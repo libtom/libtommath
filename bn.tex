@@ -49,7 +49,7 @@
 \begin{document}
 \frontmatter
 \pagestyle{empty}
-\title{LibTomMath User Manual \\ v0.28}
+\title{LibTomMath User Manual \\ v0.30}
 \author{Tom St Denis \\ tomstdenis@iahu.ca}
 \maketitle
 This text, the library and the accompanying textbook are all hereby placed in the public domain.  This book has been 
@@ -87,7 +87,7 @@ release the textbook ``Implementing Multiple Precision Arithmetic'' has been pla
 release as well.  This textbook is meant to compliment the project by providing a more solid walkthrough of the development
 algorithms used in the library.
 
-Since both\footnote{Note that the MPI files under mtest/ are copyrighted by Michael Fromberger.} are in the 
+Since both\footnote{Note that the MPI files under mtest/ are copyrighted by Michael Fromberger.  They are not required to use LibTomMath.} are in the 
 public domain everyone is entitled to do with them as they see fit.
 
 \section{Building LibTomMath}
@@ -114,7 +114,7 @@ nmake -f makefile.msvc
 This will build the library and archive the object files in ``tommath.lib''.  This has been tested with MSVC version 6.00
 with service pack 5.  
 
-Tbere is limited support for making a ``DLL'' in windows via the ``makefile.cygwin\_dll'' makefile.  It requires Cygwin
+There is limited support for making a ``DLL'' in windows via the ``makefile.cygwin\_dll'' makefile.  It requires Cygwin
 to work with since it requires the auto-export/import functionality.  The resulting DLL and imprt library ``libtomcrypt.dll.a''
 can be used to link LibTomMath dynamically to any Windows program using Cygwin.
 
@@ -385,7 +385,7 @@ To initialized and make a copy of an mp\_int the mp\_init\_copy() function has b
 int mp_init_copy (mp_int * a, mp_int * b);
 \end{alltt}
 
-This function will initialize ``a'' and make it a copy of ``b'' if all goes well.
+This function will initialize $a$ and make it a copy of $b$ if all goes well.
 
 \begin{small} \begin{alltt}
 int main(void)
@@ -420,8 +420,8 @@ you override this behaviour.
 int mp_init_size (mp_int * a, int size);
 \end{alltt}
 
-The ``size'' parameter must be greater than zero.  If the function succeeds the mp\_int ``a'' will be initialized
-to have ``size'' digits (which are all initially zero).  
+The $size$ parameter must be greater than zero.  If the function succeeds the mp\_int $a$ will be initialized
+to have $size$ digits (which are all initially zero).  
 
 \begin{small} \begin{alltt}
 int main(void)
@@ -453,7 +453,7 @@ digits can be removed to return memory to the heap with the mp\_shrink() functio
 int mp_shrink (mp_int * a);
 \end{alltt}
 
-This will remove excess digits of the mp\_int ``a''.  If the operation fails the mp\_int should be intact without the
+This will remove excess digits of the mp\_int $a$.  If the operation fails the mp\_int should be intact without the
 excess digits being removed.  Note that you can use a shrunk mp\_int in further computations, however, such operations
 will require heap operations which can be slow.  It is not ideal to shrink mp\_int variables that you will further
 modify in the system (unless you are seriously low on memory).  
@@ -502,8 +502,8 @@ your desired size.
 int mp_grow (mp_int * a, int size);
 \end{alltt}
 
-This will grow the array of digits of ``a'' to ``size''.  If the \textit{alloc} parameter is already bigger than
-``size'' the function will not do anything.
+This will grow the array of digits of $a$ to $size$.  If the \textit{alloc} parameter is already bigger than
+$size$ the function will not do anything.
 
 \begin{small} \begin{alltt}
 int main(void)
@@ -552,7 +552,7 @@ Setting a single digit can be accomplished with the following function.
 void mp_set (mp_int * a, mp_digit b);
 \end{alltt}
 
-This will zero the contents of ``a'' and make it represent an integer equal to the value of ``b''.  Note that this
+This will zero the contents of $a$ and make it represent an integer equal to the value of $b$.  Note that this
 function has a return type of \textbf{void}.  It cannot cause an error so it is safe to assume the function
 succeeded.
 
@@ -578,19 +578,28 @@ int main(void)
 \}
 \end{alltt} \end{small}
 
-\subsection{Long Constant}
+\subsection{Long Constants}
 
-When you want to set a constant that is the size of an ISO C ``unsigned long'' and larger than a single
-digit the following function is provided.
+To set a constant that is the size of an ISO C ``unsigned long'' and larger than a single digit the following function 
+can be used.
 
 \index{mp\_set\_int}
 \begin{alltt}
 int mp_set_int (mp_int * a, unsigned long b);
 \end{alltt}
 
-This will assign the value of the 32-bit variable ``b'' to the mp\_int ``a''.  Unlike mp\_set() this function will always
+This will assign the value of the 32-bit variable $b$ to the mp\_int $a$.  Unlike mp\_set() this function will always
 accept a 32-bit input regardless of the size of a single digit.  However, since the value may span several digits 
 this function can fail if it runs out of heap memory.
+
+To get the ``unsigned long'' copy of an mp\_int the following function can be used.
+
+\index{mp\_get\_int}
+\begin{alltt}
+unsigned long mp_get_int (mp_int * a);
+\end{alltt}
+
+This will return the 32 least significant bits of the mp\_int $a$.  
 
 \begin{small} \begin{alltt}
 int main(void)
@@ -610,12 +619,67 @@ int main(void)
              mp_error_to_string(result));
       return EXIT_FAILURE;
    \}
+
+   printf("number == \%lu", mp_get_int(&number));
+
    /* we're done with it. */ 
    mp_clear(&number);
 
    return EXIT_SUCCESS;
 \}
 \end{alltt} \end{small}
+
+This should output the following if the program succeeds.
+
+\begin{alltt}
+number == 654321
+\end{alltt}
+
+\subsection{Initialize and Setting Constants}
+To both initialize and set small constants the following two functions are available.
+\index{mp\_init\_set} \index{mp\_init\_set\_int}
+\begin{alltt}
+int mp_init_set (mp_int * a, mp_digit b);
+int mp_init_set_int (mp_int * a, unsigned long b);
+\end{alltt}
+
+Both functions work like the previous counterparts except they first mp\_init $a$ before setting the values.  
+
+\begin{alltt}
+int main(void)
+\{
+   mp_int number1, number2;
+   int    result;
+
+   /* initialize and set a single digit */
+   if ((result = mp_init_set(&number1, 100)) != MP_OKAY) \{
+      printf("Error setting number1: \%s", 
+             mp_error_to_string(result));
+      return EXIT_FAILURE;
+   \}             
+
+   /* initialize and set a long */
+   if ((result = mp_init_set_int(&number2, 1023)) != MP_OKAY) \{
+      printf("Error setting number2: \%s", 
+             mp_error_to_string(result));
+      return EXIT_FAILURE;
+   \}
+
+   /* display */
+   printf("Number1, Number2 == \%lu, \%lu",
+          mp_get_int(&number1), mp_get_int(&number2));
+
+   /* clear */
+   mp_clear_multi(&number1, &number2, NULL);
+
+   return EXIT_SUCCESS;
+\}
+\end{alltt}
+
+If this program succeeds it shall output.
+\begin{alltt}
+Number1, Number2 == 100, 1023
+\end{alltt}
 
 \section{Comparisons}
 
@@ -644,13 +708,13 @@ $b$.
 
 An unsigned comparison considers only the digits themselves and not the associated \textit{sign} flag of the 
 mp\_int structures.  This is analogous to an absolute comparison.  The function mp\_cmp\_mag() will compare two
-mp\_int variables based on their digits only.
+mp\_int variables based on their digits only. 
 
 \index{mp\_cmp\_mag}
 \begin{alltt}
 int mp_cmp(mp_int * a, mp_int * b);
 \end{alltt}
-This will compare ``a'' to ``b'' placing ``a'' to the left of ``b''.  This function cannot fail and will return one of the
+This will compare $a$ to $b$ placing $a$ to the left of $b$.  This function cannot fail and will return one of the
 three compare codes listed in figure \ref{fig:CMP}.
 
 \begin{small} \begin{alltt}
@@ -707,7 +771,7 @@ To compare two mp\_int variables based on their signed value the mp\_cmp() funct
 int mp_cmp(mp_int * a, mp_int * b);
 \end{alltt}
 
-This will compare ``a'' to the left of ``b''.  It will first compare the signs of the two mp\_int variables.  If they
+This will compare $a$ to the left of $b$.  It will first compare the signs of the two mp\_int variables.  If they
 differ it will return immediately based on their signs.  If the signs are equal then it will compare the digits
 individually.  This function will return one of the compare conditions codes listed in figure \ref{fig:CMP}.
 
@@ -763,7 +827,7 @@ To compare a single digit against an mp\_int the following function has been pro
 int mp_cmp_d(mp_int * a, mp_digit b);
 \end{alltt}
 
-This will compare ``a'' to the left of ``b'' using a signed comparison.  Note that it will always treat ``b'' as 
+This will compare $a$ to the left of $b$ using a signed comparison.  Note that it will always treat $b$ as 
 positive.  This function is rather handy when you have to compare against small values such as $1$ (which often
 comes up in cryptography).  The function cannot fail and will return one of the tree compare condition codes
 listed in figure \ref{fig:CMP}.
@@ -820,7 +884,7 @@ int mp_mul_2(mp_int * a, mp_int * b);
 int mp_div_2(mp_int * a, mp_int * b);
 \end{alltt}
 
-The former will assign twice ``a'' to ``b'' while the latter will assign half ``a'' to ``b''.  These functions are fast
+The former will assign twice $a$ to $b$ while the latter will assign half $a$ to $b$.  These functions are fast
 since the shift counts and maskes are hardcoded into the routines.
 
 \begin{small} \begin{alltt}
@@ -883,8 +947,8 @@ Since $10 > 7$ and $5 < 7$.  To multiply by a power of two the following functio
 int mp_mul_2d(mp_int * a, int b, mp_int * c);
 \end{alltt}
 
-This will multiply ``a'' by $2^b$ and store the result in ``c''.  If the value of $b$ is less than or equal to 
-zero the function will copy ``a'' to ``c'' without performing any further actions.  
+This will multiply $a$ by $2^b$ and store the result in ``c''.  If the value of $b$ is less than or equal to 
+zero the function will copy $a$ to ``c'' without performing any further actions.  
 
 To divide by a power of two use the following.
 
@@ -892,8 +956,8 @@ To divide by a power of two use the following.
 \begin{alltt}
 int mp_div_2d (mp_int * a, int b, mp_int * c, mp_int * d);
 \end{alltt}
-Which will divide ``a'' by $2^b$, store the quotient in ``c'' and the remainder in ``d'.  If $b \le 0$ then the
-function simply copies ``a'' over to ``c'' and zeroes ``d''.  The variable ``d'' may be passed as a \textbf{NULL}
+Which will divide $a$ by $2^b$, store the quotient in ``c'' and the remainder in ``d'.  If $b \le 0$ then the
+function simply copies $a$ over to ``c'' and zeroes $d$.  The variable $d$ may be passed as a \textbf{NULL}
 value to signal that the remainder is not desired.
 
 \subsection{Polynomial Basis Operations}
@@ -911,14 +975,14 @@ following function provides this operation.
 int mp_lshd (mp_int * a, int b);
 \end{alltt}
 
-This will multiply ``a'' in place by $x^b$ which is equivalent to shifting the digits left $b$ places and inserting zeroes
+This will multiply $a$ in place by $x^b$ which is equivalent to shifting the digits left $b$ places and inserting zeroes
 in the least significant digits.  Similarly to divide by a power of $x$ the following function is provided.
 
 \index{mp\_rshd}
 \begin{alltt}
 void mp_rshd (mp_int * a, int b)
 \end{alltt}
-This will divide ``a'' in place by $x^b$ and discard the remainder.  This function cannot fail as it performs the operations
+This will divide $a$ in place by $x^b$ and discard the remainder.  This function cannot fail as it performs the operations
 in place and no new digits are required to complete it.
 
 \subsection{AND, OR and XOR Operations}
@@ -948,7 +1012,6 @@ int mp_sub (mp_int * a, mp_int * b, mp_int * c)
 Which perform $c = a \odot b$ where $\odot$ is one of signed addition or subtraction.  The operations are fully sign
 aware.
 
-
 \section{Sign Manipulation}
 \subsection{Negation}
 \label{sec:NEG}
@@ -959,7 +1022,7 @@ Simple integer negation can be performed with the following.
 int mp_neg (mp_int * a, mp_int * b);
 \end{alltt}
 
-Which assigns $-b$ to $a$.  
+Which assigns $-a$ to $b$.  
 
 \subsection{Absolute}
 Simple integer absolutes can be performed with the following.
@@ -969,7 +1032,20 @@ Simple integer absolutes can be performed with the following.
 int mp_abs (mp_int * a, mp_int * b);
 \end{alltt}
 
-Which assigns $\vert b \vert$ to $a$.  
+Which assigns $\vert a \vert$ to $b$.  
+
+\section{Integer Division and Remainder}
+To perform a complete and general integer division with remainder use the following function.
+
+\index{mp\_div}
+\begin{alltt}
+int mp_div (mp_int * a, mp_int * b, mp_int * c, mp_int * d);
+\end{alltt}
+                                                        
+This divides $a$ by $b$ and stores the quotient in $c$ and $d$.  The signed quotient is computed such that 
+$bc + d = a$.  Note that either of $c$ or $d$ can be set to \textbf{NULL} if their value is not required.  If 
+$b$ is zero the function returns \textbf{MP\_VAL}.  
+
 
 \chapter{Multiplication and Squaring}
 \section{Multiplication}
@@ -986,6 +1062,57 @@ sized inputs.  Then followed by the Comba and baseline multipliers.
 Fortunately for the developer you don't really need to know this unless you really want to fine tune the system.  mp\_mul()
 will determine on its own\footnote{Some tweaking may be required.} what routine to use automatically when it is called.
 
+\begin{alltt}
+int main(void)
+\{
+   mp_int number1, number2;
+   int result;
+
+   /* Initialize the numbers */
+   if ((result = mp_init_multi(&number1, 
+                               &number2, NULL)) != MP_OKAY) \{
+      printf("Error initializing the numbers.  \%s", 
+             mp_error_to_string(result));
+      return EXIT_FAILURE;
+   \}
+
+   /* set the terms */
+   if ((result = mp_set_int(&number, 257)) != MP_OKAY) \{
+      printf("Error setting number1.  \%s", 
+             mp_error_to_string(result));
+      return EXIT_FAILURE;
+   \}
+ 
+   if ((result = mp_set_int(&number2, 1023)) != MP_OKAY) \{
+      printf("Error setting number2.  \%s", 
+             mp_error_to_string(result));
+      return EXIT_FAILURE;
+   \}
+
+   /* multiply them */
+   if ((result = mp_mul(&number1, &number2,
+                        &number1)) != MP_OKAY) \{
+      printf("Error multiplying terms.  \%s", 
+             mp_error_to_string(result));
+      return EXIT_FAILURE;
+   \}
+
+   /* display */
+   printf("number1 * number2 == \%lu", mp_get_int(&number1));
+
+   /* free terms and return */
+   mp_clear_multi(&number1, &number2, NULL);
+
+   return EXIT_SUCCESS;
+\}
+\end{alltt}   
+
+If this program succeeds it shall output the following.
+
+\begin{alltt}
+number1 * number2 == 262911
+\end{alltt}
+
 \section{Squaring}
 Since squaring can be performed faster than multiplication it is performed it's own function instead of just using
 mp\_mul().
@@ -995,12 +1122,12 @@ mp\_mul().
 int mp_sqr (mp_int * a, mp_int * b);
 \end{alltt}
 
-Will square ``a'' and store it in ``b''.  Like the case of multiplication there are four different squaring
-algorithms all which can be called from mp\_sqr().
+Will square $a$ and store it in $b$.  Like the case of multiplication there are four different squaring
+algorithms all which can be called from mp\_sqr().  It is ideal to use mp\_sqr over mp\_mul when squaring terms.
 
 \section{Tuning Polynomial Basis Routines}
 
-Both Toom-Cook and Karatsuba multiplication algorithms are faster than the traditional $O(n^2)$ approach that
+Both of the Toom-Cook and Karatsuba multiplication algorithms are faster than the traditional $O(n^2)$ approach that
 the Comba and baseline algorithms use.  At $O(n^{1.464973})$ and $O(n^{1.584962})$ running times respectfully they require 
 considerably less work.  For example, a 10000-digit multiplication would take roughly 724,000 single precision
 multiplications with Toom-Cook or 100,000,000 single precision multiplications with the standard Comba (a factor
@@ -1044,21 +1171,277 @@ good Karatsuba squaring and multiplication points.  Then it proceeds to find Too
 tuning takes a very long time as the cutoff points are likely to be very high.
 
 \chapter{Modular Reduction}
-\section{Integer Division and Remainder}
-To perform a complete and general integer division with remainder use the following function.
 
-\index{mp\_div}
+Modular reduction is process of taking the remainder of one quantity divided by another.  Expressed 
+as (\ref{eqn:mod}) the modular reduction is equivalent to the remainder of $b$ divided by $c$.  
+
+\begin{equation}
+a \equiv b \mbox{ (mod }c\mbox{)}
+\label{eqn:mod}
+\end{equation}
+
+Of particular interest to cryptography are reductions where $b$ is limited to the range $0 \le b < c^2$ since particularly 
+fast reduction algorithms can be written for the limited range.  
+
+Note that one of the four optimized reduction algorithms are automatically chosen in the modular exponentiation
+algorithm mp\_exptmod when an appropriate modulus is detected.  
+
+\section{Straight Division}
+In order to effect an arbitrary modular reduction the following algorithm is provided.
+
+\index{mp\_mod}
 \begin{alltt}
-int mp_div (mp_int * a, mp_int * b, mp_int * c, mp_int * d);
+int mp_mod(mp_int *a, mp_int *b, mp_int *c);
 \end{alltt}
 
-This divides ``a'' by ``b'' and stores the quotient in ``c'' and ``d''.  The signed quotient is computed such that 
-$bc + d = a$.  Note that either of ``c'' or ``d'' can be set to \textbf{NULL} if their value is not required.
+This reduces $a$ modulo $b$ and stores the result in $c$.  The sign of $c$ shall agree with the sign 
+of $b$.  This algorithm accepts an input $a$ of any range and is not limited by $0 \le a < b^2$.
 
 \section{Barrett Reduction}
+
+Barrett reduction is a generic optimized reduction algorithm that requires pre--computation to achieve
+a decent speedup over straight division.  First a $mu$ value must be precomputed with the following function.
+
+\index{mp\_reduce\_setup}
+\begin{alltt}
+int mp_reduce_setup(mp_int *a, mp_int *b);
+\end{alltt}
+
+Given a modulus in $b$ this produces the required $mu$ value in $a$.  For any given modulus this only has to
+be computed once.  Modular reduction can now be performed with the following.
+
+\index{mp\_reduce}
+\begin{alltt}
+int mp_reduce(mp_int *a, mp_int *b, mp_int *c);
+\end{alltt}
+
+This will reduce $a$ in place modulo $b$ with the precomputed $mu$ value in $c$.  $a$ must be in the range
+$0 \le a < b^2$.
+
+\begin{alltt}
+int main(void)
+\{
+   mp_int   a, b, c, mu;
+   int      result;
+
+   /* initialize a,b to desired values, mp_init mu, 
+    * c and set c to 1...we want to compute a^3 mod b 
+    */
+
+   /* get mu value */
+   if ((result = mp_reduce_setup(&mu, b)) != MP_OKAY) \{
+      printf("Error getting mu.  \%s", 
+             mp_error_to_string(result));
+      return EXIT_FAILURE;
+   \}
+
+   /* square a to get c = a^2 */
+   if ((result = mp_sqr(&a, &c)) != MP_OKAY) \{
+      printf("Error squaring.  \%s", 
+             mp_error_to_string(result));
+      return EXIT_FAILURE;
+   \}
+
+   /* now reduce `c' modulo b */
+   if ((result = mp_reduce(&c, &b, &mu)) != MP_OKAY) \{
+      printf("Error reducing.  \%s", 
+             mp_error_to_string(result));
+      return EXIT_FAILURE;
+   \}
+   
+   /* multiply a to get c = a^3 */
+   if ((result = mp_mul(&a, &c, &c)) != MP_OKAY) \{
+      printf("Error reducing.  \%s", 
+             mp_error_to_string(result));
+      return EXIT_FAILURE;
+   \}
+
+   /* now reduce `c' modulo b  */
+   if ((result = mp_reduce(&c, &b, &mu)) != MP_OKAY) \{
+      printf("Error reducing.  \%s", 
+             mp_error_to_string(result));
+      return EXIT_FAILURE;
+   \}
+  
+   /* c now equals a^3 mod b */
+
+   return EXIT_SUCCESS;
+\}
+\end{alltt} 
+
+This program will calculate $a^3 \mbox{ mod }b$ if all the functions succeed.  
+
 \section{Montgomery Reduction}
+
+Montgomery is a specialized reduction algorithm for any odd moduli.  Like Barrett reduction a pre--computation
+step is required.  This is accomplished with the following.
+
+\index{mp\_montgomery\_setup}
+\begin{alltt}
+int mp_montgomery_setup(mp_int *a, mp_digit *mp);
+\end{alltt}
+
+For the given odd moduli $a$ the precomputation value is placed in $mp$.  The reduction is computed with the 
+following.
+
+\index{mp\_montgomery\_reduce}
+\begin{alltt}
+int mp_montgomery_reduce(mp_int *a, mp_int *m, mp_digit mp);
+\end{alltt}
+This reduces $a$ in place modulo $m$ with the pre--computed value $mp$.   $a$ must be in the range
+$0 \le a < b^2$.
+
+Montgomery reduction is faster than Barrett reduction for moduli smaller than the ``comba'' limit.  With the default
+setup for instance, the limit is $127$ digits ($3556$--bits).   Note that this function is not limited to
+$127$ digits just that it falls back to a baseline algorithm after that point.  
+
+An important observation is that this reduction does not return $a \mbox{ mod }m$ but $aR^{-1} \mbox{ mod }m$ 
+where $R = \beta^n$, $n$ is the n number of digits in $m$ and $\beta$ is radix used (default is $2^{28}$).  
+
+To quickly calculate $R$ the following function was provided.
+
+\index{mp\_montgomery\_calc\_normalization}
+\begin{alltt}
+int mp_montgomery_calc_normalization(mp_int *a, mp_int *b);
+\end{alltt}
+Which calculates $a = R$ for the odd moduli $b$ without using multiplication or division.  
+
+The normal modus operandi for Montgomery reductions is to normalize the integers before entering the system.  For
+example, to calculate $a^3 \mbox { mod }b$ using Montgomery reduction the value of $a$ can be normalized by
+multiplying it by $R$.  Consider the following code snippet.
+
+\begin{alltt}
+int main(void)
+\{
+   mp_int   a, b, c, R;
+   mp_digit mp;
+   int      result;
+
+   /* initialize a,b to desired values, 
+    * mp_init R, c and set c to 1.... 
+    */
+
+   /* get normalization */
+   if ((result = mp_montgomery_calc_normalization(&R, b)) != MP_OKAY) \{
+      printf("Error getting norm.  \%s", 
+             mp_error_to_string(result));
+      return EXIT_FAILURE;
+   \}
+
+   /* get mp value */
+   if ((result = mp_montgomery_setup(&c, &mp)) != MP_OKAY) \{
+      printf("Error setting up montgomery.  \%s", 
+             mp_error_to_string(result));
+      return EXIT_FAILURE;
+   \}
+
+   /* normalize `a' so now a is equal to aR */
+   if ((result = mp_mulmod(&a, &R, &b, &a)) != MP_OKAY) \{
+      printf("Error computing aR.  \%s", 
+             mp_error_to_string(result));
+      return EXIT_FAILURE;
+   \}
+
+   /* square a to get c = a^2R^2 */
+   if ((result = mp_sqr(&a, &c)) != MP_OKAY) \{
+      printf("Error squaring.  \%s", 
+             mp_error_to_string(result));
+      return EXIT_FAILURE;
+   \}
+
+   /* now reduce `c' back down to c = a^2R^2 * R^-1 == a^2R */
+   if ((result = mp_montgomery_reduce(&c, &b, mp)) != MP_OKAY) \{
+      printf("Error reducing.  \%s", 
+             mp_error_to_string(result));
+      return EXIT_FAILURE;
+   \}
+   
+   /* multiply a to get c = a^3R^2 */
+   if ((result = mp_mul(&a, &c, &c)) != MP_OKAY) \{
+      printf("Error reducing.  \%s", 
+             mp_error_to_string(result));
+      return EXIT_FAILURE;
+   \}
+
+   /* now reduce `c' back down to c = a^3R^2 * R^-1 == a^3R */
+   if ((result = mp_montgomery_reduce(&c, &b, mp)) != MP_OKAY) \{
+      printf("Error reducing.  \%s", 
+             mp_error_to_string(result));
+      return EXIT_FAILURE;
+   \}
+   
+   /* now reduce (again) `c' back down to c = a^3R * R^-1 == a^3 */
+   if ((result = mp_montgomery_reduce(&c, &b, mp)) != MP_OKAY) \{
+      printf("Error reducing.  \%s", 
+             mp_error_to_string(result));
+      return EXIT_FAILURE;
+   \}
+
+   /* c now equals a^3 mod b */
+
+   return EXIT_SUCCESS;
+\}
+\end{alltt} 
+
+This particular example does not look too efficient but it demonstrates the point of the algorithm.  By 
+normalizing the inputs the reduced results are always of the form $aR$ for some variable $a$.  This allows
+a single final reduction to correct for the normalization and the fast reduction used within the algorithm.
+
+For more details consider examining the file \textit{bn\_mp\_exptmod\_fast.c}.
+
 \section{Restricted Dimminished Radix}
+
+``Dimminished Radix'' reduction refers to reduction with respect to moduli that are ameniable to simple
+digit shifting and small multiplications.  In this case the ``restricted'' variant refers to moduli of the
+form $\beta^k - p$ for some $k \ge 0$ and $0 < p < \beta$ where $\beta$ is the radix (default to $2^{28}$).  
+
+As in the case of Montgomery reduction there is a pre--computation phase required for a given modulus.
+
+\index{mp\_dr\_setup}
+\begin{alltt}
+void mp_dr_setup(mp_int *a, mp_digit *d);
+\end{alltt}
+
+This computes the value required for the modulus $a$ and stores it in $d$.  This function cannot fail
+and does not return any error codes.  After the pre--computation a reduction can be performed with the
+following.
+
+\index{mp\_dr\_reduce}
+\begin{alltt}
+int mp_dr_reduce(mp_int *a, mp_int *b, mp_digit mp);
+\end{alltt}
+
+This reduces $a$ in place modulo $b$ with the pre--computed value $mp$.  $b$ must be of a restricted
+dimminished radix form and $a$ must be in the range $0 \le a < b^2$.  Dimminished radix reductions are 
+much faster than both Barrett and Montgomery reductions as they have a much lower asymtotic running time.  
+
+Since the moduli are restricted this algorithm is not particularly useful for something like Rabin, RSA or
+BBS cryptographic purposes.  This reduction algorithm is useful for Diffie-Hellman and ECC where fixed
+primes are acceptable.  
+
+Note that unlike Montgomery reduction there is no normalization process.  The result of this function is
+equal to the correct residue.
+
 \section{Unrestricted Dimminshed Radix}
+
+Unrestricted reductions work much like the restricted counterparts except in this case the moduli is of the 
+form $2^k - p$ for $0 < p < \beta$.  In this sense the unrestricted reductions are more flexible as they 
+can be applied to a wider range of numbers.  
+
+\index{mp\_reduce\_2k\_setup}
+\begin{alltt}
+int mp_reduce_2k_setup(mp_int *a, mp_digit *d);
+\end{alltt}
+
+This will compute the required $d$ value for the given moduli $a$.  
+
+\index{mp\_reduce\_2k}
+\begin{alltt}
+int mp_reduce_2k(mp_int *a, mp_int *n, mp_digit d);
+\end{alltt}
+
+This will reduce $a$ in place modulo $n$ with the pre--computed value $d$.  From my experience this routine is 
+slower than mp\_dr\_reduce but faster for most moduli sizes than the Montgomery reduction.  
 
 \chapter{Exponentiation}
 \section{Single Digit Exponentiation}
@@ -1066,8 +1449,8 @@ $bc + d = a$.  Note that either of ``c'' or ``d'' can be set to \textbf{NULL} if
 \begin{alltt}
 int mp_expt_d (mp_int * a, mp_digit b, mp_int * c)
 \end{alltt}
-This computes $c = a^b$ using a simple binary left-to-write algorithm.  It is faster than repeated multiplications for
-all values of $b$ greater than three.  
+This computes $c = a^b$ using a simple binary left-to-right algorithm.  It is faster than repeated multiplications by 
+$a$ for all values of $b$ greater than three.  
 
 \section{Modular Exponentiation}
 \index{mp\_exptmod}
@@ -1077,7 +1460,12 @@ int mp_exptmod (mp_int * G, mp_int * X, mp_int * P, mp_int * Y)
 This computes $Y \equiv G^X \mbox{ (mod }P\mbox{)}$ using a variable width sliding window algorithm.  This function
 will automatically detect the fastest modular reduction technique to use during the operation.  For negative values of 
 $X$ the operation is performed as $Y \equiv (G^{-1} \mbox{ mod }P)^{\vert X \vert} \mbox{ (mod }P\mbox{)}$ provided that 
-$gcd(G, P) = 1$.  
+$gcd(G, P) = 1$.
+
+This function is actually a shell around the two internal exponentiation functions.  This routine will automatically
+detect when Barrett, Montgomery, Restricted and Unrestricted Dimminished Radix based exponentiation can be used.  Generally
+moduli of the a ``restricted dimminished radix'' form lead to the fastest modular exponentiations.  Followed by Montgomery
+and the other two algorithms.
 
 \section{Root Finding}
 \index{mp\_n\_root}
@@ -1089,6 +1477,11 @@ ideal for values of $b$ greater than three.  It will work but become very slow. 
 numbers (less than 1000 bits) I'd avoid $b > 3$ situations.  Will return a positive root only for even roots and return
 a root with the sign of the input for odd roots.  For example, performing $4^{1/2}$ will return $2$ whereas $(-8)^{1/3}$ 
 will return $-2$.  
+
+This algorithm uses the ``Newton Approximation'' method and will converge on the correct root fairly quickly.  Since
+the algorithm requires raising $a$ to the power of $b$ it is not ideal to attempt to find roots for large
+values of $b$.  If particularly large roots are required then a factor method could be used instead.  For example,
+$a^{1/16}$ is equivalent to $\left (a^{1/4} \right)^{1/4}$.
 
 \chapter{Prime Numbers}
 \section{Trial Division}
@@ -1168,10 +1561,44 @@ typedef int ltm_prime_callback(unsigned char *dst, int len, void *dat);
 \end{alltt}
 
 Which is a function that must read $len$ bytes (and return the amount stored) into $dst$.  The $dat$ variable is simply
-copied from the original input.  It can be used to pass RNG context data to the callback.  
+copied from the original input.  It can be used to pass RNG context data to the callback.  The function 
+mp\_prime\_random() is more suitable for generating primes which must be secret (as in the case of RSA) since there 
+is no skew on the least significant bits.
 
-The function mp\_prime\_random() is more suitable for generating primes which must be secret (as in the case of RSA) since
-there is no skew on the least significant bits.
+\textit{Note:}  As of v0.30 of the LibTomMath library this function has been deprecated.  It is still available
+but users are encouraged to use the new mp\_prime\_random\_ex() function instead.
+
+\subsection{Extended Generation}
+\index{mp\_prime\_random\_ex}
+\begin{alltt}
+int mp_prime_random_ex(mp_int *a,    int t, 
+                       int     size, int flags, 
+                       ltm_prime_callback cb, void *dat);
+\end{alltt}
+This will generate a prime in $a$ using $t$ tests of the primality testing algorithms.  The variable $size$
+specifies the bit length of the prime desired.  The variable $flags$ specifies one of several options available
+(see fig. \ref{fig:primeopts}) which can be OR'ed together.  The callback parameters are used as in 
+mp\_prime\_random().
+
+\begin{figure}[here]
+\begin{center}
+\begin{small}
+\begin{tabular}{|r|l|}
+\hline \textbf{Flag}         & \textbf{Meaning} \\
+\hline LTM\_PRIME\_BBS       & Make the prime congruent to $3$ modulo $4$ \\
+\hline LTM\_PRIME\_SAFE      & Make a prime $p$ such that $(p - 1)/2$ is also prime. \\
+                             & This option implies LTM\_PRIME\_BBS as well. \\
+\hline LTM\_PRIME\_2MSB\_OFF & Makes sure that the bit adjacent to the most significant bit \\
+                             & Is forced to zero.  \\
+\hline LTM\_PRIME\_2MSB\_ON  & Makes sure that the bit adjacent to the most significant bit \\
+                             & Is forced to one. \\
+\hline
+\end{tabular}
+\end{small}
+\end{center}
+\caption{Primality Generation Options}
+\label{fig:primeopts}
+\end{figure}
 
 \chapter{Input and Output}
 \section{ASCII Conversions}
@@ -1180,7 +1607,7 @@ there is no skew on the least significant bits.
 \begin{alltt}
 int mp_toradix (mp_int * a, char *str, int radix);
 \end{alltt}
-This still store ``a'' in ``str'' as a base-``radix'' string of ASCII chars.  This function appends a NUL character
+This still store $a$ in ``str'' as a base-``radix'' string of ASCII chars.  This function appends a NUL character
 to terminate the string.  Valid values of ``radix'' line in the range $[2, 64]$.  To determine the size (exact) required
 by the conversion before storing any data use the following function.
 
@@ -1196,12 +1623,46 @@ function returns an error code and ``size'' will be zero.
 \begin{alltt}
 int mp_read_radix (mp_int * a, char *str, int radix);
 \end{alltt}
-This will read the base-``radix'' NUL terminated string from ``str'' into ``a''.  It will stop reading when it reads a
+This will read the base-``radix'' NUL terminated string from ``str'' into $a$.  It will stop reading when it reads a
 character it does not recognize (which happens to include th NUL char... imagine that...).  A single leading $-$ sign
 can be used to denote a negative number.
 
 \section{Binary Conversions}
-\section{Stream Functions}
+
+Converting an mp\_int to and from binary is another keen idea.
+
+\index{mp\_unsigned\_bin\_size}
+\begin{alltt}
+int mp_unsigned_bin_size(mp_int *a);
+\end{alltt}
+
+This will return the number of bytes (octets) required to store the unsigned copy of the integer $a$.
+
+\index{mp\_to\_unsigned\_bin}
+\begin{alltt}
+int mp_to_unsigned_bin(mp_int *a, unsigned char *b);
+\end{alltt}
+This will store $a$ into the buffer $b$ in big--endian format.  Fortunately this is exactly what DER (or is it ASN?)
+requires.  It does not store the sign of the integer.
+
+\index{mp\_read\_unsigned\_bin}
+\begin{alltt}
+int mp_read_unsigned_bin(mp_int *a, unsigned char *b, int c);
+\end{alltt}
+This will read in an unsigned big--endian array of bytes (octets) from $b$ of length $c$ into $a$.  The resulting
+integer $a$ will always be positive.
+
+For those who acknowledge the existence of negative numbers (heretic!) there are ``signed'' versions of the
+previous functions.
+
+\begin{alltt}
+int mp_signed_bin_size(mp_int *a);
+int mp_read_signed_bin(mp_int *a, unsigned char *b, int c);
+int mp_to_signed_bin(mp_int *a, unsigned char *b);
+\end{alltt}
+They operate essentially the same as the unsigned copies except they prefix the data with zero or non--zero
+byte depending on the sign.  If the sign is zpos (e.g. not negative) the prefix is zero, otherwise the prefix
+is non--zero.  
 
 \chapter{Algebraic Functions}
 \section{Extended Euclidean Algorithm}
@@ -1216,6 +1677,8 @@ This finds the triple U1/U2/U3 using the Extended Euclidean algorithm such that 
 \begin{equation}
 a \cdot U1 + b \cdot U2 = U3
 \end{equation}
+
+Any of the U1/U2/U3 paramters can be set to \textbf{NULL} if they are not desired.  
 
 \section{Greatest Common Divisor}
 \index{mp\_gcd}
@@ -1248,9 +1711,22 @@ int mp_invmod (mp_int * a, mp_int * b, mp_int * c)
 \end{alltt}
 Computes the multiplicative inverse of $a$ modulo $b$ and stores the result in $c$ such that $ac \equiv 1 \mbox{ (mod }b\mbox{)}$.
 
-
-
 \section{Single Digit Functions}
+
+For those using small numbers (\textit{snicker snicker}) there are several ``helper'' functions
+
+\index{mp\_add\_d} \index{mp\_sub\_d} \index{mp\_mul\_d} \index{mp\_div\_d} \index{mp\_mod\_d}
+\begin{alltt}
+int mp_add_d(mp_int *a, mp_digit b, mp_int *c);
+int mp_sub_d(mp_int *a, mp_digit b, mp_int *c);
+int mp_mul_d(mp_int *a, mp_digit b, mp_int *c);
+int mp_div_d(mp_int *a, mp_digit b, mp_int *c, mp_digit *d);
+int mp_mod_d(mp_int *a, mp_digit b, mp_digit *c);
+\end{alltt}
+
+These work like the full mp\_int capable variants except the second parameter $b$ is a mp\_digit.  These
+functions fairly handy if you have to work with relatively small numbers since you will not have to allocate
+an entire mp\_int to store a number like $1$ or $2$.
 
 \input{bn.ind}
 

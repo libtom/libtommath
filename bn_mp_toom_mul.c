@@ -15,8 +15,7 @@
 #include <tommath.h>
 
 /* multiplication using the Toom-Cook 3-way algorithm */
-int 
-mp_toom_mul(mp_int *a, mp_int *b, mp_int *c)
+int mp_toom_mul(mp_int *a, mp_int *b, mp_int *c)
 {
     mp_int w0, w1, w2, w3, w4, tmp1, tmp2, a0, a1, a2, b0, b1, b2;
     int res, B;

@@ -49,7 +49,7 @@
 \begin{document}
 \frontmatter
 \pagestyle{empty}
-\title{Implementing Multiple Precision Arithmetic \\ ~ \\ Holiday Draft Edition }
+\title{Implementing Multiple Precision Arithmetic \\ ~ \\ Draft Edition }
 \author{\mbox{
 %\begin{small}
 \begin{tabular}{c}
@@ -66,7 +66,7 @@ QUALCOMM Australia \\
 }
 }
 \maketitle
-This text has been placed in the public domain.  This text corresponds to the v0.28 release of the 
+This text has been placed in the public domain.  This text corresponds to the v0.30 release of the 
 LibTomMath project.
 
 \begin{alltt}
@@ -85,7 +85,7 @@ This text is formatted to the international B5 paper size of 176mm wide by 250mm
 
 \tableofcontents
 \listoffigures
-\chapter*{Prefaces to the Holiday Draft Edition}
+\chapter*{Prefaces to the Draft Edition}
 I started this text in April 2003 to complement my LibTomMath library.  That is, explain how to implement the functions
 contained in LibTomMath.  The goal is to have a textbook that any Computer Science student can use when implementing their
 own multiple precision arithmetic.  The plan I wanted to follow was flesh out all the
@@ -100,7 +100,7 @@ to read it.  I had Jean-Luc Cooke print copies for me and I brought them to Cryp
 managed to grab a certain level of attention having people from around the world ask me for copies of the text was certain
 rewarding.
 
-Now we are in December 2003.  By this time I had pictured that I would have at least finished my second draft of the text.  
+Now we are past December 2003.  By this time I had pictured that I would have at least finished my second draft of the text.  
 Currently I am far off from this goal.  I've done partial re-writes of chapters one, two and three but they are not even
 finished yet.  I haven't given up on the project, only had some setbacks.  First O'Reilly declined to publish the text then
 Addison-Wesley and Greg is tried another which I don't know the name of.  However, at this point I want to focus my energy
@@ -145,9 +145,6 @@ been getting the feeling that people are starting to use my text and I owe them 
 plan is to edit one chapter every two weeks starting January 4th.  It seems insane but my lower course load at college
 should provide ample time.  By Crypto'04 I plan to have a 2nd draft of the text polished and ready to hand out to as many
 people who will take it.
-
-Finally, again, I'd like to thank my parents Vern and Katie St Denis for giving me a place to stay, food, clothes and 
-word of encouragement whenever I seemed to need it.  Thanks!
 
 \begin{flushright} Tom St Denis \end{flushright}
 
@@ -485,7 +482,7 @@ exponentiation and Montgomery reduction have been provided to make the library m
 Even with the nearly optimal and specialized algorithms that have been included the Application Programing Interface 
 (\textit{API}) has been kept as simple as possible.  Often generic place holder routines will make use of specialized 
 algorithms automatically without the developer's specific attention.  One such example is the generic multiplication 
-algorithm \textbf{mp\_mul()} which will automatically use Karatsuba, Toom-Cook, Comba or baseline multiplication 
+algorithm \textbf{mp\_mul()} which will automatically use Toom--Cook, Karatsuba, Comba or baseline multiplication 
 based on the magnitude of the inputs and the configuration of the library.  
 
 Making LibTomMath as efficient as possible is not the only goal of the LibTomMath project.  Ideally the library should 
@@ -510,12 +507,12 @@ segments of code littered throughout the source.  This clean and uncluttered app
 developer can more readily discern the true intent of a given section of source code without trying to keep track of
 what conditional code will be used.
 
-The code base of LibTomMath is also well organized.  Each function is in its own separate source code file 
-which allows the reader to find a given function very quickly.  On average there are about $76$ lines of code per source
+The code base of LibTomMath is well organized.  Each function is in its own separate source code file 
+which allows the reader to find a given function very quickly.  On average there are $76$ lines of code per source
 file which makes the source very easily to follow.  By comparison MPI and LIP are single file projects making code tracing
 very hard.  GMP has many conditional code segments which also hinder tracing.  
 
-When compiled with GCC for the x86 processor and optimized for speed the entire library is approximately $66$KiB\footnote{The notation ``KiB'' means $2^{10}$ octets, similarly ``MiB'' means $2^{20}$ octets.}
+When compiled with GCC for the x86 processor and optimized for speed the entire library is approximately $100$KiB\footnote{The notation ``KiB'' means $2^{10}$ octets, similarly ``MiB'' means $2^{20}$ octets.}
  which is fairly small compared to GMP (over $250$KiB).  LibTomMath is slightly larger than MPI (which compiles to about 
 $50$KiB) but LibTomMath is also much faster and more complete than MPI.
 
@@ -2736,7 +2733,7 @@ general purpose multiplication.  Given two polynomial basis representations $f(x
 light algebra \cite{KARAP} that the following polynomial is equivalent to multiplication of the two integers the polynomials represent.
 
 \begin{equation}
-f(x) \cdot g(x) = acx^2 + ((a - b)(c - d) + ac + bd)x + bd
+f(x) \cdot g(x) = acx^2 + ((a - b)(c - d) - (ac + bd))x + bd
 \end{equation}
 
 Using the observation that $ac$ and $bd$ could be re-used only three half sized multiplications would be required to produce the product.  Applying
@@ -3196,7 +3193,7 @@ Upon closer inspection this equation only requires the calculation of three half
 Karatsuba multiplication, this algorithm can be applied recursively on the input and will achieve an asymptotic running time of 
 $O \left ( n^{lg(3)} \right )$.
 
-You might ask yourself, if the asymptotic time of Karatsuba squaring and multiplication is the same, why not simply use the multiplication algorithm 
+If the asymptotic times of Karatsuba squaring and multiplication are the same, why not simply use the multiplication algorithm 
 instead?  The answer to this arises from the cutoff point for squaring.  As in multiplication there exists a cutoff point, at which the 
 time required for a Comba based squaring and a Karatsuba based squaring meet.  Due to the overhead inherent in the Karatsuba method, the cutoff 
 point is fairly high.  For example, on an AMD Athlon XP processor with $\beta = 2^{28}$, the cutoff point is around 127 digits.  

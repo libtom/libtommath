@@ -110,7 +110,7 @@ int main(void)
    t1 = clock();
    for (;;) {
       if (clock() - t1 > CLOCKS_PER_SEC) {
-         sleep(1);
+         sleep(2);
          t1 = clock();
       }
 

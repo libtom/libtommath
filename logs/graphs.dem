@@ -1,4 +1,4 @@
-set terminal png color
+set terminal png
 set size 1.75
 set ylabel "Operations per Second"
 set xlabel "Operand size (bits)"

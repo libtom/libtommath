@@ -101,7 +101,7 @@ int mp_n_root (mp_int * a, mp_digit b, mp_int * c)
 
     if (mp_cmp (&t2, a) == MP_GT) {
       if ((res = mp_sub_d (&t1, 1, &t1)) != MP_OKAY) {
-    goto __T3;
+         goto __T3;
       }
     } else {
       break;

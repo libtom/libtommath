@@ -1,5 +1,7 @@
 #include <time.h>
 
+#define TESTING
+
 #ifdef IOWNANATHLON
 #include <unistd.h>
 #define SLEEP sleep(4)
@@ -11,8 +13,45 @@
 
 #ifdef TIMER
 ulong64 _tt;
-void reset(void) { _tt = clock(); }
-ulong64 rdtsc(void) { return clock() - _tt; }
+
+#if defined(__i386__) || defined(_M_IX86) || defined(_M_AMD64)
+/* RDTSC from Scott Duplichan */
+static ulong64 TIMFUNC (void)
+   {
+   #if defined __GNUC__
+      #ifdef __i386__
+         ulong64 a;
+         __asm__ __volatile__ ("rdtsc ":"=A" (a));
+         return a;
+      #else /* gcc-IA64 version */
+         unsigned long result;
+         __asm__ __volatile__("mov %0=ar.itc" : "=r"(result) :: "memory");
+         while (__builtin_expect ((int) result == -1, 0))
+         __asm__ __volatile__("mov %0=ar.itc" : "=r"(result) :: "memory");
+         return result;
+      #endif
+
+   // Microsoft and Intel Windows compilers
+   #elif defined _M_IX86
+     __asm rdtsc
+   #elif defined _M_AMD64
+     return __rdtsc ();
+   #elif defined _M_IA64
+     #if defined __INTEL_COMPILER
+       #include <ia64intrin.h>
+     #endif
+      return __getReg (3116);
+   #else
+     #error need rdtsc function for this build
+   #endif
+   }
+#else
+#define TIMFUNC clock
+#endif
+
+ulong64 rdtsc(void) { return TIMFUNC() - _tt; }
+void reset(void) { _tt = TIMFUNC(); }
+
 #endif
 
 void ndraw(mp_int *a, char *name)
@@ -42,6 +81,13 @@ int lbit(void)
    }
 }
 
+int myrng(unsigned char *dst, int len, void *dat)
+{
+   int x;
+   for (x = 0; x < len; x++) dst[x] = rand() & 0xFF;
+   return len;
+}
+
 
 #define DO2(x) x; x;
 #define DO4(x) DO2(x); DO2(x);
@@ -53,13 +99,12 @@ int main(void)
 {
    mp_int a, b, c, d, e, f;
    unsigned long expt_n, add_n, sub_n, mul_n, div_n, sqr_n, mul2d_n, div2d_n, gcd_n, lcm_n, inv_n,
-                 div2_n, mul2_n, add_d_n, sub_d_n;
+                 div2_n, mul2_n, add_d_n, sub_d_n, t;
    unsigned rr;
-   int cnt, ix, old_kara_m, old_kara_s;
+   int i, n, err, cnt, ix, old_kara_m, old_kara_s;
 
 #ifdef TIMER
-   int n;
-   ulong64 tt;
+   ulong64 tt, CLK_PER_SEC;
    FILE *log, *logb, *logc;
 #endif
 
@@ -71,6 +116,127 @@ int main(void)
    mp_init(&f);
 
    srand(time(NULL));
+
+#ifdef TESTING
+  // test mp_get_int
+  printf("Testing: mp_get_int\n");
+  for(i=0;i<1000;++i) {
+    t = (unsigned long)rand()*rand()+1;
+    mp_set_int(&a,t);
+    if (t!=mp_get_int(&a)) { 
+      printf("mp_get_int() bad result!\n");
+      return 1;
+    }
+  }
+  mp_set_int(&a,0);
+  if (mp_get_int(&a)!=0)
+  { printf("mp_get_int() bad result!\n");
+    return 1;
+  }
+  mp_set_int(&a,0xffffffff);
+  if (mp_get_int(&a)!=0xffffffff)
+  { printf("mp_get_int() bad result!\n");
+    return 1;
+  }
+
+  // test mp_sqrt
+  printf("Testing: mp_sqrt\n");
+  for (i=0;i<10000;++i) { 
+    printf("%6d\r", i); fflush(stdout);
+    n = (rand()&15)+1;
+    mp_rand(&a,n);
+    if (mp_sqrt(&a,&b) != MP_OKAY)
+    { printf("mp_sqrt() error!\n");
+      return 1;
+    }
+    mp_n_root(&a,2,&a);
+    if (mp_cmp_mag(&b,&a) != MP_EQ)
+    { printf("mp_sqrt() bad result!\n");
+      return 1;
+    }
+  }
+
+  printf("\nTesting: mp_is_square\n");
+  for (i=0;i<100000;++i) {
+    printf("%6d\r", i); fflush(stdout);
+
+    /* test mp_is_square false negatives */
+    n = (rand()&7)+1;
+    mp_rand(&a,n);
+    mp_sqr(&a,&a);
+    if (mp_is_square(&a,&n)!=MP_OKAY) { 
+      printf("fn:mp_is_square() error!\n");
+      return 1;
+    }
+    if (n==0) { 
+      printf("fn:mp_is_square() bad result!\n");
+      return 1;
+    }
+
+    /* test for false positives */
+    mp_add_d(&a, 1, &a);
+    if (mp_is_square(&a,&n)!=MP_OKAY) { 
+      printf("fp:mp_is_square() error!\n");
+      return 1;
+    }
+    if (n==1) { 
+      printf("fp:mp_is_square() bad result!\n");
+      return 1;
+    }
+
+  }
+  printf("\n\n");
+#endif
+
+#ifdef TESTING 
+   /* test for size */
+   for (ix = 16; ix < 512; ix++) {
+       printf("Testing (not safe-prime): %9d bits    \r", ix); fflush(stdout);
+       err = mp_prime_random_ex(&a, 8, ix, (rand()&1)?LTM_PRIME_2MSB_OFF:LTM_PRIME_2MSB_ON, myrng, NULL);
+       if (err != MP_OKAY) {
+          printf("failed with err code %d\n", err);
+          return EXIT_FAILURE;
+       }
+       if (mp_count_bits(&a) != ix) {
+          printf("Prime is %d not %d bits!!!\n", mp_count_bits(&a), ix);
+          return EXIT_FAILURE;
+       }
+   }
+
+   for (ix = 16; ix < 512; ix++) {
+       printf("Testing (   safe-prime): %9d bits    \r", ix); fflush(stdout);
+       err = mp_prime_random_ex(&a, 8, ix, ((rand()&1)?LTM_PRIME_2MSB_OFF:LTM_PRIME_2MSB_ON)|LTM_PRIME_SAFE, myrng, NULL);
+       if (err != MP_OKAY) {
+          printf("failed with err code %d\n", err);
+          return EXIT_FAILURE;
+       }
+       if (mp_count_bits(&a) != ix) {
+          printf("Prime is %d not %d bits!!!\n", mp_count_bits(&a), ix);
+          return EXIT_FAILURE;
+       }
+       /* let's see if it's really a safe prime */
+       mp_sub_d(&a, 1, &a);
+       mp_div_2(&a, &a);
+       mp_prime_is_prime(&a, 8, &cnt);
+       if (cnt != MP_YES) {
+          printf("sub is not prime!\n");
+          return EXIT_FAILURE;
+       }
+   }
+
+   printf("\n\n");
+#endif
+
+#ifdef TESTING
+   mp_read_radix(&a, "123456", 10);
+   mp_toradix_n(&a, buf, 10, 3);
+   printf("a == %s\n", buf);
+   mp_toradix_n(&a, buf, 10, 4);
+   printf("a == %s\n", buf);
+   mp_toradix_n(&a, buf, 10, 30);
+   printf("a == %s\n", buf);
+#endif
+
 
 #if 0
    for (;;) {
@@ -97,12 +263,13 @@ int main(void)
 }
 #endif
 
-#if 0
+#ifdef TESTING
    /* test mp_cnt_lsb */
+   printf("testing mp_cnt_lsb...\n");
    mp_set(&a, 1);
-   for (ix = 0; ix < 128; ix++) {
+   for (ix = 0; ix < 1024; ix++) {
        if (mp_cnt_lsb(&a) != ix) {
-          printf("Failed at %d\n", ix);
+          printf("Failed at %d, %d\n", ix, mp_cnt_lsb(&a));
           return 0;
        }
        mp_mul_2(&a, &a);
@@ -110,7 +277,8 @@ int main(void)
 #endif
 
 /* test mp_reduce_2k */
-#if 0
+#ifdef TESTING
+   printf("Testing mp_reduce_2k...\n");
    for (cnt = 3; cnt <= 384; ++cnt) {
        mp_digit tmp;
        mp_2expt(&a, cnt);
@@ -137,7 +305,8 @@ int main(void)
 
 
 /* test mp_div_3  */
-#if 0
+#ifdef TESTING
+   printf("Testing mp_div_3...\n");
    mp_set(&d, 3);
    for (cnt = 0; cnt < 1000000; ) {
       mp_digit r1, r2;
@@ -155,7 +324,8 @@ int main(void)
 #endif
 
 /* test the DR reduction */
-#if 0
+#ifdef TESTING
+   printf("testing mp_dr_reduce...\n");
    for (cnt = 2; cnt < 128; cnt++) {
        printf("%d digit modulus\n", cnt);
        mp_grow(&a, cnt);
@@ -190,7 +360,13 @@ int main(void)
 #ifdef TIMER
       /* temp. turn off TOOM */
       TOOM_MUL_CUTOFF = TOOM_SQR_CUTOFF = 100000;
-      printf("CLOCKS_PER_SEC == %lu\n", CLOCKS_PER_SEC);
+
+      reset();
+      sleep(1);
+      CLK_PER_SEC = rdtsc();
+
+      printf("CLK_PER_SEC == %lu\n", CLK_PER_SEC);
+      
 
       log = fopen("logs/add.log", "w");
       for (cnt = 8; cnt <= 128; cnt += 8) {
@@ -202,10 +378,10 @@ int main(void)
          do {
             DO(mp_add(&a,&b,&c));
             rr += 16;
-         } while (rdtsc() < (CLOCKS_PER_SEC * 2));
+         } while (rdtsc() < (CLK_PER_SEC * 2));
          tt = rdtsc();
-         printf("Adding\t\t%4d-bit => %9llu/sec, %9llu ticks\n", mp_count_bits(&a), (((ulong64)rr)*CLOCKS_PER_SEC)/tt, tt);
-         fprintf(log, "%d %9llu\n", cnt*DIGIT_BIT, (((ulong64)rr)*CLOCKS_PER_SEC)/tt);
+         printf("Adding\t\t%4d-bit => %9llu/sec, %9llu ticks\n", mp_count_bits(&a), (((ulong64)rr)*CLK_PER_SEC)/tt, tt);
+         fprintf(log, "%d %9llu\n", cnt*DIGIT_BIT, (((ulong64)rr)*CLK_PER_SEC)/tt); fflush(log);
       }
       fclose(log);
 
@@ -219,10 +395,10 @@ int main(void)
          do {
             DO(mp_sub(&a,&b,&c));
             rr += 16;
-         } while (rdtsc() < (CLOCKS_PER_SEC * 2));
+         } while (rdtsc() < (CLK_PER_SEC * 2));
          tt = rdtsc();
-         printf("Subtracting\t\t%4d-bit => %9llu/sec, %9llu ticks\n", mp_count_bits(&a), (((ulong64)rr)*CLOCKS_PER_SEC)/tt, tt);
-         fprintf(log, "%d %9llu\n", cnt*DIGIT_BIT, (((ulong64)rr)*CLOCKS_PER_SEC)/tt);
+         printf("Subtracting\t\t%4d-bit => %9llu/sec, %9llu ticks\n", mp_count_bits(&a), (((ulong64)rr)*CLK_PER_SEC)/tt, tt);
+         fprintf(log, "%d %9llu\n", cnt*DIGIT_BIT, (((ulong64)rr)*CLK_PER_SEC)/tt);  fflush(log);
       }
       fclose(log);
 
@@ -237,7 +413,7 @@ mult_test:
       KARATSUBA_SQR_CUTOFF = (ix==0)?9999:old_kara_s;
 
       log = fopen((ix==0)?"logs/mult.log":"logs/mult_kara.log", "w");
-      for (cnt = 32; cnt <= 288; cnt += 16) {
+      for (cnt = 32; cnt <= 288; cnt += 8) {
          SLEEP;
          mp_rand(&a, cnt);
          mp_rand(&b, cnt);
@@ -246,15 +422,15 @@ mult_test:
          do {
             DO(mp_mul(&a, &b, &c));
             rr += 16;
-         } while (rdtsc() < (CLOCKS_PER_SEC * 2));
+         } while (rdtsc() < (CLK_PER_SEC * 2));
          tt = rdtsc();
-         printf("Multiplying\t%4d-bit => %9llu/sec, %9llu ticks\n", mp_count_bits(&a), (((ulong64)rr)*CLOCKS_PER_SEC)/tt, tt);
-         fprintf(log, "%d %9llu\n", mp_count_bits(&a), (((ulong64)rr)*CLOCKS_PER_SEC)/tt);
+         printf("Multiplying\t%4d-bit => %9llu/sec, %9llu ticks\n", mp_count_bits(&a), (((ulong64)rr)*CLK_PER_SEC)/tt, tt);
+         fprintf(log, "%d %9llu\n", mp_count_bits(&a), (((ulong64)rr)*CLK_PER_SEC)/tt);  fflush(log);
       }
       fclose(log);
 
       log = fopen((ix==0)?"logs/sqr.log":"logs/sqr_kara.log", "w");
-      for (cnt = 32; cnt <= 288; cnt += 16) {
+      for (cnt = 32; cnt <= 288; cnt += 8) {
          SLEEP;
          mp_rand(&a, cnt);
          reset();
@@ -262,14 +438,15 @@ mult_test:
          do {
             DO(mp_sqr(&a, &b));
             rr += 16;
-         } while (rdtsc() < (CLOCKS_PER_SEC * 2));
+         } while (rdtsc() < (CLK_PER_SEC * 2));
          tt = rdtsc();
-         printf("Squaring\t%4d-bit => %9llu/sec, %9llu ticks\n", mp_count_bits(&a), (((ulong64)rr)*CLOCKS_PER_SEC)/tt, tt);
-         fprintf(log, "%d %9llu\n", mp_count_bits(&a), (((ulong64)rr)*CLOCKS_PER_SEC)/tt);
+         printf("Squaring\t%4d-bit => %9llu/sec, %9llu ticks\n", mp_count_bits(&a), (((ulong64)rr)*CLK_PER_SEC)/tt, tt);
+         fprintf(log, "%d %9llu\n", mp_count_bits(&a), (((ulong64)rr)*CLK_PER_SEC)/tt);  fflush(log);
       }
       fclose(log);
 
    }
+expt_test:
   {
       char *primes[] = {
          /* 2K moduli mersenne primes */
@@ -299,14 +476,12 @@ mult_test:
          "1214855636816562637502584060163403830270705000634713483015101384881871978446801224798536155406895823305035467591632531067547890948695117172076954220727075688048751022421198712032848890056357845974246560748347918630050853933697792254955890439720297560693579400297062396904306270145886830719309296352765295712183040773146419022875165382778007040109957609739589875590885701126197906063620133954893216612678838507540777138437797705602453719559017633986486649523611975865005712371194067612263330335590526176087004421363598470302731349138773205901447704682181517904064735636518462452242791676541725292378925568296858010151852326316777511935037531017413910506921922450666933202278489024521263798482237150056835746454842662048692127173834433089016107854491097456725016327709663199738238442164843147132789153725513257167915555162094970853584447993125488607696008169807374736711297007473812256272245489405898470297178738029484459690836250560495461579533254473316340608217876781986188705928270735695752830825527963838355419762516246028680280988020401914551825487349990306976304093109384451438813251211051597392127491464898797406789175453067960072008590614886532333015881171367104445044718144312416815712216611576221546455968770801413440778423979",
          NULL
       };
-expt_test:
    log = fopen("logs/expt.log", "w");
    logb = fopen("logs/expt_dr.log", "w");
    logc = fopen("logs/expt_2k.log", "w");
    for (n = 0; primes[n]; n++) {
       SLEEP;
       mp_read_radix(&a, primes[n], 10);
-         printf("Different (%d)!!!\n", mp_count_bits(&a));
       mp_zero(&b);
       for (rr = 0; rr < mp_count_bits(&a); rr++) {
          mp_mul_2(&b, &b);
@@ -321,7 +496,7 @@ expt_test:
       do {
          DO(mp_exptmod(&c, &b, &a, &d));
          rr += 16;
-      } while (rdtsc() < (CLOCKS_PER_SEC * 2));
+      } while (rdtsc() < (CLK_PER_SEC * 2));
       tt = rdtsc();
       mp_sub_d(&a, 1, &e);
       mp_sub(&e, &b, &b);
@@ -332,8 +507,8 @@ expt_test:
          draw(&d);
          exit(0);
       }
-      printf("Exponentiating\t%4d-bit => %9llu/sec, %9llu ticks\n", mp_count_bits(&a), (((ulong64)rr)*CLOCKS_PER_SEC)/tt, tt);
-      fprintf((n < 6) ? logc : (n < 13) ? logb : log, "%d %9llu\n", mp_count_bits(&a), (((ulong64)rr)*CLOCKS_PER_SEC)/tt);
+      printf("Exponentiating\t%4d-bit => %9llu/sec, %9llu ticks\n", mp_count_bits(&a), (((ulong64)rr)*CLK_PER_SEC)/tt, tt);
+      fprintf((n < 6) ? logc : (n < 13) ? logb : log, "%d %9llu\n", mp_count_bits(&a), (((ulong64)rr)*CLK_PER_SEC)/tt);
    }
    }
    fclose(log);
@@ -356,15 +531,15 @@ expt_test:
       do {
          DO(mp_invmod(&b, &a, &c));
          rr += 16;
-      } while (rdtsc() < (CLOCKS_PER_SEC * 2));
+      } while (rdtsc() < (CLK_PER_SEC * 2));
       tt = rdtsc();
       mp_mulmod(&b, &c, &a, &d);
       if (mp_cmp_d(&d, 1) != MP_EQ) {
          printf("Failed to invert\n");
          return 0;
       }
-      printf("Inverting mod\t%4d-bit => %9llu/sec, %9llu ticks\n", mp_count_bits(&a), (((ulong64)rr)*CLOCKS_PER_SEC)/tt, tt);
-      fprintf(log, "%d %9llu\n", cnt*DIGIT_BIT, (((ulong64)rr)*CLOCKS_PER_SEC)/tt);
+      printf("Inverting mod\t%4d-bit => %9llu/sec, %9llu ticks\n", mp_count_bits(&a), (((ulong64)rr)*CLK_PER_SEC)/tt, tt);
+      fprintf(log, "%d %9llu\n", cnt*DIGIT_BIT, (((ulong64)rr)*CLK_PER_SEC)/tt);
    }
    fclose(log);
 

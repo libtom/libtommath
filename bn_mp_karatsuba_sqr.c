@@ -21,8 +21,7 @@
  * is essentially the same algorithm but merely 
  * tuned to perform recursive squarings.
  */
-int
-mp_karatsuba_sqr (mp_int * a, mp_int * b)
+int mp_karatsuba_sqr (mp_int * a, mp_int * b)
 {
   mp_int  x0, x1, t1, t2, x0x0, x1x1;
   int     B, err;
@@ -33,7 +32,7 @@ mp_karatsuba_sqr (mp_int * a, mp_int * b)
   B = a->used;
 
   /* now divide in two */
-  B = B / 2;
+  B = B >> 1;
 
   /* init copy all the temps */
   if (mp_init_size (&x0, B) != MP_OKAY)

@@ -31,8 +31,7 @@
  * Based on Algorithm 14.16 on pp.597 of HAC.
  *
  */
-int
-fast_s_mp_sqr (mp_int * a, mp_int * b)
+int fast_s_mp_sqr (mp_int * a, mp_int * b)
 {
   int     olduse, newused, res, ix, pa;
   mp_word W2[MP_WARRAY], W[MP_WARRAY];
