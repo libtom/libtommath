@@ -1,10 +1,14 @@
 #Makefile for GCC
 #
 #Tom St Denis
+
+#version of library 
+VERSION=0.33
+
 CFLAGS  +=  -I./ -Wall -W -Wshadow -Wsign-compare
 
 #for speed 
-CFLAGS += -O3 -funroll-loops
+CFLAGS += -O3 -funroll-all-loops
 
 #for size 
 #CFLAGS += -Os
@@ -15,13 +19,15 @@ CFLAGS  += -fomit-frame-pointer
 #debug
 #CFLAGS += -g3
 
-VERSION=0.32
+#install as this user
+USER=root
+GROUP=root
 
 default: libtommath.a
 
 #default files to install
 LIBNAME=libtommath.a
-HEADERS=tommath.h
+HEADERS=tommath.h tommath_class.h tommath_superclass.h
 
 #LIBPATH-The directory for libtommath to be installed to.
 #INCPATH-The directory to install the header files for libtommath.
@@ -61,7 +67,6 @@ libtommath.a:  $(OBJECTS)
 	$(AR) $(ARFLAGS) libtommath.a $(OBJECTS)
 	ranlib libtommath.a
 
-
 #make a profiled library (takes a while!!!)
 #
 # This will build the library with profile generation
@@ -86,19 +91,19 @@ profiled_single:
 	ranlib libtommath.a	
 
 install: libtommath.a
-	install -d -g root -o root $(DESTDIR)$(LIBPATH)
-	install -d -g root -o root $(DESTDIR)$(INCPATH)
-	install -g root -o root $(LIBNAME) $(DESTDIR)$(LIBPATH)
-	install -g root -o root $(HEADERS) $(DESTDIR)$(INCPATH)
+	install -d -g $(GROUP) -o $(USER) $(DESTDIR)$(LIBPATH)
+	install -d -g $(GROUP) -o $(USER) $(DESTDIR)$(INCPATH)
+	install -g $(GROUP) -o $(USER) $(LIBNAME) $(DESTDIR)$(LIBPATH)
+	install -g $(GROUP) -o $(USER) $(HEADERS) $(DESTDIR)$(INCPATH)
 
 test: libtommath.a demo/demo.o
-	$(CC) demo/demo.o libtommath.a -o test
+	$(CC) $(CFLAGS) demo/demo.o libtommath.a -o test
 	
 mtest: test	
-	cd mtest ; $(CC) $(CFLAGS) mtest.c -o mtest -s
+	cd mtest ; $(CC) $(CFLAGS) mtest.c -o mtest
         
 timing: libtommath.a
-	$(CC) $(CFLAGS) -DTIMER demo/timing.c libtommath.a -o ltmtest -s
+	$(CC) $(CFLAGS) -DTIMER demo/timing.c libtommath.a -o ltmtest
 
 # makes the LTM book DVI file, requires tetex, perl and makeindex [part of tetex I think]
 docdvi: tommath.src

@@ -14,9 +14,9 @@
 #ifndef X86_TIMER
 
 /* generic ISO C timer */
-ulong64 __T;
-void t_start(void) { __T = clock(); }
-ulong64 t_read(void) { return clock() - __T; }
+ulong64 LBL_T;
+void t_start(void) { LBL_T = clock(); }
+ulong64 t_read(void) { return clock() - LBL_T; }
 
 #else
 extern void t_start(void);

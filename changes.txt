@@ -1,3 +1,12 @@
+December 23rd, 2004
+v0.33  -- Fixed "small" variant for mp_div() which would munge with negative dividends...
+       -- Fixed bug in mp_prime_random_ex() which would set the most significant byte to zero when
+          no special flags were set
+       -- Fixed overflow [minor] bug in fast_s_mp_sqr()
+       -- Made the makefiles easier to configure the group/user that ltm will install as
+       -- Fixed "final carry" bug in comba multipliers. (Volkan Ceylan)
+       -- Matt Johnston pointed out a missing semi-colon in mp_exptmod
+
 October 29th, 2004
 v0.32  -- Added "makefile.shared" for shared object support
        -- Added more to the build options/configs in the manual

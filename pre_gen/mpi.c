@@ -87,20 +87,20 @@ fast_mp_invmod (mp_int * a, mp_int * b, mp_int * c)
 
   /* x == modulus, y == value to invert */
   if ((res = mp_copy (b, &x)) != MP_OKAY) {
-    goto __ERR;
+    goto LBL_ERR;
   }
 
   /* we need y = |a| */
   if ((res = mp_abs (a, &y)) != MP_OKAY) {
-    goto __ERR;
+    goto LBL_ERR;
   }
 
   /* 3. u=x, v=y, A=1, B=0, C=0,D=1 */
   if ((res = mp_copy (&x, &u)) != MP_OKAY) {
-    goto __ERR;
+    goto LBL_ERR;
   }
   if ((res = mp_copy (&y, &v)) != MP_OKAY) {
-    goto __ERR;
+    goto LBL_ERR;
   }
   mp_set (&D, 1);
 
@@ -109,17 +109,17 @@ top:
   while (mp_iseven (&u) == 1) {
     /* 4.1 u = u/2 */
     if ((res = mp_div_2 (&u, &u)) != MP_OKAY) {
-      goto __ERR;
+      goto LBL_ERR;
     }
     /* 4.2 if B is odd then */
     if (mp_isodd (&B) == 1) {
       if ((res = mp_sub (&B, &x, &B)) != MP_OKAY) {
-        goto __ERR;
+        goto LBL_ERR;
       }
     }
     /* B = B/2 */
     if ((res = mp_div_2 (&B, &B)) != MP_OKAY) {
-      goto __ERR;
+      goto LBL_ERR;
     }
   }
 
@@ -127,18 +127,18 @@ top:
   while (mp_iseven (&v) == 1) {
     /* 5.1 v = v/2 */
     if ((res = mp_div_2 (&v, &v)) != MP_OKAY) {
-      goto __ERR;
+      goto LBL_ERR;
     }
     /* 5.2 if D is odd then */
     if (mp_isodd (&D) == 1) {
       /* D = (D-x)/2 */
       if ((res = mp_sub (&D, &x, &D)) != MP_OKAY) {
-        goto __ERR;
+        goto LBL_ERR;
       }
     }
     /* D = D/2 */
     if ((res = mp_div_2 (&D, &D)) != MP_OKAY) {
-      goto __ERR;
+      goto LBL_ERR;
     }
   }
 
@@ -146,20 +146,20 @@ top:
   if (mp_cmp (&u, &v) != MP_LT) {
     /* u = u - v, B = B - D */
     if ((res = mp_sub (&u, &v, &u)) != MP_OKAY) {
-      goto __ERR;
+      goto LBL_ERR;
     }
 
     if ((res = mp_sub (&B, &D, &B)) != MP_OKAY) {
-      goto __ERR;
+      goto LBL_ERR;
     }
   } else {
     /* v - v - u, D = D - B */
     if ((res = mp_sub (&v, &u, &v)) != MP_OKAY) {
-      goto __ERR;
+      goto LBL_ERR;
     }
 
     if ((res = mp_sub (&D, &B, &D)) != MP_OKAY) {
-      goto __ERR;
+      goto LBL_ERR;
     }
   }
 
@@ -173,21 +173,21 @@ top:
   /* if v != 1 then there is no inverse */
   if (mp_cmp_d (&v, 1) != MP_EQ) {
     res = MP_VAL;
-    goto __ERR;
+    goto LBL_ERR;
   }
 
   /* b is now the inverse */
   neg = a->sign;
   while (D.sign == MP_NEG) {
     if ((res = mp_add (&D, b, &D)) != MP_OKAY) {
-      goto __ERR;
+      goto LBL_ERR;
     }
   }
   mp_exch (&D, c);
   c->sign = neg;
   res = MP_OKAY;
 
-__ERR:mp_clear_multi (&x, &y, &u, &v, &B, &D, NULL);
+LBL_ERR:mp_clear_multi (&x, &y, &u, &v, &B, &D, NULL);
   return res;
 }
 #endif
@@ -420,7 +420,7 @@ fast_s_mp_mul_digs (mp_int * a, mp_int * b, mp_int * c, int digs)
 
   /* clear the carry */
   _W = 0;
-  for (ix = 0; ix <= pa; ix++) { 
+  for (ix = 0; ix < pa; ix++) { 
       int      tx, ty;
       int      iy;
       mp_digit *tmpx, *tmpy;
@@ -449,6 +449,9 @@ fast_s_mp_mul_digs (mp_int * a, mp_int * b, mp_int * c, int digs)
       /* make next carry */
       _W = _W >> ((mp_word)DIGIT_BIT);
   }
+
+  /* store final carry */
+  W[ix] = _W;
 
   /* setup dest */
   olduse  = c->used;
@@ -519,7 +522,7 @@ fast_s_mp_mul_high_digs (mp_int * a, mp_int * b, mp_int * c, int digs)
   /* number of output digits to produce */
   pa = a->used + b->used;
   _W = 0;
-  for (ix = digs; ix <= pa; ix++) { 
+  for (ix = digs; ix < pa; ix++) { 
       int      tx, ty, iy;
       mp_digit *tmpx, *tmpy;
 
@@ -547,6 +550,9 @@ fast_s_mp_mul_high_digs (mp_int * a, mp_int * b, mp_int * c, int digs)
       /* make next carry */
       _W = _W >> ((mp_word)DIGIT_BIT);
   }
+  
+  /* store final carry */
+  W[ix] = _W;
 
   /* setup dest */
   olduse  = c->used;
@@ -636,7 +642,7 @@ int fast_s_mp_sqr (mp_int * a, mp_int * b)
 
   /* number of output digits to produce */
   W1 = 0;
-  for (ix = 0; ix <= pa; ix++) { 
+  for (ix = 0; ix < pa; ix++) { 
       int      tx, ty, iy;
       mp_word  _W;
       mp_digit *tmpy;
@@ -1539,23 +1545,23 @@ int mp_div(mp_int * a, mp_int * b, mp_int * c, mp_int * d)
 
   mp_set(&tq, 1);
   n = mp_count_bits(a) - mp_count_bits(b);
-  if (((res = mp_copy(a, &ta)) != MP_OKAY) ||
-      ((res = mp_copy(b, &tb)) != MP_OKAY) || 
+  if (((res = mp_abs(a, &ta)) != MP_OKAY) ||
+      ((res = mp_abs(b, &tb)) != MP_OKAY) || 
       ((res = mp_mul_2d(&tb, n, &tb)) != MP_OKAY) ||
       ((res = mp_mul_2d(&tq, n, &tq)) != MP_OKAY)) {
-      goto __ERR;
+      goto LBL_ERR;
   }
 
   while (n-- >= 0) {
      if (mp_cmp(&tb, &ta) != MP_GT) {
         if (((res = mp_sub(&ta, &tb, &ta)) != MP_OKAY) ||
             ((res = mp_add(&q, &tq, &q)) != MP_OKAY)) {
-           goto __ERR;
+           goto LBL_ERR;
         }
      }
      if (((res = mp_div_2d(&tb, 1, &tb, NULL)) != MP_OKAY) ||
          ((res = mp_div_2d(&tq, 1, &tq, NULL)) != MP_OKAY)) {
-           goto __ERR;
+           goto LBL_ERR;
      }
   }
 
@@ -1564,13 +1570,13 @@ int mp_div(mp_int * a, mp_int * b, mp_int * c, mp_int * d)
   n2 = (a->sign == b->sign ? MP_ZPOS : MP_NEG);
   if (c != NULL) {
      mp_exch(c, &q);
-     c->sign  = n2;
+     c->sign  = (mp_iszero(c) == MP_YES) ? MP_ZPOS : n2;
   }
   if (d != NULL) {
      mp_exch(d, &ta);
-     d->sign = n;
+     d->sign = (mp_iszero(d) == MP_YES) ? MP_ZPOS : n;
   }
-__ERR:
+LBL_ERR:
    mp_clear_multi(&ta, &tb, &tq, &q, NULL);
    return res;
 }
@@ -1619,19 +1625,19 @@ int mp_div (mp_int * a, mp_int * b, mp_int * c, mp_int * d)
   q.used = a->used + 2;
 
   if ((res = mp_init (&t1)) != MP_OKAY) {
-    goto __Q;
+    goto LBL_Q;
   }
 
   if ((res = mp_init (&t2)) != MP_OKAY) {
-    goto __T1;
+    goto LBL_T1;
   }
 
   if ((res = mp_init_copy (&x, a)) != MP_OKAY) {
-    goto __T2;
+    goto LBL_T2;
   }
 
   if ((res = mp_init_copy (&y, b)) != MP_OKAY) {
-    goto __X;
+    goto LBL_X;
   }
 
   /* fix the sign */
@@ -1643,10 +1649,10 @@ int mp_div (mp_int * a, mp_int * b, mp_int * c, mp_int * d)
   if (norm < (int)(DIGIT_BIT-1)) {
      norm = (DIGIT_BIT-1) - norm;
      if ((res = mp_mul_2d (&x, norm, &x)) != MP_OKAY) {
-       goto __Y;
+       goto LBL_Y;
      }
      if ((res = mp_mul_2d (&y, norm, &y)) != MP_OKAY) {
-       goto __Y;
+       goto LBL_Y;
      }
   } else {
      norm = 0;
@@ -1658,13 +1664,13 @@ int mp_div (mp_int * a, mp_int * b, mp_int * c, mp_int * d)
 
   /* while (x >= y*b**n-t) do { q[n-t] += 1; x -= y*b**{n-t} } */
   if ((res = mp_lshd (&y, n - t)) != MP_OKAY) { /* y = y*b**{n-t} */
-    goto __Y;
+    goto LBL_Y;
   }
 
   while (mp_cmp (&x, &y) != MP_LT) {
     ++(q.dp[n - t]);
     if ((res = mp_sub (&x, &y, &x)) != MP_OKAY) {
-      goto __Y;
+      goto LBL_Y;
     }
   }
 
@@ -1706,7 +1712,7 @@ int mp_div (mp_int * a, mp_int * b, mp_int * c, mp_int * d)
       t1.dp[1] = y.dp[t];
       t1.used = 2;
       if ((res = mp_mul_d (&t1, q.dp[i - t - 1], &t1)) != MP_OKAY) {
-        goto __Y;
+        goto LBL_Y;
       }
 
       /* find right hand */
@@ -1718,27 +1724,27 @@ int mp_div (mp_int * a, mp_int * b, mp_int * c, mp_int * d)
 
     /* step 3.3 x = x - q{i-t-1} * y * b**{i-t-1} */
     if ((res = mp_mul_d (&y, q.dp[i - t - 1], &t1)) != MP_OKAY) {
-      goto __Y;
+      goto LBL_Y;
     }
 
     if ((res = mp_lshd (&t1, i - t - 1)) != MP_OKAY) {
-      goto __Y;
+      goto LBL_Y;
     }
 
     if ((res = mp_sub (&x, &t1, &x)) != MP_OKAY) {
-      goto __Y;
+      goto LBL_Y;
     }
 
     /* if x < 0 then { x = x + y*b**{i-t-1}; q{i-t-1} -= 1; } */
     if (x.sign == MP_NEG) {
       if ((res = mp_copy (&y, &t1)) != MP_OKAY) {
-        goto __Y;
+        goto LBL_Y;
       }
       if ((res = mp_lshd (&t1, i - t - 1)) != MP_OKAY) {
-        goto __Y;
+        goto LBL_Y;
       }
       if ((res = mp_add (&x, &t1, &x)) != MP_OKAY) {
-        goto __Y;
+        goto LBL_Y;
       }
 
       q.dp[i - t - 1] = (q.dp[i - t - 1] - 1UL) & MP_MASK;
@@ -1765,11 +1771,11 @@ int mp_div (mp_int * a, mp_int * b, mp_int * c, mp_int * d)
 
   res = MP_OKAY;
 
-__Y:mp_clear (&y);
-__X:mp_clear (&x);
-__T2:mp_clear (&t2);
-__T1:mp_clear (&t1);
-__Q:mp_clear (&q);
+LBL_Y:mp_clear (&y);
+LBL_X:mp_clear (&x);
+LBL_T2:mp_clear (&t2);
+LBL_T1:mp_clear (&t1);
+LBL_Q:mp_clear (&q);
   return res;
 }
 
@@ -2199,7 +2205,7 @@ int mp_dr_is_modulus(mp_int *a)
  * Based on algorithm from the paper
  *
  * "Generating Efficient Primes for Discrete Log Cryptosystems"
- *                 Chae Hoon Lim, Pil Loong Lee,
+ *                 Chae Hoon Lim, Pil Joong Lee,
  *          POSTECH Information Research Laboratories
  *
  * The modulus must be of a special format [see manual]
@@ -2457,7 +2463,7 @@ int mp_exptmod (mp_int * G, mp_int * X, mp_int * P, mp_int * Y)
      return err;
 #else 
      /* no invmod */
-     return MP_VAL
+     return MP_VAL;
 #endif
   }
 
@@ -2588,11 +2594,11 @@ mp_exptmod_fast (mp_int * G, mp_int * X, mp_int * P, mp_int * Y, int redmode)
 #ifdef BN_MP_MONTGOMERY_SETUP_C     
      /* now setup montgomery  */
      if ((err = mp_montgomery_setup (P, &mp)) != MP_OKAY) {
-        goto __M;
+        goto LBL_M;
      }
 #else
      err = MP_VAL;
-     goto __M;
+     goto LBL_M;
 #endif
 
      /* automatically pick the comba one if available (saves quite a few calls/ifs) */
@@ -2608,7 +2614,7 @@ mp_exptmod_fast (mp_int * G, mp_int * X, mp_int * P, mp_int * Y, int redmode)
         redux = mp_montgomery_reduce;
 #else
         err = MP_VAL;
-        goto __M;
+        goto LBL_M;
 #endif
      }
   } else if (redmode == 1) {
@@ -2618,24 +2624,24 @@ mp_exptmod_fast (mp_int * G, mp_int * X, mp_int * P, mp_int * Y, int redmode)
      redux = mp_dr_reduce;
 #else
      err = MP_VAL;
-     goto __M;
+     goto LBL_M;
 #endif
   } else {
 #if defined(BN_MP_REDUCE_2K_SETUP_C) && defined(BN_MP_REDUCE_2K_C)
      /* setup DR reduction for moduli of the form 2**k - b */
      if ((err = mp_reduce_2k_setup(P, &mp)) != MP_OKAY) {
-        goto __M;
+        goto LBL_M;
      }
      redux = mp_reduce_2k;
 #else
      err = MP_VAL;
-     goto __M;
+     goto LBL_M;
 #endif
   }
 
   /* setup result */
   if ((err = mp_init (&res)) != MP_OKAY) {
-    goto __M;
+    goto LBL_M;
   }
 
   /* create M table
@@ -2649,45 +2655,45 @@ mp_exptmod_fast (mp_int * G, mp_int * X, mp_int * P, mp_int * Y, int redmode)
 #ifdef BN_MP_MONTGOMERY_CALC_NORMALIZATION_C
      /* now we need R mod m */
      if ((err = mp_montgomery_calc_normalization (&res, P)) != MP_OKAY) {
-       goto __RES;
+       goto LBL_RES;
      }
 #else 
      err = MP_VAL;
-     goto __RES;
+     goto LBL_RES;
 #endif
 
      /* now set M[1] to G * R mod m */
      if ((err = mp_mulmod (G, &res, P, &M[1])) != MP_OKAY) {
-       goto __RES;
+       goto LBL_RES;
      }
   } else {
      mp_set(&res, 1);
      if ((err = mp_mod(G, P, &M[1])) != MP_OKAY) {
-        goto __RES;
+        goto LBL_RES;
      }
   }
 
   /* compute the value at M[1<<(winsize-1)] by squaring M[1] (winsize-1) times */
   if ((err = mp_copy (&M[1], &M[1 << (winsize - 1)])) != MP_OKAY) {
-    goto __RES;
+    goto LBL_RES;
   }
 
   for (x = 0; x < (winsize - 1); x++) {
     if ((err = mp_sqr (&M[1 << (winsize - 1)], &M[1 << (winsize - 1)])) != MP_OKAY) {
-      goto __RES;
+      goto LBL_RES;
     }
     if ((err = redux (&M[1 << (winsize - 1)], P, mp)) != MP_OKAY) {
-      goto __RES;
+      goto LBL_RES;
     }
   }
 
   /* create upper table */
   for (x = (1 << (winsize - 1)) + 1; x < (1 << winsize); x++) {
     if ((err = mp_mul (&M[x - 1], &M[1], &M[x])) != MP_OKAY) {
-      goto __RES;
+      goto LBL_RES;
     }
     if ((err = redux (&M[x], P, mp)) != MP_OKAY) {
-      goto __RES;
+      goto LBL_RES;
     }
   }
 
@@ -2727,10 +2733,10 @@ mp_exptmod_fast (mp_int * G, mp_int * X, mp_int * P, mp_int * Y, int redmode)
     /* if the bit is zero and mode == 1 then we square */
     if (mode == 1 && y == 0) {
       if ((err = mp_sqr (&res, &res)) != MP_OKAY) {
-        goto __RES;
+        goto LBL_RES;
       }
       if ((err = redux (&res, P, mp)) != MP_OKAY) {
-        goto __RES;
+        goto LBL_RES;
       }
       continue;
     }
@@ -2744,19 +2750,19 @@ mp_exptmod_fast (mp_int * G, mp_int * X, mp_int * P, mp_int * Y, int redmode)
       /* square first */
       for (x = 0; x < winsize; x++) {
         if ((err = mp_sqr (&res, &res)) != MP_OKAY) {
-          goto __RES;
+          goto LBL_RES;
         }
         if ((err = redux (&res, P, mp)) != MP_OKAY) {
-          goto __RES;
+          goto LBL_RES;
         }
       }
 
       /* then multiply */
       if ((err = mp_mul (&res, &M[bitbuf], &res)) != MP_OKAY) {
-        goto __RES;
+        goto LBL_RES;
       }
       if ((err = redux (&res, P, mp)) != MP_OKAY) {
-        goto __RES;
+        goto LBL_RES;
       }
 
       /* empty window and reset */
@@ -2771,10 +2777,10 @@ mp_exptmod_fast (mp_int * G, mp_int * X, mp_int * P, mp_int * Y, int redmode)
     /* square then multiply if the bit is set */
     for (x = 0; x < bitcpy; x++) {
       if ((err = mp_sqr (&res, &res)) != MP_OKAY) {
-        goto __RES;
+        goto LBL_RES;
       }
       if ((err = redux (&res, P, mp)) != MP_OKAY) {
-        goto __RES;
+        goto LBL_RES;
       }
 
       /* get next bit of the window */
@@ -2782,10 +2788,10 @@ mp_exptmod_fast (mp_int * G, mp_int * X, mp_int * P, mp_int * Y, int redmode)
       if ((bitbuf & (1 << winsize)) != 0) {
         /* then multiply */
         if ((err = mp_mul (&res, &M[1], &res)) != MP_OKAY) {
-          goto __RES;
+          goto LBL_RES;
         }
         if ((err = redux (&res, P, mp)) != MP_OKAY) {
-          goto __RES;
+          goto LBL_RES;
         }
       }
     }
@@ -2799,15 +2805,15 @@ mp_exptmod_fast (mp_int * G, mp_int * X, mp_int * P, mp_int * Y, int redmode)
       * of R.
       */
      if ((err = redux(&res, P, mp)) != MP_OKAY) {
-       goto __RES;
+       goto LBL_RES;
      }
   }
 
   /* swap res with Y */
   mp_exch (&res, Y);
   err = MP_OKAY;
-__RES:mp_clear (&res);
-__M:
+LBL_RES:mp_clear (&res);
+LBL_M:
   mp_clear(&M[1]);
   for (x = 1<<(winsize-1); x < (1 << winsize); x++) {
     mp_clear (&M[x]);
@@ -3059,7 +3065,7 @@ int mp_gcd (mp_int * a, mp_int * b, mp_int * c)
   }
 
   if ((res = mp_init_copy (&v, b)) != MP_OKAY) {
-    goto __U;
+    goto LBL_U;
   }
 
   /* must be positive for the remainder of the algorithm */
@@ -3073,24 +3079,24 @@ int mp_gcd (mp_int * a, mp_int * b, mp_int * c)
   if (k > 0) {
      /* divide the power of two out */
      if ((res = mp_div_2d(&u, k, &u, NULL)) != MP_OKAY) {
-        goto __V;
+        goto LBL_V;
      }
 
      if ((res = mp_div_2d(&v, k, &v, NULL)) != MP_OKAY) {
-        goto __V;
+        goto LBL_V;
      }
   }
 
   /* divide any remaining factors of two out */
   if (u_lsb != k) {
      if ((res = mp_div_2d(&u, u_lsb - k, &u, NULL)) != MP_OKAY) {
-        goto __V;
+        goto LBL_V;
      }
   }
 
   if (v_lsb != k) {
      if ((res = mp_div_2d(&v, v_lsb - k, &v, NULL)) != MP_OKAY) {
-        goto __V;
+        goto LBL_V;
      }
   }
 
@@ -3103,23 +3109,23 @@ int mp_gcd (mp_int * a, mp_int * b, mp_int * c)
      
      /* subtract smallest from largest */
      if ((res = s_mp_sub(&v, &u, &v)) != MP_OKAY) {
-        goto __V;
+        goto LBL_V;
      }
      
      /* Divide out all factors of two */
      if ((res = mp_div_2d(&v, mp_cnt_lsb(&v), &v, NULL)) != MP_OKAY) {
-        goto __V;
+        goto LBL_V;
      } 
   } 
 
   /* multiply by 2**k which we divided out at the beginning */
   if ((res = mp_mul_2d (&u, k, c)) != MP_OKAY) {
-     goto __V;
+     goto LBL_V;
   }
   c->sign = MP_ZPOS;
   res = MP_OKAY;
-__V:mp_clear (&u);
-__U:mp_clear (&v);
+LBL_V:mp_clear (&u);
+LBL_U:mp_clear (&v);
   return res;
 }
 #endif
@@ -3556,24 +3562,24 @@ int mp_invmod_slow (mp_int * a, mp_int * b, mp_int * c)
 
   /* x = a, y = b */
   if ((res = mp_copy (a, &x)) != MP_OKAY) {
-    goto __ERR;
+    goto LBL_ERR;
   }
   if ((res = mp_copy (b, &y)) != MP_OKAY) {
-    goto __ERR;
+    goto LBL_ERR;
   }
 
   /* 2. [modified] if x,y are both even then return an error! */
   if (mp_iseven (&x) == 1 && mp_iseven (&y) == 1) {
     res = MP_VAL;
-    goto __ERR;
+    goto LBL_ERR;
   }
 
   /* 3. u=x, v=y, A=1, B=0, C=0,D=1 */
   if ((res = mp_copy (&x, &u)) != MP_OKAY) {
-    goto __ERR;
+    goto LBL_ERR;
   }
   if ((res = mp_copy (&y, &v)) != MP_OKAY) {
-    goto __ERR;
+    goto LBL_ERR;
   }
   mp_set (&A, 1);
   mp_set (&D, 1);
@@ -3583,24 +3589,24 @@ top:
   while (mp_iseven (&u) == 1) {
     /* 4.1 u = u/2 */
     if ((res = mp_div_2 (&u, &u)) != MP_OKAY) {
-      goto __ERR;
+      goto LBL_ERR;
     }
     /* 4.2 if A or B is odd then */
     if (mp_isodd (&A) == 1 || mp_isodd (&B) == 1) {
       /* A = (A+y)/2, B = (B-x)/2 */
       if ((res = mp_add (&A, &y, &A)) != MP_OKAY) {
-         goto __ERR;
+         goto LBL_ERR;
       }
       if ((res = mp_sub (&B, &x, &B)) != MP_OKAY) {
-         goto __ERR;
+         goto LBL_ERR;
       }
     }
     /* A = A/2, B = B/2 */
     if ((res = mp_div_2 (&A, &A)) != MP_OKAY) {
-      goto __ERR;
+      goto LBL_ERR;
     }
     if ((res = mp_div_2 (&B, &B)) != MP_OKAY) {
-      goto __ERR;
+      goto LBL_ERR;
     }
   }
 
@@ -3608,24 +3614,24 @@ top:
   while (mp_iseven (&v) == 1) {
     /* 5.1 v = v/2 */
     if ((res = mp_div_2 (&v, &v)) != MP_OKAY) {
-      goto __ERR;
+      goto LBL_ERR;
     }
     /* 5.2 if C or D is odd then */
     if (mp_isodd (&C) == 1 || mp_isodd (&D) == 1) {
       /* C = (C+y)/2, D = (D-x)/2 */
       if ((res = mp_add (&C, &y, &C)) != MP_OKAY) {
-         goto __ERR;
+         goto LBL_ERR;
       }
       if ((res = mp_sub (&D, &x, &D)) != MP_OKAY) {
-         goto __ERR;
+         goto LBL_ERR;
       }
     }
     /* C = C/2, D = D/2 */
     if ((res = mp_div_2 (&C, &C)) != MP_OKAY) {
-      goto __ERR;
+      goto LBL_ERR;
     }
     if ((res = mp_div_2 (&D, &D)) != MP_OKAY) {
-      goto __ERR;
+      goto LBL_ERR;
     }
   }
 
@@ -3633,28 +3639,28 @@ top:
   if (mp_cmp (&u, &v) != MP_LT) {
     /* u = u - v, A = A - C, B = B - D */
     if ((res = mp_sub (&u, &v, &u)) != MP_OKAY) {
-      goto __ERR;
+      goto LBL_ERR;
     }
 
     if ((res = mp_sub (&A, &C, &A)) != MP_OKAY) {
-      goto __ERR;
+      goto LBL_ERR;
     }
 
     if ((res = mp_sub (&B, &D, &B)) != MP_OKAY) {
-      goto __ERR;
+      goto LBL_ERR;
     }
   } else {
     /* v - v - u, C = C - A, D = D - B */
     if ((res = mp_sub (&v, &u, &v)) != MP_OKAY) {
-      goto __ERR;
+      goto LBL_ERR;
     }
 
     if ((res = mp_sub (&C, &A, &C)) != MP_OKAY) {
-      goto __ERR;
+      goto LBL_ERR;
     }
 
     if ((res = mp_sub (&D, &B, &D)) != MP_OKAY) {
-      goto __ERR;
+      goto LBL_ERR;
     }
   }
 
@@ -3667,27 +3673,27 @@ top:
   /* if v != 1 then there is no inverse */
   if (mp_cmp_d (&v, 1) != MP_EQ) {
     res = MP_VAL;
-    goto __ERR;
+    goto LBL_ERR;
   }
 
   /* if its too low */
   while (mp_cmp_d(&C, 0) == MP_LT) {
       if ((res = mp_add(&C, b, &C)) != MP_OKAY) {
-         goto __ERR;
+         goto LBL_ERR;
       }
   }
   
   /* too big */
   while (mp_cmp_mag(&C, b) != MP_LT) {
       if ((res = mp_sub(&C, b, &C)) != MP_OKAY) {
-         goto __ERR;
+         goto LBL_ERR;
       }
   }
   
   /* C is now the inverse */
   mp_exch (&C, c);
   res = MP_OKAY;
-__ERR:mp_clear_multi (&x, &y, &u, &v, &A, &B, &C, &D, NULL);
+LBL_ERR:mp_clear_multi (&x, &y, &u, &v, &A, &B, &C, &D, NULL);
   return res;
 }
 #endif
@@ -3856,13 +3862,13 @@ int mp_jacobi (mp_int * a, mp_int * p, int *c)
   }
 
   if ((res = mp_init (&p1)) != MP_OKAY) {
-    goto __A1;
+    goto LBL_A1;
   }
 
   /* divide out larger power of two */
   k = mp_cnt_lsb(&a1);
   if ((res = mp_div_2d(&a1, k, &a1, NULL)) != MP_OKAY) {
-     goto __P1;
+     goto LBL_P1;
   }
 
   /* step 4.  if e is even set s=1 */
@@ -3890,18 +3896,18 @@ int mp_jacobi (mp_int * a, mp_int * p, int *c)
   } else {
     /* n1 = n mod a1 */
     if ((res = mp_mod (p, &a1, &p1)) != MP_OKAY) {
-      goto __P1;
+      goto LBL_P1;
     }
     if ((res = mp_jacobi (&p1, &a1, &r)) != MP_OKAY) {
-      goto __P1;
+      goto LBL_P1;
     }
     *c = s * r;
   }
 
   /* done */
   res = MP_OKAY;
-__P1:mp_clear (&p1);
-__A1:mp_clear (&a1);
+LBL_P1:mp_clear (&p1);
+LBL_A1:mp_clear (&a1);
   return res;
 }
 #endif
@@ -4227,20 +4233,20 @@ int mp_lcm (mp_int * a, mp_int * b, mp_int * c)
 
   /* t1 = get the GCD of the two inputs */
   if ((res = mp_gcd (a, b, &t1)) != MP_OKAY) {
-    goto __T;
+    goto LBL_T;
   }
 
   /* divide the smallest by the GCD */
   if (mp_cmp_mag(a, b) == MP_LT) {
      /* store quotient in t2 such that t2 * b is the LCM */
      if ((res = mp_div(a, &t1, &t2, NULL)) != MP_OKAY) {
-        goto __T;
+        goto LBL_T;
      }
      res = mp_mul(b, &t2, c);
   } else {
      /* store quotient in t2 such that t2 * a is the LCM */
      if ((res = mp_div(b, &t1, &t2, NULL)) != MP_OKAY) {
-        goto __T;
+        goto LBL_T;
      }
      res = mp_mul(a, &t2, c);
   }
@@ -4248,7 +4254,7 @@ int mp_lcm (mp_int * a, mp_int * b, mp_int * c)
   /* fix the sign to positive */
   c->sign = MP_ZPOS;
 
-__T:
+LBL_T:
   mp_clear_multi (&t1, &t2, NULL);
   return res;
 }
@@ -4402,7 +4408,7 @@ mp_mod_2d (mp_int * a, int b, mp_int * c)
   }
 
   /* if the modulus is larger than the value than return */
-  if (b > (int) (a->used * DIGIT_BIT)) {
+  if (b >= (int) (a->used * DIGIT_BIT)) {
     res = mp_copy (a, c);
     return res;
   }
@@ -5085,11 +5091,11 @@ int mp_n_root (mp_int * a, mp_digit b, mp_int * c)
   }
 
   if ((res = mp_init (&t2)) != MP_OKAY) {
-    goto __T1;
+    goto LBL_T1;
   }
 
   if ((res = mp_init (&t3)) != MP_OKAY) {
-    goto __T2;
+    goto LBL_T2;
   }
 
   /* if a is negative fudge the sign but keep track */
@@ -5102,52 +5108,52 @@ int mp_n_root (mp_int * a, mp_digit b, mp_int * c)
   do {
     /* t1 = t2 */
     if ((res = mp_copy (&t2, &t1)) != MP_OKAY) {
-      goto __T3;
+      goto LBL_T3;
     }
 
     /* t2 = t1 - ((t1**b - a) / (b * t1**(b-1))) */
     
     /* t3 = t1**(b-1) */
     if ((res = mp_expt_d (&t1, b - 1, &t3)) != MP_OKAY) {   
-      goto __T3;
+      goto LBL_T3;
     }
 
     /* numerator */
     /* t2 = t1**b */
     if ((res = mp_mul (&t3, &t1, &t2)) != MP_OKAY) {    
-      goto __T3;
+      goto LBL_T3;
     }
 
     /* t2 = t1**b - a */
     if ((res = mp_sub (&t2, a, &t2)) != MP_OKAY) {  
-      goto __T3;
+      goto LBL_T3;
     }
 
     /* denominator */
     /* t3 = t1**(b-1) * b  */
     if ((res = mp_mul_d (&t3, b, &t3)) != MP_OKAY) {    
-      goto __T3;
+      goto LBL_T3;
     }
 
     /* t3 = (t1**b - a)/(b * t1**(b-1)) */
     if ((res = mp_div (&t2, &t3, &t3, NULL)) != MP_OKAY) {  
-      goto __T3;
+      goto LBL_T3;
     }
 
     if ((res = mp_sub (&t1, &t3, &t2)) != MP_OKAY) {
-      goto __T3;
+      goto LBL_T3;
     }
   }  while (mp_cmp (&t1, &t2) != MP_EQ);
 
   /* result can be off by a few so check */
   for (;;) {
     if ((res = mp_expt_d (&t1, b, &t2)) != MP_OKAY) {
-      goto __T3;
+      goto LBL_T3;
     }
 
     if (mp_cmp (&t2, a) == MP_GT) {
       if ((res = mp_sub_d (&t1, 1, &t1)) != MP_OKAY) {
-         goto __T3;
+         goto LBL_T3;
       }
     } else {
       break;
@@ -5165,9 +5171,9 @@ int mp_n_root (mp_int * a, mp_digit b, mp_int * c)
 
   res = MP_OKAY;
 
-__T3:mp_clear (&t3);
-__T2:mp_clear (&t2);
-__T1:mp_clear (&t1);
+LBL_T3:mp_clear (&t3);
+LBL_T2:mp_clear (&t2);
+LBL_T1:mp_clear (&t1);
   return res;
 }
 #endif
@@ -5304,7 +5310,7 @@ int mp_prime_fermat (mp_int * a, mp_int * b, int *result)
 
   /* compute t = b**a mod a */
   if ((err = mp_exptmod (b, a, a, &t)) != MP_OKAY) {
-    goto __T;
+    goto LBL_T;
   }
 
   /* is it equal to b? */
@@ -5313,7 +5319,7 @@ int mp_prime_fermat (mp_int * a, mp_int * b, int *result)
   }
 
   err = MP_OKAY;
-__T:mp_clear (&t);
+LBL_T:mp_clear (&t);
   return err;
 }
 #endif
@@ -5352,8 +5358,8 @@ int mp_prime_is_divisible (mp_int * a, int *result)
   *result = MP_NO;
 
   for (ix = 0; ix < PRIME_SIZE; ix++) {
-    /* what is a mod __prime_tab[ix] */
-    if ((err = mp_mod_d (a, __prime_tab[ix], &res)) != MP_OKAY) {
+    /* what is a mod LBL_prime_tab[ix] */
+    if ((err = mp_mod_d (a, ltm_prime_tab[ix], &res)) != MP_OKAY) {
       return err;
     }
 
@@ -5410,7 +5416,7 @@ int mp_prime_is_prime (mp_int * a, int t, int *result)
 
   /* is the input equal to one of the primes in the table? */
   for (ix = 0; ix < PRIME_SIZE; ix++) {
-      if (mp_cmp_d(a, __prime_tab[ix]) == MP_EQ) {
+      if (mp_cmp_d(a, ltm_prime_tab[ix]) == MP_EQ) {
          *result = 1;
          return MP_OKAY;
       }
@@ -5433,20 +5439,20 @@ int mp_prime_is_prime (mp_int * a, int t, int *result)
 
   for (ix = 0; ix < t; ix++) {
     /* set the prime */
-    mp_set (&b, __prime_tab[ix]);
+    mp_set (&b, ltm_prime_tab[ix]);
 
     if ((err = mp_prime_miller_rabin (a, &b, &res)) != MP_OKAY) {
-      goto __B;
+      goto LBL_B;
     }
 
     if (res == MP_NO) {
-      goto __B;
+      goto LBL_B;
     }
   }
 
   /* passed the test */
   *result = MP_YES;
-__B:mp_clear (&b);
+LBL_B:mp_clear (&b);
   return err;
 }
 #endif
@@ -5496,12 +5502,12 @@ int mp_prime_miller_rabin (mp_int * a, mp_int * b, int *result)
     return err;
   }
   if ((err = mp_sub_d (&n1, 1, &n1)) != MP_OKAY) {
-    goto __N1;
+    goto LBL_N1;
   }
 
   /* set 2**s * r = n1 */
   if ((err = mp_init_copy (&r, &n1)) != MP_OKAY) {
-    goto __N1;
+    goto LBL_N1;
   }
 
   /* count the number of least significant bits
@@ -5511,15 +5517,15 @@ int mp_prime_miller_rabin (mp_int * a, mp_int * b, int *result)
 
   /* now divide n - 1 by 2**s */
   if ((err = mp_div_2d (&r, s, &r, NULL)) != MP_OKAY) {
-    goto __R;
+    goto LBL_R;
   }
 
   /* compute y = b**r mod a */
   if ((err = mp_init (&y)) != MP_OKAY) {
-    goto __R;
+    goto LBL_R;
   }
   if ((err = mp_exptmod (b, &r, a, &y)) != MP_OKAY) {
-    goto __Y;
+    goto LBL_Y;
   }
 
   /* if y != 1 and y != n1 do */
@@ -5528,12 +5534,12 @@ int mp_prime_miller_rabin (mp_int * a, mp_int * b, int *result)
     /* while j <= s-1 and y != n1 */
     while ((j <= (s - 1)) && mp_cmp (&y, &n1) != MP_EQ) {
       if ((err = mp_sqrmod (&y, a, &y)) != MP_OKAY) {
-         goto __Y;
+         goto LBL_Y;
       }
 
       /* if y == 1 then composite */
       if (mp_cmp_d (&y, 1) == MP_EQ) {
-         goto __Y;
+         goto LBL_Y;
       }
 
       ++j;
@@ -5541,15 +5547,15 @@ int mp_prime_miller_rabin (mp_int * a, mp_int * b, int *result)
 
     /* if y != n1 then composite */
     if (mp_cmp (&y, &n1) != MP_EQ) {
-      goto __Y;
+      goto LBL_Y;
     }
   }
 
   /* probably prime now */
   *result = MP_YES;
-__Y:mp_clear (&y);
-__R:mp_clear (&r);
-__N1:mp_clear (&n1);
+LBL_Y:mp_clear (&y);
+LBL_R:mp_clear (&r);
+LBL_N1:mp_clear (&n1);
   return err;
 }
 #endif
@@ -5594,10 +5600,10 @@ int mp_prime_next_prime(mp_int *a, int t, int bbs_style)
    a->sign = MP_ZPOS;
 
    /* simple algo if a is less than the largest prime in the table */
-   if (mp_cmp_d(a, __prime_tab[PRIME_SIZE-1]) == MP_LT) {
+   if (mp_cmp_d(a, ltm_prime_tab[PRIME_SIZE-1]) == MP_LT) {
       /* find which prime it is bigger than */
       for (x = PRIME_SIZE - 2; x >= 0; x--) {
-          if (mp_cmp_d(a, __prime_tab[x]) != MP_LT) {
+          if (mp_cmp_d(a, ltm_prime_tab[x]) != MP_LT) {
              if (bbs_style == 1) {
                 /* ok we found a prime smaller or
                  * equal [so the next is larger]
@@ -5605,17 +5611,17 @@ int mp_prime_next_prime(mp_int *a, int t, int bbs_style)
                  * however, the prime must be
                  * congruent to 3 mod 4
                  */
-                if ((__prime_tab[x + 1] & 3) != 3) {
+                if ((ltm_prime_tab[x + 1] & 3) != 3) {
                    /* scan upwards for a prime congruent to 3 mod 4 */
                    for (y = x + 1; y < PRIME_SIZE; y++) {
-                       if ((__prime_tab[y] & 3) == 3) {
-                          mp_set(a, __prime_tab[y]);
+                       if ((ltm_prime_tab[y] & 3) == 3) {
+                          mp_set(a, ltm_prime_tab[y]);
                           return MP_OKAY;
                        }
                    }
                 }
              } else {
-                mp_set(a, __prime_tab[x + 1]);
+                mp_set(a, ltm_prime_tab[x + 1]);
                 return MP_OKAY;
              }
           }
@@ -5653,7 +5659,7 @@ int mp_prime_next_prime(mp_int *a, int t, int bbs_style)
 
    /* generate the restable */
    for (x = 1; x < PRIME_SIZE; x++) {
-      if ((err = mp_mod_d(a, __prime_tab[x], res_tab + x)) != MP_OKAY) {
+      if ((err = mp_mod_d(a, ltm_prime_tab[x], res_tab + x)) != MP_OKAY) {
          return err;
       }
    }
@@ -5679,8 +5685,8 @@ int mp_prime_next_prime(mp_int *a, int t, int bbs_style)
              res_tab[x] += kstep;
 
              /* subtract the modulus [instead of using division] */
-             if (res_tab[x] >= __prime_tab[x]) {
-                res_tab[x]  -= __prime_tab[x];
+             if (res_tab[x] >= ltm_prime_tab[x]) {
+                res_tab[x]  -= ltm_prime_tab[x];
              }
 
              /* set flag if zero */
@@ -5692,7 +5698,7 @@ int mp_prime_next_prime(mp_int *a, int t, int bbs_style)
 
       /* add the step */
       if ((err = mp_add_d(a, step, a)) != MP_OKAY) {
-         goto __ERR;
+         goto LBL_ERR;
       }
 
       /* if didn't pass sieve and step == MAX then skip test */
@@ -5702,9 +5708,9 @@ int mp_prime_next_prime(mp_int *a, int t, int bbs_style)
 
       /* is this prime? */
       for (x = 0; x < t; x++) {
-          mp_set(&b, __prime_tab[t]);
+          mp_set(&b, ltm_prime_tab[t]);
           if ((err = mp_prime_miller_rabin(a, &b, &res)) != MP_OKAY) {
-             goto __ERR;
+             goto LBL_ERR;
           }
           if (res == MP_NO) {
              break;
@@ -5717,7 +5723,7 @@ int mp_prime_next_prime(mp_int *a, int t, int bbs_style)
    }
 
    err = MP_OKAY;
-__ERR:
+LBL_ERR:
    mp_clear(&b);
    return err;
 }
@@ -5828,7 +5834,7 @@ int mp_prime_random_ex(mp_int *a, int t, int size, int flags, ltm_prime_callback
    }
 
    /* calc the byte size */
-   bsize = (size>>3)+(size&7?1:0);
+   bsize = (size>>3) + ((size&7)?1:0);
 
    /* we need a buffer of bsize bytes */
    tmp = OPT_CAST(unsigned char) XMALLOC(bsize);
@@ -5837,7 +5843,7 @@ int mp_prime_random_ex(mp_int *a, int t, int size, int flags, ltm_prime_callback
    }
 
    /* calc the maskAND value for the MSbyte*/
-   maskAND = 0xFF >> (8 - (size & 7));
+   maskAND = ((size&7) == 0) ? 0xFF : (0xFF >> (8 - (size & 7)));
 
    /* calc the maskOR_msb */
    maskOR_msb        = 0;
@@ -5846,7 +5852,7 @@ int mp_prime_random_ex(mp_int *a, int t, int size, int flags, ltm_prime_callback
       maskOR_msb     |= 1 << ((size - 2) & 7);
    } else if (flags & LTM_PRIME_2MSB_OFF) {
       maskAND        &= ~(1 << ((size - 2) & 7));
-   }
+   } 
 
    /* get the maskOR_lsb */
    maskOR_lsb         = 0;
@@ -7996,7 +8002,7 @@ mp_zero (mp_int * a)
  *
  * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
  */
-const mp_digit __prime_tab[] = {
+const mp_digit ltm_prime_tab[] = {
   0x0002, 0x0003, 0x0005, 0x0007, 0x000B, 0x000D, 0x0011, 0x0013,
   0x0017, 0x001D, 0x001F, 0x0025, 0x0029, 0x002B, 0x002F, 0x0035,
   0x003B, 0x003D, 0x0043, 0x0047, 0x0049, 0x004F, 0x0053, 0x0059,
@@ -8261,10 +8267,10 @@ int s_mp_exptmod (mp_int * G, mp_int * X, mp_int * P, mp_int * Y)
 
   /* create mu, used for Barrett reduction */
   if ((err = mp_init (&mu)) != MP_OKAY) {
-    goto __M;
+    goto LBL_M;
   }
   if ((err = mp_reduce_setup (&mu, P)) != MP_OKAY) {
-    goto __MU;
+    goto LBL_MU;
   }
 
   /* create M table
@@ -8276,23 +8282,23 @@ int s_mp_exptmod (mp_int * G, mp_int * X, mp_int * P, mp_int * Y)
    * computed though accept for M[0] and M[1]
    */
   if ((err = mp_mod (G, P, &M[1])) != MP_OKAY) {
-    goto __MU;
+    goto LBL_MU;
   }
 
   /* compute the value at M[1<<(winsize-1)] by squaring 
    * M[1] (winsize-1) times 
    */
   if ((err = mp_copy (&M[1], &M[1 << (winsize - 1)])) != MP_OKAY) {
-    goto __MU;
+    goto LBL_MU;
   }
 
   for (x = 0; x < (winsize - 1); x++) {
     if ((err = mp_sqr (&M[1 << (winsize - 1)], 
                        &M[1 << (winsize - 1)])) != MP_OKAY) {
-      goto __MU;
+      goto LBL_MU;
     }
     if ((err = mp_reduce (&M[1 << (winsize - 1)], P, &mu)) != MP_OKAY) {
-      goto __MU;
+      goto LBL_MU;
     }
   }
 
@@ -8301,16 +8307,16 @@ int s_mp_exptmod (mp_int * G, mp_int * X, mp_int * P, mp_int * Y)
    */
   for (x = (1 << (winsize - 1)) + 1; x < (1 << winsize); x++) {
     if ((err = mp_mul (&M[x - 1], &M[1], &M[x])) != MP_OKAY) {
-      goto __MU;
+      goto LBL_MU;
     }
     if ((err = mp_reduce (&M[x], P, &mu)) != MP_OKAY) {
-      goto __MU;
+      goto LBL_MU;
     }
   }
 
   /* setup result */
   if ((err = mp_init (&res)) != MP_OKAY) {
-    goto __MU;
+    goto LBL_MU;
   }
   mp_set (&res, 1);
 
@@ -8350,10 +8356,10 @@ int s_mp_exptmod (mp_int * G, mp_int * X, mp_int * P, mp_int * Y)
     /* if the bit is zero and mode == 1 then we square */
     if (mode == 1 && y == 0) {
       if ((err = mp_sqr (&res, &res)) != MP_OKAY) {
-        goto __RES;
+        goto LBL_RES;
       }
       if ((err = mp_reduce (&res, P, &mu)) != MP_OKAY) {
-        goto __RES;
+        goto LBL_RES;
       }
       continue;
     }
@@ -8367,19 +8373,19 @@ int s_mp_exptmod (mp_int * G, mp_int * X, mp_int * P, mp_int * Y)
       /* square first */
       for (x = 0; x < winsize; x++) {
         if ((err = mp_sqr (&res, &res)) != MP_OKAY) {
-          goto __RES;
+          goto LBL_RES;
         }
         if ((err = mp_reduce (&res, P, &mu)) != MP_OKAY) {
-          goto __RES;
+          goto LBL_RES;
         }
       }
 
       /* then multiply */
       if ((err = mp_mul (&res, &M[bitbuf], &res)) != MP_OKAY) {
-        goto __RES;
+        goto LBL_RES;
       }
       if ((err = mp_reduce (&res, P, &mu)) != MP_OKAY) {
-        goto __RES;
+        goto LBL_RES;
       }
 
       /* empty window and reset */
@@ -8394,20 +8400,20 @@ int s_mp_exptmod (mp_int * G, mp_int * X, mp_int * P, mp_int * Y)
     /* square then multiply if the bit is set */
     for (x = 0; x < bitcpy; x++) {
       if ((err = mp_sqr (&res, &res)) != MP_OKAY) {
-        goto __RES;
+        goto LBL_RES;
       }
       if ((err = mp_reduce (&res, P, &mu)) != MP_OKAY) {
-        goto __RES;
+        goto LBL_RES;
       }
 
       bitbuf <<= 1;
       if ((bitbuf & (1 << winsize)) != 0) {
         /* then multiply */
         if ((err = mp_mul (&res, &M[1], &res)) != MP_OKAY) {
-          goto __RES;
+          goto LBL_RES;
         }
         if ((err = mp_reduce (&res, P, &mu)) != MP_OKAY) {
-          goto __RES;
+          goto LBL_RES;
         }
       }
     }
@@ -8415,9 +8421,9 @@ int s_mp_exptmod (mp_int * G, mp_int * X, mp_int * P, mp_int * Y)
 
   mp_exch (&res, Y);
   err = MP_OKAY;
-__RES:mp_clear (&res);
-__MU:mp_clear (&mu);
-__M:
+LBL_RES:mp_clear (&res);
+LBL_MU:mp_clear (&mu);
+LBL_M:
   mp_clear(&M[1]);
   for (x = 1<<(winsize-1); x < (1 << winsize); x++) {
     mp_clear (&M[x]);

@@ -42,7 +42,7 @@ fast_s_mp_mul_high_digs (mp_int * a, mp_int * b, mp_int * c, int digs)
   /* number of output digits to produce */
   pa = a->used + b->used;
   _W = 0;
-  for (ix = digs; ix <= pa; ix++) { 
+  for (ix = digs; ix < pa; ix++) { 
       int      tx, ty, iy;
       mp_digit *tmpx, *tmpy;
 
@@ -70,6 +70,9 @@ fast_s_mp_mul_high_digs (mp_int * a, mp_int * b, mp_int * c, int digs)
       /* make next carry */
       _W = _W >> ((mp_word)DIGIT_BIT);
   }
+  
+  /* store final carry */
+  W[ix] = _W;
 
   /* setup dest */
   olduse  = c->used;

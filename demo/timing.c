@@ -38,14 +38,13 @@ int lbit(void)
    }
 }
 
-#if defined(__i386__) || defined(_M_IX86) || defined(_M_AMD64)
 /* RDTSC from Scott Duplichan */
 static ulong64 TIMFUNC (void)
    {
    #if defined __GNUC__
-      #ifdef __i386__
-         ulong64 a;
-         __asm__ __volatile__ ("rdtsc ":"=A" (a));
+      #if defined(__i386__) || defined(__x86_64__)
+         unsigned long long a;
+         __asm__ __volatile__ ("rdtsc\nmovl %%eax,%0\nmovl %%edx,4+%0\n"::"m"(a):"%eax","%edx");
          return a;
       #else /* gcc-IA64 version */
          unsigned long result;
@@ -69,9 +68,6 @@ static ulong64 TIMFUNC (void)
      #error need rdtsc function for this build
    #endif
    }
-#else
-#define TIMFUNC clock
-#endif
 
 #define DO(x) x; x;
 //#define DO4(x) DO2(x); DO2(x);

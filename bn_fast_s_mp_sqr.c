@@ -60,7 +60,7 @@ int fast_s_mp_sqr (mp_int * a, mp_int * b)
 
   /* number of output digits to produce */
   W1 = 0;
-  for (ix = 0; ix <= pa; ix++) { 
+  for (ix = 0; ix < pa; ix++) { 
       int      tx, ty, iy;
       mp_word  _W;
       mp_digit *tmpy;

@@ -442,7 +442,7 @@ int mp_exptmod(mp_int *a, mp_int *b, mp_int *c, mp_int *d);
 #endif
 
 /* table of first PRIME_SIZE primes */
-extern const mp_digit __prime_tab[];
+extern const mp_digit ltm_prime_tab[];
 
 /* result=1 if a is divisible by one of the first PRIME_SIZE primes */
 int mp_prime_is_divisible(mp_int *a, int *result);

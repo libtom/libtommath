@@ -242,6 +242,7 @@
    #define BN_MP_INIT_MULTI_C
    #define BN_MP_SET_C
    #define BN_MP_COUNT_BITS_C
+   #define BN_MP_ABS_C
    #define BN_MP_MUL_2D_C
    #define BN_MP_CMP_C
    #define BN_MP_SUB_C

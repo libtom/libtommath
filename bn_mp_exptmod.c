@@ -61,7 +61,7 @@ int mp_exptmod (mp_int * G, mp_int * X, mp_int * P, mp_int * Y)
      return err;
 #else 
      /* no invmod */
-     return MP_VAL
+     return MP_VAL;
 #endif
   }
 

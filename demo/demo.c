@@ -11,9 +11,9 @@
 
 void ndraw(mp_int *a, char *name)
 {
-   char buf[4096];
+   char buf[16000];
    printf("%s: ", name);
-   mp_toradix(a, buf, 64);
+   mp_toradix(a, buf, 10);
    printf("%s\n", buf);
 }
 
@@ -395,7 +395,7 @@ draw(&a);draw(&b);draw(&c);draw(&d);
 
           mp_div(&a, &b, &e, &f);
           if (mp_cmp(&c, &e) != MP_EQ || mp_cmp(&d, &f) != MP_EQ) {
-             printf("div %lu failure!\n", div_n);
+             printf("div %lu %d, %d, failure!\n", div_n, mp_cmp(&c, &e), mp_cmp(&d, &f));
 draw(&a);draw(&b);draw(&c);draw(&d); draw(&e); draw(&f);
              return 0;
           }
