@@ -8,17 +8,17 @@
 #ifndef X86_TIMER
 
 /* generic ISO C timer */
-unsigned long long __T;
+ulong64 __T;
 void t_start(void) { __T = clock(); }
-unsigned long long t_read(void) { return clock() - __T; }
+ulong64 t_read(void) { return clock() - __T; }
 
 #else
 extern void t_start(void);
-extern unsigned long long t_read(void);
+extern ulong64 t_read(void);
 #endif
 
-unsigned long long
-time_mult (void)
+ulong64
+time_mult (int max)
 {
   int     x, y;
   mp_int  a, b, c;
@@ -28,7 +28,7 @@ time_mult (void)
   mp_init (&c);
 
   t_start();
-  for (x = 32; x <= 288; x += 4) {
+  for (x = 32; x <= max; x += 4) {
     mp_rand (&a, x);
     mp_rand (&b, x);
     for (y = 0; y < 100; y++) {
@@ -41,8 +41,8 @@ time_mult (void)
   return t_read();
 }
 
-unsigned long long
-time_sqr (void)
+ulong64
+time_sqr (int max)
 {
   int     x, y;
   mp_int  a, b;
@@ -51,7 +51,7 @@ time_sqr (void)
   mp_init (&b);
 
   t_start();
-  for (x = 32; x <= 288; x += 4) {
+  for (x = 32; x <= max; x += 4) {
     mp_rand (&a, x);
     for (y = 0; y < 100; y++) {
       mp_sqr (&a, &b);
@@ -65,45 +65,85 @@ time_sqr (void)
 int
 main (void)
 {
-  int     best_mult, best_square;
-  unsigned long long best, ti;
+  int     best_kmult, best_tmult, best_ksquare, best_tsquare;
+  ulong64 best, ti;
   FILE   *log;
 
-  best_mult = best_square = 0;
+  best_kmult = best_ksquare = best_tmult = best_tsquare = 0;
   /* tune multiplication first */
+  
+  /* effectively turn TOOM off */
+  TOOM_SQR_CUTOFF = TOOM_MUL_CUTOFF = 100000;
+    
   log = fopen ("mult.log", "w");
   best = -1;
   for (KARATSUBA_MUL_CUTOFF = 8; KARATSUBA_MUL_CUTOFF <= 200; KARATSUBA_MUL_CUTOFF++) {
-    ti = time_mult ();
+    ti = time_mult (300);
     printf ("%4d : %9llu\r", KARATSUBA_MUL_CUTOFF, ti);
     fprintf (log, "%d, %llu\n", KARATSUBA_MUL_CUTOFF, ti);
     fflush (stdout);
     if (ti < best) {
       printf ("New best: %llu, %d         \n", ti, KARATSUBA_MUL_CUTOFF);
       best = ti;
-      best_mult = KARATSUBA_MUL_CUTOFF;
+      best_kmult = KARATSUBA_MUL_CUTOFF;
     }
   }
   fclose (log);
+  
   /* tune squaring */
   log = fopen ("sqr.log", "w");
   best = -1;
   for (KARATSUBA_SQR_CUTOFF = 8; KARATSUBA_SQR_CUTOFF <= 200; KARATSUBA_SQR_CUTOFF++) {
-    ti = time_sqr ();
+    ti = time_sqr (300);
     printf ("%4d : %9llu\r", KARATSUBA_SQR_CUTOFF, ti);
     fprintf (log, "%d, %llu\n", KARATSUBA_SQR_CUTOFF, ti);
     fflush (stdout);
     if (ti < best) {
       printf ("New best: %llu, %d         \n", ti, KARATSUBA_SQR_CUTOFF);
       best = ti;
-      best_square = KARATSUBA_SQR_CUTOFF;
+      best_ksquare = KARATSUBA_SQR_CUTOFF;
     }
   }
   fclose (log);
+  
+  KARATSUBA_MUL_CUTOFF = best_kmult;
+  KARATSUBA_SQR_CUTOFF = best_ksquare;
+    
+  /* tune TOOM mult */
+  log = fopen ("tmult.log", "w");
+  best = -1;
+  for (TOOM_MUL_CUTOFF = best_kmult*5; TOOM_MUL_CUTOFF <= 800; TOOM_MUL_CUTOFF++) {
+    ti = time_mult (1200);
+    printf ("%4d : %9llu\r", TOOM_MUL_CUTOFF, ti);
+    fprintf (log, "%d, %llu\n", TOOM_MUL_CUTOFF, ti);
+    fflush (stdout);
+    if (ti < best) {
+      printf ("New best: %llu, %d         \n", ti, TOOM_MUL_CUTOFF);
+      best = ti;
+      best_tmult = TOOM_MUL_CUTOFF;
+    }
+  }
+  fclose (log);   
+  
+  /* tune TOOM sqr */
+  log = fopen ("tsqr.log", "w");
+  best = -1;
+  for (TOOM_SQR_CUTOFF = best_ksquare*3; TOOM_SQR_CUTOFF <= 800; TOOM_SQR_CUTOFF++) {
+    ti = time_sqr (1200);
+    printf ("%4d : %9llu\r", TOOM_SQR_CUTOFF, ti);
+    fprintf (log, "%d, %llu\n", TOOM_SQR_CUTOFF, ti);
+    fflush (stdout);
+    if (ti < best) {
+      printf ("New best: %llu, %d         \n", ti, TOOM_SQR_CUTOFF);
+      best = ti;
+      best_tsquare = TOOM_SQR_CUTOFF;
+    }
+  }
+  fclose (log);   
 
   printf
-    ("\n\n\nKaratsuba Multiplier Cutoff: %d\nKaratsuba Squaring Cutoff: %d\n",
-     best_mult, best_square);
+    ("\n\n\nKaratsuba Multiplier Cutoff: %d\nKaratsuba Squaring Cutoff: %d\nToom Multiplier Cutoff: %d\nToom Squaring Cutoff: %d\n",
+     best_kmult, best_ksquare, best_tmult, best_tsquare);
 
   return 0;
 }

@@ -15,3 +15,6 @@ tune: tune.obj
 	
 drprime: drprime.obj
 	cl drprime.obj ../tommath.lib
+
+2kprime: 2kprime.obj
+	cl 2kprime.obj ../tommath.lib

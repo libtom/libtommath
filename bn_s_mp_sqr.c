@@ -20,8 +20,8 @@ s_mp_sqr (mp_int * a, mp_int * b)
 {
   mp_int  t;
   int     res, ix, iy, pa;
-  mp_word r, u;
-  mp_digit tmpx, *tmpt;
+  mp_word r;
+  mp_digit u, tmpx, *tmpt;
 
   pa = a->used;
   if ((res = mp_init_size (&t, pa + pa + 1)) != MP_OKAY) {
@@ -32,7 +32,8 @@ s_mp_sqr (mp_int * a, mp_int * b)
   for (ix = 0; ix < pa; ix++) {
     /* first calculate the digit at 2*ix */
     /* calculate double precision result */
-    r = ((mp_word) t.dp[ix + ix]) + ((mp_word) a->dp[ix]) * ((mp_word) a->dp[ix]);
+    r = ((mp_word) t.dp[ix + ix]) + 
+        ((mp_word) a->dp[ix]) * ((mp_word) a->dp[ix]);
 
     /* store lower part in result */
     t.dp[ix + ix] = (mp_digit) (r & ((mp_word) MP_MASK));
@@ -44,7 +45,8 @@ s_mp_sqr (mp_int * a, mp_int * b)
     tmpx = a->dp[ix];
 
     /* alias for where to store the results */
-    tmpt = &(t.dp[ix + ix + 1]);
+    tmpt = t.dp + (ix + ix + 1);
+    
     for (iy = ix + 1; iy < pa; iy++) {
       /* first calculate the product */
       r = ((mp_word) tmpx) * ((mp_word) a->dp[iy]);
@@ -60,13 +62,9 @@ s_mp_sqr (mp_int * a, mp_int * b)
       /* get carry */
       u = (r >> ((mp_word) DIGIT_BIT));
     }
-    r = ((mp_word) * tmpt) + u;
-    *tmpt = (mp_digit) (r & ((mp_word) MP_MASK));
-    u = (r >> ((mp_word) DIGIT_BIT));
     /* propagate upwards */
-    ++tmpt;
-    while (u != ((mp_word) 0)) {
-      r = ((mp_word) * tmpt) + ((mp_word) 1);
+    while (u != ((mp_digit) 0)) {
+      r = ((mp_word) * tmpt) + ((mp_word) u);
       *tmpt++ = (mp_digit) (r & ((mp_word) MP_MASK));
       u = (r >> ((mp_word) DIGIT_BIT));
     }
