@@ -1,0 +1,6 @@
+Dec 25th,2002
+v0.01     -- Initial release.  Gimme a break.
+          -- Todo list, 
+               add details to manual [e.g. algorithms]
+               more comments in code
+               example programs

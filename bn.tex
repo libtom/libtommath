@@ -1,0 +1,411 @@
+\documentclass{article}
+\begin{document}
+
+\title{LibTomMath v0.01 \\ A Free Multiple Precision Integer Library}
+\author{Tom St Denis \\ tomstdenis@iahu.ca}
+\maketitle
+\newpage
+
+\section{Introduction}
+``LibTomMath'' is a free and open source library that provides multiple-precision integer functions required to form a basis
+of a public key cryptosystem.  LibTomMath is written entire in portable ISO C source code and designed to have an application
+interface much like that of MPI from Michael Fromberger.  
+
+LibTomMath was written from scratch by Tom St Denis but designed to be  drop in replacement for the MPI package.  The 
+algorithms within the library are derived from descriptions as provided in the Handbook of Applied Cryptography and Knuth's
+``The Art of Computer Programming''.  The library has been extensively optimized and should provide quite comparable 
+timings as compared to many free and commercial libraries.
+
+LibTomMath was designed with the following goals in mind:
+\begin{enumerate}
+\item Be a drop in replacement for MPI.
+\item Be much faster than MPI.
+\item Be written entirely in portable C.
+\end{enumerate}
+
+All three goals have been achieved.  Particularly the speed increase goal.  For example, a 512-bit modular exponentiation is
+four times faster\footnote{On an Athlon XP with GCC 3.2} with LibTomMath compared to MPI.
+
+Being compatible with MPI means that applications that already use it can be ported fairly quickly.  Currently there are 
+a few differences but there are many similarities.  In fact the average MPI based application can be ported in under 15
+minutes.  
+
+Thanks goes to Michael Fromberger for answering a couple questions and Colin Percival for having the patience and courtesy to
+help debug and suggest optimizations.  They were both of great help!
+
+\section{Building Against LibTomMath}
+
+Building against LibTomMath is very simple because there is only one source file.  Simply add ``bn.c'' to your project and 
+copy both ``bn.c'' and ``bn.h'' into your project directory.  There is no configuration nor building required before hand.
+
+If you are porting an MPI application to LibTomMath the first step will be to remove all references to MPI and replace them 
+with references to LibTomMath.  For example, substitute 
+
+\begin{verbatim}
+#include "mpi.h"
+\end{verbatim}
+
+with 
+
+\begin{verbatim}
+#include "bn.h"
+\end{verbatim}
+
+Remove ``mpi.c'' from your project and replace it with ``bn.c''.  Note that currently MPI has a few more functions than
+LibTomMath has (e.g. no square-root code and a few others).  Those are planned for future releases.  In the interim work 
+arounds can be sought.  Note that LibTomMath doesn't lack any functions required to build a cryptosystem.
+
+\section{Programming with LibTomMath}
+
+\subsection{The mp\_int Structure}
+All multiple precision integers are stored in a structure called \textbf{mp\_int}.  A multiple precision integer is
+essentially an array of \textbf{mp\_digit}.  mp\_digit is defined at the top of bn.h.  Its type can be changed to suit
+a particular platform.  
+
+For example, when \textbf{MP\_8BIT} is defined\footnote{When building bn.c.} a mp\_digit is a unsigned char and holds 
+seven bits.  Similarly when \textbf{MP\_16BIT} is defined a mp\_digit is a unsigned short and holds 15 bits.  
+By default a mp\_digit is a unsigned long and holds 28 bits.  
+
+The choice of digit is particular to the platform at hand and what available multipliers are provided.  For 
+MP\_8BIT either a $8 \times 8 \Rightarrow 16$ or $16 \times 16 \Rightarrow 16$ multiplier is optimal.  When 
+MP\_16BIT is defined either a $16 \times 16 \Rightarrow 32$ or $32 \times 32 \Rightarrow 32$ multiplier is optimal.  By
+default a $32 \times 32 \Rightarrow 64$ or $64 \times 64 \Rightarrow 64$ multiplier is optimal.  
+
+This gives the library some flexibility.  For example, a i8051 has a $8 \times 8 \Rightarrow 16$ multiplier.  The 
+16-bit x86 instruction set has a $16 \times 16 \Rightarrow 32$ multiplier.  In practice this library is not particularly
+designed for small devices like an i8051 due to the size.  It is possible to strip out functions which are not required 
+to drop the code size.  More realistically the library is well suited to 32 and 64-bit processors that have decent
+integer multipliers.  The AMD Athlon XP and Intel Pentium 4 processors are examples of well suited processors.
+
+Throughout the discussions there will be references to a \textbf{used} and \textbf{alloc} members of an integer.  The
+used member refers to how many digits are actually used in the representation of the integer.  The alloc member refers
+to how many digits have been allocated off the heap.  There is also the $\beta$ quantity which is equal to $2^W$ where 
+$W$ is the number of bits in a digit (default is 28).  
+
+\subsection{Basic Functionality}
+Essentially all LibTomMath functions return one of three values to indicate if the function worked as desired.  A 
+function will return \textbf{MP\_OKAY} if the function was successful.  A function will return \textbf{MP\_MEM} if
+it ran out of memory and \textbf{MP\_VAL} if the input was invalid.  
+
+Before an mp\_int can be used it must be initialized with 
+
+\begin{verbatim}
+int mp_init(mp_int *a);
+\end{verbatim}
+
+For example, consider the following.
+
+\begin{verbatim}
+#include "bn.h"
+int main(void)
+{
+   mp_int num;
+   if (mp_init(&num) != MP_OKAY) {
+      printf("Error initializing a mp_int.\n");
+   }
+   return 0;
+}   
+\end{verbatim}
+
+A mp\_int can be freed from memory with
+
+\begin{verbatim}
+void mp_clear(mp_int *a);
+\end{verbatim}
+
+This will zero the memory and free the allocated data.  There are a set of trivial functions to manipulate the 
+value of an mp\_int.  
+
+\begin{verbatim}
+/* set to zero */
+void mp_zero(mp_int *a);
+
+/* set to a digit */
+void mp_set(mp_int *a, mp_digit b);
+
+/* set a 32-bit const */
+int mp_set_int(mp_int *a, unsigned long b);
+
+/* init to a given number of digits */
+int mp_init_size(mp_int *a, int size);
+
+/* copy, b = a */
+int mp_copy(mp_int *a, mp_int *b);
+
+/* inits and copies, a = b */
+int mp_init_copy(mp_int *a, mp_int *b);
+\end{verbatim}
+
+The \textbf{mp\_zero} function will clear the contents of a mp\_int and set it to positive.  The \textbf{mp\_set} function 
+will zero the integer and set the first digit to a value specified.  The \textbf{mp\_set\_int} function will zero the 
+integer and set the first 32-bits to a given value.  It is important to note that using mp\_set can have unintended 
+side effects when either the  MP\_8BIT or MP\_16BIT defines are enabled.  By default the library will accept the 
+ranges of values MPI will (and more).
+
+The \textbf{mp\_init\_size} function will initialize the integer and set the allocated size to a given value.  The 
+allocated digits are zero'ed by default but not marked as used.  The \textbf{mp\_copy} function will copy the digits
+(and sign) of the first parameter into the integer specified by the second parameter.  The \textbf{mp\_init\_copy} will
+initialize the first integer specified and copy the second one into it.  Note that the order is reversed from that of
+mp\_copy.  This odd ``bug'' was kept to maintain compatibility with MPI.
+
+\subsection{Digit Manipulations}
+
+There are a class of functions that provide simple digit manipulations such as shifting and modulo reduction of powers
+of two.  
+
+\begin{verbatim}
+/* right shift by "b" digits */
+void mp_rshd(mp_int *a, int b);
+
+/* left shift by "b" digits */
+int mp_lshd(mp_int *a, int b);
+
+/* c = a / 2^b */
+int mp_div_2d(mp_int *a, int b, mp_int *c);
+
+/* b = a/2 */
+int mp_div_2(mp_int *a, mp_int *b);
+
+/* c = a * 2^b */
+int mp_mul_2d(mp_int *a, int b, mp_int *c);
+
+/* b = a*2 */
+int mp_mul_2(mp_int *a, mp_int *b);
+
+/* c = a mod 2^d */
+int mp_mod_2d(mp_int *a, int b, mp_int *c);
+\end{verbatim}
+
+Both the \textbf{mp\_rshd} and \textbf{mp\_lshd} functions provide shifting by whole digits.  For example, 
+mp\_rshd($x$, $n$) is the same as $x \leftarrow \lfloor x / \beta^n \rfloor$ while mp\_lshd($x$, $n$) is equivalent
+to $x \leftarrow x \cdot \beta^n$.  Both functions are extremely fast as they merely copy digits within the array.  
+
+Similarly the \textbf{mp\_div\_2d} and \textbf{mp\_mul\_2d} functions provide shifting but allow any bit count to 
+be specified.  For example, mp\_div\_2d($x$, $n$, $y$) is the same as $y =\lfloor x / 2^n \rfloor$ while 
+mp\_mul\_2d($x$, $n$, $y$) is the same as $y = x \cdot 2^n$.  The \textbf{mp\_div\_2} and \textbf{mp\_mul\_2} 
+functions are legacy functions that merely shift right or left one bit respectively.  The \textbf{mp\_mod\_2d} function
+reduces an integer mod a power of two.  For example, mp\_mod\_2d($x$, $n$, $y$) is the same as 
+$y \equiv x \mbox{ (mod }2^n\mbox{)}$.
+
+\subsection{Basic Arithmetic}
+
+Next are the class of functions which provide basic arithmetic.
+
+\begin{verbatim}
+/* compare a to b */
+int mp_cmp(mp_int *a, mp_int *b);
+
+/* c = a + b */
+int mp_add(mp_int *a, mp_int *b, mp_int *c);
+
+/* c = a - b */
+int mp_sub(mp_int *a, mp_int *b, mp_int *c);
+
+/* c = a * b */
+int mp_mul(mp_int *a, mp_int *b, mp_int *c);
+
+/* b = a^2 */
+int mp_sqr(mp_int *a, mp_int *b);
+
+/* a/b => cb + d == a */
+int mp_div(mp_int *a, mp_int *b, mp_int *c, mp_int *d);
+
+/* c == a mod b */
+#define mp_mod(a, b, c) mp_div(a, b, NULL, c)
+\end{verbatim}
+
+The \textbf{mp\_cmp} will compare two integers.  It will return \textbf{MP\_LT} if the first parameter is less than
+the second, \textbf{MP\_GT} if it is greater or \textbf{MP\_EQ} if they are equal.  These constants are the same as from
+MPI.
+
+The \textbf{mp\_add}, \textbf{mp\_sub}, \textbf{mp\_mul}, \textbf{mp\_div}, \textbf{mp\_sqr} and \textbf{mp\_mod} are all
+fairly straight forward to understand.  Note that in mp\_div either $c$ (the quotient) or $d$ (the remainder) can be 
+passed as NULL to ignore it.  For example, if you only want the quotient $z = \lfloor x/y \rfloor$ then a call such as 
+mp\_div(\&x, \&y, \&z, NULL) is acceptable.
+
+There is a related class of ``single digit'' functions that are like the above except they use a digit as the second
+operand.
+
+\begin{verbatim}
+/* compare against a single digit */
+int mp_cmp_d(mp_int *a, mp_digit b);
+
+/* c = a + b */
+int mp_add_d(mp_int *a, mp_digit b, mp_int *c);
+
+/* c = a - b */
+int mp_sub_d(mp_int *a, mp_digit b, mp_int *c);
+
+/* c = a * b */
+int mp_mul_d(mp_int *a, mp_digit b, mp_int *c);
+
+/* a/b => cb + d == a */
+int mp_div_d(mp_int *a, mp_digit b, mp_int *c, mp_digit *d);
+
+/* c = a mod b */
+#define mp_mod_d(a,b,c) mp_div_d(a, b, NULL, c)
+\end{verbatim}
+
+Note that care should be taken for the value of the digit passed.  By default, any 28-bit integer is a valid digit that can
+be passed into the function.  However, if MP\_8BIT or MP\_16BIT is defined only 7 or 15-bit (respectively) integers 
+can be passed into it.
+
+\subsection{Modular Arithmetic}
+
+There are some trivial modular arithmetic functions.
+
+\begin{verbatim}
+/* d = a + b (mod c) */
+int mp_addmod(mp_int *a, mp_int *b, mp_int *c, mp_int *d);
+
+/* d = a - b (mod c) */
+int mp_submod(mp_int *a, mp_int *b, mp_int *c, mp_int *d);
+
+/* d = a * b (mod c) */
+int mp_mulmod(mp_int *a, mp_int *b, mp_int *c, mp_int *d);
+
+/* c = a * a (mod b) */
+int mp_sqrmod(mp_int *a, mp_int *b, mp_int *c);
+
+/* c = 1/a (mod b) */
+int mp_invmod(mp_int *a, mp_int *b, mp_int *c);
+
+/* c = (a, b) */
+int mp_gcd(mp_int *a, mp_int *b, mp_int *c);
+
+/* c = [a, b] or (a*b)/(a, b) */
+int mp_lcm(mp_int *a, mp_int *b, mp_int *c);
+
+/* d = a^b (mod c) */
+int mp_exptmod(mp_int *a, mp_int *b, mp_int *c, mp_int *d);
+\end{verbatim}
+
+These are all fairly simple to understand.  The \textbf{mp\_invmod} is a modular multiplicative inverse.  That is it
+stores in the third parameter an integer such that $ac \equiv 1 \mbox{ (mod }b\mbox{)}$ provided such integer exists.  If
+there is no such integer the function returns \textbf{MP\_VAL}.
+
+\subsection{Radix Conversions}
+To read or store integers in other formats there are the following functions.
+
+\begin{verbatim}
+int mp_unsigned_bin_size(mp_int *a);
+int mp_read_unsigned_bin(mp_int *a, unsigned char *b, int c);
+int mp_to_unsigned_bin(mp_int *a, unsigned char *b);
+
+int mp_signed_bin_size(mp_int *a);
+int mp_read_signed_bin(mp_int *a, unsigned char *b, int c);
+int mp_to_signed_bin(mp_int *a, unsigned char *b);
+
+int mp_read_radix(mp_int *a, unsigned char *str, int radix);
+int mp_toradix(mp_int *a, unsigned char *str, int radix);
+\end{verbatim}
+
+The integers are stored in big endian format as most libraries (and MPI) expect.  The \textbf{mp\_read\_radix} and 
+\textbf{mp\_toradix} functions read and write (respectively) null terminated ASCII strings in a given radix.  Valid values
+for the radix are between 2 and 64 (inclusively).  
+
+\section{Timing Analysis}
+\subsection{Observed Timings}
+A simple test program ``demo.c'' was developed which builds with either MPI or LibTomMath (without modification).  The
+test was conducted on an AMD Athlon XP processor with 266Mhz DDR memory and the GCC 3.2 compiler\footnote{With build
+options ``-O3 -fomit-frame-pointer -funroll-loops''}.    The multiplications and squarings were repeated 10,000 times 
+each while the modular exponentiation (exptmod) were performed 10 times each.  The RDTSC (Read Time Stamp Counter) instruction
+was used to measure the time the entire iterations took and was divided by the number of iterations to get an
+average.  The following results were observed.
+
+\begin{small}
+\begin{center}
+\begin{tabular}{c|c|c|c}
+\hline \textbf{Operation} & \textbf{Size (bits)} & \textbf{Time with MPI (cycles)} & \textbf{Time with LibTomMath (cycles)} \\
+\hline
+Multiply & 128 & 1,394  & 915  \\
+Multiply & 256 & 2,559  & 1,893  \\
+Multiply & 512 & 7,919  & 3,770  \\
+Multiply & 1024 & 28,460  & 9,970  \\
+Multiply & 2048 & 109,637  & 32,264  \\
+Multiply & 4096 & 467,226  & 129,645  \\
+\hline 
+Square & 128 & 1,288  & 1,147  \\
+Square & 256 & 1,705  & 2,129  \\
+Square & 512 & 5,365  & 3,755  \\
+Square & 1024 & 18,836  & 9,267  \\
+Square & 2048 & 72,334  & 28,387  \\
+Square & 4096 & 306,252  & 112,391  \\
+\hline 
+Exptmod & 512 & 30,497,732  & 7,222,872  \\
+Exptmod & 768 & 98,943,020  & 16,474,567  \\
+Exptmod & 1024 & 221,123,749  & 30,070,883  \\
+Exptmod & 2048 & 1,694,796,907  & 154,697,320  \\
+Exptmod & 2560 & 3,262,360,107  & 318,998,183  \\
+Exptmod & 3072 & 5,647,243,373  & 494,313,122  \\
+Exptmod & 4096 & 13,345,194,048  & 1,036,254,558  
+
+\end{tabular}
+\end{center}
+\end{small}
+
+\subsection{Digit Size}
+The first major constribution to the time savings is the fact that 28 bits are stored per digit instead of the MPI 
+defualt of 16.  This means in many of the algorithms the savings can be considerable.  Consider a baseline multiplier 
+with a 1024-bit input.  With MPI the input would be 64 16-bit digits whereas in LibTomMath it would be 37 28-bit digits.
+A savings of $64^2 - 37^2 = 2727$ single precision multiplications.  
+
+\subsection{Multiplication Algorithms}
+For most inputs a typical baseline $O(n^2)$ multiplier is used which is similar to that of MPI.  There are two variants 
+of the baseline multiplier.  The normal and the fast variants.  The normal baseline multiplier is the exact same as the
+algorithm from MPI.  The fast baseline multiplier is optimized for cases where the number of input digits $N$ is less
+than or equal to $2^{w}/\beta^2$.  Where $w$ is the number of bits in a \textbf{mp\_word}.  By default a mp\_word is
+64-bits which means $N \le 256$ is allowed which represents numbers upto $7168$ bits.
+
+The fast baseline multiplier is optimized by removing the carry operations from the inner loop.  This is often referred
+to as the ``comba'' method since it computes the products a columns first then figures out the carries.  This has the
+effect of making a very simple and paralizable inner loop.
+
+For large inputs, typically 80 digits\footnote{By default that is 2240-bits or more.} or more the Karatsuba method is 
+used.  This method has significant overhead but an asymptotic running time of $O(n^{1.584})$ which means for fairly large
+inputs this method is faster.  The Karatsuba implementation is recursive which means for extremely large inputs they
+will benefit from the algorithm.
+
+MPI only implements the slower baseline multiplier where carries are dealt with in the inner loop.  As a result even at
+smaller numbers (below the Karatsuba cutoff) the LibTomCrypt multipliers are faster.
+
+\subsection{Squaring Algorithms}
+
+Similar to the multiplication algorithms there are two baseline squaring algorithms.  Both have an asymptotic running
+time of $O((t^2 + t)/2)$.  The normal baseline squaring is the same from MPI and the fast is a ``comba'' squaring
+algorithm.  The comba method is used if the number of digits $N$ is less than $2^{w-1}/\beta^2$ which by default 
+covers numbers upto $3584$ bits.  
+
+There is also a Karatsuba squaring method which achieves a running time of $O(n^{1.584})$ after considerably large
+inputs.
+
+MPI only implements the slower baseline squaring algorithm.  As a result LibTomMath is considerably faster at squaring
+than MPI is.
+
+\subsection{Exponentiation Algorithms}
+
+LibTomMath implements a sliding window $k$-ary left to right exponentiation algorithm.  For a given exponent size $L$ an
+appropriate window size $k$ is chosen.  There are always at most $L$ modular squarings and $\lfloor L/k \rfloor$ modular
+multiplications.   The $k$-ary method works by precomputing values $g(x) = b^x$ for $0 \le x < 2^k$ and a given base 
+$b$.  Then the multiplications are grouped in windows of $k$ bits.  The sliding window technique has the benefit 
+that it can skip multiplications if there are zero bits following or preceding a window.  Consider the exponent 
+$e = 11110001_2$ if $k = 2$ then there will be a two squarings, a multiplication of $g(3)$, two squarings, a multiplication
+of $g(3)$, four squarings and and a multiplication by $g(1)$.  In total there are 8 squarings and 3 multiplications.  
+
+MPI uses a binary square-multiply method.  For the same exponent $e$ it would have had 8 squarings and 5 multiplications.  
+There is a precomputation phase for the method LibTomCrypt uses but it generally cuts down considerably on the number
+of multiplications.  Consider a 512-bit exponent.  The worst case for the LibTomMath method results in 512 squarings and 
+124 multiplications.  The MPI method would have 512 squarings and 512 multiplications.  Randomly every $2k$ bits another 
+multiplication is saved via the sliding-window technique on top of the savings the $k$-ary method provides.
+
+Both LibTomMath and MPI use Barrett reduction instead of division to reduce the numbers modulo the modulus given.  
+However, LibTomMath can take advantage of the fact that the multiplications required within the Barrett reduction
+do not to give full precision.  As a result the reduction step is much faster and just as accurate.  The LibTomMath code
+will automatically determine at run-time (e.g. when its called) whether the faster multiplier can be used.  The
+faster multipliers have also been optimized into the two variants (baseline and fast baseline).
+
+As a result of all these changes exponentiation in LibTomMath is much faster than compared to MPI.  
+
+
+
+\end{document}
