@@ -15,7 +15,7 @@ CFLAGS  += -fomit-frame-pointer
 #debug
 #CFLAGS += -g3
 
-VERSION=0.31
+VERSION=0.32
 
 default: libtommath.a
 
@@ -53,9 +53,9 @@ bn_mp_toom_mul.o bn_mp_toom_sqr.o bn_mp_div_3.o bn_s_mp_exptmod.o \
 bn_mp_reduce_2k.o bn_mp_reduce_is_2k.o bn_mp_reduce_2k_setup.o \
 bn_mp_radix_smap.o bn_mp_read_radix.o bn_mp_toradix.o bn_mp_radix_size.o \
 bn_mp_fread.o bn_mp_fwrite.o bn_mp_cnt_lsb.o bn_error.o \
-bn_mp_init_multi.o bn_mp_clear_multi.o bn_prime_sizes_tab.o bn_mp_exteuclid.o bn_mp_toradix_n.o \
+bn_mp_init_multi.o bn_mp_clear_multi.o bn_mp_exteuclid.o bn_mp_toradix_n.o \
 bn_mp_prime_random_ex.o bn_mp_get_int.o bn_mp_sqrt.o bn_mp_is_square.o bn_mp_init_set.o \
-bn_mp_init_set_int.o
+bn_mp_init_set_int.o bn_mp_invmod_slow.o bn_mp_prime_rabin_miller_trials.o
 
 libtommath.a:  $(OBJECTS)
 	$(AR) $(ARFLAGS) libtommath.a $(OBJECTS)
@@ -139,7 +139,8 @@ pretty:
 
 clean:
 	rm -f *.bat *.pdf *.o *.a *.obj *.lib *.exe *.dll etclib/*.o demo/demo.o test ltmtest mpitest mtest/mtest mtest/mtest.exe \
-        *.idx *.toc *.log *.aux *.dvi *.lof *.ind *.ilg *.ps *.log *.s mpi.c *.da *.dyn *.dpi tommath.tex *~ demo/*~ etc/*~
+        *.idx *.toc *.log *.aux *.dvi *.lof *.ind *.ilg *.ps *.log *.s mpi.c *.da *.dyn *.dpi tommath.tex `find -type f | grep [~] | xargs` *.lo *.la
+	rm -rf .libs
 	cd etc ; make clean
 	cd pics ; make clean
 

@@ -1,3 +1,5 @@
+#include <tommath.h>
+#ifdef BN_MP_KARATSUBA_MUL_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is a library that provides multiple-precision
@@ -12,7 +14,6 @@
  *
  * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
  */
-#include <tommath.h>
 
 /* c = |a| * |b| using Karatsuba Multiplication using 
  * three half size multiplications
@@ -159,3 +160,4 @@ X0:mp_clear (&x0);
 ERR:
   return err;
 }
+#endif

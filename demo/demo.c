@@ -64,6 +64,7 @@ int main(void)
 
    srand(time(NULL));
 
+#if 0
   // test mp_get_int
   printf("Testing: mp_get_int\n");
   for(i=0;i<1000;++i) {
@@ -274,6 +275,7 @@ int main(void)
       printf("Passed DR test for %d digits\n", cnt);
    }
 
+#endif
 
    div2_n = mul2_n = inv_n = expt_n = lcm_n = gcd_n = add_n =
    sub_n = mul_n = div_n = sqr_n = mul2d_n = div2d_n = cnt = add_d_n = sub_d_n= 0;

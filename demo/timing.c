@@ -152,7 +152,7 @@ int main(void)
       KARATSUBA_SQR_CUTOFF = (ix==0)?9999:old_kara_s;
 
       log = fopen((ix==0)?"logs/mult.log":"logs/mult_kara.log", "w");
-      for (cnt = 32; cnt <= 288; cnt += 8) {
+      for (cnt = 4; cnt <= 288; cnt += 2) {
          SLEEP;
          mp_rand(&a, cnt);
          mp_rand(&b, cnt);
@@ -170,7 +170,7 @@ int main(void)
       fclose(log);
 
       log = fopen((ix==0)?"logs/sqr.log":"logs/sqr_kara.log", "w");
-      for (cnt = 32; cnt <= 288; cnt += 8) {
+      for (cnt = 4; cnt <= 288; cnt += 2) {
          SLEEP;
          mp_rand(&a, cnt);
          rr = 0;

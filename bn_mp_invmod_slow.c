@@ -1,5 +1,5 @@
 #include <tommath.h>
-#ifdef BN_FAST_MP_INVMOD_C
+#ifdef BN_MP_INVMOD_SLOW_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is a library that provides multiple-precision
@@ -15,35 +15,34 @@
  * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
  */
 
-/* computes the modular inverse via binary extended euclidean algorithm, 
- * that is c = 1/a mod b 
- *
- * Based on slow invmod except this is optimized for the case where b is 
- * odd as per HAC Note 14.64 on pp. 610
- */
-int
-fast_mp_invmod (mp_int * a, mp_int * b, mp_int * c)
+/* hac 14.61, pp608 */
+int mp_invmod_slow (mp_int * a, mp_int * b, mp_int * c)
 {
-  mp_int  x, y, u, v, B, D;
-  int     res, neg;
+  mp_int  x, y, u, v, A, B, C, D;
+  int     res;
 
-  /* 2. [modified] b must be odd   */
-  if (mp_iseven (b) == 1) {
+  /* b cannot be negative */
+  if (b->sign == MP_NEG || mp_iszero(b) == 1) {
     return MP_VAL;
   }
 
-  /* init all our temps */
-  if ((res = mp_init_multi(&x, &y, &u, &v, &B, &D, NULL)) != MP_OKAY) {
+  /* init temps */
+  if ((res = mp_init_multi(&x, &y, &u, &v, 
+                           &A, &B, &C, &D, NULL)) != MP_OKAY) {
      return res;
   }
 
-  /* x == modulus, y == value to invert */
-  if ((res = mp_copy (b, &x)) != MP_OKAY) {
+  /* x = a, y = b */
+  if ((res = mp_copy (a, &x)) != MP_OKAY) {
+    goto __ERR;
+  }
+  if ((res = mp_copy (b, &y)) != MP_OKAY) {
     goto __ERR;
   }
 
-  /* we need y = |a| */
-  if ((res = mp_abs (a, &y)) != MP_OKAY) {
+  /* 2. [modified] if x,y are both even then return an error! */
+  if (mp_iseven (&x) == 1 && mp_iseven (&y) == 1) {
+    res = MP_VAL;
     goto __ERR;
   }
 
@@ -54,6 +53,7 @@ fast_mp_invmod (mp_int * a, mp_int * b, mp_int * c)
   if ((res = mp_copy (&y, &v)) != MP_OKAY) {
     goto __ERR;
   }
+  mp_set (&A, 1);
   mp_set (&D, 1);
 
 top:
@@ -63,13 +63,20 @@ top:
     if ((res = mp_div_2 (&u, &u)) != MP_OKAY) {
       goto __ERR;
     }
-    /* 4.2 if B is odd then */
-    if (mp_isodd (&B) == 1) {
+    /* 4.2 if A or B is odd then */
+    if (mp_isodd (&A) == 1 || mp_isodd (&B) == 1) {
+      /* A = (A+y)/2, B = (B-x)/2 */
+      if ((res = mp_add (&A, &y, &A)) != MP_OKAY) {
+         goto __ERR;
+      }
       if ((res = mp_sub (&B, &x, &B)) != MP_OKAY) {
-        goto __ERR;
+         goto __ERR;
       }
     }
-    /* B = B/2 */
+    /* A = A/2, B = B/2 */
+    if ((res = mp_div_2 (&A, &A)) != MP_OKAY) {
+      goto __ERR;
+    }
     if ((res = mp_div_2 (&B, &B)) != MP_OKAY) {
       goto __ERR;
     }
@@ -81,14 +88,20 @@ top:
     if ((res = mp_div_2 (&v, &v)) != MP_OKAY) {
       goto __ERR;
     }
-    /* 5.2 if D is odd then */
-    if (mp_isodd (&D) == 1) {
-      /* D = (D-x)/2 */
+    /* 5.2 if C or D is odd then */
+    if (mp_isodd (&C) == 1 || mp_isodd (&D) == 1) {
+      /* C = (C+y)/2, D = (D-x)/2 */
+      if ((res = mp_add (&C, &y, &C)) != MP_OKAY) {
+         goto __ERR;
+      }
       if ((res = mp_sub (&D, &x, &D)) != MP_OKAY) {
-        goto __ERR;
+         goto __ERR;
       }
     }
-    /* D = D/2 */
+    /* C = C/2, D = D/2 */
+    if ((res = mp_div_2 (&C, &C)) != MP_OKAY) {
+      goto __ERR;
+    }
     if ((res = mp_div_2 (&D, &D)) != MP_OKAY) {
       goto __ERR;
     }
@@ -96,8 +109,12 @@ top:
 
   /* 6.  if u >= v then */
   if (mp_cmp (&u, &v) != MP_LT) {
-    /* u = u - v, B = B - D */
+    /* u = u - v, A = A - C, B = B - D */
     if ((res = mp_sub (&u, &v, &u)) != MP_OKAY) {
+      goto __ERR;
+    }
+
+    if ((res = mp_sub (&A, &C, &A)) != MP_OKAY) {
       goto __ERR;
     }
 
@@ -105,8 +122,12 @@ top:
       goto __ERR;
     }
   } else {
-    /* v - v - u, D = D - B */
+    /* v - v - u, C = C - A, D = D - B */
     if ((res = mp_sub (&v, &u, &v)) != MP_OKAY) {
+      goto __ERR;
+    }
+
+    if ((res = mp_sub (&C, &A, &C)) != MP_OKAY) {
       goto __ERR;
     }
 
@@ -116,9 +137,8 @@ top:
   }
 
   /* if not zero goto step 4 */
-  if (mp_iszero (&u) == 0) {
+  if (mp_iszero (&u) == 0)
     goto top;
-  }
 
   /* now a = C, b = D, gcd == g*v */
 
@@ -128,18 +148,24 @@ top:
     goto __ERR;
   }
 
-  /* b is now the inverse */
-  neg = a->sign;
-  while (D.sign == MP_NEG) {
-    if ((res = mp_add (&D, b, &D)) != MP_OKAY) {
-      goto __ERR;
-    }
+  /* if its too low */
+  while (mp_cmp_d(&C, 0) == MP_LT) {
+      if ((res = mp_add(&C, b, &C)) != MP_OKAY) {
+         goto __ERR;
+      }
   }
-  mp_exch (&D, c);
-  c->sign = neg;
+  
+  /* too big */
+  while (mp_cmp_mag(&C, b) != MP_LT) {
+      if ((res = mp_sub(&C, b, &C)) != MP_OKAY) {
+         goto __ERR;
+      }
+  }
+  
+  /* C is now the inverse */
+  mp_exch (&C, c);
   res = MP_OKAY;
-
-__ERR:mp_clear_multi (&x, &y, &u, &v, &B, &D, NULL);
+__ERR:mp_clear_multi (&x, &y, &u, &v, &A, &B, &C, &D, NULL);
   return res;
 }
 #endif
