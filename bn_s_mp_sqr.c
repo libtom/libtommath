@@ -54,19 +54,19 @@ s_mp_sqr (mp_int * a, mp_int * b)
       /* now calculate the double precision result, note we use
        * addition instead of *2 since it's easier to optimize
        */
-      r = ((mp_word) *tmpt) + r + r + ((mp_word) u);
+      r       = ((mp_word) *tmpt) + r + r + ((mp_word) u);
 
       /* store lower part */
       *tmpt++ = (mp_digit) (r & ((mp_word) MP_MASK));
 
       /* get carry */
-      u = (mp_digit)(r >> ((mp_word) DIGIT_BIT));
+      u       = (mp_digit)(r >> ((mp_word) DIGIT_BIT));
     }
     /* propagate upwards */
     while (u != ((mp_digit) 0)) {
-      r = ((mp_word) * tmpt) + ((mp_word) u);
+      r       = ((mp_word) *tmpt) + ((mp_word) u);
       *tmpt++ = (mp_digit) (r & ((mp_word) MP_MASK));
-      u = (mp_digit)(r >> ((mp_word) DIGIT_BIT));
+      u       = (mp_digit)(r >> ((mp_word) DIGIT_BIT));
     }
   }
 

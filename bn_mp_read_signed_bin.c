@@ -20,9 +20,17 @@ mp_read_signed_bin (mp_int * a, unsigned char *b, int c)
 {
   int     res;
 
+  /* read magnitude */
   if ((res = mp_read_unsigned_bin (a, b + 1, c - 1)) != MP_OKAY) {
     return res;
   }
-  a->sign = ((b[0] == (unsigned char) 0) ? MP_ZPOS : MP_NEG);
+
+  /* first byte is 0 for positive, non-zero for negative */
+  if (b[0] == 0) {
+     a->sign = MP_ZPOS;
+  } else {
+     a->sign = MP_NEG;
+  }
+
   return MP_OKAY;
 }

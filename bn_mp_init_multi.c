@@ -50,3 +50,4 @@ int mp_init_multi(mp_int *mp, ...)
     va_end(args);
     return res;                /* Assumed ok, if error flagged above. */
 }
+

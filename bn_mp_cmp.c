@@ -19,12 +19,12 @@ int
 mp_cmp (mp_int * a, mp_int * b)
 {
   /* compare based on sign */
-  if (a->sign == MP_NEG && b->sign == MP_ZPOS) {
-    return MP_LT;
-  } 
-  
-  if (a->sign == MP_ZPOS && b->sign == MP_NEG) {
-    return MP_GT;
+  if (a->sign != b->sign) {
+     if (a->sign == MP_NEG) {
+        return MP_LT;
+     } else {
+        return MP_GT;
+     }
   }
   
   /* compare digits */

@@ -45,7 +45,10 @@ fast_mp_montgomery_reduce (mp_int * x, mp_int * n, mp_digit rho)
     register mp_word *_W;
     register mp_digit *tmpx;
 
-    _W = W;
+    /* alias for the W[] array */
+    _W   = W;
+
+    /* alias for the digits of  x*/
     tmpx = x->dp;
 
     /* copy the digits of a into W[0..a->used-1] */

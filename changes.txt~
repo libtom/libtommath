@@ -1,4 +1,4 @@
-Aug 29th, 2003
+Aug 11th, 2003
 v0.26  -- Fixed typo that caused warning with GCC 3.2
        -- Martin Marcel noticed a bug in mp_neg() that allowed negative zeroes.  
           Also, Martin is the fellow who noted the bugs in mp_gcd() of 0.24/0.25.

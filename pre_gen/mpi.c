@@ -241,7 +241,10 @@ fast_mp_montgomery_reduce (mp_int * x, mp_int * n, mp_digit rho)
     register mp_word *_W;
     register mp_digit *tmpx;
 
-    _W = W;
+    /* alias for the W[] array */
+    _W   = W;
+
+    /* alias for the digits of  x*/
     tmpx = x->dp;
 
     /* copy the digits of a into W[0..a->used-1] */
@@ -925,7 +928,6 @@ mp_add_d (mp_int * a, mp_digit b, mp_int * c)
      return res;
   }
 
-
   /* old number of used digits in c */
   oldused = c->used;
 
@@ -959,7 +961,6 @@ mp_add_d (mp_int * a, mp_digit b, mp_int * c)
      /* set final carry */
      ix++;
      *tmpc++  = mu;
-
   } else {
      /* a was negative and |a| < b */
      c->used  = 1;
@@ -1217,12 +1218,12 @@ int
 mp_cmp (mp_int * a, mp_int * b)
 {
   /* compare based on sign */
-  if (a->sign == MP_NEG && b->sign == MP_ZPOS) {
-    return MP_LT;
-  } 
-  
-  if (a->sign == MP_ZPOS && b->sign == MP_NEG) {
-    return MP_GT;
+  if (a->sign != b->sign) {
+     if (a->sign == MP_NEG) {
+        return MP_LT;
+     } else {
+        return MP_GT;
+     }
   }
   
   /* compare digits */
@@ -1301,23 +1302,30 @@ int
 mp_cmp_mag (mp_int * a, mp_int * b)
 {
   int     n;
+  mp_digit *tmpa, *tmpb;
 
   /* compare based on # of non-zero digits */
   if (a->used > b->used) {
     return MP_GT;
-  } 
+  }
   
   if (a->used < b->used) {
     return MP_LT;
   }
 
+  /* alias for a */
+  tmpa = a->dp + (a->used - 1);
+
+  /* alias for b */
+  tmpb = b->dp + (a->used - 1);
+
   /* compare based on digits  */
-  for (n = a->used - 1; n >= 0; n--) {
-    if (a->dp[n] > b->dp[n]) {
+  for (n = 0; n < a->used; ++n, --tmpa, --tmpb) {
+    if (*tmpa > *tmpb) {
       return MP_GT;
-    } 
-    
-    if (a->dp[n] < b->dp[n]) {
+    }
+
+    if (*tmpa < *tmpb) {
       return MP_LT;
     }
   }
@@ -1594,8 +1602,9 @@ mp_div (mp_int * a, mp_int * b, mp_int * c, mp_int * d)
 
   /* step 3. for i from n down to (t + 1) */
   for (i = n; i >= (t + 1); i--) {
-    if (i > x.used)
+    if (i > x.used) {
       continue;
+    }
 
     /* step 3.1 if xi == yt then set q{i-t-1} to b-1, 
      * otherwise set q{i-t-1} to (xi*b + x{i-1})/yt */
@@ -2111,6 +2120,8 @@ int mp_dr_is_modulus(mp_int *a)
  * The modulus must be of a special format [see manual]
  *
  * Has been modified to use algorithm 7.10 from the LTM book instead
+ *
+ * Input x must be in the range 0 <= x <= (n-1)^2
  */
 int
 mp_dr_reduce (mp_int * x, mp_int * n, mp_digit k)
@@ -2149,10 +2160,10 @@ top:
       *tmpx1++  = (mp_digit)(r & MP_MASK);
       mu        = (mp_digit)(r >> ((mp_word)DIGIT_BIT));
   }
-  
+
   /* set final carry */
   *tmpx1++ = mu;
-  
+
   /* zero words above m */
   for (i = m + 1; i < x->used; i++) {
       *tmpx1++ = 0;
@@ -3060,6 +3071,8 @@ int mp_init_multi(mp_int *mp, ...)
     va_end(args);
     return res;                /* Assumed ok, if error flagged above. */
 }
+
+
 /* End: bn_mp_init_multi.c */
 
 /* Start: bn_mp_init_size.c */
@@ -3689,30 +3702,43 @@ ERR:
  */
 #include <tommath.h>
 
-/* computes least common multiple as a*b/(a, b) */
+/* computes least common multiple as |a*b|/(a, b) */
 int
 mp_lcm (mp_int * a, mp_int * b, mp_int * c)
 {
   int     res;
-  mp_int  t;
+  mp_int  t1, t2;
 
 
-  if ((res = mp_init (&t)) != MP_OKAY) {
+  if ((res = mp_init_multi (&t1, &t2, NULL)) != MP_OKAY) {
     return res;
   }
 
-  if ((res = mp_mul (a, b, &t)) != MP_OKAY) {
-    mp_clear (&t);
-    return res;
+  /* t1 = get the GCD of the two inputs */
+  if ((res = mp_gcd (a, b, &t1)) != MP_OKAY) {
+    goto __T;
   }
 
-  if ((res = mp_gcd (a, b, c)) != MP_OKAY) {
-    mp_clear (&t);
-    return res;
+  /* divide the smallest by the GCD */
+  if (mp_cmp_mag(a, b) == MP_LT) {
+     /* store quotient in t2 such that t2 * b is the LCM */
+     if ((res = mp_div(a, &t1, &t2, NULL)) != MP_OKAY) {
+        goto __T;
+     }
+     res = mp_mul(b, &t2, c);
+  } else {
+     /* store quotient in t2 such that t2 * a is the LCM */
+     if ((res = mp_div(b, &t1, &t2, NULL)) != MP_OKAY) {
+        goto __T;
+     }
+     res = mp_mul(a, &t2, c);
   }
 
-  res = mp_div (&t, c, c, NULL);
-  mp_clear (&t);
+  /* fix the sign to positive */
+  c->sign = MP_ZPOS;
+
+__T:
+  mp_clear_multi (&t1, &t2, NULL);
   return res;
 }
 
@@ -4012,7 +4038,14 @@ mp_montgomery_reduce (mp_int * x, mp_int * n, mp_digit rho)
   x->used = digs;
 
   for (ix = 0; ix < n->used; ix++) {
-    /* mu = ai * m' mod b */
+    /* mu = ai * rho mod b
+     *
+     * The value of rho must be precalculated via
+     * bn_mp_montgomery_setup() such that
+     * it equals -1/n0 mod b this allows the
+     * following inner loop to reduce the
+     * input one digit at a time
+     */
     mu = ((mp_word)x->dp[ix]) * ((mp_word)rho) & MP_MASK;
 
     /* a = a + mu * m * b**i */
@@ -4021,8 +4054,10 @@ mp_montgomery_reduce (mp_int * x, mp_int * n, mp_digit rho)
       register mp_digit *tmpn, *tmpx, u;
       register mp_word r;
 
-      /* aliases */
+      /* alias for digits of the modulus */
       tmpn = n->dp;
+
+      /* alias for the digits of x [the input] */
       tmpx = x->dp + ix;
 
       /* set the carry to zero */
@@ -4030,12 +4065,20 @@ mp_montgomery_reduce (mp_int * x, mp_int * n, mp_digit rho)
       
       /* Multiply and add in place */
       for (iy = 0; iy < n->used; iy++) {
+        /* compute product and sum */
         r       = ((mp_word)mu) * ((mp_word)*tmpn++) +
                   ((mp_word) u) + ((mp_word) * tmpx);
+
+        /* get carry */
         u       = (mp_digit)(r >> ((mp_word) DIGIT_BIT));
+
+        /* fix digit */
         *tmpx++ = (mp_digit)(r & ((mp_word) MP_MASK));
       }
-      /* propagate carries */
+      /* At this point the ix'th digit of x should be zero */
+
+
+      /* propagate carries upwards as required*/
       while (u) {
         *tmpx   += u;
         u        = *tmpx >> DIGIT_BIT;
@@ -4044,11 +4087,18 @@ mp_montgomery_reduce (mp_int * x, mp_int * n, mp_digit rho)
     }
   }
 
+  /* at this point the n.used'th least
+   * significant digits of x are all zero
+   * which means we can shift x to the
+   * right by n.used digits and the
+   * residue is unchanged.
+   */
+
   /* x = x/b**n.used */
   mp_clamp(x);
   mp_rshd (x, n->used);
 
-  /* if A >= m then A = A - m */
+  /* if x >= n then x = x - n */
   if (mp_cmp_mag (x, n) != MP_LT) {
     return s_mp_sub (x, n, x);
   }
@@ -4606,7 +4656,9 @@ mp_neg (mp_int * a, mp_int * b)
   if ((res = mp_copy (a, b)) != MP_OKAY) {
     return res;
   }
-  b->sign = (a->sign == MP_ZPOS) ? MP_NEG : MP_ZPOS;
+  if (mp_iszero(b) != 1) {
+     b->sign = (a->sign == MP_ZPOS) ? MP_NEG : MP_ZPOS;
+  }
   return MP_OKAY;
 }
 
@@ -5360,10 +5412,18 @@ mp_read_signed_bin (mp_int * a, unsigned char *b, int c)
 {
   int     res;
 
+  /* read magnitude */
   if ((res = mp_read_unsigned_bin (a, b + 1, c - 1)) != MP_OKAY) {
     return res;
   }
-  a->sign = ((b[0] == (unsigned char) 0) ? MP_ZPOS : MP_NEG);
+
+  /* first byte is 0 for positive, non-zero for negative */
+  if (b[0] == 0) {
+     a->sign = MP_ZPOS;
+  } else {
+     a->sign = MP_NEG;
+  }
+
   return MP_OKAY;
 }
 
@@ -5391,7 +5451,18 @@ int
 mp_read_unsigned_bin (mp_int * a, unsigned char *b, int c)
 {
   int     res;
+
+  /* make sure there are at least two digits */
+  if (a->alloc < 2) {
+     if ((res = mp_grow(a, 2)) != MP_OKAY) {
+        return res;
+     }
+  }
+
+  /* zero the int */
   mp_zero (a);
+
+  /* read the bytes in */
   while (c-- > 0) {
     if ((res = mp_mul_2d (a, 8, a)) != MP_OKAY) {
       return res;
@@ -5804,6 +5875,7 @@ mp_set_int (mp_int * a, unsigned int b)
   int     x, res;
 
   mp_zero (a);
+  
   /* set four bits at a time */
   for (x = 0; x < 8; x++) {
     /* shift the number up four bits */
@@ -7414,15 +7486,15 @@ s_mp_mul_digs (mp_int * a, mp_int * b, mp_int * c, int digs)
     /* compute the columns of the output and propagate the carry */
     for (iy = 0; iy < pb; iy++) {
       /* compute the column as a mp_word */
-      r = ((mp_word) *tmpt) + 
-          ((mp_word)tmpx) * ((mp_word)*tmpy++) +
-          ((mp_word) u);
+      r       = ((mp_word)*tmpt) +
+                ((mp_word)tmpx) * ((mp_word)*tmpy++) +
+                ((mp_word) u);
 
       /* the new column is the lower part of the result */
       *tmpt++ = (mp_digit) (r & ((mp_word) MP_MASK));
 
       /* get the carry word from the result */
-      u = (mp_digit) (r >> ((mp_word) DIGIT_BIT));
+      u       = (mp_digit) (r >> ((mp_word) DIGIT_BIT));
     }
     /* set carry if it is placed below digs */
     if (ix + iy < digs) {
@@ -7468,7 +7540,6 @@ s_mp_mul_high_digs (mp_int * a, mp_int * b, mp_int * c, int digs)
   mp_word r;
   mp_digit tmpx, *tmpt, *tmpy;
 
-
   /* can we use the fast multiplier? */
   if (((a->used + b->used + 1) < MP_WARRAY)
       && MIN (a->used, b->used) < (1 << ((CHAR_BIT * sizeof (mp_word)) - (2 * DIGIT_BIT)))) {
@@ -7497,13 +7568,15 @@ s_mp_mul_high_digs (mp_int * a, mp_int * b, mp_int * c, int digs)
 
     for (iy = digs - ix; iy < pb; iy++) {
       /* calculate the double precision result */
-      r = ((mp_word) * tmpt) + ((mp_word)tmpx) * ((mp_word)*tmpy++) + ((mp_word) u);
+      r       = ((mp_word)*tmpt) +
+                ((mp_word)tmpx) * ((mp_word)*tmpy++) +
+                ((mp_word) u);
 
       /* get the lower part */
       *tmpt++ = (mp_digit) (r & ((mp_word) MP_MASK));
 
       /* carry the carry */
-      u = (mp_digit) (r >> ((mp_word) DIGIT_BIT));
+      u       = (mp_digit) (r >> ((mp_word) DIGIT_BIT));
     }
     *tmpt = u;
   }
@@ -7572,19 +7645,19 @@ s_mp_sqr (mp_int * a, mp_int * b)
       /* now calculate the double precision result, note we use
        * addition instead of *2 since it's easier to optimize
        */
-      r = ((mp_word) *tmpt) + r + r + ((mp_word) u);
+      r       = ((mp_word) *tmpt) + r + r + ((mp_word) u);
 
       /* store lower part */
       *tmpt++ = (mp_digit) (r & ((mp_word) MP_MASK));
 
       /* get carry */
-      u = (mp_digit)(r >> ((mp_word) DIGIT_BIT));
+      u       = (mp_digit)(r >> ((mp_word) DIGIT_BIT));
     }
     /* propagate upwards */
     while (u != ((mp_digit) 0)) {
-      r = ((mp_word) * tmpt) + ((mp_word) u);
+      r       = ((mp_word) *tmpt) + ((mp_word) u);
       *tmpt++ = (mp_digit) (r & ((mp_word) MP_MASK));
-      u = (mp_digit)(r >> ((mp_word) DIGIT_BIT));
+      u       = (mp_digit)(r >> ((mp_word) DIGIT_BIT));
     }
   }
 

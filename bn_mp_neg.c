@@ -22,6 +22,8 @@ mp_neg (mp_int * a, mp_int * b)
   if ((res = mp_copy (a, b)) != MP_OKAY) {
     return res;
   }
-  b->sign = (a->sign == MP_ZPOS) ? MP_NEG : MP_ZPOS;
+  if (mp_iszero(b) != 1) {
+     b->sign = (a->sign == MP_ZPOS) ? MP_NEG : MP_ZPOS;
+  }
   return MP_OKAY;
 }

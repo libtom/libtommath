@@ -25,6 +25,8 @@
  * The modulus must be of a special format [see manual]
  *
  * Has been modified to use algorithm 7.10 from the LTM book instead
+ *
+ * Input x must be in the range 0 <= x <= (n-1)^2
  */
 int
 mp_dr_reduce (mp_int * x, mp_int * n, mp_digit k)
@@ -63,10 +65,10 @@ top:
       *tmpx1++  = (mp_digit)(r & MP_MASK);
       mu        = (mp_digit)(r >> ((mp_word)DIGIT_BIT));
   }
-  
+
   /* set final carry */
   *tmpx1++ = mu;
-  
+
   /* zero words above m */
   for (i = m + 1; i < x->used; i++) {
       *tmpx1++ = 0;

@@ -6,7 +6,7 @@ CFLAGS  +=  -I./ -Wall -W -Wshadow -O3 -funroll-loops
 #x86 optimizations [should be valid for any GCC install though]
 CFLAGS  += -fomit-frame-pointer 
 
-VERSION=0.25
+VERSION=0.26
 
 default: libtommath.a
 
@@ -80,12 +80,6 @@ poster: poster.tex
 # makes the LTM book PS/PDF file, requires tetex, cleans up the LaTeX temp files
 docs:	
 	cd pics ; make pdfes
-	echo "hello" > tommath.ind
-	perl booker.pl
-	latex tommath > /dev/null
-	makeindex tommath
-	latex tommath > /dev/null
-	dvips -tB5 -D600 tommath
 	echo "hello" > tommath.ind
 	perl booker.pl PDF
 	latex tommath > /dev/null

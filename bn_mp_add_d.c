@@ -42,7 +42,6 @@ mp_add_d (mp_int * a, mp_digit b, mp_int * c)
      return res;
   }
 
-
   /* old number of used digits in c */
   oldused = c->used;
 
@@ -76,7 +75,6 @@ mp_add_d (mp_int * a, mp_digit b, mp_int * c)
      /* set final carry */
      ix++;
      *tmpc++  = mu;
-
   } else {
      /* a was negative and |a| < b */
      c->used  = 1;
