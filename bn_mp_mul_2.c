@@ -35,17 +35,29 @@ mp_mul_2 (mp_int * a, mp_int * b)
   {
     register mp_digit r, rr, *tmpa, *tmpb;
 
-    r = 0;
+    /* alias for source */
     tmpa = a->dp;
+    
+    /* alias for dest */
     tmpb = b->dp;
+
+    /* carry */
+    r = 0;
     for (x = 0; x < b->used; x++) {
+    
+      /* get what will be the *next* carry bit from the MSB of the current digit */
       rr = *tmpa >> (DIGIT_BIT - 1);
+      
+      /* now shift up this digit, add in the carry [from the previous] */
       *tmpb++ = ((*tmpa++ << 1) | r) & MP_MASK;
+      
+      /* copy the carry that would be from the source digit into the next iteration */
       r = rr;
     }
 
     /* new leading digit? */
     if (r != 0) {
+      /* do we have to grow to accomodate the new digit? */
       if (b->alloc == b->used) {
 	if ((res = mp_grow (b, b->used + 1)) != MP_OKAY) {
 	  return res;
@@ -56,11 +68,12 @@ mp_mul_2 (mp_int * a, mp_int * b)
 	 */
 	tmpb = b->dp + b->used;
       }
-      /* add a MSB of 1 */
+      /* add a MSB which is always 1 at this point */
       *tmpb = 1;
       ++b->used;
     }
 
+    /* now zero any excess digits on the destination that we didn't write to */
     tmpb = b->dp + b->used;
     for (x = b->used; x < oldused; x++) {
       *tmpb++ = 0;

@@ -26,6 +26,7 @@ fast_mp_invmod (mp_int * a, mp_int * b, mp_int * c)
   mp_int  x, y, u, v, B, D;
   int     res, neg;
 
+  /* init all our temps */
   if ((res = mp_init (&x)) != MP_OKAY) {
     goto __ERR;
   }
@@ -58,6 +59,7 @@ fast_mp_invmod (mp_int * a, mp_int * b, mp_int * c)
     goto __D;
   }
 
+  /* we need |y| */
   if ((res = mp_abs (&y, &y)) != MP_OKAY) {
     goto __D;
   }
@@ -93,12 +95,11 @@ top:
 	goto __D;
       }
     }
-    /* A = A/2, B = B/2 */
+    /* B = B/2 */
     if ((res = mp_div_2 (&B, &B)) != MP_OKAY) {
       goto __D;
     }
   }
-
 
   /* 5.  while v is even do */
   while (mp_iseven (&v) == 1) {
@@ -108,12 +109,12 @@ top:
     }
     /* 5.2 if C,D are even then */
     if (mp_iseven (&D) == 0) {
-      /* C = (C+y)/2, D = (D-x)/2 */
+      /* D = (D-x)/2 */
       if ((res = mp_sub (&D, &x, &D)) != MP_OKAY) {
 	goto __D;
       }
     }
-    /* C = C/2, D = D/2 */
+    /* D = D/2 */
     if ((res = mp_div_2 (&D, &D)) != MP_OKAY) {
       goto __D;
     }
@@ -121,7 +122,7 @@ top:
 
   /* 6.  if u >= v then */
   if (mp_cmp (&u, &v) != MP_LT) {
-    /* u = u - v, A = A - C, B = B - D */
+    /* u = u - v, B = B - D */
     if ((res = mp_sub (&u, &v, &u)) != MP_OKAY) {
       goto __D;
     }
@@ -130,7 +131,7 @@ top:
       goto __D;
     }
   } else {
-    /* v - v - u, C = C - A, D = D - B */
+    /* v - v - u, D = D - B */
     if ((res = mp_sub (&v, &u, &v)) != MP_OKAY) {
       goto __D;
     }

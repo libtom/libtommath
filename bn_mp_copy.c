@@ -37,6 +37,7 @@ mp_copy (mp_int * a, mp_int * b)
   {
     register mp_digit *tmpa, *tmpb;
 
+    /* point aliases */
     tmpa = a->dp;
     tmpb = b->dp;
 

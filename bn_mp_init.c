@@ -27,9 +27,9 @@ mp_init (mp_int * a)
 
   /* set the used to zero, allocated digit to the default precision
    * and sign to positive */
-  a->used = 0;
+  a->used  = 0;
   a->alloc = MP_PREC;
-  a->sign = MP_ZPOS;
+  a->sign  = MP_ZPOS;
 
   return MP_OKAY;
 }

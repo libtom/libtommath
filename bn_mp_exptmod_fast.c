@@ -19,7 +19,7 @@
  * Uses a left-to-right k-ary sliding window to compute the modular exponentiation.
  * The value of k changes based on the size of the exponent.
  *
- * Uses Montgomery reduction 
+ * Uses Montgomery or Diminished Radix reduction [whichever appropriate] 
  */
 int
 mp_exptmod_fast (mp_int * G, mp_int * X, mp_int * P, mp_int * Y, int redmode)
@@ -29,7 +29,6 @@ mp_exptmod_fast (mp_int * G, mp_int * X, mp_int * P, mp_int * Y, int redmode)
   int     err, bitbuf, bitcpy, bitcnt, mode, digidx, x, y, winsize;
   int     (*redux)(mp_int*,mp_int*,mp_digit);
   
-
   /* find window size */
   x = mp_count_bits (X);
   if (x <= 7) {
@@ -169,7 +168,7 @@ mp_exptmod_fast (mp_int * G, mp_int * X, mp_int * P, mp_int * Y, int redmode)
     mode = 2;
 
     if (bitcpy == winsize) {
-      /* ok window is filled so square as required and multiply multiply */
+      /* ok window is filled so square as required and multiply  */
       /* square first */
       for (x = 0; x < winsize; x++) {
 	if ((err = mp_sqr (&res, &res)) != MP_OKAY) {

@@ -1,3 +1,9 @@
+Mar 29th, 2003
+v0.16  -- Sped up mp_div by making normalization one shift call
+       -- Sped up mp_mul_2d/mp_div_2d by aliasing pointers :-)
+       -- Cleaned up mp_gcd to use the macros for odd/even detection
+       -- Added comments here and there, mostly there but occasionally here too.
+
 Mar 22nd, 2003
 v0.15  -- Added series of prime testing routines to lib
        -- Fixed up etc/tune.c

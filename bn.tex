@@ -1,7 +1,7 @@
-\documentclass{article}
+\documentclass[]{report}
 \begin{document}
 
-\title{LibTomMath v0.15 \\ A Free Multiple Precision Integer Library \\ http://math.libtomcrypt.org }
+\title{LibTomMath v0.16 \\ A Free Multiple Precision Integer Library \\ http://math.libtomcrypt.org }
 \author{Tom St Denis \\ tomstdenis@iahu.ca}
 \maketitle
 \newpage
@@ -285,6 +285,9 @@ int mp_mul_d(mp_int *a, mp_digit b, mp_int *c);
 
 /* a/b => cb + d == a */
 int mp_div_d(mp_int *a, mp_digit b, mp_int *c, mp_digit *d);
+
+/* c = a^b */
+int mp_expt_d(mp_int *a, mp_digit b, mp_int *c);
 
 /* c = a mod b, 0 <= c < b  */
 int mp_mod_d(mp_int *a, mp_digit b, mp_digit *c);
@@ -1027,6 +1030,32 @@ p == 10951211157166778028568112903923951285881685924091094949001780089679
 \end{verbatim}
 \end{small}
 
+%\newpage
+%\section*{Appendix B - Function Quick Sheet}
 
+%The following table gives a quick summary of the functions provided within LibTomMath.
+
+%\begin{flushleft}
+%\begin{tiny}
+%\begin{tabular}{|l|l|l|}
+%\hline \textbf{Function Name} & \textbf{Purpose} & \textbf{Notes} \\
+%\hline mp\_init(mp\_int *a) & Initializes a mp\_int & Allocates runtime memory required for an integer \\
+%\hline mp\_clear(mp\_int *a) & Frees the ram used by an mp\_int & \\
+%\hline mp\_exch(mp\_int *a, mp\_int *b) & Swaps two mp\_int structures contents & \\
+%\hline mp\_shrink(mp\_int *a) & Frees unused memory & The mp\_int is still valid and not cleared. \\
+%\hline mp\_grow(mp\_int *a, int size) & Ensures that a has at least $size$ digits allocated & \\
+%\hline mp\_init\_size(mp\_int a, int size) & Inits and ensures it has at least $size$ digits & \\
+%\hline &&\\
+%\hline mp\_zero(mp\_int *a) & $a \leftarrow 0$ & \\
+%\hline mp\_set(mp\_int *a, mp\_digit b) & $a \leftarrow b$ & \\
+%\hline mp\_set\_int(mp\_int *a, unsigned long b) & $a \leftarrow b$ & Only reads upto 32 bits from $b$ \\
+%\hline &&\\
+%\hline mp\_rshd(mp\_int *a, int b) & $a \leftarrow a/\beta^b$ & \\
+%\hline mp\_lshd(mp\_int *a, int b) & $a \leftarrow a \cdot \beta^b$ &\\
+%\hline mp\_div\_2d(mp\_int *a, int b, mp\_int *c, mp\_int *d) & &\\
+%\hline
+%\end{tabular}
+%\end{tiny}
+%\end{flushleft}
 
 \end{document}

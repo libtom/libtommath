@@ -124,6 +124,12 @@ void mp_exch(mp_int *a, mp_int *b);
 /* shrink ram required for a bignum */
 int mp_shrink(mp_int *a);
 
+/* grow an int to a given size */
+int mp_grow(mp_int *a, int size);
+
+/* init to a given number of digits */
+int mp_init_size(mp_int *a, int size);
+
 /* ---> Basic Manipulations <--- */
 
 #define mp_iszero(a) (((a)->used == 0) ? 1 : 0)
@@ -138,12 +144,6 @@ void mp_set(mp_int *a, mp_digit b);
 
 /* set a 32-bit const */
 int mp_set_int(mp_int *a, unsigned long b);
-
-/* grow an int to a given size */
-int mp_grow(mp_int *a, int size);
-
-/* init to a given number of digits */
-int mp_init_size(mp_int *a, int size);
 
 /* copy, b = a */
 int mp_copy(mp_int *a, mp_int *b);

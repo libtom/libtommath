@@ -164,7 +164,7 @@ f_mp_exptmod (mp_int * G, mp_int * X, mp_int * P, mp_int * Y)
     mode = 2;
 
     if (bitcpy == winsize) {
-      /* ok window is filled so square as required and multiply multiply */
+      /* ok window is filled so square as required and multiply  */
       /* square first */
       for (x = 0; x < winsize; x++) {
 	if ((err = mp_sqr (&res, &res)) != MP_OKAY) {

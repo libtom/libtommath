@@ -140,6 +140,7 @@ int main(void)
 
 #ifdef TIMER
       printf("CLOCKS_PER_SEC == %lu\n", CLOCKS_PER_SEC);
+goto sqrtime;      
 
       log = fopen("add.log", "w");
       for (cnt = 4; cnt <= 128; cnt += 4) {
@@ -170,6 +171,7 @@ int main(void)
       fclose(log);
       
 
+sqrtime:   
    log = fopen("sqr.log", "w");
    for (cnt = 4; cnt <= 128; cnt += 4) {
       mp_rand(&a, cnt);
@@ -197,6 +199,7 @@ int main(void)
    }
    fclose(log);
 
+expttime:
    {
       char *primes[] = {
          /* DR moduli */

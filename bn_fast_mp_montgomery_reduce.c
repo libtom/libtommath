@@ -45,12 +45,12 @@ fast_mp_montgomery_reduce (mp_int * a, mp_int * m, mp_digit mp)
     _W = W;
     tmpa = a->dp;
 
-    /* copy the digits of a */
+    /* copy the digits of a into W[0..a->used-1] */
     for (ix = 0; ix < a->used; ix++) {
       *_W++ = *tmpa++;
     }
 
-    /* zero the high words */
+    /* zero the high words of W[a->used..m->used*2] */
     for (; ix < m->used * 2 + 1; ix++) {
       *_W++ = 0;
     }

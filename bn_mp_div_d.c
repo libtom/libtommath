@@ -33,6 +33,7 @@ mp_div_d (mp_int * a, mp_digit b, mp_int * c, mp_digit * d)
   mp_set (&t, b);
   res = mp_div (a, &t, c, &t2);
 
+  /* set remainder if not null */
   if (d != NULL) {
     *d = t2.dp[0];
   }

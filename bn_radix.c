@@ -17,7 +17,6 @@
 /* chars used in radix conversions */
 static const char *s_rmap = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+/";
 
-
 /* read a string [ASCII] in a given radix */
 int
 mp_read_radix (mp_int * a, char *str, int radix)

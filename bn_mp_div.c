@@ -74,17 +74,19 @@ mp_div (mp_int * a, mp_int * b, mp_int * c, mp_int * d)
   x.sign = y.sign = MP_ZPOS;
 
   /* normalize both x and y, ensure that y >= b/2, [b == 2^DIGIT_BIT] */
-  norm = 0;
-  while ((y.dp[y.used - 1] & (((mp_digit) 1) << (DIGIT_BIT - 1))) == ((mp_digit) 0)) {
-    ++norm;
-    if ((res = mp_mul_2 (&x, &x)) != MP_OKAY) {
-      goto __Y;
-    }
-    if ((res = mp_mul_2 (&y, &y)) != MP_OKAY) {
-      goto __Y;
-    }
+  norm = mp_count_bits(&y) % DIGIT_BIT;
+  if (norm < (DIGIT_BIT-1)) {
+     norm = (DIGIT_BIT-1) - norm;
+     if ((res = mp_mul_2d (&x, norm, &x)) != MP_OKAY) {
+       goto __Y;
+     }
+     if ((res = mp_mul_2d (&y, norm, &y)) != MP_OKAY) {
+       goto __Y;
+     }
+  } else {
+     norm = 0;
   }
-
+     
   /* note hac does 0 based, so if used==5 then its 0,1,2,3,4, e.g. use 4 */
   n = x.used - 1;
   t = y.used - 1;

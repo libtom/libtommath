@@ -22,7 +22,6 @@ mp_gcd (mp_int * a, mp_int * b, mp_int * c)
   mp_int  u, v, t;
   int     k, res, neg;
 
-
   /* either zero than gcd is the largest */
   if (mp_iszero (a) == 1 && mp_iszero (b) == 0) {
     return mp_copy (b, c);
@@ -55,7 +54,7 @@ mp_gcd (mp_int * a, mp_int * b, mp_int * c)
 
   /* B1.  Find power of two */
   k = 0;
-  while ((u.dp[0] & 1) == 0 && (v.dp[0] & 1) == 0) {
+  while (mp_iseven(&u) == 1 && mp_iseven(&v) == 1) {
     ++k;
     if ((res = mp_div_2 (&u, &u)) != MP_OKAY) {
       goto __T;
@@ -66,12 +65,14 @@ mp_gcd (mp_int * a, mp_int * b, mp_int * c)
   }
 
   /* B2.  Initialize */
-  if ((u.dp[0] & 1) == 1) {
+  if (mp_isodd(&u) == 1) {
+    /* t = -v */
     if ((res = mp_copy (&v, &t)) != MP_OKAY) {
       goto __T;
     }
     t.sign = MP_NEG;
   } else {
+    /* t = u */
     if ((res = mp_copy (&u, &t)) != MP_OKAY) {
       goto __T;
     }
@@ -79,7 +80,7 @@ mp_gcd (mp_int * a, mp_int * b, mp_int * c)
 
   do {
     /* B3 (and B4).  Halve t, if even */
-    while (t.used != 0 && (t.dp[0] & 1) == 0) {
+    while (t.used != 0 && mp_iseven(&t) == 1) {
       if ((res = mp_div_2 (&t, &t)) != MP_OKAY) {
 	goto __T;
       }

@@ -58,13 +58,23 @@ mp_div_2d (mp_int * a, int b, mp_int * c, mp_int * d)
   /* shift any bit count < DIGIT_BIT */
   D = (mp_digit) (b % DIGIT_BIT);
   if (D != 0) {
+    register mp_digit *tmpc, mask;
+    
+    /* mask */
+    mask = (1U << D) - 1U;
+    
+    /* alias */
+    tmpc = c->dp + (c->used - 1);
+    
+    /* carry */
     r = 0;
     for (x = c->used - 1; x >= 0; x--) {
       /* get the lower  bits of this word in a temp */
-      rr = c->dp[x] & ((mp_digit) ((1U << D) - 1U));
+      rr = *tmpc & mask;
 
       /* shift the current word and mix in the carry bits from the previous word */
-      c->dp[x] = (c->dp[x] >> D) | (r << (DIGIT_BIT - D));
+      *tmpc = (*tmpc >> D) | (r << (DIGIT_BIT - D));
+      --tmpc;
 
       /* set the carry to the carry bits of the current word found above */
       r = rr;

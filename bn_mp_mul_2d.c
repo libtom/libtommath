@@ -21,7 +21,6 @@ mp_mul_2d (mp_int * a, int b, mp_int * c)
   mp_digit d, r, rr;
   int     x, res;
 
-
   /* copy */
   if ((res = mp_copy (a, c)) != MP_OKAY) {
     return res;
@@ -42,13 +41,23 @@ mp_mul_2d (mp_int * a, int b, mp_int * c)
   /* shift any bit count < DIGIT_BIT */
   d = (mp_digit) (b % DIGIT_BIT);
   if (d != 0) {
-    r = 0;
+    register mp_digit *tmpc, mask;
+    
+    /* bitmask for carries */
+    mask = (1U << d) - 1U;
+    
+    /* alias */
+    tmpc = c->dp;
+    
+    /* carry */
+    r    = 0;
     for (x = 0; x < c->used; x++) {
       /* get the higher bits of the current word */
-      rr = (c->dp[x] >> (DIGIT_BIT - d)) & ((mp_digit) ((1U << d) - 1U));
+      rr = (*tmpc >> (DIGIT_BIT - d)) & mask;
 
       /* shift the current word and OR in the carry */
-      c->dp[x] = ((c->dp[x] << d) | r) & MP_MASK;
+      *tmpc = ((*tmpc << d) | r) & MP_MASK;
+      ++tmpc;
 
       /* set the carry to the carry bits of the current word */
       r = rr;
