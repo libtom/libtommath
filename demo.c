@@ -21,22 +21,37 @@ void reset(void) { _tt = clock(); }
 unsigned long long rdtsc(void) { return clock() - _tt; }
 #endif
    
-static void draw(mp_int *a)
+void draw(mp_int *a)
 {
    char buf[4096];
-   int x;
    printf("a->used  == %d\na->alloc == %d\na->sign  == %d\n", a->used, a->alloc, a->sign);
    mp_toradix(a, buf, 10);
    printf("num == %s\n", buf);
    printf("\n");
 }
 
+unsigned long lfsr = 0xAAAAAAAAUL;
+
+int lbit(void)
+{
+   if (lfsr & 0x80000000UL) {
+      lfsr = ((lfsr << 1) ^ 0x8000001BUL) & 0xFFFFFFFFUL;
+      return 1;
+   } else {
+      lfsr <<= 1;
+      return 0;
+   }
+}   
+     
+
+
 int main(void)
 {
    mp_int a, b, c, d, e, f;
-   unsigned long expt_n, add_n, sub_n, mul_n, div_n, sqr_n, mul2d_n, div2d_n, gcd_n, lcm_n;
+   unsigned long expt_n, add_n, sub_n, mul_n, div_n, sqr_n, mul2d_n, div2d_n, gcd_n, lcm_n, inv_n;
    unsigned char cmd[4096], buf[4096];
    int rr;
+   mp_digit tom;
    
 #ifdef TIMER
    int n;
@@ -50,17 +65,21 @@ int main(void)
    mp_init(&e);
    mp_init(&f); 
    
+   mp_read_radix(&a, "-2", 10);
+   mp_read_radix(&b, "2", 10);
+   mp_expt_d(&a, 3, &a);
+   draw(&a);
    
 #ifdef TIMER   
 
    mp_read_radix(&a, "340282366920938463463374607431768211455", 10);
    while (a.used * DIGIT_BIT < 8192) {
       reset();
-      for (rr = 0; rr < 10000; rr++) {
+      for (rr = 0; rr < 100000; rr++) {
           mp_mul(&a, &a, &b);
       }
       tt = rdtsc();
-      printf("Multiplying  %d-bit took %llu cycles\n", mp_count_bits(&a), tt / ((unsigned long long)10000));
+      printf("Multiplying  %d-bit took %llu cycles\n", mp_count_bits(&a), tt / ((unsigned long long)100000));
       mp_copy(&b, &a);
    }
 
@@ -68,11 +87,11 @@ int main(void)
    mp_read_radix(&a, "340282366920938463463374607431768211455", 10);
    while (a.used * DIGIT_BIT < 8192) {
       reset();
-      for (rr = 0; rr < 10000; rr++) {
+      for (rr = 0; rr < 100000; rr++) {
           mp_sqr(&a, &b);
       }
       tt = rdtsc();
-      printf("Squaring %d-bit took %llu cycles\n", mp_count_bits(&a), tt / ((unsigned long long)10000));
+      printf("Squaring %d-bit took %llu cycles\n", mp_count_bits(&a), tt / ((unsigned long long)100000));
       mp_copy(&b, &a);
    }
 
@@ -87,19 +106,18 @@ int main(void)
          "1214855636816562637502584060163403830270705000634713483015101384881871978446801224798536155406895823305035467591632531067547890948695117172076954220727075688048751022421198712032848890056357845974246560748347918630050853933697792254955890439720297560693579400297062396904306270145886830719309296352765295712183040773146419022875165382778007040109957609739589875590885701126197906063620133954893216612678838507540777138437797705602453719559017633986486649523611975865005712371194067612263330335590526176087004421363598470302731349138773205901447704682181517904064735636518462452242791676541725292378925568296858010151852326316777511935037531017413910506921922450666933202278489024521263798482237150056835746454842662048692127173834433089016107854491097456725016327709663199738238442164843147132789153725513257167915555162094970853584447993125488607696008169807374736711297007473812256272245489405898470297178738029484459690836250560495461579533254473316340608217876781986188705928270735695752830825527963838355419762516246028680280988020401914551825487349990306976304093109384451438813251211051597392127491464898797406789175453067960072008590614886532333015881171367104445044718144312416815712216611576221546455968770801413440778423979",
          NULL         
       };
-   srand(time(NULL));
    for (n = 0; primes[n]; n++) {
       mp_read_radix(&a, primes[n], 10);
       mp_zero(&b);
       for (rr = 0; rr < mp_count_bits(&a); rr++) {
          mp_mul_2d(&b, 1, &b);
-         b.dp[0] |= (rand()&1);
+         b.dp[0] |= lbit();
       }
       mp_sub_d(&a, 1, &c);
       mp_mod(&b, &c, &b);
       mp_set(&c, 3);
       reset();
-      for (rr = 0; rr < 20; rr++) {
+      for (rr = 0; rr < 35; rr++) {
           mp_exptmod(&c, &b, &a, &d);
       }
       tt = rdtsc();
@@ -112,15 +130,15 @@ int main(void)
          draw(&d);
          exit(0);
       }
-      printf("Exponentiating  %d-bit took %llu cycles\n", mp_count_bits(&a), tt / ((unsigned long long)20));
+      printf("Exponentiating  %d-bit took %llu cycles\n", mp_count_bits(&a), tt / ((unsigned long long)35));
    }
    }
    
 #endif   
 
-   expt_n = lcm_n = gcd_n = add_n = sub_n = mul_n = div_n = sqr_n = mul2d_n = div2d_n = 0;   
+   inv_n = expt_n = lcm_n = gcd_n = add_n = sub_n = mul_n = div_n = sqr_n = mul2d_n = div2d_n = 0;   
    for (;;) {
-       printf("add=%7lu sub=%7lu mul=%7lu div=%7lu sqr=%7lu mul2d=%7lu div2d=%7lu gcd=%7lu lcm=%7lu expt=%7lu\r", add_n, sub_n, mul_n, div_n, sqr_n, mul2d_n, div2d_n, gcd_n, lcm_n, expt_n);
+       printf("%7lu/%7lu/%7lu/%7lu/%7lu/%7lu/%7lu/%7lu/%7lu/%7lu/%7lu\r", add_n, sub_n, mul_n, div_n, sqr_n, mul2d_n, div2d_n, gcd_n, lcm_n, expt_n, inv_n);
        fgets(cmd, 4095, stdin);
        cmd[strlen(cmd)-1] = 0;
        printf("%s  ]\r",cmd);
@@ -161,6 +179,33 @@ int main(void)
 draw(&a);draw(&b);draw(&c);draw(&d);             
              return 0;
           }
+          
+          /* test the sign/unsigned storage functions */
+          
+          rr = mp_signed_bin_size(&c);
+          mp_to_signed_bin(&c, cmd);
+          memset(cmd+rr, rand()&255, sizeof(cmd)-rr);
+          mp_read_signed_bin(&d, cmd, rr);
+          if (mp_cmp(&c, &d) != MP_EQ) {
+             printf("mp_signed_bin failure!\n");
+             draw(&c);
+             draw(&d);
+             return 0;
+          }
+                    
+          
+          rr = mp_unsigned_bin_size(&c);
+          mp_to_unsigned_bin(&c, cmd);
+          memset(cmd+rr, rand()&255, sizeof(cmd)-rr);
+          mp_read_unsigned_bin(&d, cmd, rr);
+          if (mp_cmp_mag(&c, &d) != MP_EQ) {
+             printf("mp_unsigned_bin failure!\n");
+             draw(&c);
+             draw(&d);
+             return 0;
+          }
+          
+          
        } else if (!strcmp(cmd, "sub")) { ++sub_n;
           fgets(buf, 4095, stdin);  mp_read_radix(&a, buf, 10);
           fgets(buf, 4095, stdin);  mp_read_radix(&b, buf, 10);
@@ -210,7 +255,7 @@ draw(&a);draw(&b);draw(&c);
           mp_gcd(&a, &b, &d);
           d.sign = c.sign;
           if (mp_cmp(&c, &d) != MP_EQ) {
-             printf("gcd %lu failure!\n", sqr_n); 
+             printf("gcd %lu failure!\n", gcd_n); 
 draw(&a);draw(&b);draw(&c);draw(&d);
              return 0;
           }
@@ -221,7 +266,7 @@ draw(&a);draw(&b);draw(&c);draw(&d);
              mp_lcm(&a, &b, &d);
              d.sign = c.sign;
              if (mp_cmp(&c, &d) != MP_EQ) {
-                printf("lcm %lu failure!\n", sqr_n); 
+                printf("lcm %lu failure!\n", lcm_n); 
    draw(&a);draw(&b);draw(&c);draw(&d);
                 return 0;
              }
@@ -232,11 +277,26 @@ draw(&a);draw(&b);draw(&c);draw(&d);
              fgets(buf, 4095, stdin);  mp_read_radix(&d, buf, 10);
              mp_exptmod(&a, &b, &c, &e);
              if (mp_cmp(&d, &e) != MP_EQ) {
-                printf("expt %lu failure!\n", sqr_n); 
+                printf("expt %lu failure!\n", expt_n); 
    draw(&a);draw(&b);draw(&c);draw(&d); draw(&e);
                 return 0;
              }
+       } else if (!strcmp(cmd, "invmod")) {  ++inv_n;
+             fgets(buf, 4095, stdin);  mp_read_radix(&a, buf, 10);
+             fgets(buf, 4095, stdin);  mp_read_radix(&b, buf, 10);
+             fgets(buf, 4095, stdin);  mp_read_radix(&c, buf, 10);
+             mp_invmod(&a, &b, &d);
+             mp_mulmod(&d,&a,&b,&e);
+             if (mp_cmp_d(&e, 1) != MP_EQ) {
+                printf("inv [wrong value from MPI?!] failure\n");
+                draw(&a);draw(&b);draw(&c);draw(&d);
+                mp_gcd(&a, &b, &e);
+                draw(&e);
+                return 0;
+             }
+                
        }
+       
    }
    return 0;   
 }

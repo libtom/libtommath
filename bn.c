@@ -113,11 +113,13 @@ int mp_set_int(mp_int *a, unsigned long b)
    if ((res = mp_grow(a, 32/DIGIT_BIT + 1)) != MP_OKAY) {
       return res;
    }
+   mp_zero(a);
    /* set four bits at a time, simplest solution to the what if DIGIT_BIT==7 case */
    for (x = 0; x < 8; x++) {
       mp_mul_2d(a, 4, a);
       a->dp[0] |= (b>>28)&15;
       b <<= 4;
+      a->used += 32/DIGIT_BIT + 1;
    }
    mp_clamp(a);
    return MP_OKAY;
@@ -140,8 +142,9 @@ int mp_copy(mp_int *a, mp_int *b)
    int res, n;
    
    /* if dst == src do nothing */
-   if (a->dp == b->dp)
+   if (a == b || a->dp == b->dp) {
       return MP_OKAY;
+   }
    
    /* grow dest */
    if ((res = mp_grow(b, a->used)) != MP_OKAY) {
@@ -338,15 +341,22 @@ int  mp_div_2d(mp_int *a, int b, mp_int *c, mp_int *d)
 {
    mp_digit D, r, rr;
    int x, res;
+   mp_int t;
+   
+   if ((res = mp_init(&t)) != MP_OKAY) {
+      return res;
+   }
    
    if (d != NULL) {
-      if ((res = mp_mod_2d(a, b, d)) != MP_OKAY) {
+      if ((res = mp_mod_2d(a, b, &t)) != MP_OKAY) {
+         mp_clear(&t);
          return res;
       }
    }
    
    /* copy */
    if ((res = mp_copy(a, c)) != MP_OKAY) {
+      mp_clear(&t);
       return res;
    }
    
@@ -364,6 +374,12 @@ int  mp_div_2d(mp_int *a, int b, mp_int *c, mp_int *d)
       }
    }
    mp_clamp(c);
+   if (d != NULL) {
+      res = mp_copy(&t, d);
+   } else {
+      res = MP_OKAY;
+   }
+   mp_clear(&t);
    return MP_OKAY;
 }
 
@@ -392,7 +408,7 @@ int mp_mul_2d(mp_int *a, int b, mp_int *c)
    d = (mp_digit)(b % DIGIT_BIT);   
    if (d != 0) {
       r = 0;
-      for (x = 0; x < a->used; x++) {
+      for (x = 0; x < c->used; x++) {
           rr = (c->dp[x] >> (DIGIT_BIT - d)) & ((mp_digit)((1U<<d)-1U));
           c->dp[x] = ((c->dp[x] << d) | r) & MP_MASK;
           r  = rr;
@@ -405,13 +421,49 @@ int mp_mul_2d(mp_int *a, int b, mp_int *c)
 /* b = a/2 */
 int mp_div_2(mp_int *a, mp_int *b)
 {
-   return mp_div_2d(a, 1, b, NULL);
+   mp_digit r, rr;
+   int x, res;
+
+   /* copy */
+   if ((res = mp_copy(a, b)) != MP_OKAY) {
+      return res;
+   }
+   
+   r = 0;
+   for (x = b->used - 1; x >= 0; x--) {
+       rr = b->dp[x] & 1;
+       b->dp[x] = (b->dp[x] >> 1) | (r << (DIGIT_BIT-1));
+       r  = rr;
+   }
+   mp_clamp(b);
+   return MP_OKAY;
 }
 
 /* b = a*2 */
 int mp_mul_2(mp_int *a, mp_int *b)
 {
-   return mp_mul_2d(a, 1, b);
+   mp_digit r, rr;
+   int x, res;
+   
+   /* copy */
+   if ((res = mp_copy(a, b)) != MP_OKAY) {
+      return res;
+   }
+
+   if ((res = mp_grow(b, b->used + 1)) != MP_OKAY) {
+      return res;
+   }
+   b->used = b->alloc;
+   
+   /* shift any bit count < DIGIT_BIT */
+   r = 0;
+   for (x = 0; x < b->used; x++) {
+       rr = (b->dp[x] >> (DIGIT_BIT - 1)) & 1;
+       b->dp[x] = ((b->dp[x] << 1) | r) & MP_MASK;
+       r  = rr;
+   }
+   mp_clamp(b);
+   return MP_OKAY;
 }
 
 /* low level addition */
@@ -526,8 +578,6 @@ static int fast_s_mp_mul_digs(mp_int *a, mp_int *b, mp_int *c, int digs)
    mp_word W[512], *_W;
    mp_digit tmpx, *tmpt, *tmpy;
    
-//   printf("\nHOLA\n");
-   
    if ((res = mp_init_size(&t, digs)) != MP_OKAY) {
       return res;
    }
@@ -624,7 +674,7 @@ static int fast_s_mp_mul_high_digs(mp_int *a, mp_int *b, mp_int *c, int digs)
    
    pa = a->used;
    pb = b->used;
-   memset(W, 0, (pa + pb + 1) * sizeof(mp_word));
+   memset(&W[digs], 0, (pa + pb + 1 - digs) * sizeof(mp_word));
    for (ix = 0; ix < pa; ix++) {
        tmpx = a->dp[ix];
        tmpt = &(t.dp[digs]);
@@ -636,7 +686,7 @@ static int fast_s_mp_mul_high_digs(mp_int *a, mp_int *b, mp_int *c, int digs)
    }
    
    /* now convert the array W downto what we need */
-   for (ix = 1; ix < (pa+pb+1); ix++) {
+   for (ix = digs+1; ix < (pa+pb+1); ix++) {
        W[ix]      = W[ix] + (W[ix-1] >> ((mp_word)DIGIT_BIT));
        t.dp[ix-1] = W[ix-1] & ((mp_word)MP_MASK);
    }
@@ -665,7 +715,7 @@ static int s_mp_mul_high_digs(mp_int *a, mp_int *b, mp_int *c, int digs)
    mp_digit tmpx, *tmpt, *tmpy;
    
    /* can we use the fast multiplier? */
-   if ((digs < 512) && digs < (1<<( (CHAR_BIT*sizeof(mp_word)) - (2*DIGIT_BIT)))) {
+   if (((a->used + b->used + 1) < 512) && MAX(a->used, b->used) < (1<<( (CHAR_BIT*sizeof(mp_word)) - (2*DIGIT_BIT)))) {
       return fast_s_mp_mul_high_digs(a,b,c,digs);
    }  
 
@@ -959,13 +1009,14 @@ ERR :
 /* high level multiplication (handles sign) */
 int mp_mul(mp_int *a, mp_int *b, mp_int *c)
 {
-   int res;
+   int res, neg;
+   neg = (a->sign == b->sign) ? MP_ZPOS : MP_NEG;
    if (MIN(a->used, b->used) > KARATSUBA_MUL_CUTOFF) {
       res = mp_karatsuba_mul(a, b, c);
    } else {
       res = s_mp_mul(a, b, c);
    }
-   c->sign = (a->sign == b->sign) ? MP_ZPOS : MP_NEG;
+   c->sign = neg;
    return res;
 }
 
@@ -1047,13 +1098,17 @@ int mp_div(mp_int *a, mp_int *b, mp_int *c, mp_int *d)
    mp_int q, x, y, t1, t2;
    int res, n, t, i, norm, neg;
    
+   /* is divisor zero ? */
+   if (mp_iszero(b) == 1) {
+      return MP_VAL;
+   }
+   
    /* if a < b then q=0, r = a */
    if (mp_cmp_mag(a, b) == MP_LT) {
       if (d != NULL) {
-           res     = mp_copy(a, d);
-           d->sign = a->sign;
+           res = mp_copy(a, d);
       } else {
-         res = MP_OKAY;
+           res = MP_OKAY;
       }
       if (c != NULL) {
          mp_zero(c);
@@ -1182,6 +1237,8 @@ int mp_div(mp_int *a, mp_int *b, mp_int *c, mp_int *d)
     }
     
     /* now q is the quotient and x is the remainder [which we have to normalize] */
+    /* get sign before writing to c */
+    x.sign = a->sign;
     if (c != NULL) {
        mp_clamp(&q);
        mp_copy(&q, c);
@@ -1189,7 +1246,6 @@ int mp_div(mp_int *a, mp_int *b, mp_int *c, mp_int *d)
     }
     
     if (d != NULL) {
-       x.sign = a->sign;
        mp_div_2d(&x, norm, &x, NULL);
        mp_clamp(&x);
        mp_copy(&x, d);
@@ -1203,6 +1259,31 @@ __T2:  mp_clear(&t2);
 __T1:  mp_clear(&t1);
 __Q:   mp_clear(&q);
    return res;   
+}
+
+/* c = a mod b, 0 <= c < b */
+int mp_mod(mp_int *a, mp_int *b, mp_int *c)
+{
+   mp_int t;
+   int res;
+   
+   if ((res = mp_init(&t)) != MP_OKAY) {
+      return res;
+   }
+
+   if ((res = mp_div(a, b, NULL, &t)) != MP_OKAY) {
+      mp_clear(&t);
+      return res;
+   }
+   
+   if (t.sign == MP_NEG) {
+      res = mp_add(b, &t, c);
+   } else {
+      res = mp_copy(&t, c);
+   }
+
+   mp_clear(&t);
+   return res;
 }
 
 /* single digit addition */
@@ -1259,6 +1340,7 @@ int mp_mul_d(mp_int *a, mp_digit b, mp_int *c)
    }
    t.dp[ix] = u;
    
+   t.sign = a->sign;
    mp_clamp(&t);
    if ((res = mp_copy(&t, c)) != MP_OKAY) {
       mp_clear(&t);
@@ -1295,50 +1377,144 @@ int mp_div_d(mp_int *a, mp_digit b, mp_int *c, mp_digit *d)
    return res;
 }
 
+int mp_mod_d(mp_int *a, mp_digit b, mp_digit *c)
+{
+   mp_int t, t2;
+   int res;
+      
+   if ((res = mp_init(&t)) != MP_OKAY) {
+      return res;
+   }
+   
+   if ((res = mp_init(&t2)) != MP_OKAY) {
+      mp_clear(&t);
+      return res;
+   }
+   
+   mp_set(&t, b);
+   mp_div(a, &t, NULL, &t2);
+   
+   if (t2.sign == MP_NEG) {
+      if ((res = mp_add_d(&t2, b, &t2)) != MP_OKAY) {
+         mp_clear(&t);
+         mp_clear(&t2);
+         return res;
+      }
+   }
+   *c = t2.dp[0];
+   mp_clear(&t);
+   mp_clear(&t2);
+   return MP_OKAY;
+}
+
+int mp_expt_d(mp_int *a, mp_digit b, mp_int *c)
+{
+   int res, x;
+   mp_int g;
+   
+   if ((res = mp_init_copy(&g, a)) != MP_OKAY) {
+      return res;
+   }
+   
+   /* set initial result */
+   mp_set(c, 1);
+   
+   for (x = 0; x < (int)DIGIT_BIT; x++) {
+       if ((res = mp_sqr(c, c)) != MP_OKAY) {
+          mp_clear(&g);
+          return res;
+       }
+       
+       if (b & (mp_digit)(1<<(DIGIT_BIT-1))) {
+          if ((res = mp_mul(c, &g, c)) != MP_OKAY) {
+             mp_clear(&g);
+             return res;
+          }
+       }
+       
+       b <<= 1;
+   }
+   
+   mp_clear(&g);
+   return MP_OKAY;
+}
+
 /* simple modular functions */
 
 /* d = a + b (mod c) */
 int mp_addmod(mp_int *a, mp_int *b, mp_int *c, mp_int *d)
 {
    int res;
+   mp_int t;
    
-   if ((res = mp_add(a, b, d)) != MP_OKAY) {
+   if ((res = mp_init(&t)) != MP_OKAY) { 
       return res;
    }
-   return mp_mod(d, c, d);
+   
+   if ((res = mp_add(a, b, &t)) != MP_OKAY) {
+      mp_clear(&t);
+      return res;
+   }
+   res = mp_mod(&t, c, d);
+   mp_clear(&t);
+   return res;
 }
 
 /* d = a - b (mod c) */
 int mp_submod(mp_int *a, mp_int *b, mp_int *c, mp_int *d)
 {
    int res;
+   mp_int t;
    
-   if ((res = mp_sub(a, b, d)) != MP_OKAY) {
+   if ((res = mp_init(&t)) != MP_OKAY) { 
       return res;
    }
-   return mp_mod(d, c, d);
+   
+   if ((res = mp_sub(a, b, &t)) != MP_OKAY) {
+      mp_clear(&t);
+      return res;
+   }
+   res = mp_mod(&t, c, d);
+   mp_clear(&t);
+   return res;
 }
 
 /* d = a * b (mod c) */
 int mp_mulmod(mp_int *a, mp_int *b, mp_int *c, mp_int *d)
 {
    int res;
+   mp_int t;
    
-   if ((res = mp_mul(a, b, d)) != MP_OKAY) {
+   if ((res = mp_init(&t)) != MP_OKAY) { 
       return res;
    }
-   return mp_mod(d, c, d);
+   
+   if ((res = mp_mul(a, b, &t)) != MP_OKAY) {
+      mp_clear(&t);
+      return res;
+   }
+   res = mp_mod(&t, c, d);
+   mp_clear(&t);
+   return res;
 }
 
 /* c = a * a (mod b) */
 int mp_sqrmod(mp_int *a, mp_int *b, mp_int *c)
 {
    int res;
+   mp_int t;
    
-   if ((res = mp_sqr(a, c)) != MP_OKAY) {
+   if ((res = mp_init(&t)) != MP_OKAY) { 
       return res;
    }
-   return mp_mod(c, b, c);
+   
+   if ((res = mp_sqr(a, &t)) != MP_OKAY) {
+      mp_clear(&t);
+      return res;
+   }
+   res = mp_mod(&t, b, c);
+   mp_clear(&t);
+   return res;
 }
 
 /* Greatest Common Divisor using the binary method [Algorithm B, page 338, vol2 of TAOCP] 
@@ -1462,107 +1638,184 @@ int mp_lcm(mp_int *a, mp_int *b, mp_int *c)
    return res;
 }   
 
-/* computes the modular inverse via extended euclidean algorithm, that is c = 1/a mod b */
+/* computes the modular inverse via binary extended euclidean algorithm, that is c = 1/a mod b */
 int mp_invmod(mp_int *a, mp_int *b, mp_int *c)
 {
-   int res;
-   mp_int t1, t2, t3, u1, u2, u3, v1, v2, v3, q;
+   mp_int x, y, u, v, A, B, C, D;
+   int res, neg;
    
-   if ((res = mp_init(&t1)) != MP_OKAY) {
-      return res;
-   }
-   
-   if ((res = mp_init(&t2)) != MP_OKAY) {
-      goto __T1;
+   if ((res = mp_init(&x)) != MP_OKAY) {
+      goto __ERR;
    }
    
-   if ((res = mp_init(&t3)) != MP_OKAY) {
-      goto __T2;
-   }
-
-   if ((res = mp_init(&u1)) != MP_OKAY) {
-      goto __T3;
+   if ((res = mp_init(&y)) != MP_OKAY) {
+      goto __X;
    }
    
-   if ((res = mp_init(&u2)) != MP_OKAY) {
-      goto __U1;
+   if ((res = mp_init(&u)) != MP_OKAY) {
+      goto __Y;
    }
    
-   if ((res = mp_init(&u3)) != MP_OKAY) {
-      goto __U2;
+   if ((res = mp_init(&v)) != MP_OKAY) {
+      goto __U;
    }
    
-   if ((res = mp_init(&v1)) != MP_OKAY) {
-      goto __U3;
-   }
- 
-   if ((res = mp_init(&v2)) != MP_OKAY) {
-      goto __V1;
-   }
-
-   if ((res = mp_init(&v3)) != MP_OKAY) {
-      goto __V2;
+   if ((res = mp_init(&A)) != MP_OKAY) {
+      goto __V;
    }
    
-   if ((res = mp_init(&q)) != MP_OKAY) {
-      goto __V3;
-   }
-
-   /* (u1, u2, u3) = (1, 0, a) */
-   mp_set(&u1, 1);
-   if ((res = mp_copy(a, &u3)) != MP_OKAY) {
-      goto __Q;
+   if ((res = mp_init(&B)) != MP_OKAY) {
+      goto __A;
    }
    
-   /* (v1, v2, v3) = (0, 1, b) */
-   mp_set(&u2, 1);
-   if ((res = mp_copy(b, &v3)) != MP_OKAY) {
-      goto __Q;
+   if ((res = mp_init(&C)) != MP_OKAY) {
+      goto __B;
    }
    
-   while (mp_iszero(&v3) == 0) { 
-       if ((res = mp_div(&u3, &v3, &q, NULL)) != MP_OKAY) {
-          goto __Q;
-       }
-       
-       /* (t1, t2, t3) = (u1, u2, u3) - q*(v1, v2, v3) */
-       if ((res = mp_mul(&q, &v1, &t1)) != MP_OKAY)  { goto __Q; }
-       if ((res = mp_sub(&u1, &t1, &t1)) != MP_OKAY) { goto __Q; }
-       if ((res = mp_mul(&q, &v2, &t2)) != MP_OKAY)  { goto __Q; }
-       if ((res = mp_sub(&u2, &t2, &t2)) != MP_OKAY) { goto __Q; }
-       if ((res = mp_mul(&q, &v3, &t3)) != MP_OKAY)  { goto __Q; }
-       if ((res = mp_sub(&u3, &t3, &t3)) != MP_OKAY) { goto __Q; }
-       
-       /* u = v */
-       if ((res = mp_copy(&v1, &u1)) != MP_OKAY)     { goto __Q; }
-       if ((res = mp_copy(&v2, &u2)) != MP_OKAY)     { goto __Q; }
-       if ((res = mp_copy(&v3, &u3)) != MP_OKAY)     { goto __Q; }
-       
-       /* v = t */
-       if ((res = mp_copy(&t1, &v1)) != MP_OKAY)     { goto __Q; }
-       if ((res = mp_copy(&t2, &v2)) != MP_OKAY)     { goto __Q; }
-       if ((res = mp_copy(&t3, &v3)) != MP_OKAY)     { goto __Q; }
-	}
-	
-   /* if u3 != 1, then there is no inverse */
-   if (mp_cmp_d(&u3, 1) != MP_EQ) {
+   if ((res = mp_init(&D)) != MP_OKAY) {
+      goto __C;
+   }
+   
+   /* x = a, y = b */
+   if ((res = mp_copy(a, &x)) != MP_OKAY) {
+      goto __D;
+   }
+   if ((res = mp_copy(b, &y)) != MP_OKAY) {
+      goto __D;
+   }
+   
+   if ((res = mp_abs(&x, &x)) != MP_OKAY) {
+      goto __D;
+   }
+   
+   /* 2. [modified] if x,y are both even then return an error! */
+   if (mp_iseven(&x) == 1 && mp_iseven(&y) == 1) {
       res = MP_VAL;
-      goto __Q;
+      goto __D;
    }
-	
-   /* u1 is the inverse */
-   res = mp_copy(&u1, c);
-__Q : mp_clear(&q);
-__V3: mp_clear(&v3);   
-__V2: mp_clear(&v1);   
-__V1: mp_clear(&v1);   
-__U3: mp_clear(&u3);   
-__U2: mp_clear(&u2);   
-__U1: mp_clear(&u1);   
-__T3: mp_clear(&t3);   
-__T2: mp_clear(&t2);   
-__T1: mp_clear(&t1);   
-    return res;
+   
+   /* 3. u=x, v=y, A=1, B=0, C=0,D=1 */
+   if ((res = mp_copy(&x, &u)) != MP_OKAY) {
+      goto __D;
+   }
+   if ((res = mp_copy(&y, &v)) != MP_OKAY) {
+      goto __D;
+   }
+   mp_set(&A, 1);
+   mp_set(&D, 1);
+   
+
+top:   
+   /* 4.  while u is even do */
+   while (mp_iseven(&u) == 1) {
+      /* 4.1 u = u/2 */
+      if ((res = mp_div_2(&u, &u)) != MP_OKAY) {
+         goto __D;
+      }
+      /* 4.2 if A or B is odd then */
+      if (mp_iseven(&A) == 0 || mp_iseven(&B) == 0) {
+         /* A = (A+y)/2, B = (B-x)/2 */
+         if ((res = mp_add(&A, &y, &A)) != MP_OKAY) {
+            goto __D;
+         }
+         if ((res = mp_sub(&B, &x, &B)) != MP_OKAY) {
+            goto __D;
+         }
+      }
+      /* A = A/2, B = B/2 */
+	  if ((res = mp_div_2(&A, &A)) != MP_OKAY) {
+	     goto __D;
+	  }
+	  if ((res = mp_div_2(&B, &B)) != MP_OKAY) {
+	     goto __D;
+	  }
+   }
+   
+  
+   /* 5.  while v is even do */
+   while (mp_iseven(&v) == 1) {
+      /* 5.1 v = v/2 */
+      if ((res = mp_div_2(&v, &v)) != MP_OKAY) {
+         goto __D;
+      }
+      /* 5.2 if C,D are even then */
+      if (mp_iseven(&C) == 0 || mp_iseven(&D) == 0) {
+         /* C = (C+y)/2, D = (D-x)/2 */
+         if ((res = mp_add(&C, &y, &C)) != MP_OKAY) {
+            goto __D;
+         }
+         if ((res = mp_sub(&D, &x, &D)) != MP_OKAY) {
+            goto __D;
+         }
+      }
+      /* C = C/2, D = D/2 */
+	  if ((res = mp_div_2(&C, &C)) != MP_OKAY) {
+	     goto __D;
+	  }
+	  if ((res = mp_div_2(&D, &D)) != MP_OKAY) {
+	     goto __D;
+	  }
+   }
+   
+   /* 6.  if u >= v then */
+   if (mp_cmp(&u, &v) != MP_LT) {
+      /* u = u - v, A = A - C, B = B - D */
+      if ((res = mp_sub(&u, &v, &u)) != MP_OKAY) {
+         goto __D;
+      }
+   
+      if ((res = mp_sub(&A, &C, &A)) != MP_OKAY) {
+         goto __D;
+      }
+   
+      if ((res = mp_sub(&B, &D, &B)) != MP_OKAY) {
+         goto __D;
+      }
+   } else {
+      /* v - v - u, C = C - A, D = D - B */
+      if ((res = mp_sub(&v, &u, &v)) != MP_OKAY) {
+         goto __D;
+      }
+   
+      if ((res = mp_sub(&C, &A, &C)) != MP_OKAY) {
+         goto __D;
+      }
+   
+      if ((res = mp_sub(&D, &B, &D)) != MP_OKAY) {
+         goto __D;
+      }
+   }
+   
+   /* if not zero goto step 4 */
+   if (mp_iszero(&u) == 0) goto top;
+   
+   /* now a = C, b = D, gcd == g*v */
+ 
+   /* if v != 1 then there is no inverse */
+   if (mp_cmp_d(&v, 1) != MP_EQ) {
+      res = MP_VAL;
+      goto __D;
+   }
+   
+   /* a is now the inverse */
+   neg = a->sign;
+   if (C.sign == MP_NEG) {
+      res = mp_add(b, &C, c);
+   } else {
+      res = mp_copy(&C, c);
+   }
+   c->sign = neg;
+   
+__D:   mp_clear(&D);
+__C:   mp_clear(&C);
+__B:   mp_clear(&B);
+__A:   mp_clear(&A);
+__V:   mp_clear(&v);
+__U:   mp_clear(&u);
+__Y:   mp_clear(&y);
+__X:   mp_clear(&x);
+__ERR:
+   return res;
 }
 
 /* pre-calculate the value required for Barrett reduction 
@@ -1838,7 +2091,7 @@ int mp_count_bits(mp_int *a)
    q = a->dp[a->used - 1];
    while (q) {
       ++r;
-      q >>= 1UL;
+      q >>= ((mp_digit)1);
    }
    return r;
 }
@@ -1846,13 +2099,14 @@ int mp_count_bits(mp_int *a)
 /* reads a unsigned char array, assumes the msb is stored first [big endian] */
 int mp_read_unsigned_bin(mp_int *a, unsigned char *b, int c)
 {
-   int res;
+   int res, n;
   
    mp_zero(a);
-   a->used = (c/DIGIT_BIT) + ((c % DIGIT_BIT) != 0 ? 1: 0);
+   n = (c/DIGIT_BIT) + ((c % DIGIT_BIT) != 0 ? 1: 0);
    if ((res = mp_grow(a, a->used)) != MP_OKAY) {
       return res;
    }
+   a->used = n;
    while (c-- > 0) {
        if ((res = mp_mul_2d(a, 8, a)) != MP_OKAY) {
           return res;

@@ -46,7 +46,9 @@
    #define DIGIT_BIT     ((CHAR_BIT * sizeof(mp_digit) - 1))  /* bits per digit */
 #endif
 
-#define MP_MASK       ((((mp_digit)1)<<((mp_digit)DIGIT_BIT))-((mp_digit)1))
+#define MP_DIGIT_BIT     DIGIT_BIT
+#define MP_MASK          ((((mp_digit)1)<<((mp_digit)DIGIT_BIT))-((mp_digit)1))
+#define MP_DIGIT_MAX     MP_MASK   
 
 /* equalities */
 #define MP_LT        -1   /* less than */
@@ -57,8 +59,9 @@
 #define MP_NEG        1   /* negative */
 
 #define MP_OKAY       0   /* ok result */
-#define MP_MEM        1   /* out of mem */
-#define MP_VAL        2   /* invalid input */
+#define MP_MEM        -2  /* out of mem */
+#define MP_VAL        -3  /* invalid input */
+#define MP_RANGE      MP_VAL
 
 #define KARATSUBA_MUL_CUTOFF    80                /* Min. number of digits before Karatsuba multiplication is used. */
 #define KARATSUBA_SQR_CUTOFF    80                /* Min. number of digits before Karatsuba squaring is used. */
@@ -67,6 +70,10 @@ typedef struct  {
     int used, alloc, sign;
     mp_digit *dp;
 } mp_int;
+
+#define USED(m)    ((m)->used)
+#define DIGIT(m,k) ((m)->dp[k])
+#define SIGN(m)    ((m)->sign)
 
 /* ---> init and deinit bignum functions <--- */
 
@@ -155,8 +162,8 @@ int mp_sqr(mp_int *a, mp_int *b);
 /* a/b => cb + d == a */
 int mp_div(mp_int *a, mp_int *b, mp_int *c, mp_int *d);
 
-/* c == a mod b */
-#define mp_mod(a, b, c) mp_div(a, b, NULL, c)
+/* c = a mod b, 0 <= c < b  */
+int mp_mod(mp_int *a, mp_int *b, mp_int *c);
 
 /* ---> single digit functions <--- */
 
@@ -175,8 +182,11 @@ int mp_mul_d(mp_int *a, mp_digit b, mp_int *c);
 /* a/b => cb + d == a */
 int mp_div_d(mp_int *a, mp_digit b, mp_int *c, mp_digit *d);
 
-/* c = a mod b */
-#define mp_mod_d(a,b,c) mp_div_d(a, b, NULL, c)
+/* c = a^b */
+int mp_expt_d(mp_int *a, mp_digit b, mp_int *c);
+
+/* c = a mod b, 0 <= c < b  */
+int mp_mod_d(mp_int *a, mp_digit b, mp_digit *c);
 
 /* ---> number theory <--- */
 

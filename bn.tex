@@ -1,7 +1,7 @@
 \documentclass{article}
 \begin{document}
 
-\title{LibTomMath v0.02 \\ A Free Multiple Precision Integer Library}
+\title{LibTomMath v0.03 \\ A Free Multiple Precision Integer Library}
 \author{Tom St Denis \\ tomstdenis@iahu.ca}
 \maketitle
 \newpage
@@ -81,6 +81,15 @@ Throughout the discussions there will be references to a \textbf{used} and \text
 used member refers to how many digits are actually used in the representation of the integer.  The alloc member refers
 to how many digits have been allocated off the heap.  There is also the $\beta$ quantity which is equal to $2^W$ where 
 $W$ is the number of bits in a digit (default is 28).  
+
+\subsection{Calling Functions}
+Most functions expect pointers to mp\_int's as parameters.   To save on memory usage it is possible to have source
+variables as destinations.  For example:
+\begin{verbatim}
+   mp_add(&x, &y, &x);           /* x = x + y */
+   mp_mul(&x, &z, &x);           /* x = x * z */
+   mp_div_2(&x, &x);             /* x = x / 2 */
+\end{verbatim}
 
 \subsection{Basic Functionality}
 Essentially all LibTomMath functions return one of three values to indicate if the function worked as desired.  A 
@@ -219,8 +228,8 @@ int mp_sqr(mp_int *a, mp_int *b);
 /* a/b => cb + d == a */
 int mp_div(mp_int *a, mp_int *b, mp_int *c, mp_int *d);
 
-/* c == a mod b */
-#define mp_mod(a, b, c) mp_div(a, b, NULL, c)
+/* c = a mod b, 0 <= c < b  */
+int mp_mod(mp_int *a, mp_int *b, mp_int *c);
 \end{verbatim}
 
 The \textbf{mp\_cmp} will compare two integers.  It will return \textbf{MP\_LT} if the first parameter is less than
@@ -251,8 +260,8 @@ int mp_mul_d(mp_int *a, mp_digit b, mp_int *c);
 /* a/b => cb + d == a */
 int mp_div_d(mp_int *a, mp_digit b, mp_int *c, mp_digit *d);
 
-/* c = a mod b */
-#define mp_mod_d(a,b,c) mp_div_d(a, b, NULL, c)
+/* c = a mod b, 0 <= c < b  */
+int mp_mod_d(mp_int *a, mp_digit b, mp_digit *c);
 \end{verbatim}
 
 Note that care should be taken for the value of the digit passed.  By default, any 28-bit integer is a valid digit that can
@@ -328,27 +337,27 @@ average.  The following results were observed.
 \begin{tabular}{c|c|c|c}
 \hline \textbf{Operation} & \textbf{Size (bits)} & \textbf{Time with MPI (cycles)} & \textbf{Time with LibTomMath (cycles)} \\
 \hline
-Multiply & 128 & 1,394  & 893  \\
-Multiply & 256 & 2,559  & 1,744  \\
-Multiply & 512 & 7,919  & 4,484  \\
-Multiply & 1024 & 28,460  & 9,326, \\
-Multiply & 2048 & 109,637  & 30,140  \\
-Multiply & 4096 & 467,226  & 122,290  \\
+Multiply & 128 & 1,426   & 928   \\
+Multiply & 256 & 2,551   & 1,787   \\
+Multiply & 512 & 7,913   & 3,458   \\
+Multiply & 1024 & 28,496   & 9,271  \\
+Multiply & 2048 & 109,897   & 29,917   \\
+Multiply & 4096 & 469,970   & 123,934   \\
 \hline 
-Square & 128 & 1,288  & 1,172  \\
-Square & 256 & 1,705  & 2,162  \\
-Square & 512 & 5,365  & 3,723  \\
-Square & 1024 & 18,836  & 9,063  \\
-Square & 2048 & 72,334  & 27,489  \\
-Square & 4096 & 306,252  & 110,372  \\
+Square & 128 & 1,319   & 1,230   \\
+Square & 256 & 1,776   & 2,131   \\
+Square & 512 & 5,399  & 3,694   \\
+Square & 1024 & 18,991  & 9,172   \\
+Square & 2048 & 72,126  & 27,352   \\
+Square & 4096 & 306,269  & 110,607  \\
 \hline 
-Exptmod & 512 & 30,497,732  & 6,898,504  \\
-Exptmod & 768 & 98,943,020  & 15,510,779  \\
-Exptmod & 1024 & 221,123,749  & 27,962,904  \\
-Exptmod & 2048 & 1,694,796,907  & 146,631,975  \\
-Exptmod & 2560 & 3,262,360,107  & 305,530,060  \\
-Exptmod & 3072 & 5,647,243,373  & 472,572,762  \\
-Exptmod & 4096 & 13,345,194,048  & 984,415,240  
+Exptmod & 512 & 32,021,586  & 6,880,075  \\
+Exptmod & 768 & 97,595,492  & 15,202,614  \\
+Exptmod & 1024 & 223,302,532  & 28,081,865   \\
+Exptmod & 2048 & 1,682,223,369   & 146,545,454   \\
+Exptmod & 2560 & 3,268,615,571   & 310,970,112   \\
+Exptmod & 3072 & 5,597,240,141   & 480,703,712   \\
+Exptmod & 4096 & 13,347,270,891   & 985,918,868   
 
 \end{tabular}
 \end{center}

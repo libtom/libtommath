@@ -1,3 +1,15 @@
+Dec 27th, 2002
+v0.03  -- Sped up s_mp_mul_high_digs by not computing the carries of the lower digits
+       -- Fixed a bug where mp_set_int wouldn't zero the value first and set the used member.
+       -- fixed a bug in s_mp_mul_high_digs where the limit placed on the result digits was not calculated properly
+       -- fixed bugs in add/sub/mul/sqr_mod functions where if the modulus and dest were the same it wouldn't work
+       -- fixed a bug in mp_mod and mp_mod_d concerning negative inputs
+       -- mp_mul_d didn't preserve sign
+       -- Many many many many fixes
+       -- Works in LibTomCrypt now :-)
+       -- Added iterations to the timing demos... more accurate.
+       -- Tom needs a job.       
+
 Dec 26th, 2002
 v0.02  -- Fixed a few "slips" in the manual.  This is "LibTomMath" afterall :-)
        -- Added mp_cmp_mag, mp_neg, mp_abs and mp_radix_size that were missing.

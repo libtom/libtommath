@@ -82,7 +82,7 @@ int main(void)
    rng = fopen("/dev/urandom", "rb");
 
    for (;;) {
-       n = fgetc(rng) % 10;
+       n = fgetc(rng) % 11;
 
    if (n == 0) {
        /* add tests */
@@ -210,6 +210,21 @@ int main(void)
       mp_todecimal(&c, buf);
       printf("%s\n", buf);      
       mp_todecimal(&d, buf);
+      printf("%s\n", buf);      
+   } else if (n == 10) {
+      /* invmod test */
+      rand_num2(&a);
+      rand_num2(&b);
+      b.sign = MP_ZPOS;
+      mp_gcd(&a, &b, &c);
+      if (mp_cmp_d(&c, 1) != 0) continue;
+      mp_invmod(&a, &b, &c);
+      printf("invmod\n");
+      mp_todecimal(&a, buf);
+      printf("%s\n", buf);      
+      mp_todecimal(&b, buf);
+      printf("%s\n", buf);      
+      mp_todecimal(&c, buf);
       printf("%s\n", buf);      
    } 
    }
