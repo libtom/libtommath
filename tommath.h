@@ -28,8 +28,16 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif
 
+/* C++ compilers don't like assigning void * to mp_digit * */
+#define  OPT_CAST  (mp_digit *)
+
+#else
+
+/* C on the other hand dosen't care */
+#define  OPT_CAST  
+
+#endif
 
 /* some default configurations.  
  *
@@ -202,7 +210,6 @@ int mp_cmp_mag(mp_int *a, mp_int *b);
 /* c = a + b */
 int mp_add(mp_int *a, mp_int *b, mp_int *c);
 
-
 /* c = a - b */
 int mp_sub(mp_int *a, mp_int *b, mp_int *c);
 
@@ -297,8 +304,51 @@ int mp_montgomery_calc_normalization(mp_int *a, mp_int *b);
 /* computes xR^-1 == x (mod N) via Montgomery Reduction */
 int mp_montgomery_reduce(mp_int *a, mp_int *m, mp_digit mp);
 
+/* returns 1 if a is a valid DR modulus */
+int mp_dr_is_modulus(mp_int *a);
+
+/* sets the value of "d" required for mp_dr_reduce */
+void mp_dr_setup(mp_int *a, mp_digit *d);
+
+/* reduces a modulo b using the Diminished Radix method */
+int mp_dr_reduce(mp_int *a, mp_int *b, mp_digit mp);
+
 /* d = a^b (mod c) */
 int mp_exptmod(mp_int *a, mp_int *b, mp_int *c, mp_int *d);
+
+/* ---> Primes <--- */
+#define PRIME_SIZE	256	/* number of primes */
+
+/* table of first 256 primes */
+extern const mp_digit __prime_tab[];
+
+/* result=1 if a is divisible by one of the first 256 primes */
+int mp_prime_is_divisible(mp_int *a, int *result);
+
+/* performs one Fermat test of "a" using base "b".  
+ * Sets result to 0 if composite or 1 if probable prime 
+ */
+int mp_prime_fermat(mp_int *a, mp_int *b, int *result);
+
+/* performs one Miller-Rabin test of "a" using base "b".
+ * Sets result to 0 if composite or 1 if probable prime 
+ */
+int mp_prime_miller_rabin(mp_int *a, mp_int *b, int *result);
+
+/* performs t rounds of Miller-Rabin on "a" using the first
+ * t prime bases.  Also performs an initial sieve of trial
+ * division.  Determines if "a" is prime with probability
+ * of error no more than (1/4)^t.
+ *
+ * Sets result to 1 if probably prime, 0 otherwise
+ */
+int mp_prime_is_prime(mp_int *a, int t, int *result);
+
+/* finds the next prime after the number "a" using "t" trials
+ * of Miller-Rabin.
+ */
+int mp_prime_next_prime(mp_int *a, int t);
+
 
 /* ---> radix conversion <--- */
 int mp_count_bits(mp_int *a);
@@ -341,7 +391,7 @@ int mp_karatsuba_mul(mp_int *a, mp_int *b, mp_int *c);
 int mp_karatsuba_sqr(mp_int *a, mp_int *b);
 int fast_mp_invmod(mp_int *a, mp_int *b, mp_int *c);
 int fast_mp_montgomery_reduce(mp_int *a, mp_int *m, mp_digit mp);
-int mp_exptmod_fast(mp_int *G, mp_int *X, mp_int *P, mp_int *Y);
+int mp_exptmod_fast(mp_int *G, mp_int *X, mp_int *P, mp_int *Y, int mode);
 void bn_reverse(unsigned char *s, int len);
 
 #ifdef __cplusplus

@@ -24,9 +24,12 @@ static int f_mp_exptmod (mp_int * G, mp_int * X, mp_int * P, mp_int * Y);
 int
 mp_exptmod (mp_int * G, mp_int * X, mp_int * P, mp_int * Y)
 {
+  int dr;
+  
+  dr = mp_dr_is_modulus(P);
   /* if the modulus is odd use the fast method */
-  if (mp_isodd (P) == 1 && P->used > 4 && P->used < MONTGOMERY_EXPT_CUTOFF) {
-    return mp_exptmod_fast (G, X, P, Y);
+  if (((mp_isodd (P) == 1 && P->used < MONTGOMERY_EXPT_CUTOFF) || dr == 1) && P->used > 4) {
+    return mp_exptmod_fast (G, X, P, Y, dr);
   } else {
     return f_mp_exptmod (G, X, P, Y);
   }

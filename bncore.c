@@ -18,5 +18,3 @@
 int     KARATSUBA_MUL_CUTOFF = 73,	/* Min. number of digits before Karatsuba multiplication is used. */
         KARATSUBA_SQR_CUTOFF = 121,	/* Min. number of digits before Karatsuba squaring is used. */
         MONTGOMERY_EXPT_CUTOFF = 128;	/* max. number of digits that montgomery reductions will help for */
-
-

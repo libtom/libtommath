@@ -17,7 +17,7 @@ time_mult (void)
   mp_init (&c);
 
   t1 = clock ();
-  for (x = 4; x <= 128; x += 4) {
+  for (x = 4; x <= 144; x += 4) {
     mp_rand (&a, x);
     mp_rand (&b, x);
     for (y = 0; y < 10000; y++) {
@@ -41,7 +41,7 @@ time_sqr (void)
   mp_init (&b);
 
   t1 = clock ();
-  for (x = 4; x <= 128; x += 4) {
+  for (x = 4; x <= 144; x += 4) {
     mp_rand (&a, x);
     for (y = 0; y < 10000; y++) {
       mp_sqr (&a, &b);
@@ -65,7 +65,7 @@ time_expt (void)
   mp_init (&d);
 
   t1 = clock ();
-  for (x = 4; x <= 128; x += 4) {
+  for (x = 4; x <= 144; x += 4) {
     mp_rand (&a, x);
     mp_rand (&b, x);
     mp_rand (&c, x);
@@ -96,7 +96,7 @@ main (void)
   /* tune multiplication first */
   log = fopen ("mult.log", "w");
   best = CLOCKS_PER_SEC * 1000;
-  for (KARATSUBA_MUL_CUTOFF = 8; KARATSUBA_MUL_CUTOFF <= 128; KARATSUBA_MUL_CUTOFF++) {
+  for (KARATSUBA_MUL_CUTOFF = 8; KARATSUBA_MUL_CUTOFF <= 144; KARATSUBA_MUL_CUTOFF++) {
     ti = time_mult ();
     printf ("%4d : %9lu\r", KARATSUBA_MUL_CUTOFF, ti);
     fprintf (log, "%d, %lu\n", KARATSUBA_MUL_CUTOFF, ti);
@@ -112,7 +112,7 @@ main (void)
   /* tune squaring */
   log = fopen ("sqr.log", "w");
   best = CLOCKS_PER_SEC * 1000;
-  for (KARATSUBA_SQR_CUTOFF = 8; KARATSUBA_SQR_CUTOFF <= 128; KARATSUBA_SQR_CUTOFF++) {
+  for (KARATSUBA_SQR_CUTOFF = 8; KARATSUBA_SQR_CUTOFF <= 144; KARATSUBA_SQR_CUTOFF++) {
     ti = time_sqr ();
     printf ("%4d : %9lu\r", KARATSUBA_SQR_CUTOFF, ti);
     fprintf (log, "%d, %lu\n", KARATSUBA_SQR_CUTOFF, ti);
@@ -131,7 +131,7 @@ main (void)
 
   log = fopen ("expt.log", "w");
   best = CLOCKS_PER_SEC * 1000;
-  for (MONTGOMERY_EXPT_CUTOFF = 8; MONTGOMERY_EXPT_CUTOFF <= 192; MONTGOMERY_EXPT_CUTOFF++) {
+  for (MONTGOMERY_EXPT_CUTOFF = 8; MONTGOMERY_EXPT_CUTOFF <= 144; MONTGOMERY_EXPT_CUTOFF++) {
     ti = time_expt ();
     printf ("%4d : %9lu\r", MONTGOMERY_EXPT_CUTOFF, ti);
     fflush (stdout);

@@ -36,10 +36,10 @@ mp_lshd (mp_int * a, int b)
 
     /* increment the used by the shift amount than copy upwards */
     a->used += b;
-    
+
     /* top */
     tmpa = a->dp + a->used - 1;
-    
+
     /* base */
     tmpaa = a->dp + a->used - 1 - b;
 

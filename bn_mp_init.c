@@ -20,7 +20,7 @@ mp_init (mp_int * a)
 {
 
   /* allocate ram required and clear it */
-  a->dp = calloc (sizeof (mp_digit), MP_PREC);
+  a->dp = OPT_CAST calloc (sizeof (mp_digit), MP_PREC);
   if (a->dp == NULL) {
     return MP_MEM;
   }

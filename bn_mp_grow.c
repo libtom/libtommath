@@ -24,7 +24,7 @@ mp_grow (mp_int * a, int size)
   if (a->alloc < size) {
     size += (MP_PREC * 2) - (size & (MP_PREC - 1));	/* ensure there are always at least MP_PREC digits extra on top */
 
-    a->dp = realloc (a->dp, sizeof (mp_digit) * size);
+    a->dp = OPT_CAST realloc (a->dp, sizeof (mp_digit) * size);
     if (a->dp == NULL) {
       return MP_MEM;
     }

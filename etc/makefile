@@ -15,6 +15,9 @@ tune: tune.o
         
 mersenne: mersenne.o
 	$(CC) mersenne.o $(LIBNAME) -o mersenne
+
+drprime: drprime.o
+	$(CC) drprime.o $(LIBNAME) -o drprime
         
 clean:
-	rm -f *.log *.o *.obj *.exe pprime tune mersenne 
+	rm -f *.log *.o *.obj *.exe pprime tune mersenne drprime

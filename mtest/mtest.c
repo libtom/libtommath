@@ -41,7 +41,7 @@ void rand_num(mp_int *a)
    unsigned char buf[512];
 
 top:
-   size = 1 + ((fgetc(rng)*fgetc(rng)) % 512);
+   size = 1 + ((fgetc(rng)*fgetc(rng)) % 96);
    buf[0] = (fgetc(rng)&1)?1:0;
    fread(buf+1, 1, size, rng);
    for (n = 0; n < size; n++) {
@@ -57,7 +57,7 @@ void rand_num2(mp_int *a)
    unsigned char buf[512];
 
 top:
-   size = 1 + ((fgetc(rng)*fgetc(rng)) % 512);
+   size = 1 + ((fgetc(rng)*fgetc(rng)) % 96);
    buf[0] = (fgetc(rng)&1)?1:0;
    fread(buf+1, 1, size, rng);
    for (n = 0; n < size; n++) {
@@ -73,8 +73,6 @@ int main(void)
    mp_int a, b, c, d, e;
    char buf[4096];
    
-   static int tests[] = { 11, 12 };
-
    mp_init(&a);
    mp_init(&b);
    mp_init(&c);

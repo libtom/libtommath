@@ -19,7 +19,7 @@ int
 mp_shrink (mp_int * a)
 {
   if (a->alloc != a->used) {
-    if ((a->dp = realloc (a->dp, sizeof (mp_digit) * a->used)) == NULL) {
+    if ((a->dp = OPT_CAST realloc (a->dp, sizeof (mp_digit) * a->used)) == NULL) {
       return MP_MEM;
     }
     a->alloc = a->used;

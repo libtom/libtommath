@@ -93,7 +93,7 @@ mp_toradix (mp_int * a, char *str, int radix)
     *str++ = s_rmap[d];
     ++digs;
   }
-  bn_reverse ((unsigned char *) _s, digs);
+  bn_reverse ((unsigned char *)_s, digs);
   *str++ = '\0';
   mp_clear (&t);
   return MP_OKAY;

@@ -1,7 +1,7 @@
 \documentclass{article}
 \begin{document}
 
-\title{LibTomMath v0.14 \\ A Free Multiple Precision Integer Library \\ http://math.libtomcrypt.org }
+\title{LibTomMath v0.15 \\ A Free Multiple Precision Integer Library \\ http://math.libtomcrypt.org }
 \author{Tom St Denis \\ tomstdenis@iahu.ca}
 \maketitle
 \newpage
@@ -99,6 +99,22 @@ in the order $x, y, z$.  For example:
    mp_mul(&y, &x, &z);           /* z = y * x */
    mp_div_2(&x, &y);             /* y = x / 2 */
 \end{verbatim}
+
+\subsection{Various Optimizations}
+Various routines come in several ``flavours'' which are optimized for particular cases of inputs.  For instance
+the multiplicative inverse function ``mp\_invmod()'' has a routine for odd and even moduli.  Similarly the
+``mp\_exptmod()'' function has several variants depending on the modulus as well.  Several lower level
+functions such as multiplication, squaring and reductions come in ``comba'' and ``baseline'' variants.
+
+The design of LibTomMath is such that the end user does not have to concern themselves too much with these
+details.  This is why the functions provided will determine \textit{automatically} when an appropriate
+optimal function can be used.  For example, when you call ``mp\_mul()'' the routines will first determine
+if the Karatsuba multiplier should be used.  If not it will determine if the ``comba'' method can be used
+and finally call the standard catch-all ``baseline'' method.
+
+Throughout the rest of this manual several variants for various functions will be referenced to as
+the ``comba'', ``baseline'', etc... method.  Keep in mind you call one function to use any of the optimal
+variants.
 
 \subsection{Return Values}
 All functions that return errors will return \textbf{MP\_OKAY} if the function was succesful.  It will return 
@@ -326,8 +342,51 @@ int mp_montgomery_setup(mp_int *a, mp_digit *mp);
 /* computes xR^-1 == x (mod N) via Montgomery Reduction */
 int mp_montgomery_reduce(mp_int *a, mp_int *m, mp_digit mp);
 
+/* returns 1 if a is a valid DR modulus */
+int mp_dr_is_modulus(mp_int *a);
+
+/* sets the value of "d" required for mp_dr_reduce */
+void mp_dr_setup(mp_int *a, mp_digit *d);
+
+/* reduces a modulo b using the Diminished Radix method */
+int mp_dr_reduce(mp_int *a, mp_int *b, mp_digit mp);
+
 /* d = a^b (mod c) */
 int mp_exptmod(mp_int *a, mp_int *b, mp_int *c, mp_int *d);
+\end{verbatim}
+
+\subsection{Primality Routines}
+\begin{verbatim}
+/* ---> Primes <--- */
+/* table of first 256 primes */
+extern const mp_digit __prime_tab[];
+
+/* result=1 if a is divisible by one of the first 256 primes */
+int mp_prime_is_divisible(mp_int *a, int *result);
+
+/* performs one Fermat test of "a" using base "b".  
+ * Sets result to 0 if composite or 1 if probable prime 
+ */
+int mp_prime_fermat(mp_int *a, mp_int *b, int *result);
+
+/* performs one Miller-Rabin test of "a" using base "b".
+ * Sets result to 0 if composite or 1 if probable prime 
+ */
+int mp_prime_miller_rabin(mp_int *a, mp_int *b, int *result);
+
+/* performs t rounds of Miller-Rabin on "a" using the first
+ * t prime bases.  Also performs an initial sieve of trial
+ * division.  Determines if "a" is prime with probability
+ * of error no more than (1/4)^t.
+ *
+ * Sets result to 1 if probably prime, 0 otherwise
+ */
+int mp_prime_is_prime(mp_int *a, int t, int *result);
+
+/* finds the next prime after the number "a" using "t" trials
+ * of Miller-Rabin.
+ */
+int mp_prime_next_prime(mp_int *a, int t);
 \end{verbatim}
 
 \subsection{Radix Conversions}
@@ -533,22 +592,130 @@ $n$ is prime then $\left ( {a \over n} \right )$ is equal to $1$ if $a$ is a qua
 it is not.
 
 \subsubsection{mp\_exptmod(mp\_int *a, mp\_int *b, mp\_int *c, mp\_int *d)}
-Computes $d = a^b \mbox{ (mod }c\mbox{)}$ using a sliding window $k$-ary exponentiation algorithm.  For an $\alpha$-bit
+Computes $d \equiv a^b \mbox{ (mod }c\mbox{)}$ using a sliding window $k$-ary exponentiation algorithm.  For an $\alpha$-bit
 exponent it performs $\alpha$ squarings and at most $\lfloor \alpha/k \rfloor + 2^{k-1}$ multiplications.  The value of $k$ is
-chosen to minimize the number of multiplications required for a given value of $\alpha$.  Barrett or Montgomery 
-reductions are used to reduce the squared or multiplied temporary results modulo $c$.
+chosen to minimize the number of multiplications required for a given value of $\alpha$.  Barrett, Montgomery or
+Dimminished-Radix reductions are used to reduce the squared or multiplied temporary results modulo $c$.
 
 \subsection{Fast Modular Reductions}
 
+A modular reduction of $a \mbox{ (mod }b\mbox{)}$ means to divide $a$ by $b$ and obtain the remainder.  
+Typically modular reductions are popular in public key cryptography algorithms such as RSA, 
+Diffie-Hellman and Elliptic Curve.  Modular reductions are also a large portion of modular exponentiation 
+(e.g. $a^b \mbox{ (mod }c\mbox{)}$).  
+
+In a simplistic sense a normal integer division could be used to compute reduction.  Division is by far
+the most complicated of routines in terms of the work required.  As a result it is desirable to avoid
+division as much as possible.  This is evident in quite a few fields in computing.  For example, often in
+signal analysis uses multiplication by the reciprocal to approximate divisions.  Number theory is no
+different.
+
+In most cases for the reduction of $a$ modulo $b$ the integer $a$ will be limited to the range 
+$0 \le a \le b^2$ which led to the invention of specialized algorithms to do the work.
+
+The first algorithm is the most generic and is called the Barrett reduction.  When the input is of the 
+limited form (e.g. $0 \le a \le b^2$) Barrett reduction is numerically equivalent to a full integer
+division with remainder.  For a $n$-digit value $b$ the Barrett reduction requires approximately $2n^2$
+multiplications.
+
+The second algorithm is the Montgomery reduction.  It is slightly different since the result is not
+numerically equivalent to a standard integer division with remainder.  Also this algorithm only works for
+odd moduli.  The final result can be converted easily back to the desired for which makes the reduction 
+technique useful for algorithms where only the final output is desired.  For a $n$-digit value $b$ the 
+Montgomery reduction requires approximately $n^2 + n$ multiplications, about half as many as the 
+Barrett algorithm.  
+
+The third algorithm is the Diminished Radix ``DR'' reduction.  It is a highly optimized reduction algorithm
+suitable only for a limited set of moduli.  For the specific moduli it is numerically equivalent to
+integer division with remainder.  For a $n$-digit value $b$ the DR reduction rquires exactly $n$
+multiplications which is considerably faster than either of the two previous algorithms.
+
+All three algorithms are automatically used in the modular exponentiation function mp\_exptmod() when 
+appropriate moduli are detected.
+
+\begin{figure}[here]
+\begin{small}
+\begin{center}
+\begin{tabular}{|c|c|l|}
+\hline \textbf{Algorithm} & \textbf{Multiplications} & \textbf{Limitations} \\
+ Barrett Reduction  & $2n^2$ & Any modulus. \\
+ Montgomery Reduction & $n^2 + n$ & Any odd modulus. \\
+ DR Reduction & $n$ & Moduli of the form  $p = \beta^k - p'$.\\
+\hline
+\end{tabular}
+\caption{Summary of reduction techniques.}
+\end{center}
+\end{small}
+\end{figure}
+
 \subsubsection{mp\_reduce(mp\_int *a, mp\_int *b, mp\_int *c)}
 Computes a Barrett reduction in-place of $a$ modulo $b$ with respect to $c$.  In essence it computes 
-$a \equiv a \mbox{ (mod }b\mbox{)}$ provided $0 \le a \le b^2$.  The value of $c$ is precomputed with the 
+$a \mbox{ (mod }b\mbox{)}$ provided $0 \le a \le b^2$.  The value of $c$ is precomputed with the 
 function mp\_reduce\_setup().  The modulus $b$ must be larger than zero.
+
+This reduction function is much faster than simply calling mp\_mod() (\textit{Which simply uses mp\_div() anyways}) and is
+desirable where ever an appropriate reduction is desired.  
 
 The Barrett reduction function has been optimized to use partial multipliers which means compared to MPI it performs
 have the number of single precision multipliers (\textit{provided they have the same size digits}).  The partial
 multipliers (\textit{one of which is shared with mp\_mul}) both have baseline and comba variants.  Barrett reduction 
 can reduce a number modulo a $n-$digit modulus with approximately $2n^2$ single precision multiplications.  
+
+Consider the following snippet (from a BBS generator) using the more traditional approach:
+
+\begin{small}
+\begin{verbatim}
+   mp_int modulus, n;
+   unsigned char buf[128];
+   int ix, err;
+   
+   /* ... init code ..., e.g. init modulus and n */
+   /* now output 128 bytes */
+   for (ix = 0; ix < 128; ix++) { 
+       if ((err = mp_sqrmod(&n, &modulus, &n)) != MP_OKAY) {
+          printf("Err: %d\n", err);
+          exit(EXIT_FAILURE);
+       }
+       buf[ix] = n->dp[0] & 255;
+   }
+\end{verbatim}
+\end{small}
+
+And now consider the same function using Barrett reductions:
+
+\begin{small}
+\begin{verbatim}
+   mp_int modulus, n, mp;
+   unsigned char buf[128];
+   int ix, err;
+   
+   /* ... init code ... e.g. modulus and n */
+   
+   /* now setup mp which is the Barrett param */
+   if ((err = mp_reduce_setup(&mp, &modulus)) != MP_OKAY) {
+      printf("Err: %d\n", err);
+      exit(EXIT_FAILURE);
+   }
+   /* now output 128 bytes */
+   for (ix = 0; ix < 128; ix++) {
+      /* square n */
+      if ((err = mp_sqr(&n, &n)) != MP_OKAY) {
+         printf("Err: %d\n", err);
+         exit(EXIT_FAILURE);
+      }
+      /* now reduce the square modulo modulus */
+      if ((err = mp_reduce(&n, &modulus, &mp)) != MP_OKAY) {
+         printf("Err: %d\n", err);
+         exit(EXIT_FAILURE);
+      }
+      buf[ix] = n->dp[0] & 255;
+   }
+\end{verbatim}	
+\end{small}
+
+Both routines will produce the same output provided the same initial values of $modulus$ and $n$.  The Barrett
+method seems like more work but the optimization stems from the use of the Barrett reduction instead of the normal
+integer division.
 
 \subsubsection{mp\_montgomery\_reduce(mp\_int *a, mp\_int *m, mp\_digit mp)}
 Computes a Montgomery reduction in-place of $a$ modulo $b$ with respect to $mp$.  If $b$ is some $n-$digit modulus then
@@ -576,7 +743,95 @@ Now all the variables in the system can be multiplied by $\hat x$ and reduced wi
 two long divisions would be required to setup $\hat x$ and a multiplication followed by reduction for each variable.  
 
 A very useful observation is that multiplying by $R = \beta^n$ amounts to performing a left shift by $n$ positions which
-requires no single precision multiplications.  
+requires no single precision multiplications.
+
+\subsubsection{mp\_dr\_reduce(mp\_int *a, mp\_int *b, mp\_digit mp)}
+Computes the Diminished-Radix reduction of $a$ in place modulo $b$ with respect to $mp$.  $a$ must be in the range 
+$0 \le a \le b^2$ and $mp$ must be precomputed with the function mp\_dr\_setup().
+
+This reduction technique performs the reduction with $n$ multiplications and is much faster than either of the previous
+reduction methods.  Essentially it is very much like the Montgomery reduction except it is particularly optimized for
+specific types of moduli.  The moduli must be of the form $p = \beta^k - p'$ where $0 \le p' < \beta$ for $k \ge 2$.  
+This algorithm is suitable for several applications such as Diffie-Hellman public key cryptsystems where the prime $p$ is 
+of this form.
+
+In appendix A several ``safe'' primes of various sizes are provided.  These primes are DR moduli and of the form 
+$p = 2q + 1$ where both $p$ and $q$ are prime.  A trivial observation is that $g = 4$ will be a generator for all of them
+since the order of the multiplicative sub-group is at most $2q$.  Since $2^2 \ne 1$ that means $4^q \equiv 2^{2q} \equiv 1$ 
+and that $g = 4$ is a generator of order $q$.
+
+These moduli can be used to construct a Diffie-Hellman public key cryptosystem.  Since the moduli are of the
+DR form the modular exponentiation steps will be efficient.
+
+\subsection{Primality Testing and Generation}
+
+\subsubsection{mp\_prime\_is\_divisible(mp\_int *a, int *result)}
+Determines if $a$ is divisible by any of the first 256 primes.  Sets $result$ to $1$ if true or $0$ 
+otherwise.  Also will set $result$ to $1$ if $a$ is equal to one of the first 256 primes.  
+
+\subsubsection{mp\_prime\_fermat(mp\_int *a, mp\_int *b, int *result)}
+Determines if $b$ is a witness to the compositeness of $a$ using the Fermat test.  Essentially this
+computes $b^a \mbox{ (mod }a\mbox{)}$ and compares it to $b$.  If they match $result$ is set
+to $1$ otherwise it is set to $0$.  If $a$ is prime and $1 < b < a$ then this function will set 
+$result$ to $1$ with a probability of one.  If $a$ is composite then this function will set 
+$result$ to $1$ with a probability of no more than $1 \over 2$.  
+
+If this function is repeated $t$ times with different bases $b$ then the probability of a false positive
+is no more than $2^{-t}$.
+
+\subsubsection{mp\_prime\_miller\_rabin(mp\_int *a, mp\_int *b, int *result)}
+Determines if $b$ is a witness to the compositeness of $a$ using the Miller-Rabin test.  This test
+works much (\textit{on an abstract level}) the same as the Fermat test except is more robust.  The
+set of pseudo-primes to any given base for the Miller-Rabin test is a proper subset of the pseudo-primes
+for the Fermat test.  
+
+If $a$ is prime and $1 < b < a$ then this function will always set $result$ to $1$.  If $a$ is composite
+the trivial bound of error is $1 \over 4$.  However, according to HAC\footnote{Handbook of Applied
+Cryptography, Chapter 4, Section 4, pp. 147, Fact 4.48.} the following bounds are 
+known.  For a test of $t$ trials on a $k$-bit number the probability $P_{k,t}$ of error is given as
+follows.
+
+\begin{enumerate}
+\item $P_{k,1} < k^24^{2 - \sqrt{k}}$ for $k \ge 2$
+\item $P_{k,t} < k^{3/2}2^tt^{-1/2}4^{2-\sqrt{tk}}$ for $(t = 2, k \ge 88)$ or $(3 \le t \le k/9, k \ge 21)$.
+\item $P_{k,t} < {7 \over 20}k2^{-5t} + {1 \over 7}k^{15/4}2^{-k/2-2t} + 12k2^{-k/4-3t}$ for $k/9 \le t \le k/4, k \ge 21$.
+\item $P_{k,t} < {1 \over 7}k^{15/4}2^{-k/2 - 2t}$  for $t \ge k/4, k \ge 21$.
+\end{enumerate}
+
+For instance, $P_{1024,1}$ which indicates the probability of failure of one test with a 1024-bit candidate 
+is no more than $2^{-40}$.  However, ideally at least a couple of trials should be used.  In LibTomCrypt
+for instance eight tests are used.  In this case $P_{1024,8}$ falls under the second rule which leads
+to a probability of failure of no more than $2^{-155.52}$.
+
+\begin{figure}[here]
+\begin{small}
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|c|}
+\hline \textbf{Size (k)} & \textbf{$t = 3$} & \textbf{$t = 4$} & \textbf{$t = 5$} & \textbf{$t = 6$} & \textbf{$t = 7$} & \textbf{$t = 8$}\\
+\hline 512  & -58 & -70 & -79 & -88 & -96 & -104 \\
+\hline 768  & -75 & -89 & -101 & -112 & -122 & -131\\
+\hline 1024 & -89 & -106 & -120 & -133 & -144 & -155 \\
+\hline 1280 & -102 & -120 & -136 & -151 & -164 & -176 \\
+\hline 1536 & -113 & -133 & -151 & -167 & -181 & -195 \\
+\hline 1792 & -124 & -146 & -165 & -182 & -198 & -212 \\
+\hline 2048 & -134 & -157 & -178 & -196 & -213 & -228\\
+\hline
+\end{tabular}
+\end{center}
+\end{small}
+\caption{Probability of error for a given random candidate of $k$ bits with $t$ trials.  Denoted as 
+log$_2(P_{k,t})$. }
+\end{figure}
+
+\subsubsection{mp\_prime\_is\_prime(mp\_int *a, int t, int *result)}
+This function determines if $a$ is probably prime by first performing trial division by the first 256 
+primes and then $t$ rounds of Miller-Rabin using the first $t$ primes as bases.  If $a$ is prime this
+function will always set $result$ to $1$.  If $a$ is composite then it will almost always set $result$
+to $0$.  The probability of error is given in figure two.
+
+\subsubsection{mp\_prime\_next\_prime(mp\_int *a, int t)}
+This function will find the next prime \textbf{after} $a$ by using trial division and $t$ trials of 
+Miller-Rabin.  
 
 \section{Timing Analysis}
 
@@ -662,8 +917,12 @@ MPI uses a binary square-multiply method for exponentiation.  For the same expon
 perform 8 squarings and 5 multiplications.  There is a precomputation phase for the method LibTomMath uses but it 
 generally cuts down considerably on the number of multiplications.  Consider a 512-bit exponent.  The worst case for the 
 LibTomMath method results in 512 squarings and 124 multiplications.  The MPI method would have 512 squarings 
-and 512 multiplications.  Randomly every $2k$ bits another multiplication is saved via the sliding-window 
-technique on top of the savings the $k$-ary method provides.
+and 512 multiplications.  
+
+Randomly the most probable event is that every $2k^2$ bits another multiplication is saved via the 
+sliding-window technique on top of the savings the $k$-ary method provides.  This stems from the fact that each window
+has a probability of $2^{-1}$ of being delayed by one bit.  In reality the savings can be much more when the exponent
+has an abundance of zero bits.  
 
 Both LibTomMath and MPI use Barrett reduction instead of division to reduce the numbers modulo the modulus given.
 However, LibTomMath can take advantage of the fact that the multiplications required within the Barrett reduction
@@ -671,12 +930,103 @@ do not have to give full precision.  As a result the reduction step is much fast
 code will automatically determine at run-time (e.g. when its called) whether the faster multiplier can be used.  The
 faster multipliers have also been optimized into the two variants (baseline and comba baseline).
 
-LibTomMath also has a variant of the exptmod function that uses Montgomery reductions instead of Barrett reductions
-which is faster.  The code will automatically detect when the Montgomery version can be used (\textit{Requires the
-modulus to be odd and below the MONTGOMERY\_EXPT\_CUTOFF size}).  The Montgomery routine is essentially a copy of the 
-Barrett exponentiation routine except it uses Montgomery reduction.
+LibTomMath also has a variant of the exptmod function that uses Montgomery or Diminished-Radix reductions instead of 
+Barrett reductions which are faster.  The code will automatically detect when the Montgomery version can be used 
+(\textit{Requires the modulus to be odd and below the MONTGOMERY\_EXPT\_CUTOFF size}).  The Montgomery routine is 
+essentially a copy of the Barrett exponentiation routine except it uses Montgomery reduction.
 
 As a result of all these changes exponentiation in LibTomMath is much faster than compared to MPI.  On most ALU-strong
-processors (AMD Athlon for instance) exponentiation in LibTomMath is often more then ten times faster than MPI.   
+processors (AMD Athlon for instance) exponentiation in LibTomMath is often more then ten times faster than MPI.
+
+\newpage
+\section*{Appendix A -- DR Safe Prime Moduli}
+These are safe primes suitable for the DR reduction techniques.
+
+\begin{small}
+\begin{verbatim}
+224-bit prime:
+p == 26959946667150639794667015087019630673637144422540572481103341844143
+
+532-bit prime:
+p == 14059105607947488696282932836518693308967803494693489478439861164411
+     99243959839959474700214407465892859350284572975279726002583142341968
+     6528151609940203368691747
+
+784-bit prime:
+p == 10174582569701926077392351975587856746131528201775982910760891436407
+     52752352543956225804474009941755789631639189671820136396606697711084
+     75957692810857098847138903161308502419410142185759152435680068435915
+     159402496058513611411688900243039
+     
+1036-bit prime:
+p == 73633510803960459580592340614718453088992337057476877219196961242207
+     30400993319449915739231125812675425079864519532271929704028930638504
+     85730703075899286013451337291468249027691733891486704001513279827771
+     74018362916106519487472796251714810077522836342108369176406547759082
+     3919364012917984605619526140821798437127
+
+1540-bit prime:
+p == 38564998830736521417281865696453025806593491967131023221754800625044
+     11826546885121070536038571753679461518026049420807660579867166071933
+     31995138078062523944232834134301060035963325132466829039948295286901
+     98205120921557533726473585751382193953592127439965050261476810842071
+     57368450587885458870662348457392592590350574754547108886771218500413
+     52012892734056144158994382765356263460989042410208779740029161680999
+     51885406379295536200413493190419727789712076165162175783
+     
+2072-bit prime:
+p == 54218939133169617266167044061918053674999416641599333415160174539219
+     34845902966009796023786766248081296137779934662422030250545736925626
+     89251250471628358318743978285860720148446448885701001277560572526947
+     61939255157449083928645845499448866574499182283776991809511712954641
+     41244487770339412235658314203908468644295047744779491537946899487476
+     80362212954278693335653935890352619041936727463717926744868338358149
+     56836864340303776864961677852601361049369618605589931826833943267154
+     13281957242613296066998310166663594408748431030206661065682224010477
+     20269951530296879490444224546654729111504346660859907296364097126834
+     834235287147
+\end{verbatim}
+\newpage
+\begin{verbatim}
+3080-bit prime:
+p == 14872591348147092640920326485259710388958656451489011805853404549855
+     24155135260217788758027400478312256339496385275012465661575576202252
+     06314569873207988029466422057976484876770407676185319721656326266004
+     66027039730507982182461708359620055985616697068444694474354610925422
+     65792444947706769615695252256130901271870341005768912974433684521436
+     21126335809752272646208391793909176002665892575707673348417320292714
+     14414925737999142402226287954056239531091315945236233530448983394814
+     94120112723445689647986475279242446083151413667587008191682564376412
+     34796414611389856588668313940700594138366932599747507691048808666325
+     63356891811579575714450674901879395531659037735542902605310091218790
+     44170766615232300936675369451260747671432073394867530820527479172464
+     10644245072764022650374658634027981631882139521072626829153564850619
+     07146160831634031899433344310568760382865303657571873671474460048559
+     12033137386225053275419626102417236133948503
+
+4116-bit prime:
+p == 10951211157166778028568112903923951285881685924091094949001780089679
+     55253005183831872715423151551999734857184538199864469605657805519106
+     71752965504405483319768745978263629725521974299473675154181526972794
+     07518606702687749033402960400061140139713092570283328496790968248002
+     50742691718610670812374272414086863715763724622797509437062518082383
+     05605014462496277630214789052124947706021514827516368830127584715531
+     60422794055576326393660668474428614221648326558746558242215778499288
+     63023018366835675399949740429332468186340518172487073360822220449055
+     34058256846156864525995487330361695377639385317484513208112197632746
+     27403549307444874296172025850155107442985301015477068215901887335158
+     80733527449780963163909830077616357506845523215289297624086914545378
+     51108253422962011656326016849452390656670941816601111275452976618355
+     45793212249409511773940884655967126200762400673705890369240247283750
+     76210477267488679008016579588696191194060127319035195370137160936882
+     40224439969917201783514453748848639690614421772002899286394128821718
+     53539149915834004216827510006035966557909908155251261543943446413363
+     97793791497068253936771017031980867706707490224041075826337383538651
+     82549367950377193483609465580277633166426163174014828176348776585274
+     6577808019633679
+\end{verbatim}
+\end{small}
+
+
 
 \end{document}

@@ -21,7 +21,6 @@ mp_div_d (mp_int * a, mp_digit b, mp_int * c, mp_digit * d)
   mp_int  t, t2;
   int     res;
 
-
   if ((res = mp_init (&t)) != MP_OKAY) {
     return res;
   }

@@ -1,3 +1,14 @@
+Mar 22nd, 2003
+v0.15  -- Added series of prime testing routines to lib
+       -- Fixed up etc/tune.c
+       -- Added DR reduction algorithm
+       -- Beefed up the manual more.
+       -- Fixed up demo/demo.c so it doesn't have so many warnings and it does the full series of
+          tests
+       -- Added "pre-gen" directory which will hold a "gen.pl"'ed copy of the entire lib [done at
+          zipup time so its always the latest]
+       -- Added conditional casts for C++ users [boo!]
+
 Mar 15th, 2003
 v0.14  -- Tons of manual updates
        -- cleaned up the directory

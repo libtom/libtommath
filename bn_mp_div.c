@@ -106,7 +106,7 @@ mp_div (mp_int * a, mp_int * b, mp_int * c, mp_int * d)
 
   /* step 3. for i from n down to (t + 1) */
   for (i = n; i >= (t + 1); i--) {
-    if (i > x.alloc)
+    if (i > x.used)
       continue;
 
     /* step 3.1 if xi == yt then set q{i-t-1} to b-1, otherwise set q{i-t-1} to (xi*b + x{i-1})/yt */
@@ -171,10 +171,11 @@ mp_div (mp_int * a, mp_int * b, mp_int * c, mp_int * d)
       q.dp[i - t - 1] = (q.dp[i - t - 1] - 1UL) & MP_MASK;
     }
   }
-
+  
   /* now q is the quotient and x is the remainder [which we have to normalize] */
   /* get sign before writing to c */
   x.sign = a->sign;
+
   if (c != NULL) {
     mp_clamp (&q);
     mp_exch (&q, c);
@@ -183,7 +184,6 @@ mp_div (mp_int * a, mp_int * b, mp_int * c, mp_int * d)
 
   if (d != NULL) {
     mp_div_2d (&x, norm, &x, NULL);
-    mp_clamp (&x);
     mp_exch (&x, d);
   }
 

@@ -33,10 +33,10 @@ mp_mul_2d (mp_int * a, int b, mp_int * c)
 
   /* shift by as many digits in the bit count */
   if (b >= DIGIT_BIT) {
-     if ((res = mp_lshd (c, b / DIGIT_BIT)) != MP_OKAY) {
-       return res;
-     }
-  }     
+    if ((res = mp_lshd (c, b / DIGIT_BIT)) != MP_OKAY) {
+      return res;
+    }
+  }
   c->used = c->alloc;
 
   /* shift any bit count < DIGIT_BIT */

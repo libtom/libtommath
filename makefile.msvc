@@ -20,7 +20,10 @@ bn_mp_reduce.obj bn_mp_montgomery_setup.obj bn_fast_mp_montgomery_reduce.obj bn_
 bn_mp_exptmod_fast.obj bn_mp_exptmod.obj bn_mp_2expt.obj bn_mp_n_root.obj bn_mp_jacobi.obj bn_reverse.obj \
 bn_mp_count_bits.obj bn_mp_read_unsigned_bin.obj bn_mp_read_signed_bin.obj bn_mp_to_unsigned_bin.obj \
 bn_mp_to_signed_bin.obj bn_mp_unsigned_bin_size.obj bn_mp_signed_bin_size.obj bn_radix.obj \
-bn_mp_xor.obj bn_mp_and.obj bn_mp_or.obj bn_mp_rand.obj bn_mp_montgomery_calc_normalization.obj
+bn_mp_xor.obj bn_mp_and.obj bn_mp_or.obj bn_mp_rand.obj bn_mp_montgomery_calc_normalization.obj \
+bn_mp_prime_is_divisible.obj bn_prime_tab.obj bn_mp_prime_fermat.obj bn_mp_prime_miller_rabin.obj \
+bn_mp_prime_is_prime.obj bn_mp_prime_next_prime.obj bn_mp_dr_reduce.obj
+
 
 library: $(OBJECTS)
 	lib /out:tommath.lib $(OBJECTS)

@@ -80,7 +80,6 @@ fast_mp_invmod (mp_int * a, mp_int * b, mp_int * c)
   }
   mp_set (&D, 1);
 
-
 top:
   /* 4.  while u is even do */
   while (mp_iseven (&u) == 1) {

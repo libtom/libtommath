@@ -21,7 +21,7 @@ mp_init_size (mp_int * a, int size)
 
   /* pad up so there are at least 16 zero digits */
   size += (MP_PREC * 2) - (size & (MP_PREC - 1));	/* ensure there are always at least 16 digits extra on top */
-  a->dp = calloc (sizeof (mp_digit), size);
+  a->dp = OPT_CAST calloc (sizeof (mp_digit), size);
   if (a->dp == NULL) {
     return MP_MEM;
   }

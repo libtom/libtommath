@@ -22,11 +22,13 @@
  * Uses Montgomery reduction 
  */
 int
-mp_exptmod_fast (mp_int * G, mp_int * X, mp_int * P, mp_int * Y)
+mp_exptmod_fast (mp_int * G, mp_int * X, mp_int * P, mp_int * Y, int redmode)
 {
   mp_int  M[256], res;
   mp_digit buf, mp;
   int     err, bitbuf, bitcpy, bitcnt, mode, digidx, x, y, winsize;
+  int     (*redux)(mp_int*,mp_int*,mp_digit);
+  
 
   /* find window size */
   x = mp_count_bits (X);
@@ -55,10 +57,17 @@ mp_exptmod_fast (mp_int * G, mp_int * X, mp_int * P, mp_int * Y)
       return err;
     }
   }
-
-  /* now setup montgomery  */
-  if ((err = mp_montgomery_setup (P, &mp)) != MP_OKAY) {
-    goto __M;
+  
+  if (redmode == 0) {
+     /* now setup montgomery  */
+     if ((err = mp_montgomery_setup (P, &mp)) != MP_OKAY) {
+        goto __M;
+     }
+     redux = mp_montgomery_reduce;
+  } else {
+     /* setup DR reduction */
+     mp_dr_setup(P, &mp);
+     redux = mp_dr_reduce;
   }
 
   /* setup result */
@@ -73,15 +82,23 @@ mp_exptmod_fast (mp_int * G, mp_int * X, mp_int * P, mp_int * Y)
    * The first half of the table is not computed though accept for M[0] and M[1]
    */
 
-  /* now we need R mod m */
-  if ((err = mp_montgomery_calc_normalization (&res, P)) != MP_OKAY) {
-    goto __RES;
-  }
+  if (redmode == 0) {
+     /* now we need R mod m */
+     if ((err = mp_montgomery_calc_normalization (&res, P)) != MP_OKAY) {
+       goto __RES;
+     }
 
-  /* now set M[1] to G * R mod m */
-  if ((err = mp_mulmod (G, &res, P, &M[1])) != MP_OKAY) {
-    goto __RES;
+     /* now set M[1] to G * R mod m */
+     if ((err = mp_mulmod (G, &res, P, &M[1])) != MP_OKAY) {
+       goto __RES;
+     }
+  } else {
+     mp_set(&res, 1);
+     if ((err = mp_mod(G, P, &M[1])) != MP_OKAY) {
+        goto __RES;
+     }
   }
+  
   /* compute the value at M[1<<(winsize-1)] by squaring M[1] (winsize-1) times */
   if ((err = mp_copy (&M[1], &M[1 << (winsize - 1)])) != MP_OKAY) {
     goto __RES;
@@ -91,7 +108,7 @@ mp_exptmod_fast (mp_int * G, mp_int * X, mp_int * P, mp_int * Y)
     if ((err = mp_sqr (&M[1 << (winsize - 1)], &M[1 << (winsize - 1)])) != MP_OKAY) {
       goto __RES;
     }
-    if ((err = mp_montgomery_reduce (&M[1 << (winsize - 1)], P, mp)) != MP_OKAY) {
+    if ((err = redux (&M[1 << (winsize - 1)], P, mp)) != MP_OKAY) {
       goto __RES;
     }
   }
@@ -101,7 +118,7 @@ mp_exptmod_fast (mp_int * G, mp_int * X, mp_int * P, mp_int * Y)
     if ((err = mp_mul (&M[x - 1], &M[1], &M[x])) != MP_OKAY) {
       goto __RES;
     }
-    if ((err = mp_montgomery_reduce (&M[x], P, mp)) != MP_OKAY) {
+    if ((err = redux (&M[x], P, mp)) != MP_OKAY) {
       goto __RES;
     }
   }
@@ -141,7 +158,7 @@ mp_exptmod_fast (mp_int * G, mp_int * X, mp_int * P, mp_int * Y)
       if ((err = mp_sqr (&res, &res)) != MP_OKAY) {
 	goto __RES;
       }
-      if ((err = mp_montgomery_reduce (&res, P, mp)) != MP_OKAY) {
+      if ((err = redux (&res, P, mp)) != MP_OKAY) {
 	goto __RES;
       }
       continue;
@@ -158,7 +175,7 @@ mp_exptmod_fast (mp_int * G, mp_int * X, mp_int * P, mp_int * Y)
 	if ((err = mp_sqr (&res, &res)) != MP_OKAY) {
 	  goto __RES;
 	}
-	if ((err = mp_montgomery_reduce (&res, P, mp)) != MP_OKAY) {
+	if ((err = redux (&res, P, mp)) != MP_OKAY) {
 	  goto __RES;
 	}
       }
@@ -167,7 +184,7 @@ mp_exptmod_fast (mp_int * G, mp_int * X, mp_int * P, mp_int * Y)
       if ((err = mp_mul (&res, &M[bitbuf], &res)) != MP_OKAY) {
 	goto __RES;
       }
-      if ((err = mp_montgomery_reduce (&res, P, mp)) != MP_OKAY) {
+      if ((err = redux (&res, P, mp)) != MP_OKAY) {
 	goto __RES;
       }
 
@@ -184,7 +201,7 @@ mp_exptmod_fast (mp_int * G, mp_int * X, mp_int * P, mp_int * Y)
       if ((err = mp_sqr (&res, &res)) != MP_OKAY) {
 	goto __RES;
       }
-      if ((err = mp_montgomery_reduce (&res, P, mp)) != MP_OKAY) {
+      if ((err = redux (&res, P, mp)) != MP_OKAY) {
 	goto __RES;
       }
 
@@ -194,17 +211,19 @@ mp_exptmod_fast (mp_int * G, mp_int * X, mp_int * P, mp_int * Y)
 	if ((err = mp_mul (&res, &M[1], &res)) != MP_OKAY) {
 	  goto __RES;
 	}
-	if ((err = mp_montgomery_reduce (&res, P, mp)) != MP_OKAY) {
+	if ((err = redux (&res, P, mp)) != MP_OKAY) {
 	  goto __RES;
 	}
       }
     }
   }
 
-  /* fixup result */
-  if ((err = mp_montgomery_reduce (&res, P, mp)) != MP_OKAY) {
-    goto __RES;
-  }
+  if (redmode == 0) {
+     /* fixup result */
+     if ((err = mp_montgomery_reduce (&res, P, mp)) != MP_OKAY) {
+       goto __RES;
+     }
+  }     
 
   mp_exch (&res, Y);
   err = MP_OKAY;

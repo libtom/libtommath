@@ -52,8 +52,8 @@ mp_div_2d (mp_int * a, int b, mp_int * c, mp_int * d)
 
   /* shift by as many digits in the bit count */
   if (b >= DIGIT_BIT) {
-     mp_rshd (c, b / DIGIT_BIT);
-  }     
+    mp_rshd (c, b / DIGIT_BIT);
+  }
 
   /* shift any bit count < DIGIT_BIT */
   D = (mp_digit) (b % DIGIT_BIT);

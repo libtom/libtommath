@@ -55,13 +55,13 @@ s_mp_add (mp_int * a, mp_int * b, mp_int * c)
     register int i;
 
     /* alias for digit pointers */
-    
+
     /* first input */
     tmpa = a->dp;
-    
+
     /* second input */
     tmpb = b->dp;
-    
+
     /* destination */
     tmpc = c->dp;
 
