@@ -14,32 +14,34 @@
  */
 #include <tommath.h>
 
-/* determines if an integers is divisible by one 
- * of the first PRIME_SIZE primes or not
- *
- * sets result to 0 if not, 1 if yes
- */
-int
-mp_prime_is_divisible (mp_int * a, int *result)
+int mp_fwrite(mp_int *a, int radix, FILE *stream)
 {
-  int     err, ix;
-  mp_digit res;
-
-  /* default to not */
-  *result = 0;
-
-  for (ix = 0; ix < PRIME_SIZE; ix++) {
-    /* what is a mod __prime_tab[ix] */
-    if ((err = mp_mod_d (a, __prime_tab[ix], &res)) != MP_OKAY) {
+   char *buf;
+   int err, len, x;
+   
+   len = mp_radix_size(a, radix);
+   if (len == 0) {
+      return MP_VAL;
+   }
+   
+   buf = malloc(len);
+   if (buf == NULL) {
+      return MP_MEM;
+   }
+   
+   if ((err = mp_toradix(a, buf, radix)) != MP_OKAY) {
+      free(buf);
       return err;
-    }
-
-    /* is the residue zero? */
-    if (res == 0) {
-      *result = 1;
-      return MP_OKAY;
-    }
-  }
-
-  return MP_OKAY;
+   }
+   
+   for (x = 0; x < len; x++) {
+       if (fputc(buf[x], stream) == EOF) {
+          free(buf);
+          return MP_VAL;
+       }
+   }
+   
+   free(buf);
+   return MP_OKAY;
 }
+

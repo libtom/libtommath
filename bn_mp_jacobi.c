@@ -18,10 +18,10 @@
  * HAC pp. 73 Algorithm 2.149
  */
 int
-mp_jacobi (mp_int * a, mp_int * n, int *c)
+mp_jacobi (mp_int * a, mp_int * p, int *c)
 {
-  mp_int  a1, n1, e;
-  int     s, r, res;
+  mp_int  a1, p1;
+  int     k, s, r, res;
   mp_digit residue;
 
   /* step 1.  if a == 0, return 0 */
@@ -37,39 +37,30 @@ mp_jacobi (mp_int * a, mp_int * n, int *c)
   }
 
   /* default */
-  s = 0;
+  k = s = 0;
 
-  /* step 3.  write a = a1 * 2^e  */
+  /* step 3.  write a = a1 * 2**k  */
   if ((res = mp_init_copy (&a1, a)) != MP_OKAY) {
     return res;
   }
 
-  if ((res = mp_init (&n1)) != MP_OKAY) {
+  if ((res = mp_init (&p1)) != MP_OKAY) {
     goto __A1;
   }
 
-  if ((res = mp_init (&e)) != MP_OKAY) {
-    goto __N1;
-  }
-
   while (mp_iseven (&a1) == 1) {
-    if ((res = mp_add_d (&e, 1, &e)) != MP_OKAY) {
-      goto __E;
-    }
-
+    k = k + 1;
     if ((res = mp_div_2 (&a1, &a1)) != MP_OKAY) {
-      goto __E;
+      goto __P1;
     }
   }
 
   /* step 4.  if e is even set s=1 */
-  if (mp_iseven (&e) == 1) {
+  if ((k & 1) == 0) {
     s = 1;
   } else {
-    /* else set s=1 if n = 1/7 (mod 8) or s=-1 if n = 3/5 (mod 8) */
-    if ((res = mp_mod_d (n, 8, &residue)) != MP_OKAY) {
-      goto __E;
-    }
+    /* else set s=1 if p = 1/7 (mod 8) or s=-1 if p = 3/5 (mod 8) */
+    residue = p->dp[0] & 7;
 
     if (residue == 1 || residue == 7) {
       s = 1;
@@ -78,17 +69,9 @@ mp_jacobi (mp_int * a, mp_int * n, int *c)
     }
   }
 
-  /* step 5.  if n == 3 (mod 4) *and* a1 == 3 (mod 4) then s = -s */
-  if ((res = mp_mod_d (n, 4, &residue)) != MP_OKAY) {
-    goto __E;
-  }
-  if (residue == 3) {
-    if ((res = mp_mod_d (&a1, 4, &residue)) != MP_OKAY) {
-      goto __E;
-    }
-    if (residue == 3) {
-      s = -s;
-    }
+  /* step 5.  if p == 3 (mod 4) *and* a1 == 3 (mod 4) then s = -s */
+  if ( ((p->dp[0] & 3) == 3) && ((a1.dp[0] & 3) == 3)) {
+    s = -s;
   }
 
   /* if a1 == 1 we're done */
@@ -96,19 +79,18 @@ mp_jacobi (mp_int * a, mp_int * n, int *c)
     *c = s;
   } else {
     /* n1 = n mod a1 */
-    if ((res = mp_mod (n, &a1, &n1)) != MP_OKAY) {
-      goto __E;
+    if ((res = mp_mod (p, &a1, &p1)) != MP_OKAY) {
+      goto __P1;
     }
-    if ((res = mp_jacobi (&n1, &a1, &r)) != MP_OKAY) {
-      goto __E;
+    if ((res = mp_jacobi (&p1, &a1, &r)) != MP_OKAY) {
+      goto __P1;
     }
     *c = s * r;
   }
 
   /* done */
   res = MP_OKAY;
-__E:mp_clear (&e);
-__N1:mp_clear (&n1);
+__P1:mp_clear (&p1);
 __A1:mp_clear (&a1);
   return res;
 }

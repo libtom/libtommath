@@ -64,6 +64,19 @@ int main(void)
    mp_init(&f);   
    
    srand(time(NULL));
+
+#if 0
+   /* test mp_cnt_lsb */
+   mp_set(&a, 1);
+   for (ix = 0; ix < 128; ix++) {
+       if (mp_cnt_lsb(&a) != ix) {
+          printf("Failed at %d\n", ix);
+          return 0;
+       }
+       mp_mul_2(&a, &a);
+   }
+#endif
+
 /* test mp_reduce_2k */
 #if 0
    for (cnt = 3; cnt <= 4096; ++cnt) {
@@ -325,8 +338,6 @@ int main(void)
    /* force KARA and TOOM to enable despite cutoffs */
    KARATSUBA_SQR_CUTOFF = KARATSUBA_MUL_CUTOFF = 110;
    TOOM_SQR_CUTOFF      = TOOM_MUL_CUTOFF      = 150;
-   
-   
 
    for (;;) {
        /* randomly clear and re-init one variable, this has the affect of triming the alloc space */

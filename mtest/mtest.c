@@ -107,7 +107,7 @@ int main(void)
          sleep(1);
          t1 = clock();
       }
-   
+
        n = fgetc(rng) % 13;
 
    if (n == 0) {

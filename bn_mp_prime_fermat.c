@@ -16,9 +16,9 @@
 
 /* performs one Fermat test.
  * 
- * If "a" were prime then b^a == b (mod a) since the order of
+ * If "a" were prime then b**a == b (mod a) since the order of
  * the multiplicative sub-group would be phi(a) = a-1.  That means
- * it would be the same as b^(a mod (a-1)) == b^1 == b (mod a).
+ * it would be the same as b**(a mod (a-1)) == b**1 == b (mod a).
  *
  * Sets result to 1 if the congruence holds, or zero otherwise.
  */
@@ -36,7 +36,7 @@ mp_prime_fermat (mp_int * a, mp_int * b, int *result)
     return err;
   }
 
-  /* compute t = b^a mod a */
+  /* compute t = b**a mod a */
   if ((err = mp_exptmod (b, a, a, &t)) != MP_OKAY) {
     goto __T;
   }

@@ -1,3 +1,14 @@
+July 2nd, 2003
+v0.22  -- Fixed up mp_invmod so the result is properly in range now [was always congruent to the inverse...]
+       -- Fixed up s_mp_exptmod and mp_exptmod_fast so the lower half of the pre-computed table isn't allocated
+          which makes the algorithm use half as much ram.
+       -- Fixed the install script not to make the book :-) [which isn't included anyways]
+       -- added mp_cnt_lsb() which counts how many of the lsbs are zero
+       -- optimized mp_gcd() to use the new mp_cnt_lsb() to replace multiple divisions by two by a single division.
+       -- applied similar optimization to mp_prime_miller_rabin().
+       -- Fixed a bug in both mp_invmod() and fast_mp_invmod() which tested for odd
+          via "mp_iseven() == 0" which is not valid [since zero is not even either].
+
 June 19th, 2003
 v0.21  -- Fixed bug in mp_mul_d which would not handle sign correctly [would not always forward it]
        -- Removed the #line lines from gen.pl [was in violation of ISO C]       
