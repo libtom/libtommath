@@ -26,7 +26,7 @@ static const char *s_rmap =
 #ifdef DEBUG
 
 static char *_funcs[1000];
-static int _ifuncs;
+int _ifuncs;
 
 #define REGFUNC(name) { if (_ifuncs == 999) { printf("TROUBLE\n"); exit(0); } _funcs[_ifuncs++] = name; }
 #define DECFUNC()     --_ifuncs;
@@ -75,13 +75,18 @@ error:
 /* init a new bigint */
 int mp_init(mp_int *a)
 {
+    REGFUNC("mp_init");
     a->dp = calloc(sizeof(mp_digit), 16);
     if (a->dp == NULL) {
+       DECFUNC();
        return MP_MEM;
     }
     a->used  = 0;
     a->alloc = 16;
     a->sign  = MP_ZPOS;
+    
+    VERIFY(a);
+    DECFUNC();
     return MP_OKAY;
 }
 
@@ -125,6 +130,7 @@ static int mp_grow(mp_int *a, int size)
      
       tmp = calloc(sizeof(mp_digit), size);
       if (tmp == NULL) {
+         DECFUNC();
          return MP_MEM;
       }
       for (i = 0; i < a->used; i++) {
@@ -191,7 +197,7 @@ void mp_set(mp_int *a, mp_digit b)
 /* set a 32-bit const */
 int mp_set_int(mp_int *a, unsigned long b)
 {
-   int x;
+   int x, res;
    
    REGFUNC("mp_set_int");
    VERIFY(a);
@@ -199,9 +205,20 @@ int mp_set_int(mp_int *a, unsigned long b)
 
    /* set four bits at a time, simplest solution to the what if DIGIT_BIT==7 case */
    for (x = 0; x < 8; x++) {
-      mp_mul_2d(a, 4, a);
+   
+      /* shift the number up four bits */
+      if ((res = mp_mul_2d(a, 4, a)) != MP_OKAY) {
+         DECFUNC();
+         return res;
+      }
+      
+      /* OR in the top four bits of the source */      
       a->dp[0] |= (b>>28)&15;
+      
+      /* shift the source up to the next four bits */
       b <<= 4;
+      
+      /* ensure that digits are not clamped off */      
       a->used += 32/DIGIT_BIT + 1;
    }
    
@@ -213,16 +230,22 @@ int mp_set_int(mp_int *a, unsigned long b)
 /* init a mp_init and grow it to a given size */
 int mp_init_size(mp_int *a, int size)
 {
-   int res;
    REGFUNC("mp_init_size");
    
-   if ((res = mp_init(a)) != MP_OKAY) {
+   /* pad up so there are at least 16 zero digits */
+   size += 32 - (size & 15);
+   
+   a->dp = calloc(sizeof(mp_digit), size);
+   if (a->dp == NULL) {
       DECFUNC();
-      return res;
+      return MP_MEM;
    }
-   res = mp_grow(a, size);
+   a->used  = 0;
+   a->alloc = size;
+   a->sign  = MP_ZPOS;
+
    DECFUNC();
-   return res;
+   return MP_OKAY;
 }
 
 /* copy, b = a */
@@ -246,9 +269,12 @@ int mp_copy(mp_int *a, mp_int *b)
       return res;
    }
    
+   /* zero b and copy the parameters over */
    mp_zero(b);
    b->used = a->used;
    b->sign = a->sign;
+   
+   /* copy all the digits */
    for (n = 0; n < a->used; n++) {
        b->dp[n] = a->dp[n];
    }
@@ -482,7 +508,7 @@ int mp_mod_2d(mp_int *a, int b, mp_int *c)
       return res;
    }
 
-   /* zero digits above */
+   /* zero digits above the last digit of the modulus */
    for (x = (b/DIGIT_BIT) + ((b % DIGIT_BIT) == 0 ? 0 : 1); x < c->used; x++) {
        c->dp[x] = 0;
    }
@@ -505,9 +531,11 @@ int  mp_div_2d(mp_int *a, int b, mp_int *c, mp_int *d)
    VERIFY(c);
    if (d != NULL) { VERIFY(d); }
    
+   /* if the shift count is <= 0 then we do no work */
    if (b <= 0) {
       res = mp_copy(a, c);
       if (d != NULL) { mp_zero(d); }
+      DECFUNC();
       return res;
    }      
    
@@ -516,6 +544,7 @@ int  mp_div_2d(mp_int *a, int b, mp_int *c, mp_int *d)
       return res;
    }
    
+   /* get the remainder */
    if (d != NULL) {
       if ((res = mp_mod_2d(a, b, &t)) != MP_OKAY) {
          mp_clear(&t);
@@ -539,8 +568,13 @@ int  mp_div_2d(mp_int *a, int b, mp_int *c, mp_int *d)
    if (D != 0) {
       r = 0;
       for (x = c->used - 1; x >= 0; x--) {
+          /* get the lower  bits of this word in a temp */
           rr = c->dp[x] & ((mp_digit)((1U<<D)-1U));
+          
+          /* shift the current word and mix in the carry bits from the previous word */
           c->dp[x] = (c->dp[x] >> D) | (r << (DIGIT_BIT-D));
+          
+          /* set the carry to the carry bits of the current word found above */
           r  = rr;
       }
    }
@@ -587,8 +621,13 @@ int mp_mul_2d(mp_int *a, int b, mp_int *c)
    if (d != 0) {
       r = 0;
       for (x = 0; x < c->used; x++) {
+          /* get the higher bits of the current word */
           rr = (c->dp[x] >> (DIGIT_BIT - d)) & ((mp_digit)((1U<<d)-1U));
+          
+          /* shift the current word and OR in the carry */
           c->dp[x] = ((c->dp[x] << d) | r) & MP_MASK;
+          
+          /* set the carry to the carry bits of the current word */
           r  = rr;
       }
    }
@@ -694,16 +733,26 @@ static int s_mp_add(mp_int *a, mp_int *b, mp_int *c)
    /* add digits from lower part */
    u = 0;
    for (i = 0; i < min; i++) {
+       /* T[i] = A[i] + B[i] + U */   
        t.dp[i] = a->dp[i] + b->dp[i] + u;
+       
+       /* U = carry bit of T[i] */       
        u = (t.dp[i] >> DIGIT_BIT) & 1;
+       
+       /* take away carry bit from T[i] */
        t.dp[i] &= MP_MASK;
    }
    
-   /* now copy higher words if any */
+   /* now copy higher words if any, that is in A+B if A or B has more digits add those in */
    if (min != max) {
       for (; i < max; i++) { 
+         /* T[i] = X[i] + U */
          t.dp[i] = x->dp[i] + u;
+         
+         /* U = carry bit of T[i] */
          u = (t.dp[i] >> DIGIT_BIT) & 1;
+         
+         /* take away carry bit from T[i] */
          t.dp[i] &= MP_MASK;
       }
    }
@@ -744,16 +793,26 @@ static int s_mp_sub(mp_int *a, mp_int *b, mp_int *c)
    /* sub digits from lower part */
    u = 0;
    for (i = 0; i < min; i++) {
+       /* T[i] = A[i] - B[i] - U */
        t.dp[i] = a->dp[i] - (b->dp[i] + u);
+       
+       /* U = carry bit of T[i] */
        u = (t.dp[i] >> DIGIT_BIT) & 1;
+       
+       /* Clear carry from T[i] */
        t.dp[i] &= MP_MASK;
    }
    
-   /* now copy higher words if any */
+   /* now copy higher words if any, e.g. if A has more digits than B  */
    if (min != max) {
       for (; i < max; i++) { 
+         /* T[i] = A[i] - U */
          t.dp[i] = a->dp[i] - u;
+
+         /* U = carry bit of T[i] */
          u = (t.dp[i] >> DIGIT_BIT) & 1;
+
+         /* Clear carry from T[i] */
          t.dp[i] &= MP_MASK;
       }
    }
@@ -768,14 +827,20 @@ static int s_mp_sub(mp_int *a, mp_int *b, mp_int *c)
 /* low level multiplication */
 #define s_mp_mul(a, b, c) s_mp_mul_digs(a, b, c, (a)->used + (b)->used + 1)
 
-/* fast multiplier  */
-/* multiplies |a| * |b| and only computes upto digs digits of result */
+/* Fast (comba) multiplier
+ *
+ * This is the fast column-array [comba] multiplier.  It is designed to compute
+ * the columns of the product first then handle the carries afterwards.  This 
+ * has the effect of making the nested loops that compute the columns very
+ * simple and schedulable on super-scalar processors.
+ *
+ */
 static int fast_s_mp_mul_digs(mp_int *a, mp_int *b, mp_int *c, int digs)
 {
    mp_int t;
    int res, pa, pb, ix, iy;
    mp_word W[512], *_W;
-   mp_digit tmpx, *tmpt, *tmpy;
+   mp_digit tmpx, *tmpy;
    
    REGFUNC("fast_s_mp_mul_digs");
    VERIFY(a);
@@ -788,22 +853,44 @@ static int fast_s_mp_mul_digs(mp_int *a, mp_int *b, mp_int *c, int digs)
    }
    t.used = digs;
    
-   /* clear temp buf */
+   /* clear temp buf (the columns) */
    memset(W, 0, digs*sizeof(mp_word));
    
+   /* calculate the columns */
    pa = a->used;
    for (ix = 0; ix < pa; ix++) {
+   
+       /* this multiplier has been modified to allow you to control how many digits 
+        * of output are produced.  So at most we want to make upto "digs" digits
+        * of output
+        */
        pb = MIN(b->used, digs - ix);
+       
+       /* setup some pointer aliases to simplify the inner loop */
        tmpx = a->dp[ix];
-       tmpt = &(t.dp[ix]);
        tmpy = b->dp;
        _W   = &(W[ix]);
+       
+       /* this adds products to distinct columns (at ix+iy) of W
+        * note that each step through the loop is not dependent on
+        * the previous which means the compiler can easily unroll
+        * the loop without scheduling problems
+        */
        for (iy = 0; iy < pb; iy++) {
            *_W++ += ((mp_word)tmpx) * ((mp_word)*tmpy++);
        }
    }
    
-   /* now convert the array W downto what we need */
+   /* At this point W[] contains the sums of each column.  To get the
+    * correct result we must take the extra bits from each column and
+    * carry them down
+    *
+    * Note that while this adds extra code to the multiplier it saves time
+    * since the carry propagation is removed from the above nested loop.
+    * This has the effect of reducing the work from N*(N+N*c)==N^2 + c*N^2 to
+    * N^2 + N*c where c is the cost of the shifting.  On very small numbers
+    * this is slower but on most cryptographic size numbers it is faster.
+    */
    for (ix = 1; ix < digs; ix++) {
        W[ix]      = W[ix] + (W[ix-1] >> ((mp_word)DIGIT_BIT));
        t.dp[ix-1] = W[ix-1] & ((mp_word)MP_MASK);
@@ -831,10 +918,15 @@ static int s_mp_mul_digs(mp_int *a, mp_int *b, mp_int *c, int digs)
    VERIFY(b);
    VERIFY(c);
    
-   /* can we use the fast multiplier? */
+   /* can we use the fast multiplier? 
+    *
+    * The fast multiplier can be used if the output will have less than 
+    * 512 digits and the number of digits won't affect carry propagation
+    */
    if ((digs < 512) && digs < (1<<( (CHAR_BIT*sizeof(mp_word)) - (2*DIGIT_BIT)))) {
+      res = fast_s_mp_mul_digs(a,b,c,digs);
       DECFUNC();
-      return fast_s_mp_mul_digs(a,b,c,digs);
+      return res;
    }  
    
    if ((res = mp_init_size(&t, digs)) != MP_OKAY) {
@@ -843,16 +935,29 @@ static int s_mp_mul_digs(mp_int *a, mp_int *b, mp_int *c, int digs)
    }
    t.used = digs;
    
+   /* compute the digits of the product directly */
    pa = a->used;
    for (ix = 0; ix < pa; ix++) {
+       /* set the carry to zero */
        u = 0;
+       
+       /* limit ourselves to making digs digits of output */
        pb = MIN(b->used, digs - ix);
+       
+       /* setup some aliases */
        tmpx = a->dp[ix];
        tmpt = &(t.dp[ix]);
        tmpy = b->dp;
+       
+       /* compute the columns of the output and propagate the carry */
        for (iy = 0; iy < pb; iy++) {
+           /* compute the column as a mp_word */
            r       = ((mp_word)*tmpt) + ((mp_word)tmpx) * ((mp_word)*tmpy++) + ((mp_word)u);
+           
+           /* the new column is the lower part of the result */           
            *tmpt++ = (mp_digit)(r & ((mp_word)MP_MASK));
+           
+           /* get the carry word from the result */
            u       = (mp_digit)(r >> ((mp_word)DIGIT_BIT));
        }
        if (ix+iy<digs)
@@ -867,12 +972,19 @@ static int s_mp_mul_digs(mp_int *a, mp_int *b, mp_int *c, int digs)
    return MP_OKAY;
 }
 
+/* this is a modified version of fast_s_mp_mul_digs that only produces
+ * output digits *above* digs.  See the comments for fast_s_mp_mul_digs 
+ * to see how it works.
+ *
+ * This is used in the Barrett reduction since for one of the multiplications
+ * only the higher digits were needed.  This essentially halves the work.
+ */
 static int fast_s_mp_mul_high_digs(mp_int *a, mp_int *b, mp_int *c, int digs)
 {
    mp_int t;
    int res, pa, pb, ix, iy;
    mp_word W[512], *_W;
-   mp_digit tmpx, *tmpt, *tmpy;
+   mp_digit tmpx, *tmpy;
    
    REGFUNC("fast_s_mp_mul_high_digs");
    VERIFY(a);
@@ -885,14 +997,17 @@ static int fast_s_mp_mul_high_digs(mp_int *a, mp_int *b, mp_int *c, int digs)
    }
    t.used = a->used + b->used + 1;
    
+   /* like the other comba method we compute the columns first */
    pa = a->used;
    pb = b->used;
    memset(&W[digs], 0, (pa + pb + 1 - digs) * sizeof(mp_word));
    for (ix = 0; ix < pa; ix++) {
+       /* pointer aliases */
        tmpx = a->dp[ix];
-       tmpt = &(t.dp[digs]);
        tmpy = b->dp + (digs - ix);
        _W   = &(W[digs]);
+       
+       /* compute column products for digits above the minimum */
        for (iy = digs - ix; iy < pb; iy++) {
            *_W++ += ((mp_word)tmpx) * ((mp_word)*tmpy++);
        }
@@ -931,8 +1046,9 @@ static int s_mp_mul_high_digs(mp_int *a, mp_int *b, mp_int *c, int digs)
    
    /* can we use the fast multiplier? */
    if (((a->used + b->used + 1) < 512) && MAX(a->used, b->used) < (1<<( (CHAR_BIT*sizeof(mp_word)) - (2*DIGIT_BIT)))) {
+      res = fast_s_mp_mul_high_digs(a,b,c,digs);
       DECFUNC();
-      return fast_s_mp_mul_high_digs(a,b,c,digs);
+      return res;
    }  
 
    if ((res = mp_init_size(&t, a->used + b->used + 1)) != MP_OKAY) {
@@ -962,12 +1078,25 @@ static int s_mp_mul_high_digs(mp_int *a, mp_int *b, mp_int *c, int digs)
    return MP_OKAY;
 }
 
-/* fast squaring */
+/* fast squaring 
+ *
+ * This is the comba method where the columns of the product are computed first 
+ * then the carries are computed.  This has the effect of making a very simple
+ * inner loop that is executed the most
+ *
+ * W2 represents the outer products and W the inner.  
+ *
+ * A further optimizations is made because the inner products are of the form
+ * "A * B * 2".  The *2 part does not need to be computed until the end which is
+ * good because 64-bit shifts are slow!
+ *
+ *
+ */
 static int fast_s_mp_sqr(mp_int *a, mp_int *b)
 {
    mp_int t;
    int res, ix, iy, pa;
-   mp_word  W[512], *_W;
+   mp_word  W2[512], W[512], *_W;
    mp_digit tmpx, *tmpy;
    
    REGFUNC("fast_s_mp_sqr");
@@ -981,19 +1110,33 @@ static int fast_s_mp_sqr(mp_int *a, mp_int *b)
    }
    t.used = pa + pa + 1;
    
-   /* zero temp buffer */
+   /* zero temp buffer (columns) */
    memset(W, 0, (pa+pa+1)*sizeof(mp_word));
+   memset(W2, 0, (pa+pa+1)*sizeof(mp_word));
    
    for (ix = 0; ix < pa; ix++) {
-       W[ix+ix]   += ((mp_word)a->dp[ix]) * ((mp_word)a->dp[ix]);
+       /* compute the outer product */
+       W2[ix+ix]   += ((mp_word)a->dp[ix]) * ((mp_word)a->dp[ix]);
+       
+       /* pointer aliasing! */
 	   tmpx = a->dp[ix];
 	   tmpy = &(a->dp[ix+1]);
 	   _W   = &(W[ix+ix+1]);
+	   
+	   /* inner products */
 	   for (iy = ix + 1; iy < pa; iy++) {
-	       *_W++ += ((mp_word)tmpx) * ((mp_word)*tmpy++) << ((mp_word)1);
+	       *_W++ += ((mp_word)tmpx) * ((mp_word)*tmpy++);
        }
    }
+   
+   /* double first value, since the inner products are half of what they should be */
+   W[0] += W[0] + W2[0];
+   
+   /* now compute digits */
    for (ix = 1; ix < (pa+pa+1); ix++) {
+       /* double/add next digit */
+       W[ix] += W[ix] + W2[ix];
+       
        W[ix]      = W[ix] + (W[ix-1] >> ((mp_word)DIGIT_BIT));
        t.dp[ix-1] = W[ix-1] & ((mp_word)MP_MASK);
    }
@@ -1020,8 +1163,9 @@ static int s_mp_sqr(mp_int *a, mp_int *b)
    
    /* can we use the fast multiplier? */
    if (((a->used * 2 + 1) < 512) && a->used < (1<<( (CHAR_BIT*sizeof(mp_word)) - (2*DIGIT_BIT) - 1))) {
+      res = fast_s_mp_sqr(a,b);
       DECFUNC();
-      return fast_s_mp_sqr(a,b);
+      return res;
    }  
 
    pa = a->used;
@@ -1210,8 +1354,8 @@ static int mp_karatsuba_mul(mp_int *a, mp_int *b, mp_int *c)
    mp_clamp(&y1);
    
    /* now calc the products x0y0 and x1y1 */
-   if (mp_mul(&x0, &y0, &x0y0) != MP_OKAY) goto X1Y1;   /* x0y0 = x0*y0 */
-   if (mp_mul(&x1, &y1, &x1y1) != MP_OKAY) goto X1Y1;   /* x1y1 = x1*y1 */
+   if (mp_mul(&x0, &y0, &x0y0) != MP_OKAY) goto X1Y1;             /* x0y0 = x0*y0 */
+   if (mp_mul(&x1, &y1, &x1y1) != MP_OKAY) goto X1Y1;             /* x1y1 = x1*y1 */
 
    /* now calc x1-x0 and y1-y0 */
    if (mp_sub(&x1, &x0, &t1) != MP_OKAY) goto X1Y1;               /* t1 = x1 - x0 */
@@ -1225,8 +1369,8 @@ static int mp_karatsuba_mul(mp_int *a, mp_int *b, mp_int *c)
    if (mp_sub(&t2, &t1, &t1) != MP_OKAY) goto X1Y1;               /* t1 = x0y0 + x1y1 - (x1-x0)*(y1-y0) */
 
    /* shift by B */
-   if (mp_lshd(&t1, B) != MP_OKAY) goto X1Y1;                   /* t1 = (x0y0 + x1y1 - (x1-x0)*(y1-y0))<<B */
-   if (mp_lshd(&x1y1, B*2) != MP_OKAY) goto X1Y1;               /* x1y1 = x1y1 << 2*B */
+   if (mp_lshd(&t1, B) != MP_OKAY) goto X1Y1;                     /* t1 = (x0y0 + x1y1 - (x1-x0)*(y1-y0))<<B */
+   if (mp_lshd(&x1y1, B*2) != MP_OKAY) goto X1Y1;                 /* x1y1 = x1y1 << 2*B */
 
    if (mp_add(&x0y0, &t1, &t1) != MP_OKAY) goto X1Y1;             /* t1 = x0y0 + t1 */
    if (mp_add(&t1, &x1y1, &t1) != MP_OKAY) goto X1Y1;             /* t1 = x0y0 + t1 + x1y1 */
@@ -1299,8 +1443,8 @@ static int mp_karatsuba_sqr(mp_int *a, mp_int *b)
    mp_rshd(&x1, B);
 
    /* now calc the products x0*x0 and x1*x1 */
-   if (s_mp_sqr(&x0, &x0x0) != MP_OKAY) goto X1X1;   /* x0x0 = x0*x0 */
-   if (s_mp_sqr(&x1, &x1x1) != MP_OKAY) goto X1X1;   /* x1x1 = x1*x1 */
+   if (s_mp_sqr(&x0, &x0x0) != MP_OKAY) goto X1X1;                /* x0x0 = x0*x0 */
+   if (s_mp_sqr(&x1, &x1x1) != MP_OKAY) goto X1X1;                /* x1x1 = x1*x1 */
 
    /* now calc x1-x0 and y1-y0 */
    if (mp_sub(&x1, &x0, &t1) != MP_OKAY) goto X1X1;               /* t1 = x1 - x0 */
@@ -2164,13 +2308,19 @@ __ERR:
 int mp_invmod(mp_int *a, mp_int *b, mp_int *c)
 {
    mp_int x, y, u, v, A, B, C, D;
-   int res, neg;
+   int res;
    
    REGFUNC("mp_invmod");
    VERIFY(a);
    VERIFY(b);
    VERIFY(c);
    
+   /* b cannot be negative */
+   if (b->sign == MP_NEG) {
+      return MP_VAL;
+   }
+   
+   /* if the modulus is odd we can use a faster routine instead */
    if (mp_iseven(b) == 0) {
       res = fast_mp_invmod(a,b,c);
       DECFUNC();
@@ -2331,14 +2481,8 @@ top:
    }
    
    /* a is now the inverse */
-   neg = a->sign;
-   if (C.sign == MP_NEG) {
-      res = mp_add(b, &C, c);
-   } else {
-      mp_exch(&C, c);
-      res = MP_OKAY;
-   }
-   c->sign = neg;
+   mp_exch(&C, c);
+   res = MP_OKAY;
    
 __D:   mp_clear(&D);
 __C:   mp_clear(&C);
@@ -2441,7 +2585,7 @@ int mp_exptmod(mp_int *G, mp_int *X, mp_int *P, mp_int *Y)
 {
    mp_int M[64], res, mu;
    mp_digit buf;
-   int err, bitbuf, bitcpy, bitcnt, mode, digidx, x, y, z, winsize, tab[64];
+   int err, bitbuf, bitcpy, bitcnt, mode, digidx, x, y, winsize;
    
    REGFUNC("mp_exptmod");
    VERIFY(G);
@@ -2476,38 +2620,44 @@ int mp_exptmod(mp_int *G, mp_int *X, mp_int *P, mp_int *Y)
       goto __MU;
    }
    
-   /* create M table */
+   /* create M table 
+    *
+    * The M table contains powers of the input base, e.g. M[x] = G^x mod P
+    *
+    * This table is not made in the straight forward manner of a for loop with only
+    * multiplications.  Since squaring is faster than multiplication we use as many
+    * squarings as possible.  As a result about half of the steps to make the M 
+    * table are squarings.  
+    *
+    * The first half of the table is not computed though accept for M[0] and M[1]
+    */
    mp_set(&M[0], 1);
    if ((err = mp_mod(G, P, &M[1])) != MP_OKAY) {
       goto __MU;
    }
    
-   memset(tab, 0, sizeof(tab));
-   tab[0] = tab[1] = 1;
+   /* compute the value at M[1<<(winsize-1)] by squaring M[1] (winsize-1) times */
+   if ((err = mp_copy(&M[1], &M[1<<(winsize-1)])) != MP_OKAY) {
+      goto __MU;
+   }
    
-   for (x = 2; x < (1 << winsize); x++) {
-       if (tab[x] == 0) {
-          if ((err = mp_mul(&M[x-1], &M[1], &M[x])) != MP_OKAY) {
-             goto __MU;
-          }
-          if ((err = mp_reduce(&M[x], P, &mu)) != MP_OKAY) {
-             goto __MU;
-          }
-          tab[x] = 1;
-          
-          y = x+x;
-          z = x;
-          while (y < (1 << winsize)) {
-             tab[y] = 1;
-             if ((err = mp_sqr(&M[z], &M[y])) != MP_OKAY) {
-                goto __MU;
-             }
-             if ((err = mp_reduce(&M[y], P, &mu)) != MP_OKAY) {
-                goto __MU;
-             }
-             z = y;
-             y = y + y;
-          }
+   for (x = 0; x < (winsize-1); x++) {
+       if ((err = mp_sqr(&M[1<<(winsize-1)], &M[1<<(winsize-1)])) != MP_OKAY) {
+          goto __MU;
+       }
+       if ((err = mp_reduce(&M[1<<(winsize-1)], P, &mu)) != MP_OKAY) {
+          goto __MU;
+       }
+   }  
+   
+     
+   /* create upper table */
+   for (x = (1<<(winsize-1))+1; x < (1 << winsize); x++) {
+       if ((err = mp_mul(&M[x-1], &M[1], &M[x])) != MP_OKAY) {
+          goto __MU;
+       }
+       if ((err = mp_reduce(&M[x], P, &mu)) != MP_OKAY) {
+          goto __MU;
        }
    }
    /* init result */
@@ -2588,8 +2738,7 @@ int mp_exptmod(mp_int *G, mp_int *X, mp_int *P, mp_int *Y)
    
    /* if bits remain then square/multiply */
    if (mode == 2 && bitcpy > 0) {
-      bitbuf >>= (winsize - bitcpy);
-      /* square first */
+      /* square then multiply if the bit is set */
       for (x = 0; x < bitcpy; x++) {
          if ((err = mp_sqr(&res, &res)) != MP_OKAY) {
             goto __RES;
@@ -2597,14 +2746,17 @@ int mp_exptmod(mp_int *G, mp_int *X, mp_int *P, mp_int *Y)
          if ((err = mp_reduce(&res, P, &mu)) != MP_OKAY) {
             goto __RES;
          }
-      }
          
-      /* then multiply */
-      if ((err = mp_mul(&res, &M[bitbuf], &res)) != MP_OKAY) {
-         goto __MU;
-      }
-      if ((err = mp_reduce(&res, P, &mu)) != MP_OKAY) {
-         goto __MU;
+         bitbuf <<= 1;
+         if (bitbuf & (1<<winsize)) {
+            /* then multiply */
+            if ((err = mp_mul(&res, &M[1], &res)) != MP_OKAY) {
+               goto __MU;
+            }
+            if ((err = mp_reduce(&res, P, &mu)) != MP_OKAY) {
+               goto __MU;
+            }
+         }
       }
    }
    
@@ -2742,9 +2894,10 @@ int mp_signed_bin_size(mp_int *a)
 }
 
 /* read a string [ASCII] in a given radix */
-int mp_read_radix(mp_int *a, unsigned char *str, int radix)
+int mp_read_radix(mp_int *a, char *str, int radix)
 {
    int y, res, neg;
+   char ch;
    
    if (radix < 2 || radix > 64) {
       return MP_VAL;
@@ -2759,8 +2912,9 @@ int mp_read_radix(mp_int *a, unsigned char *str, int radix)
    
    mp_zero(a);
    while (*str) {
+      ch = (radix < 36) ? toupper(*str) : *str;
       for (y = 0; y < 64; y++) {
-          if (*str == (unsigned char)s_rmap[y]) {
+          if (ch == s_rmap[y]) {
              break;
           }
       }
@@ -2782,7 +2936,7 @@ int mp_read_radix(mp_int *a, unsigned char *str, int radix)
 }
 
 /* stores a bignum as a ASCII string in a given radix (2..64) */
-int mp_toradix(mp_int *a, unsigned char *str, int radix)
+int mp_toradix(mp_int *a, char *str, int radix)
 {
    int res, digs;
    mp_int t;
@@ -2809,11 +2963,11 @@ int mp_toradix(mp_int *a, unsigned char *str, int radix)
           mp_clear(&t);
           return res;
        }
-       *str++ = (unsigned char)s_rmap[d];
+       *str++ = s_rmap[d];
        ++digs;
    }
    reverse(_s, digs);
-   *str++ = (unsigned char)'\0';
+   *str++ = '\0';
    mp_clear(&t);
    return MP_OKAY;
 }

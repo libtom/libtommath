@@ -1,12 +1,13 @@
 CC = gcc
-CFLAGS  += -DDEBUG -Wall -W -Os
+CFLAGS  += -DDEBUG -Wall -W -O3 -fomit-frame-pointer -funroll-loops 
 
-VERSION=0.04
+VERSION=0.05
 
 default: test
 
-test: bn.o demo.o
+test: bn.o demo.o 
 	$(CC) bn.o demo.o -o demo
+	cd mtest ; gcc -O3 -fomit-frame-pointer -funroll-loops mtest.c -o mtest.exe -s
 
 docdvi: bn.tex
 	latex bn

@@ -37,8 +37,15 @@
    typedef unsigned short     mp_digit;
    typedef unsigned long      mp_word;
 #else
+#ifndef CRYPT
+   #ifdef _MSC_VER
+      typedef __int64            ulong64;
+   #else
+      typedef unsigned long long ulong64;
+   #endif   
+#endif   
    typedef unsigned long      mp_digit;
-   typedef unsigned long long mp_word;
+   typedef ulong64            mp_word;
    #define DIGIT_BIT          28U
 #endif  
 
@@ -62,6 +69,8 @@
 #define MP_MEM        -2  /* out of mem */
 #define MP_VAL        -3  /* invalid input */
 #define MP_RANGE      MP_VAL
+
+typedef int           mp_err;
 
 #define KARATSUBA_MUL_CUTOFF    80                /* Min. number of digits before Karatsuba multiplication is used. */
 #define KARATSUBA_SQR_CUTOFF    80                /* Min. number of digits before Karatsuba squaring is used. */
@@ -239,8 +248,8 @@ int mp_signed_bin_size(mp_int *a);
 int mp_read_signed_bin(mp_int *a, unsigned char *b, int c);
 int mp_to_signed_bin(mp_int *a, unsigned char *b);
 
-int mp_read_radix(mp_int *a, unsigned char *str, int radix);
-int mp_toradix(mp_int *a, unsigned char *str, int radix);
+int mp_read_radix(mp_int *a, char *str, int radix);
+int mp_toradix(mp_int *a, char *str, int radix);
 int mp_radix_size(mp_int *a, int radix);
 
 #define mp_read_raw(mp, str, len) mp_read_signed_bin((mp), (str), (len))

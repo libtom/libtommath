@@ -1,7 +1,7 @@
 \documentclass{article}
 \begin{document}
 
-\title{LibTomMath v0.04 \\ A Free Multiple Precision Integer Library}
+\title{LibTomMath v0.05 \\ A Free Multiple Precision Integer Library}
 \author{Tom St Denis \\ tomstdenis@iahu.ca}
 \maketitle
 \newpage
@@ -90,6 +90,8 @@ variables as destinations.  For example:
    mp_mul(&x, &z, &x);           /* x = x * z */
    mp_div_2(&x, &x);             /* x = x / 2 */
 \end{verbatim}
+
+\section{Quick Overview}
 
 \subsection{Basic Functionality}
 Essentially all LibTomMath functions return one of three values to indicate if the function worked as desired.  A 
@@ -335,59 +337,69 @@ The class of digit manipulation functions such as \textbf{mp\_rshd}, \textbf{mp\
 very simple functions to analyze.  
 
 \subsubsection{mp\_rshd(mp\_int *a, int b)}
-If the shift count ``b'' is less than or equal to zero the function returns without doing any work.  If the
-the shift count is larger than the number of digits in ``a'' then ``a'' is simply zeroed without shifting digits.
+Shifts $a$ by given number of digits to the right and is equivalent to dividing by $\beta^b$.  The work is performed
+in-place which means the input and output are the same.  If the shift count $b$ is less than or equal to zero 
+the function returns without doing any work.  If the the shift count is larger than the number of digits in $a$ 
+then $a$ is simply zeroed without shifting digits.
 
 This function requires no additional memory and $O(N)$ time.
 
 \subsubsection{mp\_lshd(mp\_int *a, int b)}
-If the shift count ``b'' is less than or equal to zero the function returns success without doing any work.
+Shifts $a$ by a given number of digits to the left and is equivalent to multiplying by $\beta^b$.  The work
+is performed in-place which means the input and output are the same.  If the shift count $b$ is less than or equal 
+to zero the function returns success without doing any work.
 
 This function requires $O(b)$ additional digits of memory and $O(N)$ time.
 
 \subsubsection{mp\_div\_2d(mp\_int *a, int b, mp\_int *c, mp\_int *d)}
-If the shift count ``b'' is less than or equal to zero the function places ``a'' in ``c'' and returns success.  
+Shifts $a$ by a given number of \textbf{bits} to the right and is equivalent to dividing by $2^b$.  The shifted number is stored
+in the $c$ parameter.  The remainder of $a/2^b$ is optionally stored in $d$ (if it is not passed as NULL).  
+If the shift count $b$ is less than or equal to zero the function places $a$ in $c$ and returns success.  
 
 This function requires $O(2 \cdot N)$ additional digits of memory and $O(2 \cdot N)$ time.
 
 \subsubsection{mp\_mul\_2d(mp\_int *a, int b, mp\_int *c)}
-If the shift count ``b'' is less than or equal to zero the function places ``a'' in ``c'' and returns success.  
+Shifts $a$ by a given number of bits to the left and is equivalent to multiplying by $2^b$.  The shifted number
+is placed in the $c$ parameter.  If the shift count $b$ is less than or equal to zero the function places $a$
+in $c$ and returns success.  
 
 This function requires $O(N)$ additional digits of memory and $O(2 \cdot N)$ time.
 
 \subsubsection{mp\_mod\_2d(mp\_int *a, int b, mp\_int *c)}
-If the shift count ``b'' is less than or equal to zero the function places ``a'' in ``c'' and returns success.  
+Performs the action of reducing $a$ modulo $2^b$ and stores the result in $c$.  If the shift count $b$ is less than 
+or equal to zero the function places $a$ in $c$ and returns success.  
 
 This function requires $O(N)$ additional digits of memory and $O(2 \cdot N)$ time.
 
 \subsection{Basic Arithmetic}
 
 \subsubsection{mp\_cmp(mp\_int *a, mp\_int *b)}
-Performs a \textbf{signed} comparison between ``a'' and ``b'' returning
-\textbf{MP\_GT} is ``a'' is larger than ``b''.
+Performs a \textbf{signed} comparison between $a$ and $b$ returning \textbf{MP\_GT} is $a$ is larger than $b$.
 
 This function requires no additional memory and $O(N)$ time.
 
 \subsubsection{mp\_cmp\_mag(mp\_int *a, mp\_int *b)}
-Performs a \textbf{unsigned} comparison between ``a'' and ``b'' returning
-\textbf{MP\_GT} is ``a'' is larger than ``b''.  Note that this comparison is unsigned which means it will report, for
-example, $-5 > 3$.  By comparison mp\_cmp will report $-5 < 3$.
+Performs a \textbf{unsigned} comparison between $a$ and $b$ returning \textbf{MP\_GT} is $a$ is larger than $b$.  Note 
+that this comparison is unsigned which means it will report, for example, $-5 > 3$.  By comparison mp\_cmp will 
+report $-5 < 3$.
 
 This function requires no additional memory and $O(N)$ time.
 
 \subsubsection{mp\_add(mp\_int *a, mp\_int *b, mp\_int *c)}
-Handles the sign of the numbers correctly which means it will subtract as required, e.g. $a + -b$ turns into $a - b$.
+Computes $c = a + b$ using signed arithmetic.  Handles the sign of the numbers which means it will subtract as 
+required, e.g. $a + -b$ turns into $a - b$.
 
 This function requires no additional memory and $O(N)$ time.
 
 \subsubsection{mp\_sub(mp\_int *a, mp\_int *b, mp\_int *c)}
-Handles the sign of the numbers correctly which means it will add as required, e.g. $a - -b$ turns into $a + b$.
+Computes $c = a - b$ using signed arithmetic.   Handles the sign of the numbers which means it will add as 
+required, e.g. $a - -b$ turns into $a + b$.
 
 This function requires no additional memory and $O(N)$ time.
 
 \subsubsection{mp\_mul(mp\_int *a, mp\_int *b, mp\_int *c)}
-Handles the sign of the numbers correctly which means it will correct the sign of the product as required, 
-e.g. $a \cdot -b$ turns into $-ab$.
+Computes $c = a \cdot b$ using signed arithmetic.  Handles the sign of the numbers correctly which means it will 
+correct the sign of the product as required, e.g. $a \cdot -b$ turns into $-ab$.
 
 For relatively small inputs, that is less than 80 digits a standard baseline or comba-baseline multiplier is used.  It
 requires no additional memory and $O(N^2)$ time.  The comba-baseline multiplier is only used if it can safely be used
@@ -397,33 +409,41 @@ than 80 for the inputs than a Karatsuba multiplier is used which requires approx
 $O(N^{lg(3)})$ time.  
 
 \subsubsection{mp\_sqr(mp\_int *a, mp\_int *b)}
+Computes $b = a^2$. 
 For relatively small inputs, that is less than 80 digits a modified squaring or comba-squaring algorithm is used.  It
 requires no additional memory and $O((N^2 + N)/2)$ time.  The comba-squaring method is used only if it can be safely used
 without losing carry digits.  After 80 digits a Karatsuba squaring algorithm is used whcih requires approximately 
 $O(4 \cdot N)$ memory and $O(N^{lg(3)})$ time.
 
 \subsubsection{mp\_div(mp\_int *a, mp\_int *b, mp\_int *c, mp\_int *d)}
-The quotient is placed in ``c'' and the remainder in ``d''.  Either (or both) of ``c'' and ``d'' can be set to NULL 
-if the value is not desired.  
+Computes $c = \lfloor a/b \rfloor$ and $d \equiv a \mbox{ (mod }b\mbox{)}$.  The division is signed which means the sign
+of the output is not always positive.  The sign of the remainder equals the sign of $a$ while the sign of the 
+quotient equals the product of the ratios $(a/\vert a \vert) \cdot (b/\vert b \vert)$.  Both $c$ and $d$ can be 
+optionally passed as NULL if the value is not desired.  For example, if you want only the quotient of $x/y$ then 
+mp\_div(\&x, \&y, \&z, NULL) is acceptable.
 
-This function requires $O(4 \cdot N)$ memory and $O(N^2 + N)$ time.
+This function requires $O(4 \cdot N)$ memory and $O(3 \cdot N^2)$ time.
+
+\subsubsection{mp\_mod(mp\_int *a, mp\_int *b, mp\_int *c)}
+Computes $c \equiv a \mbox{ (mod }b\mbox{)}$ but with the added condition that $0 \le c < b$.  That is a normal 
+division is performed and if the remainder is negative $b$ is added to it.  Since adding $b$ modulo $b$ is equivalent
+to adding zero ($0 \equiv b \mbox{ (mod }b\mbox{)}$) the result is accurate.  The results are undefined 
+when $b \le 0$, in theory the routine will still give a properly congruent answer but it will not always be positive. 
+
+This function requires $O(4 \cdot N)$ memory and $O(3 \cdot N^2)$ time.
 
 \subsection{Modular Arithmetic}
 
 \subsubsection{mp\_addmod, mp\_submod, mp\_mulmod, mp\_sqrmod}
 These functions take the time of their host function plus the time it takes to perform a division.  For example, 
-mp\_addmod takes $O(N + (N^2 + N))$ time.  Note that if you are performing many modular operations in a row with
+mp\_addmod takes $O(N + 3 \cdot N^2)$ time.  Note that if you are performing many modular operations in a row with
 the same modulus you should consider Barrett reductions.  
 
-NOTE:  This section will be expanded upon in future releases of the library.
+Also note that these functions use mp\_mod which means the result are guaranteed to be positive.
 
 \subsubsection{mp\_invmod(mp\_int *a, mp\_int *b, mp\_int *c)}
-This function is technically only defined for moduli who are positive and inputs that are positive.  That is it will find
-$c = 1/a \mbox{ (mod }b\mbox{)}$ for any $a > 0$ and $b > 0$.  The function will work for negative values of $a$ since
-it merely computes $c = -1 \cdot (1/{\vert a \vert}) \mbox{ (mod }b\mbox{)}$.  In general the input is only 
-\textbf{guaranteed} to lead to a correct output if $-b < a < b$ and $(a, b) = 1$.
-
-NOTE:  This function will be revised to accept a wider range of inputs in future releases.
+This function will find $c = 1/a \mbox{ (mod }b\mbox{)}$ for any value of $a$ such that $(a, b) = 1$ and $b > 0$.  When
+$b$ is odd a ``fast'' variant is used which finds the inverse twice as fast.  
 
 \section{Timing Analysis}
 \subsection{Observed Timings}
@@ -440,34 +460,34 @@ were observed.
 \begin{tabular}{c|c|c|c}
 \hline \textbf{Operation} & \textbf{Size (bits)} & \textbf{Time with MPI (cycles)} & \textbf{Time with LibTomMath (cycles)} \\
 \hline
-Inversion & 128 & 264,083  & 172,381  \\
-Inversion & 256 & 549,370  & 381,237  \\
-Inversion & 512 & 1,675,975  & 1,212,341  \\
-Inversion & 1024 & 5,237,957  & 3,114,144  \\
-Inversion & 2048 & 17,871,944  & 8,137,896  \\
-Inversion & 4096 & 66,610,468  & 22,469,360  \\
+Inversion & 128 & 264,083  & 159,194  \\
+Inversion & 256 & 549,370  & 355,914  \\
+Inversion & 512 & 1,675,975  & 842,538  \\
+Inversion & 1024 & 5,237,957  & 2,170,804  \\
+Inversion & 2048 & 17,871,944  & 6,250,876  \\
+Inversion & 4096 & 66,610,468  & 18,161,612  \\
 \hline
-Multiply & 128 & 1,426   & 847    \\
-Multiply & 256 & 2,551   & 1,848    \\
-Multiply & 512 & 7,913   & 3,505    \\
-Multiply & 1024 & 28,496   & 9,097   \\
-Multiply & 2048 & 109,897   & 29,497    \\
-Multiply & 4096 & 469,970   & 112,651    \\
+Multiply & 128 & 1,426   & 828    \\
+Multiply & 256 & 2,551   & 1,393    \\
+Multiply & 512 & 7,913   & 2,926    \\
+Multiply & 1024 & 28,496   & 8,620  \\
+Multiply & 2048 & 109,897   & 28,967    \\
+Multiply & 4096 & 469,970   & 106,855    \\
 \hline 
-Square & 128 & 1,319   & 883    \\
-Square & 256 & 1,776   & 1,895    \\
-Square & 512 & 5,399  & 3,543   \\
-Square & 1024 & 18,991  & 8,692    \\
-Square & 2048 & 72,126  & 26,792   \\
-Square & 4096 & 306,269  & 103,263  \\
+Square & 128 & 1,319   & 869    \\
+Square & 256 & 1,776   & 1,362    \\
+Square & 512 & 5,399  & 2,571   \\
+Square & 1024 & 18,991  & 6,332    \\
+Square & 2048 & 72,126  & 18,426   \\
+Square & 4096 & 306,269  & 76,305  \\
 \hline 
-Exptmod & 512 & 32,021,586  & 7,096,687 \\
-Exptmod & 768 & 97,595,492  & 14,849,813   \\
-Exptmod & 1024 & 223,302,532  & 27,826,489    \\
-Exptmod & 2048 & 1,682,223,369   & 142,026,274    \\
-Exptmod & 2560 & 3,268,615,571   & 292,597,205    \\
-Exptmod & 3072 & 5,597,240,141   & 452,731,243   \\
-Exptmod & 4096 & 13,347,270,891   & 941,433,401   
+Exptmod & 512 & 32,021,586  & 5,709,468 \\
+Exptmod & 768 & 97,595,492  & 12,473,526   \\
+Exptmod & 1024 & 223,302,532  & 23,593,075    \\
+Exptmod & 2048 & 1,682,223,369   & 121,992,481    \\
+Exptmod & 2560 & 3,268,615,571   & 258,155,605    \\
+Exptmod & 3072 & 5,597,240,141   & 399,800,504   \\
+Exptmod & 4096 & 13,347,270,891   & 826,013,375   
 
 \end{tabular}
 \end{center}
@@ -475,7 +495,7 @@ Exptmod & 4096 & 13,347,270,891   & 941,433,401
 
 Note that the figures do fluctuate but their magnitudes are relatively intact.  The purpose of the chart is not to
 get an exact timing but to compare the two libraries.  For example, in all of the tests the exact time for a 512-bit
-squaring operation was not the same.  The observed times were all approximately 3,500 cycles, more importantly they
+squaring operation was not the same.  The observed times were all approximately 2,500 cycles, more importantly they
 were always faster than the timings observed with MPI by about the same magnitude.  
 
 \subsection{Digit Size}

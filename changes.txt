@@ -1,3 +1,16 @@
+Dec 30th, 2002
+v0.05  -- Builds with MSVC out of the box
+       -- Fixed a bug in mp_invmod w.r.t. even moduli
+       -- Made mp_toradix and mp_read_radix use char instead of unsigned char arrays
+       -- Fixed up exptmod to use fewer multiplications
+       -- Fixed up mp_init_size to use only one heap operation
+          -- Note there is a slight "off-by-one" bug in the library somewhere
+             without the padding (see the source for comment) the library 
+             crashes in libtomcrypt.  Anyways a reasonable workaround is to pad the
+             numbers which will always correct it since as the numbers grow the padding
+             will still be beyond the end of the number
+       -- Added more to the manual
+       
 Dec 29th, 2002
 v0.04  -- Fixed a memory leak in mp_to_unsigned_bin
        -- optimized invmod code
