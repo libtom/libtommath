@@ -14,23 +14,13 @@
       typedef unsigned long long ulong64;
    #endif   
 #else   
-   #include "bn.h"
-#endif
-
-#ifdef TIMER_X86
-#define TIMER
-extern ulong64 _rdtsc(void);
-extern void _reset(void);
-ulong64 rdtsc(void) { return _rdtsc(); }
-void reset(void) { _reset(); }
+   #include "tommath.h"
 #endif
 
 #ifdef TIMER
-#ifndef TIMER_X86
 ulong64 _tt;
 void reset(void) { _tt = clock(); }
 ulong64 rdtsc(void) { return clock() - _tt; }
-#endif
 #endif
 
 #ifndef DEBUG
@@ -87,19 +77,19 @@ int main(void)
    mp_int a, b, c, d, e, f;
    unsigned long expt_n, add_n, sub_n, mul_n, div_n, sqr_n, mul2d_n, div2d_n, gcd_n, lcm_n, inv_n;
    int rr;
-   
+
 #ifdef TIMER
    int n;
    ulong64 tt;
-#endif   
-   
+#endif
+
    mp_init(&a);
    mp_init(&b);
    mp_init(&c);
    mp_init(&d);
    mp_init(&e);
    mp_init(&f);
-   
+
 #ifdef DEBUG
    mp_read_radix(&a, "347743159439876626079252796797422223177535447388206607607181663903045907591201940478223621722118173270898487582987137708656414344685816179420855160986340457973820182883508387588163122354089264395604796675278966117567294812714812796820596564876450716066283126720010859041484786529056457896367683122960411136319", 10);
    mp_read_radix(&b, "347743159439876626079252796797422223177535447388206607607181663903045907591201940478223621722118173270898487582987137708656414344685816179420855160986340457973820182883508387588163122354089264395604796675278966117567294812714812796820596564876450716066283126720010859041484786529056457896367683122960411136318", 10);
@@ -123,10 +113,10 @@ int main(void)
    mp_exptmod(&c, &b, &a, &d);
    dump_timings();
    return 0;
-#endif   
-      
-#ifdef TIMER      
-goto expt;
+#endif
+
+#ifdef TIMER
+      printf("CLOCKS_PER_SEC == %lu\n", CLOCKS_PER_SEC);
       mp_read_radix(&a, "340282366920938463463374607431768211455", 10);
       mp_read_radix(&b, "340282366920938463463574607431768211455", 10);
       while (a.used * DIGIT_BIT < 8192) {
@@ -135,7 +125,7 @@ goto expt;
              mp_add(&a, &b, &c);
          }
          tt = rdtsc();
-         printf("Adding %d-bit took %llu cycles\n", mp_count_bits(&a), tt / ((ulong64)1000000));
+         printf("Adding %d-bit took %f ticks\n", mp_count_bits(&a), (double)tt / ((double)1000000));
          mp_sqr(&a, &a);
          mp_sqr(&b, &b);
       }
@@ -148,7 +138,7 @@ goto expt;
              mp_sub(&a, &b, &c);
          }
          tt = rdtsc();
-         printf("Subtracting %d-bit took %llu cycles\n", mp_count_bits(&a), tt / ((ulong64)1000000));
+         printf("Subtracting %d-bit took %f ticks\n", mp_count_bits(&a), (double)tt / ((double)1000000));
          mp_sqr(&a, &a);
          mp_sqr(&b, &b);
       }
@@ -156,25 +146,25 @@ goto expt;
    mp_read_radix(&a, "340282366920938463463374607431768211455", 10);
    while (a.used * DIGIT_BIT < 8192) {
       reset();
-      for (rr = 0; rr < 100000; rr++) {
+      for (rr = 0; rr < 1000000; rr++) {
           mp_sqr(&a, &b);
       }
       tt = rdtsc();
-      printf("Squaring %d-bit took %lu cycles\n", mp_count_bits(&a), tt / ((ulong64)100000));
+      printf("Squaring %d-bit took %f ticks\n", mp_count_bits(&a), (double)tt / ((double)1000000));
       mp_copy(&b, &a);
    }
    
    mp_read_radix(&a, "340282366920938463463374607431768211455", 10);
    while (a.used * DIGIT_BIT < 8192) {
       reset();
-      for (rr = 0; rr < 100000; rr++) {
+      for (rr = 0; rr < 1000000; rr++) {
           mp_mul(&a, &a, &b);
       }
       tt = rdtsc();
-      printf("Multiplying %d-bit took %llu cycles\n", mp_count_bits(&a), tt / ((ulong64)100000));
+      printf("Multiplying %d-bit took %f ticks\n", mp_count_bits(&a), (double)tt / ((double)1000000));
       mp_copy(&b, &a);
    }
-expt:
+   
    {
       char *primes[] = {
          "17933601194860113372237070562165128350027320072176844226673287945873370751245439587792371960615073855669274087805055507977323024886880985062002853331424203",
@@ -211,7 +201,7 @@ expt:
          draw(&d);
          exit(0);
       }
-      printf("Exponentiating %d-bit took %llu cycles\n", mp_count_bits(&a), tt / ((ulong64)100));
+      printf("Exponentiating %d-bit took %f ticks\n", mp_count_bits(&a), (double)tt / ((double)100));
    }
    }   
 
@@ -229,14 +219,14 @@ expt:
          printf("Failed to invert\n");
          return 0;
       }
-      printf("Inverting mod %d-bit took %llu cycles\n", mp_count_bits(&a), tt / ((ulong64)100));
+      printf("Inverting mod %d-bit took %f ticks\n", mp_count_bits(&a), (double)tt / ((double)100));
       mp_sqr(&a, &a);
       mp_sqr(&b, &b);
    }
    
    return 0;
   
-#endif   
+#endif
 
    inv_n = expt_n = lcm_n = gcd_n = add_n = sub_n = mul_n = div_n = sqr_n = mul2d_n = div2d_n = 0;   
    for (;;) {

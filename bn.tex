@@ -1,7 +1,7 @@
 \documentclass{article}
 \begin{document}
 
-\title{LibTomMath v0.11 \\ A Free Multiple Precision Integer Library}
+\title{LibTomMath v0.12 \\ A Free Multiple Precision Integer Library}
 \author{Tom St Denis \\ tomstdenis@iahu.ca}
 \maketitle
 \newpage
@@ -35,23 +35,24 @@ help debug and suggest optimizations.  They were both of great help!
 
 \section{Building Against LibTomMath}
 
-Building against LibTomMath is very simple because there is only one source file.  Simply add ``bn.c'' to your project and 
-copy both ``bn.c'' and ``bn.h'' into your project directory.  There is no configuration nor building required before hand.
+As of v0.12 LibTomMath is not a simple single source file project like MPI.  LibTomMath retains the exact same API as MPI
+but is implemented differently.  To build LibTomMath you will need a copy of GNU cc and GNU make.  Both are free so if you 
+don't have a copy don't whine to me about it.
 
-If you are porting an MPI application to LibTomMath the first step will be to remove all references to MPI and replace them 
-with references to LibTomMath.  For example, substitute 
-
-\begin{verbatim}
-#include "mpi.h"
-\end{verbatim}
-
-with 
+To build the library type 
 
 \begin{verbatim}
-#include "bn.h"
+make
 \end{verbatim}
 
-Remove ``mpi.c'' from your project and replace it with ``bn.c''.
+This will build the library file libtommath.a.  If you want to build the library and also install it (in /usr/bin and /usr/include) then
+type 
+
+\begin{verbatim}
+make install
+\end{verbatim}
+
+Now within your application include ``tommath.h'' and link against libtommath.a to get MPI-like functionality.
 
 \section{Programming with LibTomMath}
 
@@ -183,6 +184,28 @@ int mp_mul_2(mp_int *a, mp_int *b);
 
 /* c = a mod 2^d */
 int mp_mod_2d(mp_int *a, int b, mp_int *c);
+
+/* computes a = 2^b */
+int mp_2expt(mp_int *a, int b);
+
+/* makes a pseudo-random int of a given size */
+int mp_rand(mp_int *a, int digits);
+
+\end{verbatim}
+
+\subsection{Binary Operations}
+
+\begin{verbatim}
+
+/* c = a XOR b  */
+int mp_xor(mp_int *a, mp_int *b, mp_int *c);
+
+/* c = a OR b */
+int mp_or(mp_int *a, mp_int *b, mp_int *c);
+
+/* c = a AND b */
+int mp_and(mp_int *a, mp_int *b, mp_int *c);
+
 \end{verbatim}
 
 \subsection{Basic Arithmetic}
@@ -365,6 +388,27 @@ Performs the action of reducing $a$ modulo $2^b$ and stores the result in $c$.  
 or equal to zero the function places $a$ in $c$ and returns success.  
 
 This function requires $O(N)$ additional digits of memory and $O(2 \cdot N)$ time.
+
+\subsubsection{mp\_2expt(mp\_int *a, int b)}
+Computes $a = 2^b$ by first setting $a$ to zero then OR'ing the correct bit to get the right value.
+
+\subsubsection{mp\_rand(mp\_int *a, int digits)}
+Computes a pseudo-random (\textit{via rand()}) integer that is always ``$digits$'' digits in length.  Not for
+cryptographic use.
+
+\subsection{Binary Arithmetic}
+\subsubsection{mp\_xor(mp\_int *a, mp\_int *b, mp\_int *c)}
+Computes $c = a \oplus b$, pseudo-extends with zeroes whichever of $a$ or $b$ is shorter such that the length
+of $c$ is the maximum length of the two inputs.
+
+\subsubsection{mp\_or(mp\_int *a, mp\_int *b, mp\_int *c)}
+Computes $c = a \lor b$, pseudo-extends with zeroes whichever of $a$ or $b$ is shorter such that the length
+of $c$ is the maximum length of the two inputs.
+
+\subsubsection{mp\_and(mp\_int *a, mp\_int *b, mp\_int *c)}
+Computes $c = a \land b$, pseudo-extends with zeroes whichever of $a$ or $b$ is shorter such that the length
+of $c$ is the maximum length of the two inputs.
+
 
 \subsection{Basic Arithmetic}
 
@@ -622,14 +666,13 @@ of multiplications.  Consider a 512-bit exponent.  The worst case for the LibTom
 124 multiplications.  The MPI method would have 512 squarings and 512 multiplications.  Randomly every $2k$ bits another 
 multiplication is saved via the sliding-window technique on top of the savings the $k$-ary method provides.
 
-Both LibTomMath and MPI use Barrett reduction instead of division to reduce the numbers modulo the modulus given.  
+Both LibTomMath and MPI use Barrett reduction instead of division to reduce the numbers modulo the modulus given.
 However, LibTomMath can take advantage of the fact that the multiplications required within the Barrett reduction
 do not have to give full precision.  As a result the reduction step is much faster and just as accurate.  The LibTomMath code
 will automatically determine at run-time (e.g. when its called) whether the faster multiplier can be used.  The
 faster multipliers have also been optimized into the two variants (baseline and comba baseline).
 
-As a result of all these changes exponentiation in LibTomMath is much faster than compared to MPI.  
-
-
+LibTomMath also has a variant of the exptmod function that uses Montgomery reductions instead of Barrett reductions
+which is faser.  As a result of all these changes exponentiation in LibTomMath is much faster than compared to MPI.  
 
 \end{document}
