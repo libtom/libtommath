@@ -14,7 +14,7 @@
  */
 #include <tommath.h>
 
-/* calc a value mod 2^b */
+/* calc a value mod 2**b */
 int
 mp_mod_2d (mp_int * a, int b, mp_int * c)
 {

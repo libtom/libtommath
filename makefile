@@ -6,7 +6,7 @@ CFLAGS  +=  -I./ -Wall -W -Wshadow -O3 -funroll-loops
 #x86 optimizations [should be valid for any GCC install though]
 CFLAGS  += -fomit-frame-pointer 
 
-VERSION=0.26
+VERSION=0.27
 
 default: libtommath.a
 
@@ -95,7 +95,7 @@ manual:
 	rm -f bn.aux bn.dvi bn.log
 	
 clean:
-	rm -f *.pdf *.o *.a *.obj *.lib *.exe etclib/*.o demo/demo.o test ltmtest mpitest mtest/mtest mtest/mtest.exe \
+	rm -f *.bat *.pdf *.o *.a *.obj *.lib *.exe etclib/*.o demo/demo.o test ltmtest mpitest mtest/mtest mtest/mtest.exe \
         tommath.idx tommath.toc tommath.log tommath.aux tommath.dvi tommath.lof tommath.ind tommath.ilg *.ps *.pdf *.log *.s mpi.c \
         poster.aux poster.dvi poster.log
 	cd etc ; make clean

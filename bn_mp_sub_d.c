@@ -73,7 +73,8 @@ mp_sub_d (mp_int * a, mp_digit b, mp_int * c)
      }
   }
 
-  for (; ix < oldused; ix++) {
+  /* zero excess digits */
+  while (ix++ < oldused) {
      *tmpc++ = 0;
   }
   mp_clamp(c);

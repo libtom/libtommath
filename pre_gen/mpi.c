@@ -942,9 +942,6 @@ mp_add_d (mp_int * a, mp_digit b, mp_int * c)
 
   /* if a is positive */
   if (a->sign == MP_ZPOS) {
-     /* setup size */
-     c->used = a->used + 1;
-
      /* add digit, after this we're propagating
       * the carry.
       */
@@ -961,6 +958,9 @@ mp_add_d (mp_int * a, mp_digit b, mp_int * c)
      /* set final carry */
      ix++;
      *tmpc++  = mu;
+
+     /* setup size */
+     c->used = a->used + 1;
   } else {
      /* a was negative and |a| < b */
      c->used  = 1;
@@ -2121,7 +2121,7 @@ int mp_dr_is_modulus(mp_int *a)
  *
  * Has been modified to use algorithm 7.10 from the LTM book instead
  *
- * Input x must be in the range 0 <= x <= (n-1)^2
+ * Input x must be in the range 0 <= x <= (n-1)**2
  */
 int
 mp_dr_reduce (mp_int * x, mp_int * n, mp_digit k)
@@ -2129,10 +2129,10 @@ mp_dr_reduce (mp_int * x, mp_int * n, mp_digit k)
   int      err, i, m;
   mp_word  r;
   mp_digit mu, *tmpx1, *tmpx2;
-  
+
   /* m = digits in modulus */
   m = n->used;
-  
+
   /* ensure that "x" has at least 2m digits */
   if (x->alloc < m + m) {
     if ((err = mp_grow (x, m + m)) != MP_OKAY) {
@@ -2140,20 +2140,20 @@ mp_dr_reduce (mp_int * x, mp_int * n, mp_digit k)
     }
   }
 
-/* top of loop, this is where the code resumes if 
+/* top of loop, this is where the code resumes if
  * another reduction pass is required.
  */
 top:
   /* aliases for digits */
   /* alias for lower half of x */
   tmpx1 = x->dp;
-  
+
   /* alias for upper half of x, or x/B**m */
   tmpx2 = x->dp + m;
-  
+
   /* set carry to zero */
   mu = 0;
-  
+
   /* compute (x mod B**m) + k * [x/B**m] inline and inplace */
   for (i = 0; i < m; i++) {
       r         = ((mp_word)*tmpx2++) * ((mp_word)k) + *tmpx1 + mu;
@@ -2172,7 +2172,7 @@ top:
   /* clamp, sub and return */
   mp_clamp (x);
 
-  /* if x >= n then subtract and reduce again 
+  /* if x >= n then subtract and reduce again
    * Each successive "recursion" makes the input smaller and smaller.
    */
   if (mp_cmp_mag (x, n) != MP_LT) {
@@ -2402,7 +2402,7 @@ mp_exptmod (mp_int * G, mp_int * X, mp_int * P, mp_int * Y)
  */
 #include <tommath.h>
 
-/* computes Y == G^X mod P, HAC pp.616, Algorithm 14.85
+/* computes Y == G**X mod P, HAC pp.616, Algorithm 14.85
  *
  * Uses a left-to-right k-ary sliding window to compute the modular exponentiation.
  * The value of k changes based on the size of the exponent.
@@ -2422,10 +2422,10 @@ mp_exptmod_fast (mp_int * G, mp_int * X, mp_int * P, mp_int * Y, int redmode)
   mp_int  M[TAB_SIZE], res;
   mp_digit buf, mp;
   int     err, bitbuf, bitcpy, bitcnt, mode, digidx, x, y, winsize;
-  
+
   /* use a pointer to the reduction algorithm.  This allows us to use
    * one of many reduction algorithms without modding the guts of
-   * the code with if statements everywhere.  
+   * the code with if statements everywhere.
    */
   int     (*redux)(mp_int*,mp_int*,mp_digit);
 
@@ -2456,7 +2456,7 @@ mp_exptmod_fast (mp_int * G, mp_int * X, mp_int * P, mp_int * Y, int redmode)
   /* init M array */
   /* init first cell */
   if ((err = mp_init(&M[1])) != MP_OKAY) {
-     return err; 
+     return err;
   }
 
   /* now init the second half of the array */
@@ -2476,7 +2476,7 @@ mp_exptmod_fast (mp_int * G, mp_int * X, mp_int * P, mp_int * Y, int redmode)
      if ((err = mp_montgomery_setup (P, &mp)) != MP_OKAY) {
         goto __M;
      }
-     
+
      /* automatically pick the comba one if available (saves quite a few calls/ifs) */
      if (((P->used * 2 + 1) < MP_WARRAY) &&
           P->used < (1 << ((CHAR_BIT * sizeof (mp_word)) - (2 * DIGIT_BIT)))) {
@@ -2926,16 +2926,28 @@ int
 mp_grow (mp_int * a, int size)
 {
   int     i;
+  mp_digit *tmp;
+
 
   /* if the alloc size is smaller alloc more ram */
   if (a->alloc < size) {
     /* ensure there are always at least MP_PREC digits extra on top */
-    size += (MP_PREC * 2) - (size % MP_PREC);     
+    size += (MP_PREC * 2) - (size % MP_PREC);
 
-    a->dp = OPT_CAST realloc (a->dp, sizeof (mp_digit) * size);
-    if (a->dp == NULL) {
+    /* reallocate the array a->dp
+     *
+     * We store the return in a temporary variable
+     * in case the operation failed we don't want
+     * to overwrite the dp member of a.
+     */
+    tmp = OPT_CAST realloc (a->dp, sizeof (mp_digit) * size);
+    if (tmp == NULL) {
+      /* reallocation failed but "a" is still valid [can be freed] */
       return MP_MEM;
     }
+
+    /* reallocation succeeded so set a->dp */
+    a->dp = tmp;
 
     /* zero excess digits */
     i        = a->alloc;
@@ -3874,7 +3886,7 @@ mp_mod (mp_int * a, mp_int * b, mp_int * c)
  */
 #include <tommath.h>
 
-/* calc a value mod 2^b */
+/* calc a value mod 2**b */
 int
 mp_mod_2d (mp_int * a, int b, mp_int * c)
 {
@@ -4405,12 +4417,13 @@ mp_mul_2d (mp_int * a, int b, mp_int * c)
 int
 mp_mul_d (mp_int * a, mp_digit b, mp_int * c)
 {
-  int     res, pa, olduse;
+  mp_digit u, *tmpa, *tmpc;
+  mp_word  r;
+  int      ix, res, olduse;
 
   /* make sure c is big enough to hold a*b */
-  pa = a->used;
-  if (c->alloc < pa + 1) {
-    if ((res = mp_grow (c, pa + 1)) != MP_OKAY) {
+  if (c->alloc < a->used + 1) {
+    if ((res = mp_grow (c, a->used + 1)) != MP_OKAY) {
       return res;
     }
   }
@@ -4418,43 +4431,42 @@ mp_mul_d (mp_int * a, mp_digit b, mp_int * c)
   /* get the original destinations used count */
   olduse = c->used;
 
-  /* set the new temporary used count */
-  c->used = pa + 1;
+  /* set the sign */
   c->sign = a->sign;
 
-  {
-    register mp_digit u, *tmpa, *tmpc;
-    register mp_word r;
-    register int ix;
+  /* alias for a->dp [source] */
+  tmpa = a->dp;
 
-    /* alias for a->dp [source] */
-    tmpa = a->dp;
+  /* alias for c->dp [dest] */
+  tmpc = c->dp;
 
-    /* alias for c->dp [dest] */
-    tmpc = c->dp;
+  /* zero carry */
+  u = 0;
 
-    /* zero carry */
-    u = 0;
-    for (ix = 0; ix < pa; ix++) {
-      /* compute product and carry sum for this term */
-      r = ((mp_word) u) + ((mp_word)*tmpa++) * ((mp_word)b);
+  /* compute columns */
+  for (ix = 0; ix < a->used; ix++) {
+    /* compute product and carry sum for this term */
+    r       = ((mp_word) u) + ((mp_word)*tmpa++) * ((mp_word)b);
 
-      /* mask off higher bits to get a single digit */
-      *tmpc++ = (mp_digit) (r & ((mp_word) MP_MASK));
+    /* mask off higher bits to get a single digit */
+    *tmpc++ = (mp_digit) (r & ((mp_word) MP_MASK));
 
-      /* send carry into next iteration */
-      u = (mp_digit) (r >> ((mp_word) DIGIT_BIT));
-    }
-    /* store final carry [if any] */
-    *tmpc++ = u;
-
-    /* now zero digits above the top */
-    for (; pa < olduse; pa++) {
-       *tmpc++ = 0;
-    }
+    /* send carry into next iteration */
+    u       = (mp_digit) (r >> ((mp_word) DIGIT_BIT));
   }
 
-  mp_clamp (c);
+  /* store final carry [if any] */
+  *tmpc++ = u;
+
+  /* now zero digits above the top */
+  while (ix++ < olduse) {
+     *tmpc++ = 0;
+  }
+
+  /* set used count */
+  c->used = a->used + 1;
+  mp_clamp(c);
+
   return MP_OKAY;
 }
 
@@ -6172,7 +6184,8 @@ mp_sub_d (mp_int * a, mp_digit b, mp_int * c)
      }
   }
 
-  for (; ix < oldused; ix++) {
+  /* zero excess digits */
+  while (ix++ < oldused) {
      *tmpc++ = 0;
   }
   mp_clamp(c);
@@ -6596,12 +6609,12 @@ ERR:
 #include <tommath.h>
 
 /* squaring using Toom-Cook 3-way algorithm */
-int 
+int
 mp_toom_sqr(mp_int *a, mp_int *b)
 {
     mp_int w0, w1, w2, w3, w4, tmp1, a0, a1, a2;
     int res, B;
-        
+
     /* init temps */
     if ((res = mp_init_multi(&w0, &w1, &w2, &w3, &w4, &a0, &a1, &a2, &tmp1, NULL)) != MP_OKAY) {
        return res;
@@ -6609,8 +6622,8 @@ mp_toom_sqr(mp_int *a, mp_int *b)
 
     /* B */
     B = a->used / 3;
-    
-    /* a = a2 * B^2 + a1 * B + a0 */
+
+    /* a = a2 * B**2 + a1 * B + a0 */
     if ((res = mp_mod_2d(a, DIGIT_BIT * B, &a0)) != MP_OKAY) {
        goto ERR;
     }
@@ -6625,17 +6638,17 @@ mp_toom_sqr(mp_int *a, mp_int *b)
        goto ERR;
     }
     mp_rshd(&a2, B*2);
-        
+
     /* w0 = a0*a0 */
     if ((res = mp_sqr(&a0, &w0)) != MP_OKAY) {
        goto ERR;
     }
-    
+
     /* w4 = a2 * a2 */
     if ((res = mp_sqr(&a2, &w4)) != MP_OKAY) {
        goto ERR;
     }
-    
+
     /* w1 = (a2 + 2(a1 + 2a0))**2 */
     if ((res = mp_mul_2(&a0, &tmp1)) != MP_OKAY) {
        goto ERR;
@@ -6649,11 +6662,11 @@ mp_toom_sqr(mp_int *a, mp_int *b)
     if ((res = mp_add(&tmp1, &a2, &tmp1)) != MP_OKAY) {
        goto ERR;
     }
-    
+
     if ((res = mp_sqr(&tmp1, &w1)) != MP_OKAY) {
        goto ERR;
     }
-    
+
     /* w3 = (a0 + 2(a1 + 2a2))**2 */
     if ((res = mp_mul_2(&a2, &tmp1)) != MP_OKAY) {
        goto ERR;
@@ -6667,11 +6680,11 @@ mp_toom_sqr(mp_int *a, mp_int *b)
     if ((res = mp_add(&tmp1, &a0, &tmp1)) != MP_OKAY) {
        goto ERR;
     }
-    
+
     if ((res = mp_sqr(&tmp1, &w3)) != MP_OKAY) {
        goto ERR;
     }
-    
+
 
     /* w2 = (a2 + a1 + a0)**2 */
     if ((res = mp_add(&a2, &a1, &tmp1)) != MP_OKAY) {
@@ -6683,18 +6696,18 @@ mp_toom_sqr(mp_int *a, mp_int *b)
     if ((res = mp_sqr(&tmp1, &w2)) != MP_OKAY) {
        goto ERR;
     }
-    
-    /* now solve the matrix 
-    
+
+    /* now solve the matrix
+
        0  0  0  0  1
        1  2  4  8  16
        1  1  1  1  1
        16 8  4  2  1
        1  0  0  0  0
-       
+
        using 12 subtractions, 4 shifts, 2 small divisions and 1 small multiplication.
      */
-     
+
      /* r1 - r4 */
      if ((res = mp_sub(&w1, &w4, &w1)) != MP_OKAY) {
         goto ERR;
@@ -6766,7 +6779,7 @@ mp_toom_sqr(mp_int *a, mp_int *b)
      if ((res = mp_div_3(&w3, &w3, NULL)) != MP_OKAY) {
         goto ERR;
      }
-     
+
      /* at this point shift W[n] by B*n */
      if ((res = mp_lshd(&w1, 1*B)) != MP_OKAY) {
         goto ERR;
@@ -6779,8 +6792,8 @@ mp_toom_sqr(mp_int *a, mp_int *b)
      }
      if ((res = mp_lshd(&w4, 4*B)) != MP_OKAY) {
         goto ERR;
-     }     
-     
+     }
+
      if ((res = mp_add(&w0, &w1, b)) != MP_OKAY) {
         goto ERR;
      }
@@ -6792,13 +6805,13 @@ mp_toom_sqr(mp_int *a, mp_int *b)
      }
      if ((res = mp_add(&tmp1, b, b)) != MP_OKAY) {
         goto ERR;
-     }     
-     
+     }
+
 ERR:
      mp_clear_multi(&w0, &w1, &w2, &w3, &w4, &a0, &a1, &a2, &tmp1, NULL);
      return res;
-}     
-     
+}
+
 
 /* End: bn_mp_toom_sqr.c */
 

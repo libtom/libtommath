@@ -68,8 +68,8 @@ int main(void)
    mp_init(&c);
    mp_init(&d);
    mp_init(&e);
-   mp_init(&f);   
-   
+   mp_init(&f);
+
    srand(time(NULL));
 
 #if 0
@@ -89,7 +89,7 @@ int main(void)
    for (;;) {
        aa = abs(rand()) & MP_MASK;
        bb = abs(rand()) & MP_MASK;
-	  if (MULT(aa,bb) != (aa*bb)) {
+      if (MULT(aa,bb) != (aa*bb)) {
              printf("%llu * %llu == %llu or %llu?\n", aa, bb, (ulong64)MULT(aa,bb), (ulong64)(aa*bb));
              return 0;
           }
@@ -111,18 +111,18 @@ int main(void)
 
 /* test mp_reduce_2k */
 #if 0
-   for (cnt = 3; cnt <= 4096; ++cnt) {
+   for (cnt = 3; cnt <= 256; ++cnt) {
        mp_digit tmp;
        mp_2expt(&a, cnt);
        mp_sub_d(&a, 1, &a);  /* a = 2**cnt - 1 */
-       
-       
+
+
        printf("\nTesting %4d bits", cnt);
        printf("(%d)", mp_reduce_is_2k(&a));
        mp_reduce_2k_setup(&a, &tmp);
        printf("(%d)", tmp);
-       for (ix = 0; ix < 100000; ix++) {
-           if (!(ix & 1023)) {printf("."); fflush(stdout); }
+       for (ix = 0; ix < 10000; ix++) {
+           if (!(ix & 127)) {printf("."); fflush(stdout); }
            mp_rand(&b, (cnt/DIGIT_BIT  + 1) * 2);
            mp_copy(&c, &b);
            mp_mod(&c, &a, &c);
@@ -135,22 +135,23 @@ int main(void)
     }
 #endif
 
-           
+
 /* test mp_div_3  */
 #if 0
-   for (cnt = 0; cnt < 1000000; ) {
+   for (cnt = 0; cnt < 10000; ) {
       mp_digit r1, r2;
-      
+
       if (!(++cnt & 127)) printf("%9d\r", cnt);
       mp_rand(&a, abs(rand()) % 32 + 1);
       mp_div_d(&a, 3, &b, &r1);
       mp_div_3(&a, &c, &r2);
-      
+
       if (mp_cmp(&b, &c) || r1 != r2) {
-         printf("Failure\n");
+         printf("\n\nmp_div_3 => Failure\n");
       }
    }
-#endif     
+   printf("\n\nPassed div_3 testing\n");
+#endif
 
 /* test the DR reduction */
 #if 0
@@ -162,7 +163,7 @@ int main(void)
            a.dp[ix] = MP_MASK;
        }
        a.used = cnt;
-       mp_prime_next_prime(&a, 3);
+       mp_prime_next_prime(&a, 3, 0);
 
        mp_rand(&b, cnt - 1);
        mp_copy(&b, &c);
@@ -178,9 +179,9 @@ int main(void)
 
          if (mp_cmp(&b, &c) != MP_EQ) {
             printf("Failed on trial %lu\n", rr); exit(-1);
-                       
+
          }
-      } while (++rr < 1000000);
+      } while (++rr < 10000);
       printf("Passed DR test for %d digits\n", cnt);
    }
 #endif
@@ -369,7 +370,7 @@ int main(void)
 
    div2_n = mul2_n = inv_n = expt_n = lcm_n = gcd_n = add_n =
    sub_n = mul_n = div_n = sqr_n = mul2d_n = div2d_n = cnt = add_d_n = sub_d_n= 0;
-   
+
    /* force KARA and TOOM to enable despite cutoffs */
    KARATSUBA_SQR_CUTOFF = KARATSUBA_MUL_CUTOFF = 110;
    TOOM_SQR_CUTOFF      = TOOM_MUL_CUTOFF      = 150;

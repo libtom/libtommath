@@ -1,7 +1,7 @@
 /* Makes safe primes of a DR nature */
 #include <tommath.h>
 
-int sizes[] = { 256/DIGIT_BIT, 512/DIGIT_BIT, 768/DIGIT_BIT, 1024/DIGIT_BIT, 2048/DIGIT_BIT, 4096/DIGIT_BIT };
+int sizes[] = { 1+256/DIGIT_BIT, 1+512/DIGIT_BIT, 1+768/DIGIT_BIT, 1+1024/DIGIT_BIT, 1+2048/DIGIT_BIT, 1+4096/DIGIT_BIT };
 int main(void)
 {
    int res, x, y;
@@ -27,6 +27,7 @@ int main(void)
        a.used = sizes[x];
        
        /* now loop */
+       res = 0;
        for (;;) { 
           a.dp[0] += 4;
           if (a.dp[0] >= MP_MASK) break;

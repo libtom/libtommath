@@ -56,9 +56,6 @@ mp_add_d (mp_int * a, mp_digit b, mp_int * c)
 
   /* if a is positive */
   if (a->sign == MP_ZPOS) {
-     /* setup size */
-     c->used = a->used + 1;
-
      /* add digit, after this we're propagating
       * the carry.
       */
@@ -75,6 +72,9 @@ mp_add_d (mp_int * a, mp_digit b, mp_int * c)
      /* set final carry */
      ix++;
      *tmpc++  = mu;
+
+     /* setup size */
+     c->used = a->used + 1;
   } else {
      /* a was negative and |a| < b */
      c->used  = 1;

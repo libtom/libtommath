@@ -1,3 +1,12 @@
+Sept 19th, 2003
+v0.27  -- Removed changes.txt~ which was made by accident since "kate" decided it was
+          a good time to re-enable backups... [kde is fun!]
+       -- In mp_grow() "a->dp" is not overwritten by realloc call [re: memory leak]
+          Now if mp_grow() fails the mp_int is still valid and can be cleared via
+          mp_clear() to reclaim the memory.
+       -- Henrik Goldman found a buffer overflow bug in mp_add_d().  Fixed.
+       -- Cleaned up mp_mul_d() to be much easier to read and follow.
+
 Aug 29th, 2003
 v0.26  -- Fixed typo that caused warning with GCC 3.2
        -- Martin Marcel noticed a bug in mp_neg() that allowed negative zeroes.  
