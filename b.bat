@@ -1,3 +1,2 @@
-nasm -f coff timer.asm
+nasm -f elf timer.asm
 gcc -Wall -W -O3 -fomit-frame-pointer -funroll-loops -DTIMER_X86 demo.c bn.c timer.o -o ltmdemo
-rem gcc -I./mtest/ -DU_MPI -Wall -W -O3 -fomit-frame-pointer -funroll-loops -DTIMER_X86 demo.c mtest/mpi.c timer.o -o mpidemo

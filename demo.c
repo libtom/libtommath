@@ -19,8 +19,10 @@
 
 #ifdef TIMER_X86
 #define TIMER
-extern ulong64 rdtsc(void);
-extern void reset(void);
+extern ulong64 _rdtsc(void);
+extern void _reset(void);
+ulong64 rdtsc(void) { return _rdtsc(); }
+void reset(void) { _reset(); }
 #endif
 
 #ifdef TIMER
@@ -85,7 +87,6 @@ int main(void)
    mp_int a, b, c, d, e, f;
    unsigned long expt_n, add_n, sub_n, mul_n, div_n, sqr_n, mul2d_n, div2d_n, gcd_n, lcm_n, inv_n;
    int rr;
-   mp_digit tom;
    
 #ifdef TIMER
    int n;
@@ -99,42 +100,33 @@ int main(void)
    mp_init(&e);
    mp_init(&f);
    
-   mp_read_radix(&a, "59994534535345535344389423", 10);
-   mp_read_radix(&b, "49993453555234234565675534", 10);
-   mp_read_radix(&c, "62398923474472948723847281", 10);
-    
-   mp_mulmod(&a, &b, &c, &f);
-   
-   /* setup mont */
-   mp_montgomery_setup(&c, &tom);
-   mp_mul(&a, &b, &a);
-   mp_montgomery_reduce(&a, &c, tom);
-   mp_montgomery_reduce(&a, &c, tom);
-   mp_lshd(&a, c.used*2);
-   mp_mod(&a, &c, &a);
-   
-   mp_toradix(&a, cmd, 10);
-   printf("%s\n\n", cmd);
-   mp_toradix(&f, cmd, 10);
-   printf("%s\n", cmd);
-   
-/*   return 0; */
-   
-   
-   mp_read_radix(&a, "V//////////////////////////////////////////////////////////////////////////////////////", 64);
-   mp_reduce_setup(&b, &a);
-   printf("\n\n----\n\n");
-   mp_toradix(&b, buf, 10);
-   printf("b == %s\n\n\n", buf);
-
-   mp_read_radix(&b, "4982748972349724892742", 10);
-   mp_sub_d(&a, 1, &c);
-   mp_exptmod(&b, &c, &a, &d);
-   mp_toradix(&d, buf, 10);
-   printf("b^p-1 == %s\n", buf);
-   
+#ifdef DEBUG
+   mp_read_radix(&a, "347743159439876626079252796797422223177535447388206607607181663903045907591201940478223621722118173270898487582987137708656414344685816179420855160986340457973820182883508387588163122354089264395604796675278966117567294812714812796820596564876450716066283126720010859041484786529056457896367683122960411136319", 10);
+   mp_read_radix(&b, "347743159439876626079252796797422223177535447388206607607181663903045907591201940478223621722118173270898487582987137708656414344685816179420855160986340457973820182883508387588163122354089264395604796675278966117567294812714812796820596564876450716066283126720010859041484786529056457896367683122960411136318", 10);
+   mp_set(&c, 1);
+   reset_timings();
+   mp_exptmod(&c, &b, &a, &d);
+   mp_exptmod(&c, &b, &a, &d);
+   mp_exptmod(&c, &b, &a, &d);
+   mp_exptmod(&c, &b, &a, &d);
+   mp_exptmod(&c, &b, &a, &d);
+   mp_exptmod(&c, &b, &a, &d);
+   mp_exptmod(&c, &b, &a, &d);
+   mp_exptmod(&c, &b, &a, &d);
+   mp_exptmod(&c, &b, &a, &d);
+   mp_exptmod(&c, &b, &a, &d);
+   mp_exptmod(&c, &b, &a, &d);
+   mp_exptmod(&c, &b, &a, &d);
+   mp_exptmod(&c, &b, &a, &d);
+   mp_exptmod(&c, &b, &a, &d);
+   mp_exptmod(&c, &b, &a, &d);
+   mp_exptmod(&c, &b, &a, &d);
+   dump_timings();
+   return 0;
+#endif   
       
 #ifdef TIMER      
+goto expt;
       mp_read_radix(&a, "340282366920938463463374607431768211455", 10);
       mp_read_radix(&b, "340282366920938463463574607431768211455", 10);
       while (a.used * DIGIT_BIT < 8192) {
@@ -182,7 +174,7 @@ int main(void)
       printf("Multiplying %d-bit took %llu cycles\n", mp_count_bits(&a), tt / ((ulong64)100000));
       mp_copy(&b, &a);
    }
-
+expt:
    {
       char *primes[] = {
          "17933601194860113372237070562165128350027320072176844226673287945873370751245439587792371960615073855669274087805055507977323024886880985062002853331424203",
@@ -206,7 +198,7 @@ int main(void)
       mp_mod(&b, &c, &b);
       mp_set(&c, 3);
       reset();
-      for (rr = 0; rr < 35; rr++) {
+      for (rr = 0; rr < 100; rr++) {
           mp_exptmod(&c, &b, &a, &d);
       }
       tt = rdtsc();
@@ -219,7 +211,7 @@ int main(void)
          draw(&d);
          exit(0);
       }
-      printf("Exponentiating %d-bit took %llu cycles\n", mp_count_bits(&a), tt / ((ulong64)35));
+      printf("Exponentiating %d-bit took %llu cycles\n", mp_count_bits(&a), tt / ((ulong64)100));
    }
    }   
 

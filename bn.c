@@ -99,7 +99,8 @@ void dump_timings(void)
    memset(&functime, 0, sizeof(functime));
    total = 0;
    for (x = 0; x < _itims; x++) {
-       total += timings[x].tot;
+       if (strcmp(timings[x].func, "_verify")) 
+          total += timings[x].tot;
        
        /* try to find this entry */
        for (y = 0; functime[y].func != NULL; y++) {
@@ -1053,7 +1054,7 @@ static int fast_s_mp_mul_digs(mp_int *a, mp_int *b, mp_int *c, int digs)
    c->dp[digs-1]   = (mp_digit)(W[digs-1] & ((mp_word)MP_MASK));
    
    /* clear unused */
-   for (ix = c->used; ix < olduse; ix++) {
+   for (; ix < olduse; ix++) {
       c->dp[ix] = 0;
    }
   
@@ -1194,13 +1195,13 @@ static int fast_s_mp_mul_high_digs(mp_int *a, mp_int *b, mp_int *c, int digs)
    c->used = newused;
    
    /* now convert the array W downto what we need */
-   for (ix = digs+1; ix < (pa+pb+1); ix++) {
+   for (ix = digs+1; ix < newused; ix++) {
        W[ix]       += (W[ix-1] >> ((mp_word)DIGIT_BIT));
        c->dp[ix-1] = (mp_digit)(W[ix-1] & ((mp_word)MP_MASK));
    }
    c->dp[(pa+pb+1)-1] = (mp_digit)(W[(pa+pb+1)-1] & ((mp_word)MP_MASK));
    
-   for (ix = c->used; ix < oldused; ix++) {
+   for (; ix < oldused; ix++) {
       c->dp[ix] = 0;
    }
    mp_clamp(c);
@@ -1339,17 +1340,17 @@ static int fast_s_mp_sqr(mp_int *a, mp_int *b)
    b->used = newused;
    
    /* now compute digits */
-   for (ix = 1; ix < (pa+pa+1); ix++) {
+   for (ix = 1; ix < newused; ix++) {
        /* double/add next digit */
        W[ix]       += W[ix] + W2[ix];
 
        W[ix]       = W[ix] + (W[ix-1] >> ((mp_word)DIGIT_BIT));
        b->dp[ix-1] = (mp_digit)(W[ix-1] & ((mp_word)MP_MASK));
    }
-   b->dp[(pa+pa+1)-1] = (mp_digit)(W[(pa+pa+1)-1] & ((mp_word)MP_MASK));
+   b->dp[(newused)-1] = (mp_digit)(W[(newused)-1] & ((mp_word)MP_MASK));
    
    /* clear high */
-   for (ix = b->used; ix < olduse; ix++) {
+   for (; ix < olduse; ix++) {
        b->dp[ix] = 0;
    }
    
@@ -1580,9 +1581,7 @@ static int mp_karatsuba_mul(mp_int *a, mp_int *b, mp_int *c)
    }
    
    mp_clamp(&x0);
-   mp_clamp(&x1);
    mp_clamp(&y0);
-   mp_clamp(&y1);
    
    /* now calc the products x0y0 and x1y1 */
    if (mp_mul(&x0, &y0, &x0y0) != MP_OKAY) goto X1Y1;             /* x0y0 = x0*y0 */
@@ -1679,15 +1678,14 @@ static int mp_karatsuba_sqr(mp_int *a, mp_int *b)
    x1.used = a->used - B;
    
    mp_clamp(&x0);
-   mp_clamp(&x1);
    
    /* now calc the products x0*x0 and x1*x1 */
-   if (mp_sqr(&x0, &x0x0) != MP_OKAY) goto X1X1;                /* x0x0 = x0*x0 */
-   if (mp_sqr(&x1, &x1x1) != MP_OKAY) goto X1X1;                /* x1x1 = x1*x1 */
+   if (mp_sqr(&x0, &x0x0) != MP_OKAY) goto X1X1;                  /* x0x0 = x0*x0 */
+   if (mp_sqr(&x1, &x1x1) != MP_OKAY) goto X1X1;                  /* x1x1 = x1*x1 */
 
    /* now calc x1-x0 and y1-y0 */
    if (mp_sub(&x1, &x0, &t1) != MP_OKAY) goto X1X1;               /* t1 = x1 - x0 */
-   if (mp_sqr(&t1, &t1) != MP_OKAY) goto X1X1;                  /* t1 = (x1 - x0) * (y1 - y0) */
+   if (mp_sqr(&t1, &t1) != MP_OKAY) goto X1X1;                    /* t1 = (x1 - x0) * (y1 - y0) */
 
    /* add x0y0 */
    if (mp_add(&x0x0, &x1x1, &t2) != MP_OKAY) goto X1X1;           /* t2 = x0y0 + x1y1 */
@@ -2760,8 +2758,7 @@ int mp_reduce_setup(mp_int *a, mp_int *b)
    VERIFY(a);
    VERIFY(b);
    
-   mp_set(a, 1);
-   if ((res = mp_lshd(a, b->used * 2)) != MP_OKAY) {
+   if ((res = mp_2expt(a, b->used * 2 * DIGIT_BIT)) != MP_OKAY) {
       DECFUNC();
       return res;
    }
@@ -2876,7 +2873,6 @@ __T:  mp_clear(&t);
    return res;
 }   
 
-
 /* computes xR^-1 == x (mod N) via Montgomery Reduction (comba) */
 static int fast_mp_montgomery_reduce(mp_int *a, mp_int *m, mp_digit mp)
 {
@@ -2884,29 +2880,53 @@ static int fast_mp_montgomery_reduce(mp_int *a, mp_int *m, mp_digit mp)
    mp_digit ui;
    mp_word  W[512];
    
+   REGFUNC("fast_mp_montgomery_reduce");
+   VERIFY(a);
+   VERIFY(m);
+   
    /* get old used count */
    olduse = a->used;
    
    /* grow a as required */
-   if (a->alloc < m->used*2+1) {
-      if ((res = mp_grow(a, m->used*2+1)) != MP_OKAY) {
+   if (a->alloc < m->used+1) {
+      if ((res = mp_grow(a, m->used+1)) != MP_OKAY) {
+         DECFUNC();
          return res;
       }
    }
    
-   /* copy and clear */
+   /* copy the digits of a */
    for (ix = 0; ix < a->used; ix++) {
        W[ix] = a->dp[ix];
    }
+   
+   /* zero the high words */
    for (; ix < m->used * 2 + 1; ix++) {
        W[ix] = 0;
    }
-   
+     
    for (ix = 0; ix < m->used; ix++) {
-       /* ui = ai * m' mod b */
+       /* ui = ai * m' mod b 
+        *
+        * We avoid a double precision multiplication (which isn't required)
+        * by casting the value down to a mp_digit.  Note this requires that W[ix-1] have
+        * the carry cleared (see after the inner loop)
+        */
        ui = (((mp_digit)(W[ix] & MP_MASK)) * mp) & MP_MASK;
        
-       /* a = a + ui * m * b^i */
+       /* a = a + ui * m * b^i 
+        *
+        * This is computed in place and on the fly.  The multiplication 
+        * by b^i is handled by offseting which columns the results 
+        * are added to.
+        *
+        * Note the comba method normally doesn't handle carries in the inner loop
+        * In this case we fix the carry from the previous column since the Montgomery
+        * reduction requires digits of the result (so far) [see above] to work.  This is 
+        * handled by fixing up one carry after the inner loop.  The carry fixups are done
+        * in order so after these loops the first m->used words of W[] have the carries
+        * fixed
+        */       
        { 
           register int      iy;
           register mp_digit *tmpx;
@@ -2916,32 +2936,36 @@ static int fast_mp_montgomery_reduce(mp_int *a, mp_int *m, mp_digit mp)
           tmpx = m->dp;
           _W   = W + ix;
           
+          /* inner loop */
           for (iy = 0; iy < m->used; iy++) {
               *_W++        += ((mp_word)ui) * ((mp_word)*tmpx++);
           }
-          
-          /* now fix carry for W[ix+1] */
-          W[ix+1] += W[ix] >> ((mp_word)DIGIT_BIT);
-          W[ix]   &= ((mp_word)MP_MASK);
        }
+
+       /* now fix carry for next digit, W[ix+1] */
+       W[ix+1] += W[ix] >> ((mp_word)DIGIT_BIT);
    }
    
    /* nox fix rest of carries */
-   for (; ix <= m->used * 2 + 1; ix++) {
+   for (++ix; ix <= m->used * 2 + 1; ix++) {
        W[ix]   += (W[ix-1] >> ((mp_word)DIGIT_BIT));
-       W[ix-1] &= ((mp_word)MP_MASK);
    }
    
-   /* copy out */
-
-   /* A = A/b^n */
+   /* copy out, A = A/b^n 
+    *
+    * The result is A/b^n but instead of converting from an array of mp_word
+    * to mp_digit than calling mp_rshd we just copy them in the right
+    * order 
+    */
    for (ix = 0; ix < m->used + 1; ix++) { 
-       a->dp[ix] = W[ix+m->used];
+       a->dp[ix] = W[ix+m->used] & ((mp_word)MP_MASK);
    }
    
+   /* set the max used */
    a->used = m->used + 1;
 
-   /* zero oldused digits */  
+   /* zero oldused digits, if the input a was larger than 
+    * m->used+1 we'll have to clear the digits */  
    for (; ix < olduse; ix++) {
        a->dp[ix] = 0;
    }
@@ -2951,10 +2975,12 @@ static int fast_mp_montgomery_reduce(mp_int *a, mp_int *m, mp_digit mp)
    /* if A >= m then A = A - m */
    if (mp_cmp_mag(a, m) != MP_LT) {
       if ((res = s_mp_sub(a, m, a)) != MP_OKAY) {
+         DECFUNC();
          return res;
       }
-   }
+   }   
    
+   DECFUNC();
    return MP_OKAY;
 }
 
@@ -3036,7 +3062,7 @@ int mp_montgomery_reduce(mp_int *a, mp_int *m, mp_digit mp)
  */
 static int mp_exptmod_fast(mp_int *G, mp_int *X, mp_int *P, mp_int *Y)
 {
-   mp_int M[64], res;
+   mp_int M[256], res;
    mp_digit buf, mp;
    int err, bitbuf, bitcpy, bitcnt, mode, digidx, x, y, winsize;
    
@@ -3048,12 +3074,14 @@ static int mp_exptmod_fast(mp_int *G, mp_int *X, mp_int *P, mp_int *Y)
    
    /* find window size */
    x = mp_count_bits(X);
-        if (x <= 18)    { winsize = 2; }
-   else if (x <= 84)    { winsize = 3; }
-   else if (x <= 300)   { winsize = 4; }
-   else if (x <= 930)   { winsize = 5; }
-   else                 { winsize = 6; }
-   
+        if (x <= 7)     { winsize = 2; }
+   else if (x <= 36)    { winsize = 3; }
+   else if (x <= 140)   { winsize = 4; }
+   else if (x <= 450)   { winsize = 5; }
+   else if (x <= 1303)  { winsize = 6; }
+   else if (x <= 3529)  { winsize = 7; }
+   else                 { winsize = 8; }
+
    /* init G array */
    for (x = 0; x < (1<<winsize); x++) {
       if ((err = mp_init_size(&M[x], 1)) != MP_OKAY) {
@@ -3072,15 +3100,14 @@ static int mp_exptmod_fast(mp_int *G, mp_int *X, mp_int *P, mp_int *Y)
    
    /* setup result */
    if ((err = mp_init(&res)) != MP_OKAY) {
-      goto __M;
+      goto __RES;
    }
 
    /* now we need R mod m */
-   mp_set(&res, 1);           
-   if ((err = mp_lshd(&res, P->used)) != MP_OKAY) {
+   if ((err = mp_2expt(&res, P->used * DIGIT_BIT)) != MP_OKAY) {
       goto __RES;
    }
-   
+      
    /* res = R mod m */
    if ((err = mp_mod(&res, P, &res)) != MP_OKAY) {
       goto __RES;
@@ -3092,7 +3119,6 @@ static int mp_exptmod_fast(mp_int *G, mp_int *X, mp_int *P, mp_int *Y)
     *
     * The first half of the table is not computed though accept for M[0] and M[1]
     */
-   mp_set(&M[0], 1);
    if ((err = mp_mod(G, P, &M[1])) != MP_OKAY) {
       goto __RES;
    }
@@ -3101,7 +3127,7 @@ static int mp_exptmod_fast(mp_int *G, mp_int *X, mp_int *P, mp_int *Y)
    if ((err = mp_mulmod(&M[1], &res, P, &M[1])) != MP_OKAY) {
       goto __RES;
    }
-   
+      
    /* compute the value at M[1<<(winsize-1)] by squaring M[1] (winsize-1) times */
    if ((err = mp_copy(&M[1], &M[1<<(winsize-1)])) != MP_OKAY) {
       goto __RES;
@@ -3236,10 +3262,9 @@ __M  :
    return err;
 }
 
-
 int mp_exptmod(mp_int *G, mp_int *X, mp_int *P, mp_int *Y)
 {
-   mp_int M[64], res, mu;
+   mp_int M[256], res, mu;
    mp_digit buf;
    int err, bitbuf, bitcpy, bitcnt, mode, digidx, x, y, winsize;
    
@@ -3258,11 +3283,13 @@ int mp_exptmod(mp_int *G, mp_int *X, mp_int *P, mp_int *Y)
 
    /* find window size */
    x = mp_count_bits(X);
-        if (x <= 18)    { winsize = 2; }
-   else if (x <= 84)    { winsize = 3; }
-   else if (x <= 300)   { winsize = 4; }
-   else if (x <= 930)   { winsize = 5; }
-   else                 { winsize = 6; }
+        if (x <= 7)     { winsize = 2; }
+   else if (x <= 36)    { winsize = 3; }
+   else if (x <= 140)   { winsize = 4; }
+   else if (x <= 450)   { winsize = 5; }
+   else if (x <= 1303)  { winsize = 6; }
+   else if (x <= 3529)  { winsize = 7; }
+   else                 { winsize = 8; }
    
    /* init G array */
    for (x = 0; x < (1<<winsize); x++) {
@@ -3289,7 +3316,6 @@ int mp_exptmod(mp_int *G, mp_int *X, mp_int *P, mp_int *Y)
     *
     * The first half of the table is not computed though accept for M[0] and M[1]
     */
-   mp_set(&M[0], 1);
    if ((err = mp_mod(G, P, &M[1])) != MP_OKAY) {
       goto __MU;
    }
@@ -3429,6 +3455,22 @@ __M  :
    DECFUNC();
    return err;
 }
+
+/* computes a = 2^b */
+int mp_2expt(mp_int *a, int b)
+{
+   int res;
+   
+   mp_zero(a);
+   if ((res = mp_grow(a, b/DIGIT_BIT + 1)) != MP_OKAY) {
+      return res;
+   }
+   a->used = b/DIGIT_BIT + 1;
+   a->dp[b/DIGIT_BIT] = 1 << (b % DIGIT_BIT);
+   
+   return MP_OKAY;
+}   
+   
 
 /* find the n'th root of an integer 
  *

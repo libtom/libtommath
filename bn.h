@@ -158,6 +158,9 @@ int mp_mul_2(mp_int *a, mp_int *b);
 /* c = a mod 2^d */
 int mp_mod_2d(mp_int *a, int b, mp_int *c);
 
+/* computes a = 2^b */
+int mp_2expt(mp_int *a, int b);
+
 /* ---> Basic arithmetic <--- */
 
 /* b = -a */

@@ -1,7 +1,7 @@
 \documentclass{article}
 \begin{document}
 
-\title{LibTomMath v0.10 \\ A Free Multiple Precision Integer Library}
+\title{LibTomMath v0.11 \\ A Free Multiple Precision Integer Library}
 \author{Tom St Denis \\ tomstdenis@iahu.ca}
 \maketitle
 \newpage
@@ -471,7 +471,7 @@ it is not.
 
 \subsubsection{mp\_exptmod(mp\_int *a, mp\_int *b, mp\_int *c, mp\_int *d)}
 Computes $d = a^b \mbox{ (mod }c\mbox{)}$ using a sliding window $k$-ary exponentiation algorithm.  For an $\alpha$-bit
-exponent it performs $\alpha$ squarings and at most $\lfloor \alpha/k \rfloor + k$ multiplications.  The value of $k$ is
+exponent it performs $\alpha$ squarings and at most $\lfloor \alpha/k \rfloor + 2^{k-1}$ multiplications.  The value of $k$ is
 chosen to minimize the number of multiplications required for a given value of $\alpha$.  Barrett or Montgomery 
 reductions are used to reduce the squared or multiplied temporary results modulo $c$.
 
@@ -480,7 +480,7 @@ reductions are used to reduce the squared or multiplied temporary results modulo
 \subsubsection{mp\_reduce(mp\_int *a, mp\_int *b, mp\_int *c)}
 Computes a Barrett reduction in-place of $a$ modulo $b$ with respect to $c$.  In essence it computes 
 $a \equiv a \mbox{ (mod }b\mbox{)}$ provided $0 \le a \le b^2$.  The value of $c$ is precomputed with the 
-function mp\_reduce\_setup().
+function mp\_reduce\_setup().  The modulus $b$ must be larger than zero.
 
 The Barrett reduction function has been optimized to use partial multipliers which means compared to MPI it performs
 have the number of single precision multipliers (\textit{provided they have the same size digits}).  The partial
@@ -490,15 +490,30 @@ can reduce a number modulo a $n-$digit modulus with approximately $2n^2$ single 
 \subsubsection{mp\_montgomery\_reduce(mp\_int *a, mp\_int *m, mp\_digit mp)}
 Computes a Montgomery reduction in-place of $a$ modulo $b$ with respect to $mp$.  If $b$ is some $n-$digit modulus then
 $R = \beta^{n+1}$.  The result of this function is $aR^{-1} \mbox{ (mod }b\mbox{)}$ provided that $0 \le a \le b^2$.
-The value of $mp$ is precomputed with the function mp\_montgomery\_setup().
+The value of $mp$ is precomputed with the function mp\_montgomery\_setup().  The modulus $b$ must be odd and larger
+than zero.  
 
 The Montgomery reduction comes in two variants.  A standard baseline and a fast comba method.  The baseline routine
 is in fact slower than the Barrett reductions, however, the comba routine is much faster.  Montomgery reduction can 
-reduce a number modulo a $n-$digit modulus with approximately $n^2 + n$ single precision multiplications.  
+reduce a number modulo a $n-$digit modulus with approximately $n^2 + n$ single precision multiplications.  Compared
+to Barrett reductions the montgomery reduction requires half as many multiplications as $n \rightarrow \infty$.  
 
 Note that the final result of a Montgomery reduction is not just the value reduced modulo $b$.  You have to multiply
 by $R$ modulo $b$ to get the real result.  At first that may not seem like such a worthwhile routine, however, the
-exptmod function can be made to take advantage of this such that only one normalization at the end is required.  
+exptmod function can be made to take advantage of this such that only one normalization at the end is required.
+
+This stems from the fact that if $a \rightarrow aR^{-1}$ through Montgomery reduction and if $a = vR$ and $b = uR$ then
+$a^2 \rightarrow v^2R^2R^{-1} \equiv v^2R$ and $ab \rightarrow uvRRR^{-1} \equiv uvR$.  The next useful observation is 
+that through the reduction $a \rightarrow vRR^{-1} \equiv v$ which means given a final result it can be normalized with
+a single reduction.  Now a series of complicated modular operations can be optimized if all the variables are initially
+multiplied by $R$ then the final result normalized by performing an extra reduction.
+
+If many variables are to be normalized the simplest method to setup the variables is to first compute $\hat x \equiv R^2 \mbox{ mod }m$.
+Now all the variables in the system can be multiplied by $\hat x$ and reduced with Montgomery reduction.  This means that
+two long divisions would be required to setup $\hat x$ and a multiplication followed by reduction for each variable.  
+
+A very useful observation is that multiplying by $R = \beta^n$ amounts to performing a left shift by $n$ positions which
+requires no single precision multiplications.  
 
 \section{Timing Analysis}
 \subsection{Observed Timings}

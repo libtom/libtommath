@@ -1,3 +1,9 @@
+Jan 15th, 2003
+v0.11  -- More subtle fixes
+       -- Moved to gentoo linux [hurrah!] so made *nix specific fixes to the make process
+       -- Sped up the montgomery reduction code quite a bit
+       -- fixed up demo so when building timing for the x86 it assumes ELF format now
+       
 Jan 9th, 2003
 v0.10  -- Pekka Riikonen suggested fixes to the radix conversion code.  
        -- Added baseline montgomery and comba montgomery reductions, sped up exptmods
