@@ -10,7 +10,7 @@
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://libtommath.iahu.ca
+ * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
  */
 #include <tommath.h>
 
@@ -50,6 +50,11 @@ mp_mul_2 (mp_int * a, mp_int * b)
 	if ((res = mp_grow (b, b->used + 1)) != MP_OKAY) {
 	  return res;
 	}
+
+	/* after the grow *tmpb is no longer valid so we have to reset it! 
+	 * (this bug took me about 17 minutes to find...!)
+	 */
+	tmpb = b->dp + b->used;
       }
       /* add a MSB of 1 */
       *tmpb = 1;
@@ -61,5 +66,6 @@ mp_mul_2 (mp_int * a, mp_int * b)
       *tmpb++ = 0;
     }
   }
+  b->sign = a->sign;
   return MP_OKAY;
 }

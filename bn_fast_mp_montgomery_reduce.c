@@ -10,7 +10,7 @@
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://libtommath.iahu.ca
+ * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
  */
 #include <tommath.h>
 
@@ -100,14 +100,18 @@ fast_mp_montgomery_reduce (mp_int * a, mp_int * m, mp_digit mp)
     W[ix + 1] += W[ix] >> ((mp_word) DIGIT_BIT);
   }
 
-  /* nox fix rest of carries */
-  for (++ix; ix <= m->used * 2 + 1; ix++) {
-    W[ix] += (W[ix - 1] >> ((mp_word) DIGIT_BIT));
-  }
 
   {
     register mp_digit *tmpa;
-    register mp_word *_W;
+    register mp_word *_W, *_W1;
+
+    /* nox fix rest of carries */
+    _W1 = W + ix;
+    _W = W + ++ix;
+
+    for (; ix <= m->used * 2 + 1; ix++) {
+      *_W++ += *_W1++ >> ((mp_word) DIGIT_BIT);
+    }
 
     /* copy out, A = A/b^n
      *

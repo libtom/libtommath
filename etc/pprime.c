@@ -8,10 +8,10 @@
 #include "tommath.h"
 
 /* fast square root */
-static    mp_digit
+static  mp_digit
 i_sqrt (mp_word x)
 {
-  mp_word   x1, x2;
+  mp_word x1, x2;
 
   x2 = x;
   do {
@@ -28,10 +28,10 @@ i_sqrt (mp_word x)
 
 
 /* generates a prime digit */
-static    mp_digit
+static  mp_digit
 prime_digit ()
 {
-  mp_digit  r, x, y, next;
+  mp_digit r, x, y, next;
 
   /* make a DIGIT_BIT-bit random number */
   for (r = x = 0; x < DIGIT_BIT; x++) {
@@ -141,8 +141,8 @@ prime_digit ()
 int
 pprime (int k, int li, mp_int * p, mp_int * q)
 {
-  mp_int    a, b, c, n, x, y, z, v;
-  int       res, ii;
+  mp_int  a, b, c, n, x, y, z, v;
+  int     res, ii;
   static const mp_digit bases[] = { 2, 3, 5, 7, 11, 13, 17, 19 };
 
   /* single digit ? */
@@ -329,10 +329,10 @@ __C:mp_clear (&c);
 int
 main (void)
 {
-  mp_int    p, q;
-  char      buf[4096];
-  int       k, li;
-  clock_t   t1;
+  mp_int  p, q;
+  char    buf[4096];
+  int     k, li;
+  clock_t t1;
 
   srand (time (NULL));
 

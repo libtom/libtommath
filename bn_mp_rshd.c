@@ -10,7 +10,7 @@
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://libtommath.iahu.ca
+ * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
  */
 #include <tommath.h>
 
@@ -19,7 +19,6 @@ void
 mp_rshd (mp_int * a, int b)
 {
   int     x;
-
 
   /* if b <= 0 then ignore it */
   if (b <= 0) {
@@ -32,14 +31,34 @@ mp_rshd (mp_int * a, int b)
     return;
   }
 
-  /* shift the digits down */
-  for (x = 0; x < (a->used - b); x++) {
-    a->dp[x] = a->dp[x + b];
-  }
+  {
+    register mp_digit *tmpa, *tmpaa;
 
-  /* zero the top digits */
-  for (; x < a->used; x++) {
-    a->dp[x] = 0;
+    /* shift the digits down */
+
+    /* base */
+    tmpa = a->dp;
+    
+    /* offset into digits */
+    tmpaa = a->dp + b;
+    
+    /* this is implemented as a sliding window where the window is b-digits long
+     * and digits from the top of the window are copied to the bottom
+     *
+     * e.g.
+     
+     b-2 | b-1 | b0 | b1 | b2 | ... | bb |   ---->
+                 /\                   |      ---->
+                  \-------------------/      ---->
+    */         
+    for (x = 0; x < (a->used - b); x++) {
+      *tmpa++ = *tmpaa++;
+    }
+
+    /* zero the top digits */
+    for (; x < a->used; x++) {
+      *tmpa++ = 0;
+    }
   }
   mp_clamp (a);
 }

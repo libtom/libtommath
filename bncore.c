@@ -10,10 +10,13 @@
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://libtommath.iahu.ca
+ * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
  */
 #include <tommath.h>
 
-int     KARATSUBA_MUL_CUTOFF = 80,	/* Min. number of digits before Karatsuba multiplication is used. */
-        KARATSUBA_SQR_CUTOFF = 80,	/* Min. number of digits before Karatsuba squaring is used. */
-        MONTGOMERY_EXPT_CUTOFF = 74;	/* max. number of digits that montgomery reductions will help for */
+/* configured for a AMD Duron Morgan core with etc/tune.c */
+int     KARATSUBA_MUL_CUTOFF = 73,	/* Min. number of digits before Karatsuba multiplication is used. */
+        KARATSUBA_SQR_CUTOFF = 121,	/* Min. number of digits before Karatsuba squaring is used. */
+        MONTGOMERY_EXPT_CUTOFF = 128;	/* max. number of digits that montgomery reductions will help for */
+
+

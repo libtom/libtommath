@@ -10,7 +10,7 @@
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://libtommath.iahu.ca
+ * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
  */
 #include <tommath.h>
 
@@ -37,8 +37,7 @@ int
 mp_karatsuba_mul (mp_int * a, mp_int * b, mp_int * c)
 {
   mp_int  x0, x1, y0, y1, t1, t2, x0y0, x1y1;
-  int     B, err, x;
-
+  int     B, err;
 
   err = MP_MEM;
 
@@ -59,13 +58,13 @@ mp_karatsuba_mul (mp_int * a, mp_int * b, mp_int * c)
     goto Y0;
 
   /* init temps */
-  if (mp_init (&t1) != MP_OKAY)
+  if (mp_init_size (&t1, B * 2) != MP_OKAY)
     goto Y1;
-  if (mp_init (&t2) != MP_OKAY)
+  if (mp_init_size (&t2, B * 2) != MP_OKAY)
     goto T1;
-  if (mp_init (&x0y0) != MP_OKAY)
+  if (mp_init_size (&x0y0, B * 2) != MP_OKAY)
     goto T2;
-  if (mp_init (&x1y1) != MP_OKAY)
+  if (mp_init_size (&x1y1, B * 2) != MP_OKAY)
     goto X0Y0;
 
   /* now shift the digits */
@@ -76,18 +75,32 @@ mp_karatsuba_mul (mp_int * a, mp_int * b, mp_int * c)
   x1.used = a->used - B;
   y1.used = b->used - B;
 
-  /* we copy the digits directly instead of using higher level functions
-   * since we also need to shift the digits
-   */
-  for (x = 0; x < B; x++) {
-    x0.dp[x] = a->dp[x];
-    y0.dp[x] = b->dp[x];
-  }
-  for (x = B; x < a->used; x++) {
-    x1.dp[x - B] = a->dp[x];
-  }
-  for (x = B; x < b->used; x++) {
-    y1.dp[x - B] = b->dp[x];
+  {
+    register int x;
+    register mp_digit *tmpa, *tmpb, *tmpx, *tmpy;
+
+    /* we copy the digits directly instead of using higher level functions
+     * since we also need to shift the digits
+     */
+    tmpa = a->dp;
+    tmpb = b->dp;
+
+    tmpx = x0.dp;
+    tmpy = y0.dp;
+    for (x = 0; x < B; x++) {
+      *tmpx++ = *tmpa++;
+      *tmpy++ = *tmpb++;
+    }
+
+    tmpx = x1.dp;
+    for (x = B; x < a->used; x++) {
+      *tmpx++ = *tmpa++;
+    }
+
+    tmpy = y1.dp;
+    for (x = B; x < b->used; x++) {
+      *tmpy++ = *tmpb++;
+    }
   }
 
   /* only need to clamp the lower words since by definition the upper words x1/y1 must

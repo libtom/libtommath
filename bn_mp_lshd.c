@@ -10,7 +10,7 @@
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://libtommath.iahu.ca
+ * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
  */
 #include <tommath.h>
 
@@ -31,16 +31,31 @@ mp_lshd (mp_int * a, int b)
     return res;
   }
 
-  /* increment the used by the shift amount than copy upwards */
-  a->used += b;
-  for (x = a->used - 1; x >= b; x--) {
-    a->dp[x] = a->dp[x - b];
-  }
+  {
+    register mp_digit *tmpa, *tmpaa;
 
-  /* zero the lower digits */
-  for (x = 0; x < b; x++) {
-    a->dp[x] = 0;
+    /* increment the used by the shift amount than copy upwards */
+    a->used += b;
+    
+    /* top */
+    tmpa = a->dp + a->used - 1;
+    
+    /* base */
+    tmpaa = a->dp + a->used - 1 - b;
+
+    /* much like mp_rshd this is implemented using a sliding window
+     * except the window goes the otherway around.  Copying from
+     * the bottom to the top.  see bn_mp_rshd.c for more info.
+     */
+    for (x = a->used - 1; x >= b; x--) {
+      *tmpa-- = *tmpaa--;
+    }
+
+    /* zero the lower digits */
+    tmpa = a->dp;
+    for (x = 0; x < b; x++) {
+      *tmpa++ = 0;
+    }
   }
-  mp_clamp (a);
   return MP_OKAY;
 }

@@ -69,18 +69,32 @@ int mp_reduce_setup(mp_int *a, mp_int *b)
    }
    return mp_div(a, b, a, NULL);
 }
+
+int mp_rand(mp_int *a, int c)
+{
+   long z = abs(rand()) & 65535;
+   mp_set(a, z?z:1);
+   while (c--) {
+      s_mp_lshd(a, 1);
+      mp_add_d(a, abs(rand()), a);
+   }
+   return MP_OKAY;
+}
 #endif
 
    char cmd[4096], buf[4096];
 int main(void)
 {
    mp_int a, b, c, d, e, f;
-   unsigned long expt_n, add_n, sub_n, mul_n, div_n, sqr_n, mul2d_n, div2d_n, gcd_n, lcm_n, inv_n;
+   unsigned long expt_n, add_n, sub_n, mul_n, div_n, sqr_n, mul2d_n, div2d_n, gcd_n, lcm_n, inv_n,
+                 div2_n, mul2_n;
    unsigned rr;
+   int cnt;
 
 #ifdef TIMER
    int n;
    ulong64 tt;
+   FILE *log;
 #endif
 
    mp_init(&a);
@@ -90,60 +104,66 @@ int main(void)
    mp_init(&e);
    mp_init(&f);
 
-
 #ifdef TIMER
-goto multtime;
-
       printf("CLOCKS_PER_SEC == %lu\n", CLOCKS_PER_SEC);
-      mp_read_radix(&a, "340282366920938463463374607431768211455", 10);
-      mp_read_radix(&b, "340282366920938463463574607431768211455", 10);
-      while (a.used * DIGIT_BIT < 8192) {
+goto expttime;      
+
+      log = fopen("add.log", "w");
+      for (cnt = 4; cnt <= 128; cnt += 4) {
+         mp_rand(&a, cnt);
+         mp_rand(&b, cnt);
          reset();
          for (rr = 0; rr < 10000000; rr++) {
              mp_add(&a, &b, &c);
          }
          tt = rdtsc();
          printf("Adding\t\t%4d-bit => %9llu/sec, %9llu ticks\n", mp_count_bits(&a), (((unsigned long long)rr)*CLOCKS_PER_SEC)/tt, tt);
-         mp_sqr(&a, &a);
-         mp_sqr(&b, &b);
+         fprintf(log, "%d,%9llu\n", cnt, (((unsigned long long)rr)*CLOCKS_PER_SEC)/tt);
       }
+      fclose(log);
  
-      mp_read_radix(&a, "340282366920938463463374607431768211455", 10);
-      mp_read_radix(&b, "340282366920938463463574607431768211455", 10);
-      while (a.used * DIGIT_BIT < 8192) {
+      log = fopen("sub.log", "w");
+      for (cnt = 4; cnt <= 128; cnt += 4) {
+         mp_rand(&a, cnt);
+         mp_rand(&b, cnt);
          reset();
          for (rr = 0; rr < 10000000; rr++) {
              mp_sub(&a, &b, &c);
          }
          tt = rdtsc();
-         printf("Subtracting\t%4d-bit => %9llu/sec, %9llu ticks\n", mp_count_bits(&a), (((unsigned long long)rr)*CLOCKS_PER_SEC)/tt, tt);
-         mp_sqr(&a, &a);
-         mp_sqr(&b, &b);
+         printf("Subtracting\t\t%4d-bit => %9llu/sec, %9llu ticks\n", mp_count_bits(&a), (((unsigned long long)rr)*CLOCKS_PER_SEC)/tt, tt);
+         fprintf(log, "%d,%9llu\n", cnt, (((unsigned long long)rr)*CLOCKS_PER_SEC)/tt);
       }
+      fclose(log);
       
 multtime:      
 
-   mp_read_radix(&a, "340282366920938463463374607431768211455", 10);
-   while (a.used * DIGIT_BIT < 8192) {
+   log = fopen("sqr.log", "w");
+   for (cnt = 4; cnt <= 128; cnt += 4) {
+      mp_rand(&a, cnt);
       reset();
       for (rr = 0; rr < 250000; rr++) {
           mp_sqr(&a, &b);
       }
       tt = rdtsc();
       printf("Squaring\t%4d-bit => %9llu/sec, %9llu ticks\n", mp_count_bits(&a), (((unsigned long long)rr)*CLOCKS_PER_SEC)/tt, tt);
-      mp_copy(&b, &a);
+      fprintf(log, "%d,%9llu\n", cnt, (((unsigned long long)rr)*CLOCKS_PER_SEC)/tt);
    }
+   fclose(log);
    
-   mp_read_radix(&a, "340282366920938463463374607431768211455", 10);
-   while (a.used * DIGIT_BIT < 8192) {
+   log = fopen("mult.log", "w");
+   for (cnt = 4; cnt <= 128; cnt += 4) {
+      mp_rand(&a, cnt);
+      mp_rand(&b, cnt);
       reset();
       for (rr = 0; rr < 250000; rr++) {
-          mp_mul(&a, &a, &b);
+          mp_mul(&a, &b, &c);
       }
       tt = rdtsc();
       printf("Multiplying\t%4d-bit => %9llu/sec, %9llu ticks\n", mp_count_bits(&a), (((unsigned long long)rr)*CLOCKS_PER_SEC)/tt, tt);
-      mp_copy(&b, &a);
+      fprintf(log, "%d,%9llu\n", cnt, (((unsigned long long)rr)*CLOCKS_PER_SEC)/tt);
    }
+   fclose(log);
 
 expttime:  
    {
@@ -157,6 +177,7 @@ expttime:
          "1214855636816562637502584060163403830270705000634713483015101384881871978446801224798536155406895823305035467591632531067547890948695117172076954220727075688048751022421198712032848890056357845974246560748347918630050853933697792254955890439720297560693579400297062396904306270145886830719309296352765295712183040773146419022875165382778007040109957609739589875590885701126197906063620133954893216612678838507540777138437797705602453719559017633986486649523611975865005712371194067612263330335590526176087004421363598470302731349138773205901447704682181517904064735636518462452242791676541725292378925568296858010151852326316777511935037531017413910506921922450666933202278489024521263798482237150056835746454842662048692127173834433089016107854491097456725016327709663199738238442164843147132789153725513257167915555162094970853584447993125488607696008169807374736711297007473812256272245489405898470297178738029484459690836250560495461579533254473316340608217876781986188705928270735695752830825527963838355419762516246028680280988020401914551825487349990306976304093109384451438813251211051597392127491464898797406789175453067960072008590614886532333015881171367104445044718144312416815712216611576221546455968770801413440778423979",
          NULL         
       };
+   log = fopen("expt.log", "w");
    for (n = 0; primes[n]; n++) {
       mp_read_radix(&a, primes[n], 10);
       mp_zero(&b);
@@ -183,12 +204,21 @@ expttime:
          exit(0);
       }
       printf("Exponentiating\t%4d-bit => %9llu/sec, %9llu ticks\n", mp_count_bits(&a), (((unsigned long long)rr)*CLOCKS_PER_SEC)/tt, tt);
+      fprintf(log, "%d,%9llu\n", cnt, (((unsigned long long)rr)*CLOCKS_PER_SEC)/tt);
    }
    }   
-
-   mp_read_radix(&a, "340282366920938463463374607431768211455", 10);
-   mp_read_radix(&b, "234892374891378913789237289378973232333", 10);
-   while (a.used * DIGIT_BIT < 8192) {
+   fclose(log);
+invtime:
+   log = fopen("invmod.log", "w");
+   for (cnt = 4; cnt <= 128; cnt += 4) {
+      mp_rand(&a, cnt);
+      mp_rand(&b, cnt);
+      
+      do {
+         mp_add_d(&b, 1, &b);
+         mp_gcd(&a, &b, &c);
+      } while (mp_cmp_d(&c, 1) != MP_EQ);
+      
       reset();
       for (rr = 0; rr < 10000; rr++) {
           mp_invmod(&b, &a, &c);
@@ -200,16 +230,18 @@ expttime:
          return 0;
       }
       printf("Inverting mod\t%4d-bit => %9llu/sec, %9llu ticks\n", mp_count_bits(&a), (((unsigned long long)rr)*CLOCKS_PER_SEC)/tt, tt);
-      mp_sqr(&a, &a);
-      mp_sqr(&b, &b);
+      fprintf(log, "%d,%9llu\n", cnt, (((unsigned long long)rr)*CLOCKS_PER_SEC)/tt);
    }
+   fclose(log);
    
    return 0;
   
 #endif
 
-   inv_n = expt_n = lcm_n = gcd_n = add_n = sub_n = mul_n = div_n = sqr_n = mul2d_n = div2d_n = 0;   
+   div2_n = mul2_n = inv_n = expt_n = lcm_n = gcd_n = add_n = 
+   sub_n = mul_n = div_n = sqr_n = mul2d_n = div2d_n = cnt = 0;
    for (;;) {
+       if (!(++cnt & 15)) sleep(3);
    
        /* randomly clear and re-init one variable, this has the affect of triming the alloc space */
        switch (abs(rand()) % 7) {
@@ -223,7 +255,7 @@ expttime:
        }
    
    
-       printf("%7lu/%7lu/%7lu/%7lu/%7lu/%7lu/%7lu/%7lu/%7lu/%7lu/%7lu/%5d\r", add_n, sub_n, mul_n, div_n, sqr_n, mul2d_n, div2d_n, gcd_n, lcm_n, expt_n, inv_n, _ifuncs);
+       printf("%7lu/%7lu/%7lu/%7lu/%7lu/%7lu/%7lu/%7lu/%7lu/%7lu/%7lu/%7lu/%7lu ", add_n, sub_n, mul_n, div_n, sqr_n, mul2d_n, div2d_n, gcd_n, lcm_n, expt_n, inv_n, div2_n, mul2_n);
        fgets(cmd, 4095, stdin);
        cmd[strlen(cmd)-1] = 0;
        printf("%s  ]\r",cmd); fflush(stdout);
@@ -386,7 +418,29 @@ draw(&a);draw(&b);draw(&c);draw(&d);
                 return 0;
              }
                 
-       }
+       } else if (!strcmp(cmd, "div2")) { ++div2_n;
+             fgets(buf, 4095, stdin);  mp_read_radix(&a, buf, 10);
+             fgets(buf, 4095, stdin);  mp_read_radix(&b, buf, 10);
+             mp_div_2(&a, &c);
+             if (mp_cmp(&c, &b) != MP_EQ) {
+                 printf("div_2 %lu failure\n", div2_n);
+                 draw(&a);
+                 draw(&b);
+                 draw(&c);
+                 return 0;
+             }
+       } else if (!strcmp(cmd, "mul2")) { ++mul2_n;
+             fgets(buf, 4095, stdin);  mp_read_radix(&a, buf, 10);
+             fgets(buf, 4095, stdin);  mp_read_radix(&b, buf, 10);
+             mp_mul_2(&a, &c);
+             if (mp_cmp(&c, &b) != MP_EQ) {
+                 printf("mul_2 %lu failure\n", mul2_n);
+                 draw(&a);
+                 draw(&b);
+                 draw(&c);
+                 return 0;
+             }
+       }             
        
    }
    return 0;   

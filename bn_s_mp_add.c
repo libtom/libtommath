@@ -10,7 +10,7 @@
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://libtommath.iahu.ca
+ * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
  */
 #include <tommath.h>
 
@@ -55,8 +55,14 @@ s_mp_add (mp_int * a, mp_int * b, mp_int * c)
     register int i;
 
     /* alias for digit pointers */
+    
+    /* first input */
     tmpa = a->dp;
+    
+    /* second input */
     tmpb = b->dp;
+    
+    /* destination */
     tmpc = c->dp;
 
     u = 0;

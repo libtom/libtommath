@@ -10,7 +10,7 @@
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://libtommath.iahu.ca
+ * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
  */
 #include <tommath.h>
 
@@ -23,8 +23,7 @@ int
 mp_karatsuba_sqr (mp_int * a, mp_int * b)
 {
   mp_int  x0, x1, t1, t2, x0x0, x1x1;
-  int     B, err, x;
-
+  int     B, err;
 
   err = MP_MEM;
 
@@ -41,22 +40,31 @@ mp_karatsuba_sqr (mp_int * a, mp_int * b)
     goto X0;
 
   /* init temps */
-  if (mp_init (&t1) != MP_OKAY)
+  if (mp_init_size (&t1, a->used * 2) != MP_OKAY)
     goto X1;
-  if (mp_init (&t2) != MP_OKAY)
+  if (mp_init_size (&t2, a->used * 2) != MP_OKAY)
     goto T1;
-  if (mp_init (&x0x0) != MP_OKAY)
+  if (mp_init_size (&x0x0, B * 2) != MP_OKAY)
     goto T2;
-  if (mp_init (&x1x1) != MP_OKAY)
+  if (mp_init_size (&x1x1, (a->used - B) * 2) != MP_OKAY)
     goto X0X0;
 
-  /* now shift the digits */
-  for (x = 0; x < B; x++) {
-    x0.dp[x] = a->dp[x];
-  }
+  {
+    register int x;
+    register mp_digit *dst, *src;
 
-  for (x = B; x < a->used; x++) {
-    x1.dp[x - B] = a->dp[x];
+    src = a->dp;
+
+    /* now shift the digits */
+    dst = x0.dp;
+    for (x = 0; x < B; x++) {
+      *dst++ = *src++;
+    }
+
+    dst = x1.dp;
+    for (x = B; x < a->used; x++) {
+      *dst++ = *src++;
+    }
   }
 
   x0.used = B;
@@ -77,7 +85,7 @@ mp_karatsuba_sqr (mp_int * a, mp_int * b)
     goto X1X1;			/* t1 = (x1 - x0) * (y1 - y0) */
 
   /* add x0y0 */
-  if (mp_add (&x0x0, &x1x1, &t2) != MP_OKAY)
+  if (s_mp_add (&x0x0, &x1x1, &t2) != MP_OKAY)
     goto X1X1;			/* t2 = x0y0 + x1y1 */
   if (mp_sub (&t2, &t1, &t1) != MP_OKAY)
     goto X1X1;			/* t1 = x0y0 + x1y1 - (x1-x0)*(y1-y0) */

@@ -41,7 +41,7 @@ void rand_num(mp_int *a)
    unsigned char buf[512];
 
 top:
-   size = 1 + ((fgetc(rng)*fgetc(rng)) % 96);
+   size = 1 + ((fgetc(rng)*fgetc(rng)) % 512);
    buf[0] = (fgetc(rng)&1)?1:0;
    fread(buf+1, 1, size, rng);
    for (n = 0; n < size; n++) {
@@ -57,7 +57,7 @@ void rand_num2(mp_int *a)
    unsigned char buf[512];
 
 top:
-   size = 1 + ((fgetc(rng)*fgetc(rng)) % 96);
+   size = 1 + ((fgetc(rng)*fgetc(rng)) % 512);
    buf[0] = (fgetc(rng)&1)?1:0;
    fread(buf+1, 1, size, rng);
    for (n = 0; n < size; n++) {
@@ -72,6 +72,8 @@ int main(void)
    int n;
    mp_int a, b, c, d, e;
    char buf[4096];
+   
+   static int tests[] = { 11, 12 };
 
    mp_init(&a);
    mp_init(&b);
@@ -89,7 +91,7 @@ int main(void)
    }
 
    for (;;) {
-       n = 4; // fgetc(rng) % 11;
+       n =  fgetc(rng) % 13;
 
    if (n == 0) {
        /* add tests */
@@ -235,7 +237,24 @@ int main(void)
       printf("%s\n", buf);      
       mp_todecimal(&c, buf);
       printf("%s\n", buf);      
-   } 
+   } else if (n == 11) {
+      rand_num(&a);
+      mp_mul_2(&a, &a);
+      mp_div_2(&a, &b);
+      printf("div2\n");
+      mp_todecimal(&a, buf);
+      printf("%s\n", buf);      
+      mp_todecimal(&b, buf);
+      printf("%s\n", buf);
+   } else if (n == 12) {
+      rand_num2(&a);
+      mp_mul_2(&a, &b);
+      printf("mul2\n");
+      mp_todecimal(&a, buf);
+      printf("%s\n", buf);      
+      mp_todecimal(&b, buf);
+      printf("%s\n", buf);
+   }
    }
    fclose(rng);
    return 0;

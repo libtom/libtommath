@@ -10,7 +10,7 @@
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://libtommath.iahu.ca
+ * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
  */
 #include <tommath.h>
 
@@ -46,6 +46,7 @@ mp_div_2 (mp_int * a, mp_int * b)
       *tmpb++ = 0;
     }
   }
+  b->sign = a->sign;
   mp_clamp (b);
   return MP_OKAY;
 }

@@ -1,6 +1,6 @@
 CFLAGS  +=  -I./ -Wall -W -Wshadow -O3 -fomit-frame-pointer -funroll-loops
 
-VERSION=0.13
+VERSION=0.14
 
 default: libtommath.a
 
@@ -60,7 +60,7 @@ docs:	docdvi
 	rm -f bn.log bn.aux bn.dvi
 	
 clean:
-	rm -f *.pdf *.o *.a *.exe etclib/*.o demo/demo.o test ltmtest mpitest mtest/mtest mtest/mtest.exe \
+	rm -f *.pdf *.o *.a *.obj *.lib *.exe etclib/*.o demo/demo.o test ltmtest mpitest mtest/mtest mtest/mtest.exe \
         bn.log bn.aux bn.dvi *.log *.s mpi.c 
 	cd etc ; make clean
 

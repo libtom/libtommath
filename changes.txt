@@ -1,3 +1,16 @@
+Mar 15th, 2003
+v0.14  -- Tons of manual updates
+       -- cleaned up the directory
+       -- added MSVC makefiles
+       -- source changes [that I don't recall]
+       -- Fixed up the lshd/rshd code to use pointer aliasing
+       -- Fixed up the mul_2d and div_2d to not call rshd/lshd unless needed
+       -- Fixed up etc/tune.c a tad
+       -- fixed up demo/demo.c to output comma-delimited results of timing
+          also fixed up timing demo to use a finer granularity for various functions
+       -- fixed up demo/demo.c testing to pause during testing so my Duron won't catch on fire
+          [stays around 31-35C during testing :-)]
+       
 Feb 13th, 2003
 v0.13  -- tons of minor speed-ups in low level add, sub, mul_2 and div_2 which propagate 
           to other functions like mp_invmod, mp_div, etc...

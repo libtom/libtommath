@@ -3,14 +3,14 @@
  * Tom St Denis, tomstdenis@iahu.ca
  */
 #include <time.h>
-#include <bn.h>
+#include <tommath.h>
 
 int
 is_mersenne (long s, int *pp)
 {
-  mp_int    n, u, mu;
-  int       res, k;
-  long      ss;
+  mp_int  n, u, mu;
+  int     res, k;
+  long    ss;
 
   *pp = 0;
 
@@ -85,7 +85,7 @@ __N:mp_clear (&n);
 long
 i_sqrt (long x)
 {
-  long      x1, x2;
+  long    x1, x2;
 
   x2 = 16;
   do {
@@ -104,7 +104,7 @@ i_sqrt (long x)
 int
 isprime (long k)
 {
-  long      y, z;
+  long    y, z;
 
   y = i_sqrt (k);
   for (z = 2; z <= y; z++) {
@@ -118,9 +118,9 @@ isprime (long k)
 int
 main (void)
 {
-  int       pp;
-  long      k;
-  clock_t   tt;
+  int     pp;
+  long    k;
+  clock_t tt;
 
   k = 3;
 

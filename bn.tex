@@ -1,15 +1,15 @@
 \documentclass{article}
 \begin{document}
 
-\title{LibTomMath v0.13 \\ A Free Multiple Precision Integer Library}
+\title{LibTomMath v0.14 \\ A Free Multiple Precision Integer Library \\ http://math.libtomcrypt.org }
 \author{Tom St Denis \\ tomstdenis@iahu.ca}
 \maketitle
 \newpage
 
 \section{Introduction}
-``LibTomMath'' is a free and open source library that provides multiple-precision integer functions required to form a basis
-of a public key cryptosystem.  LibTomMath is written entire in portable ISO C source code and designed to have an application
-interface much like that of MPI from Michael Fromberger.  
+``LibTomMath'' is a free and open source library that provides multiple-precision integer functions required to form a 
+basis of a public key cryptosystem.  LibTomMath is written entire in portable ISO C source code and designed to have an 
+application interface much like that of MPI from Michael Fromberger.  
 
 LibTomMath was written from scratch by Tom St Denis but designed to be  drop in replacement for the MPI package.  The 
 algorithms within the library are derived from descriptions as provided in the Handbook of Applied Cryptography and Knuth's
@@ -23,8 +23,7 @@ LibTomMath was designed with the following goals in mind:
 \item Be written entirely in portable C.
 \end{enumerate}
 
-All three goals have been achieved.  Particularly the speed increase goal.  For example, a 512-bit modular exponentiation 
-is eight times faster\footnote{On an Athlon XP with GCC 3.2} with LibTomMath compared to MPI.
+All three goals have been achieved to one extent or another (actual figures depend on what platform you are using).
 
 Being compatible with MPI means that applications that already use it can be ported fairly quickly.  Currently there are 
 a few differences but there are many similarities.  In fact the average MPI based application can be ported in under 15
@@ -54,16 +53,26 @@ make install
 
 Now within your application include ``tommath.h'' and link against libtommath.a to get MPI-like functionality.
 
+\subsection{Microsoft Visual C++}
+A makefile is also provided for MSVC (\textit{tested against MSVC 6.00 with SP5}) which allows the library to be used
+with that compiler as well.  To build the library type
+
+\begin{verbatim}
+nmake -f makefile.msvc
+\end{verbatim}
+
+Which will build ``tommath.lib''.  
+
 \section{Programming with LibTomMath}
 
 \subsection{The mp\_int Structure}
 All multiple precision integers are stored in a structure called \textbf{mp\_int}.  A multiple precision integer is
-essentially an array of \textbf{mp\_digit}.  mp\_digit is defined at the top of bn.h.  Its type can be changed to suit
-a particular platform.  
+essentially an array of \textbf{mp\_digit}.  mp\_digit is defined at the top of ``tommath.h''.  The type can be changed 
+to suit a particular platform.  
 
-For example, when \textbf{MP\_8BIT} is defined\footnote{When building bn.c.} a mp\_digit is a unsigned char and holds 
-seven bits.  Similarly when \textbf{MP\_16BIT} is defined a mp\_digit is a unsigned short and holds 15 bits.  
-By default a mp\_digit is a unsigned long and holds 28 bits.  
+For example, when \textbf{MP\_8BIT} is defined a mp\_digit is a unsigned char and holds seven bits.  Similarly 
+when \textbf{MP\_16BIT} is defined a mp\_digit is a unsigned short and holds 15 bits.   By default a mp\_digit is a 
+unsigned long and holds 28 bits which is optimal for most 32 and 64 bit processors.
 
 The choice of digit is particular to the platform at hand and what available multipliers are provided.  For 
 MP\_8BIT either a $8 \times 8 \Rightarrow 16$ or $16 \times 16 \Rightarrow 16$ multiplier is optimal.  When 
@@ -83,20 +92,19 @@ $W$ is the number of bits in a digit (default is 28).
 
 \subsection{Calling Functions}
 Most functions expect pointers to mp\_int's as parameters.   To save on memory usage it is possible to have source
-variables as destinations.  For example:
+variables as destinations.  The arguements are read left to right so to compute $x + y = z$ you would pass the arguments
+in the order $x, y, z$.  For example:
 \begin{verbatim}
    mp_add(&x, &y, &x);           /* x = x + y */
-   mp_mul(&x, &z, &x);           /* x = x * z */
-   mp_div_2(&x, &x);             /* x = x / 2 */
+   mp_mul(&y, &x, &z);           /* z = y * x */
+   mp_div_2(&x, &y);             /* y = x / 2 */
 \end{verbatim}
 
-\section{Quick Overview}
+\subsection{Return Values}
+All functions that return errors will return \textbf{MP\_OKAY} if the function was succesful.  It will return 
+\textbf{MP\_MEM} if it ran out of heap memory or \textbf{MP\_VAL} if one of the arguements is out of range.  
 
 \subsection{Basic Functionality}
-Essentially all LibTomMath functions return one of three values to indicate if the function worked as desired.  A 
-function will return \textbf{MP\_OKAY} if the function was successful.  A function will return \textbf{MP\_MEM} if
-it ran out of memory and \textbf{MP\_VAL} if the input was invalid.  
-
 Before an mp\_int can be used it must be initialized with 
 
 \begin{verbatim}
@@ -106,7 +114,7 @@ int mp_init(mp_int *a);
 For example, consider the following.
 
 \begin{verbatim}
-#include "bn.h"
+#include "tommath.h"
 int main(void)
 {
    mp_int num;
@@ -383,6 +391,18 @@ in $c$ and returns success.
 
 This function requires $O(N)$ additional digits of memory and $O(2 \cdot N)$ time.
 
+\subsubsection{mp\_mul\_2(mp\_int *a, mp\_int *b)}
+Multiplies $a$ by two and stores in $b$.  This function is hard coded todo a shift by one place so it is faster
+than calling mp\_mul\_2d with a count of one.  
+
+This function requires $O(N)$ additional digits of memory and $O(N)$ time.
+
+\subsubsection{mp\_div\_2(mp\_int *a, mp\_int *b)}
+Divides $a$ by two and stores in $b$.  This function is hard coded todo a shift by one place so it is faster
+than calling mp\_div\_2d with a count of one.
+
+This function requires $O(N)$ additional digits of memory and $O(N)$ time.
+
 \subsubsection{mp\_mod\_2d(mp\_int *a, int b, mp\_int *c)}
 Performs the action of reducing $a$ modulo $2^b$ and stores the result in $c$.  If the shift count $b$ is less than 
 or equal to zero the function places $a$ in $c$ and returns success.  
@@ -412,7 +432,7 @@ of $c$ is the maximum length of the two inputs.
 \subsection{Basic Arithmetic}
 
 \subsubsection{mp\_cmp(mp\_int *a, mp\_int *b)}
-Performs a \textbf{signed} comparison between $a$ and $b$ returning \textbf{MP\_GT} is $a$ is larger than $b$.
+Performs a \textbf{signed} comparison between $a$ and $b$ returning \textbf{MP\_GT} if $a$ is larger than $b$.
 
 This function requires no additional memory and $O(N)$ time.
 
@@ -559,57 +579,6 @@ A very useful observation is that multiplying by $R = \beta^n$ amounts to perfor
 requires no single precision multiplications.  
 
 \section{Timing Analysis}
-\subsection{Observed Timings}
-A simple test program ``demo.c'' was developed which builds with either MPI or LibTomMath (without modification).  The
-test was conducted on an AMD Athlon XP processor with 266Mhz DDR memory and the GCC 3.2 compiler\footnote{With build
-options ``-O3 -fomit-frame-pointer -funroll-loops''}.    The multiplications and squarings were repeated 100,000 times 
-each while the modular exponentiation (exptmod) were performed 50 times each.  The ``inversions'' refers to multiplicative
-inversions modulo an odd number of a given size.  The RDTSC (Read Time Stamp Counter) instruction was used to measure the 
-time the entire iterations took and was divided by the number of iterations to get an average.  The following results 
-were observed.
-
-\begin{small}
-\begin{center}
-\begin{tabular}{c|c|c|c}
-\hline \textbf{Operation} & \textbf{Size (bits)} & \textbf{Time with MPI (cycles)} & \textbf{Time with LibTomMath (cycles)} \\
-\hline
-Inversion & 128 & 264,083  & 59,782   \\
-Inversion & 256 & 549,370  & 146,915   \\
-Inversion & 512 & 1,675,975  & 367,172   \\
-Inversion & 1024 & 5,237,957  & 1,054,158   \\
-Inversion & 2048 & 17,871,944  & 3,459,683   \\
-Inversion & 4096 & 66,610,468  & 11,834,556   \\
-\hline
-Multiply & 128 & 1,426   & 451     \\
-Multiply & 256 & 2,551   & 958     \\
-Multiply & 512 & 7,913   & 2,476     \\
-Multiply & 1024 & 28,496   & 7,927   \\
-Multiply & 2048 & 109,897   & 28,224     \\
-Multiply & 4096 & 469,970   & 101,171     \\
-\hline 
-Square & 128 & 1,319   & 511     \\
-Square & 256 & 1,776   & 947     \\
-Square & 512 & 5,399  & 2,153    \\
-Square & 1024 & 18,991  & 5,733     \\
-Square & 2048 & 72,126  & 17,621    \\
-Square & 4096 & 306,269  & 67,576   \\
-\hline 
-Exptmod & 512 & 32,021,586  & 3,118,435 \\
-Exptmod & 768 & 97,595,492  & 8,493,633 \\
-Exptmod & 1024 & 223,302,532  & 17,715,899     \\
-Exptmod & 2048 & 1,682,223,369   & 114,936,361      \\
-Exptmod & 2560 & 3,268,615,571   & 229,402,426       \\
-Exptmod & 3072 & 5,597,240,141   & 367,403,840      \\
-Exptmod & 4096 & 13,347,270,891   & 779,058,433      
-
-\end{tabular}
-\end{center}
-\end{small}
-
-Note that the figures do fluctuate but their magnitudes are relatively intact.  The purpose of the chart is not to
-get an exact timing but to compare the two libraries.  For example, in all of the tests the exact time for a 512-bit
-squaring operation was not the same.  The observed times were all approximately 2,500 cycles, more importantly they
-were always faster than the timings observed with MPI by about the same magnitude.  
 
 \subsection{Digit Size}
 The first major constribution to the time savings is the fact that 28 bits are stored per digit instead of the MPI 
@@ -619,29 +588,59 @@ A savings of $64^2 - 37^2 = 2727$ single precision multiplications.
 
 \subsection{Multiplication Algorithms}
 For most inputs a typical baseline $O(n^2)$ multiplier is used which is similar to that of MPI.  There are two variants 
-of the baseline multiplier.  The normal and the fast variants.  The normal baseline multiplier is the exact same as the
-algorithm from MPI.  The fast baseline multiplier is optimized for cases where the number of input digits $N$ is less
-than or equal to $2^{w}/\beta^2$.  Where $w$ is the number of bits in a \textbf{mp\_word}.  By default a mp\_word is
-64-bits which means $N \le 256$ is allowed which represents numbers upto $7168$ bits.
+of the baseline multiplier.  The normal and the fast comba variant.  The normal baseline multiplier is the exact same as 
+the algorithm from MPI.  The fast comba baseline multiplier is optimized for cases where the number of input digits $N$ 
+is less than or equal to $2^{w}/\beta^2$.  Where $w$ is the number of bits in a \textbf{mp\_word} or simply $lg(\beta)$.
+By default a mp\_word is 64-bits which means $N \le 256$ is allowed which represents numbers upto $7,168$ bits.  However,
+since the Karatsuba multiplier (discussed below) will kick in before that size the slower baseline algorithm (that MPI
+uses) should never really be used in a default configuration.  
 
-The fast baseline multiplier is optimized by removing the carry operations from the inner loop.  This is often referred
-to as the ``comba'' method since it computes the products a columns first then figures out the carries.  This has the
-effect of making a very simple and paralizable inner loop.
+The fast comba baseline multiplier is optimized by removing the carry operations from the inner loop.  This is often 
+referred to as the ``comba'' method since it computes the products a columns first then figures out the carries.  To
+accomodate this the result of the inner multiplications must be stored in words large enough not to lose the carry bits.  
+This is why there is a limit of $2^{w}/\beta^2$ digits in the input.  This optimization has the effect of making a 
+very simple and efficient inner loop.
 
-For large inputs, typically 80 digits\footnote{By default that is 2240-bits or more.} or more the Karatsuba method is 
-used.  This method has significant overhead but an asymptotic running time of $O(n^{1.584})$ which means for fairly large
-inputs this method is faster.  The Karatsuba implementation is recursive which means for extremely large inputs they
-will benefit from the algorithm.
+\subsubsection{Karatsuba Multiplier}
+For large inputs, typically 80 digits\footnote{By default that is 2240-bits or more.} or more the Karatsuba multiplication
+method is used.  This method has significant overhead but an asymptotic running time of $O(n^{1.584})$ which means for 
+fairly large inputs this method is faster than the baseline (or comba) algorithm.  The Karatsuba implementation is 
+recursive which means for extremely large inputs they will benefit from the algorithm.
+
+The algorithm is based on the observation that if 
+
+\begin{eqnarray}
+x = x_0 + x_1\beta \nonumber \\
+y = y_0 + y_1\beta
+\end{eqnarray}
+
+Where $x_0, x_1, y_0, y_1$ are half the size of their respective summand than 
+
+\begin{equation}
+x \cdot y = x_1y_1\beta^2 + ((x_1 - y_1)(x_0 - y_0) + x_0y_0 + x_1y_1)\beta + x_0y_0
+\end{equation}
+
+It is trivial that from this only three products have to be produced: $x_0y_0, x_1y_1, (x_1-y_1)(x_0-y_0)$ which
+are all of half size numbers.  A multiplication of two half size numbers requires only $1 \over 4$ of the
+original work which means with no recursion the Karatsuba algorithm achieves a running time of ${3n^2}\over 4$.  
+The routine provided does recursion which is where the $O(n^{1.584})$ work factor comes from.
+
+The multiplication by $\beta$ and $\beta^2$ amount to digit shift operations.  
+The extra overhead in the Karatsuba method comes from extracting the half size numbers $x_0, x_1, y_0, y_1$ and
+performing the various smaller calculations.  
+
+The library has been fairly optimized to extract the digits using hard-coded routines instead of the hire
+level functions however there is still significant overhead to optimize away.
 
 MPI only implements the slower baseline multiplier where carries are dealt with in the inner loop.  As a result even at
 smaller numbers (below the Karatsuba cutoff) the LibTomMath multipliers are faster.
 
 \subsection{Squaring Algorithms}
 
-Similar to the multiplication algorithms there are two baseline squaring algorithms.  Both have an asymptotic running
-time of $O((t^2 + t)/2)$.  The normal baseline squaring is the same from MPI and the fast is a ``comba'' squaring
-algorithm.  The comba method is used if the number of digits $N$ is less than $2^{w-1}/\beta^2$ which by default 
-covers numbers upto $3584$ bits.  
+Similar to the multiplication algorithms there are two baseline squaring algorithms.  Both have an asymptotic 
+running time of $O((t^2 + t)/2)$.  The normal baseline squaring is the same from MPI and the fast method is 
+a ``comba'' squaring algorithm.  The comba method is used if the number of digits $N$ is less than 
+$2^{w-1}/\beta^2$ which by default covers numbers upto $3,584$ bits.  
 
 There is also a Karatsuba squaring method which achieves a running time of $O(n^{1.584})$ after considerably large
 inputs.
@@ -653,25 +652,31 @@ than MPI is.
 
 LibTomMath implements a sliding window $k$-ary left to right exponentiation algorithm.  For a given exponent size $L$ an
 appropriate window size $k$ is chosen.  There are always at most $L$ modular squarings and $\lfloor L/k \rfloor$ modular
-multiplications.   The $k$-ary method works by precomputing values $g(x) = b^x$ for $0 \le x < 2^k$ and a given base 
+multiplications.   The $k$-ary method works by precomputing values $g(x) = b^x$ for $2^{k-1} \le x < 2^k$ and a given base 
 $b$.  Then the multiplications are grouped in windows of $k$ bits.  The sliding window technique has the benefit 
 that it can skip multiplications if there are zero bits following or preceding a window.  Consider the exponent 
 $e = 11110001_2$ if $k = 2$ then there will be a two squarings, a multiplication of $g(3)$, two squarings, a multiplication
-of $g(3)$, four squarings and and a multiplication by $g(1)$.  In total there are 8 squarings and 3 multiplications.  
+of $g(3)$, four squarings and and a multiplication by $g(1)$.  In total there are 8 squarings and 3 multiplications.
 
-MPI uses a binary square-multiply method.  For the same exponent $e$ it would have had 8 squarings and 5 multiplications.  
-There is a precomputation phase for the method LibTomMath uses but it generally cuts down considerably on the number
-of multiplications.  Consider a 512-bit exponent.  The worst case for the LibTomMath method results in 512 squarings and 
-124 multiplications.  The MPI method would have 512 squarings and 512 multiplications.  Randomly every $2k$ bits another 
-multiplication is saved via the sliding-window technique on top of the savings the $k$-ary method provides.
+MPI uses a binary square-multiply method for exponentiation.  For the same exponent $e = 11110001_2$ it would have had to
+perform 8 squarings and 5 multiplications.  There is a precomputation phase for the method LibTomMath uses but it 
+generally cuts down considerably on the number of multiplications.  Consider a 512-bit exponent.  The worst case for the 
+LibTomMath method results in 512 squarings and 124 multiplications.  The MPI method would have 512 squarings 
+and 512 multiplications.  Randomly every $2k$ bits another multiplication is saved via the sliding-window 
+technique on top of the savings the $k$-ary method provides.
 
 Both LibTomMath and MPI use Barrett reduction instead of division to reduce the numbers modulo the modulus given.
 However, LibTomMath can take advantage of the fact that the multiplications required within the Barrett reduction
-do not have to give full precision.  As a result the reduction step is much faster and just as accurate.  The LibTomMath code
-will automatically determine at run-time (e.g. when its called) whether the faster multiplier can be used.  The
+do not have to give full precision.  As a result the reduction step is much faster and just as accurate.  The LibTomMath 
+code will automatically determine at run-time (e.g. when its called) whether the faster multiplier can be used.  The
 faster multipliers have also been optimized into the two variants (baseline and comba baseline).
 
 LibTomMath also has a variant of the exptmod function that uses Montgomery reductions instead of Barrett reductions
-which is faser.  As a result of all these changes exponentiation in LibTomMath is much faster than compared to MPI.  
+which is faster.  The code will automatically detect when the Montgomery version can be used (\textit{Requires the
+modulus to be odd and below the MONTGOMERY\_EXPT\_CUTOFF size}).  The Montgomery routine is essentially a copy of the 
+Barrett exponentiation routine except it uses Montgomery reduction.
+
+As a result of all these changes exponentiation in LibTomMath is much faster than compared to MPI.  On most ALU-strong
+processors (AMD Athlon for instance) exponentiation in LibTomMath is often more then ten times faster than MPI.   
 
 \end{document}

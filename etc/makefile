@@ -17,4 +17,4 @@ mersenne: mersenne.o
 	$(CC) mersenne.o $(LIBNAME) -o mersenne
         
 clean:
-	rm -f *.o *.exe pprime tune mersenne 
+	rm -f *.log *.o *.obj *.exe pprime tune mersenne 

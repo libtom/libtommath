@@ -10,7 +10,7 @@
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://libtommath.iahu.ca
+ * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
  */
 #include <tommath.h>
 
@@ -32,9 +32,11 @@ mp_mul_2d (mp_int * a, int b, mp_int * c)
   }
 
   /* shift by as many digits in the bit count */
-  if ((res = mp_lshd (c, b / DIGIT_BIT)) != MP_OKAY) {
-    return res;
-  }
+  if (b >= DIGIT_BIT) {
+     if ((res = mp_lshd (c, b / DIGIT_BIT)) != MP_OKAY) {
+       return res;
+     }
+  }     
   c->used = c->alloc;
 
   /* shift any bit count < DIGIT_BIT */

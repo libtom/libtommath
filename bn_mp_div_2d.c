@@ -10,7 +10,7 @@
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://libtommath.iahu.ca
+ * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
  */
 #include <tommath.h>
 
@@ -51,7 +51,9 @@ mp_div_2d (mp_int * a, int b, mp_int * c, mp_int * d)
   }
 
   /* shift by as many digits in the bit count */
-  mp_rshd (c, b / DIGIT_BIT);
+  if (b >= DIGIT_BIT) {
+     mp_rshd (c, b / DIGIT_BIT);
+  }     
 
   /* shift any bit count < DIGIT_BIT */
   D = (mp_digit) (b % DIGIT_BIT);
