@@ -1,7 +1,7 @@
 \documentclass{article}
 \begin{document}
 
-\title{LibTomMath v0.09 \\ A Free Multiple Precision Integer Library}
+\title{LibTomMath v0.10 \\ A Free Multiple Precision Integer Library}
 \author{Tom St Denis \\ tomstdenis@iahu.ca}
 \maketitle
 \newpage
@@ -279,6 +279,22 @@ int mp_n_root(mp_int *a, mp_digit b, mp_int *c);
 /* computes the jacobi c = (a | n) (or Legendre if b is prime)  */
 int mp_jacobi(mp_int *a, mp_int *n, int *c);
 
+/* used to setup the Barrett reduction for a given modulus b */
+int mp_reduce_setup(mp_int *a, mp_int *b);
+
+/* Barrett Reduction, computes a (mod b) with a precomputed value c  
+ *
+ * Assumes that 0 < a <= b^2, note if 0 > a > -(b^2) then you can merely
+ * compute the reduction as -1 * mp_reduce(mp_abs(a)) [pseudo code].
+ */
+int mp_reduce(mp_int *a, mp_int *b, mp_int *c);
+
+/* setups the montgomery reduction */
+int mp_montgomery_setup(mp_int *a, mp_digit *mp);
+
+/* computes xR^-1 == x (mod N) via Montgomery Reduction */
+int mp_montgomery_reduce(mp_int *a, mp_int *m, mp_digit mp);
+
 /* d = a^b (mod c) */
 int mp_exptmod(mp_int *a, mp_int *b, mp_int *c, mp_int *d);
 \end{verbatim}
@@ -451,21 +467,38 @@ by $c$.  Since the result of the Jacobi function $\left ( {a \over n} \right ) \
 natural to store the result in a simple C style \textbf{int}.  If $n$ is prime then the Jacobi function produces
 the same results as the Legendre function\footnote{Source: Handbook of Applied Cryptography, pp. 73}.  This means if
 $n$ is prime then $\left ( {a \over n} \right )$ is equal to $1$ if $a$ is a quadratic residue modulo $n$ or $-1$ if 
-it is not.  
+it is not.
 
 \subsubsection{mp\_exptmod(mp\_int *a, mp\_int *b, mp\_int *c, mp\_int *d)}
 Computes $d = a^b \mbox{ (mod }c\mbox{)}$ using a sliding window $k$-ary exponentiation algorithm.  For an $\alpha$-bit
 exponent it performs $\alpha$ squarings and at most $\lfloor \alpha/k \rfloor + k$ multiplications.  The value of $k$ is
-chosen to minimize the number of multiplications required for a given value of $\alpha$.  Barrett reductions are used
-to reduce the squared or multiplied temporary results modulo $c$.  A Barrett reduction requires one division that is
-performed only and two half multipliers of $N$ digit numbers resulting in approximation $O((N^2)/2)$ work.  
+chosen to minimize the number of multiplications required for a given value of $\alpha$.  Barrett or Montgomery 
+reductions are used to reduce the squared or multiplied temporary results modulo $c$.
 
-Let $\gamma = \lfloor \alpha/k \rfloor + k$ represent the total multiplications.  The total work of a exponentiation is
-therefore, $O(3 \cdot N^2 + (\alpha + \gamma) \cdot ((N^2)/2) + \alpha \cdot ((N^2 + N)/2) + \gamma \cdot N^2)$ which 
-simplies to $O(3 \cdot N^2 + \gamma N^2 + \alpha (N^2 + (N/2)))$.  The bulk of the time is spent in the Barrett 
-reductions and the squaring algorithms.  Since $\gamma < \alpha$ it makes sense to optimize first the Barrett and
-squaring routines first.  Significant improvements in the future will most likely stem from optimizing these instead
-of optimizing the multipliers.
+\subsection{Fast Modular Reductions}
+
+\subsubsection{mp\_reduce(mp\_int *a, mp\_int *b, mp\_int *c)}
+Computes a Barrett reduction in-place of $a$ modulo $b$ with respect to $c$.  In essence it computes 
+$a \equiv a \mbox{ (mod }b\mbox{)}$ provided $0 \le a \le b^2$.  The value of $c$ is precomputed with the 
+function mp\_reduce\_setup().
+
+The Barrett reduction function has been optimized to use partial multipliers which means compared to MPI it performs
+have the number of single precision multipliers (\textit{provided they have the same size digits}).  The partial
+multipliers (\textit{one of which is shared with mp\_mul}) both have baseline and comba variants.  Barrett reduction 
+can reduce a number modulo a $n-$digit modulus with approximately $2n^2$ single precision multiplications.  
+
+\subsubsection{mp\_montgomery\_reduce(mp\_int *a, mp\_int *m, mp\_digit mp)}
+Computes a Montgomery reduction in-place of $a$ modulo $b$ with respect to $mp$.  If $b$ is some $n-$digit modulus then
+$R = \beta^{n+1}$.  The result of this function is $aR^{-1} \mbox{ (mod }b\mbox{)}$ provided that $0 \le a \le b^2$.
+The value of $mp$ is precomputed with the function mp\_montgomery\_setup().
+
+The Montgomery reduction comes in two variants.  A standard baseline and a fast comba method.  The baseline routine
+is in fact slower than the Barrett reductions, however, the comba routine is much faster.  Montomgery reduction can 
+reduce a number modulo a $n-$digit modulus with approximately $n^2 + n$ single precision multiplications.  
+
+Note that the final result of a Montgomery reduction is not just the value reduced modulo $b$.  You have to multiply
+by $R$ modulo $b$ to get the real result.  At first that may not seem like such a worthwhile routine, however, the
+exptmod function can be made to take advantage of this such that only one normalization at the end is required.  
 
 \section{Timing Analysis}
 \subsection{Observed Timings}
@@ -503,9 +536,9 @@ Square & 1024 & 18,991  & 5,733     \\
 Square & 2048 & 72,126  & 17,621    \\
 Square & 4096 & 306,269  & 67,576   \\
 \hline 
-Exptmod & 512 & 32,021,586  & 4,138,354 \\
-Exptmod & 768 & 97,595,492  & 9,840,233 \\
-Exptmod & 1024 & 223,302,532  & 20,624,553     \\
+Exptmod & 512 & 32,021,586  & 3,118,435 \\
+Exptmod & 768 & 97,595,492  & 8,493,633 \\
+Exptmod & 1024 & 223,302,532  & 17,715,899     \\
 Exptmod & 2048 & 1,682,223,369   & 114,936,361      \\
 Exptmod & 2560 & 3,268,615,571   & 229,402,426       \\
 Exptmod & 3072 & 5,597,240,141   & 367,403,840      \\

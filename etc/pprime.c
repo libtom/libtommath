@@ -85,10 +85,11 @@ static mp_digit prime_digit()
 }
 
 /* makes a prime of at least k bits */
-int pprime(int k, mp_int *p, mp_int *q)
+int pprime(int k, int li, mp_int *p, mp_int *q)
 {
    mp_int a, b, c, n, x, y, z, v;
-   int res;
+   int res, ii;
+   static const mp_digit bases[] = { 2, 3, 5, 7, 11, 13, 17, 19 };
    
    /* single digit ? */
    if (k <= (int)DIGIT_BIT) {
@@ -167,55 +168,60 @@ int pprime(int k, mp_int *p, mp_int *q)
       
       if (mp_cmp_d(&y, 1) != MP_EQ) goto top;
       
-      /* now try base x=2  */
-      mp_set(&x, 2);
+      /* now try base x=bases[ii]  */
+      for (ii = 0; ii < li; ii++) {
+         mp_set(&x, bases[ii]);
        
-      /* compute x^a mod n */
-      if ((res = mp_exptmod(&x, &a, &n, &y)) != MP_OKAY) {             /* y = x^a mod n */
-         goto __Z;
-      }
+         /* compute x^a mod n */
+         if ((res = mp_exptmod(&x, &a, &n, &y)) != MP_OKAY) {             /* y = x^a mod n */
+            goto __Z;
+         }
       
-      /* if y == 1 loop */
-      if (mp_cmp_d(&y, 1) == MP_EQ) goto top;
+         /* if y == 1 loop */
+         if (mp_cmp_d(&y, 1) == MP_EQ) continue;
    
-      /* now x^2a mod n */
-      if ((res = mp_sqrmod(&y, &n, &y)) != MP_OKAY) {                  /* y = x^2a mod n */
-         goto __Z;
-      }
+         /* now x^2a mod n */
+         if ((res = mp_sqrmod(&y, &n, &y)) != MP_OKAY) {                  /* y = x^2a mod n */
+           goto __Z;
+         }
    
-      if (mp_cmp_d(&y, 1) == MP_EQ) goto top;
+         if (mp_cmp_d(&y, 1) == MP_EQ) continue;
    
-      /* compute x^b mod n */
-      if ((res = mp_exptmod(&x, &b, &n, &y)) != MP_OKAY) {             /* y = x^b mod n */
-          goto __Z;
-      }
+         /* compute x^b mod n */
+         if ((res = mp_exptmod(&x, &b, &n, &y)) != MP_OKAY) {             /* y = x^b mod n */
+            goto __Z;
+         }
       
-      /* if y == 1 loop */
-      if (mp_cmp_d(&y, 1) == MP_EQ) goto top;
+         /* if y == 1 loop */
+         if (mp_cmp_d(&y, 1) == MP_EQ) continue;
    
-      /* now x^2b mod n */
-      if ((res = mp_sqrmod(&y, &n, &y)) != MP_OKAY) {                  /* y = x^2b mod n */
-         goto __Z;
-      }
+         /* now x^2b mod n */
+         if ((res = mp_sqrmod(&y, &n, &y)) != MP_OKAY) {                  /* y = x^2b mod n */
+            goto __Z;
+         }
    
-      if (mp_cmp_d(&y, 1) == MP_EQ) goto top;
+         if (mp_cmp_d(&y, 1) == MP_EQ) continue;
 
+         /* compute x^c mod n == x^ab mod n */
+         if ((res = mp_exptmod(&x, &c, &n, &y)) != MP_OKAY) {             /* y = x^ab mod n */
+             goto __Z;
+         }
       
-      /* compute x^c mod n == x^ab mod n */
-      if ((res = mp_exptmod(&x, &c, &n, &y)) != MP_OKAY) {             /* y = x^ab mod n */
-          goto __Z;
+         /* if y == 1 loop */
+         if (mp_cmp_d(&y, 1) == MP_EQ) continue;
+   
+         /* now compute (x^c mod n)^2 */
+         if ((res = mp_sqrmod(&y, &n, &y)) != MP_OKAY) {                  /* y = x^2ab mod n */
+            goto __Z;
+         }
+   
+         /* y should be 1 */
+         if (mp_cmp_d(&y, 1) != MP_EQ) continue;
+         break;
       }
       
-      /* if y == 1 loop */
-      if (mp_cmp_d(&y, 1) == MP_EQ) goto top;
-   
-      /* now compute (x^c mod n)^2 */
-      if ((res = mp_sqrmod(&y, &n, &y)) != MP_OKAY) {                  /* y = x^2ab mod n */
-         goto __Z;
-      }
-   
-      /* y should be 1 */
-      if (mp_cmp_d(&y, 1) != MP_EQ) goto top;
+      /* no bases worked? */
+      if (ii == li) goto top;
 
 /*
 {
@@ -232,10 +238,14 @@ int pprime(int k, mp_int *p, mp_int *q)
 */
      /* a = n */
      mp_copy(&n, &a);
-  }     
+  }
+  
+  /* get q to be the order of the large prime subgroup */
+  mp_sub_d(&n, 1, q);
+  mp_div_2(q, q);
+  mp_div(q, &b, q, NULL);
 
   mp_exch(&n, p);
-  mp_exch(&b, q);
    
    res = MP_OKAY;
 __Z: mp_clear(&z); 
@@ -254,19 +264,25 @@ int main(void)
 {
    mp_int p, q;
    char buf[4096];
-   int k;
+   int k, li;
    clock_t t1;
       
    srand(time(NULL));
    
    printf("Enter # of bits: \n");
-   scanf("%d", &k);
+   fgets(buf, sizeof(buf), stdin);
+   sscanf(buf, "%d", &k);
+   
+   printf("Enter number of bases to try (1 to 8):\n");
+   fgets(buf, sizeof(buf), stdin);
+   sscanf(buf, "%d", &li);
+   
    
    mp_init(&p);
    mp_init(&q);
    
    t1 = clock();   
-   pprime(k, &p, &q);
+   pprime(k, li, &p, &q);
    t1 = clock() - t1;
    
    printf("\n\nTook %ld ticks, %d bits\n", t1, mp_count_bits(&p));

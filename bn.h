@@ -84,6 +84,7 @@ typedef int           mp_err;
 /* you'll have to tune these... */
 #define KARATSUBA_MUL_CUTOFF    80      /* Min. number of digits before Karatsuba multiplication is used. */
 #define KARATSUBA_SQR_CUTOFF    80      /* Min. number of digits before Karatsuba squaring is used. */
+#define MONTGOMERY_EXPT_CUTOFF  40      /* max. number of digits that montgomery reductions will help for */
 
 #define MP_PREC                 64      /* default digits of precision */
 
@@ -114,7 +115,7 @@ int mp_shrink(mp_int *a);
 
 #define mp_iszero(a) (((a)->used == 0) ? 1 : 0)
 #define mp_iseven(a) (((a)->used == 0 || (((a)->dp[0] & 1) == 0)) ? 1 : 0)
-#define mp_isodd(a)  (((a)->used > 0 || (((a)->dp[0] & 1) == 1)) ? 1 : 0)
+#define mp_isodd(a)  (((a)->used > 0 && (((a)->dp[0] & 1) == 1)) ? 1 : 0)
 
 /* set to zero */
 void mp_zero(mp_int *a);
@@ -256,6 +257,12 @@ int mp_reduce_setup(mp_int *a, mp_int *b);
  * compute the reduction as -1 * mp_reduce(mp_abs(a)) [pseudo code].
  */
 int mp_reduce(mp_int *a, mp_int *b, mp_int *c);
+
+/* setups the montgomery reduction */
+int mp_montgomery_setup(mp_int *a, mp_digit *mp);
+
+/* computes xR^-1 == x (mod N) via Montgomery Reduction */
+int mp_montgomery_reduce(mp_int *a, mp_int *m, mp_digit mp);
  
 /* d = a^b (mod c) */
 int mp_exptmod(mp_int *a, mp_int *b, mp_int *c, mp_int *d);

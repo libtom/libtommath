@@ -21,11 +21,14 @@
 #define TIMER
 extern ulong64 rdtsc(void);
 extern void reset(void);
-#else 
+#endif
 
+#ifdef TIMER
+#ifndef TIMER_X86
 ulong64 _tt;
 void reset(void) { _tt = clock(); }
 ulong64 rdtsc(void) { return clock() - _tt; }
+#endif
 #endif
 
 #ifndef DEBUG
@@ -82,6 +85,7 @@ int main(void)
    mp_int a, b, c, d, e, f;
    unsigned long expt_n, add_n, sub_n, mul_n, div_n, sqr_n, mul2d_n, div2d_n, gcd_n, lcm_n, inv_n;
    int rr;
+   mp_digit tom;
    
 #ifdef TIMER
    int n;
@@ -94,29 +98,38 @@ int main(void)
    mp_init(&d);
    mp_init(&e);
    mp_init(&f);
- 
+   
+   mp_read_radix(&a, "59994534535345535344389423", 10);
+   mp_read_radix(&b, "49993453555234234565675534", 10);
+   mp_read_radix(&c, "62398923474472948723847281", 10);
+    
+   mp_mulmod(&a, &b, &c, &f);
+   
+   /* setup mont */
+   mp_montgomery_setup(&c, &tom);
+   mp_mul(&a, &b, &a);
+   mp_montgomery_reduce(&a, &c, tom);
+   mp_montgomery_reduce(&a, &c, tom);
+   mp_lshd(&a, c.used*2);
+   mp_mod(&a, &c, &a);
+   
+   mp_toradix(&a, cmd, 10);
+   printf("%s\n\n", cmd);
+   mp_toradix(&f, cmd, 10);
+   printf("%s\n", cmd);
+   
+/*   return 0; */
+   
+   
    mp_read_radix(&a, "V//////////////////////////////////////////////////////////////////////////////////////", 64);
    mp_reduce_setup(&b, &a);
    printf("\n\n----\n\n");
    mp_toradix(&b, buf, 10);
    printf("b == %s\n\n\n", buf);
-   
+
    mp_read_radix(&b, "4982748972349724892742", 10);
    mp_sub_d(&a, 1, &c);
-   
-#ifdef DEBUG
-   mp_sqr(&a, &a);mp_sqr(&c, &c);
-   mp_sqr(&a, &a);mp_sqr(&c, &c);
-   mp_sqr(&a, &a);mp_sqr(&c, &c);
-   reset_timings();
-#endif   
    mp_exptmod(&b, &c, &a, &d);
-#ifdef DEBUG   
-   dump_timings();
-   return 0;
-
-#endif   
-   
    mp_toradix(&d, buf, 10);
    printf("b^p-1 == %s\n", buf);
    
@@ -169,7 +182,7 @@ int main(void)
       printf("Multiplying %d-bit took %llu cycles\n", mp_count_bits(&a), tt / ((ulong64)100000));
       mp_copy(&b, &a);
    }
-   
+
    {
       char *primes[] = {
          "17933601194860113372237070562165128350027320072176844226673287945873370751245439587792371960615073855669274087805055507977323024886880985062002853331424203",
