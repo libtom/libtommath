@@ -1,3 +1,21 @@
+July 12th, 2003
+v0.23  -- Optimized mp_prime_next_prime() to not use mp_mod [via is_divisible()] in each
+          iteration.  Instead now a smaller table is kept of the residues which can be updated
+          without division.
+       -- Fixed a bug in next_prime() where an input of zero would be treated as odd and
+          have two added to it [to move to the next odd].
+       -- fixed a bug in prime_fermat() and prime_miller_rabin() which allowed the base
+          to be negative, zero or one.  Normally the test is only valid if the base is
+          greater than one.
+       -- changed the next_prime() prototype to accept a new parameter "bbs_style" which
+          will find the next prime congruent to 3 mod 4.  The default [bbs_style==0] will
+          make primes which are either congruent to 1 or 3 mod 4.
+       -- fixed mp_read_unsigned_bin() so that it doesn't include both code for
+          the case DIGIT_BIT < 8 and >= 8
+       -- optimized div_d() to easy out on division by 1 [or if a == 0] and use
+          logical shifts if the divisor is a power of two.
+       -- the default DIGIT_BIT type was not int for non-default builds.  Fixed.
+
 July 2nd, 2003
 v0.22  -- Fixed up mp_invmod so the result is properly in range now [was always congruent to the inverse...]
        -- Fixed up s_mp_exptmod and mp_exptmod_fast so the lower half of the pre-computed table isn't allocated

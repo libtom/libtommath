@@ -71,7 +71,7 @@ fast_s_mp_mul_high_digs (mp_int * a, mp_int * b, mp_int * c, int digs)
 
       /* compute column products for digits above the minimum */
       for (; iy < pb; iy++) {
-    *_W++ += ((mp_word) tmpx) * ((mp_word) * tmpy++);
+         *_W++ += ((mp_word) tmpx) * ((mp_word)*tmpy++);
       }
     }
   }
@@ -80,12 +80,15 @@ fast_s_mp_mul_high_digs (mp_int * a, mp_int * b, mp_int * c, int digs)
   oldused = c->used;
   c->used = newused;
 
-  /* now convert the array W downto what we need */
+  /* now convert the array W downto what we need
+   *
+   * See comments in bn_fast_s_mp_mul_digs.c
+   */
   for (ix = digs + 1; ix < newused; ix++) {
     W[ix] += (W[ix - 1] >> ((mp_word) DIGIT_BIT));
     c->dp[ix - 1] = (mp_digit) (W[ix - 1] & ((mp_word) MP_MASK));
   }
-  c->dp[(pa + pb + 1) - 1] = (mp_digit) (W[(pa + pb + 1) - 1] & ((mp_word) MP_MASK));
+  c->dp[newused - 1] = (mp_digit) (W[newused - 1] & ((mp_word) MP_MASK));
 
   for (; ix < oldused; ix++) {
     c->dp[ix] = 0;

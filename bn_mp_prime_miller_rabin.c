@@ -30,6 +30,11 @@ mp_prime_miller_rabin (mp_int * a, mp_int * b, int *result)
   /* default */
   *result = 0;
 
+  /* ensure b > 1 */
+  if (mp_cmp_d(b, 1) != MP_GT) {
+     return MP_VAL;
+  }     
+
   /* get n1 = a - 1 */
   if ((err = mp_init_copy (&n1, a)) != MP_OKAY) {
     return err;
@@ -42,8 +47,13 @@ mp_prime_miller_rabin (mp_int * a, mp_int * b, int *result)
   if ((err = mp_init_copy (&r, &n1)) != MP_OKAY) {
     goto __N1;
   }
- 
+
+  /* count the number of least significant bits
+   * which are zero
+   */
   s = mp_cnt_lsb(&r);
+
+  /* now divide n - 1 by 2^s */
   if ((err = mp_div_2d (&r, s, &r, NULL)) != MP_OKAY) {
     goto __R;
   }

@@ -1,6 +1,6 @@
 CFLAGS  +=  -I./ -Wall -W -Wshadow -O3 -fomit-frame-pointer -funroll-loops
 
-VERSION=0.22
+VERSION=0.23
 
 default: libtommath.a
 

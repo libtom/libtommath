@@ -31,6 +31,11 @@ mp_prime_fermat (mp_int * a, mp_int * b, int *result)
   /* default to fail */
   *result = 0;
 
+  /* ensure b > 1 */
+  if (mp_cmp_d(b, 1) != MP_GT) {
+     return MP_VAL;
+  }
+
   /* init t */
   if ((err = mp_init (&t)) != MP_OKAY) {
     return err;

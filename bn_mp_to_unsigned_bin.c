@@ -27,11 +27,11 @@ mp_to_unsigned_bin (mp_int * a, unsigned char *b)
 
   x = 0;
   while (mp_iszero (&t) == 0) {
-    if (DIGIT_BIT != 7) {
+#ifndef MP_8BIT
       b[x++] = (unsigned char) (t.dp[0] & 255);
-    } else {
+#else
       b[x++] = (unsigned char) (t.dp[0] | ((t.dp[1] & 0x01) << 7));
-    }
+#endif
     if ((res = mp_div_2d (&t, 8, &t, NULL)) != MP_OKAY) {
       mp_clear (&t);
       return res;

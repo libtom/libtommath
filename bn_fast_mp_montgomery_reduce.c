@@ -64,7 +64,7 @@ fast_mp_montgomery_reduce (mp_int * x, mp_int * n, mp_digit rho)
      * that W[ix-1] have  the carry cleared (see after the inner loop)
      */
     register mp_digit mu;
-    mu = (((mp_digit) (W[ix] & MP_MASK)) * rho) & MP_MASK;
+    mu = ((W[ix] & MP_MASK) * rho) & MP_MASK;
 
     /* a = a + mu * m * b**i
      *
@@ -93,14 +93,13 @@ fast_mp_montgomery_reduce (mp_int * x, mp_int * n, mp_digit rho)
 
       /* inner loop */
       for (iy = 0; iy < n->used; iy++) {
-          *_W++ += ((mp_word) mu) * ((mp_word) * tmpn++);
+          *_W++ += ((mp_word)mu) * ((mp_word)*tmpn++);
       }
     }
 
     /* now fix carry for next digit, W[ix+1] */
     W[ix + 1] += W[ix] >> ((mp_word) DIGIT_BIT);
   }
-
 
   {
     register mp_digit *tmpx;

@@ -19,7 +19,6 @@ void
 mp_clear (mp_int * a)
 {
   if (a->dp != NULL) {
-
     /* first zero the digits */
     memset (a->dp, 0, sizeof (mp_digit) * a->used);
 
@@ -27,7 +26,7 @@ mp_clear (mp_int * a)
     free (a->dp);
 
     /* reset members to make debugging easier */
-    a->dp = NULL;
+    a->dp    = NULL;
     a->alloc = a->used = 0;
   }
 }

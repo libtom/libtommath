@@ -55,7 +55,7 @@ s_mp_mul_high_digs (mp_int * a, mp_int * b, mp_int * c, int digs)
 
     for (iy = digs - ix; iy < pb; iy++) {
       /* calculate the double precision result */
-      r = ((mp_word) * tmpt) + ((mp_word) tmpx) * ((mp_word) * tmpy++) + ((mp_word) u);
+      r = ((mp_word) * tmpt) + ((mp_word)tmpx) * ((mp_word)*tmpy++) + ((mp_word) u);
 
       /* get the lower part */
       *tmpt++ = (mp_digit) (r & ((mp_word) MP_MASK));

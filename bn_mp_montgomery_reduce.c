@@ -44,7 +44,7 @@ mp_montgomery_reduce (mp_int * x, mp_int * n, mp_digit rho)
 
   for (ix = 0; ix < n->used; ix++) {
     /* mu = ai * m' mod b */
-    mu = (x->dp[ix] * rho) & MP_MASK;
+    mu = ((mp_word)x->dp[ix]) * ((mp_word)rho) & MP_MASK;
 
     /* a = a + mu * m * b**i */
     {
@@ -61,7 +61,7 @@ mp_montgomery_reduce (mp_int * x, mp_int * n, mp_digit rho)
       
       /* Multiply and add in place */
       for (iy = 0; iy < n->used; iy++) {
-        r       = ((mp_word) mu) * ((mp_word) * tmpn++) + 
+        r       = ((mp_word)mu) * ((mp_word)*tmpn++) +
                   ((mp_word) u) + ((mp_word) * tmpx);
         u       = (mp_digit)(r >> ((mp_word) DIGIT_BIT));
         *tmpx++ = (mp_digit)(r & ((mp_word) MP_MASK));

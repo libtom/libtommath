@@ -68,7 +68,7 @@ fast_s_mp_sqr (mp_int * a, mp_int * b)
      * for a particular column only once which means that
      * there is no need todo a double precision addition
      */
-    W2[ix + ix] = ((mp_word) a->dp[ix]) * ((mp_word) a->dp[ix]);
+    W2[ix + ix] = ((mp_word)a->dp[ix]) * ((mp_word)a->dp[ix]);
 
     {
       register mp_digit tmpx, *tmpy;
@@ -86,7 +86,7 @@ fast_s_mp_sqr (mp_int * a, mp_int * b)
 
       /* inner products */
       for (iy = ix + 1; iy < pa; iy++) {
-          *_W++ += ((mp_word) tmpx) * ((mp_word) * tmpy++);
+          *_W++ += ((mp_word)tmpx) * ((mp_word)*tmpy++);
       }
     }
   }

@@ -62,7 +62,7 @@ s_mp_mul_digs (mp_int * a, mp_int * b, mp_int * c, int digs)
     for (iy = 0; iy < pb; iy++) {
       /* compute the column as a mp_word */
       r = ((mp_word) *tmpt) + 
-          ((mp_word) tmpx) * ((mp_word) * tmpy++) + 
+          ((mp_word)tmpx) * ((mp_word)*tmpy++) +
           ((mp_word) u);
 
       /* the new column is the lower part of the result */

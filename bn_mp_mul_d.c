@@ -50,7 +50,7 @@ mp_mul_d (mp_int * a, mp_digit b, mp_int * c)
     u = 0;
     for (ix = 0; ix < pa; ix++) {
       /* compute product and carry sum for this term */
-      r = ((mp_word) u) + ((mp_word) * tmpa++) * ((mp_word) b);
+      r = ((mp_word) u) + ((mp_word)*tmpa++) * ((mp_word)b);
 
       /* mask off higher bits to get a single digit */
       *tmpc++ = (mp_digit) (r & ((mp_word) MP_MASK));

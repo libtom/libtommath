@@ -85,12 +85,13 @@ extern "C" {
    #define DIGIT_BIT          31
 #else
    #define DIGIT_BIT          28
+   #define MP_28BIT
 #endif   
 #endif
 
 /* otherwise the bits per digit is calculated automatically from the size of a mp_digit */
 #ifndef DIGIT_BIT
-   #define DIGIT_BIT     ((CHAR_BIT * sizeof(mp_digit) - 1))  /* bits per digit */
+   #define DIGIT_BIT     ((int)((CHAR_BIT * sizeof(mp_digit) - 1)))  /* bits per digit */
 #endif
 
 
@@ -400,9 +401,10 @@ int mp_prime_is_prime(mp_int *a, int t, int *result);
 
 /* finds the next prime after the number "a" using "t" trials
  * of Miller-Rabin.
+ *
+ * bbs_style = 1 means the prime must be congruent to 3 mod 4
  */
-int mp_prime_next_prime(mp_int *a, int t);
-
+int mp_prime_next_prime(mp_int *a, int t, int bbs_style);
 
 /* ---> radix conversion <--- */
 int mp_count_bits(mp_int *a);

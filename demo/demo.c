@@ -66,6 +66,31 @@ int main(void)
    srand(time(NULL));
 
 #if 0
+   for (;;) {
+      fgets(buf, sizeof(buf), stdin);
+      mp_read_radix(&a, buf, 10);
+      mp_prime_next_prime(&a, 5, 1);
+      mp_toradix(&a, buf, 10);
+      printf("%s, %lu\n", buf, a.dp[0] & 3);
+   }
+#endif
+
+#if 0
+{
+   mp_word aa, bb;
+
+   for (;;) {
+       aa = abs(rand()) & MP_MASK;
+       bb = abs(rand()) & MP_MASK;
+	  if (MULT(aa,bb) != (aa*bb)) {
+             printf("%llu * %llu == %llu or %llu?\n", aa, bb, (ulong64)MULT(aa,bb), (ulong64)(aa*bb));
+             return 0;
+          }
+   }
+}
+#endif
+
+#if 0
    /* test mp_cnt_lsb */
    mp_set(&a, 1);
    for (ix = 0; ix < 128; ix++) {
@@ -122,7 +147,6 @@ int main(void)
 
 /* test the DR reduction */
 #if 0
-
    for (cnt = 2; cnt < 32; cnt++) {
        printf("%d digit modulus\n", cnt);
        mp_grow(&a, cnt);
@@ -175,8 +199,6 @@ int main(void)
          fprintf(log, "%d %9llu\n", cnt*DIGIT_BIT, (((unsigned long long)rr)*CLOCKS_PER_SEC)/tt);
       }
       fclose(log);
-      
-      return 0;
 
       log = fopen("logs/sub.log", "w");
       for (cnt = 8; cnt <= 128; cnt += 8) {

@@ -82,7 +82,6 @@ mp_exptmod_fast (mp_int * G, mp_int * X, mp_int * P, mp_int * Y, int redmode)
     }
   }
 
-
   /* determine and setup reduction code */
   if (redmode == 0) {
      /* now setup montgomery  */
