@@ -1,3 +1,12 @@
+August 9th, 2004
+v0.31  -- "profiled" builds now :-) new timings for Intel Northwoods
+       -- Added "pretty" build target
+       -- Update mp_init() to actually assign 0's instead of relying on calloc()
+       -- "Wolfgang Ehrhardt" <Wolfgang.Ehrhardt@munich.netsurf.de> found a bug in mp_mul() where if
+          you multiply a negative by zero you get negative zero as the result.  Oops.
+       -- J Harper from PeerSec let me toy with his AMD64 and I got 60-bit digits working properly
+          [this also means that I fixed a bug where if sizeof(int) < sizeof(mp_digit) it would bug]
+
 April 11th, 2004
 v0.30  -- Added "mp_toradix_n" which stores upto "n-1" least significant digits of an mp_int
        -- Johan Lindh sent a patch so MSVC wouldn't whine about redefining malloc [in weird dll modes]

@@ -84,6 +84,7 @@ while (<IN>) {
             $text[$line++] = $_;
             last if ($_ =~ /tommath\.h/);
          }
+         <SRC>;   
       }
       
       $inline = 0;

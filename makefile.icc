@@ -1,21 +1,25 @@
-#Makefile for GCC
+#Makefile for ICC
 #
 #Tom St Denis
-CFLAGS  +=  -I./ -Wall -W -Wshadow -Wsign-compare
+CC=icc
 
-#for speed 
-CFLAGS += -O3 -funroll-loops
+CFLAGS  +=  -I./
 
-#for size 
-#CFLAGS += -Os
-
-#x86 optimizations [should be valid for any GCC install though]
-CFLAGS  += -fomit-frame-pointer
-
-#debug
-#CFLAGS += -g3
-
-VERSION=0.31
+# optimize for SPEED
+#
+# -mcpu= can be pentium, pentiumpro (covers PII through PIII) or pentium4
+# -ax?   specifies make code specifically for ? but compatible with IA-32
+# -x?    specifies compile solely for ? [not specifically IA-32 compatible]
+#
+# where ? is 
+#   K - PIII
+#   W - first P4 [Williamette]
+#   N - P4 Northwood
+#   P - P4 Prescott
+#   B - Blend of P4 and PM [mobile]
+#
+# Default to just generic max opts
+CFLAGS += -O3 -xN
 
 default: libtommath.a
 
@@ -23,7 +27,7 @@ default: libtommath.a
 LIBNAME=libtommath.a
 HEADERS=tommath.h
 
-#LIBPATH-The directory for libtommath to be installed to.
+#LIBPATH-The directory for libtomcrypt to be installed to.
 #INCPATH-The directory to install the header files for libtommath.
 #DATAPATH-The directory to install the pdf docs.
 DESTDIR=
@@ -61,7 +65,6 @@ libtommath.a:  $(OBJECTS)
 	$(AR) $(ARFLAGS) libtommath.a $(OBJECTS)
 	ranlib libtommath.a
 
-
 #make a profiled library (takes a while!!!)
 #
 # This will build the library with profile generation
@@ -69,19 +72,19 @@ libtommath.a:  $(OBJECTS)
 # 
 # So far I've seen improvements in the MP math
 profiled:
-	make CFLAGS="$(CFLAGS) -fprofile-arcs -DTESTING" timing
+	make -f makefile.icc CFLAGS="$(CFLAGS) -prof_gen -DTESTING" timing
 	./ltmtest
 	rm -f *.a *.o ltmtest
-	make CFLAGS="$(CFLAGS) -fbranch-probabilities"
+	make -f makefile.icc CFLAGS="$(CFLAGS) -prof_use"
 
 #make a single object profiled library 
 profiled_single:
 	perl gen.pl
-	$(CC) $(CFLAGS) -fprofile-arcs -DTESTING -c mpi.c -o mpi.o
-	$(CC) $(CFLAGS) -DTESTING -DTIMER demo/timing.c mpi.o -o ltmtest
+	$(CC) $(CFLAGS) -prof_gen -DTESTING -c mpi.c -o mpi.o
+	$(CC) $(CFLAGS) -DTESTING -DTIMER demo/demo.c mpi.o -o ltmtest
 	./ltmtest
 	rm -f *.o ltmtest
-	$(CC) $(CFLAGS) -fbranch-probabilities -DTESTING -c mpi.c -o mpi.o
+	$(CC) $(CFLAGS) -prof_use -ip -DTESTING -c mpi.c -o mpi.o
 	$(AR) $(ARFLAGS) libtommath.a mpi.o
 	ranlib libtommath.a	
 
@@ -95,57 +98,13 @@ test: libtommath.a demo/demo.o
 	$(CC) demo/demo.o libtommath.a -o test
 	
 mtest: test	
-	cd mtest ; $(CC) $(CFLAGS) mtest.c -o mtest -s
+	cd mtest ; $(CC) $(CFLAGS) mtest.c -o mtest
         
 timing: libtommath.a
-	$(CC) $(CFLAGS) -DTIMER demo/timing.c libtommath.a -o ltmtest -s
-
-# makes the LTM book DVI file, requires tetex, perl and makeindex [part of tetex I think]
-docdvi: tommath.src
-	cd pics ; make 
-	echo "hello" > tommath.ind
-	perl booker.pl
-	latex tommath > /dev/null
-	latex tommath > /dev/null
-	makeindex tommath
-	latex tommath > /dev/null
-
-# poster, makes the single page PDF poster
-poster: poster.tex
-	pdflatex poster
-	rm -f poster.aux poster.log 
-
-# makes the LTM book PDF file, requires tetex, cleans up the LaTeX temp files
-docs:   docdvi
-	dvipdf tommath
-	rm -f tommath.log tommath.aux tommath.dvi tommath.idx tommath.toc tommath.lof tommath.ind tommath.ilg
-	cd pics ; make clean
-	
-#LTM user manual
-mandvi: bn.tex
-	echo "hello" > bn.ind
-	latex bn > /dev/null
-	latex bn > /dev/null
-	makeindex bn
-	latex bn > /dev/null
-
-#LTM user manual [pdf]
-manual:	mandvi
-	pdflatex bn >/dev/null
-	rm -f bn.aux bn.dvi bn.log bn.idx bn.lof bn.out bn.toc
-
-pretty: 
-	perl pretty.build
+	$(CC) $(CFLAGS) -DTIMER demo/timing.c libtommath.a -o ltmtest
 
 clean:
 	rm -f *.bat *.pdf *.o *.a *.obj *.lib *.exe *.dll etclib/*.o demo/demo.o test ltmtest mpitest mtest/mtest mtest/mtest.exe \
-        *.idx *.toc *.log *.aux *.dvi *.lof *.ind *.ilg *.ps *.log *.s mpi.c *.da *.dyn *.dpi tommath.tex *~ demo/*~ etc/*~
+        *.idx *.toc *.log *.aux *.dvi *.lof *.ind *.ilg *.ps *.log *.s mpi.c *.il etc/*.il *.dyn
 	cd etc ; make clean
 	cd pics ; make clean
-
-zipup: clean manual poster docs
-	perl gen.pl ; mv mpi.c pre_gen/ ; \
-	cd .. ; rm -rf ltm* libtommath-$(VERSION) ; mkdir libtommath-$(VERSION) ; \
-	cp -R ./libtommath/* ./libtommath-$(VERSION)/ ; \
-	tar -c libtommath-$(VERSION)/* | bzip2 -9vvc > ltm-$(VERSION).tar.bz2 ; \
-	zip -9 -r ltm-$(VERSION).zip libtommath-$(VERSION)/*

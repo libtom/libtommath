@@ -187,7 +187,7 @@ int mp_div (mp_int * a, mp_int * b, mp_int * c, mp_int * d)
    */
   
   /* get sign before writing to c */
-  x.sign = a->sign;
+  x.sign = x.used == 0 ? MP_ZPOS : a->sign;
 
   if (c != NULL) {
     mp_clamp (&q);

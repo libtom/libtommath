@@ -76,9 +76,6 @@ int mp_karatsuba_mul (mp_int * a, mp_int * b, mp_int * c)
     goto X0Y0;
 
   /* now shift the digits */
-  x0.sign = x1.sign = a->sign;
-  y0.sign = y1.sign = b->sign;
-
   x0.used = y0.used = B;
   x1.used = a->used - B;
   y1.used = b->used - B;

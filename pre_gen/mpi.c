@@ -452,7 +452,7 @@ fast_s_mp_mul_digs (mp_int * a, mp_int * b, mp_int * c, int digs)
   }
 
   /* setup dest */
-  olduse = c->used;
+  olduse  = c->used;
   c->used = digs;
 
   {
@@ -779,7 +779,7 @@ mp_2expt (mp_int * a, int b)
   a->used = b / DIGIT_BIT + 1;
 
   /* put the single bit in its place */
-  a->dp[b / DIGIT_BIT] = 1 << (b % DIGIT_BIT);
+  a->dp[b / DIGIT_BIT] = ((mp_digit)1) << (b % DIGIT_BIT);
 
   return MP_OKAY;
 }
@@ -1142,10 +1142,14 @@ mp_clamp (mp_int * a)
 void
 mp_clear (mp_int * a)
 {
+  int i;
+
   /* only do anything if a hasn't been freed previously */
   if (a->dp != NULL) {
     /* first zero the digits */
-    memset (a->dp, 0, sizeof (mp_digit) * a->used);
+    for (i = 0; i < a->used; i++) {
+        a->dp[i] = 0;
+    }
 
     /* free ram */
     XFREE(a->dp);
@@ -1677,7 +1681,7 @@ int mp_div (mp_int * a, mp_int * b, mp_int * c, mp_int * d)
    */
   
   /* get sign before writing to c */
-  x.sign = a->sign;
+  x.sign = x.used == 0 ? MP_ZPOS : a->sign;
 
   if (c != NULL) {
     mp_clamp (&q);
@@ -3083,13 +3087,20 @@ int mp_grow (mp_int * a, int size)
  */
 #include <tommath.h>
 
-/* init a new bigint */
+/* init a new mp_int */
 int mp_init (mp_int * a)
 {
+  int i;
+
   /* allocate memory required and clear it */
-  a->dp = OPT_CAST(mp_digit) XCALLOC (sizeof (mp_digit), MP_PREC);
+  a->dp = OPT_CAST(mp_digit) XMALLOC (sizeof (mp_digit) * MP_PREC);
   if (a->dp == NULL) {
     return MP_MEM;
+  }
+
+  /* set the digits to zero */
+  for (i = 0; i < MP_PREC; i++) {
+      a->dp[i] = 0;
   }
 
   /* set the used to zero, allocated digits to the default precision
@@ -3753,9 +3764,6 @@ int mp_karatsuba_mul (mp_int * a, mp_int * b, mp_int * c)
     goto X0Y0;
 
   /* now shift the digits */
-  x0.sign = x1.sign = a->sign;
-  y0.sign = y1.sign = b->sign;
-
   x0.used = y0.used = B;
   x1.used = a->used - B;
   y1.used = b->used - B;
@@ -4484,7 +4492,7 @@ int mp_mul (mp_int * a, mp_int * b, mp_int * c)
       res = s_mp_mul (a, b, c);
     }
   }
-  c->sign = neg;
+  c->sign = (c->used > 0) ? neg : MP_ZPOS;
   return res;
 }
 
@@ -6090,7 +6098,8 @@ mp_reduce_2k_setup(mp_int *a, mp_digit *d)
 /* determines if mp_reduce_2k can be used */
 int mp_reduce_is_2k(mp_int *a)
 {
-   int ix, iy, iz, iw;
+   int ix, iy, iw;
+   mp_digit iz;
    
    if (a->used == 0) {
       return 0;
@@ -6107,7 +6116,7 @@ int mp_reduce_is_2k(mp_int *a)
              return 0;
           }
           iz <<= 1;
-          if (iz > (int)MP_MASK) {
+          if (iz > (mp_digit)MP_MASK) {
              ++iw;
              iz = 1;
           }
@@ -8396,14 +8405,16 @@ s_mp_sub (mp_int * a, mp_int * b, mp_int * c)
 
  CPU                    /Compiler     /MUL CUTOFF/SQR CUTOFF
 -------------------------------------------------------------
- Intel P4               /GCC v3.2     /        70/       108
- AMD Athlon XP          /GCC v3.2     /       109/       127
-
+ Intel P4 Northwood     /GCC v3.3.3   /        59/        81/profiled build
+ Intel P4 Northwood     /GCC v3.3.3   /        59/        80/profiled_single build
+ Intel P4 Northwood     /ICC v8.0     /        57/        70/profiled build
+ Intel P4 Northwood     /ICC v8.0     /        54/        76/profiled_single build
+ AMD Athlon XP          /GCC v3.2     /       109/       127/
+ 
 */
 
-/* configured for a AMD XP Thoroughbred core with etc/tune.c */
-int     KARATSUBA_MUL_CUTOFF = 109,      /* Min. number of digits before Karatsuba multiplication is used. */
-        KARATSUBA_SQR_CUTOFF = 127,      /* Min. number of digits before Karatsuba squaring is used. */
+int     KARATSUBA_MUL_CUTOFF = 57,      /* Min. number of digits before Karatsuba multiplication is used. */
+        KARATSUBA_SQR_CUTOFF = 70,      /* Min. number of digits before Karatsuba squaring is used. */
         
         TOOM_MUL_CUTOFF      = 350,      /* no optimal values of these are known yet so set em high */
         TOOM_SQR_CUTOFF      = 400; 
