@@ -168,8 +168,31 @@ int mp_init_copy(mp_int *a, mp_int *b)
   return mp_copy(b, a);
 }
 
+/* b = |a| */
+int mp_abs(mp_int *a, mp_int *b)
+{
+   int res;
+   if ((res = mp_copy(a, b)) != MP_OKAY) {
+      return res;
+   }
+   b->sign = MP_ZPOS;
+   return MP_OKAY;
+}
+
+/* b = -a */
+int mp_neg(mp_int *a, mp_int *b)
+{
+   int res;
+   if ((res = mp_copy(a, b)) != MP_OKAY) {
+      return res;
+   }
+   b->sign = (a->sign == MP_ZPOS) ? MP_NEG : MP_ZPOS;
+   return MP_OKAY;
+}
+
+
 /* compare maginitude of two ints (unsigned) */
-static int s_mp_cmp(mp_int *a, mp_int *b) 
+int mp_cmp_mag(mp_int *a, mp_int *b) 
 {
    int n;
 
@@ -200,7 +223,7 @@ int mp_cmp(mp_int *a, mp_int *b)
    } else if (a->sign == MP_ZPOS && b->sign == MP_NEG) {
       return MP_GT;
    }
-   return s_mp_cmp(a, b);
+   return mp_cmp_mag(a, b);
 }
 
 /* compare a digit */
@@ -500,7 +523,7 @@ static int fast_s_mp_mul_digs(mp_int *a, mp_int *b, mp_int *c, int digs)
 {
    mp_int t;
    int res, pa, pb, ix, iy;
-   mp_word W[512];
+   mp_word W[512], *_W;
    mp_digit tmpx, *tmpt, *tmpy;
    
 //   printf("\nHOLA\n");
@@ -519,8 +542,9 @@ static int fast_s_mp_mul_digs(mp_int *a, mp_int *b, mp_int *c, int digs)
        tmpx = a->dp[ix];
        tmpt = &(t.dp[ix]);
        tmpy = b->dp;
+       _W   = &(W[ix]);
        for (iy = 0; iy < pb; iy++) {
-           W[iy+ix] += ((mp_word)tmpx) * ((mp_word)*tmpy++);
+           *_W++ += ((mp_word)tmpx) * ((mp_word)*tmpy++);
        }
    }
    
@@ -590,7 +614,7 @@ static int fast_s_mp_mul_high_digs(mp_int *a, mp_int *b, mp_int *c, int digs)
 {
    mp_int t;
    int res, pa, pb, ix, iy;
-   mp_word W[512];
+   mp_word W[512], *_W;
    mp_digit tmpx, *tmpt, *tmpy;
    
    if ((res = mp_init_size(&t, a->used + b->used + 1)) != MP_OKAY) {
@@ -605,8 +629,9 @@ static int fast_s_mp_mul_high_digs(mp_int *a, mp_int *b, mp_int *c, int digs)
        tmpx = a->dp[ix];
        tmpt = &(t.dp[digs]);
        tmpy = b->dp + (digs - ix);
+       _W   = &(W[digs]);
        for (iy = digs - ix; iy < pb; iy++) {
-           W[ix+iy] += ((mp_word)tmpx) * ((mp_word)*tmpy++);
+           *_W++ += ((mp_word)tmpx) * ((mp_word)*tmpy++);
        }
    }
    
@@ -678,7 +703,7 @@ static int fast_s_mp_sqr(mp_int *a, mp_int *b)
 {
    mp_int t;
    int res, ix, iy, pa;
-   mp_word  r, W[512];
+   mp_word  W[512], *_W;
    mp_digit tmpx, *tmpy;
 
    pa = a->used;
@@ -694,9 +719,9 @@ static int fast_s_mp_sqr(mp_int *a, mp_int *b)
        W[ix+ix]   += ((mp_word)a->dp[ix]) * ((mp_word)a->dp[ix]);
 	   tmpx = a->dp[ix];
 	   tmpy = &(a->dp[ix+1]);
+	   _W   = &(W[ix+ix+1]);
 	   for (iy = ix + 1; iy < pa; iy++) {
-	       r           = ((mp_word)tmpx) * ((mp_word)*tmpy++);
-	       W[ix+iy]   += r + r;
+	       *_W++ += ((mp_word)tmpx) * ((mp_word)*tmpy++) << ((mp_word)1);
        }
    }
    for (ix = 1; ix < (pa+pa+1); ix++) {
@@ -781,7 +806,7 @@ int mp_add(mp_int *a, mp_int *b, mp_int *c)
       c->sign = MP_ZPOS;
    } else if (sa == MP_ZPOS && sb == MP_NEG) {
       /* a + -b == a - b, but if b>a then we do it as -(b-a) */
-      if (s_mp_cmp(a, b) == MP_LT) {
+      if (mp_cmp_mag(a, b) == MP_LT) {
          res = s_mp_sub(b, a, c);
          c->sign = MP_NEG;
       } else {
@@ -790,7 +815,7 @@ int mp_add(mp_int *a, mp_int *b, mp_int *c)
       }
    } else if (sa == MP_NEG && sb == MP_ZPOS) {
       /* -a + b == b - a, but if a>b then we do it as -(a-b) */
-      if (s_mp_cmp(a, b) == MP_GT) {
+      if (mp_cmp_mag(a, b) == MP_GT) {
          res = s_mp_sub(a, b, c);
          c->sign = MP_NEG;
       } else {
@@ -816,7 +841,7 @@ int mp_sub(mp_int *a, mp_int *b, mp_int *c)
    /* handle four cases */
    if (sa == MP_ZPOS && sb == MP_ZPOS) {
       /* both positive, a - b, but if b>a then we do -(b - a) */
-      if (s_mp_cmp(a, b) == MP_LT) {
+      if (mp_cmp_mag(a, b) == MP_LT) {
          /* b>a */
          res = s_mp_sub(b, a, c);
          c->sign = MP_NEG;
@@ -834,7 +859,7 @@ int mp_sub(mp_int *a, mp_int *b, mp_int *c)
       c->sign = MP_NEG;
    } else {
       /* -a - -b == b - a, but if a>b == -(a - b) */
-      if (s_mp_cmp(a, b) == MP_GT) {
+      if (mp_cmp_mag(a, b) == MP_GT) {
          res = s_mp_sub(a, b, c);
          c->sign = MP_NEG;
       } else {
@@ -1023,7 +1048,7 @@ int mp_div(mp_int *a, mp_int *b, mp_int *c, mp_int *d)
    int res, n, t, i, norm, neg;
    
    /* if a < b then q=0, r = a */
-   if (s_mp_cmp(a, b) == MP_LT) {
+   if (mp_cmp_mag(a, b) == MP_LT) {
       if (d != NULL) {
            res     = mp_copy(a, d);
            d->sign = a->sign;
@@ -1979,5 +2004,37 @@ int mp_toradix(mp_int *a, unsigned char *str, int radix)
    *str++ = (unsigned char)'\0';
    mp_clear(&t);
    return MP_OKAY;
+}
+
+/* returns size of ASCII reprensentation */
+int mp_radix_size(mp_int *a, int radix)
+{
+   int res, digs;
+   mp_int t;
+   mp_digit d;
+   
+   digs = 0;
+
+   if (radix < 2 || radix > 64) {
+      return 0;
+   }
+
+   if ((res = mp_init_copy(&t, a)) != MP_OKAY) {
+      return 0;
+   }
+   
+   if (t.sign == MP_NEG) { 
+      ++digs;
+      t.sign = MP_ZPOS;
+   }
+   
+   while (mp_iszero(&t) == 0) {
+       if ((res = mp_div_d(&t, (mp_digit)radix, &t, &d)) != MP_OKAY) {
+          return 0;
+       }
+       ++digs;
+   }
+   mp_clear(&t);
+   return digs + 1;
 }
 

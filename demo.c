@@ -11,9 +11,14 @@
    #include "bn.h"
 #endif
 
-#ifdef TIMER
+#ifdef TIMER_X86
+#define TIMER
 extern unsigned long long rdtsc(void);
 extern void reset(void);
+#else 
+unsigned long long _tt;
+void reset(void) { _tt = clock(); }
+unsigned long long rdtsc(void) { return clock() - _tt; }
 #endif
    
 static void draw(mp_int *a)

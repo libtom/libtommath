@@ -1,6 +1,11 @@
+Dec 26th, 2002
+v0.02  -- Fixed a few "slips" in the manual.  This is "LibTomMath" afterall :-)
+       -- Added mp_cmp_mag, mp_neg, mp_abs and mp_radix_size that were missing.
+       -- Sped up the fast [comba] multipliers more [yahoo!]
+
 Dec 25th,2002
-v0.01     -- Initial release.  Gimme a break.
-          -- Todo list, 
-               add details to manual [e.g. algorithms]
-               more comments in code
-               example programs
+v0.01  -- Initial release.  Gimme a break.
+       -- Todo list, 
+           add details to manual [e.g. algorithms]
+           more comments in code
+           example programs

@@ -128,8 +128,17 @@ int mp_mod_2d(mp_int *a, int b, mp_int *c);
 
 /* ---> Basic arithmetic <--- */
 
+/* b = -a */
+int mp_neg(mp_int *a, mp_int *b);
+
+/* b = |a| */
+int mp_abs(mp_int *a, mp_int *b);
+
 /* compare a to b */
 int mp_cmp(mp_int *a, mp_int *b);
+
+/* compare |a| to |b| */
+int mp_cmp_mag(mp_int *a, mp_int *b);
 
 /* c = a + b */
 int mp_add(mp_int *a, mp_int *b, mp_int *c);
@@ -215,6 +224,14 @@ int mp_to_signed_bin(mp_int *a, unsigned char *b);
 
 int mp_read_radix(mp_int *a, unsigned char *str, int radix);
 int mp_toradix(mp_int *a, unsigned char *str, int radix);
+int mp_radix_size(mp_int *a, int radix);
+
+#define mp_read_raw(mp, str, len) mp_read_signed_bin((mp), (str), (len))
+#define mp_raw_size(mp)           mp_signed_bin_size(mp)
+#define mp_toraw(mp, str)         mp_to_signed_bin((mp), (str))
+#define mp_read_mag(mp, str, len) mp_read_unsigned_bin((mp), (str), (len))
+#define mp_mag_size(mp)           mp_unsigned_bin_size(mp)
+#define mp_tomag(mp, str)         mp_to_unsigned_bin((mp), (str))
 
 #define mp_tobinary(M, S)  mp_toradix((M), (S), 2)
 #define mp_tooctal(M, S)   mp_toradix((M), (S), 8)

@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS  += -Wall -W -O3 -funroll-loops
 
-VERSION=0.01
+VERSION=0.02
 
 default: test
 

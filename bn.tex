@@ -1,7 +1,7 @@
 \documentclass{article}
 \begin{document}
 
-\title{LibTomMath v0.01 \\ A Free Multiple Precision Integer Library}
+\title{LibTomMath v0.02 \\ A Free Multiple Precision Integer Library}
 \author{Tom St Denis \\ tomstdenis@iahu.ca}
 \maketitle
 \newpage
@@ -192,8 +192,17 @@ $y \equiv x \mbox{ (mod }2^n\mbox{)}$.
 Next are the class of functions which provide basic arithmetic.
 
 \begin{verbatim}
+/* b = -a */
+int mp_neg(mp_int *a, mp_int *b);
+
+/* b = |a| */
+int mp_abs(mp_int *a, mp_int *b);
+
 /* compare a to b */
 int mp_cmp(mp_int *a, mp_int *b);
+
+/* compare |a| to |b| */
+int mp_cmp_mag(mp_int *a, mp_int *b);
 
 /* c = a + b */
 int mp_add(mp_int *a, mp_int *b, mp_int *c);
@@ -298,6 +307,7 @@ int mp_to_signed_bin(mp_int *a, unsigned char *b);
 
 int mp_read_radix(mp_int *a, unsigned char *str, int radix);
 int mp_toradix(mp_int *a, unsigned char *str, int radix);
+int mp_radix_size(mp_int *a, int radix);
 \end{verbatim}
 
 The integers are stored in big endian format as most libraries (and MPI) expect.  The \textbf{mp\_read\_radix} and 
@@ -318,27 +328,27 @@ average.  The following results were observed.
 \begin{tabular}{c|c|c|c}
 \hline \textbf{Operation} & \textbf{Size (bits)} & \textbf{Time with MPI (cycles)} & \textbf{Time with LibTomMath (cycles)} \\
 \hline
-Multiply & 128 & 1,394  & 915  \\
-Multiply & 256 & 2,559  & 1,893  \\
-Multiply & 512 & 7,919  & 3,770  \\
-Multiply & 1024 & 28,460  & 9,970  \\
-Multiply & 2048 & 109,637  & 32,264  \\
-Multiply & 4096 & 467,226  & 129,645  \\
+Multiply & 128 & 1,394  & 893  \\
+Multiply & 256 & 2,559  & 1,744  \\
+Multiply & 512 & 7,919  & 4,484  \\
+Multiply & 1024 & 28,460  & 9,326, \\
+Multiply & 2048 & 109,637  & 30,140  \\
+Multiply & 4096 & 467,226  & 122,290  \\
 \hline 
-Square & 128 & 1,288  & 1,147  \\
-Square & 256 & 1,705  & 2,129  \\
-Square & 512 & 5,365  & 3,755  \\
-Square & 1024 & 18,836  & 9,267  \\
-Square & 2048 & 72,334  & 28,387  \\
-Square & 4096 & 306,252  & 112,391  \\
+Square & 128 & 1,288  & 1,172  \\
+Square & 256 & 1,705  & 2,162  \\
+Square & 512 & 5,365  & 3,723  \\
+Square & 1024 & 18,836  & 9,063  \\
+Square & 2048 & 72,334  & 27,489  \\
+Square & 4096 & 306,252  & 110,372  \\
 \hline 
-Exptmod & 512 & 30,497,732  & 7,222,872  \\
-Exptmod & 768 & 98,943,020  & 16,474,567  \\
-Exptmod & 1024 & 221,123,749  & 30,070,883  \\
-Exptmod & 2048 & 1,694,796,907  & 154,697,320  \\
-Exptmod & 2560 & 3,262,360,107  & 318,998,183  \\
-Exptmod & 3072 & 5,647,243,373  & 494,313,122  \\
-Exptmod & 4096 & 13,345,194,048  & 1,036,254,558  
+Exptmod & 512 & 30,497,732  & 6,898,504  \\
+Exptmod & 768 & 98,943,020  & 15,510,779  \\
+Exptmod & 1024 & 221,123,749  & 27,962,904  \\
+Exptmod & 2048 & 1,694,796,907  & 146,631,975  \\
+Exptmod & 2560 & 3,262,360,107  & 305,530,060  \\
+Exptmod & 3072 & 5,647,243,373  & 472,572,762  \\
+Exptmod & 4096 & 13,345,194,048  & 984,415,240  
 
 \end{tabular}
 \end{center}
@@ -367,7 +377,7 @@ inputs this method is faster.  The Karatsuba implementation is recursive which m
 will benefit from the algorithm.
 
 MPI only implements the slower baseline multiplier where carries are dealt with in the inner loop.  As a result even at
-smaller numbers (below the Karatsuba cutoff) the LibTomCrypt multipliers are faster.
+smaller numbers (below the Karatsuba cutoff) the LibTomMath multipliers are faster.
 
 \subsection{Squaring Algorithms}
 
@@ -393,16 +403,16 @@ $e = 11110001_2$ if $k = 2$ then there will be a two squarings, a multiplication
 of $g(3)$, four squarings and and a multiplication by $g(1)$.  In total there are 8 squarings and 3 multiplications.  
 
 MPI uses a binary square-multiply method.  For the same exponent $e$ it would have had 8 squarings and 5 multiplications.  
-There is a precomputation phase for the method LibTomCrypt uses but it generally cuts down considerably on the number
+There is a precomputation phase for the method LibTomMath uses but it generally cuts down considerably on the number
 of multiplications.  Consider a 512-bit exponent.  The worst case for the LibTomMath method results in 512 squarings and 
 124 multiplications.  The MPI method would have 512 squarings and 512 multiplications.  Randomly every $2k$ bits another 
 multiplication is saved via the sliding-window technique on top of the savings the $k$-ary method provides.
 
 Both LibTomMath and MPI use Barrett reduction instead of division to reduce the numbers modulo the modulus given.  
 However, LibTomMath can take advantage of the fact that the multiplications required within the Barrett reduction
-do not to give full precision.  As a result the reduction step is much faster and just as accurate.  The LibTomMath code
+do not have to give full precision.  As a result the reduction step is much faster and just as accurate.  The LibTomMath code
 will automatically determine at run-time (e.g. when its called) whether the faster multiplier can be used.  The
-faster multipliers have also been optimized into the two variants (baseline and fast baseline).
+faster multipliers have also been optimized into the two variants (baseline and comba baseline).
 
 As a result of all these changes exponentiation in LibTomMath is much faster than compared to MPI.  
 
