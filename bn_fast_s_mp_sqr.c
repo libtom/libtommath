@@ -101,7 +101,7 @@ int fast_s_mp_sqr (mp_int * a, mp_int * b)
       }
 
       /* store it */
-      W[ix] = _W;
+      W[ix] = _W & MP_MASK;
 
       /* make next carry */
       W1 = _W >> ((mp_word)DIGIT_BIT);
