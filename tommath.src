@@ -201,12 +201,27 @@ Greg Rose, Sydney, Australia, June 2003.
 \pagestyle{headings}
 \chapter{Introduction}
 \section{Multiple Precision Arithmetic}
+
+\subsection{What is Multiple Precision Arithmetic?}
+When we think of long-hand arithmetic such as addition or multiplication we rarely consider the fact that we instinctively
+raise or lower the precision of the numbers we are dealing with.  For example, in decimal we almost immediate can 
+reason that $7$ times $6$ is $42$.  However, $42$ has two digits of precision as opposed to one digit we started with.  
+Further multiplications of say $3$ result in a larger precision result $126$.  In these few examples we have multiple 
+precisions for the numbers we are working with.  Despite the various levels of precision a single subset\footnote{With the occasional optimization.}
+ of algorithms can be designed to accomodate them.  
+
+By way of comparison a fixed or single precision operation would lose precision on various operations.  For example, in
+the decimal system with fixed precision $6 \cdot 7 = 2$.
+
+Essentially at the heart of computer based multiple precision arithmetic are the same long-hand algorithms taught in
+schools to manually add, subtract, multiply and divide.  
+
 \subsection{The Need for Multiple Precision Arithmetic}
 The most prevalent need for multiple precision arithmetic, often referred to as ``bignum'' math, is within the implementation
 of public-key cryptography algorithms.   Algorithms such as RSA \cite{RSAREF} and Diffie-Hellman \cite{DHREF} require 
 integers of significant magnitude to resist known cryptanalytic attacks.  For example, at the time of this writing a 
-typical RSA modulus would be at greater than $10^{309}$.  However, modern programming languages such as ISO C \ref{ISOC} and 
-Java \ref{JAVA} only provide instrinsic support for integers which are relatively small and are single precision.
+typical RSA modulus would be at least greater than $10^{309}$.  However, modern programming languages such as ISO C \cite{ISOC} and 
+Java \cite{JAVA} only provide instrinsic support for integers which are relatively small and single precision.
 
 \begin{figure}[!here]
 \begin{center}
@@ -227,9 +242,9 @@ The largest data type guaranteed to be provided by the ISO C programming
 language\footnote{As per the ISO C standard.  However, each compiler vendor is allowed to augment the precision as they 
 see fit.}  can only represent values up to $10^{19}$ as shown in figure \ref{fig:ISOC}. On its own the C language is 
 insufficient to accomodate the magnitude required for the problem at hand.  An RSA modulus of magnitude $10^{19}$ could be 
-trivially factored on the average desktop computer, rendering any protocol based on the algorithm insecure.  Multiple 
-precision algorithms solve this very problem by extending the range of representable integers while using single precision 
-data types.
+trivially factored\footnote{A Pollard-Rho factoring would take only $2^{16}$ time.} on the average desktop computer, 
+rendering any protocol based on the algorithm insecure.  Multiple precision algorithms solve this very problem by 
+extending the range of representable integers while using single precision data types.
 
 Most advancements in fast multiple precision arithmetic stem from the need for faster and more efficient cryptographic 
 primitives.  Faster modular reduction and exponentiation algorithms such as Barrett's algorithm, which have appeared in 
@@ -246,27 +261,16 @@ floating point is meant to be implemented in hardware the precision of the manti
 a mantissa of much larger precision than hardware alone can efficiently support.  This approach could be useful where 
 scientific applications must minimize the total output error over long calculations.
 
-\subsection{What is Multiple Precision Arithmetic?}
-At the heart of all multiple precision integer operations are the ``long-hand'' algorithms taught to children in grade 
-school.  For example, to multiply $1,234$ by $981$ the student is not taught to memorize the times table for 
-$1,234$.  Instead, they are taught how to long-multiply one digit at a time.  That is to multiply each column using 
-simple single digit multiplications, line up the partial results, and add the resulting products by column.  The 
-representation that most are familiar with is known as decimal or more formally as radix-10. A radix-$n$ representation 
-simply means there are $n$ possible values per digit.  For example, binary would be a radix-2 representation.
-
-In essence computer based multiple precision arithmetic is very much the same.  In most cases the same algorithms
-which seem instinctive are the basis of computer based algorithms.  The most notable difference is the usage
-of a binary friendly radix, that is, to use a radix of the form $2^k$ where $k$ is typically the size of a computer 
-machine register\footnote{For example, with an x86 based processor $k$ could be $32$ while on an Alpha it would likely
-be $64$.}.
+Another use for large integers is within arithmetic on polynomials of large characteristic (i.e. $GF(p)[x]$ for large $p$).
+In fact the library discussed within this text has already been used to form a polynomial basis library\footnote{See \url{http://poly.libtomcrypt.org} for more details.}.
 
 \subsection{Benefits of Multiple Precision Arithmetic}
 \index{precision}
 The benefit of multiple precision representations over single or fixed precision representations is that 
-often no precision is lost while representing the result of an operation which requires excess precision.  For example, 
-the product of two $n$-bit integers requires at least $2n$ bits of resolution to be precisely represented.  
-A multiple precision algorithm would augment the precision of the destination to accomodate the result while a single 
-precision system would truncate excess bits to maintain a fixed level of precision.
+no precision is lost while representing the result of an operation which requires excess precision.  For example, 
+the product of two $n$-bit integers requires at least $2n$ bits of precision to be represented faithfully.  A multiple 
+precision algorithm would augment the precision of the destination to accomodate the result while a single precision system 
+would truncate excess bits to maintain a fixed level of precision.
 
 It is possible to implement algorithms which require large integers with fixed precision algorithms.  For example, elliptic
 curve cryptography (\textit{ECC}) is often implemented on smartcards by fixing the precision of the integers to the maximum 
@@ -279,11 +283,12 @@ Multiple precision algorithms have the most overhead of any style of arithmetic.
 overhead can be kept to a minimum with careful planning, but overall, it is not well suited for most memory starved
 platforms.  However, multiple precision algorithms do offer the most flexibility in terms of the magnitude of the 
 inputs.  That is, the same algorithms based on multiple precision integers can accomodate any reasonable size input 
-without the designer's explicit forethought.  
+without the designer's explicit forethought.  This leads to lower cost of ownership for the code as it only has to 
+be written and tested once.
 
 \section{Purpose of This Text}
-The purpose of this text is to instruct the reader regarding how to implement multiple precision algorithms.  That is 
-to not only explain a limited subset of the core theory behind the algorithms but also the various ``house keeping'' 
+The purpose of this text is to instruct the reader regarding how to implement efficient multiple precision algorithms.  
+That is to not only explain a limited subset of the core theory behind the algorithms but also the various ``house keeping'' 
 elements that are neglected by authors of other texts on the subject.  Several well reknowned texts \cite{TAOCPV2,HAC} 
 give considerably detailed explanations of the theoretical aspects of algorithms and often very little information 
 regarding the practical implementation aspects.  
@@ -308,6 +313,9 @@ discusses a very large portion of the inner workings of the library.
 The algorithms that are presented will always include at least one ``pseudo-code'' description followed 
 by the actual C source code that implements the algorithm.  The pseudo-code can be used to implement the same 
 algorithm in other programming languages as the reader sees fit.  
+
+This text shall also serve as a walkthrough of the creation of multiple precision algorithms from scratch.  Showing
+the reader how the algorithms fit together as well as where to start on various taskings.  
 
 \section{Discussion and Notation}
 \subsection{Notation}
@@ -368,41 +376,36 @@ The $\lfloor \mbox{ } \rfloor$ brackets imply an expression truncated to an inte
 itself.  For example, $\lfloor 5.7 \rfloor = 5$.  Similarly the $\lceil \mbox{ } \rceil$ brackets imply an expression
 rounded to an integer not less than the expression itself.  For example, $\lceil 5.1 \rceil = 6$.  Typically when 
 the $/$ division symbol is used the intention is to perform an integer division with truncation.  For example, 
-$5/2 = 2$ which will often be written as $\lfloor 5/2 \rfloor = 2$ for clarity.  When a value is presented as a 
-fraction such as $5 \over 2$ a real value division is implied.  
+$5/2 = 2$ which will often be written as $\lfloor 5/2 \rfloor = 2$ for clarity.  When an expression is written as a 
+fraction a real value division is implied, for example ${5 \over 2} = 2.5$.  
 
 The norm of a multiple precision integer, for example, $\vert \vert x \vert \vert$ will be used to represent the number of digits in the representation
-of the integer.  For example, $\vert \vert 123 \vert \vert = 3$.  
+of the integer.  For example, $\vert \vert 123 \vert \vert = 3$ and $\vert \vert 79452 \vert \vert = 5$.  
 
 \subsection{Work Effort}
-\index{big-O}
-To measure the efficiency of the specified algorithms, a modified big-O notation is used.  In this system all 
+\index{big-Oh}
+To measure the efficiency of the specified algorithms, a modified big-Oh notation is used.  In this system all 
 single precision operations are considered to have the same cost\footnote{Except where explicitly noted.}.  
 That is a single precision addition, multiplication and division are assumed to take the same time to 
 complete.  While this is generally not true in practice, it will simplify the discussions considerably.
 
 Some algorithms have slight advantages over others which is why some constants will not be removed in 
-the notation.  For example, a normal multiplication requires $O(n^2)$ work while a squaring requires 
-$O({{n^2 + n}\over 2})$ work.  In standard big-O notation these would both be said to be equivalent to $O(n^2)$.  However, 
+the notation.  For example, a normal baseline multiplication (section \ref{sec:basemult}) requires $O(n^2)$ work while a 
+baseline squaring (section \ref{sec:basesquare}) requires $O({{n^2 + n}\over 2})$ work.  In standard big-Oh notation these 
+would both be said to be equivalent to $O(n^2)$.  However, 
 in the context of the this text this is not the case as the magnitude of the inputs will typically be rather small.  As a 
 result small constant factors in the work effort will make an observable difference in algorithm efficiency.
 
-Throughout the discussions various ``work levels'' will be discussed.  The term work level shall refer to 
-the complexity of an algorithm with respect to its time requirements.  For example, 
-$O(1)$, $O(n)$, $O(n^2)$, ..., $O(n^k)$ are various possible work levels that will be of concern in this text.  Any 
-sequence of operations said to be at the $O(n^k)$ work level will often be nested $k-$deep within loops and are performed
-$n^k$ times.
-
-Operations which are deeply nested within algorithms will have a higher big-O rating and be the target of the most 
-optimizatons.  For example, in integer multiplication, by moving the carry propagation from the innermost 
-$O(n^2)$ nesting to the $O(n)$ nesting level the algorithm becomes vastly more 
-efficient\footnote{This is known as Comba multiplication.}.  
+All of the algorithms presented in this text have a polynomial time work level.  That is, of the form 
+$O(n^k)$ for $n, k \in \Z^{+}$.  This will help make useful comparisons in terms of the speed of the algorithms and how 
+various optimizations will help pay off in the long run.
 
 \section{Exercises}
-Within the more advanced chapters a section will be set aside to give the reader some challenging exercises.  These 
-exercises are not designed to be prize winning problems, but instead to be thought provoking.  Wherever possible the 
-problems are forward minded, stating problems that will be answered in subsequent chapters.  The reader is encouraged to 
-finish the exercises as they appear to get a better understanding of the subject material.  
+Within the more advanced chapters a section will be set aside to give the reader some challenging exercises related to
+the discussion at hand.  These exercises are not designed to be prize winning problems, but instead to be thought 
+provoking.  Wherever possible the problems are forward minded, stating problems that will be answered in subsequent 
+chapters.  The reader is encouraged to finish the exercises as they appear to get a better understanding of the 
+subject material.  
 
 That being said, the problems are designed to affirm knowledge of a particular subject matter.  Students in particular
 are encouraged to verify they can answer the problems correctly before moving on.
@@ -410,52 +413,60 @@ are encouraged to verify they can answer the problems correctly before moving on
 Similar to the exercises of \cite[pp. ix]{TAOCPV2} these exercises are given a scoring system based on the difficulty of
 the problem.  However, unlike \cite{TAOCPV2} the problems do not get nearly as hard.  The scoring of these 
 exercises ranges from one (the easiest) to five (the hardest).  The following table sumarizes the 
-scoring.
+scoring system used.
 
-\begin{tabular}{cl}
-$\left [ 1 \right ]$ & An easy problem that should only take the reader a manner of \\
-                     & minutes to solve.  Usually does not involve much computer time \\
-                     & to solve. \\
-                     & \\
-$\left [ 2 \right ]$ & An easy problem that involves a marginal amount of computer \\
+\begin{figure}[here]
+\begin{center}
+\begin{small}
+\begin{tabular}{|c|l|}
+\hline $\left [ 1 \right ]$ & An easy problem that should only take the reader a manner of \\
+                            & minutes to solve.  Usually does not involve much computer time \\
+                            & to solve. \\
+\hline $\left [ 2 \right ]$ & An easy problem that involves a marginal amount of computer \\
                      & time usage.  Usually requires a program to be written to \\
                      & solve the problem. \\
-                     & \\
-$\left [ 3 \right ]$ & A moderately hard problem that requires a non-trivial amount \\
+\hline $\left [ 3 \right ]$ & A moderately hard problem that requires a non-trivial amount \\
                      & of work.  Usually involves trivial research and development of \\
                      & new theory from the perspective of a student. \\
-                     & \\
-$\left [ 4 \right ]$ & A moderately hard problem that involves a non-trivial amount \\
+\hline $\left [ 4 \right ]$ & A moderately hard problem that involves a non-trivial amount \\
                      & of work and research, the solution to which will demonstrate \\
                      & a higher mastery of the subject matter. \\
-                     & \\
-$\left [ 5 \right ]$ & A hard problem that involves concepts that are difficult for a \\
+\hline $\left [ 5 \right ]$ & A hard problem that involves concepts that are difficult for a \\
                      & novice to solve.  Solutions to these problems will demonstrate a \\
                      & complete mastery of the given subject. \\
-                     & \\
+\hline
 \end{tabular}
+\end{small}
+\end{center}
+\caption{Exercise Scoring System}
+\end{figure}
 
-Essentially problems at the first level are meant to be simple questions that the reader can answer quickly without programming a solution or
-devising new theory.  These problems are quick tests to see if the material is understood.  Problems at the second level are also
-designed to be easy but will require a program or algorithm to be implemented to arrive at the answer.  
+Problems at the first level are meant to be simple questions that the reader can answer quickly without programming a solution or
+devising new theory.  These problems are quick tests to see if the material is understood.  Problems at the second level 
+are also designed to be easy but will require a program or algorithm to be implemented to arrive at the answer.  These
+two levels are essentially entry level questions.  
 
-Problems at the third level are meant to be a bit more difficult.  Often the answer is fairly obvious but arriving at an exacting solution
-requires some thought and skill.  These problems will almost always involve devising a new algorithm or implementing a variation of
-another algorithm.
+Problems at the third level are meant to be a bit more difficult than the first two levels.  The answer is often 
+fairly obvious but arriving at an exacting solution requires some thought and skill.  These problems will almost always 
+involve devising a new algorithm or implementing a variation of another algorithm previously presented.  Readers who can
+answer these questions will feel comfortable with the concepts behind the topic at hand.
 
-Problems at the fourth level are meant to be even more difficult as well as involve some research.  The reader will most 
-likely not know the answer right away, nor will the text provide the exact details of the answer until a subsequent 
-chapter.  Problems at the fifth level are meant to be the hardest problems relative to all the other problems in the 
-chapter.  People who can correctly answer fifth level problems have a mastery of the subject matter at hand.
+Problems at the fourth level are meant to be similar to those of the level three questions except they will require 
+additional research to be completed.  The reader will most likely not know the answer right away, nor will the text provide 
+the exact details of the answer until a subsequent chapter.  
+
+Problems at the fifth level are meant to be the hardest 
+problems relative to all the other problems in the chapter.  People who can correctly answer fifth level problems have a 
+mastery of the subject matter at hand.
 
 Often problems will be tied together.  The purpose of this is to start a chain of thought that will be discussed in future chapters.  The reader
 is encouraged to answer the follow-up problems and try to draw the relevance of problems.
 
-\chapter{Introduction to LibTomMath}
+\section{Introduction to LibTomMath}
 
-\section{What is LibTomMath?}
-LibTomMath is a free and open source multiple precision library written in portable ISO C.  By portable it is 
-meant that the library does not contain any code that is computer platform dependent or otherwise problematic to use on 
+\subsection{What is LibTomMath?}
+LibTomMath is a free and open source multiple precision integer library written entirely in portable ISO C.  By portable it 
+is meant that the library does not contain any code that is computer platform dependent or otherwise problematic to use on 
 any given platform.  
 
 The library has been successfully tested under numerous operating systems including Unix\footnote{All of these
@@ -463,7 +474,7 @@ trademarks belong to their respective rightful owners.}, MacOS, Windows, Linux, 
 as the Gameboy Advance.  The library is designed to contain enough functionality to be able to develop applications such 
 as public key cryptosystems and still maintain a relatively small footprint.
 
-\section{Goals of LibTomMath}
+\subsection{Goals of LibTomMath}
 
 Libraries which obtain the most efficiency are rarely written in a high level programming language such as C.  However, 
 even though this library is written entirely in ISO C, considerable care has been taken to optimize the algorithm implementations within the 
@@ -479,13 +490,13 @@ based on the magnitude of the inputs and the configuration of the library.
 
 Making LibTomMath as efficient as possible is not the only goal of the LibTomMath project.  Ideally the library should 
 be source compatible with another popular library which makes it more attractive for developers to use.  In this case the
-MPI library was used as a API template for all the basic functions.  MPI was chosen as the template because it is 
-another library that fits in the same niche as LibTomMath.  Even though LibTomMath uses MPI as the template for the 
-function names and argument passing conventions, LibTomMath has been written from scratch by Tom St Denis.
+MPI library was used as a API template for all the basic functions.  MPI was chosen because it is another library that fits 
+in the same niche as LibTomMath.  Even though LibTomMath uses MPI as the template for the function names and argument 
+passing conventions, it has been written from scratch by Tom St Denis.
 
 The project is also meant to act as a learning tool for students, the logic being that no easy-to-follow ``bignum'' 
 library exists which can be used to teach computer science students how to perform fast and reliable multiple precision 
-arithmetic.  To this end the source code has been given quite a few comments and algorithm discussion points.  
+integer arithmetic.  To this end the source code has been given quite a few comments and algorithm discussion points.  
 
 \section{Choice of LibTomMath}
 LibTomMath was chosen as the case study of this text not only because the author of both projects is one and the same but
@@ -500,15 +511,13 @@ developer can more readily discern the true intent of a given section of source 
 what conditional code will be used.
 
 The code base of LibTomMath is also well organized.  Each function is in its own separate source code file 
-which allows the reader to find a given function very quickly.  When compiled with GCC for the x86 processor the entire 
-library is a mere 87,760 bytes ($116,182$ bytes for ARMv4 processors).  This includes every single function 
-LibTomMath provides from basic arithmetic to various number theoretic functions such as modular exponentiation, various 
-reduction algorithms and Jacobi symbol computation.  
+which allows the reader to find a given function very quickly.  On average there are about $76$ lines of code per source
+file which makes the source very easily to follow.  By comparison MPI and LIP are single file projects making code tracing
+very hard.  GMP has many conditional code segments which also hinder tracing.  
 
-By comparison MPI, which has fewer functions than LibTomMath, compiled with the same conditions occupied 45,429 bytes 
-($54,536$ for ARMv4).  GMP which has a rather large collection of functions with the default configuration on an 
-x86 Athlon is 2,950,688 bytes.  Note that while LibTomMath has fewer functions than GMP it has been used as the sole basis 
-for several public key cryptosystems without having to seek additional outside functions to supplement the library.
+When compiled with GCC for the x86 processor and optimized for speed the entire library is approximately $66$KiB\footnote{The notation ``KiB'' means $2^{10}$ octets, similarly ``MiB'' means $2^{20}$ octets.}
+ which is fairly small compared to GMP (over $250$KiB).  LibTomMath is slightly larger than MPI (which compiles to about 
+$50$KiB) but LibTomMath is also much faster and more complete than MPI.
 
 \subsection{API Simplicity}
 LibTomMath is designed after the MPI library and shares the API design.  Quite often programs that use MPI will build 
@@ -518,6 +527,11 @@ which is an extremely valuable benefit for the student and developer alike.
 
 The LIP library is an example of a library with an API that is awkward to work with.  LIP uses function names that are often ``compressed'' to 
 illegible short hand.  LibTomMath does not share this characteristic.  
+
+The GMP library also does not return error codes.  Instead it uses a POSIX.1 \cite{POSIX1} signal system where errors
+are signaled to the host application.  This happens to be the fastest approach but definitely not the most versatile.  In
+effect a math error (i.e. invalid input, heap error, etc) can cause a program to stop functioning which is definitely 
+undersireable in many situations.
 
 \subsection{Optimizations}
 While LibTomMath is certainly not the fastest library (GMP often beats LibTomMath by a factor of two) it does
@@ -2320,6 +2334,7 @@ This technique led to the discovery of polynomial basis algorithms (\textit{good
 
 \section{Multiplication}
 \subsection{The Baseline Multiplication}
+\label{sec:basemult}
 \index{baseline multiplication}
 Computing the product of two integers in software can be achieved using a trivial adaptation of the standard $O(n^2)$ long-hand multiplication
 algorithm that school children are taught.  The algorithm is considered an $O(n^2)$ algorithm since for two $n$-digit inputs $n^2$ single precision 
@@ -2985,6 +3000,7 @@ The implementation is rather simplistic and is not particularly noteworthy.  Lin
 operator from the C programming language.  Line @37,<<@ computes $\delta$ using the fact that $1 << k$ is equal to $2^k$.  
 
 \section{Squaring}
+\label{sec:basesquare}
 
 Squaring is a special case of multiplication where both multiplicands are equal.  At first it may seem like there is no significant optimization
 available but in fact there is.  Consider the multiplication of $576$ against $241$.  In total there will be nine single precision multiplications
@@ -6260,6 +6276,12 @@ OpenSSL Cryptographic Toolkit, \url{http://openssl.org}
 
 \bibitem[17]{LIP}
 Large Integer Package, \url{http://home.hetnet.nl/~ecstr/LIP.zip}
+
+\bibitem[18]{ISOC}
+JTC1/SC22/WG14, ISO/IEC 9899:1999, ``A draft rationale for the C99 standard.''
+
+\bibitem[19]{JAVA}
+The Sun Java Website, \url{http://java.sun.com/}
 
 \end{thebibliography}
 

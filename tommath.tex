@@ -201,12 +201,27 @@ Greg Rose, Sydney, Australia, June 2003.
 \pagestyle{headings}
 \chapter{Introduction}
 \section{Multiple Precision Arithmetic}
+
+\subsection{What is Multiple Precision Arithmetic?}
+When we think of long-hand arithmetic such as addition or multiplication we rarely consider the fact that we instinctively
+raise or lower the precision of the numbers we are dealing with.  For example, in decimal we almost immediate can 
+reason that $7$ times $6$ is $42$.  However, $42$ has two digits of precision as opposed to one digit we started with.  
+Further multiplications of say $3$ result in a larger precision result $126$.  In these few examples we have multiple 
+precisions for the numbers we are working with.  Despite the various levels of precision a single subset\footnote{With the occasional optimization.}
+ of algorithms can be designed to accomodate them.  
+
+By way of comparison a fixed or single precision operation would lose precision on various operations.  For example, in
+the decimal system with fixed precision $6 \cdot 7 = 2$.
+
+Essentially at the heart of computer based multiple precision arithmetic are the same long-hand algorithms taught in
+schools to manually add, subtract, multiply and divide.  
+
 \subsection{The Need for Multiple Precision Arithmetic}
 The most prevalent need for multiple precision arithmetic, often referred to as ``bignum'' math, is within the implementation
 of public-key cryptography algorithms.   Algorithms such as RSA \cite{RSAREF} and Diffie-Hellman \cite{DHREF} require 
 integers of significant magnitude to resist known cryptanalytic attacks.  For example, at the time of this writing a 
-typical RSA modulus would be at greater than $10^{309}$.  However, modern programming languages such as ISO C \ref{ISOC} and 
-Java \ref{JAVA} only provide instrinsic support for integers which are relatively small and are single precision.
+typical RSA modulus would be at least greater than $10^{309}$.  However, modern programming languages such as ISO C \cite{ISOC} and 
+Java \cite{JAVA} only provide instrinsic support for integers which are relatively small and single precision.
 
 \begin{figure}[!here]
 \begin{center}
@@ -227,9 +242,9 @@ The largest data type guaranteed to be provided by the ISO C programming
 language\footnote{As per the ISO C standard.  However, each compiler vendor is allowed to augment the precision as they 
 see fit.}  can only represent values up to $10^{19}$ as shown in figure \ref{fig:ISOC}. On its own the C language is 
 insufficient to accomodate the magnitude required for the problem at hand.  An RSA modulus of magnitude $10^{19}$ could be 
-trivially factored on the average desktop computer, rendering any protocol based on the algorithm insecure.  Multiple 
-precision algorithms solve this very problem by extending the range of representable integers while using single precision 
-data types.
+trivially factored\footnote{A Pollard-Rho factoring would take only $2^{16}$ time.} on the average desktop computer, 
+rendering any protocol based on the algorithm insecure.  Multiple precision algorithms solve this very problem by 
+extending the range of representable integers while using single precision data types.
 
 Most advancements in fast multiple precision arithmetic stem from the need for faster and more efficient cryptographic 
 primitives.  Faster modular reduction and exponentiation algorithms such as Barrett's algorithm, which have appeared in 
@@ -246,27 +261,16 @@ floating point is meant to be implemented in hardware the precision of the manti
 a mantissa of much larger precision than hardware alone can efficiently support.  This approach could be useful where 
 scientific applications must minimize the total output error over long calculations.
 
-\subsection{What is Multiple Precision Arithmetic?}
-At the heart of all multiple precision integer operations are the ``long-hand'' algorithms taught to children in grade 
-school.  For example, to multiply $1,234$ by $981$ the student is not taught to memorize the times table for 
-$1,234$.  Instead, they are taught how to long-multiply one digit at a time.  That is to multiply each column using 
-simple single digit multiplications, line up the partial results, and add the resulting products by column.  The 
-representation that most are familiar with is known as decimal or more formally as radix-10. A radix-$n$ representation 
-simply means there are $n$ possible values per digit.  For example, binary would be a radix-2 representation.
-
-In essence computer based multiple precision arithmetic is very much the same.  In most cases the same algorithms
-which seem instinctive are the basis of computer based algorithms.  The most notable difference is the usage
-of a binary friendly radix, that is, to use a radix of the form $2^k$ where $k$ is typically the size of a computer 
-machine register\footnote{For example, with an x86 based processor $k$ could be $32$ while on an Alpha it would likely
-be $64$.}.
+Another use for large integers is within arithmetic on polynomials of large characteristic (i.e. $GF(p)[x]$ for large $p$).
+In fact the library discussed within this text has already been used to form a polynomial basis library\footnote{See \url{http://poly.libtomcrypt.org} for more details.}.
 
 \subsection{Benefits of Multiple Precision Arithmetic}
 \index{precision}
 The benefit of multiple precision representations over single or fixed precision representations is that 
-often no precision is lost while representing the result of an operation which requires excess precision.  For example, 
-the product of two $n$-bit integers requires at least $2n$ bits of resolution to be precisely represented.  
-A multiple precision algorithm would augment the precision of the destination to accomodate the result while a single 
-precision system would truncate excess bits to maintain a fixed level of precision.
+no precision is lost while representing the result of an operation which requires excess precision.  For example, 
+the product of two $n$-bit integers requires at least $2n$ bits of precision to be represented faithfully.  A multiple 
+precision algorithm would augment the precision of the destination to accomodate the result while a single precision system 
+would truncate excess bits to maintain a fixed level of precision.
 
 It is possible to implement algorithms which require large integers with fixed precision algorithms.  For example, elliptic
 curve cryptography (\textit{ECC}) is often implemented on smartcards by fixing the precision of the integers to the maximum 
@@ -279,11 +283,12 @@ Multiple precision algorithms have the most overhead of any style of arithmetic.
 overhead can be kept to a minimum with careful planning, but overall, it is not well suited for most memory starved
 platforms.  However, multiple precision algorithms do offer the most flexibility in terms of the magnitude of the 
 inputs.  That is, the same algorithms based on multiple precision integers can accomodate any reasonable size input 
-without the designer's explicit forethought.  
+without the designer's explicit forethought.  This leads to lower cost of ownership for the code as it only has to 
+be written and tested once.
 
 \section{Purpose of This Text}
-The purpose of this text is to instruct the reader regarding how to implement multiple precision algorithms.  That is 
-to not only explain a limited subset of the core theory behind the algorithms but also the various ``house keeping'' 
+The purpose of this text is to instruct the reader regarding how to implement efficient multiple precision algorithms.  
+That is to not only explain a limited subset of the core theory behind the algorithms but also the various ``house keeping'' 
 elements that are neglected by authors of other texts on the subject.  Several well reknowned texts \cite{TAOCPV2,HAC} 
 give considerably detailed explanations of the theoretical aspects of algorithms and often very little information 
 regarding the practical implementation aspects.  
@@ -308,6 +313,9 @@ discusses a very large portion of the inner workings of the library.
 The algorithms that are presented will always include at least one ``pseudo-code'' description followed 
 by the actual C source code that implements the algorithm.  The pseudo-code can be used to implement the same 
 algorithm in other programming languages as the reader sees fit.  
+
+This text shall also serve as a walkthrough of the creation of multiple precision algorithms from scratch.  Showing
+the reader how the algorithms fit together as well as where to start on various taskings.  
 
 \section{Discussion and Notation}
 \subsection{Notation}
@@ -368,41 +376,36 @@ The $\lfloor \mbox{ } \rfloor$ brackets imply an expression truncated to an inte
 itself.  For example, $\lfloor 5.7 \rfloor = 5$.  Similarly the $\lceil \mbox{ } \rceil$ brackets imply an expression
 rounded to an integer not less than the expression itself.  For example, $\lceil 5.1 \rceil = 6$.  Typically when 
 the $/$ division symbol is used the intention is to perform an integer division with truncation.  For example, 
-$5/2 = 2$ which will often be written as $\lfloor 5/2 \rfloor = 2$ for clarity.  When a value is presented as a 
-fraction such as $5 \over 2$ a real value division is implied.  
+$5/2 = 2$ which will often be written as $\lfloor 5/2 \rfloor = 2$ for clarity.  When an expression is written as a 
+fraction a real value division is implied, for example ${5 \over 2} = 2.5$.  
 
 The norm of a multiple precision integer, for example, $\vert \vert x \vert \vert$ will be used to represent the number of digits in the representation
-of the integer.  For example, $\vert \vert 123 \vert \vert = 3$.  
+of the integer.  For example, $\vert \vert 123 \vert \vert = 3$ and $\vert \vert 79452 \vert \vert = 5$.  
 
 \subsection{Work Effort}
-\index{big-O}
-To measure the efficiency of the specified algorithms, a modified big-O notation is used.  In this system all 
+\index{big-Oh}
+To measure the efficiency of the specified algorithms, a modified big-Oh notation is used.  In this system all 
 single precision operations are considered to have the same cost\footnote{Except where explicitly noted.}.  
 That is a single precision addition, multiplication and division are assumed to take the same time to 
 complete.  While this is generally not true in practice, it will simplify the discussions considerably.
 
 Some algorithms have slight advantages over others which is why some constants will not be removed in 
-the notation.  For example, a normal multiplication requires $O(n^2)$ work while a squaring requires 
-$O({{n^2 + n}\over 2})$ work.  In standard big-O notation these would both be said to be equivalent to $O(n^2)$.  However, 
+the notation.  For example, a normal baseline multiplication (section \ref{sec:basemult}) requires $O(n^2)$ work while a 
+baseline squaring (section \ref{sec:basesquare}) requires $O({{n^2 + n}\over 2})$ work.  In standard big-Oh notation these 
+would both be said to be equivalent to $O(n^2)$.  However, 
 in the context of the this text this is not the case as the magnitude of the inputs will typically be rather small.  As a 
 result small constant factors in the work effort will make an observable difference in algorithm efficiency.
 
-Throughout the discussions various ``work levels'' will be discussed.  The term work level shall refer to 
-the complexity of an algorithm with respect to its time requirements.  For example, 
-$O(1)$, $O(n)$, $O(n^2)$, ..., $O(n^k)$ are various possible work levels that will be of concern in this text.  Any 
-sequence of operations said to be at the $O(n^k)$ work level will often be nested $k-$deep within loops and are performed
-$n^k$ times.
-
-Operations which are deeply nested within algorithms will have a higher big-O rating and be the target of the most 
-optimizatons.  For example, in integer multiplication, by moving the carry propagation from the innermost 
-$O(n^2)$ nesting to the $O(n)$ nesting level the algorithm becomes vastly more 
-efficient\footnote{This is known as Comba multiplication.}.  
+All of the algorithms presented in this text have a polynomial time work level.  That is, of the form 
+$O(n^k)$ for $n, k \in \Z^{+}$.  This will help make useful comparisons in terms of the speed of the algorithms and how 
+various optimizations will help pay off in the long run.
 
 \section{Exercises}
-Within the more advanced chapters a section will be set aside to give the reader some challenging exercises.  These 
-exercises are not designed to be prize winning problems, but instead to be thought provoking.  Wherever possible the 
-problems are forward minded, stating problems that will be answered in subsequent chapters.  The reader is encouraged to 
-finish the exercises as they appear to get a better understanding of the subject material.  
+Within the more advanced chapters a section will be set aside to give the reader some challenging exercises related to
+the discussion at hand.  These exercises are not designed to be prize winning problems, but instead to be thought 
+provoking.  Wherever possible the problems are forward minded, stating problems that will be answered in subsequent 
+chapters.  The reader is encouraged to finish the exercises as they appear to get a better understanding of the 
+subject material.  
 
 That being said, the problems are designed to affirm knowledge of a particular subject matter.  Students in particular
 are encouraged to verify they can answer the problems correctly before moving on.
@@ -410,52 +413,60 @@ are encouraged to verify they can answer the problems correctly before moving on
 Similar to the exercises of \cite[pp. ix]{TAOCPV2} these exercises are given a scoring system based on the difficulty of
 the problem.  However, unlike \cite{TAOCPV2} the problems do not get nearly as hard.  The scoring of these 
 exercises ranges from one (the easiest) to five (the hardest).  The following table sumarizes the 
-scoring.
+scoring system used.
 
-\begin{tabular}{cl}
-$\left [ 1 \right ]$ & An easy problem that should only take the reader a manner of \\
-                     & minutes to solve.  Usually does not involve much computer time \\
-                     & to solve. \\
-                     & \\
-$\left [ 2 \right ]$ & An easy problem that involves a marginal amount of computer \\
+\begin{figure}[here]
+\begin{center}
+\begin{small}
+\begin{tabular}{|c|l|}
+\hline $\left [ 1 \right ]$ & An easy problem that should only take the reader a manner of \\
+                            & minutes to solve.  Usually does not involve much computer time \\
+                            & to solve. \\
+\hline $\left [ 2 \right ]$ & An easy problem that involves a marginal amount of computer \\
                      & time usage.  Usually requires a program to be written to \\
                      & solve the problem. \\
-                     & \\
-$\left [ 3 \right ]$ & A moderately hard problem that requires a non-trivial amount \\
+\hline $\left [ 3 \right ]$ & A moderately hard problem that requires a non-trivial amount \\
                      & of work.  Usually involves trivial research and development of \\
                      & new theory from the perspective of a student. \\
-                     & \\
-$\left [ 4 \right ]$ & A moderately hard problem that involves a non-trivial amount \\
+\hline $\left [ 4 \right ]$ & A moderately hard problem that involves a non-trivial amount \\
                      & of work and research, the solution to which will demonstrate \\
                      & a higher mastery of the subject matter. \\
-                     & \\
-$\left [ 5 \right ]$ & A hard problem that involves concepts that are difficult for a \\
+\hline $\left [ 5 \right ]$ & A hard problem that involves concepts that are difficult for a \\
                      & novice to solve.  Solutions to these problems will demonstrate a \\
                      & complete mastery of the given subject. \\
-                     & \\
+\hline
 \end{tabular}
+\end{small}
+\end{center}
+\caption{Exercise Scoring System}
+\end{figure}
 
-Essentially problems at the first level are meant to be simple questions that the reader can answer quickly without programming a solution or
-devising new theory.  These problems are quick tests to see if the material is understood.  Problems at the second level are also
-designed to be easy but will require a program or algorithm to be implemented to arrive at the answer.  
+Problems at the first level are meant to be simple questions that the reader can answer quickly without programming a solution or
+devising new theory.  These problems are quick tests to see if the material is understood.  Problems at the second level 
+are also designed to be easy but will require a program or algorithm to be implemented to arrive at the answer.  These
+two levels are essentially entry level questions.  
 
-Problems at the third level are meant to be a bit more difficult.  Often the answer is fairly obvious but arriving at an exacting solution
-requires some thought and skill.  These problems will almost always involve devising a new algorithm or implementing a variation of
-another algorithm.
+Problems at the third level are meant to be a bit more difficult than the first two levels.  The answer is often 
+fairly obvious but arriving at an exacting solution requires some thought and skill.  These problems will almost always 
+involve devising a new algorithm or implementing a variation of another algorithm previously presented.  Readers who can
+answer these questions will feel comfortable with the concepts behind the topic at hand.
 
-Problems at the fourth level are meant to be even more difficult as well as involve some research.  The reader will most 
-likely not know the answer right away, nor will the text provide the exact details of the answer until a subsequent 
-chapter.  Problems at the fifth level are meant to be the hardest problems relative to all the other problems in the 
-chapter.  People who can correctly answer fifth level problems have a mastery of the subject matter at hand.
+Problems at the fourth level are meant to be similar to those of the level three questions except they will require 
+additional research to be completed.  The reader will most likely not know the answer right away, nor will the text provide 
+the exact details of the answer until a subsequent chapter.  
+
+Problems at the fifth level are meant to be the hardest 
+problems relative to all the other problems in the chapter.  People who can correctly answer fifth level problems have a 
+mastery of the subject matter at hand.
 
 Often problems will be tied together.  The purpose of this is to start a chain of thought that will be discussed in future chapters.  The reader
 is encouraged to answer the follow-up problems and try to draw the relevance of problems.
 
-\chapter{Introduction to LibTomMath}
+\section{Introduction to LibTomMath}
 
-\section{What is LibTomMath?}
-LibTomMath is a free and open source multiple precision library written in portable ISO C.  By portable it is 
-meant that the library does not contain any code that is computer platform dependent or otherwise problematic to use on 
+\subsection{What is LibTomMath?}
+LibTomMath is a free and open source multiple precision integer library written entirely in portable ISO C.  By portable it 
+is meant that the library does not contain any code that is computer platform dependent or otherwise problematic to use on 
 any given platform.  
 
 The library has been successfully tested under numerous operating systems including Unix\footnote{All of these
@@ -463,7 +474,7 @@ trademarks belong to their respective rightful owners.}, MacOS, Windows, Linux, 
 as the Gameboy Advance.  The library is designed to contain enough functionality to be able to develop applications such 
 as public key cryptosystems and still maintain a relatively small footprint.
 
-\section{Goals of LibTomMath}
+\subsection{Goals of LibTomMath}
 
 Libraries which obtain the most efficiency are rarely written in a high level programming language such as C.  However, 
 even though this library is written entirely in ISO C, considerable care has been taken to optimize the algorithm implementations within the 
@@ -479,13 +490,13 @@ based on the magnitude of the inputs and the configuration of the library.
 
 Making LibTomMath as efficient as possible is not the only goal of the LibTomMath project.  Ideally the library should 
 be source compatible with another popular library which makes it more attractive for developers to use.  In this case the
-MPI library was used as a API template for all the basic functions.  MPI was chosen as the template because it is 
-another library that fits in the same niche as LibTomMath.  Even though LibTomMath uses MPI as the template for the 
-function names and argument passing conventions, LibTomMath has been written from scratch by Tom St Denis.
+MPI library was used as a API template for all the basic functions.  MPI was chosen because it is another library that fits 
+in the same niche as LibTomMath.  Even though LibTomMath uses MPI as the template for the function names and argument 
+passing conventions, it has been written from scratch by Tom St Denis.
 
 The project is also meant to act as a learning tool for students, the logic being that no easy-to-follow ``bignum'' 
 library exists which can be used to teach computer science students how to perform fast and reliable multiple precision 
-arithmetic.  To this end the source code has been given quite a few comments and algorithm discussion points.  
+integer arithmetic.  To this end the source code has been given quite a few comments and algorithm discussion points.  
 
 \section{Choice of LibTomMath}
 LibTomMath was chosen as the case study of this text not only because the author of both projects is one and the same but
@@ -500,15 +511,13 @@ developer can more readily discern the true intent of a given section of source 
 what conditional code will be used.
 
 The code base of LibTomMath is also well organized.  Each function is in its own separate source code file 
-which allows the reader to find a given function very quickly.  When compiled with GCC for the x86 processor the entire 
-library is a mere 87,760 bytes ($116,182$ bytes for ARMv4 processors).  This includes every single function 
-LibTomMath provides from basic arithmetic to various number theoretic functions such as modular exponentiation, various 
-reduction algorithms and Jacobi symbol computation.  
+which allows the reader to find a given function very quickly.  On average there are about $76$ lines of code per source
+file which makes the source very easily to follow.  By comparison MPI and LIP are single file projects making code tracing
+very hard.  GMP has many conditional code segments which also hinder tracing.  
 
-By comparison MPI, which has fewer functions than LibTomMath, compiled with the same conditions occupied 45,429 bytes 
-($54,536$ for ARMv4).  GMP which has a rather large collection of functions with the default configuration on an 
-x86 Athlon is 2,950,688 bytes.  Note that while LibTomMath has fewer functions than GMP it has been used as the sole basis 
-for several public key cryptosystems without having to seek additional outside functions to supplement the library.
+When compiled with GCC for the x86 processor and optimized for speed the entire library is approximately $66$KiB\footnote{The notation ``KiB'' means $2^{10}$ octets, similarly ``MiB'' means $2^{20}$ octets.}
+ which is fairly small compared to GMP (over $250$KiB).  LibTomMath is slightly larger than MPI (which compiles to about 
+$50$KiB) but LibTomMath is also much faster and more complete than MPI.
 
 \subsection{API Simplicity}
 LibTomMath is designed after the MPI library and shares the API design.  Quite often programs that use MPI will build 
@@ -518,6 +527,11 @@ which is an extremely valuable benefit for the student and developer alike.
 
 The LIP library is an example of a library with an API that is awkward to work with.  LIP uses function names that are often ``compressed'' to 
 illegible short hand.  LibTomMath does not share this characteristic.  
+
+The GMP library also does not return error codes.  Instead it uses a POSIX.1 \cite{POSIX1} signal system where errors
+are signaled to the host application.  This happens to be the fastest approach but definitely not the most versatile.  In
+effect a math error (i.e. invalid input, heap error, etc) can cause a program to stop functioning which is definitely 
+undersireable in many situations.
 
 \subsection{Optimizations}
 While LibTomMath is certainly not the fastest library (GMP often beats LibTomMath by a factor of two) it does
@@ -2613,7 +2627,7 @@ is set to $a.used$ at step 4.  Only if there is a final carry will the \textbf{u
 Step 6 is an optimization implementation of the addition loop for this specific case.  That is since the two values being added together 
 are the same there is no need to perform two reads from the digits of $a$.  Step 6.1 performs a single precision shift on the current digit $a_n$ to
 obtain what will be the carry for the next iteration.  Step 6.2 calculates the $n$'th digit of the result as single precision shift of $a_n$ plus
-the previous carry.  Recall from section 5.1 that $a_n << 1$ is equivalent to $a_n \cdot 2$.  An iteration of the addition loop is finished with 
+the previous carry.  Recall from section 4.1 that $a_n << 1$ is equivalent to $a_n \cdot 2$.  An iteration of the addition loop is finished with 
 forwarding the carry to the next iteration.
 
 Step 7 takes care of any final carry by setting the $a.used$'th digit of the result to the carry and augmenting the \textbf{used} count of $b$.  
@@ -2787,7 +2801,7 @@ least significant bit not the most significant bit.
 \end{small}
 
 \section{Polynomial Basis Operations}
-Recall from section 5.3 that any integer can be represented as a polynomial in $x$ as $y = f(\beta)$.  Such a representation is also known as
+Recall from section 4.3 that any integer can be represented as a polynomial in $x$ as $y = f(\beta)$.  Such a representation is also known as
 the polynomial basis \cite[pp. 48]{ROSE}. Given such a notation a multiplication or division by $x$ amounts to shifting whole digits a single 
 place.  The need for such operations arises in several other higher level algorithms such as Barrett and Montgomery reduction, integer
 division and Karatsuba multiplication.  
@@ -3414,6 +3428,7 @@ This technique led to the discovery of polynomial basis algorithms (\textit{good
 
 \section{Multiplication}
 \subsection{The Baseline Multiplication}
+\label{sec:basemult}
 \index{baseline multiplication}
 Computing the product of two integers in software can be achieved using a trivial adaptation of the standard $O(n^2)$ long-hand multiplication
 algorithm that school children are taught.  The algorithm is considered an $O(n^2)$ algorithm since for two $n$-digit inputs $n^2$ single precision 
@@ -3426,9 +3441,9 @@ facet of this algorithm, is that it has been modified to only produce a certain 
 modification will become evident during the discussion of Barrett modular reduction.  Recall that for a $n$ and $m$ digit input the product 
 will be at most $n + m$ digits.  Therefore, this algorithm can be reduced to a full multiplier by having it produce $n + m$ digits of the product.  
 
-Recall from sub-section 5.2.2 the definition of $\gamma$ as the number of bits in the type \textbf{mp\_digit}.  We shall now extend the variable set to 
+Recall from sub-section 4.2.2 the definition of $\gamma$ as the number of bits in the type \textbf{mp\_digit}.  We shall now extend the variable set to 
 include $\alpha$ which shall represent the number of bits in the type \textbf{mp\_word}.  This implies that $2^{\alpha} > 2 \cdot \beta^2$.  The 
-constant $\delta = 2^{\alpha - 2lg(\beta)}$ will represent the maximal weight of any column in a product (\textit{see sub-section 6.2.2 for more information}).
+constant $\delta = 2^{\alpha - 2lg(\beta)}$ will represent the maximal weight of any column in a product (\textit{see sub-section 5.2.2 for more information}).
 
 \newpage\begin{figure}[!here]
 \begin{small}
@@ -4718,11 +4733,10 @@ s\_mp\_mul\_digs will clear it.
 042       \} else \{
 043         res = s_mp_mul (a, b, c);
 044       \}
-045   
-046     \}
-047     c->sign = neg;
-048     return res;
-049   \}
+045     \}
+046     c->sign = neg;
+047     return res;
+048   \}
 \end{alltt}
 \end{small}
 
@@ -4730,6 +4744,7 @@ The implementation is rather simplistic and is not particularly noteworthy.  Lin
 operator from the C programming language.  Line 40 computes $\delta$ using the fact that $1 << k$ is equal to $2^k$.  
 
 \section{Squaring}
+\label{sec:basesquare}
 
 Squaring is a special case of multiplication where both multiplicands are equal.  At first it may seem like there is no significant optimization
 available but in fact there is.  Consider the multiplication of $576$ against $241$.  In total there will be nine single precision multiplications
@@ -5374,25 +5389,26 @@ neither of the polynomial basis algorithms should be used then either the Comba 
 019   mp_sqr (mp_int * a, mp_int * b)
 020   \{
 021     int     res;
-022     /* use Toom-Cook? */
-023     if (a->used >= TOOM_SQR_CUTOFF) \{
-024       res = mp_toom_sqr(a, b);
-025     /* Karatsuba? */
-026     \} else if (a->used >= KARATSUBA_SQR_CUTOFF) \{
-027       res = mp_karatsuba_sqr (a, b);
-028     \} else \{
-029       /* can we use the fast comba multiplier? */
-030       if ((a->used * 2 + 1) < MP_WARRAY && 
-031            a->used < 
-032            (1 << (sizeof(mp_word) * CHAR_BIT - 2*DIGIT_BIT - 1))) \{
-033         res = fast_s_mp_sqr (a, b);
-034       \} else \{
-035         res = s_mp_sqr (a, b);
-036       \}
-037     \}
-038     b->sign = MP_ZPOS;
-039     return res;
-040   \}
+022   
+023     /* use Toom-Cook? */
+024     if (a->used >= TOOM_SQR_CUTOFF) \{
+025       res = mp_toom_sqr(a, b);
+026     /* Karatsuba? */
+027     \} else if (a->used >= KARATSUBA_SQR_CUTOFF) \{
+028       res = mp_karatsuba_sqr (a, b);
+029     \} else \{
+030       /* can we use the fast comba multiplier? */
+031       if ((a->used * 2 + 1) < MP_WARRAY && 
+032            a->used < 
+033            (1 << (sizeof(mp_word) * CHAR_BIT - 2*DIGIT_BIT - 1))) \{
+034         res = fast_s_mp_sqr (a, b);
+035       \} else \{
+036         res = s_mp_sqr (a, b);
+037       \}
+038     \}
+039     b->sign = MP_ZPOS;
+040     return res;
+041   \}
 \end{alltt}
 \end{small}
 
@@ -5401,7 +5417,7 @@ neither of the polynomial basis algorithms should be used then either the Comba 
 $\left [ 3 \right ] $ & Devise an efficient algorithm for selection of the radix point to handle inputs \\
                       & that have different number of digits in Karatsuba multiplication. \\
                       & \\
-$\left [ 3 \right ] $ & In section 6.3 the fact that every column of a squaring is made up \\
+$\left [ 3 \right ] $ & In section 5.3 the fact that every column of a squaring is made up \\
                       & of double products and at most one square is stated.  Prove this statement. \\
                       & \\                      
 $\left [ 2 \right ] $ & In the Comba squaring algorithm half of the $\hat X$ variables are not used. \\
@@ -6005,7 +6021,7 @@ for the Barrett algorithm.  Additionally if $n > 1$ and $n$ is odd there will ex
 advance of this algorithm.  Finally the variable $k$ is fixed and a pseudonym for $n.used$.  
 
 Step 2 decides whether a faster Montgomery algorithm can be used.  It is based on the Comba technique meaning that there are limits on
-the size of the input.  This algorithm is discussed in sub-section 7.3.3.
+the size of the input.  This algorithm is discussed in sub-section 6.3.3.
 
 Step 5 is the main reduction loop of the algorithm.  The value of $\mu$ is calculated once per iteration in the outer loop.  The inner loop
 calculates $x + \mu n \beta^{ix}$ by multiplying $\mu n$ and adding the result to $x$ shifted by $ix$ digits.  Both the addition and
@@ -7402,7 +7418,7 @@ $d \equiv a^b \mbox{ (mod }c\mbox{)}$ is a modular exponentiation.  Instead of f
 modulo $c$ the intermediate result is reduced modulo $c$ after every squaring or multiplication operation.  
 
 This guarantees that any intermediate result is bounded by $0 \le d \le c^2 - 2c + 1$ and can be reduced modulo $c$ quickly using
-one of the algorithms presented in chapter seven.  
+one of the algorithms presented in chapter six.  
 
 Before the actual modular exponentiation algorithm can be written a wrapper algorithm must be written first.  This algorithm
 will allow the exponent $b$ to be negative which is computed as $c \equiv \left (1 / a \right )^{\vert b \vert} \mbox{(mod }d\mbox{)}$. The
@@ -7692,230 +7708,229 @@ a Left-to-Right algorithm is used to process the remaining few bits.
 020      #define TAB_SIZE 256
 021   #endif
 022   
-023   int
-024   s_mp_exptmod (mp_int * G, mp_int * X, mp_int * P, mp_int * Y)
-025   \{
-026     mp_int  M[TAB_SIZE], res, mu;
-027     mp_digit buf;
-028     int     err, bitbuf, bitcpy, bitcnt, mode, digidx, x, y, winsize;
-029   
-030     /* find window size */
-031     x = mp_count_bits (X);
-032     if (x <= 7) \{
-033       winsize = 2;
-034     \} else if (x <= 36) \{
-035       winsize = 3;
-036     \} else if (x <= 140) \{
-037       winsize = 4;
-038     \} else if (x <= 450) \{
-039       winsize = 5;
-040     \} else if (x <= 1303) \{
-041       winsize = 6;
-042     \} else if (x <= 3529) \{
-043       winsize = 7;
-044     \} else \{
-045       winsize = 8;
-046     \}
-047   
-048   #ifdef MP_LOW_MEM
-049       if (winsize > 5) \{
-050          winsize = 5;
-051       \}
-052   #endif
-053   
-054     /* init M array */
-055     /* init first cell */
-056     if ((err = mp_init(&M[1])) != MP_OKAY) \{
-057        return err; 
-058     \}
-059   
-060     /* now init the second half of the array */
-061     for (x = 1<<(winsize-1); x < (1 << winsize); x++) \{
-062       if ((err = mp_init(&M[x])) != MP_OKAY) \{
-063         for (y = 1<<(winsize-1); y < x; y++) \{
-064           mp_clear (&M[y]);
-065         \}
-066         mp_clear(&M[1]);
-067         return err;
-068       \}
-069     \}
-070   
-071     /* create mu, used for Barrett reduction */
-072     if ((err = mp_init (&mu)) != MP_OKAY) \{
-073       goto __M;
-074     \}
-075     if ((err = mp_reduce_setup (&mu, P)) != MP_OKAY) \{
-076       goto __MU;
-077     \}
-078   
-079     /* create M table
-080      *
-081      * The M table contains powers of the base, 
-082      * e.g. M[x] = G**x mod P
-083      *
-084      * The first half of the table is not 
-085      * computed though accept for M[0] and M[1]
-086      */
-087     if ((err = mp_mod (G, P, &M[1])) != MP_OKAY) \{
-088       goto __MU;
-089     \}
-090   
-091     /* compute the value at M[1<<(winsize-1)] by squaring 
-092      * M[1] (winsize-1) times 
-093      */
-094     if ((err = mp_copy (&M[1], &M[1 << (winsize - 1)])) != MP_OKAY) \{
-095       goto __MU;
-096     \}
-097   
-098     for (x = 0; x < (winsize - 1); x++) \{
-099       if ((err = mp_sqr (&M[1 << (winsize - 1)], 
-100                          &M[1 << (winsize - 1)])) != MP_OKAY) \{
-101         goto __MU;
-102       \}
-103       if ((err = mp_reduce (&M[1 << (winsize - 1)], P, &mu)) != MP_OKAY) \{
-104         goto __MU;
-105       \}
-106     \}
-107   
-108     /* create upper table, that is M[x] = M[x-1] * M[1] (mod P)
-109      * for x = (2**(winsize - 1) + 1) to (2**winsize - 1)
-110      */
-111     for (x = (1 << (winsize - 1)) + 1; x < (1 << winsize); x++) \{
-112       if ((err = mp_mul (&M[x - 1], &M[1], &M[x])) != MP_OKAY) \{
-113         goto __MU;
-114       \}
-115       if ((err = mp_reduce (&M[x], P, &mu)) != MP_OKAY) \{
-116         goto __MU;
-117       \}
-118     \}
-119   
-120     /* setup result */
-121     if ((err = mp_init (&res)) != MP_OKAY) \{
-122       goto __MU;
-123     \}
-124     mp_set (&res, 1);
-125   
-126     /* set initial mode and bit cnt */
-127     mode   = 0;
-128     bitcnt = 1;
-129     buf    = 0;
-130     digidx = X->used - 1;
-131     bitcpy = 0;
-132     bitbuf = 0;
-133   
-134     for (;;) \{
-135       /* grab next digit as required */
-136       if (--bitcnt == 0) \{
-137         /* if digidx == -1 we are out of digits */
-138         if (digidx == -1) \{
-139           break;
-140         \}
-141         /* read next digit and reset the bitcnt */
-142         buf    = X->dp[digidx--];
-143         bitcnt = (int) DIGIT_BIT;
-144       \}
-145   
-146       /* grab the next msb from the exponent */
-147       y     = (buf >> (mp_digit)(DIGIT_BIT - 1)) & 1;
-148       buf <<= (mp_digit)1;
-149   
-150       /* if the bit is zero and mode == 0 then we ignore it
-151        * These represent the leading zero bits before the first 1 bit
-152        * in the exponent.  Technically this opt is not required but it
-153        * does lower the # of trivial squaring/reductions used
-154        */
-155       if (mode == 0 && y == 0) \{
-156         continue;
-157       \}
-158   
-159       /* if the bit is zero and mode == 1 then we square */
-160       if (mode == 1 && y == 0) \{
-161         if ((err = mp_sqr (&res, &res)) != MP_OKAY) \{
-162           goto __RES;
-163         \}
-164         if ((err = mp_reduce (&res, P, &mu)) != MP_OKAY) \{
-165           goto __RES;
-166         \}
-167         continue;
-168       \}
-169   
-170       /* else we add it to the window */
-171       bitbuf |= (y << (winsize - ++bitcpy));
-172       mode    = 2;
-173   
-174       if (bitcpy == winsize) \{
-175         /* ok window is filled so square as required and multiply  */
-176         /* square first */
-177         for (x = 0; x < winsize; x++) \{
-178           if ((err = mp_sqr (&res, &res)) != MP_OKAY) \{
-179             goto __RES;
-180           \}
-181           if ((err = mp_reduce (&res, P, &mu)) != MP_OKAY) \{
-182             goto __RES;
-183           \}
-184         \}
-185   
-186         /* then multiply */
-187         if ((err = mp_mul (&res, &M[bitbuf], &res)) != MP_OKAY) \{
-188           goto __MU;
-189         \}
-190         if ((err = mp_reduce (&res, P, &mu)) != MP_OKAY) \{
-191           goto __MU;
-192         \}
-193   
-194         /* empty window and reset */
-195         bitcpy = 0;
-196         bitbuf = 0;
-197         mode   = 1;
-198       \}
-199     \}
-200   
-201     /* if bits remain then square/multiply */
-202     if (mode == 2 && bitcpy > 0) \{
-203       /* square then multiply if the bit is set */
-204       for (x = 0; x < bitcpy; x++) \{
-205         if ((err = mp_sqr (&res, &res)) != MP_OKAY) \{
-206           goto __RES;
-207         \}
-208         if ((err = mp_reduce (&res, P, &mu)) != MP_OKAY) \{
-209           goto __RES;
-210         \}
-211   
-212         bitbuf <<= 1;
-213         if ((bitbuf & (1 << winsize)) != 0) \{
-214           /* then multiply */
-215           if ((err = mp_mul (&res, &M[1], &res)) != MP_OKAY) \{
-216             goto __RES;
-217           \}
-218           if ((err = mp_reduce (&res, P, &mu)) != MP_OKAY) \{
-219             goto __RES;
-220           \}
-221         \}
-222       \}
-223     \}
-224   
-225     mp_exch (&res, Y);
-226     err = MP_OKAY;
-227   __RES:mp_clear (&res);
-228   __MU:mp_clear (&mu);
-229   __M:
-230     mp_clear(&M[1]);
-231     for (x = 1<<(winsize-1); x < (1 << winsize); x++) \{
-232       mp_clear (&M[x]);
-233     \}
-234     return err;
-235   \}
+023   int s_mp_exptmod (mp_int * G, mp_int * X, mp_int * P, mp_int * Y)
+024   \{
+025     mp_int  M[TAB_SIZE], res, mu;
+026     mp_digit buf;
+027     int     err, bitbuf, bitcpy, bitcnt, mode, digidx, x, y, winsize;
+028   
+029     /* find window size */
+030     x = mp_count_bits (X);
+031     if (x <= 7) \{
+032       winsize = 2;
+033     \} else if (x <= 36) \{
+034       winsize = 3;
+035     \} else if (x <= 140) \{
+036       winsize = 4;
+037     \} else if (x <= 450) \{
+038       winsize = 5;
+039     \} else if (x <= 1303) \{
+040       winsize = 6;
+041     \} else if (x <= 3529) \{
+042       winsize = 7;
+043     \} else \{
+044       winsize = 8;
+045     \}
+046   
+047   #ifdef MP_LOW_MEM
+048       if (winsize > 5) \{
+049          winsize = 5;
+050       \}
+051   #endif
+052   
+053     /* init M array */
+054     /* init first cell */
+055     if ((err = mp_init(&M[1])) != MP_OKAY) \{
+056        return err; 
+057     \}
+058   
+059     /* now init the second half of the array */
+060     for (x = 1<<(winsize-1); x < (1 << winsize); x++) \{
+061       if ((err = mp_init(&M[x])) != MP_OKAY) \{
+062         for (y = 1<<(winsize-1); y < x; y++) \{
+063           mp_clear (&M[y]);
+064         \}
+065         mp_clear(&M[1]);
+066         return err;
+067       \}
+068     \}
+069   
+070     /* create mu, used for Barrett reduction */
+071     if ((err = mp_init (&mu)) != MP_OKAY) \{
+072       goto __M;
+073     \}
+074     if ((err = mp_reduce_setup (&mu, P)) != MP_OKAY) \{
+075       goto __MU;
+076     \}
+077   
+078     /* create M table
+079      *
+080      * The M table contains powers of the base, 
+081      * e.g. M[x] = G**x mod P
+082      *
+083      * The first half of the table is not 
+084      * computed though accept for M[0] and M[1]
+085      */
+086     if ((err = mp_mod (G, P, &M[1])) != MP_OKAY) \{
+087       goto __MU;
+088     \}
+089   
+090     /* compute the value at M[1<<(winsize-1)] by squaring 
+091      * M[1] (winsize-1) times 
+092      */
+093     if ((err = mp_copy (&M[1], &M[1 << (winsize - 1)])) != MP_OKAY) \{
+094       goto __MU;
+095     \}
+096   
+097     for (x = 0; x < (winsize - 1); x++) \{
+098       if ((err = mp_sqr (&M[1 << (winsize - 1)], 
+099                          &M[1 << (winsize - 1)])) != MP_OKAY) \{
+100         goto __MU;
+101       \}
+102       if ((err = mp_reduce (&M[1 << (winsize - 1)], P, &mu)) != MP_OKAY) \{
+103         goto __MU;
+104       \}
+105     \}
+106   
+107     /* create upper table, that is M[x] = M[x-1] * M[1] (mod P)
+108      * for x = (2**(winsize - 1) + 1) to (2**winsize - 1)
+109      */
+110     for (x = (1 << (winsize - 1)) + 1; x < (1 << winsize); x++) \{
+111       if ((err = mp_mul (&M[x - 1], &M[1], &M[x])) != MP_OKAY) \{
+112         goto __MU;
+113       \}
+114       if ((err = mp_reduce (&M[x], P, &mu)) != MP_OKAY) \{
+115         goto __MU;
+116       \}
+117     \}
+118   
+119     /* setup result */
+120     if ((err = mp_init (&res)) != MP_OKAY) \{
+121       goto __MU;
+122     \}
+123     mp_set (&res, 1);
+124   
+125     /* set initial mode and bit cnt */
+126     mode   = 0;
+127     bitcnt = 1;
+128     buf    = 0;
+129     digidx = X->used - 1;
+130     bitcpy = 0;
+131     bitbuf = 0;
+132   
+133     for (;;) \{
+134       /* grab next digit as required */
+135       if (--bitcnt == 0) \{
+136         /* if digidx == -1 we are out of digits */
+137         if (digidx == -1) \{
+138           break;
+139         \}
+140         /* read next digit and reset the bitcnt */
+141         buf    = X->dp[digidx--];
+142         bitcnt = (int) DIGIT_BIT;
+143       \}
+144   
+145       /* grab the next msb from the exponent */
+146       y     = (buf >> (mp_digit)(DIGIT_BIT - 1)) & 1;
+147       buf <<= (mp_digit)1;
+148   
+149       /* if the bit is zero and mode == 0 then we ignore it
+150        * These represent the leading zero bits before the first 1 bit
+151        * in the exponent.  Technically this opt is not required but it
+152        * does lower the # of trivial squaring/reductions used
+153        */
+154       if (mode == 0 && y == 0) \{
+155         continue;
+156       \}
+157   
+158       /* if the bit is zero and mode == 1 then we square */
+159       if (mode == 1 && y == 0) \{
+160         if ((err = mp_sqr (&res, &res)) != MP_OKAY) \{
+161           goto __RES;
+162         \}
+163         if ((err = mp_reduce (&res, P, &mu)) != MP_OKAY) \{
+164           goto __RES;
+165         \}
+166         continue;
+167       \}
+168   
+169       /* else we add it to the window */
+170       bitbuf |= (y << (winsize - ++bitcpy));
+171       mode    = 2;
+172   
+173       if (bitcpy == winsize) \{
+174         /* ok window is filled so square as required and multiply  */
+175         /* square first */
+176         for (x = 0; x < winsize; x++) \{
+177           if ((err = mp_sqr (&res, &res)) != MP_OKAY) \{
+178             goto __RES;
+179           \}
+180           if ((err = mp_reduce (&res, P, &mu)) != MP_OKAY) \{
+181             goto __RES;
+182           \}
+183         \}
+184   
+185         /* then multiply */
+186         if ((err = mp_mul (&res, &M[bitbuf], &res)) != MP_OKAY) \{
+187           goto __RES;
+188         \}
+189         if ((err = mp_reduce (&res, P, &mu)) != MP_OKAY) \{
+190           goto __RES;
+191         \}
+192   
+193         /* empty window and reset */
+194         bitcpy = 0;
+195         bitbuf = 0;
+196         mode   = 1;
+197       \}
+198     \}
+199   
+200     /* if bits remain then square/multiply */
+201     if (mode == 2 && bitcpy > 0) \{
+202       /* square then multiply if the bit is set */
+203       for (x = 0; x < bitcpy; x++) \{
+204         if ((err = mp_sqr (&res, &res)) != MP_OKAY) \{
+205           goto __RES;
+206         \}
+207         if ((err = mp_reduce (&res, P, &mu)) != MP_OKAY) \{
+208           goto __RES;
+209         \}
+210   
+211         bitbuf <<= 1;
+212         if ((bitbuf & (1 << winsize)) != 0) \{
+213           /* then multiply */
+214           if ((err = mp_mul (&res, &M[1], &res)) != MP_OKAY) \{
+215             goto __RES;
+216           \}
+217           if ((err = mp_reduce (&res, P, &mu)) != MP_OKAY) \{
+218             goto __RES;
+219           \}
+220         \}
+221       \}
+222     \}
+223   
+224     mp_exch (&res, Y);
+225     err = MP_OKAY;
+226   __RES:mp_clear (&res);
+227   __MU:mp_clear (&mu);
+228   __M:
+229     mp_clear(&M[1]);
+230     for (x = 1<<(winsize-1); x < (1 << winsize); x++) \{
+231       mp_clear (&M[x]);
+232     \}
+233     return err;
+234   \}
 \end{alltt}
 \end{small}
 
-Lines 21 through 40 determine the optimal window size based on the length of the exponent in bits.  The window divisions are sorted
+Lines 31 through 41 determine the optimal window size based on the length of the exponent in bits.  The window divisions are sorted
 from smallest to greatest so that in each \textbf{if} statement only one condition must be tested.  For example, by the \textbf{if} statement 
-on line 32 the value of $x$ is already known to be greater than $140$.  
+on line 33 the value of $x$ is already known to be greater than $140$.  
 
-The conditional piece of code beginning on line 48 allows the window size to be restricted to five bits.  This logic is used to ensure
+The conditional piece of code beginning on line 47 allows the window size to be restricted to five bits.  This logic is used to ensure
 the table of precomputed powers of $G$ remains relatively small.  
 
-The for loop on line 61 initializes the $M$ array while lines 62 and 75 compute the value of $\mu$ required for
+The for loop on line 60 initializes the $M$ array while lines 61 and 74 compute the value of $\mu$ required for
 Barrett reduction.  
 
 -- More later.
@@ -8751,86 +8766,85 @@ from chapter seven.
 028   \}
 029   
 030   /* single digit division (based on routine from MPI) */
-031   int
-032   mp_div_d (mp_int * a, mp_digit b, mp_int * c, mp_digit * d)
-033   \{
-034     mp_int  q;
-035     mp_word w;
-036     mp_digit t;
-037     int     res, ix;
-038   
-039     /* cannot divide by zero */
-040     if (b == 0) \{
-041        return MP_VAL;
-042     \}
-043   
-044     /* quick outs */
-045     if (b == 1 || mp_iszero(a) == 1) \{
-046        if (d != NULL) \{
-047           *d = 0;
-048        \}
-049        if (c != NULL) \{
-050           return mp_copy(a, c);
-051        \}
-052        return MP_OKAY;
-053     \}
-054   
-055     /* power of two ? */
-056     if (s_is_power_of_two(b, &ix) == 1) \{
-057        if (d != NULL) \{
-058           *d = a->dp[0] & ((1<<ix) - 1);
-059        \}
-060        if (c != NULL) \{
-061           return mp_div_2d(a, ix, c, NULL);
-062        \}
-063        return MP_OKAY;
-064     \}
-065   
-066     /* three? */
-067     if (b == 3) \{
-068        return mp_div_3(a, c, d);
-069     \}
-070   
-071     /* no easy answer [c'est la vie].  Just division */
-072     if ((res = mp_init_size(&q, a->used)) != MP_OKAY) \{
-073        return res;
-074     \}
-075     
-076     q.used = a->used;
-077     q.sign = a->sign;
-078     w = 0;
-079     for (ix = a->used - 1; ix >= 0; ix--) \{
-080        w = (w << ((mp_word)DIGIT_BIT)) | ((mp_word)a->dp[ix]);
-081        
-082        if (w >= b) \{
-083           t = (mp_digit)(w / b);
-084           w -= ((mp_word)t) * ((mp_word)b);
-085         \} else \{
-086           t = 0;
-087         \}
-088         q.dp[ix] = (mp_digit)t;
-089     \}
-090     
-091     if (d != NULL) \{
-092        *d = (mp_digit)w;
-093     \}
-094     
-095     if (c != NULL) \{
-096        mp_clamp(&q);
-097        mp_exch(&q, c);
-098     \}
-099     mp_clear(&q);
-100     
-101     return res;
-102   \}
-103   
+031   int mp_div_d (mp_int * a, mp_digit b, mp_int * c, mp_digit * d)
+032   \{
+033     mp_int  q;
+034     mp_word w;
+035     mp_digit t;
+036     int     res, ix;
+037   
+038     /* cannot divide by zero */
+039     if (b == 0) \{
+040        return MP_VAL;
+041     \}
+042   
+043     /* quick outs */
+044     if (b == 1 || mp_iszero(a) == 1) \{
+045        if (d != NULL) \{
+046           *d = 0;
+047        \}
+048        if (c != NULL) \{
+049           return mp_copy(a, c);
+050        \}
+051        return MP_OKAY;
+052     \}
+053   
+054     /* power of two ? */
+055     if (s_is_power_of_two(b, &ix) == 1) \{
+056        if (d != NULL) \{
+057           *d = a->dp[0] & ((1<<ix) - 1);
+058        \}
+059        if (c != NULL) \{
+060           return mp_div_2d(a, ix, c, NULL);
+061        \}
+062        return MP_OKAY;
+063     \}
+064   
+065     /* three? */
+066     if (b == 3) \{
+067        return mp_div_3(a, c, d);
+068     \}
+069   
+070     /* no easy answer [c'est la vie].  Just division */
+071     if ((res = mp_init_size(&q, a->used)) != MP_OKAY) \{
+072        return res;
+073     \}
+074     
+075     q.used = a->used;
+076     q.sign = a->sign;
+077     w = 0;
+078     for (ix = a->used - 1; ix >= 0; ix--) \{
+079        w = (w << ((mp_word)DIGIT_BIT)) | ((mp_word)a->dp[ix]);
+080        
+081        if (w >= b) \{
+082           t = (mp_digit)(w / b);
+083           w -= ((mp_word)t) * ((mp_word)b);
+084         \} else \{
+085           t = 0;
+086         \}
+087         q.dp[ix] = (mp_digit)t;
+088     \}
+089     
+090     if (d != NULL) \{
+091        *d = (mp_digit)w;
+092     \}
+093     
+094     if (c != NULL) \{
+095        mp_clamp(&q);
+096        mp_exch(&q, c);
+097     \}
+098     mp_clear(&q);
+099     
+100     return res;
+101   \}
+102   
 \end{alltt}
 \end{small}
 
 Like the implementation of algorithm mp\_div this algorithm allows either of the quotient or remainder to be passed as a \textbf{NULL} pointer to
 indicate the respective value is not required.  This allows a trivial single digit modular reduction algorithm, mp\_mod\_d to be created.
 
-The division and remainder on lines 44 and @45,%@ can be replaced often by a single division on most processors.  For example, the 32-bit x86 based 
+The division and remainder on lines 43 and @45,%@ can be replaced often by a single division on most processors.  For example, the 32-bit x86 based 
 processors can divide a 64-bit quantity by a 32-bit quantity and produce the quotient and remainder simultaneously.  Unfortunately the GCC 
 compiler does not recognize that optimization and will actually produce two function calls to find the quotient and remainder respectively.  
 
@@ -9168,66 +9182,65 @@ as part of larger input without any significant problem.
 \begin{alltt}
 016   
 017   /* read a string [ASCII] in a given radix */
-018   int
-019   mp_read_radix (mp_int * a, char *str, int radix)
-020   \{
-021     int     y, res, neg;
-022     char    ch;
-023   
-024     /* make sure the radix is ok */
-025     if (radix < 2 || radix > 64) \{
-026       return MP_VAL;
-027     \}
-028   
-029     /* if the leading digit is a 
-030      * minus set the sign to negative. 
-031      */
-032     if (*str == '-') \{
-033       ++str;
-034       neg = MP_NEG;
-035     \} else \{
-036       neg = MP_ZPOS;
-037     \}
-038   
-039     /* set the integer to the default of zero */
-040     mp_zero (a);
-041     
-042     /* process each digit of the string */
-043     while (*str) \{
-044       /* if the radix < 36 the conversion is case insensitive
-045        * this allows numbers like 1AB and 1ab to represent the same  value
-046        * [e.g. in hex]
-047        */
-048       ch = (char) ((radix < 36) ? toupper (*str) : *str);
-049       for (y = 0; y < 64; y++) \{
-050         if (ch == mp_s_rmap[y]) \{
-051            break;
-052         \}
-053       \}
-054   
-055       /* if the char was found in the map 
-056        * and is less than the given radix add it
-057        * to the number, otherwise exit the loop. 
-058        */
-059       if (y < radix) \{
-060         if ((res = mp_mul_d (a, (mp_digit) radix, a)) != MP_OKAY) \{
-061            return res;
-062         \}
-063         if ((res = mp_add_d (a, (mp_digit) y, a)) != MP_OKAY) \{
-064            return res;
-065         \}
-066       \} else \{
-067         break;
-068       \}
-069       ++str;
-070     \}
-071     
-072     /* set the sign only if a != 0 */
-073     if (mp_iszero(a) != 1) \{
-074        a->sign = neg;
-075     \}
-076     return MP_OKAY;
-077   \}
+018   int mp_read_radix (mp_int * a, char *str, int radix)
+019   \{
+020     int     y, res, neg;
+021     char    ch;
+022   
+023     /* make sure the radix is ok */
+024     if (radix < 2 || radix > 64) \{
+025       return MP_VAL;
+026     \}
+027   
+028     /* if the leading digit is a 
+029      * minus set the sign to negative. 
+030      */
+031     if (*str == '-') \{
+032       ++str;
+033       neg = MP_NEG;
+034     \} else \{
+035       neg = MP_ZPOS;
+036     \}
+037   
+038     /* set the integer to the default of zero */
+039     mp_zero (a);
+040     
+041     /* process each digit of the string */
+042     while (*str) \{
+043       /* if the radix < 36 the conversion is case insensitive
+044        * this allows numbers like 1AB and 1ab to represent the same  value
+045        * [e.g. in hex]
+046        */
+047       ch = (char) ((radix < 36) ? toupper (*str) : *str);
+048       for (y = 0; y < 64; y++) \{
+049         if (ch == mp_s_rmap[y]) \{
+050            break;
+051         \}
+052       \}
+053   
+054       /* if the char was found in the map 
+055        * and is less than the given radix add it
+056        * to the number, otherwise exit the loop. 
+057        */
+058       if (y < radix) \{
+059         if ((res = mp_mul_d (a, (mp_digit) radix, a)) != MP_OKAY) \{
+060            return res;
+061         \}
+062         if ((res = mp_add_d (a, (mp_digit) y, a)) != MP_OKAY) \{
+063            return res;
+064         \}
+065       \} else \{
+066         break;
+067       \}
+068       ++str;
+069     \}
+070     
+071     /* set the sign only if a != 0 */
+072     if (mp_iszero(a) != 1) \{
+073        a->sign = neg;
+074     \}
+075     return MP_OKAY;
+076   \}
 \end{alltt}
 \end{small}
 
@@ -9294,59 +9307,58 @@ are required instead of a series of $n \times k$ divisions.  One design flaw of 
 \begin{alltt}
 016   
 017   /* stores a bignum as a ASCII string in a given radix (2..64) */
-018   int
-019   mp_toradix (mp_int * a, char *str, int radix)
-020   \{
-021     int     res, digs;
-022     mp_int  t;
-023     mp_digit d;
-024     char   *_s = str;
-025   
-026     /* check range of the radix */
-027     if (radix < 2 || radix > 64) \{
-028       return MP_VAL;
-029     \}
-030   
-031     /* quick out if its zero */
-032     if (mp_iszero(a) == 1) \{
-033        *str++ = '0';
-034        *str = '\symbol{92}0';
-035        return MP_OKAY;
-036     \}
-037   
-038     if ((res = mp_init_copy (&t, a)) != MP_OKAY) \{
-039       return res;
-040     \}
-041   
-042     /* if it is negative output a - */
-043     if (t.sign == MP_NEG) \{
-044       ++_s;
-045       *str++ = '-';
-046       t.sign = MP_ZPOS;
-047     \}
-048   
-049     digs = 0;
-050     while (mp_iszero (&t) == 0) \{
-051       if ((res = mp_div_d (&t, (mp_digit) radix, &t, &d)) != MP_OKAY) \{
-052         mp_clear (&t);
-053         return res;
-054       \}
-055       *str++ = mp_s_rmap[d];
-056       ++digs;
-057     \}
-058   
-059     /* reverse the digits of the string.  In this case _s points
-060      * to the first digit [exluding the sign] of the number]
-061      */
-062     bn_reverse ((unsigned char *)_s, digs);
-063   
-064     /* append a NULL so the string is properly terminated */
-065     *str = '\symbol{92}0';
-066   
-067     mp_clear (&t);
-068     return MP_OKAY;
-069   \}
-070   
+018   int mp_toradix (mp_int * a, char *str, int radix)
+019   \{
+020     int     res, digs;
+021     mp_int  t;
+022     mp_digit d;
+023     char   *_s = str;
+024   
+025     /* check range of the radix */
+026     if (radix < 2 || radix > 64) \{
+027       return MP_VAL;
+028     \}
+029   
+030     /* quick out if its zero */
+031     if (mp_iszero(a) == 1) \{
+032        *str++ = '0';
+033        *str = '\symbol{92}0';
+034        return MP_OKAY;
+035     \}
+036   
+037     if ((res = mp_init_copy (&t, a)) != MP_OKAY) \{
+038       return res;
+039     \}
+040   
+041     /* if it is negative output a - */
+042     if (t.sign == MP_NEG) \{
+043       ++_s;
+044       *str++ = '-';
+045       t.sign = MP_ZPOS;
+046     \}
+047   
+048     digs = 0;
+049     while (mp_iszero (&t) == 0) \{
+050       if ((res = mp_div_d (&t, (mp_digit) radix, &t, &d)) != MP_OKAY) \{
+051         mp_clear (&t);
+052         return res;
+053       \}
+054       *str++ = mp_s_rmap[d];
+055       ++digs;
+056     \}
+057   
+058     /* reverse the digits of the string.  In this case _s points
+059      * to the first digit [exluding the sign] of the number]
+060      */
+061     bn_reverse ((unsigned char *)_s, digs);
+062   
+063     /* append a NULL so the string is properly terminated */
+064     *str = '\symbol{92}0';
+065   
+066     mp_clear (&t);
+067     return MP_OKAY;
+068   \}
+069   
 \end{alltt}
 \end{small}
 
@@ -10675,6 +10687,12 @@ OpenSSL Cryptographic Toolkit, \url{http://openssl.org}
 
 \bibitem[17]{LIP}
 Large Integer Package, \url{http://home.hetnet.nl/~ecstr/LIP.zip}
+
+\bibitem[18]{ISOC}
+JTC1/SC22/WG14, ISO/IEC 9899:1999, ``A draft rationale for the C99 standard.''
+
+\bibitem[19]{JAVA}
+The Sun Java Website, \url{http://java.sun.com/}
 
 \end{thebibliography}
 

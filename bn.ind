@@ -14,6 +14,7 @@
   \item mp\_error\_to\_string, \hyperpage{6}
   \item mp\_expt\_d, \hyperpage{31}
   \item mp\_exptmod, \hyperpage{31}
+  \item mp\_exteuclid, \hyperpage{39}
   \item mp\_gcd, \hyperpage{39}
   \item mp\_grow, \hyperpage{12}
   \item MP\_GT, \hyperpage{17}
@@ -23,7 +24,7 @@
   \item mp\_init\_size, \hyperpage{10}
   \item mp\_int, \hyperpage{6}
   \item mp\_invmod, \hyperpage{40}
-  \item mp\_jacobi, \hyperpage{39}
+  \item mp\_jacobi, \hyperpage{40}
   \item mp\_lcm, \hyperpage{39}
   \item mp\_lshd, \hyperpage{23}
   \item MP\_LT, \hyperpage{17}
@@ -43,12 +44,15 @@
   \item mp\_prime\_next\_prime, \hyperpage{34}
   \item mp\_prime\_rabin\_miller\_trials, \hyperpage{34}
   \item mp\_prime\_random, \hyperpage{35}
+  \item mp\_radix\_size, \hyperpage{37}
+  \item mp\_read\_radix, \hyperpage{37}
   \item mp\_rshd, \hyperpage{23}
   \item mp\_set, \hyperpage{15}
   \item mp\_set\_int, \hyperpage{16}
   \item mp\_shrink, \hyperpage{11}
   \item mp\_sqr, \hyperpage{25}
   \item mp\_sub, \hyperpage{23}
+  \item mp\_toradix, \hyperpage{37}
   \item MP\_VAL, \hyperpage{5}
   \item mp\_xor, \hyperpage{23}
   \item MP\_YES, \hyperpage{5}

@@ -1001,10 +1001,10 @@ algorithms all which can be called from mp\_sqr().
 \section{Tuning Polynomial Basis Routines}
 
 Both Toom-Cook and Karatsuba multiplication algorithms are faster than the traditional $O(n^2)$ approach that
-the Comba and baseline algorithms use.  At $O(n^{1.46})$ and $O(n^{1.58})$ running times respectfully they require 
-considerably less work.  For example, a 10000-digit multiplication would take roughly 692,000 single precision
+the Comba and baseline algorithms use.  At $O(n^{1.464973})$ and $O(n^{1.584962})$ running times respectfully they require 
+considerably less work.  For example, a 10000-digit multiplication would take roughly 724,000 single precision
 multiplications with Toom-Cook or 100,000,000 single precision multiplications with the standard Comba (a factor
-of 144).
+of 138).
 
 So why not always use Karatsuba or Toom-Cook?   The simple answer is that they have so much overhead that they're not
 actually faster than Comba until you hit distinct  ``cutoff'' points.  For Karatsuba with the default configuration, 
@@ -1175,10 +1175,48 @@ there is no skew on the least significant bits.
 
 \chapter{Input and Output}
 \section{ASCII Conversions}
+\subsection{To ASCII}
+\index{mp\_toradix}
+\begin{alltt}
+int mp_toradix (mp_int * a, char *str, int radix);
+\end{alltt}
+This still store ``a'' in ``str'' as a base-``radix'' string of ASCII chars.  This function appends a NUL character
+to terminate the string.  Valid values of ``radix'' line in the range $[2, 64]$.  To determine the size (exact) required
+by the conversion before storing any data use the following function.
+
+\index{mp\_radix\_size}
+\begin{alltt}
+int mp_radix_size (mp_int * a, int radix, int *size)
+\end{alltt}
+This stores in ``size'' the number of characters (including space for the NUL terminator) required.  Upon error this 
+function returns an error code and ``size'' will be zero.  
+
+\subsection{From ASCII}
+\index{mp\_read\_radix}
+\begin{alltt}
+int mp_read_radix (mp_int * a, char *str, int radix);
+\end{alltt}
+This will read the base-``radix'' NUL terminated string from ``str'' into ``a''.  It will stop reading when it reads a
+character it does not recognize (which happens to include th NUL char... imagine that...).  A single leading $-$ sign
+can be used to denote a negative number.
+
 \section{Binary Conversions}
 \section{Stream Functions}
 
 \chapter{Algebraic Functions}
+\section{Extended Euclidean Algorithm}
+\index{mp\_exteuclid}
+\begin{alltt}
+int mp_exteuclid(mp_int *a, mp_int *b, 
+                 mp_int *U1, mp_int *U2, mp_int *U3);
+\end{alltt}
+
+This finds the triple U1/U2/U3 using the Extended Euclidean algorithm such that the following equation holds.
+
+\begin{equation}
+a \cdot U1 + b \cdot U2 = U3
+\end{equation}
+
 \section{Greatest Common Divisor}
 \index{mp\_gcd}
 \begin{alltt}
