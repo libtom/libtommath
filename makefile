@@ -1,7 +1,7 @@
 CC = gcc
-CFLAGS  += -Wall -W -O3 -funroll-loops
+CFLAGS  += -DDEBUG -Wall -W -Os
 
-VERSION=0.03
+VERSION=0.04
 
 default: test
 

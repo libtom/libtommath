@@ -1,7 +1,7 @@
 \documentclass{article}
 \begin{document}
 
-\title{LibTomMath v0.03 \\ A Free Multiple Precision Integer Library}
+\title{LibTomMath v0.04 \\ A Free Multiple Precision Integer Library}
 \author{Tom St Denis \\ tomstdenis@iahu.ca}
 \maketitle
 \newpage
@@ -323,45 +323,160 @@ The integers are stored in big endian format as most libraries (and MPI) expect.
 \textbf{mp\_toradix} functions read and write (respectively) null terminated ASCII strings in a given radix.  Valid values
 for the radix are between 2 and 64 (inclusively).  
 
+\section{Function Analysis}
+
+Throughout the function analysis the variable $N$ will denote the average size of an input to a function as measured 
+by the number of digits it has.  The variable $W$ will denote the number of bits per word and $c$ will denote a small
+constant amount of work.  The big-oh notation will be abused slightly to consider numbers that do not grow to infinity.
+That is we shall consider $O(N/2) \ne O(N)$ which is an abuse of the notation.
+
+\subsection{Digit Manipulation Functions}
+The class of digit manipulation functions such as \textbf{mp\_rshd}, \textbf{mp\_lshd} and \textbf{mp\_mul\_2} are all
+very simple functions to analyze.  
+
+\subsubsection{mp\_rshd(mp\_int *a, int b)}
+If the shift count ``b'' is less than or equal to zero the function returns without doing any work.  If the
+the shift count is larger than the number of digits in ``a'' then ``a'' is simply zeroed without shifting digits.
+
+This function requires no additional memory and $O(N)$ time.
+
+\subsubsection{mp\_lshd(mp\_int *a, int b)}
+If the shift count ``b'' is less than or equal to zero the function returns success without doing any work.
+
+This function requires $O(b)$ additional digits of memory and $O(N)$ time.
+
+\subsubsection{mp\_div\_2d(mp\_int *a, int b, mp\_int *c, mp\_int *d)}
+If the shift count ``b'' is less than or equal to zero the function places ``a'' in ``c'' and returns success.  
+
+This function requires $O(2 \cdot N)$ additional digits of memory and $O(2 \cdot N)$ time.
+
+\subsubsection{mp\_mul\_2d(mp\_int *a, int b, mp\_int *c)}
+If the shift count ``b'' is less than or equal to zero the function places ``a'' in ``c'' and returns success.  
+
+This function requires $O(N)$ additional digits of memory and $O(2 \cdot N)$ time.
+
+\subsubsection{mp\_mod\_2d(mp\_int *a, int b, mp\_int *c)}
+If the shift count ``b'' is less than or equal to zero the function places ``a'' in ``c'' and returns success.  
+
+This function requires $O(N)$ additional digits of memory and $O(2 \cdot N)$ time.
+
+\subsection{Basic Arithmetic}
+
+\subsubsection{mp\_cmp(mp\_int *a, mp\_int *b)}
+Performs a \textbf{signed} comparison between ``a'' and ``b'' returning
+\textbf{MP\_GT} is ``a'' is larger than ``b''.
+
+This function requires no additional memory and $O(N)$ time.
+
+\subsubsection{mp\_cmp\_mag(mp\_int *a, mp\_int *b)}
+Performs a \textbf{unsigned} comparison between ``a'' and ``b'' returning
+\textbf{MP\_GT} is ``a'' is larger than ``b''.  Note that this comparison is unsigned which means it will report, for
+example, $-5 > 3$.  By comparison mp\_cmp will report $-5 < 3$.
+
+This function requires no additional memory and $O(N)$ time.
+
+\subsubsection{mp\_add(mp\_int *a, mp\_int *b, mp\_int *c)}
+Handles the sign of the numbers correctly which means it will subtract as required, e.g. $a + -b$ turns into $a - b$.
+
+This function requires no additional memory and $O(N)$ time.
+
+\subsubsection{mp\_sub(mp\_int *a, mp\_int *b, mp\_int *c)}
+Handles the sign of the numbers correctly which means it will add as required, e.g. $a - -b$ turns into $a + b$.
+
+This function requires no additional memory and $O(N)$ time.
+
+\subsubsection{mp\_mul(mp\_int *a, mp\_int *b, mp\_int *c)}
+Handles the sign of the numbers correctly which means it will correct the sign of the product as required, 
+e.g. $a \cdot -b$ turns into $-ab$.
+
+For relatively small inputs, that is less than 80 digits a standard baseline or comba-baseline multiplier is used.  It
+requires no additional memory and $O(N^2)$ time.  The comba-baseline multiplier is only used if it can safely be used
+without losing carry digits.  The comba method is faster than the baseline method but cannot always be used which is why
+both are provided.  The code will automatically determine when it can be used.  If the digit count is higher
+than 80 for the inputs than a Karatsuba multiplier is used which requires approximately $O(6 \cdot N)$ memory and 
+$O(N^{lg(3)})$ time.  
+
+\subsubsection{mp\_sqr(mp\_int *a, mp\_int *b)}
+For relatively small inputs, that is less than 80 digits a modified squaring or comba-squaring algorithm is used.  It
+requires no additional memory and $O((N^2 + N)/2)$ time.  The comba-squaring method is used only if it can be safely used
+without losing carry digits.  After 80 digits a Karatsuba squaring algorithm is used whcih requires approximately 
+$O(4 \cdot N)$ memory and $O(N^{lg(3)})$ time.
+
+\subsubsection{mp\_div(mp\_int *a, mp\_int *b, mp\_int *c, mp\_int *d)}
+The quotient is placed in ``c'' and the remainder in ``d''.  Either (or both) of ``c'' and ``d'' can be set to NULL 
+if the value is not desired.  
+
+This function requires $O(4 \cdot N)$ memory and $O(N^2 + N)$ time.
+
+\subsection{Modular Arithmetic}
+
+\subsubsection{mp\_addmod, mp\_submod, mp\_mulmod, mp\_sqrmod}
+These functions take the time of their host function plus the time it takes to perform a division.  For example, 
+mp\_addmod takes $O(N + (N^2 + N))$ time.  Note that if you are performing many modular operations in a row with
+the same modulus you should consider Barrett reductions.  
+
+NOTE:  This section will be expanded upon in future releases of the library.
+
+\subsubsection{mp\_invmod(mp\_int *a, mp\_int *b, mp\_int *c)}
+This function is technically only defined for moduli who are positive and inputs that are positive.  That is it will find
+$c = 1/a \mbox{ (mod }b\mbox{)}$ for any $a > 0$ and $b > 0$.  The function will work for negative values of $a$ since
+it merely computes $c = -1 \cdot (1/{\vert a \vert}) \mbox{ (mod }b\mbox{)}$.  In general the input is only 
+\textbf{guaranteed} to lead to a correct output if $-b < a < b$ and $(a, b) = 1$.
+
+NOTE:  This function will be revised to accept a wider range of inputs in future releases.
+
 \section{Timing Analysis}
 \subsection{Observed Timings}
 A simple test program ``demo.c'' was developed which builds with either MPI or LibTomMath (without modification).  The
 test was conducted on an AMD Athlon XP processor with 266Mhz DDR memory and the GCC 3.2 compiler\footnote{With build
-options ``-O3 -fomit-frame-pointer -funroll-loops''}.    The multiplications and squarings were repeated 10,000 times 
-each while the modular exponentiation (exptmod) were performed 10 times each.  The RDTSC (Read Time Stamp Counter) instruction
-was used to measure the time the entire iterations took and was divided by the number of iterations to get an
-average.  The following results were observed.
+options ``-O3 -fomit-frame-pointer -funroll-loops''}.    The multiplications and squarings were repeated 100,000 times 
+each while the modular exponentiation (exptmod) were performed 50 times each.  The ``inversions'' refers to multiplicative
+inversions modulo an odd number of a given size.  The RDTSC (Read Time Stamp Counter) instruction was used to measure the 
+time the entire iterations took and was divided by the number of iterations to get an average.  The following results 
+were observed.
 
 \begin{small}
 \begin{center}
 \begin{tabular}{c|c|c|c}
 \hline \textbf{Operation} & \textbf{Size (bits)} & \textbf{Time with MPI (cycles)} & \textbf{Time with LibTomMath (cycles)} \\
 \hline
-Multiply & 128 & 1,426   & 928   \\
-Multiply & 256 & 2,551   & 1,787   \\
-Multiply & 512 & 7,913   & 3,458   \\
-Multiply & 1024 & 28,496   & 9,271  \\
-Multiply & 2048 & 109,897   & 29,917   \\
-Multiply & 4096 & 469,970   & 123,934   \\
+Inversion & 128 & 264,083  & 172,381  \\
+Inversion & 256 & 549,370  & 381,237  \\
+Inversion & 512 & 1,675,975  & 1,212,341  \\
+Inversion & 1024 & 5,237,957  & 3,114,144  \\
+Inversion & 2048 & 17,871,944  & 8,137,896  \\
+Inversion & 4096 & 66,610,468  & 22,469,360  \\
+\hline
+Multiply & 128 & 1,426   & 847    \\
+Multiply & 256 & 2,551   & 1,848    \\
+Multiply & 512 & 7,913   & 3,505    \\
+Multiply & 1024 & 28,496   & 9,097   \\
+Multiply & 2048 & 109,897   & 29,497    \\
+Multiply & 4096 & 469,970   & 112,651    \\
 \hline 
-Square & 128 & 1,319   & 1,230   \\
-Square & 256 & 1,776   & 2,131   \\
-Square & 512 & 5,399  & 3,694   \\
-Square & 1024 & 18,991  & 9,172   \\
-Square & 2048 & 72,126  & 27,352   \\
-Square & 4096 & 306,269  & 110,607  \\
+Square & 128 & 1,319   & 883    \\
+Square & 256 & 1,776   & 1,895    \\
+Square & 512 & 5,399  & 3,543   \\
+Square & 1024 & 18,991  & 8,692    \\
+Square & 2048 & 72,126  & 26,792   \\
+Square & 4096 & 306,269  & 103,263  \\
 \hline 
-Exptmod & 512 & 32,021,586  & 6,880,075  \\
-Exptmod & 768 & 97,595,492  & 15,202,614  \\
-Exptmod & 1024 & 223,302,532  & 28,081,865   \\
-Exptmod & 2048 & 1,682,223,369   & 146,545,454   \\
-Exptmod & 2560 & 3,268,615,571   & 310,970,112   \\
-Exptmod & 3072 & 5,597,240,141   & 480,703,712   \\
-Exptmod & 4096 & 13,347,270,891   & 985,918,868   
+Exptmod & 512 & 32,021,586  & 7,096,687 \\
+Exptmod & 768 & 97,595,492  & 14,849,813   \\
+Exptmod & 1024 & 223,302,532  & 27,826,489    \\
+Exptmod & 2048 & 1,682,223,369   & 142,026,274    \\
+Exptmod & 2560 & 3,268,615,571   & 292,597,205    \\
+Exptmod & 3072 & 5,597,240,141   & 452,731,243   \\
+Exptmod & 4096 & 13,347,270,891   & 941,433,401   
 
 \end{tabular}
 \end{center}
 \end{small}
+
+Note that the figures do fluctuate but their magnitudes are relatively intact.  The purpose of the chart is not to
+get an exact timing but to compare the two libraries.  For example, in all of the tests the exact time for a 512-bit
+squaring operation was not the same.  The observed times were all approximately 3,500 cycles, more importantly they
+were always faster than the timings observed with MPI by about the same magnitude.  
 
 \subsection{Digit Size}
 The first major constribution to the time savings is the fact that 28 bits are stored per digit instead of the MPI 

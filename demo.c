@@ -21,14 +21,19 @@ void reset(void) { _tt = clock(); }
 unsigned long long rdtsc(void) { return clock() - _tt; }
 #endif
    
-void draw(mp_int *a)
+void ndraw(mp_int *a, char *name)
 {
    char buf[4096];
-   printf("a->used  == %d\na->alloc == %d\na->sign  == %d\n", a->used, a->alloc, a->sign);
+   printf("%s: ", name);
    mp_toradix(a, buf, 10);
-   printf("num == %s\n", buf);
-   printf("\n");
+   printf("%s\n", buf);
 }
+
+static void draw(mp_int *a)
+{
+   ndraw(a, "");
+}
+
 
 unsigned long lfsr = 0xAAAAAAAAUL;
 
@@ -43,7 +48,18 @@ int lbit(void)
    }
 }   
      
-
+#ifdef U_MPI
+int mp_reduce_setup(mp_int *a, mp_int *b)
+{
+   int res;
+   
+   mp_set(a, 1);
+   if ((res = s_mp_lshd(a, b->used * 2)) != MP_OKAY) {
+      return res;
+   }
+   return mp_div(a, b, a, NULL);
+}
+#endif
 
 int main(void)
 {
@@ -51,7 +67,6 @@ int main(void)
    unsigned long expt_n, add_n, sub_n, mul_n, div_n, sqr_n, mul2d_n, div2d_n, gcd_n, lcm_n, inv_n;
    unsigned char cmd[4096], buf[4096];
    int rr;
-   mp_digit tom;
    
 #ifdef TIMER
    int n;
@@ -63,35 +78,63 @@ int main(void)
    mp_init(&c);
    mp_init(&d);
    mp_init(&e);
-   mp_init(&f); 
+   mp_init(&f);
    
-   mp_read_radix(&a, "-2", 10);
-   mp_read_radix(&b, "2", 10);
-   mp_expt_d(&a, 3, &a);
-   draw(&a);
+   mp_read_radix(&a, "V//////////////////////////////////////////////////////////////////////////////////////", 64);
+   mp_reduce_setup(&b, &a);
+   printf("\n\n----\n\n");
+   mp_toradix(&b, buf, 10);
+   printf("b == %s\n\n\n", buf);
    
+   mp_read_radix(&b, "4982748972349724892742", 10);
+   mp_sub_d(&a, 1, &c);
+   mp_exptmod(&b, &c, &a, &d);
+   mp_toradix(&d, buf, 10);
+   printf("b^p-1 == %s\n", buf);
+   
+
 #ifdef TIMER   
 
    mp_read_radix(&a, "340282366920938463463374607431768211455", 10);
+   mp_read_radix(&b, "234892374891378913789237289378973232333", 10);
    while (a.used * DIGIT_BIT < 8192) {
       reset();
-      for (rr = 0; rr < 100000; rr++) {
+      for (rr = 0; rr < 1000; rr++) {
+          mp_invmod(&b, &a, &c);
+      }
+      tt = rdtsc();
+      mp_mulmod(&b, &c, &a, &d);
+      if (mp_cmp_d(&d, 1) != MP_EQ) {
+         printf("Failed to invert\n");
+         return 0;
+      }
+      printf("Inverting mod %d-bit took %llu cycles\n", mp_count_bits(&a), tt / ((unsigned long long)1000));
+      mp_sqr(&a, &a);
+      mp_sqr(&b, &b);
+   }
+   
+   mp_read_radix(&a, "340282366920938463463374607431768211455", 10);
+   while (a.used * DIGIT_BIT < 8192) {
+      reset();
+      for (rr = 0; rr < 1000000; rr++) {
           mp_mul(&a, &a, &b);
       }
       tt = rdtsc();
-      printf("Multiplying  %d-bit took %llu cycles\n", mp_count_bits(&a), tt / ((unsigned long long)100000));
+      printf("Multiplying %d-bit took %llu cycles\n", mp_count_bits(&a), tt / ((unsigned long long)1000000));
       mp_copy(&b, &a);
    }
+
+
 
   
    mp_read_radix(&a, "340282366920938463463374607431768211455", 10);
    while (a.used * DIGIT_BIT < 8192) {
       reset();
-      for (rr = 0; rr < 100000; rr++) {
+      for (rr = 0; rr < 1000000; rr++) {
           mp_sqr(&a, &b);
       }
       tt = rdtsc();
-      printf("Squaring %d-bit took %llu cycles\n", mp_count_bits(&a), tt / ((unsigned long long)100000));
+      printf("Squaring %d-bit took %llu cycles\n", mp_count_bits(&a), tt / ((unsigned long long)1000000));
       mp_copy(&b, &a);
    }
 
@@ -117,7 +160,7 @@ int main(void)
       mp_mod(&b, &c, &b);
       mp_set(&c, 3);
       reset();
-      for (rr = 0; rr < 35; rr++) {
+      for (rr = 0; rr < 50; rr++) {
           mp_exptmod(&c, &b, &a, &d);
       }
       tt = rdtsc();
@@ -130,7 +173,7 @@ int main(void)
          draw(&d);
          exit(0);
       }
-      printf("Exponentiating  %d-bit took %llu cycles\n", mp_count_bits(&a), tt / ((unsigned long long)35));
+      printf("Exponentiating %d-bit took %llu cycles\n", mp_count_bits(&a), tt / ((unsigned long long)50));
    }
    }
    
@@ -141,7 +184,7 @@ int main(void)
        printf("%7lu/%7lu/%7lu/%7lu/%7lu/%7lu/%7lu/%7lu/%7lu/%7lu/%7lu\r", add_n, sub_n, mul_n, div_n, sqr_n, mul2d_n, div2d_n, gcd_n, lcm_n, expt_n, inv_n);
        fgets(cmd, 4095, stdin);
        cmd[strlen(cmd)-1] = 0;
-       printf("%s  ]\r",cmd);
+       printf("%s  ]\r",cmd); fflush(stdout);
        if (!strcmp(cmd, "mul2d")) { ++mul2d_n; 
           fgets(buf, 4095, stdin); mp_read_radix(&a, buf, 10);
           fgets(buf, 4095, stdin); sscanf(buf, "%d", &rr);
@@ -173,7 +216,8 @@ int main(void)
           fgets(buf, 4095, stdin);  mp_read_radix(&a, buf, 10);
           fgets(buf, 4095, stdin);  mp_read_radix(&b, buf, 10);
           fgets(buf, 4095, stdin);  mp_read_radix(&c, buf, 10);
-          mp_add(&a, &b, &d);
+          mp_copy(&a, &d);
+          mp_add(&d, &b, &d);
           if (mp_cmp(&c, &d) != MP_EQ) {
              printf("add %lu failure!\n", add_n); 
 draw(&a);draw(&b);draw(&c);draw(&d);             
@@ -204,13 +248,13 @@ draw(&a);draw(&b);draw(&c);draw(&d);
              draw(&d);
              return 0;
           }
-          
-          
+
        } else if (!strcmp(cmd, "sub")) { ++sub_n;
           fgets(buf, 4095, stdin);  mp_read_radix(&a, buf, 10);
           fgets(buf, 4095, stdin);  mp_read_radix(&b, buf, 10);
           fgets(buf, 4095, stdin);  mp_read_radix(&c, buf, 10);
-          mp_sub(&a, &b, &d);
+          mp_copy(&a, &d);
+          mp_sub(&d, &b, &d);
           if (mp_cmp(&c, &d) != MP_EQ) {
              printf("sub %lu failure!\n", sub_n); 
 draw(&a);draw(&b);draw(&c);draw(&d);             
@@ -220,7 +264,8 @@ draw(&a);draw(&b);draw(&c);draw(&d);
           fgets(buf, 4095, stdin);  mp_read_radix(&a, buf, 10);
           fgets(buf, 4095, stdin);  mp_read_radix(&b, buf, 10);
           fgets(buf, 4095, stdin);  mp_read_radix(&c, buf, 10);
-          mp_mul(&a, &b, &d);
+          mp_copy(&a, &d);
+          mp_mul(&d, &b, &d);
           if (mp_cmp(&c, &d) != MP_EQ) {
              printf("mul %lu failure!\n", mul_n); 
 draw(&a);draw(&b);draw(&c);draw(&d);             
@@ -242,7 +287,8 @@ draw(&a);draw(&b);draw(&c);draw(&d); draw(&e); draw(&f);
        } else if (!strcmp(cmd, "sqr")) { ++sqr_n;
           fgets(buf, 4095, stdin);  mp_read_radix(&a, buf, 10);
           fgets(buf, 4095, stdin);  mp_read_radix(&b, buf, 10);
-          mp_sqr(&a, &c);
+          mp_copy(&a, &c);
+          mp_sqr(&c, &c);
           if (mp_cmp(&b, &c) != MP_EQ) {
              printf("sqr %lu failure!\n", sqr_n); 
 draw(&a);draw(&b);draw(&c);
@@ -252,7 +298,8 @@ draw(&a);draw(&b);draw(&c);
           fgets(buf, 4095, stdin);  mp_read_radix(&a, buf, 10);
           fgets(buf, 4095, stdin);  mp_read_radix(&b, buf, 10);
           fgets(buf, 4095, stdin);  mp_read_radix(&c, buf, 10);
-          mp_gcd(&a, &b, &d);
+          mp_copy(&a, &d);
+          mp_gcd(&d, &b, &d);
           d.sign = c.sign;
           if (mp_cmp(&c, &d) != MP_EQ) {
              printf("gcd %lu failure!\n", gcd_n); 
@@ -263,7 +310,8 @@ draw(&a);draw(&b);draw(&c);draw(&d);
              fgets(buf, 4095, stdin);  mp_read_radix(&a, buf, 10);
              fgets(buf, 4095, stdin);  mp_read_radix(&b, buf, 10);
              fgets(buf, 4095, stdin);  mp_read_radix(&c, buf, 10);
-             mp_lcm(&a, &b, &d);
+             mp_copy(&a, &d);
+             mp_lcm(&d, &b, &d);
              d.sign = c.sign;
              if (mp_cmp(&c, &d) != MP_EQ) {
                 printf("lcm %lu failure!\n", lcm_n); 
@@ -275,7 +323,8 @@ draw(&a);draw(&b);draw(&c);draw(&d);
              fgets(buf, 4095, stdin);  mp_read_radix(&b, buf, 10);
              fgets(buf, 4095, stdin);  mp_read_radix(&c, buf, 10);
              fgets(buf, 4095, stdin);  mp_read_radix(&d, buf, 10);
-             mp_exptmod(&a, &b, &c, &e);
+             mp_copy(&a, &e);
+             mp_exptmod(&e, &b, &c, &e);
              if (mp_cmp(&d, &e) != MP_EQ) {
                 printf("expt %lu failure!\n", expt_n); 
    draw(&a);draw(&b);draw(&c);draw(&d); draw(&e);

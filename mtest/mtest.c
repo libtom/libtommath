@@ -41,7 +41,7 @@ void rand_num(mp_int *a)
    unsigned char buf[512];
 
 top:
-   size = 1 + (fgetc(rng) % 96);
+   size = 1 + ((fgetc(rng)*fgetc(rng)) % 32);
    buf[0] = (fgetc(rng)&1)?1:0;
    fread(buf+1, 1, size, rng);
    for (n = 0; n < size; n++) {
@@ -57,7 +57,7 @@ void rand_num2(mp_int *a)
    unsigned char buf[512];
 
 top:
-   size = 1 + (fgetc(rng) % 128);
+   size = 1 + ((fgetc(rng)*fgetc(rng)) % 32);
    buf[0] = (fgetc(rng)&1)?1:0;
    fread(buf+1, 1, size, rng);
    for (n = 0; n < size; n++) {
@@ -196,7 +196,7 @@ int main(void)
       mp_todecimal(&c, buf);
       printf("%s\n", buf);      
    } else if (n == 9) {
-      /* lcm test */
+      /* exptmod test */
       rand_num2(&a);
       rand_num2(&b);
       rand_num2(&c);
@@ -216,8 +216,10 @@ int main(void)
       rand_num2(&a);
       rand_num2(&b);
       b.sign = MP_ZPOS;
+      a.sign = MP_ZPOS;
       mp_gcd(&a, &b, &c);
       if (mp_cmp_d(&c, 1) != 0) continue;
+      if (mp_cmp_d(&b, 1) == 0) continue;
       mp_invmod(&a, &b, &c);
       printf("invmod\n");
       mp_todecimal(&a, buf);

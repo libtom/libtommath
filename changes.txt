@@ -1,3 +1,10 @@
+Dec 29th, 2002
+v0.04  -- Fixed a memory leak in mp_to_unsigned_bin
+       -- optimized invmod code
+       -- Fixed bug in mp_div
+       -- use exchange instead of copy for results
+       -- added a bit more to the manual
+       
 Dec 27th, 2002
 v0.03  -- Sped up s_mp_mul_high_digs by not computing the carries of the lower digits
        -- Fixed a bug where mp_set_int wouldn't zero the value first and set the used member.

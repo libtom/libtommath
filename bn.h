@@ -83,6 +83,9 @@ int mp_init(mp_int *a);
 /* free a bignum */
 void mp_clear(mp_int *a);
 
+/* exchange two ints */
+void mp_exch(mp_int *a, mp_int *b);
+
 /* shrink ram required for a bignum */
 int mp_shrink(mp_int *a);
 
@@ -214,7 +217,11 @@ int mp_lcm(mp_int *a, mp_int *b, mp_int *c);
 /* used to setup the Barrett reduction for a given modulus b */
 int mp_reduce_setup(mp_int *a, mp_int *b);
 
-/* Barrett Reduction, computes a (mod b) with a precomputed value c  */
+/* Barrett Reduction, computes a (mod b) with a precomputed value c  
+ *
+ * Assumes that 0 < a <= b^2, note if 0 > a > -(b^2) then you can merely
+ * compute the reduction as -1 * mp_reduce(mp_abs(a)) [pseudo code].
+ */
 int mp_reduce(mp_int *a, mp_int *b, mp_int *c);
  
 /* d = a^b (mod c) */
