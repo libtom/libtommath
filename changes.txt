@@ -1,3 +1,12 @@
+July 15th, 2003
+v0.24  -- Optimized mp_add_d and mp_sub_d to not allocate temporary variables
+       -- Fixed mp_gcd() so the gcd of 0,0 is 0.  Allows the gcd operation to be chained
+          e.g. (0,0,a) == a [instead of 1]
+       -- Should be one of the last release for a while.  Working on LibTomMath book now.
+       -- optimized the pprime demo [/etc/pprime.c] to first make a huge table of single
+          digit primes then it reads them randomly instead of randomly choosing/testing single
+          digit primes.
+
 July 12th, 2003
 v0.23  -- Optimized mp_prime_next_prime() to not use mp_mod [via is_divisible()] in each
           iteration.  Instead now a smaller table is kept of the residues which can be updated

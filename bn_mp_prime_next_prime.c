@@ -112,7 +112,7 @@ int mp_prime_next_prime(mp_int *a, int t, int bbs_style)
          /* y == 1 if any residue was zero [e.g. cannot be prime] */
          y     =  0;
 
-         /* increase step to next odd */
+         /* increase step to next candidate */
          step += kstep;
 
          /* compute the new residue without using division */

@@ -1,6 +1,9 @@
+#Makefile for GCC
+#
+#Tom St Denis
 CFLAGS  +=  -I./ -Wall -W -Wshadow -O3 -fomit-frame-pointer -funroll-loops
 
-VERSION=0.23
+VERSION=0.24
 
 default: libtommath.a
 
@@ -69,7 +72,7 @@ docdvi: tommath.src
 poster: poster.tex
 	pdflatex poster
 	rm -f poster.aux poster.log 
-	
+
 # makes the LTM book PS/PDF file, requires tetex, cleans up the LaTeX temp files
 docs:	
 	cd pics ; make pdfes
@@ -91,7 +94,7 @@ docs:
 manual:	
 	latex bn
 	pdflatex bn
-	rm -f bn.aux bn.dvi bn.log 	
+	rm -f bn.aux bn.dvi bn.log
 	
 clean:
 	rm -f *.pdf *.o *.a *.obj *.lib *.exe etclib/*.o demo/demo.o test ltmtest mpitest mtest/mtest mtest/mtest.exe \

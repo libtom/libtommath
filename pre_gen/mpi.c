@@ -813,18 +813,87 @@ mp_add (mp_int * a, mp_int * b, mp_int * c)
 int
 mp_add_d (mp_int * a, mp_digit b, mp_int * c)
 {
-  mp_int  t;
-  int     res;
+  int     res, ix, oldused;
+  mp_digit *tmpa, *tmpc, mu;
 
-  if ((res = mp_init_size(&t, 1)) != MP_OKAY) {
-    return res;
+  /* grow c as required */
+  if (c->alloc < a->used + 1) {
+     if ((res = mp_grow(c, a->used + 1)) != MP_OKAY) {
+        return res;
+     }
   }
-  mp_set (&t, b);
-  res = mp_add (a, &t, c);
 
-  mp_clear (&t);
-  return res;
+  /* if a is negative and |a| >= b, call c = |a| - b */
+  if (a->sign == MP_NEG && (a->used > 1 || a->dp[0] >= b)) {
+     /* temporarily fix sign of a */
+     a->sign = MP_ZPOS;
+
+     /* c = |a| - b */
+     res = mp_sub_d(a, b, c);
+
+     /* fix sign  */
+     a->sign = c->sign = MP_NEG;
+
+     return res;
+  }
+
+
+  /* old number of used digits in c */
+  oldused = c->used;
+
+  /* sign always positive */
+  c->sign = MP_ZPOS;
+
+  /* source alias */
+  tmpa    = a->dp;
+
+  /* destination alias */
+  tmpc    = c->dp;
+
+  /* if a is positive */
+  if (a->sign == MP_ZPOS) {
+     /* setup size */
+     c->used = a->used + 1;
+
+     /* add digit, after this we're propagating
+      * the carry.
+      */
+     *tmpc   = *tmpa++ + b;
+     mu      = *tmpc >> DIGIT_BIT;
+     *tmpc++ &= MP_MASK;
+
+     /* now handle rest of the digits */
+     for (ix = 1; ix < a->used; ix++) {
+        *tmpc   = *tmpa++ + mu;
+        mu      = *tmpc >> DIGIT_BIT;
+        *tmpc++ &= MP_MASK;
+     }
+     /* set final carry */
+     ix++;
+     *tmpc++  = mu;
+
+  } else {
+     /* a was negative and |a| < b */
+     c->used  = 1;
+
+     /* the result is a single digit */
+     *tmpc++  =  b - a->dp[0];
+
+     /* setup count so the clearing of oldused
+      * can fall through correctly
+      */
+     ix       = 1;
+  }
+
+  /* now zero to oldused */
+  while (ix++ < oldused) {
+     *tmpc++ = 0;
+  }
+  mp_clamp(c);
+
+  return MP_OKAY;
 }
+
 
 /* End: bn_mp_add_d.c */
 
@@ -2577,7 +2646,7 @@ mp_gcd (mp_int * a, mp_int * b, mp_int * c)
     return mp_copy (a, c);
   }
   if (mp_iszero (a) == 1 && mp_iszero (b) == 1) {
-    mp_set (c, 1);
+    mp_zero(c);
     return MP_OKAY;
   }
 
@@ -4674,7 +4743,7 @@ mp_prime_miller_rabin (mp_int * a, mp_int * b, int *result)
    */
   s = mp_cnt_lsb(&r);
 
-  /* now divide n - 1 by 2^s */
+  /* now divide n - 1 by 2**s */
   if ((err = mp_div_2d (&r, s, &r, NULL)) != MP_OKAY) {
     goto __R;
   }
@@ -4835,7 +4904,7 @@ int mp_prime_next_prime(mp_int *a, int t, int bbs_style)
          /* y == 1 if any residue was zero [e.g. cannot be prime] */
          y     =  0;
 
-         /* increase step to next odd */
+         /* increase step to next candidate */
          step += kstep;
 
          /* compute the new residue without using division */
@@ -5812,19 +5881,64 @@ mp_sub (mp_int * a, mp_int * b, mp_int * c)
 int
 mp_sub_d (mp_int * a, mp_digit b, mp_int * c)
 {
-  mp_int  t;
-  int     res;
+  mp_digit *tmpa, *tmpc, mu;
+  int       res, ix, oldused;
 
-
-  if ((res = mp_init (&t)) != MP_OKAY) {
-    return res;
+  /* grow c as required */
+  if (c->alloc < a->used + 1) {
+     if ((res = mp_grow(c, a->used + 1)) != MP_OKAY) {
+        return res;
+     }
   }
-  mp_set (&t, b);
-  res = mp_sub (a, &t, c);
 
-  mp_clear (&t);
-  return res;
+  /* if a is negative just do an unsigned
+   * addition [with fudged signs]
+   */
+  if (a->sign == MP_NEG) {
+     a->sign = MP_ZPOS;
+     res     = mp_add_d(a, b, c);
+     a->sign = c->sign = MP_NEG;
+     return res;
+  }
+
+  /* setup regs */
+  oldused = c->used;
+  tmpa    = a->dp;
+  tmpc    = c->dp;
+
+  /* if a <= b simply fix the single digit */
+  if ((a->used == 1 && a->dp[0] <= b) || a->used == 0) {
+     *tmpc++ = b - *tmpa;
+     ix      = 1;
+
+     /* negative/1digit */
+     c->sign = MP_NEG;
+     c->used = 1;
+  } else {
+     /* positive/size */
+     c->sign = MP_ZPOS;
+     c->used = a->used;
+
+     /* subtract first digit */
+     *tmpc    = *tmpa++ - b;
+     mu       = *tmpc >> (sizeof(mp_digit) * CHAR_BIT - 1);
+     *tmpc++ &= MP_MASK;
+
+     /* handle rest of the digits */
+     for (ix = 1; ix < a->used; ix++) {
+        *tmpc    = *tmpa++ - mu;
+        mu       = *tmpc >> (sizeof(mp_digit) * CHAR_BIT - 1);
+        *tmpc++ &= MP_MASK;
+     }
+  }
+
+  for (; ix < oldused; ix++) {
+     *tmpc++ = 0;
+  }
+  mp_clamp(c);
+  return MP_OKAY;
 }
+
 
 /* End: bn_mp_sub_d.c */
 

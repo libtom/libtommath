@@ -29,7 +29,7 @@ mp_gcd (mp_int * a, mp_int * b, mp_int * c)
     return mp_copy (a, c);
   }
   if (mp_iszero (a) == 1 && mp_iszero (b) == 1) {
-    mp_set (c, 1);
+    mp_zero(c);
     return MP_OKAY;
   }
 

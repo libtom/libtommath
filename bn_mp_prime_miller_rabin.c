@@ -53,7 +53,7 @@ mp_prime_miller_rabin (mp_int * a, mp_int * b, int *result)
    */
   s = mp_cnt_lsb(&r);
 
-  /* now divide n - 1 by 2^s */
+  /* now divide n - 1 by 2**s */
   if ((err = mp_div_2d (&r, s, &r, NULL)) != MP_OKAY) {
     goto __R;
   }

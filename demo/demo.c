@@ -46,7 +46,7 @@ int main(void)
 {
    mp_int a, b, c, d, e, f;
    unsigned long expt_n, add_n, sub_n, mul_n, div_n, sqr_n, mul2d_n, div2d_n, gcd_n, lcm_n, inv_n,
-                 div2_n, mul2_n;
+                 div2_n, mul2_n, add_d_n, sub_d_n;
    unsigned rr;
    int cnt, ix, old_kara_m, old_kara_s;
 
@@ -190,7 +190,7 @@ int main(void)
          mp_rand(&b, cnt);
          reset();
          rr = 0;
-         do { 
+         do {
             DO(mp_add(&a,&b,&c));
             rr += 16;
          } while (rdtsc() < (CLOCKS_PER_SEC * 2));
@@ -355,7 +355,7 @@ int main(void)
 #endif
 
    div2_n = mul2_n = inv_n = expt_n = lcm_n = gcd_n = add_n =
-   sub_n = mul_n = div_n = sqr_n = mul2d_n = div2d_n = cnt = 0;
+   sub_n = mul_n = div_n = sqr_n = mul2d_n = div2d_n = cnt = add_d_n = sub_d_n= 0;
    
    /* force KARA and TOOM to enable despite cutoffs */
    KARATSUBA_SQR_CUTOFF = KARATSUBA_MUL_CUTOFF = 110;
@@ -374,7 +374,7 @@ int main(void)
        }
 
 
-       printf("%7lu/%7lu/%7lu/%7lu/%7lu/%7lu/%7lu/%7lu/%7lu/%7lu/%7lu/%7lu/%7lu ", add_n, sub_n, mul_n, div_n, sqr_n, mul2d_n, div2d_n, gcd_n, lcm_n, expt_n, inv_n, div2_n, mul2_n);
+       printf("%4lu/%4lu/%4lu/%4lu/%4lu/%4lu/%4lu/%4lu/%4lu/%4lu/%4lu/%4lu/%4lu/%4lu/%4lu ", add_n, sub_n, mul_n, div_n, sqr_n, mul2d_n, div2d_n, gcd_n, lcm_n, expt_n, inv_n, div2_n, mul2_n, add_d_n, sub_d_n);
        fgets(cmd, 4095, stdin);
        cmd[strlen(cmd)-1] = 0;
        printf("%s  ]\r",cmd); fflush(stdout);
@@ -559,8 +559,33 @@ draw(&a);draw(&b);draw(&c);draw(&d);
                  draw(&c);
                  return 0;
              }
+       } else if (!strcmp(cmd, "add_d")) { ++add_d_n;
+              fgets(buf, 4095, stdin); mp_read_radix(&a, buf, 64);
+              fgets(buf, 4095, stdin); sscanf(buf, "%d", &ix);
+              fgets(buf, 4095, stdin); mp_read_radix(&b, buf, 64);
+              mp_add_d(&a, ix, &c);
+              if (mp_cmp(&b, &c) != MP_EQ) {
+                 printf("add_d %lu failure\n", add_d_n);
+                 draw(&a);
+                 draw(&b);
+                 draw(&c);
+                 printf("d == %d\n", ix);
+                 return 0;
+              }
+       } else if (!strcmp(cmd, "sub_d")) { ++sub_d_n;
+              fgets(buf, 4095, stdin); mp_read_radix(&a, buf, 64);
+              fgets(buf, 4095, stdin); sscanf(buf, "%d", &ix);
+              fgets(buf, 4095, stdin); mp_read_radix(&b, buf, 64);
+              mp_sub_d(&a, ix, &c);
+              if (mp_cmp(&b, &c) != MP_EQ) {
+                 printf("sub_d %lu failure\n", sub_d_n);
+                 draw(&a);
+                 draw(&b);
+                 draw(&c);
+                 printf("d == %d\n", ix);
+                 return 0;
+              }
        }
-
    }
    return 0;
 }
