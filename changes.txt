@@ -1,3 +1,14 @@
+March 12th, 2005
+v0.35  -- Stupid XOR function missing line again... oops.
+       -- Fixed bug in invmod not handling negative inputs correctly [Wolfgang Ehrhardt]
+       -- Made exteuclid always give positive u3 output...[ Wolfgang Ehrhardt ]
+       -- [Wolfgang Ehrhardt] Suggested a fix for mp_reduce() which avoided underruns.  ;-)
+       -- mp_rand() would emit one too many digits and it was possible to get a 0 out of it ... oops
+       -- Added montgomery to the testing to make sure it handles 1..10 digit moduli correctly
+       -- Fixed bug in comba that would lead to possible erroneous outputs when "pa < digs" 
+       -- Fixed bug in mp_toradix_size for "0" [Kevin Kenny]
+       -- Updated chapters 1-5 of the textbook ;-) It now talks about the new comba code!
+
 February 12th, 2005
 v0.34  -- Fixed two more small errors in mp_prime_random_ex()
        -- Fixed overflow in mp_mul_d() [Kevin Kenny]

@@ -39,11 +39,11 @@ int mp_reduce (mp_int * x, mp_int * m, mp_int * mu)
     }
   } else {
 #ifdef BN_S_MP_MUL_HIGH_DIGS_C
-    if ((res = s_mp_mul_high_digs (&q, mu, &q, um - 1)) != MP_OKAY) {
+    if ((res = s_mp_mul_high_digs (&q, mu, &q, um)) != MP_OKAY) {
       goto CLEANUP;
     }
 #elif defined(BN_FAST_S_MP_MUL_HIGH_DIGS_C)
-    if ((res = fast_s_mp_mul_high_digs (&q, mu, &q, um - 1)) != MP_OKAY) {
+    if ((res = fast_s_mp_mul_high_digs (&q, mu, &q, um)) != MP_OKAY) {
       goto CLEANUP;
     }
 #else 

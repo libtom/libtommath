@@ -56,6 +56,7 @@ int main(void)
       gcd_n, lcm_n, inv_n, div2_n, mul2_n, add_d_n, sub_d_n, t;
    unsigned rr;
    int i, n, err, cnt, ix, old_kara_m, old_kara_s;
+   mp_digit mp;
 
 
    mp_init(&a);
@@ -68,6 +69,40 @@ int main(void)
    srand(time(NULL));
 
 #if 0
+   // test montgomery 
+   printf("Testing montgomery...\n");
+   for (i = 1; i < 10; i++) {
+      printf("Testing digit size: %d\n", i);
+      for (n = 0; n < 1000; n++) {
+         mp_rand(&a, i);
+         a.dp[0] |= 1;
+
+         // let's see if R is right
+         mp_montgomery_calc_normalization(&b, &a);
+         mp_montgomery_setup(&a, &mp);
+
+         // now test a random reduction 
+         for (ix = 0; ix < 100; ix++) {
+             mp_rand(&c, 1 + abs(rand()) % (2*i));
+             mp_copy(&c, &d);
+             mp_copy(&c, &e);
+
+             mp_mod(&d, &a, &d);
+             mp_montgomery_reduce(&c, &a, mp);
+             mp_mulmod(&c, &b, &a, &c);
+
+             if (mp_cmp(&c, &d) != MP_EQ) { 
+printf("d = e mod a, c = e MOD a\n");
+mp_todecimal(&a, buf); printf("a = %s\n", buf);
+mp_todecimal(&e, buf); printf("e = %s\n", buf);
+mp_todecimal(&d, buf); printf("d = %s\n", buf);
+mp_todecimal(&c, buf); printf("c = %s\n", buf);
+printf("compare no compare!\n"); exit(EXIT_FAILURE); }
+         }
+      }
+   }
+   printf("done\n");
+
    // test mp_get_int
    printf("Testing: mp_get_int\n");
    for (i = 0; i < 1000; ++i) {
@@ -139,7 +174,7 @@ int main(void)
    printf("\n\n");
 
    /* test for size */
-   for (ix = 10; ix < 256; ix++) {
+   for (ix = 10; ix < 128; ix++) {
       printf("Testing (not safe-prime): %9d bits    \r", ix);
       fflush(stdout);
       err =
@@ -156,7 +191,7 @@ int main(void)
       }
    }
 
-   for (ix = 16; ix < 256; ix++) {
+   for (ix = 16; ix < 128; ix++) {
       printf("Testing (   safe-prime): %9d bits    \r", ix);
       fflush(stdout);
       err =
@@ -235,7 +270,7 @@ int main(void)
 	 mp_rand(&b, (cnt / DIGIT_BIT + 1) * 2);
 	 mp_copy(&c, &b);
 	 mp_mod(&c, &a, &c);
-	 mp_reduce_2k(&b, &a, 1);
+	 mp_reduce_2k(&b, &a, 2);
 	 if (mp_cmp(&c, &b)) {
 	    printf("FAILED\n");
 	    exit(0);

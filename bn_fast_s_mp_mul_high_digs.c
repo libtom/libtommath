@@ -71,7 +71,7 @@ int fast_s_mp_mul_high_digs (mp_int * a, mp_int * b, mp_int * c, int digs)
   }
   
   /* store final carry */
-  W[ix] = _W & MP_MASK;
+  W[ix] = (mp_digit)(_W & MP_MASK);
 
   /* setup dest */
   olduse  = c->used;

@@ -3,7 +3,7 @@
 #Tom St Denis
 
 #version of library 
-VERSION=0.34
+VERSION=0.35
 
 CFLAGS  +=  -I./ -Wall -W -Wshadow -Wsign-compare
 

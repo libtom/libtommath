@@ -42,7 +42,7 @@ int fast_mp_invmod (mp_int * a, mp_int * b, mp_int * c)
   }
 
   /* we need y = |a| */
-  if ((res = mp_abs (a, &y)) != MP_OKAY) {
+  if ((res = mp_mod (a, b, &y)) != MP_OKAY) {
     goto LBL_ERR;
   }
 

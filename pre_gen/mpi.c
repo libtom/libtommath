@@ -90,7 +90,7 @@ int fast_mp_invmod (mp_int * a, mp_int * b, mp_int * c)
   }
 
   /* we need y = |a| */
-  if ((res = mp_abs (a, &y)) != MP_OKAY) {
+  if ((res = mp_mod (a, b, &y)) != MP_OKAY) {
     goto LBL_ERR;
   }
 
@@ -430,7 +430,7 @@ int fast_s_mp_mul_digs (mp_int * a, mp_int * b, mp_int * c, int digs)
       tmpx = a->dp + tx;
       tmpy = b->dp + ty;
 
-      /* this is the number of times the loop will iterrate, essentially its 
+      /* this is the number of times the loop will iterrate, essentially 
          while (tx++ < a->used && ty-- >= 0) { ... }
        */
       iy = MIN(a->used-tx, ty+1);
@@ -448,16 +448,16 @@ int fast_s_mp_mul_digs (mp_int * a, mp_int * b, mp_int * c, int digs)
   }
 
   /* store final carry */
-  W[ix] = _W & MP_MASK;
+  W[ix] = (mp_digit)(_W & MP_MASK);
 
   /* setup dest */
   olduse  = c->used;
-  c->used = digs;
+  c->used = pa;
 
   {
     register mp_digit *tmpc;
     tmpc = c->dp;
-    for (ix = 0; ix < digs; ix++) {
+    for (ix = 0; ix < pa+1; ix++) {
       /* now extract the previous digit [below the carry] */
       *tmpc++ = W[ix];
     }
@@ -548,7 +548,7 @@ int fast_s_mp_mul_high_digs (mp_int * a, mp_int * b, mp_int * c, int digs)
   }
   
   /* store final carry */
-  W[ix] = _W & MP_MASK;
+  W[ix] = (mp_digit)(_W & MP_MASK);
 
   /* setup dest */
   olduse  = c->used;
@@ -593,33 +593,14 @@ int fast_s_mp_mul_high_digs (mp_int * a, mp_int * b, mp_int * c, int digs)
  * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
  */
 
-/* fast squaring
- *
- * This is the comba method where the columns of the product
- * are computed first then the carries are computed.  This
- * has the effect of making a very simple inner loop that
- * is executed the most
- *
- * W2 represents the outer products and W the inner.
- *
- * A further optimizations is made because the inner
- * products are of the form "A * B * 2".  The *2 part does
- * not need to be computed until the end which is good
- * because 64-bit shifts are slow!
- *
- * Based on Algorithm 14.16 on pp.597 of HAC.
- *
- */
 /* the jist of squaring...
-
-you do like mult except the offset of the tmpx [one that starts closer to zero]
-can't equal the offset of tmpy.  So basically you set up iy like before then you min it with
-(ty-tx) so that it never happens.  You double all those you add in the inner loop
+ * you do like mult except the offset of the tmpx [one that 
+ * starts closer to zero] can't equal the offset of tmpy.  
+ * So basically you set up iy like before then you min it with
+ * (ty-tx) so that it never happens.  You double all those 
+ * you add in the inner loop
 
 After that loop you do the squares and add them in.
-
-Remove W2 and don't memset W
-
 */
 
 int fast_s_mp_sqr (mp_int * a, mp_int * b)
@@ -654,7 +635,7 @@ int fast_s_mp_sqr (mp_int * a, mp_int * b)
       tmpx = a->dp + tx;
       tmpy = a->dp + ty;
 
-      /* this is the number of times the loop will iterrate, essentially its 
+      /* this is the number of times the loop will iterrate, essentially
          while (tx++ < a->used && ty-- >= 0) { ... }
        */
       iy = MIN(a->used-tx, ty+1);
@@ -679,7 +660,7 @@ int fast_s_mp_sqr (mp_int * a, mp_int * b)
       }
 
       /* store it */
-      W[ix] = _W & MP_MASK;
+      W[ix] = (mp_digit)(_W & MP_MASK);
 
       /* make next carry */
       W1 = _W >> ((mp_word)DIGIT_BIT);
@@ -2890,6 +2871,13 @@ int mp_exteuclid(mp_int *a, mp_int *b, mp_int *U1, mp_int *U2, mp_int *U3)
        if ((err = mp_copy(&t3, &v3)) != MP_OKAY)                                  { goto _ERR; }
    }
 
+   /* make sure U3 >= 0 */
+   if (u3.sign == MP_NEG) {
+      mp_neg(&u1, &u1);
+      mp_neg(&u2, &u2);
+      mp_neg(&u3, &u3);
+   }
+
    /* copy result out */
    if (U1 != NULL) { mp_exch(U1, &u1); }
    if (U2 != NULL) { mp_exch(U2, &u2); }
@@ -3564,8 +3552,8 @@ int mp_invmod_slow (mp_int * a, mp_int * b, mp_int * c)
   }
 
   /* x = a, y = b */
-  if ((res = mp_copy (a, &x)) != MP_OKAY) {
-    goto LBL_ERR;
+  if ((res = mp_mod(a, b, &x)) != MP_OKAY) {
+      goto LBL_ERR;
   }
   if ((res = mp_copy (b, &y)) != MP_OKAY) {
     goto LBL_ERR;
@@ -4493,7 +4481,6 @@ int mp_montgomery_calc_normalization (mp_int * a, mp_int * b)
   /* how many bits of last digit does b use */
   bits = mp_count_bits (b) % DIGIT_BIT;
 
-
   if (b->used > 1) {
      if ((res = mp_2expt (a, (b->used - 1) * DIGIT_BIT + bits - 1)) != MP_OKAY) {
         return res;
@@ -5206,12 +5193,18 @@ LBL_T1:mp_clear (&t1);
 int mp_neg (mp_int * a, mp_int * b)
 {
   int     res;
-  if ((res = mp_copy (a, b)) != MP_OKAY) {
-    return res;
+  if (a != b) {
+     if ((res = mp_copy (a, b)) != MP_OKAY) {
+        return res;
+     }
   }
+
   if (mp_iszero(b) != MP_YES) {
      b->sign = (a->sign == MP_ZPOS) ? MP_NEG : MP_ZPOS;
+  } else {
+     b->sign = MP_ZPOS;
   }
+
   return MP_OKAY;
 }
 #endif
@@ -5953,22 +5946,29 @@ int mp_radix_size (mp_int * a, int radix, int *size)
     return MP_VAL;
   }
 
-  /* init a copy of the input */
-  if ((res = mp_init_copy (&t, a)) != MP_OKAY) {
-    return res;
+  if (mp_iszero(a) == MP_YES) {
+     *size = 2;
+    return MP_OKAY;
   }
 
   /* digs is the digit count */
   digs = 0;
 
   /* if it's negative add one for the sign */
-  if (t.sign == MP_NEG) {
+  if (a->sign == MP_NEG) {
     ++digs;
-    t.sign = MP_ZPOS;
   }
 
+  /* init a copy of the input */
+  if ((res = mp_init_copy (&t, a)) != MP_OKAY) {
+    return res;
+  }
+
+  /* force temp to positive */
+  t.sign = MP_ZPOS; 
+
   /* fetch out all of the digits */
-  while (mp_iszero (&t) == 0) {
+  while (mp_iszero (&t) == MP_NO) {
     if ((res = mp_div_d (&t, (mp_digit) radix, &t, &d)) != MP_OKAY) {
       mp_clear (&t);
       return res;
@@ -6042,14 +6042,14 @@ mp_rand (mp_int * a, int digits)
 
   /* first place a random non-zero digit */
   do {
-    d = ((mp_digit) abs (rand ()));
+    d = ((mp_digit) abs (rand ())) & MP_MASK;
   } while (d == 0);
 
   if ((res = mp_add_d (a, d, a)) != MP_OKAY) {
     return res;
   }
 
-  while (digits-- > 0) {
+  while (--digits > 0) {
     if ((res = mp_lshd (a, 1)) != MP_OKAY) {
       return res;
     }
@@ -6287,11 +6287,11 @@ int mp_reduce (mp_int * x, mp_int * m, mp_int * mu)
     }
   } else {
 #ifdef BN_S_MP_MUL_HIGH_DIGS_C
-    if ((res = s_mp_mul_high_digs (&q, mu, &q, um - 1)) != MP_OKAY) {
+    if ((res = s_mp_mul_high_digs (&q, mu, &q, um)) != MP_OKAY) {
       goto CLEANUP;
     }
 #elif defined(BN_FAST_S_MP_MUL_HIGH_DIGS_C)
-    if ((res = fast_s_mp_mul_high_digs (&q, mu, &q, um - 1)) != MP_OKAY) {
+    if ((res = fast_s_mp_mul_high_digs (&q, mu, &q, um)) != MP_OKAY) {
       goto CLEANUP;
     }
 #else 
@@ -7433,9 +7433,10 @@ int mp_to_unsigned_bin_n (mp_int * a, unsigned char *b, unsigned long *outlen)
 
 /* multiplication using the Toom-Cook 3-way algorithm 
  *
- * Much more complicated than Karatsuba but has a lower asymptotic running time of 
- * O(N**1.464).  This algorithm is only particularly useful on VERY large
- * inputs (we're talking 1000s of digits here...).
+ * Much more complicated than Karatsuba but has a lower 
+ * asymptotic running time of O(N**1.464).  This algorithm is 
+ * only particularly useful on VERY large inputs 
+ * (we're talking 1000s of digits here...).
 */
 int mp_toom_mul(mp_int *a, mp_int *b, mp_int *c)
 {
@@ -8154,7 +8155,7 @@ mp_xor (mp_int * a, mp_int * b, mp_int * c)
   }
 
   for (ix = 0; ix < px; ix++) {
-
+     t.dp[ix] ^= x->dp[ix];
   }
   mp_clamp (&t);
   mp_exch (c, &t);
@@ -8184,12 +8185,18 @@ mp_xor (mp_int * a, mp_int * b, mp_int * c)
  */
 
 /* set to zero */
-void
-mp_zero (mp_int * a)
+void mp_zero (mp_int * a)
 {
+  int       n;
+  mp_digit *tmp;
+
   a->sign = MP_ZPOS;
   a->used = 0;
-  memset (a->dp, 0, sizeof (mp_digit) * a->alloc);
+
+  tmp = a->dp;
+  for (n = 0; n < a->alloc; n++) {
+     *tmp++ = 0;
+  }
 }
 #endif
 
@@ -8679,8 +8686,7 @@ LBL_M:
  * HAC pp. 595, Algorithm 14.12  Modified so you can control how 
  * many digits of output are created.
  */
-int
-s_mp_mul_digs (mp_int * a, mp_int * b, mp_int * c, int digs)
+int s_mp_mul_digs (mp_int * a, mp_int * b, mp_int * c, int digs)
 {
   mp_int  t;
   int     res, pa, pb, ix, iy;
@@ -8848,8 +8854,7 @@ s_mp_mul_high_digs (mp_int * a, mp_int * b, mp_int * c, int digs)
  */
 
 /* low level squaring, b = a*a, HAC pp.596-597, Algorithm 14.16 */
-int
-s_mp_sqr (mp_int * a, mp_int * b)
+int s_mp_sqr (mp_int * a, mp_int * b)
 {
   mp_int  t;
   int     res, ix, iy, pa;

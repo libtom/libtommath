@@ -1,7 +1,7 @@
 #Makefile for GCC
 #
 #Tom St Denis
-VERSION=0:34
+VERSION=0:35
 
 CC = libtool --mode=compile gcc
 CFLAGS  +=  -I./ -Wall -W -Wshadow -Wsign-compare
