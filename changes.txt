@@ -1,3 +1,16 @@
+Aug 4th, 2003
+v0.25  -- Fix to mp_gcd again... oops (0,-a) == (-a, 0) == a
+       -- Fix to mp_clear which didn't reset the sign  [Greg Rose]
+       -- Added mp_error_to_string() to convert return codes to strings.  [Greg Rose]
+       -- Optimized fast_mp_invmod() to do the test for invalid inputs [both even]
+          first so temps don't have to be initialized if it's going to fail.
+       -- Optimized mp_gcd() by removing mp_div_2d calls for when one of the inputs
+          is odd.
+       -- Tons of new comments, some indentation fixups, etc.
+       -- mp_jacobi() returns MP_VAL if the modulus is less than or equal to zero.
+       -- fixed two typos in the header of each file :-)
+       -- LibTomMath is officially Public Domain [see LICENSE]
+
 July 15th, 2003
 v0.24  -- Optimized mp_add_d and mp_sub_d to not allocate temporary variables
        -- Fixed mp_gcd() so the gcd of 0,0 is 0.  Allows the gcd operation to be chained

@@ -1,9 +1,9 @@
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
- * LibTomMath is library that provides for multiple-precision
+ * LibTomMath is a library that provides multiple-precision
  * integer arithmetic as well as number theoretic functionality.
  *
- * The library is designed directly after the MPI library by
+ * The library was designed directly after the MPI library by
  * Michael Fromberger but has been written from scratch with
  * additional optimizations in place.
  *
@@ -24,6 +24,11 @@ mp_jacobi (mp_int * a, mp_int * p, int *c)
   int     k, s, r, res;
   mp_digit residue;
 
+  /* if p <= 0 return MP_VAL */
+  if (mp_cmp_d(p, 0) != MP_GT) {
+     return MP_VAL;
+  }
+
   /* step 1.  if a == 0, return 0 */
   if (mp_iszero (a) == 1) {
     *c = 0;
@@ -37,7 +42,7 @@ mp_jacobi (mp_int * a, mp_int * p, int *c)
   }
 
   /* default */
-  k = s = 0;
+  s = 0;
 
   /* step 3.  write a = a1 * 2**k  */
   if ((res = mp_init_copy (&a1, a)) != MP_OKAY) {
@@ -48,11 +53,10 @@ mp_jacobi (mp_int * a, mp_int * p, int *c)
     goto __A1;
   }
 
-  while (mp_iseven (&a1) == 1) {
-    k = k + 1;
-    if ((res = mp_div_2 (&a1, &a1)) != MP_OKAY) {
-      goto __P1;
-    }
+  /* divide out larger power of two */
+  k = mp_cnt_lsb(&a1);
+  if ((res = mp_div_2d(&a1, k, &a1, NULL)) != MP_OKAY) {
+     goto __P1;
   }
 
   /* step 4.  if e is even set s=1 */

@@ -181,7 +181,6 @@ int main(void)
 #ifdef TIMER
       /* temp. turn off TOOM */
       TOOM_MUL_CUTOFF = TOOM_SQR_CUTOFF = 100000;
-          
       printf("CLOCKS_PER_SEC == %lu\n", CLOCKS_PER_SEC);
 
       log = fopen("logs/add.log", "w");
@@ -225,21 +224,6 @@ int main(void)
       KARATSUBA_MUL_CUTOFF = (ix==0)?9999:old_kara_m;
       KARATSUBA_SQR_CUTOFF = (ix==0)?9999:old_kara_s;
 
-      log = fopen((ix==0)?"logs/sqr.log":"logs/sqr_kara.log", "w");
-      for (cnt = 32; cnt <= 288; cnt += 16) {
-         mp_rand(&a, cnt);
-         reset();
-         rr = 0;
-         do {
-            DO(mp_sqr(&a, &b));
-            rr += 16;
-         } while (rdtsc() < (CLOCKS_PER_SEC * 2));
-         tt = rdtsc();
-         printf("Squaring\t%4d-bit => %9llu/sec, %9llu ticks\n", mp_count_bits(&a), (((unsigned long long)rr)*CLOCKS_PER_SEC)/tt, tt);
-         fprintf(log, "%d %9llu\n", cnt*DIGIT_BIT, (((unsigned long long)rr)*CLOCKS_PER_SEC)/tt);
-      }
-      fclose(log);
-
       log = fopen((ix==0)?"logs/mult.log":"logs/mult_kara.log", "w");
       for (cnt = 32; cnt <= 288; cnt += 16) {
          mp_rand(&a, cnt);
@@ -255,6 +239,22 @@ int main(void)
          fprintf(log, "%d %9llu\n", cnt*DIGIT_BIT, (((unsigned long long)rr)*CLOCKS_PER_SEC)/tt);
       }
       fclose(log);
+
+      log = fopen((ix==0)?"logs/sqr.log":"logs/sqr_kara.log", "w");
+      for (cnt = 32; cnt <= 288; cnt += 16) {
+         mp_rand(&a, cnt);
+         reset();
+         rr = 0;
+         do {
+            DO(mp_sqr(&a, &b));
+            rr += 16;
+         } while (rdtsc() < (CLOCKS_PER_SEC * 2));
+         tt = rdtsc();
+         printf("Squaring\t%4d-bit => %9llu/sec, %9llu ticks\n", mp_count_bits(&a), (((unsigned long long)rr)*CLOCKS_PER_SEC)/tt, tt);
+         fprintf(log, "%d %9llu\n", cnt*DIGIT_BIT, (((unsigned long long)rr)*CLOCKS_PER_SEC)/tt);
+      }
+      fclose(log);
+
    }
   {
       char *primes[] = {

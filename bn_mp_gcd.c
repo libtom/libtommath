@@ -1,9 +1,9 @@
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
- * LibTomMath is library that provides for multiple-precision
+ * LibTomMath is a library that provides multiple-precision
  * integer arithmetic as well as number theoretic functionality.
  *
- * The library is designed directly after the MPI library by
+ * The library was designed directly after the MPI library by
  * Michael Fromberger but has been written from scratch with
  * additional optimizations in place.
  *
@@ -23,16 +23,21 @@ mp_gcd (mp_int * a, mp_int * b, mp_int * c)
 
   /* either zero than gcd is the largest */
   if (mp_iszero (a) == 1 && mp_iszero (b) == 0) {
-    return mp_copy (b, c);
+    return mp_abs (b, c);
   }
   if (mp_iszero (a) == 0 && mp_iszero (b) == 1) {
-    return mp_copy (a, c);
+    return mp_abs (a, c);
   }
-  if (mp_iszero (a) == 1 && mp_iszero (b) == 1) {
+
+  /* optimized.  At this point if a == 0 then
+   * b must equal zero too
+   */
+  if (mp_iszero (a) == 1) {
     mp_zero(c);
     return MP_OKAY;
   }
 
+  /* get copies of a and b we can modify */
   if ((res = mp_init_copy (&u, a)) != MP_OKAY) {
     return res;
   }
@@ -49,12 +54,15 @@ mp_gcd (mp_int * a, mp_int * b, mp_int * c)
   v_lsb = mp_cnt_lsb(&v);
   k     = MIN(u_lsb, v_lsb);
 
-  if ((res = mp_div_2d(&u, k, &u, NULL)) != MP_OKAY) {
-     goto __V;
-  }
+  if (k > 0) {
+     /* divide the power of two out */
+     if ((res = mp_div_2d(&u, k, &u, NULL)) != MP_OKAY) {
+        goto __V;
+     }
 
-  if ((res = mp_div_2d(&v, k, &v, NULL)) != MP_OKAY) {
-     goto __V;
+     if ((res = mp_div_2d(&v, k, &v, NULL)) != MP_OKAY) {
+        goto __V;
+     }
   }
 
   /* divide any remaining factors of two out */
@@ -69,10 +77,11 @@ mp_gcd (mp_int * a, mp_int * b, mp_int * c)
         goto __V;
      }
   }
-  
+
   while (mp_iszero(&v) == 0) {
      /* make sure v is the largest */
      if (mp_cmp_mag(&u, &v) == MP_GT) {
+        /* swap u and v to make sure v is >= u */
         mp_exch(&u, &v);
      }
      
@@ -86,10 +95,10 @@ mp_gcd (mp_int * a, mp_int * b, mp_int * c)
         goto __V;
      } 
   } 
-  
-  /* multiply by 2**k which we divided out at the beginning */ 
+
+  /* multiply by 2**k which we divided out at the beginning */
   if ((res = mp_mul_2d (&u, k, c)) != MP_OKAY) {
-    goto __V;
+     goto __V;
   }
   c->sign = MP_ZPOS;
   res = MP_OKAY;

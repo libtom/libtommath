@@ -59,7 +59,6 @@ static void gen_prime (void)
     r += 2;			/* next candidate */
     r &= MP_MASK;
     if (r < 31) break;
-    if (!((r>>1)&65535)) sleep(1);
 
     /* update sqrt ? */
     if (next <= r) {

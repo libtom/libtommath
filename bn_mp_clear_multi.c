@@ -13,25 +13,16 @@
  * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
  */
 #include <tommath.h>
+#include <stdarg.h>
 
-/* determines if a number is a valid DR modulus */
-int mp_dr_is_modulus(mp_int *a)
+void mp_clear_multi(mp_int *mp, ...) 
 {
-   int ix;
-
-   /* must be at least two digits */
-   if (a->used < 2) {
-      return 0;
-   }
-
-   /* must be of the form b**k - a [a <= b] so all
-    * but the first digit must be equal to -1 (mod b).
-    */
-   for (ix = 1; ix < a->used; ix++) {
-       if (a->dp[ix] != MP_MASK) {
-          return 0;
-       }
-   }
-   return 1;
+    mp_int* next_mp = mp;
+    va_list args;
+    va_start(args, mp);
+    while (next_mp != NULL) {
+        mp_clear(next_mp);
+        next_mp = va_arg(args, mp_int*);
+    }
+    va_end(args);
 }
-

@@ -1,9 +1,9 @@
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
- * LibTomMath is library that provides for multiple-precision
+ * LibTomMath is a library that provides multiple-precision
  * integer arithmetic as well as number theoretic functionality.
  *
- * The library is designed directly after the MPI library by
+ * The library was designed directly after the MPI library by
  * Michael Fromberger but has been written from scratch with
  * additional optimizations in place.
  *
@@ -31,9 +31,7 @@ int mp_prime_next_prime(mp_int *a, int t, int bbs_style)
    }
 
    /* force positive */
-   if (a->sign == MP_NEG) {
-      a->sign = MP_ZPOS;
-   }
+   a->sign = MP_ZPOS;
 
    /* simple algo if a is less than the largest prime in the table */
    if (mp_cmp_d(a, __prime_tab[PRIME_SIZE-1]) == MP_LT) {
@@ -137,8 +135,8 @@ int mp_prime_next_prime(mp_int *a, int t, int bbs_style)
          goto __ERR;
       }
 
-      /* if step == MAX then skip test */
-      if (step >= ((((mp_digit)1)<<DIGIT_BIT) - kstep)) {
+      /* if didn't pass sieve and step == MAX then skip test */
+      if (y == 1 && step >= ((((mp_digit)1)<<DIGIT_BIT) - kstep)) {
          continue;
       }
 
