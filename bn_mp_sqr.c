@@ -24,8 +24,7 @@ mp_sqr (mp_int * a, mp_int * b)
   } else {
 
     /* can we use the fast multiplier? */
-    if (((a->used * 2 + 1) < 512)
-	&& a->used < (1 << ((CHAR_BIT * sizeof (mp_word)) - (2 * DIGIT_BIT) - 1))) {
+    if ((a->used * 2 + 1) < 512 && a->used < (1 << (sizeof(mp_word) * CHAR_BIT - 2*DIGIT_BIT - 1))) {
       res = fast_s_mp_sqr (a, b);
     } else {
       res = s_mp_sqr (a, b);

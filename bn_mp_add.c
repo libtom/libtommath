@@ -24,33 +24,25 @@ mp_add (mp_int * a, mp_int * b, mp_int * c)
   sa = a->sign;
   sb = b->sign;
 
-  /* handle four cases */
-  if (sa == MP_ZPOS && sb == MP_ZPOS) {
-    /* both positive */
+  /* handle two cases, not four */
+  if (sa == sb) {
+    /* both positive or both negative */
+    /* add their magnitudes, copy the sign */
+    c->sign = sa;
     res = s_mp_add (a, b, c);
-    c->sign = MP_ZPOS;
-  } else if (sa == MP_ZPOS && sb == MP_NEG) {
-    /* a + -b == a - b, but if b>a then we do it as -(b-a) */
-    if (mp_cmp_mag (a, b) == MP_LT) {
-      res = s_mp_sub (b, a, c);
-      c->sign = MP_NEG;
-    } else {
-      res = s_mp_sub (a, b, c);
-      c->sign = MP_ZPOS;
-    }
-  } else if (sa == MP_NEG && sb == MP_ZPOS) {
-    /* -a + b == b - a, but if a>b then we do it as -(a-b) */
-    if (mp_cmp_mag (a, b) == MP_GT) {
-      res = s_mp_sub (a, b, c);
-      c->sign = MP_NEG;
-    } else {
-      res = s_mp_sub (b, a, c);
-      c->sign = MP_ZPOS;
-    }
   } else {
-    /* -a + -b == -(a + b) */
-    res = s_mp_add (a, b, c);
-    c->sign = MP_NEG;
+    /* one positive, the other negative */
+    /* subtract the one with the greater magnitude from */
+    /* the one of the lesser magnitude.  The result gets */
+    /* the sign of the one with the greater magnitude. */
+    if (mp_cmp_mag (a, b) == MP_LT) {
+      c->sign = sb;
+      res = s_mp_sub (b, a, c);
+    } else {
+      c->sign = sa;
+      res = s_mp_sub (a, b, c);
+    }
   }
   return res;
 }
+

@@ -24,7 +24,7 @@ bn_reverse (unsigned char *s, int len)
   ix = 0;
   iy = len - 1;
   while (ix < iy) {
-    t = s[ix];
+    t     = s[ix];
     s[ix] = s[iy];
     s[iy] = t;
     ++ix;

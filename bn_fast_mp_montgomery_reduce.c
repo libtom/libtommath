@@ -26,7 +26,7 @@ int
 fast_mp_montgomery_reduce (mp_int * a, mp_int * m, mp_digit mp)
 {
   int     ix, res, olduse;
-  mp_word W[512];
+  mp_word W[MP_WARRAY];
 
   /* get old used count */
   olduse = a->used;
@@ -92,7 +92,7 @@ fast_mp_montgomery_reduce (mp_int * a, mp_int * m, mp_digit mp)
 
       /* inner loop */
       for (iy = 0; iy < m->used; iy++) {
-	*_W++ += ((mp_word) ui) * ((mp_word) * tmpx++);
+    *_W++ += ((mp_word) ui) * ((mp_word) * tmpx++);
       }
     }
 

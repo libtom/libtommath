@@ -27,7 +27,7 @@ int
 fast_s_mp_mul_high_digs (mp_int * a, mp_int * b, mp_int * c, int digs)
 {
   int     oldused, newused, res, pa, pb, ix;
-  mp_word W[512];
+  mp_word W[MP_WARRAY];
 
   /* calculate size of product and allocate more space if required */
   newused = a->used + b->used + 1;
@@ -55,15 +55,23 @@ fast_s_mp_mul_high_digs (mp_int * a, mp_int * b, mp_int * c, int digs)
 
       /* alias for right side */
       tmpy = b->dp + iy;
-
+     
       /* alias for the columns of output.  Offset to be equal to or above the 
        * smallest digit place requested 
        */
-      _W = &(W[digs]);
+      _W = W + digs;     
+      
+      /* skip cases below zero where ix > digs */
+      if (iy < 0) {
+         iy    = abs(iy);
+         tmpy += iy;
+         _W   += iy;
+         iy    = 0;
+      }
 
       /* compute column products for digits above the minimum */
       for (; iy < pb; iy++) {
-	*_W++ += ((mp_word) tmpx) * ((mp_word) * tmpy++);
+    *_W++ += ((mp_word) tmpx) * ((mp_word) * tmpy++);
       }
     }
   }

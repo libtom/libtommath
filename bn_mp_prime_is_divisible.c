@@ -14,7 +14,7 @@
  */
 #include <tommath.h>
 
-/* determines if an integers is divisible by one of the first 256 primes or not 
+/* determines if an integers is divisible by one of the first 256 primes or not
  *
  * sets result to 0 if not, 1 if yes
  */
@@ -27,7 +27,7 @@ mp_prime_is_divisible (mp_int * a, int *result)
   /* default to not */
   *result = 0;
 
-  for (ix = 0; ix < 256; ix++) {
+  for (ix = 0; ix < PRIME_SIZE; ix++) {
     /* is it equal to the prime? */
     if (mp_cmp_d (a, __prime_tab[ix]) == MP_EQ) {
       *result = 1;

@@ -21,8 +21,17 @@ mp_cmp (mp_int * a, mp_int * b)
   /* compare based on sign */
   if (a->sign == MP_NEG && b->sign == MP_ZPOS) {
     return MP_LT;
-  } else if (a->sign == MP_ZPOS && b->sign == MP_NEG) {
+  } 
+  
+  if (a->sign == MP_ZPOS && b->sign == MP_NEG) {
     return MP_GT;
   }
-  return mp_cmp_mag (a, b);
+  
+  /* compare digits */
+  if (a->sign == MP_NEG) {
+     /* if negative compare opposite direction */
+     return mp_cmp_mag(b, a);
+  } else {
+     return mp_cmp_mag(a, b);
+  }
 }

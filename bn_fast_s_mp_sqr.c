@@ -20,7 +20,7 @@
  * then the carries are computed.  This has the effect of making a very simple
  * inner loop that is executed the most
  *
- * W2 represents the outer products and W the inner.  
+ * W2 represents the outer products and W the inner.
  *
  * A further optimizations is made because the inner products are of the form
  * "A * B * 2".  The *2 part does not need to be computed until the end which is
@@ -33,7 +33,7 @@ int
 fast_s_mp_sqr (mp_int * a, mp_int * b)
 {
   int     olduse, newused, res, ix, pa;
-  mp_word W2[512], W[512];
+  mp_word W2[MP_WARRAY], W[MP_WARRAY];
 
   /* calculate size of product and allocate as required */
   pa = a->used;
@@ -44,9 +44,9 @@ fast_s_mp_sqr (mp_int * a, mp_int * b)
     }
   }
 
-  /* zero temp buffer (columns) 
+  /* zero temp buffer (columns)
    * Note that there are two buffers.  Since squaring requires
-   * a outter and inner product and the inner product requires 
+   * a outter and inner product and the inner product requires
    * computing a product and doubling it (a relatively expensive
    * op to perform n^2 times if you don't have to) the inner and
    * outer products are computed in different buffers.  This way
@@ -60,7 +60,7 @@ fast_s_mp_sqr (mp_int * a, mp_int * b)
  * values in W2 are only written in even locations which means
  * we can collapse the array to 256 words [and fixup the memset above]
  * provided we also fix up the summations below.  Ideally
- * the fixup loop should be unrolled twice to handle the even/odd 
+ * the fixup loop should be unrolled twice to handle the even/odd
  * cases, and then a final step to handle odd cases [e.g. newused == odd]
  *
  * This will not only save ~8*256 = 2KB of stack but lower the number of
@@ -71,10 +71,10 @@ fast_s_mp_sqr (mp_int * a, mp_int * b)
    * the multiplication by two is done afterwards in the N loop.
    */
   for (ix = 0; ix < pa; ix++) {
-    /* compute the outer product 
+    /* compute the outer product
      *
-     * Note that every outer product is computed 
-     * for a particular column only once which means that 
+     * Note that every outer product is computed
+     * for a particular column only once which means that
      * there is no need todo a double precision addition
      */
     W2[ix + ix] = ((mp_word) a->dp[ix]) * ((mp_word) a->dp[ix]);
@@ -95,7 +95,7 @@ fast_s_mp_sqr (mp_int * a, mp_int * b)
 
       /* inner products */
       for (iy = ix + 1; iy < pa; iy++) {
-	*_W++ += ((mp_word) tmpx) * ((mp_word) * tmpy++);
+          *_W++ += ((mp_word) tmpx) * ((mp_word) * tmpy++);
       }
     }
   }

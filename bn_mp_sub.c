@@ -20,39 +20,34 @@ mp_sub (mp_int * a, mp_int * b, mp_int * c)
 {
   int     sa, sb, res;
 
-
   sa = a->sign;
   sb = b->sign;
 
-  /* handle four cases */
-  if (sa == MP_ZPOS && sb == MP_ZPOS) {
-    /* both positive, a - b, but if b>a then we do -(b - a) */
-    if (mp_cmp_mag (a, b) == MP_LT) {
-      /* b>a */
-      res = s_mp_sub (b, a, c);
-      c->sign = MP_NEG;
-    } else {
-      res = s_mp_sub (a, b, c);
-      c->sign = MP_ZPOS;
-    }
-  } else if (sa == MP_ZPOS && sb == MP_NEG) {
-    /* a - -b == a + b  */
+  if (sa != sb) {
+    /* subtract a negative from a positive, OR */
+    /* subtract a positive from a negative. */
+    /* In either case, ADD their magnitudes, */
+    /* and use the sign of the first number. */
+    c->sign = sa;
     res = s_mp_add (a, b, c);
-    c->sign = MP_ZPOS;
-  } else if (sa == MP_NEG && sb == MP_ZPOS) {
-    /* -a - b == -(a + b) */
-    res = s_mp_add (a, b, c);
-    c->sign = MP_NEG;
   } else {
-    /* -a - -b == b - a, but if a>b == -(a - b) */
-    if (mp_cmp_mag (a, b) == MP_GT) {
+    /* subtract a positive from a positive, OR */
+    /* subtract a negative from a negative. */
+    /* First, take the difference between their */
+    /* magnitudes, then... */
+    if (mp_cmp_mag (a, b) != MP_LT) {
+      /* Copy the sign from the first */
+      c->sign = sa;
+      /* The first has a larger or equal magnitude */
       res = s_mp_sub (a, b, c);
-      c->sign = MP_NEG;
     } else {
+      /* The result has the *opposite* sign from */
+      /* the first number. */
+      c->sign = (sa == MP_ZPOS) ? MP_NEG : MP_ZPOS;
+      /* The second has a larger magnitude */
       res = s_mp_sub (b, a, c);
-      c->sign = MP_ZPOS;
     }
   }
-
   return res;
 }
+

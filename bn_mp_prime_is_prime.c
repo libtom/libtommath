@@ -31,8 +31,16 @@ mp_prime_is_prime (mp_int * a, int t, int *result)
   *result = 0;
 
   /* valid value of t? */
-  if (t < 1 || t > 256) {
+  if (t < 1 || t > PRIME_SIZE) {
     return MP_VAL;
+  }
+
+  /* is the input equal to one of the primes in the table? */
+  for (ix = 0; ix < PRIME_SIZE; ix++) {
+      if (mp_cmp_d(a, __prime_tab[ix]) == MP_EQ) {
+         *result = 1;
+         return MP_OKAY;
+      }
   }
 
   /* first perform trial division */

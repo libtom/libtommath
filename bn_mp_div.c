@@ -75,7 +75,7 @@ mp_div (mp_int * a, mp_int * b, mp_int * c, mp_int * d)
 
   /* normalize both x and y, ensure that y >= b/2, [b == 2^DIGIT_BIT] */
   norm = mp_count_bits(&y) % DIGIT_BIT;
-  if (norm < (DIGIT_BIT-1)) {
+  if (norm < (int)(DIGIT_BIT-1)) {
      norm = (DIGIT_BIT-1) - norm;
      if ((res = mp_mul_2d (&x, norm, &x)) != MP_OKAY) {
        goto __Y;
@@ -86,13 +86,13 @@ mp_div (mp_int * a, mp_int * b, mp_int * c, mp_int * d)
   } else {
      norm = 0;
   }
-     
+
   /* note hac does 0 based, so if used==5 then its 0,1,2,3,4, e.g. use 4 */
   n = x.used - 1;
   t = y.used - 1;
 
   /* step 2. while (x >= y*b^n-t) do { q[n-t] += 1; x -= y*b^{n-t} } */
-  if ((res = mp_lshd (&y, n - t)) != MP_OKAY) {	/* y = y*b^{n-t} */
+  if ((res = mp_lshd (&y, n - t)) != MP_OKAY) { /* y = y*b^{n-t} */
     goto __Y;
   }
 
@@ -113,14 +113,14 @@ mp_div (mp_int * a, mp_int * b, mp_int * c, mp_int * d)
 
     /* step 3.1 if xi == yt then set q{i-t-1} to b-1, otherwise set q{i-t-1} to (xi*b + x{i-1})/yt */
     if (x.dp[i] == y.dp[t]) {
-      q.dp[i - t - 1] = ((1UL << DIGIT_BIT) - 1UL);
+      q.dp[i - t - 1] = ((((mp_digit)1) << DIGIT_BIT) - 1);
     } else {
       mp_word tmp;
       tmp = ((mp_word) x.dp[i]) << ((mp_word) DIGIT_BIT);
       tmp |= ((mp_word) x.dp[i - 1]);
       tmp /= ((mp_word) y.dp[t]);
       if (tmp > (mp_word) MP_MASK)
-	tmp = MP_MASK;
+        tmp = MP_MASK;
       q.dp[i - t - 1] = (mp_digit) (tmp & (mp_word) (MP_MASK));
     }
 
@@ -135,7 +135,7 @@ mp_div (mp_int * a, mp_int * b, mp_int * c, mp_int * d)
       t1.dp[1] = y.dp[t];
       t1.used = 2;
       if ((res = mp_mul_d (&t1, q.dp[i - t - 1], &t1)) != MP_OKAY) {
-	goto __Y;
+        goto __Y;
       }
 
       /* find right hand */
@@ -143,7 +143,7 @@ mp_div (mp_int * a, mp_int * b, mp_int * c, mp_int * d)
       t2.dp[1] = (i - 1 < 0) ? 0 : x.dp[i - 1];
       t2.dp[2] = x.dp[i];
       t2.used = 3;
-    } while (mp_cmp (&t1, &t2) == MP_GT);
+    } while (mp_cmp_mag(&t1, &t2) == MP_GT);
 
     /* step 3.3 x = x - q{i-t-1} * y * b^{i-t-1} */
     if ((res = mp_mul_d (&y, q.dp[i - t - 1], &t1)) != MP_OKAY) {
@@ -161,19 +161,19 @@ mp_div (mp_int * a, mp_int * b, mp_int * c, mp_int * d)
     /* step 3.4 if x < 0 then { x = x + y*b^{i-t-1}; q{i-t-1} -= 1; } */
     if (x.sign == MP_NEG) {
       if ((res = mp_copy (&y, &t1)) != MP_OKAY) {
-	goto __Y;
+        goto __Y;
       }
       if ((res = mp_lshd (&t1, i - t - 1)) != MP_OKAY) {
-	goto __Y;
+        goto __Y;
       }
       if ((res = mp_add (&x, &t1, &x)) != MP_OKAY) {
-	goto __Y;
+        goto __Y;
       }
 
       q.dp[i - t - 1] = (q.dp[i - t - 1] - 1UL) & MP_MASK;
     }
   }
-  
+
   /* now q is the quotient and x is the remainder [which we have to normalize] */
   /* get sign before writing to c */
   x.sign = a->sign;

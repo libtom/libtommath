@@ -19,7 +19,7 @@
  * Uses a left-to-right k-ary sliding window to compute the modular exponentiation.
  * The value of k changes based on the size of the exponent.
  *
- * Uses Montgomery or Diminished Radix reduction [whichever appropriate] 
+ * Uses Montgomery or Diminished Radix reduction [whichever appropriate]
  */
 int
 mp_exptmod_fast (mp_int * G, mp_int * X, mp_int * P, mp_int * Y, int redmode)
@@ -28,7 +28,7 @@ mp_exptmod_fast (mp_int * G, mp_int * X, mp_int * P, mp_int * Y, int redmode)
   mp_digit buf, mp;
   int     err, bitbuf, bitcpy, bitcnt, mode, digidx, x, y, winsize;
   int     (*redux)(mp_int*,mp_int*,mp_digit);
-  
+
   /* find window size */
   x = mp_count_bits (X);
   if (x <= 7) {
@@ -47,22 +47,37 @@ mp_exptmod_fast (mp_int * G, mp_int * X, mp_int * P, mp_int * Y, int redmode)
     winsize = 8;
   }
 
+#ifdef MP_LOW_MEM
+  if (winsize > 5) {
+     winsize = 5;
+  }
+#endif
+
+
   /* init G array */
   for (x = 0; x < (1 << winsize); x++) {
     if ((err = mp_init (&M[x])) != MP_OKAY) {
       for (y = 0; y < x; y++) {
-	mp_clear (&M[y]);
+        mp_clear (&M[y]);
       }
       return err;
     }
   }
-  
+
   if (redmode == 0) {
      /* now setup montgomery  */
      if ((err = mp_montgomery_setup (P, &mp)) != MP_OKAY) {
         goto __M;
      }
-     redux = mp_montgomery_reduce;
+     
+     /* automatically pick the comba one if available (saves quite a few calls/ifs) */
+     if ( ((P->used * 2 + 1) < MP_WARRAY) &&
+          P->used < (1 << ((CHAR_BIT * sizeof (mp_word)) - (2 * DIGIT_BIT)))) {
+        redux = fast_mp_montgomery_reduce;
+     } else {
+        /* use slower baselien method */
+        redux = mp_montgomery_reduce;
+     }
   } else {
      /* setup DR reduction */
      mp_dr_setup(P, &mp);
@@ -97,7 +112,7 @@ mp_exptmod_fast (mp_int * G, mp_int * X, mp_int * P, mp_int * Y, int redmode)
         goto __RES;
      }
   }
-  
+
   /* compute the value at M[1<<(winsize-1)] by squaring M[1] (winsize-1) times */
   if ((err = mp_copy (&M[1], &M[1 << (winsize - 1)])) != MP_OKAY) {
     goto __RES;
@@ -123,42 +138,42 @@ mp_exptmod_fast (mp_int * G, mp_int * X, mp_int * P, mp_int * Y, int redmode)
   }
 
   /* set initial mode and bit cnt */
-  mode = 0;
-  bitcnt = 0;
-  buf = 0;
+  mode   = 0;
+  bitcnt = 1;
+  buf    = 0;
   digidx = X->used - 1;
   bitcpy = bitbuf = 0;
 
-  bitcnt = 1;
   for (;;) {
     /* grab next digit as required */
     if (--bitcnt == 0) {
       if (digidx == -1) {
-	break;
+        break;
       }
       buf = X->dp[digidx--];
       bitcnt = (int) DIGIT_BIT;
     }
 
     /* grab the next msb from the exponent */
-    y = (buf >> (DIGIT_BIT - 1)) & 1;
-    buf <<= 1;
+    y = (mp_digit)(buf >> (DIGIT_BIT - 1)) & 1;
+    buf <<= (mp_digit)1;
 
     /* if the bit is zero and mode == 0 then we ignore it
      * These represent the leading zero bits before the first 1 bit
      * in the exponent.  Technically this opt is not required but it
      * does lower the # of trivial squaring/reductions used
      */
-    if (mode == 0 && y == 0)
+    if (mode == 0 && y == 0) {
       continue;
+    }
 
     /* if the bit is zero and mode == 1 then we square */
     if (mode == 1 && y == 0) {
       if ((err = mp_sqr (&res, &res)) != MP_OKAY) {
-	goto __RES;
+        goto __RES;
       }
       if ((err = redux (&res, P, mp)) != MP_OKAY) {
-	goto __RES;
+        goto __RES;
       }
       continue;
     }
@@ -171,20 +186,20 @@ mp_exptmod_fast (mp_int * G, mp_int * X, mp_int * P, mp_int * Y, int redmode)
       /* ok window is filled so square as required and multiply  */
       /* square first */
       for (x = 0; x < winsize; x++) {
-	if ((err = mp_sqr (&res, &res)) != MP_OKAY) {
-	  goto __RES;
-	}
-	if ((err = redux (&res, P, mp)) != MP_OKAY) {
-	  goto __RES;
-	}
+        if ((err = mp_sqr (&res, &res)) != MP_OKAY) {
+          goto __RES;
+        }
+        if ((err = redux (&res, P, mp)) != MP_OKAY) {
+          goto __RES;
+        }
       }
 
       /* then multiply */
       if ((err = mp_mul (&res, &M[bitbuf], &res)) != MP_OKAY) {
-	goto __RES;
+        goto __RES;
       }
       if ((err = redux (&res, P, mp)) != MP_OKAY) {
-	goto __RES;
+        goto __RES;
       }
 
       /* empty window and reset */
@@ -198,21 +213,21 @@ mp_exptmod_fast (mp_int * G, mp_int * X, mp_int * P, mp_int * Y, int redmode)
     /* square then multiply if the bit is set */
     for (x = 0; x < bitcpy; x++) {
       if ((err = mp_sqr (&res, &res)) != MP_OKAY) {
-	goto __RES;
+        goto __RES;
       }
       if ((err = redux (&res, P, mp)) != MP_OKAY) {
-	goto __RES;
+        goto __RES;
       }
 
       bitbuf <<= 1;
       if ((bitbuf & (1 << winsize)) != 0) {
-	/* then multiply */
-	if ((err = mp_mul (&res, &M[1], &res)) != MP_OKAY) {
-	  goto __RES;
-	}
-	if ((err = redux (&res, P, mp)) != MP_OKAY) {
-	  goto __RES;
-	}
+        /* then multiply */
+        if ((err = mp_mul (&res, &M[1], &res)) != MP_OKAY) {
+          goto __RES;
+        }
+        if ((err = redux (&res, P, mp)) != MP_OKAY) {
+          goto __RES;
+        }
       }
     }
   }
@@ -222,7 +237,7 @@ mp_exptmod_fast (mp_int * G, mp_int * X, mp_int * P, mp_int * Y, int redmode)
      if ((err = mp_montgomery_reduce (&res, P, mp)) != MP_OKAY) {
        goto __RES;
      }
-  }     
+  }
 
   mp_exch (&res, Y);
   err = MP_OKAY;

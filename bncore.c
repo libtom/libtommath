@@ -14,7 +14,15 @@
  */
 #include <tommath.h>
 
-/* configured for a AMD Duron Morgan core with etc/tune.c */
-int     KARATSUBA_MUL_CUTOFF = 73,	/* Min. number of digits before Karatsuba multiplication is used. */
-        KARATSUBA_SQR_CUTOFF = 121,	/* Min. number of digits before Karatsuba squaring is used. */
-        MONTGOMERY_EXPT_CUTOFF = 128;	/* max. number of digits that montgomery reductions will help for */
+/* Known optimal configurations
+
+ CPU                    /Compiler     /MUL CUTOFF/SQR CUTOFF
+-------------------------------------------------------------
+ Intel P4               /GCC v3.2     /        81/       110
+ AMD Athlon XP          /GCC v3.2     /       109/       127
+
+*/
+
+/* configured for a AMD XP Thoroughbred core with etc/tune.c */
+int     KARATSUBA_MUL_CUTOFF = 109,      /* Min. number of digits before Karatsuba multiplication is used. */
+        KARATSUBA_SQR_CUTOFF = 127;      /* Min. number of digits before Karatsuba squaring is used. */

@@ -22,7 +22,8 @@ bn_mp_count_bits.obj bn_mp_read_unsigned_bin.obj bn_mp_read_signed_bin.obj bn_mp
 bn_mp_to_signed_bin.obj bn_mp_unsigned_bin_size.obj bn_mp_signed_bin_size.obj bn_radix.obj \
 bn_mp_xor.obj bn_mp_and.obj bn_mp_or.obj bn_mp_rand.obj bn_mp_montgomery_calc_normalization.obj \
 bn_mp_prime_is_divisible.obj bn_prime_tab.obj bn_mp_prime_fermat.obj bn_mp_prime_miller_rabin.obj \
-bn_mp_prime_is_prime.obj bn_mp_prime_next_prime.obj bn_mp_dr_reduce.obj
+bn_mp_prime_is_prime.obj bn_mp_prime_next_prime.obj bn_mp_dr_reduce.obj bn_mp_multi.obj \
+bn_mp_dr_is_modulus.obj bn_mp_dr_setup.obj
 
 
 library: $(OBJECTS)

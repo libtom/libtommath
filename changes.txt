@@ -1,3 +1,37 @@
+May 17th, 2003
+v0.17  -- Benjamin Goldberg submitted optimized mp_add and mp_sub routines.  A new gen.pl as well
+          as several smaller suggestions.  Thanks!
+       -- removed call to mp_cmp in inner loop of mp_div and put mp_cmp_mag in its place :-)
+       -- Fixed bug in mp_exptmod that would cause it to fail for odd moduli when DIGIT_BIT != 28
+       -- mp_exptmod now also returns errors if the modulus is negative and will handle negative exponents
+       -- mp_prime_is_prime will now return true if the input is one of the primes in the prime table
+       -- Damian M Gryski (dgryski@uwaterloo.ca) found a index out of bounds error in the 
+          mp_fast_s_mp_mul_high_digs function which didn't come up before.  (fixed) 
+       -- Refactored the DR reduction code so there is only one function per file.
+       -- Fixed bug in the mp_mul() which would erroneously avoid the faster multiplier [comba] when it was
+          allowed.  The bug would not cause the incorrect value to be produced just less efficient (fixed)
+       -- Fixed similar bug in the Montgomery reduction code.
+       -- Added tons of (mp_digit) casts so the 7/15/28/31 bit digit code will work flawlessly out of the box. 
+          Also added limited support for 64-bit machines with a 60-bit digit.  Both thanks to Tom Wu (tom@arcot.com)
+       -- Added new comments here and there, cleaned up some code [style stuff]
+       -- Fixed a lingering typo in mp_exptmod* that would set bitcnt to zero then one.  Very silly stuff :-)
+       -- Fixed up mp_exptmod_fast so it would set "redux" to the comba Montgomery reduction if allowed.  This
+          saves quite a few calls and if statements.
+       -- Added etc/mont.c a test of the Montgomery reduction [assuming all else works :-| ]
+       -- Fixed up etc/tune.c to use a wider test range [more appropriate] also added a x86 based addition which
+          uses RDTSC for high precision timing.  
+       -- Updated demo/demo.c to remove MPI stuff [won't work anyways], made the tests run for 2 seconds each so its 
+          not so insanely slow.  Also made the output space delimited [and fixed up various errors]
+       -- Added logs directory, logs/graph.dem which will use gnuplot to make a series of PNG files 
+          that go with the pre-made index.html.  You have to build [via make timing] and run ltmtest first in the 
+          root of the package.
+       -- Fixed a bug in mp_sub and mp_add where "-a - -a" or "-a + a" would produce -0 as the result [obviously invalid].  
+       -- Fixed a bug in mp_rshd.  If the count == a.used it should zero/return [instead of shifting]
+       -- Fixed a "off-by-one" bug in mp_mul2d.  The initial size check on alloc would be off by one if the residue
+          shifting caused a carry.  
+       -- Fixed a bug where s_mp_mul_digs() would not call the Comba based routine if allowed.  This made Barrett reduction
+          slower than it had to be.
+          
 Mar 29th, 2003
 v0.16  -- Sped up mp_div by making normalization one shift call
        -- Sped up mp_mul_2d/mp_div_2d by aliasing pointers :-)

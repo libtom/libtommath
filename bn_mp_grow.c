@@ -18,12 +18,12 @@
 int
 mp_grow (mp_int * a, int size)
 {
-  int     i, n;
+  int     i;
 
   /* if the alloc size is smaller alloc more ram */
   if (a->alloc < size) {
     /* ensure there are always at least MP_PREC digits extra on top */
-    size += (MP_PREC * 2) - (size & (MP_PREC - 1));	
+    size += (MP_PREC * 2) - (size & (MP_PREC - 1));     
 
     a->dp = OPT_CAST realloc (a->dp, sizeof (mp_digit) * size);
     if (a->dp == NULL) {
@@ -31,9 +31,9 @@ mp_grow (mp_int * a, int size)
     }
 
     /* zero excess digits */
-    n = a->alloc;
+    i        = a->alloc;
     a->alloc = size;
-    for (i = n; i < a->alloc; i++) {
+    for (; i < a->alloc; i++) {
       a->dp[i] = 0;
     }
   }

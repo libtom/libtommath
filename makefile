@@ -1,6 +1,6 @@
 CFLAGS  +=  -I./ -Wall -W -Wshadow -O3 -fomit-frame-pointer -funroll-loops
 
-VERSION=0.16
+VERSION=0.17
 
 default: libtommath.a
 
@@ -32,7 +32,8 @@ bn_mp_count_bits.o bn_mp_read_unsigned_bin.o bn_mp_read_signed_bin.o bn_mp_to_un
 bn_mp_to_signed_bin.o bn_mp_unsigned_bin_size.o bn_mp_signed_bin_size.o bn_radix.o \
 bn_mp_xor.o bn_mp_and.o bn_mp_or.o bn_mp_rand.o bn_mp_montgomery_calc_normalization.o \
 bn_mp_prime_is_divisible.o bn_prime_tab.o bn_mp_prime_fermat.o bn_mp_prime_miller_rabin.o \
-bn_mp_prime_is_prime.o bn_mp_prime_next_prime.o bn_mp_dr_reduce.o 
+bn_mp_prime_is_prime.o bn_mp_prime_next_prime.o bn_mp_dr_reduce.o bn_mp_multi.o \
+bn_mp_dr_is_modulus.o bn_mp_dr_setup.o
 
 libtommath.a:  $(OBJECTS)
 	$(AR) $(ARFLAGS) libtommath.a $(OBJECTS)
@@ -52,21 +53,46 @@ test: libtommath.a demo/demo.o
         
 timing: libtommath.a
 	$(CC) $(CFLAGS) -DTIMER demo/demo.c libtommath.a -o ltmtest -s
-	$(CC) $(CFLAGS) -DTIMER -DU_MPI -I./mtest/ demo/demo.c mtest/mpi.c -o mpitest -s
 
-docdvi: bn.tex
-	latex bn
+# makes the LTM book DVI file, requires tetex, perl and makeindex [part of tetex I think]
+docdvi: tommath.src
+	cd pics ; make 
+	echo "hello" > tommath.ind
+	perl booker.pl
+	latex tommath > /dev/null
+	makeindex tommath
+	latex tommath > /dev/null
+		
+# makes the LTM book PS/PDF file, requires tetex, cleans up the LaTeX temp files
+docs:	
+	cd pics ; make pdfes
+	echo "hello" > tommath.ind
+	perl booker.pl
+	latex tommath > /dev/null
+	makeindex tommath
+	latex tommath > /dev/null
+	dvips -tB5 -D600 tommath
+	echo "hello" > tommath.ind
+	perl booker.pl PDF
+	latex tommath > /dev/null
+	makeindex tommath
+	latex tommath > /dev/null
+	pdflatex tommath
+	rm -f tommath.log tommath.aux tommath.dvi tommath.idx tommath.toc tommath.lof tommath.ind tommath.ilg
 	
-docs:	docdvi
+#the old manual being phased out
+manual:	
+	latex bn
 	pdflatex bn
-	rm -f bn.log bn.aux bn.dvi
+	rm -f bn.aux bn.dvi bn.log 	
 	
 clean:
 	rm -f *.pdf *.o *.a *.obj *.lib *.exe etclib/*.o demo/demo.o test ltmtest mpitest mtest/mtest mtest/mtest.exe \
-        bn.log bn.aux bn.dvi *.log *.s mpi.c 
+        tommath.idx tommath.toc tommath.log tommath.aux tommath.dvi tommath.lof tommath.ind tommath.ilg *.ps *.pdf *.log *.s mpi.c 
 	cd etc ; make clean
+	cd pics ; make clean
 
-zipup: clean docs
+zipup: clean manual
 	perl gen.pl ; mv mpi.c pre_gen/ ; \
 	cd .. ; rm -rf ltm* libtommath-$(VERSION) ; mkdir libtommath-$(VERSION) ; \
 	cp -R ./libtommath/* ./libtommath-$(VERSION)/ ; tar -c libtommath-$(VERSION)/* > ltm-$(VERSION).tar ; \

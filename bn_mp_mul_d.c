@@ -20,6 +20,7 @@ mp_mul_d (mp_int * a, mp_digit b, mp_int * c)
 {
   int     res, pa, olduse;
 
+  /* make sure c is big enough to hold a*b */
   pa = a->used;
   if (c->alloc < pa + 1) {
     if ((res = mp_grow (c, pa + 1)) != MP_OKAY) {
@@ -27,7 +28,10 @@ mp_mul_d (mp_int * a, mp_digit b, mp_int * c)
     }
   }
 
+  /* get the original destinations used count */
   olduse = c->used;
+
+  /* set the new temporary used count */
   c->used = pa + 1;
 
   {
@@ -35,21 +39,31 @@ mp_mul_d (mp_int * a, mp_digit b, mp_int * c)
     register mp_word r;
     register int ix;
 
-    tmpc = c->dp + c->used;
-    for (ix = c->used; ix < olduse; ix++) {
-      *tmpc++ = 0;
-    }
-
+    /* alias for a->dp [source] */
     tmpa = a->dp;
+
+    /* alias for c->dp [dest] */
     tmpc = c->dp;
 
+    /* zero carry */
     u = 0;
     for (ix = 0; ix < pa; ix++) {
+      /* compute product and carry sum for this term */
       r = ((mp_word) u) + ((mp_word) * tmpa++) * ((mp_word) b);
+
+      /* mask off higher bits to get a single digit */
       *tmpc++ = (mp_digit) (r & ((mp_word) MP_MASK));
+
+      /* send carry into next iteration */
       u = (mp_digit) (r >> ((mp_word) DIGIT_BIT));
     }
-    *tmpc = u;
+    /* store final carry [if any] */
+    *tmpc++ = u;
+
+    /* now zero digits above the top */
+    for (; pa < olduse; pa++) {
+       *tmpc++ = 0;
+    }
   }
 
   mp_clamp (c);

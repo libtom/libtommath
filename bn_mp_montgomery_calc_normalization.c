@@ -15,10 +15,10 @@
 #include <tommath.h>
 
 /* calculates a = B^n mod b for Montgomery reduction
- * Where B is the base [e.g. 2^DIGIT_BIT].  
+ * Where B is the base [e.g. 2^DIGIT_BIT].
  * B^n mod b is computed by first computing
  * A = B^(n-1) which doesn't require a reduction but a simple OR.
- * then C = A * B = B^n is computed by performing upto DIGIT_BIT 
+ * then C = A * B = B^n is computed by performing upto DIGIT_BIT
  * shifts with subtractions when the result is greater than b.
  *
  * The method is slightly modified to shift B unconditionally upto just under
@@ -38,13 +38,13 @@ mp_montgomery_calc_normalization (mp_int * a, mp_int * b)
   }
 
   /* now compute C = A * B mod b */
-  for (x = bits - 1; x < DIGIT_BIT; x++) {
+  for (x = bits - 1; x < (int)DIGIT_BIT; x++) {
     if ((res = mp_mul_2 (a, a)) != MP_OKAY) {
       return res;
     }
     if (mp_cmp_mag (a, b) != MP_LT) {
       if ((res = s_mp_sub (a, b, a)) != MP_OKAY) {
-	return res;
+        return res;
       }
     }
   }

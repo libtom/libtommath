@@ -51,7 +51,7 @@ mp_div_2d (mp_int * a, int b, mp_int * c, mp_int * d)
   }
 
   /* shift by as many digits in the bit count */
-  if (b >= DIGIT_BIT) {
+  if (b >= (int)DIGIT_BIT) {
     mp_rshd (c, b / DIGIT_BIT);
   }
 
@@ -59,13 +59,13 @@ mp_div_2d (mp_int * a, int b, mp_int * c, mp_int * d)
   D = (mp_digit) (b % DIGIT_BIT);
   if (D != 0) {
     register mp_digit *tmpc, mask;
-    
+
     /* mask */
-    mask = (1U << D) - 1U;
-    
+    mask = (((mp_digit)1) << D) - 1;
+
     /* alias */
     tmpc = c->dp + (c->used - 1);
-    
+
     /* carry */
     r = 0;
     for (x = c->used - 1; x >= 0; x--) {

@@ -27,41 +27,18 @@ fast_mp_invmod (mp_int * a, mp_int * b, mp_int * c)
   int     res, neg;
 
   /* init all our temps */
-  if ((res = mp_init (&x)) != MP_OKAY) {
-    goto __ERR;
-  }
-
-  if ((res = mp_init (&y)) != MP_OKAY) {
-    goto __X;
-  }
-
-  if ((res = mp_init (&u)) != MP_OKAY) {
-    goto __Y;
-  }
-
-  if ((res = mp_init (&v)) != MP_OKAY) {
-    goto __U;
-  }
-
-  if ((res = mp_init (&B)) != MP_OKAY) {
-    goto __V;
-  }
-
-  if ((res = mp_init (&D)) != MP_OKAY) {
-    goto __B;
+  if ((res = mp_init_multi(&x, &y, &u, &v, &B, &D, NULL)) != MP_OKAY) {
+     return res;
   }
 
   /* x == modulus, y == value to invert */
   if ((res = mp_copy (b, &x)) != MP_OKAY) {
-    goto __D;
-  }
-  if ((res = mp_copy (a, &y)) != MP_OKAY) {
-    goto __D;
+    goto __ERR;
   }
 
-  /* we need |y| */
-  if ((res = mp_abs (&y, &y)) != MP_OKAY) {
-    goto __D;
+  /* we need y = |a| */
+  if ((res = mp_abs (a, &y)) != MP_OKAY) {
+    goto __ERR;
   }
 
   /* 2. [modified] if x,y are both even then return an error! 
@@ -70,15 +47,15 @@ fast_mp_invmod (mp_int * a, mp_int * b, mp_int * c)
    */
   if (mp_iseven (&x) == 1 && mp_iseven (&y) == 1) {
     res = MP_VAL;
-    goto __D;
+    goto __ERR;
   }
 
   /* 3. u=x, v=y, A=1, B=0, C=0,D=1 */
   if ((res = mp_copy (&x, &u)) != MP_OKAY) {
-    goto __D;
+    goto __ERR;
   }
   if ((res = mp_copy (&y, &v)) != MP_OKAY) {
-    goto __D;
+    goto __ERR;
   }
   mp_set (&D, 1);
 
@@ -87,17 +64,17 @@ top:
   while (mp_iseven (&u) == 1) {
     /* 4.1 u = u/2 */
     if ((res = mp_div_2 (&u, &u)) != MP_OKAY) {
-      goto __D;
+      goto __ERR;
     }
     /* 4.2 if A or B is odd then */
     if (mp_iseven (&B) == 0) {
       if ((res = mp_sub (&B, &x, &B)) != MP_OKAY) {
-	goto __D;
+        goto __ERR;
       }
     }
     /* B = B/2 */
     if ((res = mp_div_2 (&B, &B)) != MP_OKAY) {
-      goto __D;
+      goto __ERR;
     }
   }
 
@@ -105,18 +82,18 @@ top:
   while (mp_iseven (&v) == 1) {
     /* 5.1 v = v/2 */
     if ((res = mp_div_2 (&v, &v)) != MP_OKAY) {
-      goto __D;
+      goto __ERR;
     }
     /* 5.2 if C,D are even then */
     if (mp_iseven (&D) == 0) {
       /* D = (D-x)/2 */
       if ((res = mp_sub (&D, &x, &D)) != MP_OKAY) {
-	goto __D;
+        goto __ERR;
       }
     }
     /* D = D/2 */
     if ((res = mp_div_2 (&D, &D)) != MP_OKAY) {
-      goto __D;
+      goto __ERR;
     }
   }
 
@@ -124,20 +101,20 @@ top:
   if (mp_cmp (&u, &v) != MP_LT) {
     /* u = u - v, B = B - D */
     if ((res = mp_sub (&u, &v, &u)) != MP_OKAY) {
-      goto __D;
+      goto __ERR;
     }
 
     if ((res = mp_sub (&B, &D, &B)) != MP_OKAY) {
-      goto __D;
+      goto __ERR;
     }
   } else {
     /* v - v - u, D = D - B */
     if ((res = mp_sub (&v, &u, &v)) != MP_OKAY) {
-      goto __D;
+      goto __ERR;
     }
 
     if ((res = mp_sub (&D, &B, &D)) != MP_OKAY) {
-      goto __D;
+      goto __ERR;
     }
   }
 
@@ -151,26 +128,20 @@ top:
   /* if v != 1 then there is no inverse */
   if (mp_cmp_d (&v, 1) != MP_EQ) {
     res = MP_VAL;
-    goto __D;
+    goto __ERR;
   }
 
   /* b is now the inverse */
   neg = a->sign;
   while (D.sign == MP_NEG) {
     if ((res = mp_add (&D, b, &D)) != MP_OKAY) {
-      goto __D;
+      goto __ERR;
     }
   }
   mp_exch (&D, c);
   c->sign = neg;
   res = MP_OKAY;
 
-__D:mp_clear (&D);
-__B:mp_clear (&B);
-__V:mp_clear (&v);
-__U:mp_clear (&u);
-__Y:mp_clear (&y);
-__X:mp_clear (&x);
-__ERR:
+__ERR:mp_clear_multi (&x, &y, &u, &v, &B, &D, NULL);
   return res;
 }

@@ -20,10 +20,9 @@ mp_mul_2 (mp_int * a, mp_int * b)
 {
   int     x, res, oldused;
 
-  /* Optimization: should copy and shift at the same time */
-
-  if (b->alloc < a->used) {
-    if ((res = mp_grow (b, a->used)) != MP_OKAY) {
+  /* grow to accomodate result */
+  if (b->alloc < a->used + 1) {
+    if ((res = mp_grow (b, a->used + 1)) != MP_OKAY) {
       return res;
     }
   }
@@ -31,7 +30,6 @@ mp_mul_2 (mp_int * a, mp_int * b)
   oldused = b->used;
   b->used = a->used;
 
-  /* shift any bit count < DIGIT_BIT */
   {
     register mp_digit r, rr, *tmpa, *tmpb;
 
@@ -43,37 +41,32 @@ mp_mul_2 (mp_int * a, mp_int * b)
 
     /* carry */
     r = 0;
-    for (x = 0; x < b->used; x++) {
+    for (x = 0; x < a->used; x++) {
     
-      /* get what will be the *next* carry bit from the MSB of the current digit */
-      rr = *tmpa >> (DIGIT_BIT - 1);
+      /* get what will be the *next* carry bit from the 
+       * MSB of the current digit 
+       */
+      rr = *tmpa >> ((mp_digit)(DIGIT_BIT - 1));
       
       /* now shift up this digit, add in the carry [from the previous] */
-      *tmpb++ = ((*tmpa++ << 1) | r) & MP_MASK;
+      *tmpb++ = ((*tmpa++ << ((mp_digit)1)) | r) & MP_MASK;
       
-      /* copy the carry that would be from the source digit into the next iteration */
+      /* copy the carry that would be from the source 
+       * digit into the next iteration 
+       */
       r = rr;
     }
 
     /* new leading digit? */
     if (r != 0) {
-      /* do we have to grow to accomodate the new digit? */
-      if (b->alloc == b->used) {
-	if ((res = mp_grow (b, b->used + 1)) != MP_OKAY) {
-	  return res;
-	}
-
-	/* after the grow *tmpb is no longer valid so we have to reset it! 
-	 * (this bug took me about 17 minutes to find...!)
-	 */
-	tmpb = b->dp + b->used;
-      }
       /* add a MSB which is always 1 at this point */
       *tmpb = 1;
       ++b->used;
     }
 
-    /* now zero any excess digits on the destination that we didn't write to */
+    /* now zero any excess digits on the destination 
+     * that we didn't write to 
+     */
     tmpb = b->dp + b->used;
     for (x = b->used; x < oldused; x++) {
       *tmpb++ = 0;

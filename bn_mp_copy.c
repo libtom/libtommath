@@ -31,13 +31,10 @@ mp_copy (mp_int * a, mp_int * b)
   }
 
   /* zero b and copy the parameters over */
-  b->used = a->used;
-  b->sign = a->sign;
-
   {
     register mp_digit *tmpa, *tmpb;
 
-    /* point aliases */
+    /* pointer aliases */
     tmpa = a->dp;
     tmpb = b->dp;
 
@@ -47,9 +44,11 @@ mp_copy (mp_int * a, mp_int * b)
     }
 
     /* clear high digits */
-    for (; n < b->alloc; n++) {
+    for (; n < b->used; n++) {
       *tmpb++ = 0;
     }
   }
+  b->used = a->used;
+  b->sign = a->sign;
   return MP_OKAY;
 }

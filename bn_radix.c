@@ -135,3 +135,80 @@ mp_radix_size (mp_int * a, int radix)
   mp_clear (&t);
   return digs + 1;
 }
+
+/* read a bigint from a file stream in ASCII */
+int mp_fread(mp_int *a, int radix, FILE *stream)
+{
+   int err, ch, neg, y;
+   
+   /* clear a */
+   mp_zero(a);
+   
+   /* if first digit is - then set negative */
+   ch = fgetc(stream);
+   if (ch == '-') {
+      neg = MP_NEG;
+      ch = fgetc(stream);
+   } else {
+      neg = MP_ZPOS;
+   }
+   
+   for (;;) {
+      /* find y in the radix map */
+      for (y = 0; y < radix; y++) {
+          if (s_rmap[y] == ch) {
+             break;
+          }
+      }
+      if (y == radix) {
+         break;
+      }
+      
+      /* shift up and add */
+      if ((err = mp_mul_d(a, radix, a)) != MP_OKAY) {
+         return err;
+      }
+      if ((err = mp_add_d(a, y, a)) != MP_OKAY) {
+         return err;
+      }
+      
+      ch = fgetc(stream);
+   }
+   if (mp_cmp_d(a, 0) != MP_EQ) {
+      a->sign = neg;
+   }
+   
+   return MP_OKAY;
+}
+
+int mp_fwrite(mp_int *a, int radix, FILE *stream)
+{
+   char *buf;
+   int err, len, x;
+   
+   len = mp_radix_size(a, radix);
+   if (len == 0) {
+      return MP_VAL;
+   }
+   
+   buf = malloc(len);
+   if (buf == NULL) {
+      return MP_MEM;
+   }
+   
+   if ((err = mp_toradix(a, buf, radix)) != MP_OKAY) {
+      free(buf);
+      return err;
+   }
+   
+   for (x = 0; x < len; x++) {
+       if (fputc(buf[x], stream) == EOF) {
+          free(buf);
+          return MP_VAL;
+       }
+   }
+   
+   free(buf);
+   return MP_OKAY;
+}
+

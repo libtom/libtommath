@@ -14,7 +14,7 @@
  */
 #include <tommath.h>
 
-/* computes the jacobi c = (a | n) (or Legendre if b is prime)
+/* computes the jacobi c = (a | n) (or Legendre if n is prime)
  * HAC pp. 73 Algorithm 2.149
  */
 int

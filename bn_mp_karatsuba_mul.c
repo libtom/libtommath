@@ -36,7 +36,7 @@
 int
 mp_karatsuba_mul (mp_int * a, mp_int * b, mp_int * c)
 {
-  mp_int  x0, x1, y0, y1, t1, t2, x0y0, x1y1;
+  mp_int  x0, x1, y0, y1, t1, x0y0, x1y1;
   int     B, err;
 
   err = MP_MEM;
@@ -60,10 +60,8 @@ mp_karatsuba_mul (mp_int * a, mp_int * b, mp_int * c)
   /* init temps */
   if (mp_init_size (&t1, B * 2) != MP_OKAY)
     goto Y1;
-  if (mp_init_size (&t2, B * 2) != MP_OKAY)
-    goto T1;
   if (mp_init_size (&x0y0, B * 2) != MP_OKAY)
-    goto T2;
+    goto T1;
   if (mp_init_size (&x1y1, B * 2) != MP_OKAY)
     goto X0Y0;
 
@@ -110,41 +108,40 @@ mp_karatsuba_mul (mp_int * a, mp_int * b, mp_int * c)
   mp_clamp (&y0);
 
   /* now calc the products x0y0 and x1y1 */
-  if (mp_mul (&x0, &y0, &x0y0) != MP_OKAY)
-    goto X1Y1;			/* x0y0 = x0*y0 */
+  if (mp_mul (&x0, &y0, &x0y0) != MP_OKAY)  /* after this x0 is no longer required, free temp [x0==t2]! */
+    goto X1Y1;          /* x0y0 = x0*y0 */
   if (mp_mul (&x1, &y1, &x1y1) != MP_OKAY)
-    goto X1Y1;			/* x1y1 = x1*y1 */
+    goto X1Y1;          /* x1y1 = x1*y1 */
 
   /* now calc x1-x0 and y1-y0 */
   if (mp_sub (&x1, &x0, &t1) != MP_OKAY)
-    goto X1Y1;			/* t1 = x1 - x0 */
-  if (mp_sub (&y1, &y0, &t2) != MP_OKAY)
-    goto X1Y1;			/* t2 = y1 - y0 */
-  if (mp_mul (&t1, &t2, &t1) != MP_OKAY)
-    goto X1Y1;			/* t1 = (x1 - x0) * (y1 - y0) */
+    goto X1Y1;          /* t1 = x1 - x0 */
+  if (mp_sub (&y1, &y0, &x0) != MP_OKAY)
+    goto X1Y1;          /* t2 = y1 - y0 */
+  if (mp_mul (&t1, &x0, &t1) != MP_OKAY)
+    goto X1Y1;          /* t1 = (x1 - x0) * (y1 - y0) */
 
   /* add x0y0 */
-  if (mp_add (&x0y0, &x1y1, &t2) != MP_OKAY)
-    goto X1Y1;			/* t2 = x0y0 + x1y1 */
-  if (mp_sub (&t2, &t1, &t1) != MP_OKAY)
-    goto X1Y1;			/* t1 = x0y0 + x1y1 - (x1-x0)*(y1-y0) */
+  if (mp_add (&x0y0, &x1y1, &x0) != MP_OKAY)
+    goto X1Y1;          /* t2 = x0y0 + x1y1 */
+  if (mp_sub (&x0, &t1, &t1) != MP_OKAY)
+    goto X1Y1;          /* t1 = x0y0 + x1y1 - (x1-x0)*(y1-y0) */
 
   /* shift by B */
   if (mp_lshd (&t1, B) != MP_OKAY)
-    goto X1Y1;			/* t1 = (x0y0 + x1y1 - (x1-x0)*(y1-y0))<<B */
+    goto X1Y1;          /* t1 = (x0y0 + x1y1 - (x1-x0)*(y1-y0))<<B */
   if (mp_lshd (&x1y1, B * 2) != MP_OKAY)
-    goto X1Y1;			/* x1y1 = x1y1 << 2*B */
+    goto X1Y1;          /* x1y1 = x1y1 << 2*B */
 
   if (mp_add (&x0y0, &t1, &t1) != MP_OKAY)
-    goto X1Y1;			/* t1 = x0y0 + t1 */
+    goto X1Y1;          /* t1 = x0y0 + t1 */
   if (mp_add (&t1, &x1y1, c) != MP_OKAY)
-    goto X1Y1;			/* t1 = x0y0 + t1 + x1y1 */
+    goto X1Y1;          /* t1 = x0y0 + t1 + x1y1 */
 
   err = MP_OKAY;
 
 X1Y1:mp_clear (&x1y1);
 X0Y0:mp_clear (&x0y0);
-T2:mp_clear (&t2);
 T1:mp_clear (&t1);
 Y1:mp_clear (&y1);
 Y0:mp_clear (&y0);

@@ -21,8 +21,7 @@ int
 mp_reduce_setup (mp_int * a, mp_int * b)
 {
   int     res;
-
-
+  
   if ((res = mp_2expt (a, b->used * 2 * DIGIT_BIT)) != MP_OKAY) {
     return res;
   }
@@ -30,8 +29,8 @@ mp_reduce_setup (mp_int * a, mp_int * b)
   return res;
 }
 
-/* reduces x mod m, assumes 0 < x < m^2, mu is precomputed via mp_reduce_setup 
- * From HAC pp.604 Algorithm 14.42 
+/* reduces x mod m, assumes 0 < x < m^2, mu is precomputed via mp_reduce_setup
+ * From HAC pp.604 Algorithm 14.42
  */
 int
 mp_reduce (mp_int * x, mp_int * m, mp_int * mu)
@@ -39,15 +38,15 @@ mp_reduce (mp_int * x, mp_int * m, mp_int * mu)
   mp_int  q;
   int     res, um = m->used;
 
-
   if ((res = mp_init_copy (&q, x)) != MP_OKAY) {
     return res;
   }
 
-  mp_rshd (&q, um - 1);		/* q1 = x / b^(k-1)  */
+  /* q1 = x / b^(k-1)  */
+  mp_rshd (&q, um - 1);         
 
   /* according to HAC this is optimization is ok */
-  if (((unsigned long) m->used) > (1UL << (unsigned long) (DIGIT_BIT - 1UL))) {
+  if (((unsigned long) m->used) > (((mp_digit)1) << (DIGIT_BIT - 1))) {
     if ((res = mp_mul (&q, mu, &q)) != MP_OKAY) {
       goto CLEANUP;
     }
@@ -57,7 +56,8 @@ mp_reduce (mp_int * x, mp_int * m, mp_int * mu)
     }
   }
 
-  mp_rshd (&q, um + 1);		/* q3 = q2 / b^(k+1) */
+  /* q3 = q2 / b^(k+1) */
+  mp_rshd (&q, um + 1);         
 
   /* x = x mod b^(k+1), quick (no division) */
   if ((res = mp_mod_2d (x, DIGIT_BIT * (um + 1), x)) != MP_OKAY) {
@@ -70,8 +70,9 @@ mp_reduce (mp_int * x, mp_int * m, mp_int * mu)
   }
 
   /* x = x - q */
-  if ((res = mp_sub (x, &q, x)) != MP_OKAY)
+  if ((res = mp_sub (x, &q, x)) != MP_OKAY) {
     goto CLEANUP;
+  }
 
   /* If x < 0, add b^(k+1) to it */
   if (mp_cmp_d (x, 0) == MP_LT) {
@@ -84,8 +85,9 @@ mp_reduce (mp_int * x, mp_int * m, mp_int * mu)
 
   /* Back off if it's too big */
   while (mp_cmp (x, m) != MP_LT) {
-    if ((res = s_mp_sub (x, m, x)) != MP_OKAY)
+    if ((res = s_mp_sub (x, m, x)) != MP_OKAY) {
       break;
+    }
   }
 
 CLEANUP:

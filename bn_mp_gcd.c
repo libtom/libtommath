@@ -82,18 +82,18 @@ mp_gcd (mp_int * a, mp_int * b, mp_int * c)
     /* B3 (and B4).  Halve t, if even */
     while (t.used != 0 && mp_iseven(&t) == 1) {
       if ((res = mp_div_2 (&t, &t)) != MP_OKAY) {
-	goto __T;
+        goto __T;
       }
     }
 
     /* B5.  if t>0 then u=t otherwise v=-t */
     if (t.used != 0 && t.sign != MP_NEG) {
       if ((res = mp_copy (&t, &u)) != MP_OKAY) {
-	goto __T;
+        goto __T;
       }
     } else {
       if ((res = mp_copy (&t, &v)) != MP_OKAY) {
-	goto __T;
+        goto __T;
       }
       v.sign = (v.sign == MP_ZPOS) ? MP_NEG : MP_ZPOS;
     }
@@ -102,9 +102,9 @@ mp_gcd (mp_int * a, mp_int * b, mp_int * c)
     if ((res = mp_sub (&u, &v, &t)) != MP_OKAY) {
       goto __T;
     }
-  }
-  while (t.used != 0);
+  } while (mp_iszero(&t) == 0);
 
+  /* multiply by 2^k which we divided out at the beginning */ 
   if ((res = mp_mul_2d (&u, k, &u)) != MP_OKAY) {
     goto __T;
   }

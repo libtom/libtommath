@@ -17,7 +17,7 @@
 static int f_mp_exptmod (mp_int * G, mp_int * X, mp_int * P, mp_int * Y);
 
 /* this is a shell function that calls either the normal or Montgomery
- * exptmod functions.  Originally the call to the montgomery code was 
+ * exptmod functions.  Originally the call to the montgomery code was
  * embedded in the normal function but that wasted alot of stack space
  * for nothing (since 99% of the time the Montgomery code would be called)
  */
@@ -25,10 +25,46 @@ int
 mp_exptmod (mp_int * G, mp_int * X, mp_int * P, mp_int * Y)
 {
   int dr;
-  
+
+  /* modulus P must be positive */
+  if (P->sign == MP_NEG) {
+     return MP_VAL;
+  }
+
+  /* if exponent X is negative we have to recurse */
+  if (X->sign == MP_NEG) {
+     mp_int tmpG, tmpX;
+     int err;
+
+     /* first compute 1/G mod P */
+     if ((err = mp_init(&tmpG)) != MP_OKAY) {
+        return err;
+     }
+     if ((err = mp_invmod(G, P, &tmpG)) != MP_OKAY) {
+        mp_clear(&tmpG);
+        return err;
+     }
+
+     /* now get |X| */
+     if ((err = mp_init(&tmpX)) != MP_OKAY) {
+        mp_clear(&tmpG);
+        return err;
+     }
+     if ((err = mp_abs(X, &tmpX)) != MP_OKAY) {
+        mp_clear_multi(&tmpG, &tmpX, NULL);
+        return err;
+     }
+
+     /* and now compute (1/G)^|X| instead of G^X [X < 0] */
+     err = mp_exptmod(&tmpG, &tmpX, P, Y);
+     mp_clear_multi(&tmpG, &tmpX, NULL);
+     return err;
+  }
+
+
   dr = mp_dr_is_modulus(P);
   /* if the modulus is odd use the fast method */
-  if (((mp_isodd (P) == 1 && P->used < MONTGOMERY_EXPT_CUTOFF) || dr == 1) && P->used > 4) {
+  if ((mp_isodd (P) == 1 || dr == 1) && P->used > 4) {
     return mp_exptmod_fast (G, X, P, Y, dr);
   } else {
     return f_mp_exptmod (G, X, P, Y);
@@ -60,11 +96,17 @@ f_mp_exptmod (mp_int * G, mp_int * X, mp_int * P, mp_int * Y)
     winsize = 8;
   }
 
+#ifdef MP_LOW_MEM
+    if (winsize > 5) {
+       winsize = 5;
+    }
+#endif
+
   /* init G array */
   for (x = 0; x < (1 << winsize); x++) {
     if ((err = mp_init_size (&M[x], 1)) != MP_OKAY) {
       for (y = 0; y < x; y++) {
-	mp_clear (&M[y]);
+        mp_clear (&M[y]);
       }
       return err;
     }
@@ -78,7 +120,7 @@ f_mp_exptmod (mp_int * G, mp_int * X, mp_int * P, mp_int * Y)
     goto __MU;
   }
 
-  /* create M table 
+  /* create M table
    *
    * The M table contains powers of the input base, e.g. M[x] = G^x mod P
    *
@@ -119,30 +161,29 @@ f_mp_exptmod (mp_int * G, mp_int * X, mp_int * P, mp_int * Y)
   mp_set (&res, 1);
 
   /* set initial mode and bit cnt */
-  mode = 0;
-  bitcnt = 0;
-  buf = 0;
+  mode   = 0;
+  bitcnt = 1;
+  buf    = 0;
   digidx = X->used - 1;
   bitcpy = bitbuf = 0;
 
-  bitcnt = 1;
   for (;;) {
     /* grab next digit as required */
     if (--bitcnt == 0) {
       if (digidx == -1) {
-	break;
+        break;
       }
       buf = X->dp[digidx--];
       bitcnt = (int) DIGIT_BIT;
     }
 
     /* grab the next msb from the exponent */
-    y = (buf >> (DIGIT_BIT - 1)) & 1;
-    buf <<= 1;
+    y = (buf >> (mp_digit)(DIGIT_BIT - 1)) & 1;
+    buf <<= (mp_digit)1;
 
-    /* if the bit is zero and mode == 0 then we ignore it 
+    /* if the bit is zero and mode == 0 then we ignore it
      * These represent the leading zero bits before the first 1 bit
-     * in the exponent.  Technically this opt is not required but it 
+     * in the exponent.  Technically this opt is not required but it
      * does lower the # of trivial squaring/reductions used
      */
     if (mode == 0 && y == 0)
@@ -151,10 +192,10 @@ f_mp_exptmod (mp_int * G, mp_int * X, mp_int * P, mp_int * Y)
     /* if the bit is zero and mode == 1 then we square */
     if (mode == 1 && y == 0) {
       if ((err = mp_sqr (&res, &res)) != MP_OKAY) {
-	goto __RES;
+        goto __RES;
       }
       if ((err = mp_reduce (&res, P, &mu)) != MP_OKAY) {
-	goto __RES;
+        goto __RES;
       }
       continue;
     }
@@ -167,20 +208,20 @@ f_mp_exptmod (mp_int * G, mp_int * X, mp_int * P, mp_int * Y)
       /* ok window is filled so square as required and multiply  */
       /* square first */
       for (x = 0; x < winsize; x++) {
-	if ((err = mp_sqr (&res, &res)) != MP_OKAY) {
-	  goto __RES;
-	}
-	if ((err = mp_reduce (&res, P, &mu)) != MP_OKAY) {
-	  goto __RES;
-	}
+        if ((err = mp_sqr (&res, &res)) != MP_OKAY) {
+          goto __RES;
+        }
+        if ((err = mp_reduce (&res, P, &mu)) != MP_OKAY) {
+          goto __RES;
+        }
       }
 
       /* then multiply */
       if ((err = mp_mul (&res, &M[bitbuf], &res)) != MP_OKAY) {
-	goto __MU;
+        goto __MU;
       }
       if ((err = mp_reduce (&res, P, &mu)) != MP_OKAY) {
-	goto __MU;
+        goto __MU;
       }
 
       /* empty window and reset */
@@ -194,21 +235,21 @@ f_mp_exptmod (mp_int * G, mp_int * X, mp_int * P, mp_int * Y)
     /* square then multiply if the bit is set */
     for (x = 0; x < bitcpy; x++) {
       if ((err = mp_sqr (&res, &res)) != MP_OKAY) {
-	goto __RES;
+        goto __RES;
       }
       if ((err = mp_reduce (&res, P, &mu)) != MP_OKAY) {
-	goto __RES;
+        goto __RES;
       }
 
       bitbuf <<= 1;
       if ((bitbuf & (1 << winsize)) != 0) {
-	/* then multiply */
-	if ((err = mp_mul (&res, &M[1], &res)) != MP_OKAY) {
-	  goto __RES;
-	}
-	if ((err = mp_reduce (&res, P, &mu)) != MP_OKAY) {
-	  goto __RES;
-	}
+        /* then multiply */
+        if ((err = mp_mul (&res, &M[1], &res)) != MP_OKAY) {
+          goto __RES;
+        }
+        if ((err = mp_reduce (&res, P, &mu)) != MP_OKAY) {
+          goto __RES;
+        }
       }
     }
   }

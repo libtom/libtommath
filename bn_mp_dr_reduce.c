@@ -16,7 +16,7 @@
 
 /* reduce "a" in place modulo "b" using the Diminished Radix algorithm.
  *
- * Based on algorithm from the paper 
+ * Based on algorithm from the paper
  *
  * "Generating Efficient Primes for Discrete Log Cryptosystems"
  *                 Chae Hoon Lim, Pil Loong Lee,
@@ -40,15 +40,15 @@ mp_dr_reduce (mp_int * a, mp_int * b, mp_digit mp)
       return err;
     }
   }
- 
+
   /* alias for a->dp[i] */
   tmpi = a->dp + k + k - 1;
 
-  /* for (i = 2k - 1; i >= k; i = i - 1) 
+  /* for (i = 2k - 1; i >= k; i = i - 1)
    *
    * This is the main loop of the reduction.  Note that at the end
    * the words above position k are not zeroed as expected.  The end
-   * result is that the digits from 0 to k-1 are the residue.  So 
+   * result is that the digits from 0 to k-1 are the residue.  So
    * we have to clear those afterwards.
    */
   for (i = k + k - 1; i >= k; i = i - 1) {
@@ -57,10 +57,10 @@ mp_dr_reduce (mp_int * a, mp_int * b, mp_digit mp)
     /* x[i] * mp */
     r = ((mp_word) *tmpi--) * ((mp_word) mp);
 
-    /* now add r to x[i-1:i-k] 
+    /* now add r to x[i-1:i-k]
      *
      * First add it to the first digit x[i-k] then form the carry
-     * then enter the main loop 
+     * then enter the main loop
      */
     j = i - k;
 
@@ -74,14 +74,14 @@ mp_dr_reduce (mp_int * a, mp_int * b, mp_digit mp)
     mu = (r >> ((mp_word) DIGIT_BIT)) + (*tmpj >> DIGIT_BIT);
 
     /* clear carry from a->dp[j]  */
-    *tmpj++ &= MP_MASK; 
+    *tmpj++ &= MP_MASK;
 
-    /* now add rest of the digits 
-     * 
+    /* now add rest of the digits
+     *
      * Note this is basically a simple single digit addition to
      * a larger multiple digit number.  This is optimized somewhat
      * because the propagation of carries is not likely to move
-     * more than a few digits. 
+     * more than a few digits.
      *
      */
     for (++j; mu != 0 && j <= (i - 1); ++j) {
@@ -99,16 +99,16 @@ mp_dr_reduce (mp_int * a, mp_int * b, mp_digit mp)
       *tmpj += mp;
       mu = *tmpj >> DIGIT_BIT;
       *tmpj++ &= MP_MASK;
-      
+
       /* now handle carries */
       for (++j; mu != 0 && j <= (i - 1); j++) {
-	*tmpj   += mu;
-	mu       = *tmpj >> DIGIT_BIT;
-	*tmpj++ &= MP_MASK;
+          *tmpj   += mu;
+          mu       = *tmpj >> DIGIT_BIT;
+          *tmpj++ &= MP_MASK;
       }
     }
   }
-  
+
   /* zero words above k */
   tmpi = a->dp + k;
   for (i = k; i < a->used; i++) {
@@ -117,34 +117,13 @@ mp_dr_reduce (mp_int * a, mp_int * b, mp_digit mp)
 
   /* clamp, sub and return */
   mp_clamp (a);
-  
+
+  /* if a >= b [b == modulus] then subtract the modulus to fix up */
   if (mp_cmp_mag (a, b) != MP_LT) {
     return s_mp_sub (a, b, a);
   }
   return MP_OKAY;
 }
 
-/* determines if a number is a valid DR modulus */
-int mp_dr_is_modulus(mp_int *a)
-{
-   int ix;
-   
-   /* must be at least two digits */
-   if (a->used < 2) {
-      return 0;
-   }      
-   
-   for (ix = 1; ix < a->used; ix++) {
-       if (a->dp[ix] != MP_MASK) {
-          return 0;
-       }
-   }
-   return 1;
-}
 
-/* determines the setup value */
-void mp_dr_setup(mp_int *a, mp_digit *d)
-{
-   *d = (1 << DIGIT_BIT) - a->dp[0];
-}
 

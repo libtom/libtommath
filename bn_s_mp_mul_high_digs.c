@@ -14,7 +14,7 @@
  */
 #include <tommath.h>
 
-/* multiplies |a| * |b| and does not compute the lower digs digits 
+/* multiplies |a| * |b| and does not compute the lower digs digits
  * [meant to get the higher part of the product]
  */
 int
@@ -28,8 +28,8 @@ s_mp_mul_high_digs (mp_int * a, mp_int * b, mp_int * c, int digs)
 
 
   /* can we use the fast multiplier? */
-  if (((a->used + b->used + 1) < 512)
-      && MAX (a->used, b->used) < (1 << ((CHAR_BIT * sizeof (mp_word)) - (2 * DIGIT_BIT)))) {
+  if (((a->used + b->used + 1) < MP_WARRAY)
+      && MIN (a->used, b->used) < (1 << ((CHAR_BIT * sizeof (mp_word)) - (2 * DIGIT_BIT)))) {
     return fast_s_mp_mul_high_digs (a, b, c, digs);
   }
 

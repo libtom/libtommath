@@ -23,7 +23,9 @@ mp_cmp_mag (mp_int * a, mp_int * b)
   /* compare based on # of non-zero digits */
   if (a->used > b->used) {
     return MP_GT;
-  } else if (a->used < b->used) {
+  } 
+  
+  if (a->used < b->used) {
     return MP_LT;
   }
 
@@ -31,7 +33,9 @@ mp_cmp_mag (mp_int * a, mp_int * b)
   for (n = a->used - 1; n >= 0; n--) {
     if (a->dp[n] > b->dp[n]) {
       return MP_GT;
-    } else if (a->dp[n] < b->dp[n]) {
+    } 
+    
+    if (a->dp[n] < b->dp[n]) {
       return MP_LT;
     }
   }

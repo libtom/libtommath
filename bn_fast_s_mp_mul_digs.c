@@ -16,14 +16,16 @@
 
 /* Fast (comba) multiplier
  *
- * This is the fast column-array [comba] multiplier.  It is designed to compute
- * the columns of the product first then handle the carries afterwards.  This
- * has the effect of making the nested loops that compute the columns very
+ * This is the fast column-array [comba] multiplier.  It is 
+ * designed to compute the columns of the product first 
+ * then handle the carries afterwards.  This has the effect 
+ * of making the nested loops that compute the columns very
  * simple and schedulable on super-scalar processors.
  *
- * This has been modified to produce a variable number of digits of output so
- * if say only a half-product is required you don't have to compute the upper half
- * (a feature required for fast Barrett reduction).
+ * This has been modified to produce a variable number of 
+ * digits of output so if say only a half-product is required 
+ * you don't have to compute the upper half (a feature 
+ * required for fast Barrett reduction).
  *
  * Based on Algorithm 14.12 on pp.595 of HAC.
  *
@@ -32,7 +34,7 @@ int
 fast_s_mp_mul_digs (mp_int * a, mp_int * b, mp_int * c, int digs)
 {
   int     olduse, res, pa, ix;
-  mp_word W[512];
+  mp_word W[MP_WARRAY];
 
   /* grow the destination as required */
   if (c->alloc < digs) {
@@ -47,10 +49,9 @@ fast_s_mp_mul_digs (mp_int * a, mp_int * b, mp_int * c, int digs)
   /* calculate the columns */
   pa = a->used;
   for (ix = 0; ix < pa; ix++) {
-
-    /* this multiplier has been modified to allow you to control how many digits 
-     * of output are produced.  So at most we want to make upto "digs" digits
-     * of output.
+    /* this multiplier has been modified to allow you to 
+     * control how many digits of output are produced.  
+     * So at most we want to make upto "digs" digits of output.
      *
      * this adds products to distinct columns (at ix+iy) of W
      * note that each step through the loop is not dependent on
@@ -73,14 +74,14 @@ fast_s_mp_mul_digs (mp_int * a, mp_int * b, mp_int * c, int digs)
        */
       _W = W + ix;
 
-      /* the number of digits is limited by their placement.  E.g. 
+      /* the number of digits is limited by their placement.  E.g.
          we avoid multiplying digits that will end up above the # of
          digits of precision requested
        */
       pb = MIN (b->used, digs - ix);
 
       for (iy = 0; iy < pb; iy++) {
-	*_W++ += ((mp_word) tmpx) * ((mp_word) * tmpy++);
+        *_W++ += ((mp_word) tmpx) * ((mp_word) * tmpy++);
       }
     }
 
@@ -97,11 +98,12 @@ fast_s_mp_mul_digs (mp_int * a, mp_int * b, mp_int * c, int digs)
      * correct result we must take the extra bits from each column and
      * carry them down
      *
-     * Note that while this adds extra code to the multiplier it saves time
-     * since the carry propagation is removed from the above nested loop.
-     * This has the effect of reducing the work from N*(N+N*c)==N^2 + c*N^2 to
-     * N^2 + N*c where c is the cost of the shifting.  On very small numbers
-     * this is slower but on most cryptographic size numbers it is faster.
+     * Note that while this adds extra code to the multiplier it 
+     * saves time since the carry propagation is removed from the 
+     * above nested loop.This has the effect of reducing the work 
+     * from N*(N+N*c)==N**2 + c*N**2 to N**2 + N*c where c is the 
+     * cost of the shifting.  On very small numbers this is slower 
+     * but on most cryptographic size numbers it is faster.
      */
     tmpc = c->dp;
     for (ix = 1; ix < digs; ix++) {

@@ -28,13 +28,10 @@ s_mp_add (mp_int * a, mp_int * b, mp_int * c)
     min = b->used;
     max = a->used;
     x = a;
-  } else if (a->used < b->used) {
+  } else {
     min = a->used;
     max = b->used;
     x = b;
-  } else {
-    min = max = a->used;
-    x = NULL;
   }
 
   /* init result */
@@ -44,10 +41,9 @@ s_mp_add (mp_int * a, mp_int * b, mp_int * c)
     }
   }
 
+  /* get old used digit count and set new one */
   olduse = c->used;
   c->used = max + 1;
-
-  /* add digits from lower part */
 
   /* set the carry to zero */
   {
@@ -65,36 +61,39 @@ s_mp_add (mp_int * a, mp_int * b, mp_int * c)
     /* destination */
     tmpc = c->dp;
 
+    /* zero the carry */
     u = 0;
     for (i = 0; i < min; i++) {
       /* Compute the sum at one digit, T[i] = A[i] + B[i] + U */
       *tmpc = *tmpa++ + *tmpb++ + u;
 
       /* U = carry bit of T[i] */
-      u = *tmpc >> DIGIT_BIT;
+      u = *tmpc >> ((mp_digit)DIGIT_BIT);
 
       /* take away carry bit from T[i] */
       *tmpc++ &= MP_MASK;
     }
 
-    /* now copy higher words if any, that is in A+B if A or B has more digits add those in */
+    /* now copy higher words if any, that is in A+B 
+     * if A or B has more digits add those in 
+     */
     if (min != max) {
       for (; i < max; i++) {
-	/* T[i] = X[i] + U */
-	*tmpc = x->dp[i] + u;
+        /* T[i] = X[i] + U */
+        *tmpc = x->dp[i] + u;
 
-	/* U = carry bit of T[i] */
-	u = *tmpc >> DIGIT_BIT;
+        /* U = carry bit of T[i] */
+        u = *tmpc >> ((mp_digit)DIGIT_BIT);
 
-	/* take away carry bit from T[i] */
-	*tmpc++ &= MP_MASK;
+        /* take away carry bit from T[i] */
+        *tmpc++ &= MP_MASK;
       }
     }
 
     /* add carry */
     *tmpc++ = u;
 
-    /* clear digits above used (since we may not have grown result above) */
+    /* clear digits above oldused */
     for (i = c->used; i < olduse; i++) {
       *tmpc++ = 0;
     }

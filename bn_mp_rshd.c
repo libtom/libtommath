@@ -26,7 +26,7 @@ mp_rshd (mp_int * a, int b)
   }
 
   /* if b > used then simply zero it and return */
-  if (a->used < b) {
+  if (a->used <= b) {
     mp_zero (a);
     return;
   }
@@ -42,8 +42,9 @@ mp_rshd (mp_int * a, int b)
     /* offset into digits */
     tmpaa = a->dp + b;
 
-    /* this is implemented as a sliding window where the window is b-digits long
-     * and digits from the top of the window are copied to the bottom
+    /* this is implemented as a sliding window where 
+     * the window is b-digits long and digits from 
+     * the top of the window are copied to the bottom
      *
      * e.g.
 

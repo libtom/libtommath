@@ -21,12 +21,19 @@ mp_montgomery_reduce (mp_int * a, mp_int * m, mp_digit mp)
   int     ix, res, digs;
   mp_digit ui;
 
+  /* can the fast reduction [comba] method be used?
+   *
+   * Note that unlike in mp_mul you're safely allowed *less*
+   * than the available columns [255 per default] since carries
+   * are fixed up in the inner loop.
+   */
   digs = m->used * 2 + 1;
-  if ((digs < 512)
-      && digs < (1 << ((CHAR_BIT * sizeof (mp_word)) - (2 * DIGIT_BIT)))) {
+  if ((digs < MP_WARRAY)
+      && m->used < (1 << ((CHAR_BIT * sizeof (mp_word)) - (2 * DIGIT_BIT)))) {
     return fast_mp_montgomery_reduce (a, m, mp);
   }
 
+  /* grow the input as required */
   if (a->alloc < m->used * 2 + 1) {
     if ((res = mp_grow (a, m->used * 2 + 1)) != MP_OKAY) {
       return res;
@@ -50,15 +57,15 @@ mp_montgomery_reduce (mp_int * a, mp_int * m, mp_digit mp)
 
       mu = 0;
       for (iy = 0; iy < m->used; iy++) {
-	r = ((mp_word) ui) * ((mp_word) * tmpx++) + ((mp_word) mu) + ((mp_word) * tmpy);
-	mu = (r >> ((mp_word) DIGIT_BIT));
-	*tmpy++ = (r & ((mp_word) MP_MASK));
+        r = ((mp_word) ui) * ((mp_word) * tmpx++) + ((mp_word) mu) + ((mp_word) * tmpy);
+        mu = (r >> ((mp_word) DIGIT_BIT));
+        *tmpy++ = (r & ((mp_word) MP_MASK));
       }
       /* propagate carries */
       while (mu) {
-	*tmpy += mu;
-	mu = (*tmpy >> DIGIT_BIT) & 1;
-	*tmpy++ &= MP_MASK;
+        *tmpy += mu;
+        mu = (*tmpy >> DIGIT_BIT) & 1;
+        *tmpy++ &= MP_MASK;
       }
     }
   }
