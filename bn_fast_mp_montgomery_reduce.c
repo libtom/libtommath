@@ -124,7 +124,7 @@ fast_mp_montgomery_reduce (mp_int * x, mp_int * n, mp_digit rho)
     _W = W + n->used;
 
     for (ix = 0; ix < n->used + 1; ix++) {
-      *tmpx++ = *_W++ & ((mp_word) MP_MASK);
+      *tmpx++ = (mp_digit)(*_W++ & ((mp_word) MP_MASK));
     }
 
     /* zero oldused digits, if the input a was larger than

@@ -39,7 +39,7 @@ s_mp_sqr (mp_int * a, mp_int * b)
     t.dp[2*ix] = (mp_digit) (r & ((mp_word) MP_MASK));
 
     /* get the carry */
-    u = (r >> ((mp_word) DIGIT_BIT));
+    u = (mp_digit)(r >> ((mp_word) DIGIT_BIT));
 
     /* left hand side of A[ix] * A[iy] */
     tmpx = a->dp[ix];
@@ -60,13 +60,13 @@ s_mp_sqr (mp_int * a, mp_int * b)
       *tmpt++ = (mp_digit) (r & ((mp_word) MP_MASK));
 
       /* get carry */
-      u = (r >> ((mp_word) DIGIT_BIT));
+      u = (mp_digit)(r >> ((mp_word) DIGIT_BIT));
     }
     /* propagate upwards */
     while (u != ((mp_digit) 0)) {
       r = ((mp_word) * tmpt) + ((mp_word) u);
       *tmpt++ = (mp_digit) (r & ((mp_word) MP_MASK));
-      u = (r >> ((mp_word) DIGIT_BIT));
+      u = (mp_digit)(r >> ((mp_word) DIGIT_BIT));
     }
   }
 

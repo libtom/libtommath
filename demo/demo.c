@@ -162,6 +162,8 @@ int main(void)
          fprintf(log, "%d %9llu\n", cnt*DIGIT_BIT, (((unsigned long long)rr)*CLOCKS_PER_SEC)/tt);
       }
       fclose(log);
+      
+      return 0;
 
       log = fopen("logs/sub.log", "w");
       for (cnt = 8; cnt <= 128; cnt += 8) {

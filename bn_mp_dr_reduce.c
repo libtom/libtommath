@@ -60,8 +60,8 @@ top:
   /* compute (x mod B**m) + mp * [x/B**m] inline and inplace */
   for (i = 0; i < m; i++) {
       r         = ((mp_word)*tmpx2++) * ((mp_word)k) + *tmpx1 + mu;
-      *tmpx1++  = r & MP_MASK;
-      mu        = r >> ((mp_word)DIGIT_BIT);
+      *tmpx1++  = (mp_digit)(r & MP_MASK);
+      mu        = (mp_digit)(r >> ((mp_word)DIGIT_BIT));
   }
   
   /* set final carry */

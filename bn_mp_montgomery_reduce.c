@@ -61,10 +61,10 @@ mp_montgomery_reduce (mp_int * x, mp_int * n, mp_digit rho)
       
       /* Multiply and add in place */
       for (iy = 0; iy < n->used; iy++) {
-        r = ((mp_word) mu) * ((mp_word) * tmpn++) + 
-            ((mp_word) u) + ((mp_word) * tmpx);
-        u = (r >> ((mp_word) DIGIT_BIT));
-        *tmpx++ = (r & ((mp_word) MP_MASK));
+        r       = ((mp_word) mu) * ((mp_word) * tmpn++) + 
+                  ((mp_word) u) + ((mp_word) * tmpx);
+        u       = (mp_digit)(r >> ((mp_word) DIGIT_BIT));
+        *tmpx++ = (mp_digit)(r & ((mp_word) MP_MASK));
       }
       /* propagate carries */
       while (u) {

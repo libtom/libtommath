@@ -19,7 +19,8 @@ int
 mp_div_d (mp_int * a, mp_digit b, mp_int * c, mp_digit * d)
 {
   mp_int  q;
-  mp_word w, t;
+  mp_word w;
+  mp_digit t;
   int     res, ix;
   
   if (b == 0) {
@@ -41,16 +42,16 @@ mp_div_d (mp_int * a, mp_digit b, mp_int * c, mp_digit * d)
      w = (w << ((mp_word)DIGIT_BIT)) | ((mp_word)a->dp[ix]);
      
      if (w >= b) {
-        t = w / b;
+        t = (mp_digit)(w / b);
         w = w % b;
       } else {
         t = 0;
       }
-      q.dp[ix] = t;
+      q.dp[ix] = (mp_digit)t;
   }
   
   if (d != NULL) {
-     *d = w;
+     *d = (mp_digit)w;
   }
   
   if (c != NULL) {

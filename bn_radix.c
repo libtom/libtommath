@@ -56,7 +56,9 @@ mp_read_radix (mp_int * a, char *str, int radix)
     }
     ++str;
   }
-  a->sign = neg;
+  if (mp_iszero(a) != 1) {
+     a->sign = neg;
+  }
   return MP_OKAY;
 }
 

@@ -1,5 +1,4 @@
 /* Start: bn_fast_mp_invmod.c */
-#line 0 "bn_fast_mp_invmod.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -151,7 +150,6 @@ __ERR:mp_clear_multi (&x, &y, &u, &v, &B, &D, NULL);
 /* End: bn_fast_mp_invmod.c */
 
 /* Start: bn_fast_mp_montgomery_reduce.c */
-#line 0 "bn_fast_mp_montgomery_reduce.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -278,7 +276,7 @@ fast_mp_montgomery_reduce (mp_int * x, mp_int * n, mp_digit rho)
     _W = W + n->used;
 
     for (ix = 0; ix < n->used + 1; ix++) {
-      *tmpx++ = *_W++ & ((mp_word) MP_MASK);
+      *tmpx++ = (mp_digit)(*_W++ & ((mp_word) MP_MASK));
     }
 
     /* zero oldused digits, if the input a was larger than
@@ -302,7 +300,6 @@ fast_mp_montgomery_reduce (mp_int * x, mp_int * n, mp_digit rho)
 /* End: bn_fast_mp_montgomery_reduce.c */
 
 /* Start: bn_fast_s_mp_mul_digs.c */
-#line 0 "bn_fast_s_mp_mul_digs.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -430,7 +427,6 @@ fast_s_mp_mul_digs (mp_int * a, mp_int * b, mp_int * c, int digs)
 /* End: bn_fast_s_mp_mul_digs.c */
 
 /* Start: bn_fast_s_mp_mul_high_digs.c */
-#line 0 "bn_fast_s_mp_mul_high_digs.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -530,7 +526,6 @@ fast_s_mp_mul_high_digs (mp_int * a, mp_int * b, mp_int * c, int digs)
 /* End: bn_fast_s_mp_mul_high_digs.c */
 
 /* Start: bn_fast_s_mp_sqr.c */
-#line 0 "bn_fast_s_mp_sqr.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -664,7 +659,6 @@ fast_s_mp_sqr (mp_int * a, mp_int * b)
 /* End: bn_fast_s_mp_sqr.c */
 
 /* Start: bn_mp_2expt.c */
-#line 0 "bn_mp_2expt.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -704,7 +698,6 @@ mp_2expt (mp_int * a, int b)
 /* End: bn_mp_2expt.c */
 
 /* Start: bn_mp_abs.c */
-#line 0 "bn_mp_abs.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -739,7 +732,6 @@ mp_abs (mp_int * a, mp_int * b)
 /* End: bn_mp_abs.c */
 
 /* Start: bn_mp_add.c */
-#line 0 "bn_mp_add.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -792,7 +784,6 @@ mp_add (mp_int * a, mp_int * b, mp_int * c)
 /* End: bn_mp_add.c */
 
 /* Start: bn_mp_add_d.c */
-#line 0 "bn_mp_add_d.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -829,7 +820,6 @@ mp_add_d (mp_int * a, mp_digit b, mp_int * c)
 /* End: bn_mp_add_d.c */
 
 /* Start: bn_mp_addmod.c */
-#line 0 "bn_mp_addmod.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -869,7 +859,6 @@ mp_addmod (mp_int * a, mp_int * b, mp_int * c, mp_int * d)
 /* End: bn_mp_addmod.c */
 
 /* Start: bn_mp_and.c */
-#line 0 "bn_mp_and.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -925,7 +914,6 @@ mp_and (mp_int * a, mp_int * b, mp_int * c)
 /* End: bn_mp_and.c */
 
 /* Start: bn_mp_clamp.c */
-#line 0 "bn_mp_clamp.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -963,7 +951,6 @@ mp_clamp (mp_int * a)
 /* End: bn_mp_clamp.c */
 
 /* Start: bn_mp_clear.c */
-#line 0 "bn_mp_clear.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -1001,7 +988,6 @@ mp_clear (mp_int * a)
 /* End: bn_mp_clear.c */
 
 /* Start: bn_mp_cmp.c */
-#line 0 "bn_mp_cmp.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -1043,7 +1029,6 @@ mp_cmp (mp_int * a, mp_int * b)
 /* End: bn_mp_cmp.c */
 
 /* Start: bn_mp_cmp_d.c */
-#line 0 "bn_mp_cmp_d.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -1085,7 +1070,6 @@ mp_cmp_d (mp_int * a, mp_digit b)
 /* End: bn_mp_cmp_d.c */
 
 /* Start: bn_mp_cmp_mag.c */
-#line 0 "bn_mp_cmp_mag.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -1133,7 +1117,6 @@ mp_cmp_mag (mp_int * a, mp_int * b)
 /* End: bn_mp_cmp_mag.c */
 
 /* Start: bn_mp_copy.c */
-#line 0 "bn_mp_copy.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -1192,7 +1175,6 @@ mp_copy (mp_int * a, mp_int * b)
 /* End: bn_mp_copy.c */
 
 /* Start: bn_mp_count_bits.c */
-#line 0 "bn_mp_count_bits.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -1236,7 +1218,6 @@ mp_count_bits (mp_int * a)
 /* End: bn_mp_count_bits.c */
 
 /* Start: bn_mp_div.c */
-#line 0 "bn_mp_div.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -1253,21 +1234,24 @@ mp_count_bits (mp_int * a)
  */
 #include <tommath.h>
 
-/* integer signed division. c*b + d == a [e.g. a/b, c=quotient, d=remainder]
+/* integer signed division. 
+ * c*b + d == a [e.g. a/b, c=quotient, d=remainder]
  * HAC pp.598 Algorithm 14.20
  *
- * Note that the description in HAC is horribly incomplete.  For example,
- * it doesn't consider the case where digits are removed from 'x' in the inner
- * loop.  It also doesn't consider the case that y has fewer than three digits, etc..
+ * Note that the description in HAC is horribly 
+ * incomplete.  For example, it doesn't consider 
+ * the case where digits are removed from 'x' in 
+ * the inner loop.  It also doesn't consider the 
+ * case that y has fewer than three digits, etc..
  *
- * The overall algorithm is as described as 14.20 from HAC but fixed to treat these cases.
+ * The overall algorithm is as described as 
+ * 14.20 from HAC but fixed to treat these cases.
 */
 int
 mp_div (mp_int * a, mp_int * b, mp_int * c, mp_int * d)
 {
   mp_int  q, x, y, t1, t2;
   int     res, n, t, i, norm, neg;
-
 
   /* is divisor zero ? */
   if (mp_iszero (b) == 1) {
@@ -1312,7 +1296,7 @@ mp_div (mp_int * a, mp_int * b, mp_int * c, mp_int * d)
   neg = (a->sign == b->sign) ? MP_ZPOS : MP_NEG;
   x.sign = y.sign = MP_ZPOS;
 
-  /* normalize both x and y, ensure that y >= b/2, [b == 2^DIGIT_BIT] */
+  /* normalize both x and y, ensure that y >= b/2, [b == 2**DIGIT_BIT] */
   norm = mp_count_bits(&y) % DIGIT_BIT;
   if (norm < (int)(DIGIT_BIT-1)) {
      norm = (DIGIT_BIT-1) - norm;
@@ -1330,8 +1314,8 @@ mp_div (mp_int * a, mp_int * b, mp_int * c, mp_int * d)
   n = x.used - 1;
   t = y.used - 1;
 
-  /* step 2. while (x >= y*b^n-t) do { q[n-t] += 1; x -= y*b^{n-t} } */
-  if ((res = mp_lshd (&y, n - t)) != MP_OKAY) { /* y = y*b^{n-t} */
+  /* while (x >= y*b**n-t) do { q[n-t] += 1; x -= y*b**{n-t} } */
+  if ((res = mp_lshd (&y, n - t)) != MP_OKAY) { /* y = y*b**{n-t} */
     goto __Y;
   }
 
@@ -1350,7 +1334,8 @@ mp_div (mp_int * a, mp_int * b, mp_int * c, mp_int * d)
     if (i > x.used)
       continue;
 
-    /* step 3.1 if xi == yt then set q{i-t-1} to b-1, otherwise set q{i-t-1} to (xi*b + x{i-1})/yt */
+    /* step 3.1 if xi == yt then set q{i-t-1} to b-1, 
+     * otherwise set q{i-t-1} to (xi*b + x{i-1})/yt */
     if (x.dp[i] == y.dp[t]) {
       q.dp[i - t - 1] = ((((mp_digit)1) << DIGIT_BIT) - 1);
     } else {
@@ -1363,7 +1348,11 @@ mp_div (mp_int * a, mp_int * b, mp_int * c, mp_int * d)
       q.dp[i - t - 1] = (mp_digit) (tmp & (mp_word) (MP_MASK));
     }
 
-    /* step 3.2 while (q{i-t-1} * (yt * b + y{t-1})) > xi * b^2 + xi-1 * b + xi-2 do q{i-t-1} -= 1; */
+    /* while (q{i-t-1} * (yt * b + y{t-1})) > 
+             xi * b**2 + xi-1 * b + xi-2 
+     
+       do q{i-t-1} -= 1; 
+    */
     q.dp[i - t - 1] = (q.dp[i - t - 1] + 1) & MP_MASK;
     do {
       q.dp[i - t - 1] = (q.dp[i - t - 1] - 1) & MP_MASK;
@@ -1384,7 +1373,7 @@ mp_div (mp_int * a, mp_int * b, mp_int * c, mp_int * d)
       t2.used = 3;
     } while (mp_cmp_mag(&t1, &t2) == MP_GT);
 
-    /* step 3.3 x = x - q{i-t-1} * y * b^{i-t-1} */
+    /* step 3.3 x = x - q{i-t-1} * y * b**{i-t-1} */
     if ((res = mp_mul_d (&y, q.dp[i - t - 1], &t1)) != MP_OKAY) {
       goto __Y;
     }
@@ -1397,7 +1386,7 @@ mp_div (mp_int * a, mp_int * b, mp_int * c, mp_int * d)
       goto __Y;
     }
 
-    /* step 3.4 if x < 0 then { x = x + y*b^{i-t-1}; q{i-t-1} -= 1; } */
+    /* if x < 0 then { x = x + y*b**{i-t-1}; q{i-t-1} -= 1; } */
     if (x.sign == MP_NEG) {
       if ((res = mp_copy (&y, &t1)) != MP_OKAY) {
         goto __Y;
@@ -1413,7 +1402,10 @@ mp_div (mp_int * a, mp_int * b, mp_int * c, mp_int * d)
     }
   }
 
-  /* now q is the quotient and x is the remainder [which we have to normalize] */
+  /* now q is the quotient and x is the remainder 
+   * [which we have to normalize] 
+   */
+  
   /* get sign before writing to c */
   x.sign = a->sign;
 
@@ -1441,7 +1433,6 @@ __Q:mp_clear (&q);
 /* End: bn_mp_div.c */
 
 /* Start: bn_mp_div_2.c */
-#line 0 "bn_mp_div_2.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -1509,7 +1500,6 @@ mp_div_2 (mp_int * a, mp_int * b)
 /* End: bn_mp_div_2.c */
 
 /* Start: bn_mp_div_2d.c */
-#line 0 "bn_mp_div_2d.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -1603,7 +1593,6 @@ mp_div_2d (mp_int * a, int b, mp_int * c, mp_int * d)
 /* End: bn_mp_div_2d.c */
 
 /* Start: bn_mp_div_3.c */
-#line 0 "bn_mp_div_3.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -1652,11 +1641,11 @@ mp_div_3 (mp_int * a, mp_int *c, mp_digit * d)
       } else {
         t = 0;
       }
-      q.dp[ix] = t;
+      q.dp[ix] = (mp_digit)t;
   }
   
   if (d != NULL) {
-     *d = w;
+     *d = (mp_digit)w;
   }
   
   if (c != NULL) {
@@ -1672,7 +1661,6 @@ mp_div_3 (mp_int * a, mp_int *c, mp_digit * d)
 /* End: bn_mp_div_3.c */
 
 /* Start: bn_mp_div_d.c */
-#line 0 "bn_mp_div_d.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -1694,7 +1682,8 @@ int
 mp_div_d (mp_int * a, mp_digit b, mp_int * c, mp_digit * d)
 {
   mp_int  q;
-  mp_word w, t;
+  mp_word w;
+  mp_digit t;
   int     res, ix;
   
   if (b == 0) {
@@ -1716,16 +1705,16 @@ mp_div_d (mp_int * a, mp_digit b, mp_int * c, mp_digit * d)
      w = (w << ((mp_word)DIGIT_BIT)) | ((mp_word)a->dp[ix]);
      
      if (w >= b) {
-        t = w / b;
+        t = (mp_digit)(w / b);
         w = w % b;
       } else {
         t = 0;
       }
-      q.dp[ix] = t;
+      q.dp[ix] = (mp_digit)t;
   }
   
   if (d != NULL) {
-     *d = w;
+     *d = (mp_digit)w;
   }
   
   if (c != NULL) {
@@ -1741,7 +1730,6 @@ mp_div_d (mp_int * a, mp_digit b, mp_int * c, mp_digit * d)
 /* End: bn_mp_div_d.c */
 
 /* Start: bn_mp_dr_is_modulus.c */
-#line 0 "bn_mp_dr_is_modulus.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -1780,7 +1768,6 @@ int mp_dr_is_modulus(mp_int *a)
 /* End: bn_mp_dr_is_modulus.c */
 
 /* Start: bn_mp_dr_reduce.c */
-#line 0 "bn_mp_dr_reduce.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -1843,8 +1830,8 @@ top:
   /* compute (x mod B**m) + mp * [x/B**m] inline and inplace */
   for (i = 0; i < m; i++) {
       r         = ((mp_word)*tmpx2++) * ((mp_word)k) + *tmpx1 + mu;
-      *tmpx1++  = r & MP_MASK;
-      mu        = r >> ((mp_word)DIGIT_BIT);
+      *tmpx1++  = (mp_digit)(r & MP_MASK);
+      mu        = (mp_digit)(r >> ((mp_word)DIGIT_BIT));
   }
   
   /* set final carry */
@@ -1871,7 +1858,6 @@ top:
 /* End: bn_mp_dr_reduce.c */
 
 /* Start: bn_mp_dr_setup.c */
-#line 0 "bn_mp_dr_setup.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -1902,7 +1888,6 @@ void mp_dr_setup(mp_int *a, mp_digit *d)
 /* End: bn_mp_dr_setup.c */
 
 /* Start: bn_mp_exch.c */
-#line 0 "bn_mp_exch.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -1935,7 +1920,6 @@ mp_exch (mp_int * a, mp_int * b)
 /* End: bn_mp_exch.c */
 
 /* Start: bn_mp_expt_d.c */
-#line 0 "bn_mp_expt_d.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -1992,7 +1976,6 @@ mp_expt_d (mp_int * a, mp_digit b, mp_int * c)
 /* End: bn_mp_expt_d.c */
 
 /* Start: bn_mp_exptmod.c */
-#line 0 "bn_mp_exptmod.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -2072,7 +2055,6 @@ mp_exptmod (mp_int * G, mp_int * X, mp_int * P, mp_int * Y)
 /* End: bn_mp_exptmod.c */
 
 /* Start: bn_mp_exptmod_fast.c */
-#line 0 "bn_mp_exptmod_fast.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -2341,7 +2323,6 @@ __M:
 /* End: bn_mp_exptmod_fast.c */
 
 /* Start: bn_mp_gcd.c */
-#line 0 "bn_mp_gcd.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -2465,7 +2446,6 @@ __U:mp_clear (&v);
 /* End: bn_mp_gcd.c */
 
 /* Start: bn_mp_grow.c */
-#line 0 "bn_mp_grow.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -2511,7 +2491,6 @@ mp_grow (mp_int * a, int size)
 /* End: bn_mp_grow.c */
 
 /* Start: bn_mp_init.c */
-#line 0 "bn_mp_init.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -2550,7 +2529,6 @@ mp_init (mp_int * a)
 /* End: bn_mp_init.c */
 
 /* Start: bn_mp_init_copy.c */
-#line 0 "bn_mp_init_copy.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -2582,7 +2560,6 @@ mp_init_copy (mp_int * a, mp_int * b)
 /* End: bn_mp_init_copy.c */
 
 /* Start: bn_mp_init_size.c */
-#line 0 "bn_mp_init_size.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -2622,7 +2599,6 @@ mp_init_size (mp_int * a, int size)
 /* End: bn_mp_init_size.c */
 
 /* Start: bn_mp_invmod.c */
-#line 0 "bn_mp_invmod.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -2793,7 +2769,6 @@ __ERR:mp_clear_multi (&x, &y, &u, &v, &A, &B, &C, &D, NULL);
 /* End: bn_mp_invmod.c */
 
 /* Start: bn_mp_jacobi.c */
-#line 0 "bn_mp_jacobi.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -2912,7 +2887,6 @@ __A1:mp_clear (&a1);
 /* End: bn_mp_jacobi.c */
 
 /* Start: bn_mp_karatsuba_mul.c */
-#line 0 "bn_mp_karatsuba_mul.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -3082,7 +3056,6 @@ ERR:
 /* End: bn_mp_karatsuba_mul.c */
 
 /* Start: bn_mp_karatsuba_sqr.c */
-#line 0 "bn_mp_karatsuba_sqr.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -3203,7 +3176,6 @@ ERR:
 /* End: bn_mp_karatsuba_sqr.c */
 
 /* Start: bn_mp_lcm.c */
-#line 0 "bn_mp_lcm.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -3250,7 +3222,6 @@ mp_lcm (mp_int * a, mp_int * b, mp_int * c)
 /* End: bn_mp_lcm.c */
 
 /* Start: bn_mp_lshd.c */
-#line 0 "bn_mp_lshd.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -3317,7 +3288,6 @@ mp_lshd (mp_int * a, int b)
 /* End: bn_mp_lshd.c */
 
 /* Start: bn_mp_mod.c */
-#line 0 "bn_mp_mod.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -3365,7 +3335,6 @@ mp_mod (mp_int * a, mp_int * b, mp_int * c)
 /* End: bn_mp_mod.c */
 
 /* Start: bn_mp_mod_2d.c */
-#line 0 "bn_mp_mod_2d.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -3420,7 +3389,6 @@ mp_mod_2d (mp_int * a, int b, mp_int * c)
 /* End: bn_mp_mod_2d.c */
 
 /* Start: bn_mp_mod_d.c */
-#line 0 "bn_mp_mod_d.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -3446,7 +3414,6 @@ mp_mod_d (mp_int * a, mp_digit b, mp_digit * c)
 /* End: bn_mp_mod_d.c */
 
 /* Start: bn_mp_montgomery_calc_normalization.c */
-#line 0 "bn_mp_montgomery_calc_normalization.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -3504,7 +3471,6 @@ mp_montgomery_calc_normalization (mp_int * a, mp_int * b)
 /* End: bn_mp_montgomery_calc_normalization.c */
 
 /* Start: bn_mp_montgomery_reduce.c */
-#line 0 "bn_mp_montgomery_reduce.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -3568,10 +3534,10 @@ mp_montgomery_reduce (mp_int * x, mp_int * n, mp_digit rho)
       
       /* Multiply and add in place */
       for (iy = 0; iy < n->used; iy++) {
-        r = ((mp_word) mu) * ((mp_word) * tmpn++) + 
-            ((mp_word) u) + ((mp_word) * tmpx);
-        u = (r >> ((mp_word) DIGIT_BIT));
-        *tmpx++ = (r & ((mp_word) MP_MASK));
+        r       = ((mp_word) mu) * ((mp_word) * tmpn++) + 
+                  ((mp_word) u) + ((mp_word) * tmpx);
+        u       = (mp_digit)(r >> ((mp_word) DIGIT_BIT));
+        *tmpx++ = (mp_digit)(r & ((mp_word) MP_MASK));
       }
       /* propagate carries */
       while (u) {
@@ -3597,7 +3563,6 @@ mp_montgomery_reduce (mp_int * x, mp_int * n, mp_digit rho)
 /* End: bn_mp_montgomery_reduce.c */
 
 /* Start: bn_mp_montgomery_setup.c */
-#line 0 "bn_mp_montgomery_setup.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -3655,7 +3620,6 @@ mp_montgomery_setup (mp_int * n, mp_digit * rho)
 /* End: bn_mp_montgomery_setup.c */
 
 /* Start: bn_mp_mul.c */
-#line 0 "bn_mp_mul.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -3709,7 +3673,6 @@ mp_mul (mp_int * a, mp_int * b, mp_int * c)
 /* End: bn_mp_mul.c */
 
 /* Start: bn_mp_mul_2.c */
-#line 0 "bn_mp_mul_2.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -3791,7 +3754,6 @@ mp_mul_2 (mp_int * a, mp_int * b)
 /* End: bn_mp_mul_2.c */
 
 /* Start: bn_mp_mul_2d.c */
-#line 0 "bn_mp_mul_2d.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -3875,7 +3837,6 @@ mp_mul_2d (mp_int * a, int b, mp_int * c)
 /* End: bn_mp_mul_2d.c */
 
 /* Start: bn_mp_mul_d.c */
-#line 0 "bn_mp_mul_d.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -3911,6 +3872,7 @@ mp_mul_d (mp_int * a, mp_digit b, mp_int * c)
 
   /* set the new temporary used count */
   c->used = pa + 1;
+  c->sign = a->sign;
 
   {
     register mp_digit u, *tmpa, *tmpc;
@@ -3951,7 +3913,6 @@ mp_mul_d (mp_int * a, mp_digit b, mp_int * c)
 /* End: bn_mp_mul_d.c */
 
 /* Start: bn_mp_mulmod.c */
-#line 0 "bn_mp_mulmod.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -3992,7 +3953,6 @@ mp_mulmod (mp_int * a, mp_int * b, mp_int * c, mp_int * d)
 /* End: bn_mp_mulmod.c */
 
 /* Start: bn_mp_multi.c */
-#line 0 "bn_mp_multi.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -4061,7 +4021,6 @@ void mp_clear_multi(mp_int *mp, ...)
 /* End: bn_mp_multi.c */
 
 /* Start: bn_mp_n_root.c */
-#line 0 "bn_mp_n_root.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -4080,11 +4039,13 @@ void mp_clear_multi(mp_int *mp, ...)
 
 /* find the n'th root of an integer 
  *
- * Result found such that (c)^b <= a and (c+1)^b > a 
+ * Result found such that (c)**b <= a and (c+1)**b > a 
  *
- * This algorithm uses Newton's approximation x[i+1] = x[i] - f(x[i])/f'(x[i]) 
- * which will find the root in log(N) time where each step involves a fair bit.  This
- * is not meant to find huge roots [square and cube at most].
+ * This algorithm uses Newton's approximation 
+ * x[i+1] = x[i] - f(x[i])/f'(x[i]) 
+ * which will find the root in log(N) time where 
+ * each step involves a fair bit.  This is not meant to 
+ * find huge roots [square and cube, etc].
  */
 int
 mp_n_root (mp_int * a, mp_digit b, mp_int * c)
@@ -4122,33 +4083,39 @@ mp_n_root (mp_int * a, mp_digit b, mp_int * c)
       goto __T3;
     }
 
-    /* t2 = t1 - ((t1^b - a) / (b * t1^(b-1))) */
-    if ((res = mp_expt_d (&t1, b - 1, &t3)) != MP_OKAY) {	/* t3 = t1^(b-1) */
+    /* t2 = t1 - ((t1**b - a) / (b * t1**(b-1))) */
+    
+    /* t3 = t1**(b-1) */
+    if ((res = mp_expt_d (&t1, b - 1, &t3)) != MP_OKAY) {   
       goto __T3;
     }
 
     /* numerator */
-    if ((res = mp_mul (&t3, &t1, &t2)) != MP_OKAY) {	/* t2 = t1^b */
+    /* t2 = t1**b */
+    if ((res = mp_mul (&t3, &t1, &t2)) != MP_OKAY) {    
       goto __T3;
     }
 
-    if ((res = mp_sub (&t2, a, &t2)) != MP_OKAY) {	/* t2 = t1^b - a */
+    /* t2 = t1**b - a */
+    if ((res = mp_sub (&t2, a, &t2)) != MP_OKAY) {  
       goto __T3;
     }
 
-    if ((res = mp_mul_d (&t3, b, &t3)) != MP_OKAY) {	/* t3 = t1^(b-1) * b  */
+    /* denominator */
+    /* t3 = t1**(b-1) * b  */
+    if ((res = mp_mul_d (&t3, b, &t3)) != MP_OKAY) {    
       goto __T3;
     }
 
-    if ((res = mp_div (&t2, &t3, &t3, NULL)) != MP_OKAY) {	/* t3 = (t1^b - a)/(b * t1^(b-1)) */
+    /* t3 = (t1**b - a)/(b * t1**(b-1)) */
+    if ((res = mp_div (&t2, &t3, &t3, NULL)) != MP_OKAY) {  
       goto __T3;
     }
 
     if ((res = mp_sub (&t1, &t3, &t2)) != MP_OKAY) {
       goto __T3;
     }
-  }
-  while (mp_cmp (&t1, &t2) != MP_EQ);
+  }  while (mp_cmp (&t1, &t2) != MP_EQ);
 
   /* result can be off by a few so check */
   for (;;) {
@@ -4158,7 +4125,7 @@ mp_n_root (mp_int * a, mp_digit b, mp_int * c)
 
     if (mp_cmp (&t2, a) == MP_GT) {
       if ((res = mp_sub_d (&t1, 1, &t1)) != MP_OKAY) {
-	goto __T3;
+    goto __T3;
       }
     } else {
       break;
@@ -4185,7 +4152,6 @@ __T1:mp_clear (&t1);
 /* End: bn_mp_n_root.c */
 
 /* Start: bn_mp_neg.c */
-#line 0 "bn_mp_neg.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -4217,7 +4183,6 @@ mp_neg (mp_int * a, mp_int * b)
 /* End: bn_mp_neg.c */
 
 /* Start: bn_mp_or.c */
-#line 0 "bn_mp_or.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -4267,7 +4232,6 @@ mp_or (mp_int * a, mp_int * b, mp_int * c)
 /* End: bn_mp_or.c */
 
 /* Start: bn_mp_prime_fermat.c */
-#line 0 "bn_mp_prime_fermat.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -4324,7 +4288,6 @@ __T:mp_clear (&t);
 /* End: bn_mp_prime_fermat.c */
 
 /* Start: bn_mp_prime_is_divisible.c */
-#line 0 "bn_mp_prime_is_divisible.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -4379,7 +4342,6 @@ mp_prime_is_divisible (mp_int * a, int *result)
 /* End: bn_mp_prime_is_divisible.c */
 
 /* Start: bn_mp_prime_is_prime.c */
-#line 0 "bn_mp_prime_is_prime.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -4460,7 +4422,6 @@ __B:mp_clear (&b);
 /* End: bn_mp_prime_is_prime.c */
 
 /* Start: bn_mp_prime_miller_rabin.c */
-#line 0 "bn_mp_prime_miller_rabin.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -4555,7 +4516,6 @@ __N1:mp_clear (&n1);
 /* End: bn_mp_prime_miller_rabin.c */
 
 /* Start: bn_mp_prime_next_prime.c */
-#line 0 "bn_mp_prime_next_prime.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -4614,7 +4574,6 @@ int mp_prime_next_prime(mp_int *a, int t)
 /* End: bn_mp_prime_next_prime.c */
 
 /* Start: bn_mp_rand.c */
-#line 0 "bn_mp_rand.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -4668,7 +4627,6 @@ mp_rand (mp_int * a, int digits)
 /* End: bn_mp_rand.c */
 
 /* Start: bn_mp_read_signed_bin.c */
-#line 0 "bn_mp_read_signed_bin.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -4701,7 +4659,6 @@ mp_read_signed_bin (mp_int * a, unsigned char *b, int c)
 /* End: bn_mp_read_signed_bin.c */
 
 /* Start: bn_mp_read_unsigned_bin.c */
-#line 0 "bn_mp_read_unsigned_bin.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -4745,7 +4702,6 @@ mp_read_unsigned_bin (mp_int * a, unsigned char *b, int c)
 /* End: bn_mp_read_unsigned_bin.c */
 
 /* Start: bn_mp_reduce.c */
-#line 0 "bn_mp_reduce.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -4780,8 +4736,8 @@ mp_reduce (mp_int * x, mp_int * m, mp_int * mu)
   /* q1 = x / b**(k-1)  */
   mp_rshd (&q, um - 1);         
 
-  /* according to HAC this is optimization is ok */
-  if (((unsigned long) m->used) > (((mp_digit)1) << (DIGIT_BIT - 1))) {
+  /* according to HAC this optimization is ok */
+  if (((unsigned long) um) > (((mp_digit)1) << (DIGIT_BIT - 1))) {
     if ((res = mp_mul (&q, mu, &q)) != MP_OKAY) {
       goto CLEANUP;
     }
@@ -4821,7 +4777,7 @@ mp_reduce (mp_int * x, mp_int * m, mp_int * mu)
   /* Back off if it's too big */
   while (mp_cmp (x, m) != MP_LT) {
     if ((res = s_mp_sub (x, m, x)) != MP_OKAY) {
-      break;
+      goto CLEANUP;
     }
   }
   
@@ -4834,7 +4790,6 @@ CLEANUP:
 /* End: bn_mp_reduce.c */
 
 /* Start: bn_mp_reduce_2k.c */
-#line 0 "bn_mp_reduce_2k.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -4895,7 +4850,6 @@ ERR:
 /* End: bn_mp_reduce_2k.c */
 
 /* Start: bn_mp_reduce_2k_setup.c */
-#line 0 "bn_mp_reduce_2k_setup.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -4942,7 +4896,6 @@ mp_reduce_2k_setup(mp_int *a, mp_digit *d)
 /* End: bn_mp_reduce_2k_setup.c */
 
 /* Start: bn_mp_reduce_is_2k.c */
-#line 0 "bn_mp_reduce_is_2k.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -4985,7 +4938,6 @@ mp_reduce_is_2k(mp_int *a)
 /* End: bn_mp_reduce_is_2k.c */
 
 /* Start: bn_mp_reduce_setup.c */
-#line 0 "bn_mp_reduce_setup.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -5019,7 +4971,6 @@ mp_reduce_setup (mp_int * a, mp_int * b)
 /* End: bn_mp_reduce_setup.c */
 
 /* Start: bn_mp_rshd.c */
-#line 0 "bn_mp_rshd.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -5091,7 +5042,6 @@ mp_rshd (mp_int * a, int b)
 /* End: bn_mp_rshd.c */
 
 /* Start: bn_mp_set.c */
-#line 0 "bn_mp_set.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -5120,7 +5070,6 @@ mp_set (mp_int * a, mp_digit b)
 /* End: bn_mp_set.c */
 
 /* Start: bn_mp_set_int.c */
-#line 0 "bn_mp_set_int.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -5167,7 +5116,6 @@ mp_set_int (mp_int * a, unsigned int b)
 /* End: bn_mp_set_int.c */
 
 /* Start: bn_mp_shrink.c */
-#line 0 "bn_mp_shrink.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -5200,7 +5148,6 @@ mp_shrink (mp_int * a)
 /* End: bn_mp_shrink.c */
 
 /* Start: bn_mp_signed_bin_size.c */
-#line 0 "bn_mp_signed_bin_size.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -5227,7 +5174,6 @@ mp_signed_bin_size (mp_int * a)
 /* End: bn_mp_signed_bin_size.c */
 
 /* Start: bn_mp_sqr.c */
-#line 0 "bn_mp_sqr.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -5271,7 +5217,6 @@ mp_sqr (mp_int * a, mp_int * b)
 /* End: bn_mp_sqr.c */
 
 /* Start: bn_mp_sqrmod.c */
-#line 0 "bn_mp_sqrmod.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -5312,7 +5257,6 @@ mp_sqrmod (mp_int * a, mp_int * b, mp_int * c)
 /* End: bn_mp_sqrmod.c */
 
 /* Start: bn_mp_sub.c */
-#line 0 "bn_mp_sub.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -5370,7 +5314,6 @@ mp_sub (mp_int * a, mp_int * b, mp_int * c)
 /* End: bn_mp_sub.c */
 
 /* Start: bn_mp_sub_d.c */
-#line 0 "bn_mp_sub_d.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -5408,7 +5351,6 @@ mp_sub_d (mp_int * a, mp_digit b, mp_int * c)
 /* End: bn_mp_sub_d.c */
 
 /* Start: bn_mp_submod.c */
-#line 0 "bn_mp_submod.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -5449,7 +5391,6 @@ mp_submod (mp_int * a, mp_int * b, mp_int * c, mp_int * d)
 /* End: bn_mp_submod.c */
 
 /* Start: bn_mp_to_signed_bin.c */
-#line 0 "bn_mp_to_signed_bin.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -5482,7 +5423,6 @@ mp_to_signed_bin (mp_int * a, unsigned char *b)
 /* End: bn_mp_to_signed_bin.c */
 
 /* Start: bn_mp_to_unsigned_bin.c */
-#line 0 "bn_mp_to_unsigned_bin.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -5530,7 +5470,6 @@ mp_to_unsigned_bin (mp_int * a, unsigned char *b)
 /* End: bn_mp_to_unsigned_bin.c */
 
 /* Start: bn_mp_toom_mul.c */
-#line 0 "bn_mp_toom_mul.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -5808,7 +5747,6 @@ ERR:
 /* End: bn_mp_toom_mul.c */
 
 /* Start: bn_mp_toom_sqr.c */
-#line 0 "bn_mp_toom_sqr.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -6033,7 +5971,6 @@ ERR:
 /* End: bn_mp_toom_sqr.c */
 
 /* Start: bn_mp_unsigned_bin_size.c */
-#line 0 "bn_mp_unsigned_bin_size.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -6061,7 +5998,6 @@ mp_unsigned_bin_size (mp_int * a)
 /* End: bn_mp_unsigned_bin_size.c */
 
 /* Start: bn_mp_xor.c */
-#line 0 "bn_mp_xor.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -6111,7 +6047,6 @@ mp_xor (mp_int * a, mp_int * b, mp_int * c)
 /* End: bn_mp_xor.c */
 
 /* Start: bn_mp_zero.c */
-#line 0 "bn_mp_zero.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -6140,7 +6075,6 @@ mp_zero (mp_int * a)
 /* End: bn_mp_zero.c */
 
 /* Start: bn_prime_tab.c */
-#line 0 "bn_prime_tab.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -6200,7 +6134,6 @@ const mp_digit __prime_tab[] = {
 /* End: bn_prime_tab.c */
 
 /* Start: bn_radix.c */
-#line 0 "bn_radix.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -6259,7 +6192,9 @@ mp_read_radix (mp_int * a, char *str, int radix)
     }
     ++str;
   }
-  a->sign = neg;
+  if (mp_iszero(a) != 1) {
+     a->sign = neg;
+  }
   return MP_OKAY;
 }
 
@@ -6427,7 +6362,6 @@ int mp_fwrite(mp_int *a, int radix, FILE *stream)
 /* End: bn_radix.c */
 
 /* Start: bn_reverse.c */
-#line 0 "bn_reverse.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -6465,7 +6399,6 @@ bn_reverse (unsigned char *s, int len)
 /* End: bn_reverse.c */
 
 /* Start: bn_s_mp_add.c */
-#line 0 "bn_s_mp_add.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -6573,7 +6506,6 @@ s_mp_add (mp_int * a, mp_int * b, mp_int * c)
 /* End: bn_s_mp_add.c */
 
 /* Start: bn_s_mp_exptmod.c */
-#line 0 "bn_s_mp_exptmod.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -6794,7 +6726,6 @@ __M:
 /* End: bn_s_mp_exptmod.c */
 
 /* Start: bn_s_mp_mul_digs.c */
-#line 0 "bn_s_mp_mul_digs.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -6884,7 +6815,6 @@ s_mp_mul_digs (mp_int * a, mp_int * b, mp_int * c, int digs)
 /* End: bn_s_mp_mul_digs.c */
 
 /* Start: bn_s_mp_mul_high_digs.c */
-#line 0 "bn_s_mp_mul_high_digs.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -6961,7 +6891,6 @@ s_mp_mul_high_digs (mp_int * a, mp_int * b, mp_int * c, int digs)
 /* End: bn_s_mp_mul_high_digs.c */
 
 /* Start: bn_s_mp_sqr.c */
-#line 0 "bn_s_mp_sqr.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -7003,7 +6932,7 @@ s_mp_sqr (mp_int * a, mp_int * b)
     t.dp[2*ix] = (mp_digit) (r & ((mp_word) MP_MASK));
 
     /* get the carry */
-    u = (r >> ((mp_word) DIGIT_BIT));
+    u = (mp_digit)(r >> ((mp_word) DIGIT_BIT));
 
     /* left hand side of A[ix] * A[iy] */
     tmpx = a->dp[ix];
@@ -7024,13 +6953,13 @@ s_mp_sqr (mp_int * a, mp_int * b)
       *tmpt++ = (mp_digit) (r & ((mp_word) MP_MASK));
 
       /* get carry */
-      u = (r >> ((mp_word) DIGIT_BIT));
+      u = (mp_digit)(r >> ((mp_word) DIGIT_BIT));
     }
     /* propagate upwards */
     while (u != ((mp_digit) 0)) {
       r = ((mp_word) * tmpt) + ((mp_word) u);
       *tmpt++ = (mp_digit) (r & ((mp_word) MP_MASK));
-      u = (r >> ((mp_word) DIGIT_BIT));
+      u = (mp_digit)(r >> ((mp_word) DIGIT_BIT));
     }
   }
 
@@ -7043,7 +6972,6 @@ s_mp_sqr (mp_int * a, mp_int * b)
 /* End: bn_s_mp_sqr.c */
 
 /* Start: bn_s_mp_sub.c */
-#line 0 "bn_s_mp_sub.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision
@@ -7131,7 +7059,6 @@ s_mp_sub (mp_int * a, mp_int * b, mp_int * c)
 /* End: bn_s_mp_sub.c */
 
 /* Start: bncore.c */
-#line 0 "bncore.c"
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is library that provides for multiple-precision

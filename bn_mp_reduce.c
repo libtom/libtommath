@@ -32,8 +32,8 @@ mp_reduce (mp_int * x, mp_int * m, mp_int * mu)
   /* q1 = x / b**(k-1)  */
   mp_rshd (&q, um - 1);         
 
-  /* according to HAC this is optimization is ok */
-  if (((unsigned long) m->used) > (((mp_digit)1) << (DIGIT_BIT - 1))) {
+  /* according to HAC this optimization is ok */
+  if (((unsigned long) um) > (((mp_digit)1) << (DIGIT_BIT - 1))) {
     if ((res = mp_mul (&q, mu, &q)) != MP_OKAY) {
       goto CLEANUP;
     }
@@ -73,7 +73,7 @@ mp_reduce (mp_int * x, mp_int * m, mp_int * mu)
   /* Back off if it's too big */
   while (mp_cmp (x, m) != MP_LT) {
     if ((res = s_mp_sub (x, m, x)) != MP_OKAY) {
-      break;
+      goto CLEANUP;
     }
   }
   

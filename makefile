@@ -1,6 +1,6 @@
 CFLAGS  +=  -I./ -Wall -W -Wshadow -O3 -fomit-frame-pointer -funroll-loops
 
-VERSION=0.20
+VERSION=0.21
 
 default: libtommath.a
 
@@ -51,7 +51,7 @@ install: libtommath.a docs
 
 test: libtommath.a demo/demo.o
 	$(CC) demo/demo.o libtommath.a -o test
-	cd mtest ; gcc $(CFLAGS) mtest.c -o mtest -s
+	cd mtest ; $(CC) $(CFLAGS) mtest.c -o mtest -s
         
 timing: libtommath.a
 	$(CC) $(CFLAGS) -DTIMER demo/demo.c libtommath.a -o ltmtest -s
