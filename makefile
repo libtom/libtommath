@@ -1,6 +1,6 @@
 CFLAGS  +=  -I./ -Wall -W -Wshadow -O3 -fomit-frame-pointer -funroll-loops
 
-VERSION=0.19
+VERSION=0.20
 
 default: libtommath.a
 
@@ -103,5 +103,6 @@ clean:
 zipup: clean manual poster
 	perl gen.pl ; mv mpi.c pre_gen/ ; \
 	cd .. ; rm -rf ltm* libtommath-$(VERSION) ; mkdir libtommath-$(VERSION) ; \
-	cp -R ./libtommath/* ./libtommath-$(VERSION)/ ; tar -c libtommath-$(VERSION)/* > ltm-$(VERSION).tar ; \
+	cp -R ./libtommath/* ./libtommath-$(VERSION)/ ; cp tdcal.pdf ./libtommath-$(VERSION)/ ; cd ./libtommath-$(VERSION) ; rm -f tommath.src tommath.tex tommath.out ; cd pics ; rm -f * ; cd .. ; cd .. ; ls ; \
+	tar -c libtommath-$(VERSION)/* > ltm-$(VERSION).tar ; \
 	bzip2 -9vv ltm-$(VERSION).tar ; zip -9 -r ltm-$(VERSION).zip libtommath-$(VERSION)/*

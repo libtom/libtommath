@@ -7,7 +7,7 @@ int sizes[] = {256, 512, 768, 1024, 1536, 2048, 3072, 4096};
 int main(void)
 {
    char buf[2000];
-   int x, y, t;
+   int x, y;
    mp_int q, p;
    FILE *out;
    clock_t t1;

@@ -1,3 +1,7 @@
+June 8th, 2003
+v0.20  -- Removed the book from the package.  Added the TDCAL license document.  
+       -- This release is officially pure-bred TDCAL again [last officially TDCAL based release was v0.16]
+
 June 6th, 2003
 v0.19  -- Fixed a bug in mp_montgomery_reduce() which was introduced when I tweaked mp_rshd() in the previous release.
           Essentially the digits were not trimmed before the compare which cause a subtraction to occur all the time.
