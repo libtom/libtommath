@@ -18,29 +18,40 @@
 int
 mp_mul_d (mp_int * a, mp_digit b, mp_int * c)
 {
-  int       res, pa, ix;
-  mp_word   r;
-  mp_digit  u;
-  mp_int    t;
-
+  int     res, pa, olduse;
 
   pa = a->used;
-  if ((res = mp_init_size (&t, pa + 2)) != MP_OKAY) {
-    return res;
+  if (c->alloc < pa + 1) {
+    if ((res = mp_grow (c, pa + 1)) != MP_OKAY) {
+      return res;
+    }
   }
-  t.used = pa + 2;
 
-  u = 0;
-  for (ix = 0; ix < pa; ix++) {
-    r = ((mp_word) u) + ((mp_word) a->dp[ix]) * ((mp_word) b);
-    t.dp[ix] = (mp_digit) (r & ((mp_word) MP_MASK));
-    u = (mp_digit) (r >> ((mp_word) DIGIT_BIT));
+  olduse = c->used;
+  c->used = pa + 1;
+
+  {
+    register mp_digit u, *tmpa, *tmpc;
+    register mp_word r;
+    register int ix;
+
+    tmpc = c->dp + c->used;
+    for (ix = c->used; ix < olduse; ix++) {
+      *tmpc++ = 0;
+    }
+
+    tmpa = a->dp;
+    tmpc = c->dp;
+
+    u = 0;
+    for (ix = 0; ix < pa; ix++) {
+      r = ((mp_word) u) + ((mp_word) * tmpa++) * ((mp_word) b);
+      *tmpc++ = (mp_digit) (r & ((mp_word) MP_MASK));
+      u = (mp_digit) (r >> ((mp_word) DIGIT_BIT));
+    }
+    *tmpc = u;
   }
-  t.dp[ix] = u;
 
-  t.sign = a->sign;
-  mp_clamp (&t);
-  mp_exch (&t, c);
-  mp_clear (&t);
+  mp_clamp (c);
   return MP_OKAY;
 }

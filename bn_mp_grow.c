@@ -18,8 +18,7 @@
 int
 mp_grow (mp_int * a, int size)
 {
-  int       i, n;
-
+  int     i, n;
 
   /* if the alloc size is smaller alloc more ram */
   if (a->alloc < size) {

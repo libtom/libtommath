@@ -1,0 +1,5 @@
+Exponentiating   513-bit =>       531/sec,        94 ticks
+Exponentiating   769-bit =>       187/sec,       266 ticks
+Exponentiating  1025-bit =>        88/sec,       562 ticks
+Exponentiating  2049-bit =>        13/sec,      3719 ticks
+

@@ -20,20 +20,17 @@
 int
 s_mp_mul_high_digs (mp_int * a, mp_int * b, mp_int * c, int digs)
 {
-  mp_int    t;
-  int       res, pa, pb, ix, iy;
-  mp_digit  u;
-  mp_word   r;
-  mp_digit  tmpx, *tmpt, *tmpy;
+  mp_int  t;
+  int     res, pa, pb, ix, iy;
+  mp_digit u;
+  mp_word r;
+  mp_digit tmpx, *tmpt, *tmpy;
 
 
   /* can we use the fast multiplier? */
   if (((a->used + b->used + 1) < 512)
-      && MAX (a->used,
-	      b->used) <
-      (1 << ((CHAR_BIT * sizeof (mp_word)) - (2 * DIGIT_BIT)))) {
-    res = fast_s_mp_mul_high_digs (a, b, c, digs);
-    return res;
+      && MAX (a->used, b->used) < (1 << ((CHAR_BIT * sizeof (mp_word)) - (2 * DIGIT_BIT)))) {
+    return fast_s_mp_mul_high_digs (a, b, c, digs);
   }
 
   if ((res = mp_init_size (&t, a->used + b->used + 1)) != MP_OKAY) {
@@ -58,9 +55,7 @@ s_mp_mul_high_digs (mp_int * a, mp_int * b, mp_int * c, int digs)
 
     for (iy = digs - ix; iy < pb; iy++) {
       /* calculate the double precision result */
-      r =
-	((mp_word) * tmpt) + ((mp_word) tmpx) * ((mp_word) * tmpy++) +
-	((mp_word) u);
+      r = ((mp_word) * tmpt) + ((mp_word) tmpx) * ((mp_word) * tmpy++) + ((mp_word) u);
 
       /* get the lower part */
       *tmpt++ = (mp_digit) (r & ((mp_word) MP_MASK));

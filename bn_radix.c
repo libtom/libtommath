@@ -15,16 +15,15 @@
 #include <tommath.h>
 
 /* chars used in radix conversions */
-static const char *s_rmap =
-  "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+/";
+static const char *s_rmap = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+/";
 
 
 /* read a string [ASCII] in a given radix */
 int
 mp_read_radix (mp_int * a, char *str, int radix)
 {
-  int       y, res, neg;
-  char      ch;
+  int     y, res, neg;
+  char    ch;
 
   if (radix < 2 || radix > 64) {
     return MP_VAL;
@@ -66,10 +65,10 @@ mp_read_radix (mp_int * a, char *str, int radix)
 int
 mp_toradix (mp_int * a, char *str, int radix)
 {
-  int       res, digs;
-  mp_int    t;
-  mp_digit  d;
-  char     *_s = str;
+  int     res, digs;
+  mp_int  t;
+  mp_digit d;
+  char   *_s = str;
 
   if (radix < 2 || radix > 64) {
     return MP_VAL;
@@ -104,9 +103,9 @@ mp_toradix (mp_int * a, char *str, int radix)
 int
 mp_radix_size (mp_int * a, int radix)
 {
-  int       res, digs;
-  mp_int    t;
-  mp_digit  d;
+  int     res, digs;
+  mp_int  t;
+  mp_digit d;
 
   /* special case for binary */
   if (radix == 2) {

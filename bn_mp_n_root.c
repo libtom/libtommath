@@ -17,12 +17,16 @@
 /* find the n'th root of an integer 
  *
  * Result found such that (c)^b <= a and (c+1)^b > a 
+ *
+ * This algorithm uses Newton's approximation x[i+1] = x[i] - f(x[i])/f'(x[i]) 
+ * which will find the root in log(N) time where each step involves a fair bit.  This
+ * is not meant to find huge roots [square and cube at most].
  */
 int
 mp_n_root (mp_int * a, mp_digit b, mp_int * c)
 {
-  mp_int    t1, t2, t3;
-  int       res, neg;
+  mp_int  t1, t2, t3;
+  int     res, neg;
 
   /* input must be positive if b is even */
   if ((b & 1) == 0 && a->sign == MP_NEG) {

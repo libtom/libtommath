@@ -14,19 +14,30 @@
  */
 #include <tommath.h>
 
+static int f_mp_exptmod (mp_int * G, mp_int * X, mp_int * P, mp_int * Y);
+
+/* this is a shell function that calls either the normal or Montgomery
+ * exptmod functions.  Originally the call to the montgomery code was 
+ * embedded in the normal function but that wasted alot of stack space
+ * for nothing (since 99% of the time the Montgomery code would be called)
+ */
 int
 mp_exptmod (mp_int * G, mp_int * X, mp_int * P, mp_int * Y)
 {
-  mp_int    M[256], res, mu;
-  mp_digit  buf;
-  int       err, bitbuf, bitcpy, bitcnt, mode, digidx, x, y, winsize;
-
-
   /* if the modulus is odd use the fast method */
   if (mp_isodd (P) == 1 && P->used > 4 && P->used < MONTGOMERY_EXPT_CUTOFF) {
-    err = mp_exptmod_fast (G, X, P, Y);
-    return err;
+    return mp_exptmod_fast (G, X, P, Y);
+  } else {
+    return f_mp_exptmod (G, X, P, Y);
   }
+}
+
+static int
+f_mp_exptmod (mp_int * G, mp_int * X, mp_int * P, mp_int * Y)
+{
+  mp_int  M[256], res, mu;
+  mp_digit buf;
+  int     err, bitbuf, bitcpy, bitcnt, mode, digidx, x, y, winsize;
 
   /* find window size */
   x = mp_count_bits (X);
@@ -80,9 +91,7 @@ mp_exptmod (mp_int * G, mp_int * X, mp_int * P, mp_int * Y)
   }
 
   for (x = 0; x < (winsize - 1); x++) {
-    if ((err =
-	 mp_sqr (&M[1 << (winsize - 1)],
-		 &M[1 << (winsize - 1)])) != MP_OKAY) {
+    if ((err = mp_sqr (&M[1 << (winsize - 1)], &M[1 << (winsize - 1)])) != MP_OKAY) {
       goto __MU;
     }
     if ((err = mp_reduce (&M[1 << (winsize - 1)], P, &mu)) != MP_OKAY) {

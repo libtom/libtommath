@@ -18,9 +18,8 @@
 int
 mp_add_d (mp_int * a, mp_digit b, mp_int * c)
 {
-  mp_int    t;
-  int       res;
-
+  mp_int  t;
+  int     res;
 
   if ((res = mp_init (&t)) != MP_OKAY) {
     return res;

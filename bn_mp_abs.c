@@ -14,11 +14,14 @@
  */
 #include <tommath.h>
 
-/* b = |a| */
+/* b = |a| 
+ *
+ * Simple function copies the input and fixes the sign to positive
+ */
 int
 mp_abs (mp_int * a, mp_int * b)
 {
-  int       res;
+  int     res;
   if ((res = mp_copy (a, b)) != MP_OKAY) {
     return res;
   }

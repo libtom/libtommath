@@ -18,10 +18,8 @@
 int
 s_mp_add (mp_int * a, mp_int * b, mp_int * c)
 {
-  mp_int   *x;
-  int       olduse, res, min, max, i;
-  mp_digit  u;
-
+  mp_int *x;
+  int     olduse, res, min, max;
 
   /* find sizes, we let |a| <= |b| which means we have to sort
    * them.  "x" will point to the input with the most digits
@@ -52,38 +50,48 @@ s_mp_add (mp_int * a, mp_int * b, mp_int * c)
   /* add digits from lower part */
 
   /* set the carry to zero */
-  u = 0;
-  for (i = 0; i < min; i++) {
-    /* Compute the sum at one digit, T[i] = A[i] + B[i] + U */
-    c->dp[i] = a->dp[i] + b->dp[i] + u;
+  {
+    register mp_digit u, *tmpa, *tmpb, *tmpc;
+    register int i;
 
-    /* U = carry bit of T[i] */
-    u = (c->dp[i] >> DIGIT_BIT) & 1;
+    /* alias for digit pointers */
+    tmpa = a->dp;
+    tmpb = b->dp;
+    tmpc = c->dp;
 
-    /* take away carry bit from T[i] */
-    c->dp[i] &= MP_MASK;
-  }
-
-  /* now copy higher words if any, that is in A+B if A or B has more digits add those in */
-  if (min != max) {
-    for (; i < max; i++) {
-      /* T[i] = X[i] + U */
-      c->dp[i] = x->dp[i] + u;
+    u = 0;
+    for (i = 0; i < min; i++) {
+      /* Compute the sum at one digit, T[i] = A[i] + B[i] + U */
+      *tmpc = *tmpa++ + *tmpb++ + u;
 
       /* U = carry bit of T[i] */
-      u = (c->dp[i] >> DIGIT_BIT) & 1;
+      u = *tmpc >> DIGIT_BIT;
 
       /* take away carry bit from T[i] */
-      c->dp[i] &= MP_MASK;
+      *tmpc++ &= MP_MASK;
     }
-  }
 
-  /* add carry */
-  c->dp[i] = u;
+    /* now copy higher words if any, that is in A+B if A or B has more digits add those in */
+    if (min != max) {
+      for (; i < max; i++) {
+	/* T[i] = X[i] + U */
+	*tmpc = x->dp[i] + u;
 
-  /* clear digits above used (since we may not have grown result above) */
-  for (i = c->used; i < olduse; i++) {
-    c->dp[i] = 0;
+	/* U = carry bit of T[i] */
+	u = *tmpc >> DIGIT_BIT;
+
+	/* take away carry bit from T[i] */
+	*tmpc++ &= MP_MASK;
+      }
+    }
+
+    /* add carry */
+    *tmpc++ = u;
+
+    /* clear digits above used (since we may not have grown result above) */
+    for (i = c->used; i < olduse; i++) {
+      *tmpc++ = 0;
+    }
   }
 
   mp_clamp (c);

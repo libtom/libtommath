@@ -14,11 +14,15 @@
  */
 #include <tommath.h>
 
-/* computes a = 2^b */
+/* computes a = 2^b 
+ *
+ * Simple algorithm which zeroes the int, grows it then just sets one bit
+ * as required.
+ */
 int
 mp_2expt (mp_int * a, int b)
 {
-  int       res;
+  int     res;
 
   mp_zero (a);
   if ((res = mp_grow (a, b / DIGIT_BIT + 1)) != MP_OKAY) {

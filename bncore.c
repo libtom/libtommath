@@ -14,6 +14,6 @@
  */
 #include <tommath.h>
 
-int       KARATSUBA_MUL_CUTOFF = 80,	/* Min. number of digits before Karatsuba multiplication is used. */
-          KARATSUBA_SQR_CUTOFF = 80,	/* Min. number of digits before Karatsuba squaring is used. */
-          MONTGOMERY_EXPT_CUTOFF = 40;	/* max. number of digits that montgomery reductions will help for */
+int     KARATSUBA_MUL_CUTOFF = 80,	/* Min. number of digits before Karatsuba multiplication is used. */
+        KARATSUBA_SQR_CUTOFF = 80,	/* Min. number of digits before Karatsuba squaring is used. */
+        MONTGOMERY_EXPT_CUTOFF = 74;	/* max. number of digits that montgomery reductions will help for */

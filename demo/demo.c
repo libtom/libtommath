@@ -76,7 +76,7 @@ int main(void)
 {
    mp_int a, b, c, d, e, f;
    unsigned long expt_n, add_n, sub_n, mul_n, div_n, sqr_n, mul2d_n, div2d_n, gcd_n, lcm_n, inv_n;
-   int rr;
+   unsigned rr;
 
 #ifdef TIMER
    int n;
@@ -90,42 +90,20 @@ int main(void)
    mp_init(&e);
    mp_init(&f);
 
-#ifdef DEBUG
-   mp_read_radix(&a, "347743159439876626079252796797422223177535447388206607607181663903045907591201940478223621722118173270898487582987137708656414344685816179420855160986340457973820182883508387588163122354089264395604796675278966117567294812714812796820596564876450716066283126720010859041484786529056457896367683122960411136319", 10);
-   mp_read_radix(&b, "347743159439876626079252796797422223177535447388206607607181663903045907591201940478223621722118173270898487582987137708656414344685816179420855160986340457973820182883508387588163122354089264395604796675278966117567294812714812796820596564876450716066283126720010859041484786529056457896367683122960411136318", 10);
-   mp_set(&c, 1);
-   reset_timings();
-   mp_exptmod(&c, &b, &a, &d);
-   mp_exptmod(&c, &b, &a, &d);
-   mp_exptmod(&c, &b, &a, &d);
-   mp_exptmod(&c, &b, &a, &d);
-   mp_exptmod(&c, &b, &a, &d);
-   mp_exptmod(&c, &b, &a, &d);
-   mp_exptmod(&c, &b, &a, &d);
-   mp_exptmod(&c, &b, &a, &d);
-   mp_exptmod(&c, &b, &a, &d);
-   mp_exptmod(&c, &b, &a, &d);
-   mp_exptmod(&c, &b, &a, &d);
-   mp_exptmod(&c, &b, &a, &d);
-   mp_exptmod(&c, &b, &a, &d);
-   mp_exptmod(&c, &b, &a, &d);
-   mp_exptmod(&c, &b, &a, &d);
-   mp_exptmod(&c, &b, &a, &d);
-   dump_timings();
-   return 0;
-#endif
 
 #ifdef TIMER
+goto multtime;
+
       printf("CLOCKS_PER_SEC == %lu\n", CLOCKS_PER_SEC);
       mp_read_radix(&a, "340282366920938463463374607431768211455", 10);
       mp_read_radix(&b, "340282366920938463463574607431768211455", 10);
       while (a.used * DIGIT_BIT < 8192) {
          reset();
-         for (rr = 0; rr < 1000000; rr++) {
+         for (rr = 0; rr < 10000000; rr++) {
              mp_add(&a, &b, &c);
          }
          tt = rdtsc();
-         printf("Adding %d-bit took %f ticks\n", mp_count_bits(&a), (double)tt / ((double)1000000));
+         printf("Adding\t\t%4d-bit => %9llu/sec, %9llu ticks\n", mp_count_bits(&a), (((unsigned long long)rr)*CLOCKS_PER_SEC)/tt, tt);
          mp_sqr(&a, &a);
          mp_sqr(&b, &b);
       }
@@ -134,37 +112,40 @@ int main(void)
       mp_read_radix(&b, "340282366920938463463574607431768211455", 10);
       while (a.used * DIGIT_BIT < 8192) {
          reset();
-         for (rr = 0; rr < 1000000; rr++) {
+         for (rr = 0; rr < 10000000; rr++) {
              mp_sub(&a, &b, &c);
          }
          tt = rdtsc();
-         printf("Subtracting %d-bit took %f ticks\n", mp_count_bits(&a), (double)tt / ((double)1000000));
+         printf("Subtracting\t%4d-bit => %9llu/sec, %9llu ticks\n", mp_count_bits(&a), (((unsigned long long)rr)*CLOCKS_PER_SEC)/tt, tt);
          mp_sqr(&a, &a);
          mp_sqr(&b, &b);
       }
+      
+multtime:      
 
    mp_read_radix(&a, "340282366920938463463374607431768211455", 10);
    while (a.used * DIGIT_BIT < 8192) {
       reset();
-      for (rr = 0; rr < 1000000; rr++) {
+      for (rr = 0; rr < 250000; rr++) {
           mp_sqr(&a, &b);
       }
       tt = rdtsc();
-      printf("Squaring %d-bit took %f ticks\n", mp_count_bits(&a), (double)tt / ((double)1000000));
+      printf("Squaring\t%4d-bit => %9llu/sec, %9llu ticks\n", mp_count_bits(&a), (((unsigned long long)rr)*CLOCKS_PER_SEC)/tt, tt);
       mp_copy(&b, &a);
    }
    
    mp_read_radix(&a, "340282366920938463463374607431768211455", 10);
    while (a.used * DIGIT_BIT < 8192) {
       reset();
-      for (rr = 0; rr < 1000000; rr++) {
+      for (rr = 0; rr < 250000; rr++) {
           mp_mul(&a, &a, &b);
       }
       tt = rdtsc();
-      printf("Multiplying %d-bit took %f ticks\n", mp_count_bits(&a), (double)tt / ((double)1000000));
+      printf("Multiplying\t%4d-bit => %9llu/sec, %9llu ticks\n", mp_count_bits(&a), (((unsigned long long)rr)*CLOCKS_PER_SEC)/tt, tt);
       mp_copy(&b, &a);
    }
-   
+
+expttime:  
    {
       char *primes[] = {
          "17933601194860113372237070562165128350027320072176844226673287945873370751245439587792371960615073855669274087805055507977323024886880985062002853331424203",
@@ -180,7 +161,7 @@ int main(void)
       mp_read_radix(&a, primes[n], 10);
       mp_zero(&b);
       for (rr = 0; rr < mp_count_bits(&a); rr++) {
-         mp_mul_2d(&b, 1, &b);
+         mp_mul_2(&b, &b);
          b.dp[0] |= lbit();
          b.used  += 1;
       }
@@ -188,7 +169,7 @@ int main(void)
       mp_mod(&b, &c, &b);
       mp_set(&c, 3);
       reset();
-      for (rr = 0; rr < 100; rr++) {
+      for (rr = 0; rr < 50; rr++) {
           mp_exptmod(&c, &b, &a, &d);
       }
       tt = rdtsc();
@@ -201,16 +182,15 @@ int main(void)
          draw(&d);
          exit(0);
       }
-      printf("Exponentiating %d-bit took %f ticks\n", mp_count_bits(&a), (double)tt / ((double)100));
+      printf("Exponentiating\t%4d-bit => %9llu/sec, %9llu ticks\n", mp_count_bits(&a), (((unsigned long long)rr)*CLOCKS_PER_SEC)/tt, tt);
    }
    }   
-
 
    mp_read_radix(&a, "340282366920938463463374607431768211455", 10);
    mp_read_radix(&b, "234892374891378913789237289378973232333", 10);
    while (a.used * DIGIT_BIT < 8192) {
       reset();
-      for (rr = 0; rr < 100; rr++) {
+      for (rr = 0; rr < 10000; rr++) {
           mp_invmod(&b, &a, &c);
       }
       tt = rdtsc();
@@ -219,7 +199,7 @@ int main(void)
          printf("Failed to invert\n");
          return 0;
       }
-      printf("Inverting mod %d-bit took %f ticks\n", mp_count_bits(&a), (double)tt / ((double)100));
+      printf("Inverting mod\t%4d-bit => %9llu/sec, %9llu ticks\n", mp_count_bits(&a), (((unsigned long long)rr)*CLOCKS_PER_SEC)/tt, tt);
       mp_sqr(&a, &a);
       mp_sqr(&b, &b);
    }

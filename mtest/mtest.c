@@ -89,7 +89,7 @@ int main(void)
    }
 
    for (;;) {
-       n = fgetc(rng) % 11;
+       n = 4; // fgetc(rng) % 11;
 
    if (n == 0) {
        /* add tests */

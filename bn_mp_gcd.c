@@ -19,8 +19,8 @@
 int
 mp_gcd (mp_int * a, mp_int * b, mp_int * c)
 {
-  mp_int    u, v, t;
-  int       k, res, neg;
+  mp_int  u, v, t;
+  int     k, res, neg;
 
 
   /* either zero than gcd is the largest */
@@ -57,10 +57,10 @@ mp_gcd (mp_int * a, mp_int * b, mp_int * c)
   k = 0;
   while ((u.dp[0] & 1) == 0 && (v.dp[0] & 1) == 0) {
     ++k;
-    if ((res = mp_div_2d (&u, 1, &u, NULL)) != MP_OKAY) {
+    if ((res = mp_div_2 (&u, &u)) != MP_OKAY) {
       goto __T;
     }
-    if ((res = mp_div_2d (&v, 1, &v, NULL)) != MP_OKAY) {
+    if ((res = mp_div_2 (&v, &v)) != MP_OKAY) {
       goto __T;
     }
   }
@@ -80,7 +80,7 @@ mp_gcd (mp_int * a, mp_int * b, mp_int * c)
   do {
     /* B3 (and B4).  Halve t, if even */
     while (t.used != 0 && (t.dp[0] & 1) == 0) {
-      if ((res = mp_div_2d (&t, 1, &t, NULL)) != MP_OKAY) {
+      if ((res = mp_div_2 (&t, &t)) != MP_OKAY) {
 	goto __T;
       }
     }

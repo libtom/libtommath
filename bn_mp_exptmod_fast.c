@@ -24,9 +24,9 @@
 int
 mp_exptmod_fast (mp_int * G, mp_int * X, mp_int * P, mp_int * Y)
 {
-  mp_int    M[256], res;
-  mp_digit  buf, mp;
-  int       err, bitbuf, bitcpy, bitcnt, mode, digidx, x, y, winsize;
+  mp_int  M[256], res;
+  mp_digit buf, mp;
+  int     err, bitbuf, bitcpy, bitcnt, mode, digidx, x, y, winsize;
 
   /* find window size */
   x = mp_count_bits (X);
@@ -48,7 +48,7 @@ mp_exptmod_fast (mp_int * G, mp_int * X, mp_int * P, mp_int * Y)
 
   /* init G array */
   for (x = 0; x < (1 << winsize); x++) {
-    if ((err = mp_init_size (&M[x], 1)) != MP_OKAY) {
+    if ((err = mp_init (&M[x])) != MP_OKAY) {
       for (y = 0; y < x; y++) {
 	mp_clear (&M[y]);
       }
@@ -66,44 +66,32 @@ mp_exptmod_fast (mp_int * G, mp_int * X, mp_int * P, mp_int * Y)
     goto __RES;
   }
 
-  /* now we need R mod m */
-  if ((err = mp_2expt (&res, P->used * DIGIT_BIT)) != MP_OKAY) {
-    goto __RES;
-  }
-
-  /* res = R mod m (can use modified double/subtract ...) */
-  if ((err = mp_mod (&res, P, &res)) != MP_OKAY) {
-    goto __RES;
-  }
-
   /* create M table
    *
    * The M table contains powers of the input base, e.g. M[x] = G^x mod P
    *
    * The first half of the table is not computed though accept for M[0] and M[1]
    */
-  if ((err = mp_mod (G, P, &M[1])) != MP_OKAY) {
+
+  /* now we need R mod m */
+  if ((err = mp_montgomery_calc_normalization (&res, P)) != MP_OKAY) {
     goto __RES;
   }
 
   /* now set M[1] to G * R mod m */
-  if ((err = mp_mulmod (&M[1], &res, P, &M[1])) != MP_OKAY) {
+  if ((err = mp_mulmod (G, &res, P, &M[1])) != MP_OKAY) {
     goto __RES;
   }
-
   /* compute the value at M[1<<(winsize-1)] by squaring M[1] (winsize-1) times */
   if ((err = mp_copy (&M[1], &M[1 << (winsize - 1)])) != MP_OKAY) {
     goto __RES;
   }
 
   for (x = 0; x < (winsize - 1); x++) {
-    if ((err =
-	 mp_sqr (&M[1 << (winsize - 1)],
-		 &M[1 << (winsize - 1)])) != MP_OKAY) {
+    if ((err = mp_sqr (&M[1 << (winsize - 1)], &M[1 << (winsize - 1)])) != MP_OKAY) {
       goto __RES;
     }
-    if ((err =
-	 mp_montgomery_reduce (&M[1 << (winsize - 1)], P, mp)) != MP_OKAY) {
+    if ((err = mp_montgomery_reduce (&M[1 << (winsize - 1)], P, mp)) != MP_OKAY) {
       goto __RES;
     }
   }

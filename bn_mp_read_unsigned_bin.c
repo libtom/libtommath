@@ -18,7 +18,7 @@
 int
 mp_read_unsigned_bin (mp_int * a, unsigned char *b, int c)
 {
-  int       res;
+  int     res;
   mp_zero (a);
   while (c-- > 0) {
     if ((res = mp_mul_2d (a, 8, a)) != MP_OKAY) {

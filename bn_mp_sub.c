@@ -18,7 +18,7 @@
 int
 mp_sub (mp_int * a, mp_int * b, mp_int * c)
 {
-  int       sa, sb, res;
+  int     sa, sb, res;
 
 
   sa = a->sign;

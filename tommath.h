@@ -289,6 +289,11 @@ int mp_reduce(mp_int *a, mp_int *b, mp_int *c);
 /* setups the montgomery reduction */
 int mp_montgomery_setup(mp_int *a, mp_digit *mp);
 
+/* computes a = B^n mod b without division or multiplication useful for 
+ * normalizing numbers in a Montgomery system.
+ */
+int mp_montgomery_calc_normalization(mp_int *a, mp_int *b);
+
 /* computes xR^-1 == x (mod N) via Montgomery Reduction */
 int mp_montgomery_reduce(mp_int *a, mp_int *m, mp_digit mp);
 
@@ -342,7 +347,6 @@ void bn_reverse(unsigned char *s, int len);
 #ifdef __cplusplus
    }
 #endif
-
 
 #endif
 

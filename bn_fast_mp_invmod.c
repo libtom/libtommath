@@ -14,13 +14,17 @@
  */
 #include <tommath.h>
 
-/* computes the modular inverse via binary extended euclidean algorithm, that is c = 1/a mod b */
+/* computes the modular inverse via binary extended euclidean algorithm, 
+ * that is c = 1/a mod b 
+ *
+ * Based on mp_invmod except this is optimized for the case where b is 
+ * odd as per HAC Note 14.64 on pp. 610
+ */
 int
 fast_mp_invmod (mp_int * a, mp_int * b, mp_int * c)
 {
-  mp_int    x, y, u, v, B, D;
-  int       res, neg;
-
+  mp_int  x, y, u, v, B, D;
+  int     res, neg;
 
   if ((res = mp_init (&x)) != MP_OKAY) {
     goto __ERR;
@@ -58,7 +62,10 @@ fast_mp_invmod (mp_int * a, mp_int * b, mp_int * c)
     goto __D;
   }
 
-  /* 2. [modified] if x,y are both even then return an error! */
+  /* 2. [modified] if x,y are both even then return an error! 
+   * 
+   * That is if gcd(x,y) = 2 * k then obviously there is no inverse.
+   */
   if (mp_iseven (&x) == 1 && mp_iseven (&y) == 1) {
     res = MP_VAL;
     goto __D;
@@ -135,8 +142,9 @@ top:
   }
 
   /* if not zero goto step 4 */
-  if (mp_iszero (&u) == 0)
+  if (mp_iszero (&u) == 0) {
     goto top;
+  }
 
   /* now a = C, b = D, gcd == g*v */
 

@@ -18,11 +18,18 @@
 int
 mp_sqr (mp_int * a, mp_int * b)
 {
-  int       res;
+  int     res;
   if (a->used > KARATSUBA_SQR_CUTOFF) {
     res = mp_karatsuba_sqr (a, b);
   } else {
-    res = s_mp_sqr (a, b);
+
+    /* can we use the fast multiplier? */
+    if (((a->used * 2 + 1) < 512)
+	&& a->used < (1 << ((CHAR_BIT * sizeof (mp_word)) - (2 * DIGIT_BIT) - 1))) {
+      res = fast_s_mp_sqr (a, b);
+    } else {
+      res = s_mp_sqr (a, b);
+    }
   }
   b->sign = MP_ZPOS;
   return res;

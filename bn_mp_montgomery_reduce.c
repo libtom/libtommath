@@ -18,14 +18,13 @@
 int
 mp_montgomery_reduce (mp_int * a, mp_int * m, mp_digit mp)
 {
-  int       ix, res, digs;
-  mp_digit  ui;
+  int     ix, res, digs;
+  mp_digit ui;
 
   digs = m->used * 2 + 1;
   if ((digs < 512)
       && digs < (1 << ((CHAR_BIT * sizeof (mp_word)) - (2 * DIGIT_BIT)))) {
-    res = fast_mp_montgomery_reduce (a, m, mp);
-    return res;
+    return fast_mp_montgomery_reduce (a, m, mp);
   }
 
   if (a->alloc < m->used * 2 + 1) {
@@ -51,9 +50,7 @@ mp_montgomery_reduce (mp_int * a, mp_int * m, mp_digit mp)
 
       mu = 0;
       for (iy = 0; iy < m->used; iy++) {
-	r =
-	  ((mp_word) ui) * ((mp_word) * tmpx++) + ((mp_word) mu) +
-	  ((mp_word) * tmpy);
+	r = ((mp_word) ui) * ((mp_word) * tmpx++) + ((mp_word) mu) + ((mp_word) * tmpy);
 	mu = (r >> ((mp_word) DIGIT_BIT));
 	*tmpy++ = (r & ((mp_word) MP_MASK));
       }
@@ -71,9 +68,7 @@ mp_montgomery_reduce (mp_int * a, mp_int * m, mp_digit mp)
 
   /* if A >= m then A = A - m */
   if (mp_cmp_mag (a, m) != MP_LT) {
-    if ((res = s_mp_sub (a, m, a)) != MP_OKAY) {
-      return res;
-    }
+    return s_mp_sub (a, m, a);
   }
 
   return MP_OKAY;

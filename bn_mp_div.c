@@ -26,8 +26,8 @@
 int
 mp_div (mp_int * a, mp_int * b, mp_int * c, mp_int * d)
 {
-  mp_int    q, x, y, t1, t2;
-  int       res, n, t, i, norm, neg;
+  mp_int  q, x, y, t1, t2;
+  int     res, n, t, i, norm, neg;
 
 
   /* is divisor zero ? */
@@ -75,13 +75,12 @@ mp_div (mp_int * a, mp_int * b, mp_int * c, mp_int * d)
 
   /* normalize both x and y, ensure that y >= b/2, [b == 2^DIGIT_BIT] */
   norm = 0;
-  while ((y.dp[y.used - 1] & (((mp_digit) 1) << (DIGIT_BIT - 1))) ==
-	 ((mp_digit) 0)) {
+  while ((y.dp[y.used - 1] & (((mp_digit) 1) << (DIGIT_BIT - 1))) == ((mp_digit) 0)) {
     ++norm;
-    if ((res = mp_mul_2d (&x, 1, &x)) != MP_OKAY) {
+    if ((res = mp_mul_2 (&x, &x)) != MP_OKAY) {
       goto __Y;
     }
-    if ((res = mp_mul_2d (&y, 1, &y)) != MP_OKAY) {
+    if ((res = mp_mul_2 (&y, &y)) != MP_OKAY) {
       goto __Y;
     }
   }
@@ -114,7 +113,7 @@ mp_div (mp_int * a, mp_int * b, mp_int * c, mp_int * d)
     if (x.dp[i] == y.dp[t]) {
       q.dp[i - t - 1] = ((1UL << DIGIT_BIT) - 1UL);
     } else {
-      mp_word   tmp;
+      mp_word tmp;
       tmp = ((mp_word) x.dp[i]) << ((mp_word) DIGIT_BIT);
       tmp |= ((mp_word) x.dp[i - 1]);
       tmp /= ((mp_word) y.dp[t]);
@@ -142,8 +141,7 @@ mp_div (mp_int * a, mp_int * b, mp_int * c, mp_int * d)
       t2.dp[1] = (i - 1 < 0) ? 0 : x.dp[i - 1];
       t2.dp[2] = x.dp[i];
       t2.used = 3;
-    }
-    while (mp_cmp (&t1, &t2) == MP_GT);
+    } while (mp_cmp (&t1, &t2) == MP_GT);
 
     /* step 3.3 x = x - q{i-t-1} * y * b^{i-t-1} */
     if ((res = mp_mul_d (&y, q.dp[i - t - 1], &t1)) != MP_OKAY) {

@@ -1,3 +1,9 @@
+Feb 13th, 2003
+v0.13  -- tons of minor speed-ups in low level add, sub, mul_2 and div_2 which propagate 
+          to other functions like mp_invmod, mp_div, etc...
+       -- Sped up mp_exptmod_fast by using new code to find R mod m [e.g. B^n mod m]
+       -- minor fixes
+
 Jan 17th, 2003
 v0.12  -- re-wrote the majority of the makefile so its more portable and will
           install via "make install" on most *nix platforms

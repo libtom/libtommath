@@ -18,8 +18,7 @@
 int
 mp_cmp_mag (mp_int * a, mp_int * b)
 {
-  int       n;
-
+  int     n;
 
   /* compare based on # of non-zero digits */
   if (a->used > b->used) {

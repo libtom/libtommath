@@ -5,7 +5,7 @@
  * Tom St Denis, tomstdenis@iahu.ca, http://tom.iahu.ca
  */
 #include <time.h>
-#include "bn.h"
+#include "tommath.h"
 
 /* fast square root */
 static    mp_digit

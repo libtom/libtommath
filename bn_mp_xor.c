@@ -18,8 +18,8 @@
 int
 mp_xor (mp_int * a, mp_int * b, mp_int * c)
 {
-  int       res, ix, px;
-  mp_int    t, *x;
+  int     res, ix, px;
+  mp_int  t, *x;
 
   if (a->used > b->used) {
     if ((res = mp_init_copy (&t, a)) != MP_OKAY) {

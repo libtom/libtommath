@@ -21,23 +21,11 @@
 int
 s_mp_mul_digs (mp_int * a, mp_int * b, mp_int * c, int digs)
 {
-  mp_int    t;
-  int       res, pa, pb, ix, iy;
-  mp_digit  u;
-  mp_word   r;
-  mp_digit  tmpx, *tmpt, *tmpy;
-
-
-  /* can we use the fast multiplier? 
-   *
-   * The fast multiplier can be used if the output will have less than 
-   * 512 digits and the number of digits won't affect carry propagation
-   */
-  if ((digs < 512)
-      && digs < (1 << ((CHAR_BIT * sizeof (mp_word)) - (2 * DIGIT_BIT)))) {
-    res = fast_s_mp_mul_digs (a, b, c, digs);
-    return res;
-  }
+  mp_int  t;
+  int     res, pa, pb, ix, iy;
+  mp_digit u;
+  mp_word r;
+  mp_digit tmpx, *tmpt, *tmpy;
 
   if ((res = mp_init_size (&t, digs)) != MP_OKAY) {
     return res;
@@ -61,9 +49,7 @@ s_mp_mul_digs (mp_int * a, mp_int * b, mp_int * c, int digs)
     /* compute the columns of the output and propagate the carry */
     for (iy = 0; iy < pb; iy++) {
       /* compute the column as a mp_word */
-      r =
-	((mp_word) * tmpt) + ((mp_word) tmpx) * ((mp_word) * tmpy++) +
-	((mp_word) u);
+      r = ((mp_word) * tmpt) + ((mp_word) tmpx) * ((mp_word) * tmpy++) + ((mp_word) u);
 
       /* the new column is the lower part of the result */
       *tmpt++ = (mp_digit) (r & ((mp_word) MP_MASK));

@@ -17,8 +17,8 @@
 int
 mp_mod_d (mp_int * a, mp_digit b, mp_digit * c)
 {
-  mp_int    t, t2;
-  int       res;
+  mp_int  t, t2;
+  int     res;
 
 
   if ((res = mp_init (&t)) != MP_OKAY) {

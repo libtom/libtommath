@@ -1,39 +1,36 @@
-CLOCKS_PER_SEC == 1000000
-Adding 128-bit took 0.070000 ticks
-Adding 256-bit took 0.100000 ticks
-Adding 512-bit took 0.140000 ticks
-Adding 1024-bit took 0.210000 ticks
-Adding 2048-bit took 0.360000 ticks
-Adding 4096-bit took 0.670000 ticks
-Subtracting 128-bit took 0.090000 ticks
-Subtracting 256-bit took 0.120000 ticks
-Subtracting 512-bit took 0.140000 ticks
-Subtracting 1024-bit took 0.210000 ticks
-Subtracting 2048-bit took 0.330000 ticks
-Subtracting 4096-bit took 0.580000 ticks
-Squaring 128-bit took 0.320000 ticks
-Squaring 256-bit took 0.620000 ticks
-Squaring 512-bit took 1.410000 ticks
-Squaring 1024-bit took 3.730000 ticks
-Squaring 2048-bit took 11.580000 ticks
-Squaring 4096-bit took 44.540000 ticks
-Multiplying 128-bit took 0.270000 ticks
-Multiplying 256-bit took 0.650000 ticks
-Multiplying 512-bit took 1.630000 ticks
-Multiplying 1024-bit took 5.180000 ticks
-Multiplying 2048-bit took 19.210000 ticks
-Multiplying 4096-bit took 67.500000 ticks
-Exponentiating 513-bit took 2000.000000 ticks
-Exponentiating 769-bit took 5200.000000 ticks
-Exponentiating 1025-bit took 11400.000000 ticks
-Exponentiating 2049-bit took 75100.000000 ticks
-Exponentiating 2561-bit took 150000.000000 ticks
-Exponentiating 3073-bit took 237800.000000 ticks
-Exponentiating 4097-bit took 510600.000000 ticks
-Inverting mod 128-bit took 0.000000 ticks
-Inverting mod 256-bit took 200.000000 ticks
-Inverting mod 512-bit took 300.000000 ticks
-Inverting mod 1024-bit took 800.000000 ticks
-Inverting mod 2048-bit took 2500.000000 ticks
-Inverting mod 4096-bit took 8400.000000 ticks
-
+CLOCKS_PER_SEC == 1000
+Adding           128-bit =>  14534883/sec,       688 ticks
+Adding           256-bit =>  11037527/sec,       906 ticks
+Adding           512-bit =>   8650519/sec,      1156 ticks
+Adding          1024-bit =>   5871990/sec,      1703 ticks
+Adding          2048-bit =>   3575259/sec,      2797 ticks
+Adding          4096-bit =>   2018978/sec,      4953 ticks
+Subtracting      128-bit =>  11025358/sec,       907 ticks
+Subtracting      256-bit =>   9149130/sec,      1093 ticks
+Subtracting      512-bit =>   7440476/sec,      1344 ticks
+Subtracting     1024-bit =>   5078720/sec,      1969 ticks
+Subtracting     2048-bit =>   3168567/sec,      3156 ticks
+Subtracting     4096-bit =>   1833852/sec,      5453 ticks
+Squaring         128-bit =>   3205128/sec,        78 ticks
+Squaring         256-bit =>   1592356/sec,       157 ticks
+Squaring         512-bit =>    696378/sec,       359 ticks
+Squaring        1024-bit =>    266808/sec,       937 ticks
+Squaring        2048-bit =>     85999/sec,      2907 ticks
+Squaring        4096-bit =>     21949/sec,     11390 ticks
+Multiplying      128-bit =>   3205128/sec,        78 ticks
+Multiplying      256-bit =>   1592356/sec,       157 ticks
+Multiplying      512-bit =>    615763/sec,       406 ticks
+Multiplying     1024-bit =>    192752/sec,      1297 ticks
+Multiplying     2048-bit =>     53510/sec,      4672 ticks
+Multiplying     4096-bit =>     14801/sec,     16890 ticks
+Exponentiating   513-bit =>       531/sec,        47 ticks
+Exponentiating   769-bit =>       177/sec,       141 ticks
+Exponentiating  1025-bit =>        88/sec,       282 ticks
+Exponentiating  2049-bit =>        13/sec,      1890 ticks
+Exponentiating  2561-bit =>         6/sec,      3812 ticks
+Exponentiating  3073-bit =>         4/sec,      6031 ticks
+Exponentiating  4097-bit =>         1/sec,     12843 ticks
+Inverting mod    128-bit =>     19160/sec,      5219 ticks
+Inverting mod    256-bit =>      8290/sec,     12062 ticks
+Inverting mod    512-bit =>      3565/sec,     28047 ticks
+Inverting mod   1024-bit =>      1305/sec,     76594 ticks

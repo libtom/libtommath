@@ -1,7 +1,7 @@
 \documentclass{article}
 \begin{document}
 
-\title{LibTomMath v0.12 \\ A Free Multiple Precision Integer Library}
+\title{LibTomMath v0.13 \\ A Free Multiple Precision Integer Library}
 \author{Tom St Denis \\ tomstdenis@iahu.ca}
 \maketitle
 \newpage
@@ -409,7 +409,6 @@ of $c$ is the maximum length of the two inputs.
 Computes $c = a \land b$, pseudo-extends with zeroes whichever of $a$ or $b$ is shorter such that the length
 of $c$ is the maximum length of the two inputs.
 
-
 \subsection{Basic Arithmetic}
 
 \subsubsection{mp\_cmp(mp\_int *a, mp\_int *b)}
@@ -440,19 +439,18 @@ This function requires no additional memory and $O(N)$ time.
 Computes $c = a \cdot b$ using signed arithmetic.  Handles the sign of the numbers correctly which means it will 
 correct the sign of the product as required, e.g. $a \cdot -b$ turns into $-ab$.
 
-For relatively small inputs, that is less than 80 digits a standard baseline or comba-baseline multiplier is used.  It
-requires no additional memory and $O(N^2)$ time.  The comba-baseline multiplier is only used if it can safely be used
-without losing carry digits.  The comba method is faster than the baseline method but cannot always be used which is why
-both are provided.  The code will automatically determine when it can be used.  If the digit count is higher
-than 80 for the inputs than a Karatsuba multiplier is used which requires approximately $O(6 \cdot N)$ memory and 
-$O(N^{lg(3)})$ time.  
+This function requires $O(N^2)$ time for small inputs and $O(N^{1.584})$ time for relatively large 
+inputs (\textit{above the }KARATSUBA\_MUL\_CUTOFF \textit{value defined in bncore.c.}).  There is 
+considerable overhead in the Karatsuba method which only pays off when the digit count is fairly high
+(\textit{typically around 80}).  For small inputs the function requires $O(2N)$ memory, otherwise it
+requires $O(6 \cdot \mbox{lg}(N) \cdot N)$ memory.
+
 
 \subsubsection{mp\_sqr(mp\_int *a, mp\_int *b)}
-Computes $b = a^2$. 
-For relatively small inputs, that is less than 80 digits a modified squaring or comba-squaring algorithm is used.  It
-requires no additional memory and $O((N^2 + N)/2)$ time.  The comba-squaring method is used only if it can be safely used
-without losing carry digits.  After 80 digits a Karatsuba squaring algorithm is used whcih requires approximately 
-$O(4 \cdot N)$ memory and $O(N^{lg(3)})$ time.
+Computes $b = a^2$ and fixes the sign of $b$ to be positive.
+
+This function has a running time and memory requirement profile very similar to that of the 
+mp\_mul function.  It is always faster and uses less memory for the larger inputs.
 
 \subsubsection{mp\_div(mp\_int *a, mp\_int *b, mp\_int *c, mp\_int *d)}
 Computes $c = \lfloor a/b \rfloor$ and $d \equiv a \mbox{ (mod }b\mbox{)}$.  The division is signed which means the sign
@@ -482,7 +480,8 @@ Also note that these functions use mp\_mod which means the result are guaranteed
 
 \subsubsection{mp\_invmod(mp\_int *a, mp\_int *b, mp\_int *c)}
 This function will find $c = 1/a \mbox{ (mod }b\mbox{)}$ for any value of $a$ such that $(a, b) = 1$ and $b > 0$.  When
-$b$ is odd a ``fast'' variant is used which finds the inverse twice as fast.  
+$b$ is odd a ``fast'' variant is used which finds the inverse twice as fast.  If no inverse is found (e.g. $(a, b) \ne 1$) then
+the function returns \textbf{MP\_VAL} and the result in $c$ is undefined.
 
 \subsubsection{mp\_gcd(mp\_int *a, mp\_int *b, mp\_int *c)}
 Finds the greatest common divisor of both $a$ and $b$ and places the result in $c$.  Will work with either positive
@@ -497,13 +496,13 @@ both.
 
 Functions requires no additional memory and approximately $O(4 \cdot N^2)$ time.
 
-\subsubsection{mp\_n\_root(mp\_int *a, mp\_digit b, mp\_int c)}
+\subsubsection{mp\_n\_root(mp\_int *a, mp\_digit b, mp\_int *c)}
 Finds the $b$'th root of $a$ and stores it in $b$.  The roots are found such that $\vert c \vert^b \le \vert a \vert$.  
 Uses the Newton approximation approach which means it converges in $O(log \beta^N)$ time to a final result.  Each iteration
 requires $b$ multiplications and one division for a total work of $O(6N^2 \cdot log \beta^N) = O(6N^3 \cdot log \beta)$.
 
-If the input $a$ is negative and $b$ is even the function returns an error.  Otherwise the function will return a root
-that has a sign that agrees with the sign of $a$.
+If the input $a$ is negative and $b$ is even the function returns \textbf{MP\_VAL}.  Otherwise the function will 
+return a root that has a sign that agrees with the sign of $a$.
 
 \subsubsection{mp\_jacobi(mp\_int *a, mp\_int *n, int *c)}
 Computes $c = \left ( {a \over n} \right )$ or the Jacobi function of $(a, n)$ and stores the result in an integer addressed

@@ -22,8 +22,8 @@
 int
 mp_karatsuba_sqr (mp_int * a, mp_int * b)
 {
-  mp_int    x0, x1, t1, t2, x0x0, x1x1;
-  int       B, err, x;
+  mp_int  x0, x1, t1, t2, x0x0, x1x1;
+  int     B, err, x;
 
 
   err = MP_MEM;

@@ -18,7 +18,7 @@
 void
 mp_rshd (mp_int * a, int b)
 {
-  int       x;
+  int     x;
 
 
   /* if b <= 0 then ignore it */

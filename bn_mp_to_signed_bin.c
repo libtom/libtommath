@@ -18,7 +18,7 @@
 int
 mp_to_signed_bin (mp_int * a, unsigned char *b)
 {
-  int       res;
+  int     res;
 
   if ((res = mp_to_unsigned_bin (a, b + 1)) != MP_OKAY) {
     return res;

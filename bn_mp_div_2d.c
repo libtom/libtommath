@@ -18,9 +18,9 @@
 int
 mp_div_2d (mp_int * a, int b, mp_int * c, mp_int * d)
 {
-  mp_digit  D, r, rr;
-  int       x, res;
-  mp_int    t;
+  mp_digit D, r, rr;
+  int     x, res;
+  mp_int  t;
 
 
   /* if the shift count is <= 0 then we do no work */

@@ -18,9 +18,7 @@
 int
 s_mp_sub (mp_int * a, mp_int * b, mp_int * c)
 {
-  int       olduse, res, min, max, i;
-  mp_digit  u;
-
+  int     olduse, res, min, max;
 
   /* find sizes */
   min = b->used;
@@ -37,36 +35,48 @@ s_mp_sub (mp_int * a, mp_int * b, mp_int * c)
 
   /* sub digits from lower part */
 
-  /* set carry to zero */
-  u = 0;
-  for (i = 0; i < min; i++) {
-    /* T[i] = A[i] - B[i] - U */
-    c->dp[i] = a->dp[i] - (b->dp[i] + u);
+  {
+    register mp_digit u, *tmpa, *tmpb, *tmpc;
+    register int i;
 
-    /* U = carry bit of T[i] */
-    u = (c->dp[i] >> DIGIT_BIT) & 1;
+    /* alias for digit pointers */
+    tmpa = a->dp;
+    tmpb = b->dp;
+    tmpc = c->dp;
 
-    /* Clear carry from T[i] */
-    c->dp[i] &= MP_MASK;
-  }
+    /* set carry to zero */
+    u = 0;
+    for (i = 0; i < min; i++) {
+      /* T[i] = A[i] - B[i] - U */
+      *tmpc = *tmpa++ - *tmpb++ - u;
 
-  /* now copy higher words if any, e.g. if A has more digits than B  */
-  if (min != max) {
-    for (; i < max; i++) {
-      /* T[i] = A[i] - U */
-      c->dp[i] = a->dp[i] - u;
-
-      /* U = carry bit of T[i] */
-      u = (c->dp[i] >> DIGIT_BIT) & 1;
+      /* U = carry bit of T[i] 
+       * Note this saves performing an AND operation since 
+       * if a carry does occur it will propagate all the way to the
+       * MSB.  As a result a single shift is required to get the carry
+       */
+      u = *tmpc >> (CHAR_BIT * sizeof (mp_digit) - 1);
 
       /* Clear carry from T[i] */
-      c->dp[i] &= MP_MASK;
+      *tmpc++ &= MP_MASK;
     }
-  }
 
-  /* clear digits above used (since we may not have grown result above) */
-  for (i = c->used; i < olduse; i++) {
-    c->dp[i] = 0;
+    /* now copy higher words if any, e.g. if A has more digits than B  */
+    for (; i < max; i++) {
+      /* T[i] = A[i] - U */
+      *tmpc = *tmpa++ - u;
+
+      /* U = carry bit of T[i] */
+      u = *tmpc >> (CHAR_BIT * sizeof (mp_digit) - 1);
+
+      /* Clear carry from T[i] */
+      *tmpc++ &= MP_MASK;
+    }
+
+    /* clear digits above used (since we may not have grown result above) */
+    for (i = c->used; i < olduse; i++) {
+      *tmpc++ = 0;
+    }
   }
 
   mp_clamp (c);

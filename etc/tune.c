@@ -18,9 +18,9 @@ time_mult (void)
 
   t1 = clock ();
   for (x = 8; x <= 128; x += 8) {
-    mp_rand (&a, x);
-    mp_rand (&b, x);
-    for (y = 0; y < 10000; y++) {
+    for (y = 0; y < 1000; y++) {
+      mp_rand (&a, x);
+      mp_rand (&b, x);
       mp_mul (&a, &b, &c);
     }
   }
@@ -42,8 +42,8 @@ time_sqr (void)
 
   t1 = clock ();
   for (x = 8; x <= 128; x += 8) {
-    mp_rand (&a, x);
-    for (y = 0; y < 10000; y++) {
+    for (y = 0; y < 1000; y++) {
+      mp_rand (&a, x);
       mp_sqr (&a, &b);
     }
   }

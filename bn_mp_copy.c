@@ -18,8 +18,7 @@
 int
 mp_copy (mp_int * a, mp_int * b)
 {
-  int       res, n;
-
+  int     res, n;
 
   /* if dst == src do nothing */
   if (a == b || a->dp == b->dp) {
@@ -35,14 +34,21 @@ mp_copy (mp_int * a, mp_int * b)
   b->used = a->used;
   b->sign = a->sign;
 
-  /* copy all the digits */
-  for (n = 0; n < a->used; n++) {
-    b->dp[n] = a->dp[n];
-  }
+  {
+    register mp_digit *tmpa, *tmpb;
 
-  /* clear high digits */
-  for (n = b->used; n < b->alloc; n++) {
-    b->dp[n] = 0;
+    tmpa = a->dp;
+    tmpb = b->dp;
+
+    /* copy all the digits */
+    for (n = 0; n < a->used; n++) {
+      *tmpb++ = *tmpa++;
+    }
+
+    /* clear high digits */
+    for (; n < b->alloc; n++) {
+      *tmpb++ = 0;
+    }
   }
   return MP_OKAY;
 }

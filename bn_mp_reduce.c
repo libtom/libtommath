@@ -20,7 +20,7 @@
 int
 mp_reduce_setup (mp_int * a, mp_int * b)
 {
-  int       res;
+  int     res;
 
 
   if ((res = mp_2expt (a, b->used * 2 * DIGIT_BIT)) != MP_OKAY) {
@@ -36,8 +36,8 @@ mp_reduce_setup (mp_int * a, mp_int * b)
 int
 mp_reduce (mp_int * x, mp_int * m, mp_int * mu)
 {
-  mp_int    q;
-  int       res, um = m->used;
+  mp_int  q;
+  int     res, um = m->used;
 
 
   if ((res = mp_init_copy (&q, x)) != MP_OKAY) {

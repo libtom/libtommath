@@ -18,7 +18,7 @@
 void
 bn_reverse (unsigned char *s, int len)
 {
-  int       ix, iy;
+  int     ix, iy;
   unsigned char t;
 
   ix = 0;

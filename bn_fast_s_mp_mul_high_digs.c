@@ -20,14 +20,16 @@
  *
  * This is used in the Barrett reduction since for one of the multiplications
  * only the higher digits were needed.  This essentially halves the work.
+ *
+ * Based on Algorithm 14.12 on pp.595 of HAC.
  */
 int
 fast_s_mp_mul_high_digs (mp_int * a, mp_int * b, mp_int * c, int digs)
 {
-  int       oldused, newused, res, pa, pb, ix;
-  mp_word   W[512];
+  int     oldused, newused, res, pa, pb, ix;
+  mp_word W[512];
 
-
+  /* calculate size of product and allocate more space if required */
   newused = a->used + b->used + 1;
   if (c->alloc < newused) {
     if ((res = mp_grow (c, newused)) != MP_OKAY) {
@@ -38,7 +40,7 @@ fast_s_mp_mul_high_digs (mp_int * a, mp_int * b, mp_int * c, int digs)
   /* like the other comba method we compute the columns first */
   pa = a->used;
   pb = b->used;
-  memset (&W[digs], 0, (pa + pb + 1 - digs) * sizeof (mp_word));
+  memset (W + digs, 0, (pa + pb + 1 - digs) * sizeof (mp_word));
   for (ix = 0; ix < pa; ix++) {
     {
       register mp_digit tmpx, *tmpy;
@@ -75,8 +77,7 @@ fast_s_mp_mul_high_digs (mp_int * a, mp_int * b, mp_int * c, int digs)
     W[ix] += (W[ix - 1] >> ((mp_word) DIGIT_BIT));
     c->dp[ix - 1] = (mp_digit) (W[ix - 1] & ((mp_word) MP_MASK));
   }
-  c->dp[(pa + pb + 1) - 1] =
-    (mp_digit) (W[(pa + pb + 1) - 1] & ((mp_word) MP_MASK));
+  c->dp[(pa + pb + 1) - 1] = (mp_digit) (W[(pa + pb + 1) - 1] & ((mp_word) MP_MASK));
 
   for (; ix < oldused; ix++) {
     c->dp[ix] = 0;

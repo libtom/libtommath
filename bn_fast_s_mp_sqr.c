@@ -26,14 +26,16 @@
  * "A * B * 2".  The *2 part does not need to be computed until the end which is
  * good because 64-bit shifts are slow!
  *
+ * Based on Algorithm 14.16 on pp.597 of HAC.
  *
  */
 int
 fast_s_mp_sqr (mp_int * a, mp_int * b)
 {
-  int       olduse, newused, res, ix, pa;
-  mp_word   W2[512], W[512];
+  int     olduse, newused, res, ix, pa;
+  mp_word W2[512], W[512];
 
+  /* calculate size of product and allocate as required */
   pa = a->used;
   newused = pa + pa + 1;
   if (b->alloc < newused) {
@@ -51,15 +53,31 @@ fast_s_mp_sqr (mp_int * a, mp_int * b)
    * the inner product can be doubled using n doublings instead of
    * n^2
    */
-  memset (W, 0,  newused * sizeof (mp_word));
+  memset (W, 0, newused * sizeof (mp_word));
   memset (W2, 0, newused * sizeof (mp_word));
+
+/* note optimization
+ * values in W2 are only written in even locations which means
+ * we can collapse the array to 256 words [and fixup the memset above]
+ * provided we also fix up the summations below.  Ideally
+ * the fixup loop should be unrolled twice to handle the even/odd 
+ * cases, and then a final step to handle odd cases [e.g. newused == odd]
+ *
+ * This will not only save ~8*256 = 2KB of stack but lower the number of
+ * operations required to finally fix up the columns
+ */
 
   /* This computes the inner product.  To simplify the inner N^2 loop
    * the multiplication by two is done afterwards in the N loop.
    */
   for (ix = 0; ix < pa; ix++) {
-     /* compute the outer product */
-    W2[ix + ix] += ((mp_word) a->dp[ix]) * ((mp_word) a->dp[ix]);
+    /* compute the outer product 
+     *
+     * Note that every outer product is computed 
+     * for a particular column only once which means that 
+     * there is no need todo a double precision addition
+     */
+    W2[ix + ix] = ((mp_word) a->dp[ix]) * ((mp_word) a->dp[ix]);
 
     {
       register mp_digit tmpx, *tmpy;
@@ -90,22 +108,25 @@ fast_s_mp_sqr (mp_int * a, mp_int * b)
   W[0] += W[0] + W2[0];
 
   /* now compute digits */
-  for (ix = 1; ix < newused; ix++) {
-    /* double/add next digit */
-    W[ix] += W[ix] + W2[ix];
+  {
+    register mp_digit *tmpb;
 
-    W[ix] = W[ix] + (W[ix - 1] >> ((mp_word) DIGIT_BIT));
-    b->dp[ix - 1] = (mp_digit) (W[ix - 1] & ((mp_word) MP_MASK));
+    tmpb = b->dp;
+
+    for (ix = 1; ix < newused; ix++) {
+      /* double/add next digit */
+      W[ix] += W[ix] + W2[ix];
+
+      W[ix] = W[ix] + (W[ix - 1] >> ((mp_word) DIGIT_BIT));
+      *tmpb++ = (mp_digit) (W[ix - 1] & ((mp_word) MP_MASK));
+    }
+    *tmpb++ = (mp_digit) (W[(newused) - 1] & ((mp_word) MP_MASK));
+
+    /* clear high */
+    for (; ix < olduse; ix++) {
+      *tmpb++ = 0;
+    }
   }
-  b->dp[(newused) - 1] = (mp_digit) (W[(newused) - 1] & ((mp_word) MP_MASK));
-
-  /* clear high */
-  for (; ix < olduse; ix++) {
-    b->dp[ix] = 0;
-  }
-
-  /* fix the sign (since we no longer make a fresh temp) */
-  b->sign = MP_ZPOS;
 
   mp_clamp (b);
   return MP_OKAY;

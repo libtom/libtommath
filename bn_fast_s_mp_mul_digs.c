@@ -21,13 +21,20 @@
  * has the effect of making the nested loops that compute the columns very
  * simple and schedulable on super-scalar processors.
  *
+ * This has been modified to produce a variable number of digits of output so
+ * if say only a half-product is required you don't have to compute the upper half
+ * (a feature required for fast Barrett reduction).
+ *
+ * Based on Algorithm 14.12 on pp.595 of HAC.
+ *
  */
 int
 fast_s_mp_mul_digs (mp_int * a, mp_int * b, mp_int * c, int digs)
 {
-  int       olduse, res, pa, ix;
-  mp_word   W[512];
+  int     olduse, res, pa, ix;
+  mp_word W[512];
 
+  /* grow the destination as required */
   if (c->alloc < digs) {
     if ((res = mp_grow (c, digs)) != MP_OKAY) {
       return res;
@@ -43,11 +50,9 @@ fast_s_mp_mul_digs (mp_int * a, mp_int * b, mp_int * c, int digs)
 
     /* this multiplier has been modified to allow you to control how many digits 
      * of output are produced.  So at most we want to make upto "digs" digits
-     * of output
-     */
-
-
-    /* this adds products to distinct columns (at ix+iy) of W
+     * of output.
+     *
+     * this adds products to distinct columns (at ix+iy) of W
      * note that each step through the loop is not dependent on
      * the previous which means the compiler can easily unroll
      * the loop without scheduling problems
@@ -85,27 +90,30 @@ fast_s_mp_mul_digs (mp_int * a, mp_int * b, mp_int * c, int digs)
   olduse = c->used;
   c->used = digs;
 
+  {
+    register mp_digit *tmpc;
 
-  /* At this point W[] contains the sums of each column.  To get the
-   * correct result we must take the extra bits from each column and
-   * carry them down
-   *
-   * Note that while this adds extra code to the multiplier it saves time
-   * since the carry propagation is removed from the above nested loop.
-   * This has the effect of reducing the work from N*(N+N*c)==N^2 + c*N^2 to
-   * N^2 + N*c where c is the cost of the shifting.  On very small numbers
-   * this is slower but on most cryptographic size numbers it is faster.
-   */
+    /* At this point W[] contains the sums of each column.  To get the
+     * correct result we must take the extra bits from each column and
+     * carry them down
+     *
+     * Note that while this adds extra code to the multiplier it saves time
+     * since the carry propagation is removed from the above nested loop.
+     * This has the effect of reducing the work from N*(N+N*c)==N^2 + c*N^2 to
+     * N^2 + N*c where c is the cost of the shifting.  On very small numbers
+     * this is slower but on most cryptographic size numbers it is faster.
+     */
+    tmpc = c->dp;
+    for (ix = 1; ix < digs; ix++) {
+      W[ix] += (W[ix - 1] >> ((mp_word) DIGIT_BIT));
+      *tmpc++ = (mp_digit) (W[ix - 1] & ((mp_word) MP_MASK));
+    }
+    *tmpc++ = (mp_digit) (W[digs - 1] & ((mp_word) MP_MASK));
 
-  for (ix = 1; ix < digs; ix++) {
-    W[ix] += (W[ix - 1] >> ((mp_word) DIGIT_BIT));
-    c->dp[ix - 1] = (mp_digit) (W[ix - 1] & ((mp_word) MP_MASK));
-  }
-  c->dp[digs - 1] = (mp_digit) (W[digs - 1] & ((mp_word) MP_MASK));
-
-  /* clear unused */
-  for (; ix < olduse; ix++) {
-    c->dp[ix] = 0;
+    /* clear unused */
+    for (; ix < olduse; ix++) {
+      *tmpc++ = 0;
+    }
   }
 
   mp_clamp (c);

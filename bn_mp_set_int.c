@@ -18,7 +18,7 @@
 int
 mp_set_int (mp_int * a, unsigned long b)
 {
-  int       x, res;
+  int     x, res;
 
   mp_zero (a);
 

@@ -18,20 +18,33 @@
 int
 mp_div_2 (mp_int * a, mp_int * b)
 {
-  mp_digit  r, rr;
-  int       x, res;
-
+  int     x, res, oldused;
 
   /* copy */
-  if ((res = mp_copy (a, b)) != MP_OKAY) {
-    return res;
+  if (b->alloc < a->used) {
+    if ((res = mp_grow (b, a->used)) != MP_OKAY) {
+      return res;
+    }
   }
 
-  r = 0;
-  for (x = b->used - 1; x >= 0; x--) {
-    rr = b->dp[x] & 1;
-    b->dp[x] = (b->dp[x] >> 1) | (r << (DIGIT_BIT - 1));
-    r = rr;
+  oldused = b->used;
+  b->used = a->used;
+  {
+    register mp_digit r, rr, *tmpa, *tmpb;
+
+    tmpa = a->dp + b->used - 1;
+    tmpb = b->dp + b->used - 1;
+    r = 0;
+    for (x = b->used - 1; x >= 0; x--) {
+      rr = *tmpa & 1;
+      *tmpb-- = (*tmpa-- >> 1) | (r << (DIGIT_BIT - 1));
+      r = rr;
+    }
+
+    tmpb = b->dp + b->used;
+    for (x = b->used; x < oldused; x++) {
+      *tmpb++ = 0;
+    }
   }
   mp_clamp (b);
   return MP_OKAY;

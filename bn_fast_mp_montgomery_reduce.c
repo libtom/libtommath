@@ -14,12 +14,19 @@
  */
 #include <tommath.h>
 
-/* computes xR^-1 == x (mod N) via Montgomery Reduction (comba) */
+/* computes xR^-1 == x (mod N) via Montgomery Reduction 
+ * 
+ * This is an optimized implementation of mp_montgomery_reduce 
+ * which uses the comba method to quickly calculate the columns of the
+ * reduction.  
+ *
+ * Based on Algorithm 14.32 on pp.601 of HAC.
+*/
 int
 fast_mp_montgomery_reduce (mp_int * a, mp_int * m, mp_digit mp)
 {
-  int       ix, res, olduse;
-  mp_word   W[512];
+  int     ix, res, olduse;
+  mp_word W[512];
 
   /* get old used count */
   olduse = a->used;
@@ -31,14 +38,22 @@ fast_mp_montgomery_reduce (mp_int * a, mp_int * m, mp_digit mp)
     }
   }
 
-  /* copy the digits of a */
-  for (ix = 0; ix < a->used; ix++) {
-    W[ix] = a->dp[ix];
-  }
+  {
+    register mp_word *_W;
+    register mp_digit *tmpa;
 
-  /* zero the high words */
-  for (; ix < m->used * 2 + 1; ix++) {
-    W[ix] = 0;
+    _W = W;
+    tmpa = a->dp;
+
+    /* copy the digits of a */
+    for (ix = 0; ix < a->used; ix++) {
+      *_W++ = *tmpa++;
+    }
+
+    /* zero the high words */
+    for (; ix < m->used * 2 + 1; ix++) {
+      *_W++ = 0;
+    }
   }
 
   for (ix = 0; ix < m->used; ix++) {
@@ -69,8 +84,10 @@ fast_mp_montgomery_reduce (mp_int * a, mp_int * m, mp_digit mp)
       register mp_digit *tmpx;
       register mp_word *_W;
 
-      /* aliases */
+      /* alias for the digits of the modulus */
       tmpx = m->dp;
+
+      /* Alias for the columns set by an offset of ix */
       _W = W + ix;
 
       /* inner loop */
@@ -88,24 +105,32 @@ fast_mp_montgomery_reduce (mp_int * a, mp_int * m, mp_digit mp)
     W[ix] += (W[ix - 1] >> ((mp_word) DIGIT_BIT));
   }
 
-  /* copy out, A = A/b^n
-   *
-   * The result is A/b^n but instead of converting from an array of mp_word
-   * to mp_digit than calling mp_rshd we just copy them in the right
-   * order
-   */
-  for (ix = 0; ix < m->used + 1; ix++) {
-    a->dp[ix] = W[ix + m->used] & ((mp_word) MP_MASK);
+  {
+    register mp_digit *tmpa;
+    register mp_word *_W;
+
+    /* copy out, A = A/b^n
+     *
+     * The result is A/b^n but instead of converting from an array of mp_word
+     * to mp_digit than calling mp_rshd we just copy them in the right
+     * order
+     */
+    tmpa = a->dp;
+    _W = W + m->used;
+
+    for (ix = 0; ix < m->used + 1; ix++) {
+      *tmpa++ = *_W++ & ((mp_word) MP_MASK);
+    }
+
+    /* zero oldused digits, if the input a was larger than
+     * m->used+1 we'll have to clear the digits */
+    for (; ix < olduse; ix++) {
+      *tmpa++ = 0;
+    }
   }
 
-  /* set the max used */
+  /* set the max used and clamp */
   a->used = m->used + 1;
-
-  /* zero oldused digits, if the input a was larger than
-   * m->used+1 we'll have to clear the digits */
-  for (; ix < olduse; ix++) {
-    a->dp[ix] = 0;
-  }
   mp_clamp (a);
 
   /* if A >= m then A = A - m */

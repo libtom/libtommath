@@ -17,8 +17,8 @@
 int
 mp_expt_d (mp_int * a, mp_digit b, mp_int * c)
 {
-  int       res, x;
-  mp_int    g;
+  int     res, x;
+  mp_int  g;
 
 
   if ((res = mp_init_copy (&g, a)) != MP_OKAY) {

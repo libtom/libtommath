@@ -18,7 +18,7 @@
 int
 mp_read_signed_bin (mp_int * a, unsigned char *b, int c)
 {
-  int       res;
+  int     res;
 
   if ((res = mp_read_unsigned_bin (a, b + 1, c - 1)) != MP_OKAY) {
     return res;

@@ -18,8 +18,8 @@
 int
 mp_to_unsigned_bin (mp_int * a, unsigned char *b)
 {
-  int       x, res;
-  mp_int    t;
+  int     x, res;
+  mp_int  t;
 
   if ((res = mp_init_copy (&t, a)) != MP_OKAY) {
     return res;

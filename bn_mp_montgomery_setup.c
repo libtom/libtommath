@@ -18,8 +18,8 @@
 int
 mp_montgomery_setup (mp_int * a, mp_digit * mp)
 {
-  mp_int    t, tt;
-  int       res;
+  mp_int  t, tt;
+  int     res;
 
   if ((res = mp_init (&t)) != MP_OKAY) {
     return res;

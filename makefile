@@ -1,6 +1,6 @@
 CFLAGS  +=  -I./ -Wall -W -Wshadow -O3 -fomit-frame-pointer -funroll-loops
 
-VERSION=0.12
+VERSION=0.13
 
 default: libtommath.a
 
@@ -30,7 +30,7 @@ bn_mp_reduce.o bn_mp_montgomery_setup.o bn_fast_mp_montgomery_reduce.o bn_mp_mon
 bn_mp_exptmod_fast.o bn_mp_exptmod.o bn_mp_2expt.o bn_mp_n_root.o bn_mp_jacobi.o bn_reverse.o \
 bn_mp_count_bits.o bn_mp_read_unsigned_bin.o bn_mp_read_signed_bin.o bn_mp_to_unsigned_bin.o \
 bn_mp_to_signed_bin.o bn_mp_unsigned_bin_size.o bn_mp_signed_bin_size.o bn_radix.o \
-bn_mp_xor.o bn_mp_and.o bn_mp_or.o bn_mp_rand.o
+bn_mp_xor.o bn_mp_and.o bn_mp_or.o bn_mp_rand.o bn_mp_montgomery_calc_normalization.o
 
 libtommath.a:  $(OBJECTS)
 	$(AR) $(ARFLAGS) libtommath.a $(OBJECTS)
@@ -60,8 +60,8 @@ docs:	docdvi
 	rm -f bn.log bn.aux bn.dvi
 	
 clean:
-	rm -f *.pdf *.o *.a etclib/*.o demo/demo.o test ltmtest mpitest mtest/mtest \
-        bn.log bn.aux bn.dvi *.log *.s
+	rm -f *.pdf *.o *.a *.exe etclib/*.o demo/demo.o test ltmtest mpitest mtest/mtest mtest/mtest.exe \
+        bn.log bn.aux bn.dvi *.log *.s mpi.c 
 	cd etc ; make clean
 
 zipup: clean docs

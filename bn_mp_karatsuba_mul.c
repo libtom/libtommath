@@ -36,8 +36,8 @@
 int
 mp_karatsuba_mul (mp_int * a, mp_int * b, mp_int * c)
 {
-  mp_int    x0, x1, y0, y1, t1, t2, x0y0, x1y1;
-  int       B, err, x;
+  mp_int  x0, x1, y0, y1, t1, t2, x0y0, x1y1;
+  int     B, err, x;
 
 
   err = MP_MEM;

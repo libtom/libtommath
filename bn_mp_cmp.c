@@ -18,13 +18,11 @@
 int
 mp_cmp (mp_int * a, mp_int * b)
 {
-  int       res;
   /* compare based on sign */
   if (a->sign == MP_NEG && b->sign == MP_ZPOS) {
     return MP_LT;
   } else if (a->sign == MP_ZPOS && b->sign == MP_NEG) {
     return MP_GT;
   }
-  res = mp_cmp_mag (a, b);
-  return res;
+  return mp_cmp_mag (a, b);
 }

@@ -18,18 +18,10 @@
 int
 s_mp_sqr (mp_int * a, mp_int * b)
 {
-  mp_int    t;
-  int       res, ix, iy, pa;
-  mp_word   r, u;
-  mp_digit  tmpx, *tmpt;
-
-  /* can we use the fast multiplier? */
-  if (((a->used * 2 + 1) < 512)
-      && a->used <
-      (1 << ((CHAR_BIT * sizeof (mp_word)) - (2 * DIGIT_BIT) - 1))) {
-    res = fast_s_mp_sqr (a, b);
-    return res;
-  }
+  mp_int  t;
+  int     res, ix, iy, pa;
+  mp_word r, u;
+  mp_digit tmpx, *tmpt;
 
   pa = a->used;
   if ((res = mp_init_size (&t, pa + pa + 1)) != MP_OKAY) {
@@ -40,9 +32,7 @@ s_mp_sqr (mp_int * a, mp_int * b)
   for (ix = 0; ix < pa; ix++) {
     /* first calculate the digit at 2*ix */
     /* calculate double precision result */
-    r =
-      ((mp_word) t.dp[ix + ix]) +
-      ((mp_word) a->dp[ix]) * ((mp_word) a->dp[ix]);
+    r = ((mp_word) t.dp[ix + ix]) + ((mp_word) a->dp[ix]) * ((mp_word) a->dp[ix]);
 
     /* store lower part in result */
     t.dp[ix + ix] = (mp_digit) (r & ((mp_word) MP_MASK));

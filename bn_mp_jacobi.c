@@ -20,9 +20,9 @@
 int
 mp_jacobi (mp_int * a, mp_int * n, int *c)
 {
-  mp_int    a1, n1, e;
-  int       s, r, res;
-  mp_digit  residue;
+  mp_int  a1, n1, e;
+  int     s, r, res;
+  mp_digit residue;
 
   /* step 1.  if a == 0, return 0 */
   if (mp_iszero (a) == 1) {

@@ -18,11 +18,10 @@
 int
 mp_init_copy (mp_int * a, mp_int * b)
 {
-  int       res;
+  int     res;
 
   if ((res = mp_init (a)) != MP_OKAY) {
     return res;
   }
-  res = mp_copy (b, a);
-  return res;
+  return mp_copy (b, a);
 }

@@ -18,8 +18,8 @@
 int
 mp_count_bits (mp_int * a)
 {
-  int       r;
-  mp_digit  q;
+  int     r;
+  mp_digit q;
 
   if (a->used == 0) {
     return 0;

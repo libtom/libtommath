@@ -18,7 +18,7 @@
 int
 mp_lshd (mp_int * a, int b)
 {
-  int       x, res;
+  int     x, res;
 
 
   /* if its less than zero return */

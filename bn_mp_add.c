@@ -18,9 +18,9 @@
 int
 mp_add (mp_int * a, mp_int * b, mp_int * c)
 {
-  int       sa, sb, res;
+  int     sa, sb, res;
 
-
+  /* get sign of both inputs */
   sa = a->sign;
   sb = b->sign;
 
