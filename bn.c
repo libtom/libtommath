@@ -849,8 +849,7 @@ static int s_mp_sub(mp_int *a, mp_int *b, mp_int *c)
  */
 static int fast_s_mp_mul_digs(mp_int *a, mp_int *b, mp_int *c, int digs)
 {
-   mp_int t;
-   int res, pa, pb, ix, iy;
+   int olduse, res, pa, pb, ix, iy;
    mp_word W[512], *_W;
    mp_digit tmpx, *tmpy;
    
@@ -859,11 +858,12 @@ static int fast_s_mp_mul_digs(mp_int *a, mp_int *b, mp_int *c, int digs)
    VERIFY(b);
    VERIFY(c);
    
-   if ((res = mp_init_size(&t, digs)) != MP_OKAY) {
-      DECFUNC();
-      return res;
+   if (c->alloc < digs) {
+      if ((res = mp_grow(c, digs)) != MP_OKAY) {
+         DECFUNC();
+         return res;
+      }
    }
-   t.used = digs;
    
    /* clear temp buf (the columns) */
    memset(W, 0, digs*sizeof(mp_word));
@@ -893,6 +893,11 @@ static int fast_s_mp_mul_digs(mp_int *a, mp_int *b, mp_int *c, int digs)
        }
    }
    
+   /* setup dest */
+   olduse  = c->used;
+   c->used = digs;
+
+   
    /* At this point W[] contains the sums of each column.  To get the
     * correct result we must take the extra bits from each column and
     * carry them down
@@ -904,14 +909,17 @@ static int fast_s_mp_mul_digs(mp_int *a, mp_int *b, mp_int *c, int digs)
     * this is slower but on most cryptographic size numbers it is faster.
     */
    for (ix = 1; ix < digs; ix++) {
-       W[ix]      = W[ix] + (W[ix-1] >> ((mp_word)DIGIT_BIT));
-       t.dp[ix-1] = W[ix-1] & ((mp_word)MP_MASK);
+       W[ix]       = W[ix] + (W[ix-1] >> ((mp_word)DIGIT_BIT));
+       c->dp[ix-1] = W[ix-1] & ((mp_word)MP_MASK);
    }
-   t.dp[digs-1]   = W[digs-1] & ((mp_word)MP_MASK);
+   c->dp[digs-1]   = W[digs-1] & ((mp_word)MP_MASK);
+   
+   /* clear unused */
+   for (ix = c->used; ix < olduse; ix++) {
+      c->dp[ix] = 0;
+   }
   
-   mp_clamp(&t);
-   mp_exch(&t, c);
-   mp_clear(&t);
+   mp_clamp(c);
    DECFUNC();
    return MP_OKAY;
 }
@@ -993,8 +1001,7 @@ static int s_mp_mul_digs(mp_int *a, mp_int *b, mp_int *c, int digs)
  */
 static int fast_s_mp_mul_high_digs(mp_int *a, mp_int *b, mp_int *c, int digs)
 {
-   mp_int t;
-   int res, pa, pb, ix, iy;
+   int oldused, newused, res, pa, pb, ix, iy;
    mp_word W[512], *_W;
    mp_digit tmpx, *tmpy;
    
@@ -1003,11 +1010,13 @@ static int fast_s_mp_mul_high_digs(mp_int *a, mp_int *b, mp_int *c, int digs)
    VERIFY(b);
    VERIFY(c);
    
-   if ((res = mp_init_size(&t, a->used + b->used + 1)) != MP_OKAY) {
-      DECFUNC();
-      return res;
+   newused = a->used + b->used + 1;
+   if (c->alloc < newused) {
+      if ((res = mp_grow(c, newused)) != MP_OKAY) {
+         DECFUNC();
+         return res;
+      }
    }
-   t.used = a->used + b->used + 1;
    
    /* like the other comba method we compute the columns first */
    pa = a->used;
@@ -1025,17 +1034,21 @@ static int fast_s_mp_mul_high_digs(mp_int *a, mp_int *b, mp_int *c, int digs)
        }
    }
    
+   /* setup dest */
+   oldused = c->used;
+   c->used = newused;
+   
    /* now convert the array W downto what we need */
    for (ix = digs+1; ix < (pa+pb+1); ix++) {
-       W[ix]      = W[ix] + (W[ix-1] >> ((mp_word)DIGIT_BIT));
-       t.dp[ix-1] = W[ix-1] & ((mp_word)MP_MASK);
+       W[ix]       = W[ix] + (W[ix-1] >> ((mp_word)DIGIT_BIT));
+       c->dp[ix-1] = W[ix-1] & ((mp_word)MP_MASK);
    }
-   t.dp[(pa+pb+1)-1]   = W[(pa+pb+1)-1] & ((mp_word)MP_MASK);
+   c->dp[(pa+pb+1)-1] = W[(pa+pb+1)-1] & ((mp_word)MP_MASK);
    
-   
-   mp_clamp(&t);
-   mp_exch(&t, c);
-   mp_clear(&t);
+   for (ix = c->used; ix < oldused; ix++) {
+      c->dp[ix] = 0;
+   }
+   mp_clamp(c);
    DECFUNC();
    return MP_OKAY;
 }
@@ -1106,8 +1119,7 @@ static int s_mp_mul_high_digs(mp_int *a, mp_int *b, mp_int *c, int digs)
  */
 static int fast_s_mp_sqr(mp_int *a, mp_int *b)
 {
-   mp_int t;
-   int res, ix, iy, pa;
+   int olduse, newused, res, ix, iy, pa;
    mp_word  W2[512], W[512], *_W;
    mp_digit tmpx, *tmpy;
    
@@ -1116,11 +1128,13 @@ static int fast_s_mp_sqr(mp_int *a, mp_int *b)
    VERIFY(b);
 
    pa = a->used;
-   if ((res = mp_init_size(&t, pa + pa + 1)) != MP_OKAY) {
-      DECFUNC();
-      return res;
-   }
-   t.used = pa + pa + 1;
+   newused = pa + pa + 1;
+   if (b->alloc < newused) {
+      if ((res = mp_grow(b, newused)) != MP_OKAY) {
+         DECFUNC();
+         return res;
+      }
+   }   
    
    /* zero temp buffer (columns) */
    memset(W, 0, (pa+pa+1)*sizeof(mp_word));
@@ -1144,19 +1158,29 @@ static int fast_s_mp_sqr(mp_int *a, mp_int *b)
    /* double first value, since the inner products are half of what they should be */
    W[0] += W[0] + W2[0];
    
+   /* setup dest */
+   olduse  = b->used;
+   b->used = newused;
+   
    /* now compute digits */
    for (ix = 1; ix < (pa+pa+1); ix++) {
        /* double/add next digit */
-       W[ix] += W[ix] + W2[ix];
-       
-       W[ix]      = W[ix] + (W[ix-1] >> ((mp_word)DIGIT_BIT));
-       t.dp[ix-1] = W[ix-1] & ((mp_word)MP_MASK);
+       W[ix]       += W[ix] + W2[ix];
+
+       W[ix]       = W[ix] + (W[ix-1] >> ((mp_word)DIGIT_BIT));
+       b->dp[ix-1] = W[ix-1] & ((mp_word)MP_MASK);
    }
-   t.dp[(pa+pa+1)-1]   = W[(pa+pa+1)-1] & ((mp_word)MP_MASK);
+   b->dp[(pa+pa+1)-1]   = W[(pa+pa+1)-1] & ((mp_word)MP_MASK);
    
-   mp_clamp(&t);
-   mp_exch(&t, b);
-   mp_clear(&t);
+   /* clear high */
+   for (ix = b->used; ix < olduse; ix++) {
+       b->dp[ix] = 0;
+   }
+   
+   /* fix the sign (since we no longer make a fresh temp) */
+   b->sign = MP_ZPOS;
+   
+   mp_clamp(b);
    DECFUNC();
    return MP_OKAY;
 }
@@ -1173,13 +1197,13 @@ static int s_mp_sqr(mp_int *a, mp_int *b)
    VERIFY(a);
    VERIFY(b);
    
-   /* can we use the fast multiplier? */
+   /* can we use the fast multiplier? */  
    if (((a->used * 2 + 1) < 512) && a->used < (1<<( (CHAR_BIT*sizeof(mp_word)) - (2*DIGIT_BIT) - 1))) {
       res = fast_s_mp_sqr(a,b);
       DECFUNC();
       return res;
    }  
-
+   
    pa = a->used;
    if ((res = mp_init_size(&t, pa + pa + 1)) != MP_OKAY) {
       DECFUNC();
@@ -1385,10 +1409,9 @@ static int mp_karatsuba_mul(mp_int *a, mp_int *b, mp_int *c)
    if (mp_lshd(&x1y1, B*2) != MP_OKAY) goto X1Y1;                 /* x1y1 = x1y1 << 2*B */
 
    if (mp_add(&x0y0, &t1, &t1) != MP_OKAY) goto X1Y1;             /* t1 = x0y0 + t1 */
-   if (mp_add(&t1, &x1y1, &t1) != MP_OKAY) goto X1Y1;             /* t1 = x0y0 + t1 + x1y1 */
+   if (mp_add(&t1, &x1y1, c) != MP_OKAY) goto X1Y1;               /* t1 = x0y0 + t1 + x1y1 */
 
    err = MP_OKAY;
-   mp_exch(&t1, c);
 
 X1Y1: mp_clear(&x1y1);
 X0Y0: mp_clear(&x0y0);
@@ -1426,7 +1449,7 @@ int mp_mul(mp_int *a, mp_int *b, mp_int *c)
 static int mp_karatsuba_sqr(mp_int *a, mp_int *b)
 {
    mp_int x0, x1, t1, t2, x0x0, x1x1;
-   int B, err;
+   int B, err, x;
    
    REGFUNC("mp_karatsuba_sqr");
    VERIFY(a);
@@ -1441,8 +1464,8 @@ static int mp_karatsuba_sqr(mp_int *a, mp_int *b)
    B = B/2;
 
    /* init copy all the temps */
-   if (mp_init_copy(&x0, a) != MP_OKAY) goto ERR;
-   if (mp_init_copy(&x1, a) != MP_OKAY) goto X0;
+   if (mp_init_size(&x0, B) != MP_OKAY) goto ERR;
+   if (mp_init_size(&x1, a->used - B) != MP_OKAY) goto X0;
 
    /* init temps */
    if (mp_init(&t1) != MP_OKAY)         goto X1;
@@ -1451,16 +1474,27 @@ static int mp_karatsuba_sqr(mp_int *a, mp_int *b)
    if (mp_init(&x1x1) != MP_OKAY)       goto X0X0;
 
    /* now shift the digits */
-   mp_mod_2d(&x0, B*DIGIT_BIT, &x0);
-   mp_rshd(&x1, B);
+   for (x = 0; x < B; x++) {
+       x0.dp[x] = a->dp[x];
+   }
 
+   for (x = B; x < a->used; x++) {
+       x1.dp[x-B] = a->dp[x];
+   }
+   
+   x0.used = B;
+   x1.used = a->used - B;
+   
+   mp_clamp(&x0);
+   mp_clamp(&x1);
+   
    /* now calc the products x0*x0 and x1*x1 */
-   if (s_mp_sqr(&x0, &x0x0) != MP_OKAY) goto X1X1;                /* x0x0 = x0*x0 */
-   if (s_mp_sqr(&x1, &x1x1) != MP_OKAY) goto X1X1;                /* x1x1 = x1*x1 */
+   if (mp_sqr(&x0, &x0x0) != MP_OKAY) goto X1X1;                /* x0x0 = x0*x0 */
+   if (mp_sqr(&x1, &x1x1) != MP_OKAY) goto X1X1;                /* x1x1 = x1*x1 */
 
    /* now calc x1-x0 and y1-y0 */
    if (mp_sub(&x1, &x0, &t1) != MP_OKAY) goto X1X1;               /* t1 = x1 - x0 */
-   if (s_mp_sqr(&t1, &t1) != MP_OKAY) goto X1X1;                  /* t1 = (x1 - x0) * (y1 - y0) */
+   if (mp_sqr(&t1, &t1) != MP_OKAY) goto X1X1;                  /* t1 = (x1 - x0) * (y1 - y0) */
 
    /* add x0y0 */
    if (mp_add(&x0x0, &x1x1, &t2) != MP_OKAY) goto X1X1;           /* t2 = x0y0 + x1y1 */
@@ -1471,10 +1505,9 @@ static int mp_karatsuba_sqr(mp_int *a, mp_int *b)
    if (mp_lshd(&x1x1, B*2) != MP_OKAY) goto X1X1;                 /* x1y1 = x1y1 << 2*B */
 
    if (mp_add(&x0x0, &t1, &t1) != MP_OKAY) goto X1X1;             /* t1 = x0y0 + t1 */
-   if (mp_add(&t1, &x1x1, &t1) != MP_OKAY) goto X1X1;             /* t1 = x0y0 + t1 + x1y1 */
+   if (mp_add(&t1, &x1x1, b) != MP_OKAY) goto X1X1;               /* t1 = x0y0 + t1 + x1y1 */
 
    err = MP_OKAY;
-   mp_exch(&t1, b);
    
 X1X1: mp_clear(&x1x1);
 X0X0: mp_clear(&x0x0);
@@ -2782,6 +2815,102 @@ __M  :
    }
    DECFUNC();
    return err;
+}
+
+/* find the n'th root of an integer 
+ *
+ * Result found such that (c)^b <= a and (c+1)^b > a 
+ */
+int mp_n_root(mp_int *a, mp_digit b, mp_int *c)
+{
+   mp_int t1, t2, t3;
+   int res, neg;
+   
+   /* input must be positive if b is even*/
+   if ((b&1) == 0 && a->sign == MP_NEG) {
+      return MP_VAL;
+   }
+   
+   if ((res = mp_init(&t1)) != MP_OKAY) {
+      return res;
+   }
+   
+   if ((res = mp_init(&t2)) != MP_OKAY) {
+      goto __T1;
+   }
+   
+   if ((res = mp_init(&t3)) != MP_OKAY) {
+      goto __T2;
+   }
+
+   /* if a is negative fudge the sign but keep track */
+   neg     = a->sign;
+   a->sign = MP_ZPOS;
+
+   /* t2 = a */
+   if ((res = mp_copy(a, &t2)) != MP_OKAY) {
+      goto __T3;
+   }
+  
+   do {
+      /* t1 = t2 */
+      if ((res = mp_copy(&t2, &t1)) != MP_OKAY) {
+         goto __T3;
+      }
+
+      /* t2 = t1 - ((t1^b - a) / (b * t1^(b-1))) */
+      if ((res = mp_expt_d(&t1, b-1, &t3)) != MP_OKAY) {            /* t3 = t1^(b-1) */
+         goto __T3;
+      }
+
+      /* numerator */
+      if ((res = mp_mul(&t3, &t1, &t2)) != MP_OKAY) {               /* t2 = t1^b */
+         goto __T3;
+      }
+      
+      if ((res = mp_sub(&t2, a, &t2)) != MP_OKAY) {                 /* t2 = t1^b - a */
+         goto __T3;
+      }
+
+      if ((res = mp_mul_d(&t3, b, &t3)) != MP_OKAY) {               /* t3 = t1^(b-1) * b  */
+         goto __T3;
+      }
+      
+      if ((res = mp_div(&t2, &t3, &t3, NULL)) != MP_OKAY) {         /* t3 = (t1^b - a)/(b * t1^(b-1)) */
+         goto __T3;
+      }
+      
+      if ((res = mp_sub(&t1, &t3, &t2)) != MP_OKAY) {
+         goto __T3;
+      }
+   } while (mp_cmp(&t1, &t2) != MP_EQ);
+   
+   /* result can be at most off by one so check */
+   if ((res = mp_expt_d(&t1, b, &t2)) != MP_OKAY) {
+      goto __T3;
+   }
+   
+   if (mp_cmp(&t2, a) == MP_GT) {
+      if ((res = mp_sub_d(&t1, 1, &t1)) != MP_OKAY) {
+         goto __T3;
+      }
+   }
+   
+   /* reset the sign of a first */
+   a->sign = neg;
+   
+   /* set the result */
+   mp_exch(&t1, c);
+   
+   /* set the sign of the result */
+   c->sign = neg;   
+   
+   res = MP_OKAY;
+   
+__T3:  mp_clear(&t3);
+__T2:  mp_clear(&t2);
+__T1:  mp_clear(&t1);
+   return res;
 }
 
 /* --> radix conversion <-- */

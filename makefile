@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS  += -DDEBUG -Wall -W -O3 -fomit-frame-pointer -funroll-loops 
 
-VERSION=0.06
+VERSION=0.07
 
 default: test
 

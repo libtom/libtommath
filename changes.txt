@@ -1,3 +1,8 @@
+Jan 1st, 2003
+v0.07  -- Removed alot of heap operations from core functions to speed them up
+       -- Added a root finding function [and mp_sqrt macro like from MPI]
+       -- Added more to manual 
+
 Dec 31st, 2002
 v0.06  -- Sped up the s_mp_add, s_mp_sub which inturn sped up mp_invmod, mp_exptmod, etc...
        -- Cleaned up the header a bit more

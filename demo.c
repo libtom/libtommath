@@ -105,10 +105,9 @@ int main(void)
    mp_sub_d(&a, 1, &c);
    mp_exptmod(&b, &c, &a, &d);
    mp_toradix(&d, buf, 10);
-   printf("b^p-1 == %s\n", buf); 
+   printf("b^p-1 == %s\n", buf);     
 
 #ifdef TIMER   
-
       mp_read_radix(&a, "340282366920938463463374607431768211455", 10);
       mp_read_radix(&b, "340282366920938463463574607431768211455", 10);
       while (a.used * DIGIT_BIT < 8192) {
@@ -156,9 +155,6 @@ int main(void)
       printf("Multiplying %d-bit took %llu cycles\n", mp_count_bits(&a), tt / ((ulong64)100000));
       mp_copy(&b, &a);
    }
-
-  
- 
    
    {
       char *primes[] = {
@@ -177,6 +173,7 @@ int main(void)
       for (rr = 0; rr < mp_count_bits(&a); rr++) {
          mp_mul_2d(&b, 1, &b);
          b.dp[0] |= lbit();
+         b.used  += 1;
       }
       mp_sub_d(&a, 1, &c);
       mp_mod(&b, &c, &b);
@@ -198,7 +195,7 @@ int main(void)
       printf("Exponentiating %d-bit took %llu cycles\n", mp_count_bits(&a), tt / ((ulong64)35));
    }
    }
-   
+
    mp_read_radix(&a, "340282366920938463463374607431768211455", 10);
    mp_read_radix(&b, "234892374891378913789237289378973232333", 10);
    while (a.used * DIGIT_BIT < 8192) {
@@ -223,6 +220,19 @@ int main(void)
 
    inv_n = expt_n = lcm_n = gcd_n = add_n = sub_n = mul_n = div_n = sqr_n = mul2d_n = div2d_n = 0;   
    for (;;) {
+   
+       /* randomly clear and re-init one variable, this has the affect of triming the alloc space */
+       switch (abs(rand()) % 7) {
+           case 0:  mp_clear(&a); mp_init(&a); break;
+           case 1:  mp_clear(&b); mp_init(&b); break;
+           case 2:  mp_clear(&c); mp_init(&c); break;
+           case 3:  mp_clear(&d); mp_init(&d); break;
+           case 4:  mp_clear(&e); mp_init(&e); break;
+           case 5:  mp_clear(&f); mp_init(&f); break;
+           case 6:  break; /* don't clear any */
+       }
+   
+   
        printf("%7lu/%7lu/%7lu/%7lu/%7lu/%7lu/%7lu/%7lu/%7lu/%7lu/%7lu/%5d\r", add_n, sub_n, mul_n, div_n, sqr_n, mul2d_n, div2d_n, gcd_n, lcm_n, expt_n, inv_n, _ifuncs);
        fgets(cmd, 4095, stdin);
        cmd[strlen(cmd)-1] = 0;

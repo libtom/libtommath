@@ -1,7 +1,7 @@
 \documentclass{article}
 \begin{document}
 
-\title{LibTomMath v0.06 \\ A Free Multiple Precision Integer Library}
+\title{LibTomMath v0.07 \\ A Free Multiple Precision Integer Library}
 \author{Tom St Denis \\ tomstdenis@iahu.ca}
 \maketitle
 \newpage
@@ -187,17 +187,6 @@ int mp_mul_2(mp_int *a, mp_int *b);
 int mp_mod_2d(mp_int *a, int b, mp_int *c);
 \end{verbatim}
 
-Both the \textbf{mp\_rshd} and \textbf{mp\_lshd} functions provide shifting by whole digits.  For example, 
-mp\_rshd($x$, $n$) is the same as $x \leftarrow \lfloor x / \beta^n \rfloor$ while mp\_lshd($x$, $n$) is equivalent
-to $x \leftarrow x \cdot \beta^n$.  Both functions are extremely fast as they merely copy digits within the array.  
-
-Similarly the \textbf{mp\_div\_2d} and \textbf{mp\_mul\_2d} functions provide shifting but allow any bit count to 
-be specified.  For example, mp\_div\_2d($x$, $n$, $y$) is the same as $y =\lfloor x / 2^n \rfloor$ while 
-mp\_mul\_2d($x$, $n$, $y$) is the same as $y = x \cdot 2^n$.  The \textbf{mp\_div\_2} and \textbf{mp\_mul\_2} 
-functions are legacy functions that merely shift right or left one bit respectively.  The \textbf{mp\_mod\_2d} function
-reduces an integer mod a power of two.  For example, mp\_mod\_2d($x$, $n$, $y$) is the same as 
-$y \equiv x \mbox{ (mod }2^n\mbox{)}$.
-
 \subsection{Basic Arithmetic}
 
 Next are the class of functions which provide basic arithmetic.
@@ -234,17 +223,7 @@ int mp_div(mp_int *a, mp_int *b, mp_int *c, mp_int *d);
 int mp_mod(mp_int *a, mp_int *b, mp_int *c);
 \end{verbatim}
 
-The \textbf{mp\_cmp} will compare two integers.  It will return \textbf{MP\_LT} if the first parameter is less than
-the second, \textbf{MP\_GT} if it is greater or \textbf{MP\_EQ} if they are equal.  These constants are the same as from
-MPI.
-
-The \textbf{mp\_add}, \textbf{mp\_sub}, \textbf{mp\_mul}, \textbf{mp\_div}, \textbf{mp\_sqr} and \textbf{mp\_mod} are all
-fairly straight forward to understand.  Note that in mp\_div either $c$ (the quotient) or $d$ (the remainder) can be 
-passed as NULL to ignore it.  For example, if you only want the quotient $z = \lfloor x/y \rfloor$ then a call such as 
-mp\_div(\&x, \&y, \&z, NULL) is acceptable.
-
-There is a related class of ``single digit'' functions that are like the above except they use a digit as the second
-operand.
+\subsection{Single Digit Functions}
 
 \begin{verbatim}
 /* compare against a single digit */
@@ -296,13 +275,12 @@ int mp_gcd(mp_int *a, mp_int *b, mp_int *c);
 /* c = [a, b] or (a*b)/(a, b) */
 int mp_lcm(mp_int *a, mp_int *b, mp_int *c);
 
+/* find the b'th root of a  */
+int mp_n_root(mp_int *a, mp_digit b, mp_int *c);
+
 /* d = a^b (mod c) */
 int mp_exptmod(mp_int *a, mp_int *b, mp_int *c, mp_int *d);
 \end{verbatim}
-
-These are all fairly simple to understand.  The \textbf{mp\_invmod} is a modular multiplicative inverse.  That is it
-stores in the third parameter an integer such that $ac \equiv 1 \mbox{ (mod }b\mbox{)}$ provided such integer exists.  If
-there is no such integer the function returns \textbf{MP\_VAL}.
 
 \subsection{Radix Conversions}
 To read or store integers in other formats there are the following functions.
@@ -432,7 +410,7 @@ when $b \le 0$, in theory the routine will still give a properly congruent answe
 
 This function requires $O(4 \cdot N)$ memory and $O(3 \cdot N^2)$ time.
 
-\subsection{Modular Arithmetic}
+\subsection{Number Theoretic Functions}
 
 \subsubsection{mp\_addmod, mp\_submod, mp\_mulmod, mp\_sqrmod}
 These functions take the time of their host function plus the time it takes to perform a division.  For example, 
@@ -444,6 +422,41 @@ Also note that these functions use mp\_mod which means the result are guaranteed
 \subsubsection{mp\_invmod(mp\_int *a, mp\_int *b, mp\_int *c)}
 This function will find $c = 1/a \mbox{ (mod }b\mbox{)}$ for any value of $a$ such that $(a, b) = 1$ and $b > 0$.  When
 $b$ is odd a ``fast'' variant is used which finds the inverse twice as fast.  
+
+\subsubsection{mp\_gcd(mp\_int *a, mp\_int *b, mp\_int *c)}
+Finds the greatest common divisor of both $a$ and $b$ and places the result in $c$.  Will work with either positive
+or negative inputs.  
+
+Functions requires no additional memory and approximately $O(N \cdot log(N))$ time.
+
+\subsubsection{mp\_lcm(mp\_int *a, mp\_int *b, mp\_int *c)}
+Finds the least common multiple of both $a$ and $b$ and places the result in $c$.  Will work with either positive
+or negative inputs.  This is calculated by dividing the product of $a$ and $b$ by the greatest common divisor of 
+both.  
+
+Functions requires no additional memory and approximately $O(4 \cdot N^2)$ time.
+
+\subsubsection{mp\_n\_root(mp\_int *a, mp\_digit b, mp\_int c)}
+Finds the $b$'th root of $a$ and stores it in $b$.  The roots are found such that $\vert c \vert^b \le \vert a \vert$.  
+Uses the Newton approximation approach which means it converges in $O(log \beta^N)$ time to a final result.  Each iteration
+requires $b$ multiplications and one division for a total work of $O(6N^2 \cdot log \beta^N) = O(6N^3 \cdot log \beta)$.
+
+If the input $a$ is negative and $b$ is even the function returns an error.  Otherwise the function will return a root
+that has a sign that agrees with the sign of $a$.
+
+\subsubsection{mp\_exptmod(mp\_int *a, mp\_int *b, mp\_int *c, mp\_int *d)}
+Computes $d = a^b \mbox{ (mod }c\mbox{)}$ using a sliding window $k$-ary exponentiation algorithm.  For an $\alpha$-bit
+exponent it performs $\alpha$ squarings and at most $\lfloor \alpha/k \rfloor + k$ multiplications.  The value of $k$ is
+chosen to minimize the number of multiplications required for a given value of $\alpha$.  Barrett reductions are used
+to reduce the squared or multiplied temporary results modulo $c$.  A Barrett reduction requires one division that is
+performed only and two half multipliers of $N$ digit numbers resulting in approximation $O((N^2)/2)$ work.  
+
+Let $\gamma = \lfloor \alpha/k \rfloor + k$ represent the total multiplications.  The total work of a exponentiation is
+therefore, $O(3 \cdot N^2 + (\alpha + \gamma) \cdot ((N^2)/2) + \alpha \cdot ((N^2 + N)/2) + \gamma \cdot N^2)$ which 
+simplies to $O(3 \cdot N^2 + \gamma N^2 + \alpha (N^2 + (N/2)))$.  The bulk of the time is spent in the Barrett 
+reductions and the squaring algorithms.  Since $\gamma < \alpha$ it makes sense to optimize first the Barrett and
+squaring routines first.  Significant improvements in the future will most likely stem from optimizing these instead
+of optimizing the multipliers.
 
 \section{Timing Analysis}
 \subsection{Observed Timings}
@@ -467,27 +480,27 @@ Inversion & 1024 & 5,237,957  & 1,054,158   \\
 Inversion & 2048 & 17,871,944  & 3,459,683   \\
 Inversion & 4096 & 66,610,468  & 11,834,556   \\
 \hline
-Multiply & 128 & 1,426   & 828    \\
-Multiply & 256 & 2,551   & 1,393    \\
-Multiply & 512 & 7,913   & 2,926    \\
-Multiply & 1024 & 28,496   & 8,620  \\
-Multiply & 2048 & 109,897   & 28,967    \\
-Multiply & 4096 & 469,970   & 105,387    \\
+Multiply & 128 & 1,426   & 451     \\
+Multiply & 256 & 2,551   & 958     \\
+Multiply & 512 & 7,913   & 2,476     \\
+Multiply & 1024 & 28,496   & 7,927   \\
+Multiply & 2048 & 109,897   & 282,24     \\
+Multiply & 4096 & 469,970   & 104,681     \\
 \hline 
-Square & 128 & 1,319   & 869    \\
-Square & 256 & 1,776   & 1,362    \\
-Square & 512 & 5,399  & 2,571   \\
-Square & 1024 & 18,991  & 6,332    \\
-Square & 2048 & 72,126  & 18,426   \\
-Square & 4096 & 306,269  & 74,908 \\
+Square & 128 & 1,319   & 511     \\
+Square & 256 & 1,776   & 947     \\
+Square & 512 & 5,399  & 2,153    \\
+Square & 1024 & 18,991  & 5,733     \\
+Square & 2048 & 72,126  & 17,621    \\
+Square & 4096 & 306,269  & 70,168  \\
 \hline 
-Exptmod & 512 & 32,021,586  & 5,696,459  \\
-Exptmod & 768 & 97,595,492  & 12,428,274   \\
-Exptmod & 1024 & 223,302,532  & 22,834,316   \\
-Exptmod & 2048 & 1,682,223,369   & 119,888,049    \\
-Exptmod & 2560 & 3,268,615,571   & 250,901,263     \\
-Exptmod & 3072 & 5,597,240,141   & 391,716,431    \\
-Exptmod & 4096 & 13,347,270,891   & 814,429,647    
+Exptmod & 512 & 32,021,586  & 4,472,406   \\
+Exptmod & 768 & 97,595,492  & 10,427,845    \\
+Exptmod & 1024 & 223,302,532  & 20,561,722    \\
+Exptmod & 2048 & 1,682,223,369   & 113,978,803     \\
+Exptmod & 2560 & 3,268,615,571   & 236,650,133      \\
+Exptmod & 3072 & 5,597,240,141   & 373,449,291     \\
+Exptmod & 4096 & 13,347,270,891   & 787,568,457     
 
 \end{tabular}
 \end{center}

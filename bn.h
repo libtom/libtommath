@@ -233,6 +233,15 @@ int mp_gcd(mp_int *a, mp_int *b, mp_int *c);
 /* c = [a, b] or (a*b)/(a, b) */
 int mp_lcm(mp_int *a, mp_int *b, mp_int *c);
 
+/* finds one of the b'th root of a, such that |c|^b <= |a| 
+ *
+ * returns error if a < 0 and b is even
+ */
+int mp_n_root(mp_int *a, mp_digit b, mp_int *c);
+
+/* shortcut for square root */
+#define mp_sqrt(a, b) mp_n_root(a, 2, b)
+
 /* used to setup the Barrett reduction for a given modulus b */
 int mp_reduce_setup(mp_int *a, mp_int *b);
 
