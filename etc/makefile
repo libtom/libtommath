@@ -1,0 +1,1 @@
+CFLAGS += -I../ -Wall -W -O3 -fomit-frame-pointer -funroll-loops ../bn.c 

@@ -23,7 +23,6 @@ extern ulong64 rdtsc(void);
 extern void reset(void);
 #else 
 
-
 ulong64 _tt;
 void reset(void) { _tt = clock(); }
 ulong64 rdtsc(void) { return clock() - _tt; }
@@ -33,6 +32,8 @@ ulong64 rdtsc(void) { return clock() - _tt; }
 int _ifuncs;
 #else
 extern int _ifuncs;
+extern void dump_timings(void);
+extern void reset_timings(void);
 #endif
    
 void ndraw(mp_int *a, char *name)
@@ -103,11 +104,25 @@ int main(void)
    
    mp_read_radix(&b, "4982748972349724892742", 10);
    mp_sub_d(&a, 1, &c);
+   
+#ifdef DEBUG
+   mp_sqr(&a, &a);mp_sqr(&c, &c);
+   mp_sqr(&a, &a);mp_sqr(&c, &c);
+   mp_sqr(&a, &a);mp_sqr(&c, &c);
+   reset_timings();
+#endif   
    mp_exptmod(&b, &c, &a, &d);
-   mp_toradix(&d, buf, 10);
-   printf("b^p-1 == %s\n", buf);     
+#ifdef DEBUG   
+   dump_timings();
+   return 0;
 
-#ifdef TIMER   
+#endif   
+   
+   mp_toradix(&d, buf, 10);
+   printf("b^p-1 == %s\n", buf);
+   
+      
+#ifdef TIMER      
       mp_read_radix(&a, "340282366920938463463374607431768211455", 10);
       mp_read_radix(&b, "340282366920938463463574607431768211455", 10);
       while (a.used * DIGIT_BIT < 8192) {
@@ -194,7 +209,8 @@ int main(void)
       }
       printf("Exponentiating %d-bit took %llu cycles\n", mp_count_bits(&a), tt / ((ulong64)35));
    }
-   }
+   }   
+
 
    mp_read_radix(&a, "340282366920938463463374607431768211455", 10);
    mp_read_radix(&b, "234892374891378913789237289378973232333", 10);

@@ -41,7 +41,7 @@ void rand_num(mp_int *a)
    unsigned char buf[512];
 
 top:
-   size = 1 + ((fgetc(rng)*fgetc(rng)) % 512);
+   size = 1 + ((fgetc(rng)*fgetc(rng)) % 32);
    buf[0] = (fgetc(rng)&1)?1:0;
    fread(buf+1, 1, size, rng);
    for (n = 0; n < size; n++) {
@@ -57,7 +57,7 @@ void rand_num2(mp_int *a)
    unsigned char buf[512];
 
 top:
-   size = 1 + ((fgetc(rng)*fgetc(rng)) % 512);
+   size = 1 + ((fgetc(rng)*fgetc(rng)) % 32);
    buf[0] = (fgetc(rng)&1)?1:0;
    fread(buf+1, 1, size, rng);
    for (n = 0; n < size; n++) {
@@ -80,6 +80,13 @@ int main(void)
    mp_init(&e);
 
    rng = fopen("/dev/urandom", "rb");
+   if (rng == NULL) {
+      rng = fopen("/dev/random", "rb");
+      if (rng == NULL) {
+         fprintf(stderr, "\nWarning:  stdin used as random source\n\n");
+         rng = stdin;
+      }
+   }
 
    for (;;) {
        n = fgetc(rng) % 11;

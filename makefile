@@ -1,13 +1,18 @@
 CC = gcc
-CFLAGS  += -DDEBUG -Wall -W -O3 -fomit-frame-pointer -funroll-loops 
+CFLAGS  += -Wall -W -O3 -fomit-frame-pointer -funroll-loops 
 
-VERSION=0.07
+VERSION=0.08
 
 default: test
 
-test: bn.o demo.o 
+test: bn.o demo.o
 	$(CC) bn.o demo.o -o demo
 	cd mtest ; gcc -O3 -fomit-frame-pointer -funroll-loops mtest.c -o mtest.exe -s
+
+# builds the x86 demo
+test86:
+	nasm -f coff timer.asm
+	$(CC) -DDEBUG -DTIMER_X86 $(CFLAGS) bn.c demo.c timer.o -o demo -s
 
 docdvi: bn.tex
 	latex bn
@@ -17,7 +22,7 @@ docs:	docdvi
 	rm -f bn.log bn.aux bn.dvi
 	
 clean:
-	rm -f *.o *.exe mtest/*.exe bn.log bn.aux bn.dvi *.s 
+	rm -f *.pdf *.o *.exe mtest/*.exe etc/*.exe bn.log bn.aux bn.dvi *.s 
 
 zipup: clean docs
 	chdir .. ; rm -rf ltm* libtommath-$(VERSION) ; mkdir libtommath-$(VERSION) ; \

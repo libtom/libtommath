@@ -1,3 +1,11 @@
+Jan 2nd, 2003
+v0.08  -- Sped up the multipliers by moving the inner loop variables into a smaller scope
+       -- Corrected a bunch of small "warnings"
+       -- Added more comments
+       -- Made "mtest" be able to use /dev/random, /dev/urandom or stdin for RNG data
+       -- Corrected some bugs where error messages were potentially ignored
+       -- add etc/pprime.c program which makes numbers which are provably prime.
+       
 Jan 1st, 2003
 v0.07  -- Removed alot of heap operations from core functions to speed them up
        -- Added a root finding function [and mp_sqrt macro like from MPI]

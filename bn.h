@@ -50,7 +50,7 @@
    typedef unsigned long      mp_digit;
    typedef ulong64            mp_word;
   
-   #define DIGIT_BIT          28U
+   #define DIGIT_BIT          28
 #endif  
 
 #ifndef DIGIT_BIT
@@ -77,13 +77,10 @@
 typedef int           mp_err;
 
 /* you'll have to tune these... */
-#ifdef FAST_FPU
-   #define KARATSUBA_MUL_CUTOFF    100     /* Min. number of digits before Karatsuba multiplication is used. */
-   #define KARATSUBA_SQR_CUTOFF    100     /* Min. number of digits before Karatsuba squaring is used. */
-#else
-   #define KARATSUBA_MUL_CUTOFF    80      /* Min. number of digits before Karatsuba multiplication is used. */
-   #define KARATSUBA_SQR_CUTOFF    80      /* Min. number of digits before Karatsuba squaring is used. */
-#endif
+#define KARATSUBA_MUL_CUTOFF    80      /* Min. number of digits before Karatsuba multiplication is used. */
+#define KARATSUBA_SQR_CUTOFF    80      /* Min. number of digits before Karatsuba squaring is used. */
+
+#define MP_PREC                 64      /* default digits of precision */
 
 typedef struct  {
     int used, alloc, sign;

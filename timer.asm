@@ -9,6 +9,12 @@
 [section .data]
 timer dd 0, 0
 [section .text]
+
+[global _gettsc]
+_gettsc:
+   rdtsc
+   ret
+
 [global _rdtsc]
 _rdtsc:
    rdtsc
