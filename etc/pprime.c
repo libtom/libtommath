@@ -56,7 +56,7 @@ static mp_digit prime_digit()
          ++y;
          next = (y+1)*(y+1);
       }
-      
+
       /* loop if divisible by 3,5,7,11,13,17,19,23,29  */
       if ((r % 3) == 0) { x = 0; continue; }
       if ((r % 5) == 0) { x = 0; continue; }
@@ -138,7 +138,7 @@ int pprime(int k, mp_int *p, mp_int *q)
 
    /* now loop making the single digit */
    while (mp_count_bits(&a) < k) {
-      printf("prime is %4d bits left\r", k - mp_count_bits(&a)); fflush(stdout);
+      printf("prime has %4d bits left\r", k - mp_count_bits(&a)); fflush(stdout);
    top: 
       mp_set(&b, prime_digit());
       

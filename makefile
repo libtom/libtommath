@@ -1,13 +1,13 @@
 CC = gcc
-CFLAGS  += -Wall -W -O3 -fomit-frame-pointer -funroll-loops 
+CFLAGS  +=  -Wall -W -Wshadow -ansi -O3 -fomit-frame-pointer -funroll-loops 
 
-VERSION=0.08
+VERSION=0.09
 
 default: test
 
 test: bn.o demo.o
 	$(CC) bn.o demo.o -o demo
-	cd mtest ; gcc -O3 -fomit-frame-pointer -funroll-loops mtest.c -o mtest.exe -s
+	cd mtest ; gcc $(CFLAGS) mtest.c -o mtest.exe -s
 
 # builds the x86 demo
 test86:

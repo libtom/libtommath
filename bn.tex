@@ -1,7 +1,7 @@
 \documentclass{article}
 \begin{document}
 
-\title{LibTomMath v0.08 \\ A Free Multiple Precision Integer Library}
+\title{LibTomMath v0.09 \\ A Free Multiple Precision Integer Library}
 \author{Tom St Denis \\ tomstdenis@iahu.ca}
 \maketitle
 \newpage
@@ -23,8 +23,8 @@ LibTomMath was designed with the following goals in mind:
 \item Be written entirely in portable C.
 \end{enumerate}
 
-All three goals have been achieved.  Particularly the speed increase goal.  For example, a 512-bit modular exponentiation is
-four times faster\footnote{On an Athlon XP with GCC 3.2} with LibTomMath compared to MPI.
+All three goals have been achieved.  Particularly the speed increase goal.  For example, a 512-bit modular exponentiation 
+is eight times faster\footnote{On an Athlon XP with GCC 3.2} with LibTomMath compared to MPI.
 
 Being compatible with MPI means that applications that already use it can be ported fairly quickly.  Currently there are 
 a few differences but there are many similarities.  In fact the average MPI based application can be ported in under 15
@@ -51,9 +51,7 @@ with
 #include "bn.h"
 \end{verbatim}
 
-Remove ``mpi.c'' from your project and replace it with ``bn.c''.  Note that currently MPI has a few more functions than
-LibTomMath has (e.g. no square-root code and a few others).  Those are planned for future releases.  In the interim work 
-arounds can be sought.  Note that LibTomMath doesn't lack any functions required to build a cryptosystem.
+Remove ``mpi.c'' from your project and replace it with ``bn.c''.
 
 \section{Programming with LibTomMath}
 
@@ -278,6 +276,9 @@ int mp_lcm(mp_int *a, mp_int *b, mp_int *c);
 /* find the b'th root of a  */
 int mp_n_root(mp_int *a, mp_digit b, mp_int *c);
 
+/* computes the jacobi c = (a | n) (or Legendre if b is prime)  */
+int mp_jacobi(mp_int *a, mp_int *n, int *c);
+
 /* d = a^b (mod c) */
 int mp_exptmod(mp_int *a, mp_int *b, mp_int *c, mp_int *d);
 \end{verbatim}
@@ -443,6 +444,14 @@ requires $b$ multiplications and one division for a total work of $O(6N^2 \cdot 
 
 If the input $a$ is negative and $b$ is even the function returns an error.  Otherwise the function will return a root
 that has a sign that agrees with the sign of $a$.
+
+\subsubsection{mp\_jacobi(mp\_int *a, mp\_int *n, int *c)}
+Computes $c = \left ( {a \over n} \right )$ or the Jacobi function of $(a, n)$ and stores the result in an integer addressed
+by $c$.  Since the result of the Jacobi function $\left ( {a \over n} \right ) \in \lbrace -1, 0, 1 \rbrace$ it seemed
+natural to store the result in a simple C style \textbf{int}.  If $n$ is prime then the Jacobi function produces
+the same results as the Legendre function\footnote{Source: Handbook of Applied Cryptography, pp. 73}.  This means if
+$n$ is prime then $\left ( {a \over n} \right )$ is equal to $1$ if $a$ is a quadratic residue modulo $n$ or $-1$ if 
+it is not.  
 
 \subsubsection{mp\_exptmod(mp\_int *a, mp\_int *b, mp\_int *c, mp\_int *d)}
 Computes $d = a^b \mbox{ (mod }c\mbox{)}$ using a sliding window $k$-ary exponentiation algorithm.  For an $\alpha$-bit

@@ -94,7 +94,6 @@ int main(void)
    mp_init(&d);
    mp_init(&e);
    mp_init(&f);
-   
  
    mp_read_radix(&a, "V//////////////////////////////////////////////////////////////////////////////////////", 64);
    mp_reduce_setup(&b, &a);

@@ -2888,11 +2888,6 @@ int mp_exptmod(mp_int *G, mp_int *X, mp_int *P, mp_int *Y)
     *
     * The M table contains powers of the input base, e.g. M[x] = G^x mod P
     *
-    * This table is not made in the straight forward manner of a for loop with only
-    * multiplications.  Since squaring is faster than multiplication we use as many
-    * squarings as possible.  As a result about half of the steps to make the M 
-    * table are squarings.  
-    *
     * The first half of the table is not computed though accept for M[0] and M[1]
     */
    mp_set(&M[0], 1);
@@ -2914,7 +2909,6 @@ int mp_exptmod(mp_int *G, mp_int *X, mp_int *P, mp_int *Y)
        }
    }  
    
-     
    /* create upper table */
    for (x = (1<<(winsize-1))+1; x < (1 << winsize); x++) {
        if ((err = mp_mul(&M[x-1], &M[1], &M[x])) != MP_OKAY) {
@@ -3129,6 +3123,104 @@ int mp_n_root(mp_int *a, mp_digit b, mp_int *c)
 __T3:  mp_clear(&t3);
 __T2:  mp_clear(&t2);
 __T1:  mp_clear(&t1);
+   return res;
+}
+
+/* computes the jacobi c = (a | n) (or Legendre if b is prime) 
+ * HAC pp. 73 Algorithm 2.149 
+ */
+int mp_jacobi(mp_int *a, mp_int *n, int *c)
+{
+   mp_int a1, n1, e;
+   int s, r, res;
+   mp_digit residue;
+   
+   /* step 1.  if a == 0, return 0 */
+   if (mp_iszero(a) == 1) {
+      *c = 0;
+      return MP_OKAY;
+   }
+   
+   /* step 2.  if a == 1, return 1 */
+   if (mp_cmp_d(a, 1) == MP_EQ) {
+      *c = 1;
+      return MP_OKAY;
+   }
+   
+   /* default */
+   s = 0;
+   
+   /* step 3.  write a = a1 * 2^e  */
+   if ((res = mp_init_copy(&a1, a)) != MP_OKAY) {
+      return res;
+   }
+   
+   if ((res = mp_init(&n1)) != MP_OKAY) {
+      goto __A1;
+   }
+   
+   if ((res = mp_init(&e)) != MP_OKAY) {
+      goto __N1;
+   }
+   
+   while (mp_iseven(&a1) == 1) {
+       if ((res = mp_add_d(&e, 1, &e)) != MP_OKAY) {
+          goto __E;
+       }
+       
+       if ((res = mp_div_2(&a1, &a1)) != MP_OKAY) {
+          goto __E;
+       }
+   }
+   
+   /* step 4.  if e is even set s=1 */
+   if (mp_iseven(&e) == 1) {
+      s = 1;
+   } else {
+      /* else set s=1 if n = 1/7 (mod 8) or s=-1 if n = 3/5 (mod 8) */
+      if ((res = mp_mod_d(n, 8, &residue)) != MP_OKAY) {
+         goto __E;
+      }
+      
+      if (residue == 1 || residue == 7) {
+         s = 1;
+      } else if (residue == 3 || residue == 5) {
+         s = -1;
+      }
+   }
+   
+   /* step 5.  if n == 3 (mod 4) *and* a1 == 3 (mod 4) then s = -s */
+   if ((res = mp_mod_d(n, 4, &residue)) != MP_OKAY) {
+      goto __E;
+   }
+   if (residue == 3) {
+      if ((res = mp_mod_d(&a1, 4, &residue)) != MP_OKAY) {
+         goto __E;
+      }
+      if (residue == 3) {
+         s = -s;
+      }
+   }
+   
+   /* if a1 == 1 we're done */
+   if (mp_cmp_d(&a1, 1) == MP_EQ) {
+      *c = s;
+   } else {
+      /* n1 = n mod a1 */
+      if ((res = mp_mod(n, &a1, &n1)) != MP_OKAY) {
+         goto __E;
+      }
+      if ((res = mp_jacobi(&n1, &a1, &r)) != MP_OKAY) {
+         goto __E;
+      }
+      *c = s * r;
+   }
+   
+   /* done */
+   res = MP_OKAY;
+__E:   mp_clear(&e);
+__N1:  mp_clear(&n1);
+__A1:  mp_clear(&a1);
    return res;
 }
 

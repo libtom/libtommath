@@ -21,6 +21,11 @@
 #include <ctype.h>
 #include <limits.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
 /* some default configurations.  
  *
  * A "mp_digit" must be able to hold DIGIT_BIT + 1 bits 
@@ -239,6 +244,9 @@ int mp_n_root(mp_int *a, mp_digit b, mp_int *c);
 /* shortcut for square root */
 #define mp_sqrt(a, b) mp_n_root(a, 2, b)
 
+/* computes the jacobi c = (a | n) (or Legendre if b is prime)  */
+int mp_jacobi(mp_int *a, mp_int *n, int *c);
+
 /* used to setup the Barrett reduction for a given modulus b */
 int mp_reduce_setup(mp_int *a, mp_int *b);
 
@@ -279,6 +287,11 @@ int mp_radix_size(mp_int *a, int radix);
 #define mp_tooctal(M, S)   mp_toradix((M), (S), 8)
 #define mp_todecimal(M, S) mp_toradix((M), (S), 10)
 #define mp_tohex(M, S)     mp_toradix((M), (S), 16)
+
+#ifdef __cplusplus
+   }
+#endif
+
 
 #endif
 

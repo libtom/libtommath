@@ -1,3 +1,8 @@
+Jan 6th, 2003
+v0.09  -- Updated the manual to reflect recent changes.  :-)
+       -- Added Jacobi function (mp_jacobi) to supplement the number theory side of the lib
+       -- Added a Mersenne prime finder demo in ./etc/mersenne.c
+
 Jan 2nd, 2003
 v0.08  -- Sped up the multipliers by moving the inner loop variables into a smaller scope
        -- Corrected a bunch of small "warnings"
