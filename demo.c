@@ -1,5 +1,6 @@
 #include <time.h>
 
+
 #ifdef U_MPI
 #include <stdio.h>
 #include <string.h>
@@ -12,7 +13,6 @@
    #else
       typedef unsigned long long ulong64;
    #endif   
-   
 #else   
    #include "bn.h"
 #endif
@@ -22,6 +22,8 @@
 extern ulong64 rdtsc(void);
 extern void reset(void);
 #else 
+
+
 ulong64 _tt;
 void reset(void) { _tt = clock(); }
 ulong64 rdtsc(void) { return clock() - _tt; }
@@ -73,11 +75,11 @@ int mp_reduce_setup(mp_int *a, mp_int *b)
 }
 #endif
 
+   char cmd[4096], buf[4096];
 int main(void)
 {
    mp_int a, b, c, d, e, f;
    unsigned long expt_n, add_n, sub_n, mul_n, div_n, sqr_n, mul2d_n, div2d_n, gcd_n, lcm_n, inv_n;
-   unsigned char cmd[4096], buf[4096];
    int rr;
    
 #ifdef TIMER
@@ -92,6 +94,7 @@ int main(void)
    mp_init(&e);
    mp_init(&f);
    
+ 
    mp_read_radix(&a, "V//////////////////////////////////////////////////////////////////////////////////////", 64);
    mp_reduce_setup(&b, &a);
    printf("\n\n----\n\n");
@@ -102,12 +105,11 @@ int main(void)
    mp_sub_d(&a, 1, &c);
    mp_exptmod(&b, &c, &a, &d);
    mp_toradix(&d, buf, 10);
-   printf("b^p-1 == %s\n", buf);
-   
+   printf("b^p-1 == %s\n", buf); 
 
 #ifdef TIMER   
 
-   mp_read_radix(&a, "340282366920938463463374607431768211455", 10);
+      mp_read_radix(&a, "340282366920938463463374607431768211455", 10);
       mp_read_radix(&b, "340282366920938463463574607431768211455", 10);
       while (a.used * DIGIT_BIT < 8192) {
          reset();
@@ -132,30 +134,31 @@ int main(void)
          mp_sqr(&a, &a);
          mp_sqr(&b, &b);
       }
-   
 
    mp_read_radix(&a, "340282366920938463463374607431768211455", 10);
    while (a.used * DIGIT_BIT < 8192) {
       reset();
-      for (rr = 0; rr < 10000; rr++) {
+      for (rr = 0; rr < 100000; rr++) {
           mp_sqr(&a, &b);
       }
       tt = rdtsc();
-      printf("Squaring %d-bit took %llu cycles\n", mp_count_bits(&a), tt / ((ulong64)10000));
+      printf("Squaring %d-bit took %lu cycles\n", mp_count_bits(&a), tt / ((ulong64)100000));
       mp_copy(&b, &a);
    }
    
    mp_read_radix(&a, "340282366920938463463374607431768211455", 10);
    while (a.used * DIGIT_BIT < 8192) {
       reset();
-      for (rr = 0; rr < 10000; rr++) {
+      for (rr = 0; rr < 100000; rr++) {
           mp_mul(&a, &a, &b);
       }
       tt = rdtsc();
-      printf("Multiplying %d-bit took %llu cycles\n", mp_count_bits(&a), tt / ((ulong64)10000));
+      printf("Multiplying %d-bit took %llu cycles\n", mp_count_bits(&a), tt / ((ulong64)100000));
       mp_copy(&b, &a);
    }
-   
+
+  
+ 
    
    {
       char *primes[] = {
@@ -213,6 +216,8 @@ int main(void)
       mp_sqr(&a, &a);
       mp_sqr(&b, &b);
    }
+   
+   return 0;
   
 #endif   
 
@@ -264,9 +269,9 @@ draw(&a);draw(&b);draw(&c);draw(&d);
           /* test the sign/unsigned storage functions */
           
           rr = mp_signed_bin_size(&c);
-          mp_to_signed_bin(&c, cmd);
+          mp_to_signed_bin(&c, (unsigned char *)cmd);
           memset(cmd+rr, rand()&255, sizeof(cmd)-rr);
-          mp_read_signed_bin(&d, cmd, rr);
+          mp_read_signed_bin(&d, (unsigned char *)cmd, rr);
           if (mp_cmp(&c, &d) != MP_EQ) {
              printf("mp_signed_bin failure!\n");
              draw(&c);
@@ -276,9 +281,9 @@ draw(&a);draw(&b);draw(&c);draw(&d);
                     
           
           rr = mp_unsigned_bin_size(&c);
-          mp_to_unsigned_bin(&c, cmd);
+          mp_to_unsigned_bin(&c, (unsigned char *)cmd);
           memset(cmd+rr, rand()&255, sizeof(cmd)-rr);
-          mp_read_unsigned_bin(&d, cmd, rr);
+          mp_read_unsigned_bin(&d, (unsigned char *)cmd, rr);
           if (mp_cmp_mag(&c, &d) != MP_EQ) {
              printf("mp_unsigned_bin failure!\n");
              draw(&c);

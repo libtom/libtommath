@@ -700,8 +700,8 @@ int mp_mul_2(mp_int *a, mp_int *b)
 /* low level addition */
 static int s_mp_add(mp_int *a, mp_int *b, mp_int *c)
 {
-   mp_int t, *x;
-   int res, min, max, i;
+   mp_int *x;
+   int olduse, res, min, max, i;
    mp_digit u;
    
    REGFUNC("s_mp_add");
@@ -724,45 +724,52 @@ static int s_mp_add(mp_int *a, mp_int *b, mp_int *c)
    }
    
    /* init result */
-   if ((res = mp_init_size(&t, max+1)) != MP_OKAY) {
-      DECFUNC();
-      return res;
+   if (c->alloc < max+1) {
+      if ((res = mp_grow(c, max+1)) != MP_OKAY) {
+         DECFUNC();
+         return res;
+      }
    }
-   t.used = max+1;
+ 
+   olduse  = c->used;
+   c->used = max + 1;
 
    /* add digits from lower part */
    u = 0;
    for (i = 0; i < min; i++) {
        /* T[i] = A[i] + B[i] + U */   
-       t.dp[i] = a->dp[i] + b->dp[i] + u;
+       c->dp[i] = a->dp[i] + b->dp[i] + u;
        
        /* U = carry bit of T[i] */       
-       u = (t.dp[i] >> DIGIT_BIT) & 1;
+       u = (c->dp[i] >> DIGIT_BIT) & 1;
        
        /* take away carry bit from T[i] */
-       t.dp[i] &= MP_MASK;
+       c->dp[i] &= MP_MASK;
    }
    
    /* now copy higher words if any, that is in A+B if A or B has more digits add those in */
    if (min != max) {
       for (; i < max; i++) { 
          /* T[i] = X[i] + U */
-         t.dp[i] = x->dp[i] + u;
+         c->dp[i] = x->dp[i] + u;
          
          /* U = carry bit of T[i] */
-         u = (t.dp[i] >> DIGIT_BIT) & 1;
+         u = (c->dp[i] >> DIGIT_BIT) & 1;
          
          /* take away carry bit from T[i] */
-         t.dp[i] &= MP_MASK;
+         c->dp[i] &= MP_MASK;
       }
    }
    
    /* add carry */
-   t.dp[i] = u;
-
-   mp_clamp(&t);
-   mp_exch(&t, c);
-   mp_clear(&t);
+   c->dp[i] = u;
+   
+   /* clear digits above used (since we may not have grown result above) */
+   for (i = c->used; i < olduse; i++) {
+      c->dp[i] = 0;
+   }
+   
+   mp_clamp(c);
    DECFUNC();
    return MP_OKAY;       
 }
@@ -770,8 +777,7 @@ static int s_mp_add(mp_int *a, mp_int *b, mp_int *c)
 /* low level subtraction (assumes a > b) */
 static int s_mp_sub(mp_int *a, mp_int *b, mp_int *c)
 {
-   mp_int t;
-   int res, min, max, i;
+   int olduse, res, min, max, i;
    mp_digit u;
    
    REGFUNC("s_mp_sub");
@@ -784,42 +790,48 @@ static int s_mp_sub(mp_int *a, mp_int *b, mp_int *c)
    max = a->used;
    
    /* init result */
-   if ((res = mp_init_size(&t, max)) != MP_OKAY) {
-      DECFUNC();
-      return res;
+   if (c->alloc < max) {
+      if ((res = mp_grow(c, max)) != MP_OKAY) {
+         DECFUNC();
+         return res;
+      }
    }
-   t.used = max;
+   olduse  = c->used;
+   c->used = max;
    
    /* sub digits from lower part */
    u = 0;
    for (i = 0; i < min; i++) {
        /* T[i] = A[i] - B[i] - U */
-       t.dp[i] = a->dp[i] - (b->dp[i] + u);
+       c->dp[i] = a->dp[i] - (b->dp[i] + u);
        
        /* U = carry bit of T[i] */
-       u = (t.dp[i] >> DIGIT_BIT) & 1;
+       u = (c->dp[i] >> DIGIT_BIT) & 1;
        
        /* Clear carry from T[i] */
-       t.dp[i] &= MP_MASK;
+       c->dp[i] &= MP_MASK;
    }
    
    /* now copy higher words if any, e.g. if A has more digits than B  */
    if (min != max) {
       for (; i < max; i++) { 
          /* T[i] = A[i] - U */
-         t.dp[i] = a->dp[i] - u;
+         c->dp[i] = a->dp[i] - u;
 
          /* U = carry bit of T[i] */
-         u = (t.dp[i] >> DIGIT_BIT) & 1;
+         u = (c->dp[i] >> DIGIT_BIT) & 1;
 
          /* Clear carry from T[i] */
-         t.dp[i] &= MP_MASK;
+         c->dp[i] &= MP_MASK;
       }
    }
    
-   mp_clamp(&t);
-   mp_exch(&t, c);
-   mp_clear(&t);
+   /* clear digits above used (since we may not have grown result above) */
+   for (i = c->used; i < olduse; i++) {
+      c->dp[i] = 0;
+   }
+
+   mp_clamp(c);
    DECFUNC();
    return MP_OKAY;       
 }
@@ -2941,7 +2953,7 @@ int mp_toradix(mp_int *a, char *str, int radix)
    int res, digs;
    mp_int t;
    mp_digit d;
-   unsigned char *_s = str;
+   char *_s = str;
    
    if (radix < 2 || radix > 64) {
       return MP_VAL;
@@ -2966,7 +2978,7 @@ int mp_toradix(mp_int *a, char *str, int radix)
        *str++ = s_rmap[d];
        ++digs;
    }
-   reverse(_s, digs);
+   reverse((unsigned char *)_s, digs);
    *str++ = '\0';
    mp_clear(&t);
    return MP_OKAY;

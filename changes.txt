@@ -1,3 +1,7 @@
+Dec 31st, 2002
+v0.06  -- Sped up the s_mp_add, s_mp_sub which inturn sped up mp_invmod, mp_exptmod, etc...
+       -- Cleaned up the header a bit more
+       
 Dec 30th, 2002
 v0.05  -- Builds with MSVC out of the box
        -- Fixed a bug in mp_invmod w.r.t. even moduli

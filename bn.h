@@ -12,7 +12,6 @@
  *
  * Tom St Denis, tomstdenis@iahu.ca, http://libtommath.iahu.ca
  */
-
 #ifndef BN_H_
 #define BN_H_
 
@@ -39,13 +38,18 @@
 #else
 #ifndef CRYPT
    #ifdef _MSC_VER
-      typedef __int64            ulong64;
+      typedef unsigned __int64   ulong64;
+      typedef signed __int64     long64;
    #else
       typedef unsigned long long ulong64;
+      typedef signed long long   long64;
    #endif   
 #endif   
+
+   /* default case */
    typedef unsigned long      mp_digit;
    typedef ulong64            mp_word;
+  
    #define DIGIT_BIT          28U
 #endif  
 
@@ -72,8 +76,14 @@
 
 typedef int           mp_err;
 
-#define KARATSUBA_MUL_CUTOFF    80                /* Min. number of digits before Karatsuba multiplication is used. */
-#define KARATSUBA_SQR_CUTOFF    80                /* Min. number of digits before Karatsuba squaring is used. */
+/* you'll have to tune these... */
+#ifdef FAST_FPU
+   #define KARATSUBA_MUL_CUTOFF    100     /* Min. number of digits before Karatsuba multiplication is used. */
+   #define KARATSUBA_SQR_CUTOFF    100     /* Min. number of digits before Karatsuba squaring is used. */
+#else
+   #define KARATSUBA_MUL_CUTOFF    80      /* Min. number of digits before Karatsuba multiplication is used. */
+   #define KARATSUBA_SQR_CUTOFF    80      /* Min. number of digits before Karatsuba squaring is used. */
+#endif
 
 typedef struct  {
     int used, alloc, sign;

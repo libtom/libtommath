@@ -1,7 +1,7 @@
 \documentclass{article}
 \begin{document}
 
-\title{LibTomMath v0.05 \\ A Free Multiple Precision Integer Library}
+\title{LibTomMath v0.06 \\ A Free Multiple Precision Integer Library}
 \author{Tom St Denis \\ tomstdenis@iahu.ca}
 \maketitle
 \newpage
@@ -460,34 +460,34 @@ were observed.
 \begin{tabular}{c|c|c|c}
 \hline \textbf{Operation} & \textbf{Size (bits)} & \textbf{Time with MPI (cycles)} & \textbf{Time with LibTomMath (cycles)} \\
 \hline
-Inversion & 128 & 264,083  & 159,194  \\
-Inversion & 256 & 549,370  & 355,914  \\
-Inversion & 512 & 1,675,975  & 842,538  \\
-Inversion & 1024 & 5,237,957  & 2,170,804  \\
-Inversion & 2048 & 17,871,944  & 6,250,876  \\
-Inversion & 4096 & 66,610,468  & 18,161,612  \\
+Inversion & 128 & 264,083  & 59,782   \\
+Inversion & 256 & 549,370  & 146,915   \\
+Inversion & 512 & 1,675,975  & 367,172   \\
+Inversion & 1024 & 5,237,957  & 1,054,158   \\
+Inversion & 2048 & 17,871,944  & 3,459,683   \\
+Inversion & 4096 & 66,610,468  & 11,834,556   \\
 \hline
 Multiply & 128 & 1,426   & 828    \\
 Multiply & 256 & 2,551   & 1,393    \\
 Multiply & 512 & 7,913   & 2,926    \\
 Multiply & 1024 & 28,496   & 8,620  \\
 Multiply & 2048 & 109,897   & 28,967    \\
-Multiply & 4096 & 469,970   & 106,855    \\
+Multiply & 4096 & 469,970   & 105,387    \\
 \hline 
 Square & 128 & 1,319   & 869    \\
 Square & 256 & 1,776   & 1,362    \\
 Square & 512 & 5,399  & 2,571   \\
 Square & 1024 & 18,991  & 6,332    \\
 Square & 2048 & 72,126  & 18,426   \\
-Square & 4096 & 306,269  & 76,305  \\
+Square & 4096 & 306,269  & 74,908 \\
 \hline 
-Exptmod & 512 & 32,021,586  & 5,709,468 \\
-Exptmod & 768 & 97,595,492  & 12,473,526   \\
-Exptmod & 1024 & 223,302,532  & 23,593,075    \\
-Exptmod & 2048 & 1,682,223,369   & 121,992,481    \\
-Exptmod & 2560 & 3,268,615,571   & 258,155,605    \\
-Exptmod & 3072 & 5,597,240,141   & 399,800,504   \\
-Exptmod & 4096 & 13,347,270,891   & 826,013,375   
+Exptmod & 512 & 32,021,586  & 5,696,459  \\
+Exptmod & 768 & 97,595,492  & 12,428,274   \\
+Exptmod & 1024 & 223,302,532  & 22,834,316   \\
+Exptmod & 2048 & 1,682,223,369   & 119,888,049    \\
+Exptmod & 2560 & 3,268,615,571   & 250,901,263     \\
+Exptmod & 3072 & 5,597,240,141   & 391,716,431    \\
+Exptmod & 4096 & 13,347,270,891   & 814,429,647    
 
 \end{tabular}
 \end{center}
