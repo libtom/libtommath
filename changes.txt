@@ -1,3 +1,10 @@
+June 6th, 2003
+v0.19  -- Fixed a bug in mp_montgomery_reduce() which was introduced when I tweaked mp_rshd() in the previous release.
+          Essentially the digits were not trimmed before the compare which cause a subtraction to occur all the time.
+       -- Fixed up etc/tune.c a bit to stop testing new cutoffs after 16 failures [to find more optimal points]. 
+          Brute force ho!
+          
+
 May 29th, 2003
 v0.18  -- Fixed a bug in s_mp_sqr which would handle carries properly just not very elegantly.
           (e.g. correct result, just bad looking code)

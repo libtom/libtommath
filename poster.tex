@@ -1,14 +1,15 @@
 \documentclass[landscape,11pt]{article}
 \usepackage{amsmath, amssymb}
+\usepackage{hyperref}
 \begin{document}
 
 \hspace*{-3in}
 \begin{tabular}{llllll}
-$c = a + b$  & {\tt mp\_add(\&a, \&b, \&c)} & $b = 2a$  & {\tt mp\_mul\_2(\&a, \&b)} & Greater Than & MP\_GT \\
-$c = a - b$  & {\tt mp\_sub(\&a, \&b, \&c)} & $b = a/2$ & {\tt mp\_div\_2(\&a, \&b)} & Equal To & MP\_EQ \\
-$c = ab $   & {\tt mp\_mul(\&a, \&b, \&c)}  & $c = 2^ba$  & {\tt mp\_mul\_2d(\&a, b, \&c)} & Less Than & MP\_LT \\
+$c = a + b$  & {\tt mp\_add(\&a, \&b, \&c)} & $b = 2a$  & {\tt mp\_mul\_2(\&a, \&b)} & \\
+$c = a - b$  & {\tt mp\_sub(\&a, \&b, \&c)} & $b = a/2$ & {\tt mp\_div\_2(\&a, \&b)} & \\
+$c = ab $   & {\tt mp\_mul(\&a, \&b, \&c)}  & $c = 2^ba$  & {\tt mp\_mul\_2d(\&a, b, \&c)}  \\
 $b = a^2 $  & {\tt mp\_sqr(\&a, \&b)}       & $c = a/2^b, d = a \mod 2^b$ & {\tt mp\_div\_2d(\&a, b, \&c, \&d)} \\
-$c = \lfloor a/b \rfloor, d = a \mod b$ & {\tt mp\_div(\&a, \&b, \&c, \&d)} & $c = a \mod 2^b $  & {\tt mp\_mod\_2d(\&a, b, \&c)}  & Bits per digit & DIGIT\_BIT \\
+$c = \lfloor a/b \rfloor, d = a \mod b$ & {\tt mp\_div(\&a, \&b, \&c, \&d)} & $c = a \mod 2^b $  & {\tt mp\_mod\_2d(\&a, b, \&c)}  \\
  && \\
 $a = b $  & {\tt mp\_set\_int(\&a, b)}  & $c = a \vee b$  & {\tt mp\_or(\&a, \&b, \&c)}  \\
 $b = a $  & {\tt mp\_copy(\&a, \&b)} & $c = a \wedge b$  & {\tt mp\_and(\&a, \&b, \&c)}  \\
@@ -28,5 +29,8 @@ $a \leftarrow buf[0..len-1]$          & {\tt mp\_read\_unsigned\_bin(\&a, buf, l
 &\\
 $b = \sqrt{a}$ & {\tt mp\_sqrt(\&a, \&b)}  & $c = \mbox{gcd}(a, b)$ & {\tt mp\_gcd(\&a, \&b, \&c)} \\
 $c = a^{1/b}$ & {\tt mp\_n\_root(\&a, b, \&c)} & $c = \mbox{lcm}(a, b)$ & {\tt mp\_lcm(\&a, \&b, \&c)} \\
+&\\
+Greater Than & MP\_GT & Equal To & MP\_EQ \\
+Less Than & MP\_LT & Bits per digit & DIGIT\_BIT \\
 \end{tabular}
 \end{document}

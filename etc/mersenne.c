@@ -57,7 +57,7 @@ is_mersenne (long s, int *pp)
 
   /* if u == 0 then its prime */
   if (mp_iszero (&u) == 1) {
-    mp_prime_is_prime(&n, 3, pp);
+    mp_prime_is_prime(&n, 8, pp);
   if (*pp != 1) printf("FAILURE\n");
   }
 

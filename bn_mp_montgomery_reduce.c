@@ -68,14 +68,15 @@ mp_montgomery_reduce (mp_int * x, mp_int * n, mp_digit rho)
       }
       /* propagate carries */
       while (u) {
-        *tmpx += u;
-        u = *tmpx >> DIGIT_BIT;
+        *tmpx   += u;
+        u        = *tmpx >> DIGIT_BIT;
         *tmpx++ &= MP_MASK;
       }
     }
   }
 
   /* x = x/b**n.used */
+  mp_clamp(x);
   mp_rshd (x, n->used);
 
   /* if A >= m then A = A - m */

@@ -27,7 +27,8 @@ mp_reduce_is_2k(mp_int *a)
    } else if (a->used > 1) {
       iy = mp_count_bits(a);
       for (ix = DIGIT_BIT; ix < iy; ix++) {
-          if ((a->dp[ix/DIGIT_BIT] & ((mp_digit)1 << (mp_digit)(ix % DIGIT_BIT))) == 0) {
+          if ((a->dp[ix/DIGIT_BIT] & 
+              ((mp_digit)1 << (mp_digit)(ix % DIGIT_BIT))) == 0) {
              return 0;
           }
       }

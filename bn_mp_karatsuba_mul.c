@@ -49,6 +49,7 @@ mp_karatsuba_mul (mp_int * a, mp_int * b, mp_int * c)
   mp_int  x0, x1, y0, y1, t1, x0y0, x1y1;
   int     B, err;
 
+  /* default the return code to an error */
   err = MP_MEM;
 
   /* min # of digits */
@@ -149,6 +150,7 @@ mp_karatsuba_mul (mp_int * a, mp_int * b, mp_int * c)
   if (mp_add (&t1, &x1y1, c) != MP_OKAY)
     goto X1Y1;          /* t1 = x0y0 + t1 + x1y1 */
 
+  /* Algorithm succeeded set the return code to MP_OKAY */
   err = MP_OKAY;
 
 X1Y1:mp_clear (&x1y1);

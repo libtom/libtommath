@@ -65,21 +65,26 @@ s_mp_exptmod (mp_int * G, mp_int * X, mp_int * P, mp_int * Y)
 
   /* create M table
    *
-   * The M table contains powers of the input base, e.g. M[x] = G**x mod P
+   * The M table contains powers of the base, 
+   * e.g. M[x] = G**x mod P
    *
-   * The first half of the table is not computed though accept for M[0] and M[1]
+   * The first half of the table is not 
+   * computed though accept for M[0] and M[1]
    */
   if ((err = mp_mod (G, P, &M[1])) != MP_OKAY) {
     goto __MU;
   }
 
-  /* compute the value at M[1<<(winsize-1)] by squaring M[1] (winsize-1) times */
+  /* compute the value at M[1<<(winsize-1)] by squaring 
+   * M[1] (winsize-1) times 
+   */
   if ((err = mp_copy (&M[1], &M[1 << (winsize - 1)])) != MP_OKAY) {
     goto __MU;
   }
 
   for (x = 0; x < (winsize - 1); x++) {
-    if ((err = mp_sqr (&M[1 << (winsize - 1)], &M[1 << (winsize - 1)])) != MP_OKAY) {
+    if ((err = mp_sqr (&M[1 << (winsize - 1)], 
+                       &M[1 << (winsize - 1)])) != MP_OKAY) {
       goto __MU;
     }
     if ((err = mp_reduce (&M[1 << (winsize - 1)], P, &mu)) != MP_OKAY) {
