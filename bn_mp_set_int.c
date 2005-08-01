@@ -42,3 +42,7 @@ int mp_set_int (mp_int * a, unsigned long b)
   return MP_OKAY;
 }
 #endif
+
+/* $Source$ */
+/* $Revision$ */
+/* $Date$ */

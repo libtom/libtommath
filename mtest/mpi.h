@@ -225,3 +225,7 @@ int    mp_char2value(char ch, int r);
 const  char  *mp_strerror(mp_err ec);
 
 #endif /* end _H_MPI_ */
+
+/* $Source$ */
+/* $Revision$ */
+/* $Date$ */

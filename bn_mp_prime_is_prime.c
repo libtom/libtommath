@@ -77,3 +77,7 @@ LBL_B:mp_clear (&b);
   return err;
 }
 #endif
+
+/* $Source$ */
+/* $Revision$ */
+/* $Date$ */

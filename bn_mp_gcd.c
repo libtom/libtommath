@@ -107,3 +107,7 @@ LBL_U:mp_clear (&v);
   return res;
 }
 #endif
+
+/* $Source$ */
+/* $Revision$ */
+/* $Date$ */

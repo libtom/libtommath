@@ -3979,3 +3979,7 @@ int      s_mp_outlen(int bits, int r)
 /*------------------------------------------------------------------------*/
 /* HERE THERE BE DRAGONS                                                  */
 /* crc==4242132123, version==2, Sat Feb 02 06:43:52 2002 */
+
+/* $Source$ */
+/* $Revision$ */
+/* $Date$ */

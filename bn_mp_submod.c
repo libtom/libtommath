@@ -36,3 +36,7 @@ mp_submod (mp_int * a, mp_int * b, mp_int * c, mp_int * d)
   return res;
 }
 #endif
+
+/* $Source$ */
+/* $Revision$ */
+/* $Date$ */

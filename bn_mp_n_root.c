@@ -126,3 +126,7 @@ LBL_T1:mp_clear (&t1);
   return res;
 }
 #endif
+
+/* $Source$ */
+/* $Revision$ */
+/* $Date$ */

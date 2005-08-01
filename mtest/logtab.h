@@ -18,3 +18,7 @@ const float s_logv_2[] = {
    0.166666667
 };
 
+
+/* $Source$ */
+/* $Revision$ */
+/* $Date$ */

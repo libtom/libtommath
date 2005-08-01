@@ -16,8 +16,7 @@
  */
 
 /* d = a * b (mod c) */
-int
-mp_mulmod (mp_int * a, mp_int * b, mp_int * c, mp_int * d)
+int mp_mulmod (mp_int * a, mp_int * b, mp_int * c, mp_int * d)
 {
   int     res;
   mp_int  t;
@@ -35,3 +34,7 @@ mp_mulmod (mp_int * a, mp_int * b, mp_int * c, mp_int * d)
   return res;
 }
 #endif
+
+/* $Source$ */
+/* $Revision$ */
+/* $Date$ */

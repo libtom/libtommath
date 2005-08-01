@@ -42,3 +42,7 @@ mp_2expt (mp_int * a, int b)
   return MP_OKAY;
 }
 #endif
+
+/* $Source$ */
+/* $Revision$ */
+/* $Date$ */

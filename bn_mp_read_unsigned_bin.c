@@ -16,8 +16,7 @@
  */
 
 /* reads a unsigned char array, assumes the msb is stored first [big endian] */
-int
-mp_read_unsigned_bin (mp_int * a, unsigned char *b, int c)
+int mp_read_unsigned_bin (mp_int * a, const unsigned char *b, int c)
 {
   int     res;
 
@@ -50,3 +49,7 @@ mp_read_unsigned_bin (mp_int * a, unsigned char *b, int c)
   return MP_OKAY;
 }
 #endif
+
+/* $Source$ */
+/* $Revision$ */
+/* $Date$ */

@@ -44,3 +44,7 @@ int mp_prime_is_divisible (mp_int * a, int *result)
   return MP_OKAY;
 }
 #endif
+
+/* $Source$ */
+/* $Revision$ */
+/* $Date$ */

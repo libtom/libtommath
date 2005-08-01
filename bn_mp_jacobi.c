@@ -99,3 +99,7 @@ LBL_A1:mp_clear (&a1);
   return res;
 }
 #endif
+
+/* $Source$ */
+/* $Revision$ */
+/* $Date$ */

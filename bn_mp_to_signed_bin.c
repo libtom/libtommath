@@ -27,3 +27,7 @@ int mp_to_signed_bin (mp_int * a, unsigned char *b)
   return MP_OKAY;
 }
 #endif
+
+/* $Source$ */
+/* $Revision$ */
+/* $Date$ */

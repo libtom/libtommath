@@ -302,3 +302,7 @@ int main(void)
    fclose(rng);
    return 0;
 }
+
+/* $Source$ */
+/* $Revision$ */
+/* $Date$ */

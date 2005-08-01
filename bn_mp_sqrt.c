@@ -75,3 +75,7 @@ E2: mp_clear(&t1);
 }
 
 #endif
+
+/* $Source$ */
+/* $Revision$ */
+/* $Date$ */

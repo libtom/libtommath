@@ -41,3 +41,7 @@ int mp_reduce_2k_setup(mp_int *a, mp_digit *d)
    return MP_OKAY;
 }
 #endif
+
+/* $Source$ */
+/* $Revision$ */
+/* $Date$ */

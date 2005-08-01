@@ -97,3 +97,7 @@ LBL_N1:mp_clear (&n1);
   return err;
 }
 #endif
+
+/* $Source$ */
+/* $Revision$ */
+/* $Date$ */

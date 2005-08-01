@@ -103,3 +103,7 @@ ERR:mp_clear(&t);
   return res;
 }
 #endif
+
+/* $Source$ */
+/* $Revision$ */
+/* $Date$ */

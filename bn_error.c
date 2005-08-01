@@ -41,3 +41,7 @@ char *mp_error_to_string(int code)
 }
 
 #endif
+
+/* $Source$ */
+/* $Revision$ */
+/* $Date$ */

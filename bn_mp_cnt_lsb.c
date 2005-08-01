@@ -47,3 +47,7 @@ int mp_cnt_lsb(mp_int *a)
 }
 
 #endif
+
+/* $Source$ */
+/* $Revision$ */
+/* $Date$ */

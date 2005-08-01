@@ -25,3 +25,7 @@ int mp_init_set_int (mp_int * a, unsigned long b)
   return mp_set_int(a, b);
 }
 #endif
+
+/* $Source$ */
+/* $Revision$ */
+/* $Date$ */

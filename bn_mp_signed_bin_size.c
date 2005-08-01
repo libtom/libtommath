@@ -21,3 +21,7 @@ int mp_signed_bin_size (mp_int * a)
   return 1 + mp_unsigned_bin_size (a);
 }
 #endif
+
+/* $Source$ */
+/* $Revision$ */
+/* $Date$ */

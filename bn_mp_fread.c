@@ -61,3 +61,7 @@ int mp_fread(mp_int *a, int radix, FILE *stream)
 }
 
 #endif
+
+/* $Source$ */
+/* $Revision$ */
+/* $Date$ */

@@ -39,3 +39,7 @@ unsigned long mp_get_int(mp_int * a)
   return res & 0xFFFFFFFFUL;
 }
 #endif
+
+/* $Source$ */
+/* $Revision$ */
+/* $Date$ */

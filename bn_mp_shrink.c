@@ -29,3 +29,7 @@ int mp_shrink (mp_int * a)
   return MP_OKAY;
 }
 #endif
+
+/* $Source$ */
+/* $Revision$ */
+/* $Date$ */

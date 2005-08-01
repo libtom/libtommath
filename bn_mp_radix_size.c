@@ -72,3 +72,7 @@ int mp_radix_size (mp_int * a, int radix, int *size)
 }
 
 #endif
+
+/* $Source$ */
+/* $Revision$ */
+/* $Date$ */

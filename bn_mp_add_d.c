@@ -103,3 +103,7 @@ mp_add_d (mp_int * a, mp_digit b, mp_int * c)
 }
 
 #endif
+
+/* $Source$ */
+/* $Revision$ */
+/* $Date$ */
