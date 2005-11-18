@@ -21,6 +21,9 @@ int mp_read_radix (mp_int * a, const char *str, int radix)
   int     y, res, neg;
   char    ch;
 
+  /* zero the digit bignum */
+  mp_zero(a);
+
   /* make sure the radix is ok */
   if (radix < 2 || radix > 64) {
     return MP_VAL;

@@ -913,6 +913,9 @@ mp_add_d (mp_int * a, mp_digit b, mp_int * c)
      /* fix sign  */
      a->sign = c->sign = MP_NEG;
 
+     /* clamp */
+     mp_clamp(c);
+
      return res;
   }
 
@@ -6241,7 +6244,7 @@ int mp_radix_size (mp_int * a, int radix, int *size)
   }
 
   if (mp_iszero(a) == MP_YES) {
-     *size = 2;
+    *size = 2;
     return MP_OKAY;
   }
 
@@ -6394,6 +6397,9 @@ int mp_read_radix (mp_int * a, const char *str, int radix)
 {
   int     y, res, neg;
   char    ch;
+
+  /* zero the digit bignum */
+  mp_zero(a);
 
   /* make sure the radix is ok */
   if (radix < 2 || radix > 64) {
@@ -7562,6 +7568,10 @@ mp_sub_d (mp_int * a, mp_digit b, mp_int * c)
      a->sign = MP_ZPOS;
      res     = mp_add_d(a, b, c);
      a->sign = c->sign = MP_NEG;
+
+     /* clamp */
+     mp_clamp(c);
+
      return res;
   }
 
@@ -8448,12 +8458,12 @@ int mp_toradix_n(mp_int * a, char *str, int radix, int maxlen)
   char   *_s = str;
 
   /* check range of the maxlen, radix */
-  if (maxlen < 3 || radix < 2 || radix > 64) {
+  if (maxlen < 2 || radix < 2 || radix > 64) {
     return MP_VAL;
   }
 
   /* quick out if its zero */
-  if (mp_iszero(a) == 1) {
+  if (mp_iszero(a) == MP_YES) {
      *str++ = '0';
      *str = '\0';
      return MP_OKAY;
@@ -8478,21 +8488,20 @@ int mp_toradix_n(mp_int * a, char *str, int radix, int maxlen)
 
   digs = 0;
   while (mp_iszero (&t) == 0) {
+    if (--maxlen < 1) {
+       /* no more room */
+       break;
+    }
     if ((res = mp_div_d (&t, (mp_digit) radix, &t, &d)) != MP_OKAY) {
       mp_clear (&t);
       return res;
     }
     *str++ = mp_s_rmap[d];
     ++digs;
-
-    if (--maxlen == 1) {
-       /* no more room */
-       break;
-    }
   }
 
   /* reverse the digits of the string.  In this case _s points
-   * to the first digit [exluding the sign] of the number]
+   * to the first digit [exluding the sign] of the number
    */
   bn_reverse ((unsigned char *)_s, digs);
 

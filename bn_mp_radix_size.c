@@ -36,7 +36,7 @@ int mp_radix_size (mp_int * a, int radix, int *size)
   }
 
   if (mp_iszero(a) == MP_YES) {
-     *size = 2;
+    *size = 2;
     return MP_OKAY;
   }
 
