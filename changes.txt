@@ -1,3 +1,7 @@
+Jan 26th, 2006
+v0.38  -- broken makefile.shared fixed
+       -- removed some carry stores that were not required [updated text]
+       
 November 18th, 2005
 v0.37  -- [Don Porter] reported on a TCL list [HEY SEND ME BUGREPORTS ALREADY!!!] that mp_add_d() would compute -0 with some inputs.  Fixed.
        -- [rinick@gmail.com] reported the makefile.bcc was messed up.  Fixed.

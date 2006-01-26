@@ -66,7 +66,7 @@ QUALCOMM Australia \\
 }
 }
 \maketitle
-This text has been placed in the public domain.  This text corresponds to the v0.37 release of the 
+This text has been placed in the public domain.  This text corresponds to the v0.38 release of the 
 LibTomMath project.
 
 \begin{alltt}
@@ -77,7 +77,7 @@ K2L 1C3
 Canada
 
 Phone: 1-613-836-3160
-Email: tomstdenis@iahu.ca
+Email: tomstdenis@gmail.com
 \end{alltt}
 
 This text is formatted to the international B5 paper size of 176mm wide by 250mm tall using the \LaTeX{} 
@@ -3169,7 +3169,7 @@ left.
 
 After the digits have been shifted appropriately at most $lg(\beta) - 1$ shifts are left to perform.  Step 5 calculates the number of remaining shifts 
 required.  If it is non-zero a modified shift loop is used to calculate the remaining product.  
-Essentially the loop is a generic version of algorith mp\_mul2 designed to handle any shift count in the range $1 \le x < lg(\beta)$.  The $mask$
+Essentially the loop is a generic version of algorithm mp\_mul\_2 designed to handle any shift count in the range $1 \le x < lg(\beta)$.  The $mask$
 variable is used to extract the upper $d$ bits to form the carry for the next iteration.  
 
 This algorithm is loosely measured as a $O(2n)$ algorithm which means that if the input is $n$-digits that it takes $2n$ ``time'' to 
@@ -3864,17 +3864,16 @@ Place an array of \textbf{MP\_WARRAY} single precision digits named $W$ on the s
 \hspace{6mm}5.4.1  $\_ \hat W \leftarrow \_ \hat W + a_{tx+iy}b_{ty-iy}$ \\
 \hspace{3mm}5.5  $W_{ix} \leftarrow \_ \hat W (\mbox{mod }\beta)$\\
 \hspace{3mm}5.6  $\_ \hat W \leftarrow \lfloor \_ \hat W / \beta \rfloor$ \\
-6.  $W_{pa} \leftarrow \_ \hat W (\mbox{mod }\beta)$ \\
 \\
-7.  $oldused \leftarrow c.used$ \\
-8.  $c.used \leftarrow digs$ \\
-9.  for $ix$ from $0$ to $pa$ do \\
-\hspace{3mm}9.1  $c_{ix} \leftarrow W_{ix}$ \\
-10.  for $ix$ from $pa + 1$ to $oldused - 1$ do \\
-\hspace{3mm}10.1 $c_{ix} \leftarrow 0$ \\
+6.  $oldused \leftarrow c.used$ \\
+7.  $c.used \leftarrow digs$ \\
+8.  for $ix$ from $0$ to $pa$ do \\
+\hspace{3mm}8.1  $c_{ix} \leftarrow W_{ix}$ \\
+9.  for $ix$ from $pa + 1$ to $oldused - 1$ do \\
+\hspace{3mm}9.1 $c_{ix} \leftarrow 0$ \\
 \\
-11.  Clamp $c$. \\
-12.  Return MP\_OKAY. \\
+10.  Clamp $c$. \\
+11.  Return MP\_OKAY. \\
 \hline
 \end{tabular}
 \end{center}
@@ -3977,33 +3976,30 @@ and addition operations in the nested loop in parallel.
 077   
 078         /* make next carry */
 079         _W = _W >> ((mp_word)DIGIT_BIT);
-080     \}
+080    \}
 081   
-082     /* store final carry */
-083     W[ix] = (mp_digit)(_W & MP_MASK);
-084   
-085     /* setup dest */
-086     olduse  = c->used;
-087     c->used = pa;
-088   
-089     \{
-090       register mp_digit *tmpc;
-091       tmpc = c->dp;
-092       for (ix = 0; ix < pa+1; ix++) \{
-093         /* now extract the previous digit [below the carry] */
-094         *tmpc++ = W[ix];
-095       \}
-096   
-097       /* clear unused digits [that existed in the old copy of c] */
-098       for (; ix < olduse; ix++) \{
-099         *tmpc++ = 0;
-100       \}
-101     \}
-102     mp_clamp (c);
-103     return MP_OKAY;
-104   \}
-105   #endif
-106   
+082     /* setup dest */
+083     olduse  = c->used;
+084     c->used = pa;
+085   
+086     \{
+087       register mp_digit *tmpc;
+088       tmpc = c->dp;
+089       for (ix = 0; ix < pa+1; ix++) \{
+090         /* now extract the previous digit [below the carry] */
+091         *tmpc++ = W[ix];
+092       \}
+093   
+094       /* clear unused digits [that existed in the old copy of c] */
+095       for (; ix < olduse; ix++) \{
+096         *tmpc++ = 0;
+097       \}
+098     \}
+099     mp_clamp (c);
+100     return MP_OKAY;
+101   \}
+102   #endif
+103   
 \end{alltt}
 \end{small}
 
@@ -4020,7 +4016,7 @@ slower and also often doesn't exist.  This new algorithm only performs two reads
 compiler has aliased $\_ \hat W$ to a CPU register.
 
 After the inner loop we store the current accumulator in $W$ and shift $\_ \hat W$ (lines 76, 79) to forward it as 
-a carry for the next pass.  After the outer loop we use the final carry (line 83) as the last digit of the product.  
+a carry for the next pass.  After the outer loop we use the final carry (line 76) as the last digit of the product.  
 
 \subsection{Polynomial Basis Multiplication}
 To break the $O(n^2)$ barrier in multiplication requires a completely different look at integer multiplication.  In the following algorithms

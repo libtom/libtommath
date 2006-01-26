@@ -66,7 +66,7 @@ QUALCOMM Australia \\
 }
 }
 \maketitle
-This text has been placed in the public domain.  This text corresponds to the v0.37 release of the 
+This text has been placed in the public domain.  This text corresponds to the v0.38 release of the 
 LibTomMath project.
 
 \begin{alltt}
@@ -77,7 +77,7 @@ K2L 1C3
 Canada
 
 Phone: 1-613-836-3160
-Email: tomstdenis@iahu.ca
+Email: tomstdenis@gmail.com
 \end{alltt}
 
 This text is formatted to the international B5 paper size of 176mm wide by 250mm tall using the \LaTeX{} 
@@ -2190,7 +2190,7 @@ left.
 
 After the digits have been shifted appropriately at most $lg(\beta) - 1$ shifts are left to perform.  Step 5 calculates the number of remaining shifts 
 required.  If it is non-zero a modified shift loop is used to calculate the remaining product.  
-Essentially the loop is a generic version of algorith mp\_mul2 designed to handle any shift count in the range $1 \le x < lg(\beta)$.  The $mask$
+Essentially the loop is a generic version of algorithm mp\_mul\_2 designed to handle any shift count in the range $1 \le x < lg(\beta)$.  The $mask$
 variable is used to extract the upper $d$ bits to form the carry for the next iteration.  
 
 This algorithm is loosely measured as a $O(2n)$ algorithm which means that if the input is $n$-digits that it takes $2n$ ``time'' to 
@@ -2611,17 +2611,16 @@ Place an array of \textbf{MP\_WARRAY} single precision digits named $W$ on the s
 \hspace{6mm}5.4.1  $\_ \hat W \leftarrow \_ \hat W + a_{tx+iy}b_{ty-iy}$ \\
 \hspace{3mm}5.5  $W_{ix} \leftarrow \_ \hat W (\mbox{mod }\beta)$\\
 \hspace{3mm}5.6  $\_ \hat W \leftarrow \lfloor \_ \hat W / \beta \rfloor$ \\
-6.  $W_{pa} \leftarrow \_ \hat W (\mbox{mod }\beta)$ \\
 \\
-7.  $oldused \leftarrow c.used$ \\
-8.  $c.used \leftarrow digs$ \\
-9.  for $ix$ from $0$ to $pa$ do \\
-\hspace{3mm}9.1  $c_{ix} \leftarrow W_{ix}$ \\
-10.  for $ix$ from $pa + 1$ to $oldused - 1$ do \\
-\hspace{3mm}10.1 $c_{ix} \leftarrow 0$ \\
+6.  $oldused \leftarrow c.used$ \\
+7.  $c.used \leftarrow digs$ \\
+8.  for $ix$ from $0$ to $pa$ do \\
+\hspace{3mm}8.1  $c_{ix} \leftarrow W_{ix}$ \\
+9.  for $ix$ from $pa + 1$ to $oldused - 1$ do \\
+\hspace{3mm}9.1 $c_{ix} \leftarrow 0$ \\
 \\
-11.  Clamp $c$. \\
-12.  Return MP\_OKAY. \\
+10.  Clamp $c$. \\
+11.  Return MP\_OKAY. \\
 \hline
 \end{tabular}
 \end{center}
