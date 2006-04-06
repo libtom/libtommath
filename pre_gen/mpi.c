@@ -13,7 +13,7 @@
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 static const struct {
@@ -64,7 +64,7 @@ char *mp_error_to_string(int code)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* computes the modular inverse via binary extended euclidean algorithm, 
@@ -216,7 +216,7 @@ LBL_ERR:mp_clear_multi (&x, &y, &u, &v, &B, &D, NULL);
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* computes xR**-1 == x (mod N) via Montgomery Reduction
@@ -392,7 +392,7 @@ int fast_mp_montgomery_reduce (mp_int * x, mp_int * n, mp_digit rho)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* Fast (comba) multiplier
@@ -503,7 +503,7 @@ int fast_s_mp_mul_digs (mp_int * a, mp_int * b, mp_int * c, int digs)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* this is a modified version of fast_s_mul_digs that only produces
@@ -605,7 +605,7 @@ int fast_s_mp_mul_high_digs (mp_int * a, mp_int * b, mp_int * c, int digs)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* the jist of squaring...
@@ -723,7 +723,7 @@ int fast_s_mp_sqr (mp_int * a, mp_int * b)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* computes a = 2**b 
@@ -775,7 +775,7 @@ mp_2expt (mp_int * a, int b)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* b = |a| 
@@ -822,7 +822,7 @@ mp_abs (mp_int * a, mp_int * b)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* high level addition (handles signs) */
@@ -879,7 +879,7 @@ int mp_add (mp_int * a, mp_int * b, mp_int * c)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* single digit addition */
@@ -995,7 +995,7 @@ mp_add_d (mp_int * a, mp_digit b, mp_int * c)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* d = a + b (mod c) */
@@ -1040,7 +1040,7 @@ mp_addmod (mp_int * a, mp_int * b, mp_int * c, mp_int * d)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* AND two ints together */
@@ -1101,7 +1101,7 @@ mp_and (mp_int * a, mp_int * b, mp_int * c)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* trim unused digits 
@@ -1149,7 +1149,7 @@ mp_clamp (mp_int * a)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* clear one (frees)  */
@@ -1197,7 +1197,7 @@ mp_clear (mp_int * a)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 #include <stdarg.h>
 
@@ -1235,7 +1235,7 @@ void mp_clear_multi(mp_int *mp, ...)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* compare two ints (signed)*/
@@ -1282,7 +1282,7 @@ mp_cmp (mp_int * a, mp_int * b)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* compare a digit */
@@ -1330,7 +1330,7 @@ int mp_cmp_d(mp_int * a, mp_digit b)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* compare maginitude of two ints (unsigned) */
@@ -1389,7 +1389,7 @@ int mp_cmp_mag (mp_int * a, mp_int * b)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 static const int lnz[16] = { 
@@ -1446,7 +1446,7 @@ int mp_cnt_lsb(mp_int *a)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* copy, b = a */
@@ -1518,7 +1518,7 @@ mp_copy (mp_int * a, mp_int * b)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* returns the number of bits in an int */
@@ -1567,7 +1567,7 @@ mp_count_bits (mp_int * a)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 #ifdef BN_MP_DIV_SMALL
@@ -1863,7 +1863,7 @@ LBL_Q:mp_clear (&q);
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* b = a/2 */
@@ -1935,7 +1935,7 @@ int mp_div_2(mp_int * a, mp_int * b)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* shift right by a certain bit count (store quotient in c, optional remainder in d) */
@@ -2036,7 +2036,7 @@ int mp_div_2d (mp_int * a, int b, mp_int * c, mp_int * d)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* divide by three (based on routine from MPI and the GMP manual) */
@@ -2119,7 +2119,7 @@ mp_div_3 (mp_int * a, mp_int *c, mp_digit * d)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 static int s_is_power_of_two(mp_digit b, int *p)
@@ -2233,7 +2233,7 @@ int mp_div_d (mp_int * a, mp_digit b, mp_int * c, mp_digit * d)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* determines if a number is a valid DR modulus */
@@ -2280,7 +2280,7 @@ int mp_dr_is_modulus(mp_int *a)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* reduce "x" in place modulo "n" using the Diminished Radix algorithm.
@@ -2378,7 +2378,7 @@ top:
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* determines the setup value */
@@ -2414,7 +2414,7 @@ void mp_dr_setup(mp_int *a, mp_digit *d)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* swap the elements of two integers, for cases where you can't simply swap the 
@@ -2452,7 +2452,7 @@ mp_exch (mp_int * a, mp_int * b)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* calculate c = a**b  using a square-multiply algorithm */
@@ -2513,7 +2513,7 @@ int mp_expt_d (mp_int * a, mp_digit b, mp_int * c)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 
@@ -2629,7 +2629,7 @@ int mp_exptmod (mp_int * G, mp_int * X, mp_int * P, mp_int * Y)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* computes Y == G**X mod P, HAC pp.616, Algorithm 14.85
@@ -2954,7 +2954,7 @@ LBL_M:
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* Extended euclidean algorithm of (a, b) produces 
@@ -3040,7 +3040,7 @@ _ERR: mp_clear_multi(&u1, &u2, &u3, &v1, &v2, &v3, &t1, &t2, &t3, &q, &tmp, NULL
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* read a bigint from a file stream in ASCII */
@@ -3111,7 +3111,7 @@ int mp_fread(mp_int *a, int radix, FILE *stream)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 int mp_fwrite(mp_int *a, int radix, FILE *stream)
@@ -3167,7 +3167,7 @@ int mp_fwrite(mp_int *a, int radix, FILE *stream)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* Greatest Common Divisor using the binary method */
@@ -3177,19 +3177,11 @@ int mp_gcd (mp_int * a, mp_int * b, mp_int * c)
   int     k, u_lsb, v_lsb, res;
 
   /* either zero than gcd is the largest */
-  if (mp_iszero (a) == 1 && mp_iszero (b) == 0) {
+  if (mp_iszero (a) == MP_YES) {
     return mp_abs (b, c);
   }
-  if (mp_iszero (a) == 0 && mp_iszero (b) == 1) {
+  if (mp_iszero (b) == MP_YES) {
     return mp_abs (a, c);
-  }
-
-  /* optimized.  At this point if a == 0 then
-   * b must equal zero too
-   */
-  if (mp_iszero (a) == 1) {
-    mp_zero(c);
-    return MP_OKAY;
   }
 
   /* get copies of a and b we can modify */
@@ -3284,7 +3276,7 @@ LBL_U:mp_clear (&v);
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* get the lower 32-bits of an mp_int */
@@ -3333,7 +3325,7 @@ unsigned long mp_get_int(mp_int * a)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* grow as required */
@@ -3394,7 +3386,7 @@ int mp_grow (mp_int * a, int size)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* init a new mp_int */
@@ -3444,7 +3436,7 @@ int mp_init (mp_int * a)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* creates "a" then copies b into it */
@@ -3480,7 +3472,7 @@ int mp_init_copy (mp_int * a, mp_int * b)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 #include <stdarg.h>
 
@@ -3543,7 +3535,7 @@ int mp_init_multi(mp_int *mp, ...)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* initialize and set a digit */
@@ -3579,7 +3571,7 @@ int mp_init_set (mp_int * a, mp_digit b)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* initialize and set a digit */
@@ -3614,7 +3606,7 @@ int mp_init_set_int (mp_int * a, unsigned long b)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* init an mp_init for a given size */
@@ -3666,7 +3658,7 @@ int mp_init_size (mp_int * a, int size)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* hac 14.61, pp608 */
@@ -3713,7 +3705,7 @@ int mp_invmod (mp_int * a, mp_int * b, mp_int * c)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* hac 14.61, pp608 */
@@ -3892,7 +3884,7 @@ LBL_ERR:mp_clear_multi (&x, &y, &u, &v, &A, &B, &C, &D, NULL);
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* Check if remainders are possible squares - fast exclude non-squares */
@@ -4005,7 +3997,7 @@ ERR:mp_clear(&t);
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* computes the jacobi c = (a | n) (or Legendre if n is prime)
@@ -4114,7 +4106,7 @@ LBL_A1:mp_clear (&a1);
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* c = |a| * |b| using Karatsuba Multiplication using 
@@ -4285,7 +4277,7 @@ ERR:
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* Karatsuba squaring, computes b = a*a using three 
@@ -4410,7 +4402,7 @@ ERR:
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* computes least common multiple as |a*b|/(a, b) */
@@ -4474,7 +4466,7 @@ LBL_T:
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* shift left a certain amount of digits */
@@ -4545,7 +4537,7 @@ int mp_lshd (mp_int * a, int b)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* c = a mod b, 0 <= c < b */
@@ -4597,7 +4589,7 @@ mp_mod (mp_int * a, mp_int * b, mp_int * c)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* calc a value mod 2**b */
@@ -4656,7 +4648,7 @@ mp_mod_2d (mp_int * a, int b, mp_int * c)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 int
@@ -4687,7 +4679,7 @@ mp_mod_d (mp_int * a, mp_digit b, mp_digit * c)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /*
@@ -4750,7 +4742,7 @@ int mp_montgomery_calc_normalization (mp_int * a, mp_int * b)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* computes xR**-1 == x (mod N) via Montgomery Reduction */
@@ -4872,7 +4864,7 @@ mp_montgomery_reduce (mp_int * x, mp_int * n, mp_digit rho)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* setups the montgomery reduction stuff */
@@ -4935,7 +4927,7 @@ mp_montgomery_setup (mp_int * n, mp_digit * rho)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* high level multiplication (handles sign) */
@@ -5005,7 +4997,7 @@ int mp_mul (mp_int * a, mp_int * b, mp_int * c)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* b = a*2 */
@@ -5091,7 +5083,7 @@ int mp_mul_2(mp_int * a, mp_int * b)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* shift left by a certain bit count */
@@ -5180,7 +5172,7 @@ int mp_mul_2d (mp_int * a, int b, mp_int * c)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* multiply by a digit */
@@ -5263,7 +5255,7 @@ mp_mul_d (mp_int * a, mp_digit b, mp_int * c)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* d = a * b (mod c) */
@@ -5307,7 +5299,7 @@ int mp_mulmod (mp_int * a, mp_int * b, mp_int * c, mp_int * d)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* find the n'th root of an integer 
@@ -5443,7 +5435,7 @@ LBL_T1:mp_clear (&t1);
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* b = -a */
@@ -5487,7 +5479,7 @@ int mp_neg (mp_int * a, mp_int * b)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* OR two ints together */
@@ -5541,7 +5533,7 @@ int mp_or (mp_int * a, mp_int * b, mp_int * c)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* performs one Fermat test.
@@ -5607,7 +5599,7 @@ LBL_T:mp_clear (&t);
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* determines if an integers is divisible by one 
@@ -5661,7 +5653,7 @@ int mp_prime_is_divisible (mp_int * a, int *result)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* performs a variable number of rounds of Miller-Rabin
@@ -5748,7 +5740,7 @@ LBL_B:mp_clear (&b);
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* Miller-Rabin test of "a" to the base of "b" as described in 
@@ -5855,7 +5847,7 @@ LBL_N1:mp_clear (&n1);
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* finds the next prime after the number "a" using "t" trials
@@ -6029,7 +6021,7 @@ LBL_ERR:
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 
@@ -6085,7 +6077,7 @@ int mp_prime_rabin_miller_trials(int size)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* makes a truly random prime of a given size (bits),
@@ -6214,7 +6206,7 @@ error:
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* returns size of ASCII reprensentation */
@@ -6296,7 +6288,7 @@ int mp_radix_size (mp_int * a, int radix, int *size)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* chars used in radix conversions */
@@ -6324,7 +6316,7 @@ const char *mp_s_rmap = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrs
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* makes a pseudo-random int of a given size */
@@ -6383,7 +6375,7 @@ mp_rand (mp_int * a, int digits)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* read a string [ASCII] in a given radix */
@@ -6472,7 +6464,7 @@ int mp_read_radix (mp_int * a, const char *str, int radix)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* read signed bin, big endian, first byte is 0==positive or 1==negative */
@@ -6517,7 +6509,7 @@ int mp_read_signed_bin (mp_int * a, const unsigned char *b, int c)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* reads a unsigned char array, assumes the msb is stored first [big endian] */
@@ -6576,7 +6568,7 @@ int mp_read_unsigned_bin (mp_int * a, const unsigned char *b, int c)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* reduces x mod m, assumes 0 < x < m**2, mu is 
@@ -6680,7 +6672,7 @@ CLEANUP:
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* reduces a modulo n where n is of the form 2**p - d */
@@ -6745,7 +6737,7 @@ ERR:
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* reduces a modulo n where n is of the form 2**p - d 
@@ -6811,7 +6803,7 @@ ERR:
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* determines the setup value */
@@ -6862,7 +6854,7 @@ int mp_reduce_2k_setup(mp_int *a, mp_digit *d)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* determines the setup value */
@@ -6910,7 +6902,7 @@ ERR:
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* determines if mp_reduce_2k can be used */
@@ -6966,7 +6958,7 @@ int mp_reduce_is_2k(mp_int *a)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* determines if reduce_2k_l can be used */
@@ -7014,7 +7006,7 @@ int mp_reduce_is_2k_l(mp_int *a)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* pre-calculate the value required for Barrett reduction
@@ -7052,7 +7044,7 @@ int mp_reduce_setup (mp_int * a, mp_int * b)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* shift right a certain amount of digits */
@@ -7128,7 +7120,7 @@ void mp_rshd (mp_int * a, int b)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* set to a digit */
@@ -7161,7 +7153,7 @@ void mp_set (mp_int * a, mp_digit b)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* set a 32-bit const */
@@ -7213,7 +7205,7 @@ int mp_set_int (mp_int * a, unsigned long b)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* shrink a bignum */
@@ -7252,7 +7244,7 @@ int mp_shrink (mp_int * a)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* get the size for an signed equivalent */
@@ -7283,7 +7275,7 @@ int mp_signed_bin_size (mp_int * a)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* computes b = a*a */
@@ -7345,7 +7337,7 @@ if (a->used >= KARATSUBA_SQR_CUTOFF) {
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* c = a * a (mod b) */
@@ -7390,7 +7382,7 @@ mp_sqrmod (mp_int * a, mp_int * b, mp_int * c)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* this function is less generic than mp_n_root, simpler and faster */
@@ -7475,7 +7467,7 @@ E2: mp_clear(&t1);
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* high level subtraction (handles signs) */
@@ -7538,7 +7530,7 @@ mp_sub (mp_int * a, mp_int * b, mp_int * c)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* single digit subtraction */
@@ -7635,7 +7627,7 @@ mp_sub_d (mp_int * a, mp_digit b, mp_int * c)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* d = a - b (mod c) */
@@ -7681,7 +7673,7 @@ mp_submod (mp_int * a, mp_int * b, mp_int * c, mp_int * d)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* store in signed [big endian] format */
@@ -7718,7 +7710,7 @@ int mp_to_signed_bin (mp_int * a, unsigned char *b)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* store in signed [big endian] format */
@@ -7753,7 +7745,7 @@ int mp_to_signed_bin_n (mp_int * a, unsigned char *b, unsigned long *outlen)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* store in unsigned [big endian] format */
@@ -7805,7 +7797,7 @@ int mp_to_unsigned_bin (mp_int * a, unsigned char *b)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* store in unsigned [big endian] format */
@@ -7840,7 +7832,7 @@ int mp_to_unsigned_bin_n (mp_int * a, unsigned char *b, unsigned long *outlen)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* multiplication using the Toom-Cook 3-way algorithm 
@@ -8128,7 +8120,7 @@ ERR:
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* squaring using Toom-Cook 3-way algorithm */
@@ -8358,7 +8350,7 @@ ERR:
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* stores a bignum as a ASCII string in a given radix (2..64) */
@@ -8437,7 +8429,7 @@ int mp_toradix (mp_int * a, char *str, int radix)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* stores a bignum as a ASCII string in a given radix (2..64) 
@@ -8529,7 +8521,7 @@ int mp_toradix_n(mp_int * a, char *str, int radix, int maxlen)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* get the size for an unsigned equivalent */
@@ -8561,7 +8553,7 @@ int mp_unsigned_bin_size (mp_int * a)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* XOR two ints together */
@@ -8616,7 +8608,7 @@ mp_xor (mp_int * a, mp_int * b, mp_int * c)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* set to zero */
@@ -8656,7 +8648,7 @@ void mp_zero (mp_int * a)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 const mp_digit ltm_prime_tab[] = {
   0x0002, 0x0003, 0x0005, 0x0007, 0x000B, 0x000D, 0x0011, 0x0013,
@@ -8721,7 +8713,7 @@ const mp_digit ltm_prime_tab[] = {
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* reverse an array, used for radix code */
@@ -8764,7 +8756,7 @@ bn_reverse (unsigned char *s, int len)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* low level addition, based on HAC pp.594, Algorithm 14.7 */
@@ -8877,7 +8869,7 @@ s_mp_add (mp_int * a, mp_int * b, mp_int * c)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 #ifdef MP_LOW_MEM
    #define TAB_SIZE 32
@@ -9133,7 +9125,7 @@ LBL_M:
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* multiplies |a| * |b| and only computes upto digs digits of result
@@ -9227,7 +9219,7 @@ int s_mp_mul_digs (mp_int * a, mp_int * b, mp_int * c, int digs)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* multiplies |a| * |b| and does not compute the lower digs digits
@@ -9312,7 +9304,7 @@ s_mp_mul_high_digs (mp_int * a, mp_int * b, mp_int * c, int digs)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* low level squaring, b = a*a, HAC pp.596-597, Algorithm 14.16 */
@@ -9400,7 +9392,7 @@ int s_mp_sqr (mp_int * a, mp_int * b)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* low level subtraction (assumes |a| > |b|), HAC pp.595 Algorithm 14.9 */
@@ -9493,7 +9485,7 @@ s_mp_sub (mp_int * a, mp_int * b, mp_int * c)
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* Known optimal configurations

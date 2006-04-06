@@ -1,6 +1,6 @@
 /* Tune the Karatsuba parameters
  *
- * Tom St Denis, tomstdenis@iahu.ca
+ * Tom St Denis, tomstdenis@gmail.com
  */
 #include <tommath.h>
 #include <time.h>
