@@ -1,2 +1,7 @@
 # suppress compiler/linker output
 *.[oa]
+Debug/
+Release/
+
+# ignore MS VS non-compressed browse file (holds information for ClassView, IntelliSense and WizardBar)
+*.ncb
