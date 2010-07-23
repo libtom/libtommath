@@ -1,5 +1,5 @@
 /* Default configuration for MPI library */
-/* $ID$ */
+/* $Id$ */
 
 #ifndef MPI_CONFIG_H_
 #define MPI_CONFIG_H_

@@ -6,7 +6,7 @@
 
     Arbitrary precision integer arithmetic library
 
-    $ID$
+    $Id$
  */
 
 #ifndef _H_MPI_
