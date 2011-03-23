@@ -179,8 +179,8 @@ printf("compare no compare!\n"); exit(EXIT_FAILURE); }
       fflush(stdout);
       err =
 	 mp_prime_random_ex(&a, 8, ix,
-			    (rand() & 1) ? LTM_PRIME_2MSB_OFF :
-			    LTM_PRIME_2MSB_ON, myrng, NULL);
+			    (rand() & 1) ? 0 : LTM_PRIME_2MSB_ON,
+				myrng, NULL);
       if (err != MP_OKAY) {
 	 printf("failed with err code %d\n", err);
 	 return EXIT_FAILURE;
@@ -196,9 +196,8 @@ printf("compare no compare!\n"); exit(EXIT_FAILURE); }
       fflush(stdout);
       err =
 	 mp_prime_random_ex(&a, 8, ix,
-			    ((rand() & 1) ? LTM_PRIME_2MSB_OFF :
-			     LTM_PRIME_2MSB_ON) | LTM_PRIME_SAFE, myrng,
-			    NULL);
+			    ((rand() & 1) ? 0 : LTM_PRIME_2MSB_ON) | LTM_PRIME_SAFE,
+				 myrng, NULL);
       if (err != MP_OKAY) {
 	 printf("failed with err code %d\n", err);
 	 return EXIT_FAILURE;
