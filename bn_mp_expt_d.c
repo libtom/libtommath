@@ -38,7 +38,7 @@ int mp_expt_d (mp_int * a, mp_digit b, mp_int * c)
     }
 
     /* square */
-    if (b > 1 && (res = mp_sqr (c, c)) != MP_OKAY) {
+    if (b > 1 && (res = mp_sqr (&g, &g)) != MP_OKAY) {
       mp_clear (&g);
       return res;
     }
