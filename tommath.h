@@ -231,8 +231,14 @@ void mp_set(mp_int *a, mp_digit b);
 /* set a 32-bit const */
 int mp_set_int(mp_int *a, unsigned long b);
 
+/* set a platform dependent unsigned long value */
+int mp_set_long(mp_int *a, unsigned long b);
+
 /* get a 32-bit value */
 unsigned long mp_get_int(mp_int * a);
+
+/* get a platform dependent unsigned long value */
+unsigned long mp_get_long(mp_int * a);
 
 /* initialize and set a digit */
 int mp_init_set (mp_int * a, mp_digit b);
