@@ -15,7 +15,7 @@
  * Tom St Denis, tomstdenis@gmail.com, http://libtom.org
  */
 
-/* c = a mod b, 0 <= c < b */
+/* c = a mod b, 0 <= c < b if b > 0, b < c <= 0 if b < 0 */
 int
 mp_mod (mp_int * a, mp_int * b, mp_int * c)
 {
@@ -31,11 +31,11 @@ mp_mod (mp_int * a, mp_int * b, mp_int * c)
     return res;
   }
 
-  if (t.sign != b->sign) {
-    res = mp_add (b, &t, c);
-  } else {
+  if (mp_iszero(&t) || t.sign == b->sign) {
     res = MP_OKAY;
     mp_exch (&t, c);
+  } else {
+    res = mp_add (b, &t, c);
   }
 
   mp_clear (&t);
