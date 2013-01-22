@@ -18,7 +18,7 @@
 
 static const struct {
      int code;
-     char *msg;
+     const char *msg;
 } msgs[] = {
      { MP_OKAY, "Successful" },
      { MP_MEM,  "Out of heap" },
@@ -26,7 +26,7 @@ static const struct {
 };
 
 /* return a char * string for a given code */
-char *mp_error_to_string(int code)
+const char *mp_error_to_string(int code)
 {
    int x;
 
@@ -2442,6 +2442,92 @@ mp_exch (mp_int * a, mp_int * b)
 
 /* End: bn_mp_exch.c */
 
+/* Start: bn_mp_export.c */
+#include <tommath.h>
+#ifdef BN_MP_EXPORT_C
+/* LibTomMath, multiple-precision integer library -- Tom St Denis
+ *
+ * LibTomMath is a library that provides multiple-precision
+ * integer arithmetic as well as number theoretic functionality.
+ *
+ * The library was designed directly after the MPI library by
+ * Michael Fromberger but has been written from scratch with
+ * additional optimizations in place.
+ *
+ * The library is free for all purposes without any express
+ * guarantee it works.
+ *
+ * Tom St Denis, tomstdenis@gmail.com, http://libtom.org
+ */
+
+/* based on gmp's mpz_export
+ * see http://gmplib.org/manual/Integer-Import-and-Export.html
+ */
+int mp_export(void* rop, size_t* countp, int order, size_t size, int endian, size_t nails, mp_int* op) {
+	int result;
+	size_t odd_nails, nail_bytes, i, j, bits, count;
+	unsigned char odd_nail_mask;
+
+	mp_int t;
+
+	if ((result = mp_init_copy(&t, op)) != MP_OKAY) {
+		return result;
+	}
+
+	if (endian == 0) {
+		union {
+			unsigned int i;
+			char c[4];
+		} lint = {0x01020304};
+
+		endian = (lint.c[0] == 4 ? -1 : 1);
+	}
+
+	odd_nails = (nails % 8);
+	odd_nail_mask = 0xff;
+	for (i = 0; i < odd_nails; ++i) {
+		odd_nail_mask ^= (1 << (7 - i));
+	}
+	nail_bytes = nails / 8;
+
+	bits = mp_count_bits(&t);
+	count = bits / (size * 8 - nails) + (bits % (size * 8 - nails) ? 1 : 0);
+
+	for (i = 0; i < count; ++i) {
+		for (j = 0; j < size; ++j) {
+			unsigned char* byte = ((unsigned char*)rop + (order == -1 ? i : count - 1 - i) * size + (endian == -1 ? j : size - 1 - j));
+
+			if (j >= (size - nail_bytes)) {
+				*byte = 0;
+				continue;
+			}
+
+			*byte = (unsigned char)(j == size - nail_bytes - 1 ? (t.dp[0] & odd_nail_mask) : t.dp[0] & 0xFF);
+
+			if ((result = mp_div_2d(&t, (j == size - nail_bytes - 1 ? 8 - odd_nails : 8), &t, NULL)) != MP_OKAY) {
+				mp_clear(&t);
+				return result;
+			}
+		}
+	}
+
+	mp_clear(&t);
+
+	if (countp) {
+		*countp = count;
+	}
+
+	return MP_OKAY;
+}
+
+#endif
+
+/* $Source$ */
+/* $Revision$ */
+/* $Date$ */
+
+/* End: bn_mp_export.c */
+
 /* Start: bn_mp_expt_d.c */
 #include <tommath.h>
 #ifdef BN_MP_EXPT_D_C
@@ -2463,7 +2549,7 @@ mp_exch (mp_int * a, mp_int * b)
 /* calculate c = a**b  using a square-multiply algorithm */
 int mp_expt_d (mp_int * a, mp_digit b, mp_int * c)
 {
-  int     res, x;
+  int     res;
   mp_int  g;
 
   if ((res = mp_init_copy (&g, a)) != MP_OKAY) {
@@ -2473,23 +2559,23 @@ int mp_expt_d (mp_int * a, mp_digit b, mp_int * c)
   /* set initial result */
   mp_set (c, 1);
 
-  for (x = 0; x < (int) DIGIT_BIT; x++) {
+  while (b > 0) {
+    /* if the bit is set multiply */
+    if (b & 1) {
+      if ((res = mp_mul (c, &g, c)) != MP_OKAY) {
+        mp_clear (&g);
+        return res;
+      }
+    }
+
     /* square */
-    if ((res = mp_sqr (c, c)) != MP_OKAY) {
+    if (b > 1 && (res = mp_sqr (&g, &g)) != MP_OKAY) {
       mp_clear (&g);
       return res;
     }
 
-    /* if the bit is set multiply */
-    if ((b & (mp_digit) (((mp_digit)1) << (DIGIT_BIT - 1))) != 0) {
-      if ((res = mp_mul (c, &g, c)) != MP_OKAY) {
-         mp_clear (&g);
-         return res;
-      }
-    }
-
     /* shift to next bit */
-    b <<= 1;
+    b >>= 1;
   }
 
   mp_clear (&g);
@@ -3375,6 +3461,76 @@ int mp_grow (mp_int * a, int size)
 /* $Date$ */
 
 /* End: bn_mp_grow.c */
+
+/* Start: bn_mp_import.c */
+#include <tommath.h>
+#ifdef BN_MP_IMPORT_C
+/* LibTomMath, multiple-precision integer library -- Tom St Denis
+ *
+ * LibTomMath is a library that provides multiple-precision
+ * integer arithmetic as well as number theoretic functionality.
+ *
+ * The library was designed directly after the MPI library by
+ * Michael Fromberger but has been written from scratch with
+ * additional optimizations in place.
+ *
+ * The library is free for all purposes without any express
+ * guarantee it works.
+ *
+ * Tom St Denis, tomstdenis@gmail.com, http://libtom.org
+ */
+
+/* based on gmp's mpz_import
+ * see http://gmplib.org/manual/Integer-Import-and-Export.html
+ */
+int mp_import(mp_int* rop, size_t count, int order, size_t size, int endian, size_t nails, const void* op) {
+	int result;
+	size_t odd_nails, nail_bytes, i, j;
+	unsigned char odd_nail_mask;
+
+	mp_zero(rop);
+
+	if (endian == 0) {
+		union {
+			unsigned int i;
+			char c[4];
+		} lint = {0x01020304};
+
+		endian = (lint.c[0] == 4 ? -1 : 1);
+	}
+
+	odd_nails = (nails % 8);
+	odd_nail_mask = 0xff;
+	for (i = 0; i < odd_nails; ++i) {
+		odd_nail_mask ^= (1 << (7 - i));
+	}
+	nail_bytes = nails / 8;
+
+	for (i = 0; i < count; ++i) {
+		for (j = 0; j < size - nail_bytes; ++j) {
+			unsigned char byte = *((unsigned char*)op + (order == 1 ? i : count - 1 - i) * size + (endian == 1 ? j + nail_bytes : size - 1 - j - nail_bytes));
+
+			if ((result = mp_mul_2d(rop, (j == 0 ? 8 - odd_nails : 8), rop)) != MP_OKAY) {
+				return result;
+			}
+
+			rop->dp[0] |= (j == 0 ? (byte & odd_nail_mask) : byte);
+			rop->used  += 1;
+		}
+	}
+
+	mp_clamp(rop);
+
+	return MP_OKAY;
+}
+
+#endif
+
+/* $Source$ */
+/* $Revision$ */
+/* $Date$ */
+
+/* End: bn_mp_import.c */
 
 /* Start: bn_mp_init.c */
 #include <tommath.h>
@@ -4545,7 +4701,7 @@ int mp_lshd (mp_int * a, int b)
  * Tom St Denis, tomstdenis@gmail.com, http://libtom.org
  */
 
-/* c = a mod b, 0 <= c < b */
+/* c = a mod b, 0 <= c < b if b > 0, b < c <= 0 if b < 0 */
 int
 mp_mod (mp_int * a, mp_int * b, mp_int * c)
 {
@@ -4561,11 +4717,11 @@ mp_mod (mp_int * a, mp_int * b, mp_int * c)
     return res;
   }
 
-  if (t.sign != b->sign) {
-    res = mp_add (b, &t, c);
-  } else {
+  if (mp_iszero(&t) || t.sign == b->sign) {
     res = MP_OKAY;
     mp_exch (&t, c);
+  } else {
+    res = mp_add (b, &t, c);
   }
 
   mp_clear (&t);
@@ -6091,7 +6247,6 @@ int mp_prime_rabin_miller_trials(int size)
  * 
  *   LTM_PRIME_BBS      - make prime congruent to 3 mod 4
  *   LTM_PRIME_SAFE     - make sure (p-1)/2 is prime as well (implies LTM_PRIME_BBS)
- *   LTM_PRIME_2MSB_OFF - make the 2nd highest bit zero
  *   LTM_PRIME_2MSB_ON  - make the 2nd highest bit one
  *
  * You have to supply a callback which fills in a buffer with random bytes.  "dat" is a parameter you can
