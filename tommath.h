@@ -249,6 +249,12 @@ int mp_init_copy(mp_int *a, mp_int *b);
 /* trim unused digits */
 void mp_clamp(mp_int *a);
 
+/* import binary data */
+int mp_import(mp_int* rop, size_t count, int order, size_t size, int endian, size_t nails, const void* op);
+
+/* export binary data */
+int mp_export(void* rop, size_t* countp, int order, size_t size, int endian, size_t nails, mp_int* op);
+
 /* ---> digit manipulation <--- */
 
 /* right shift by "b" digits */
