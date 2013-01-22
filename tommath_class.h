@@ -38,6 +38,7 @@
 #define BN_MP_DR_REDUCE_C
 #define BN_MP_DR_SETUP_C
 #define BN_MP_EXCH_C
+#define BN_MP_EXPORT_C
 #define BN_MP_EXPT_D_C
 #define BN_MP_EXPTMOD_C
 #define BN_MP_EXPTMOD_FAST_C
@@ -47,6 +48,7 @@
 #define BN_MP_GCD_C
 #define BN_MP_GET_INT_C
 #define BN_MP_GROW_C
+#define BN_MP_IMPORT_C
 #define BN_MP_INIT_C
 #define BN_MP_INIT_COPY_C
 #define BN_MP_INIT_MULTI_C
@@ -315,12 +317,19 @@
 #if defined(BN_MP_EXCH_C)
 #endif
 
+#if defined(BN_MP_EXPORT_C)
+   #define BN_MP_INIT_COPY_C
+   #define BN_MP_COUNT_BITS_C
+   #define BN_MP_DIV_2D_C
+   #define BN_MP_CLEAR_C
+#endif
+
 #if defined(BN_MP_EXPT_D_C)
    #define BN_MP_INIT_COPY_C
    #define BN_MP_SET_C
-   #define BN_MP_SQR_C
-   #define BN_MP_CLEAR_C
    #define BN_MP_MUL_C
+   #define BN_MP_CLEAR_C
+   #define BN_MP_SQR_C
 #endif
 
 #if defined(BN_MP_EXPTMOD_C)
@@ -387,7 +396,6 @@
 #if defined(BN_MP_GCD_C)
    #define BN_MP_ISZERO_C
    #define BN_MP_ABS_C
-   #define BN_MP_ZERO_C
    #define BN_MP_INIT_COPY_C
    #define BN_MP_CNT_LSB_C
    #define BN_MP_DIV_2D_C
@@ -402,6 +410,12 @@
 #endif
 
 #if defined(BN_MP_GROW_C)
+#endif
+
+#if defined(BN_MP_IMPORT_C)
+   #define BN_MP_ZERO_C
+   #define BN_MP_MUL_2D_C
+   #define BN_MP_CLAMP_C
 #endif
 
 #if defined(BN_MP_INIT_C)
@@ -481,8 +495,9 @@
    #define BN_MP_MUL_C
    #define BN_MP_INIT_SIZE_C
    #define BN_MP_CLAMP_C
-   #define BN_MP_SUB_C
+   #define BN_S_MP_ADD_C
    #define BN_MP_ADD_C
+   #define BN_S_MP_SUB_C
    #define BN_MP_LSHD_C
    #define BN_MP_CLEAR_C
 #endif
@@ -491,8 +506,8 @@
    #define BN_MP_INIT_SIZE_C
    #define BN_MP_CLAMP_C
    #define BN_MP_SQR_C
-   #define BN_MP_SUB_C
    #define BN_S_MP_ADD_C
+   #define BN_S_MP_SUB_C
    #define BN_MP_LSHD_C
    #define BN_MP_ADD_C
    #define BN_MP_CLEAR_C
@@ -516,8 +531,9 @@
    #define BN_MP_INIT_C
    #define BN_MP_DIV_C
    #define BN_MP_CLEAR_C
-   #define BN_MP_ADD_C
+   #define BN_MP_ISZERO_C
    #define BN_MP_EXCH_C
+   #define BN_MP_ADD_C
 #endif
 
 #if defined(BN_MP_MOD_2D_C)
@@ -668,8 +684,8 @@
 
 #if defined(BN_MP_RADIX_SIZE_C)
    #define BN_MP_COUNT_BITS_C
-   #define BN_MP_INIT_COPY_C
    #define BN_MP_ISZERO_C
+   #define BN_MP_INIT_COPY_C
    #define BN_MP_DIV_D_C
    #define BN_MP_CLEAR_C
 #endif
@@ -687,7 +703,6 @@
 #if defined(BN_MP_READ_RADIX_C)
    #define BN_MP_ZERO_C
    #define BN_MP_S_RMAP_C
-   #define BN_MP_RADIX_SMAP_C
    #define BN_MP_MUL_D_C
    #define BN_MP_ADD_D_C
    #define BN_MP_ISZERO_C
@@ -993,7 +1008,3 @@
 #else
 #define LTM_LAST
 #endif
-
-/* $Source$ */
-/* $Revision$ */
-/* $Date$ */
