@@ -11,6 +11,8 @@ ifndef MAKE
    MAKE=make
 endif
 
+RANLIB ?= ranlib
+
 ifndef IGNORE_SPEED
 
 #for speed 
@@ -87,7 +89,7 @@ bn_mp_to_signed_bin_n.o bn_mp_to_unsigned_bin_n.o
 
 $(LIBNAME):  $(OBJECTS)
 	$(AR) $(ARFLAGS) $@ $(OBJECTS)
-	ranlib $@
+	$(RANLIB) $@
 
 #make a profiled library (takes a while!!!)
 #
@@ -119,7 +121,7 @@ install: $(LIBNAME)
 	install -g $(GROUP) -o $(USER) $(HEADERS) $(DESTDIR)$(INCPATH)
 
 test: $(LIBNAME) demo/demo.o
-	$(CC) $(CFLAGS) demo/demo.o $(LIBNAME) -o test
+	$(CC) $(CFLAGS) demo/demo.o $(LIBNAME) -o test$(EXE_EXT)
 	
 mtest: test	
 	cd mtest ; $(CC) $(CFLAGS) mtest.c -o mtest
