@@ -7,6 +7,16 @@ VERSION=0.42.0
 
 CFLAGS  +=  -I./ -Wall -W -Wshadow -Wsign-compare
 
+# Compiler and Linker Names
+ifndef PREFIX
+  PREFIX=
+endif
+
+CC=$(PREFIX)gcc
+LD=$(PREFIX)ld
+AR=$(PREFIX)ar
+RANLIB=$(PREFIX)ranlib
+
 ifndef MAKE
    MAKE=make
 endif
@@ -87,7 +97,7 @@ bn_mp_to_signed_bin_n.o bn_mp_to_unsigned_bin_n.o
 
 $(LIBNAME):  $(OBJECTS)
 	$(AR) $(ARFLAGS) $@ $(OBJECTS)
-	ranlib $@
+	$(RANLIB) $@
 
 #make a profiled library (takes a while!!!)
 #
