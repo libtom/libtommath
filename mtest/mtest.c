@@ -41,15 +41,25 @@ mulmod
 
 FILE *rng;
 
+int getRnd(void)
+{
+  int retn;
+  if (rng != NULL)
+    retn = fgetc(rng);
+  else
+    retn = rand();
+  return retn;
+}
+
 void rand_num(mp_int *a)
 {
    int n, size;
    unsigned char buf[2048];
 
-   size = 1 + ((fgetc(rng)<<8) + fgetc(rng)) % 101;
-   buf[0] = (fgetc(rng)&1)?1:0;
+   size = 1 + ((getRnd()<<8) + getRnd()) % 101;
+   buf[0] = (getRnd()&1)?1:0;
    fread(buf+1, 1, size, rng);
-   while (buf[1] == 0) buf[1] = fgetc(rng);
+   while (buf[1] == 0) buf[1] = getRnd();
    mp_read_raw(a, buf, 1+size);
 }
 
@@ -58,10 +68,10 @@ void rand_num2(mp_int *a)
    int n, size;
    unsigned char buf[2048];
 
-   size = 10 + ((fgetc(rng)<<8) + fgetc(rng)) % 101;
-   buf[0] = (fgetc(rng)&1)?1:0;
+   size = 10 + ((getRnd()<<8) + getRnd()) % 101;
+   buf[0] = (getRnd()&1)?1:0;
    fread(buf+1, 1, size, rng);
-   while (buf[1] == 0) buf[1] = fgetc(rng);
+   while (buf[1] == 0) buf[1] = getRnd();
    mp_read_raw(a, buf, 1+size);
 }
 
@@ -102,8 +112,8 @@ int main(void)
    if (rng == NULL) {
       rng = fopen("/dev/random", "rb");
       if (rng == NULL) {
-         fprintf(stderr, "\nWarning:  stdin used as random source\n\n");
-         rng = stdin;
+         fprintf(stderr, "\nWarning:  rand() used as random source\n\n");
+         srand(23);
       }
    }
 
@@ -115,7 +125,7 @@ int main(void)
          t1 = clock();
       }
 #endif
-       n = fgetc(rng) % 15;
+      n = getRnd() % 15;
 
    if (n == 0) {
        /* add tests */
@@ -180,7 +190,7 @@ int main(void)
       /* mul_2d test */
       rand_num(&a);
       mp_copy(&a, &b);
-      n = fgetc(rng) & 63;
+      n = getRnd() & 63;
       mp_mul_2d(&b, n, &b);
       mp_to64(&a, buf);
       printf("mul2d\n");
@@ -192,7 +202,7 @@ int main(void)
       /* div_2d test */
       rand_num(&a);
       mp_copy(&a, &b);
-      n = fgetc(rng) & 63;
+      n = getRnd() & 63;
       mp_div_2d(&b, n, &b, NULL);
       mp_to64(&a, buf);
       printf("div2d\n");
