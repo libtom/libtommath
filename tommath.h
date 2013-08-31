@@ -269,7 +269,7 @@ int mp_mul_2d(mp_int *a, int b, mp_int *c);
 /* b = a*2 */
 int mp_mul_2(mp_int *a, mp_int *b);
 
-/* c = a mod 2**d */
+/* c = a mod 2**b */
 int mp_mod_2d(mp_int *a, int b, mp_int *c);
 
 /* computes a = 2**b */
