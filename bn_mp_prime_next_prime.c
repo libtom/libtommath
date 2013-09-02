@@ -142,7 +142,7 @@ int mp_prime_next_prime(mp_int *a, int t, int bbs_style)
       }
 
       /* is this prime? */
-      for (x = 0; x < t; x++) {
+      for (x = 0; x < t && x < PRIME_SIZE; x++) {
           mp_set(&b, ltm_prime_tab[x]);
           if ((err = mp_prime_miller_rabin(a, &b, &res)) != MP_OKAY) {
              goto LBL_ERR;
