@@ -519,6 +519,8 @@ int mp_prime_next_prime(mp_int *a, int t, int bbs_style);
  */
 int mp_prime_random_ex(mp_int *a, int t, int size, int flags, ltm_prime_callback cb, void *dat);
 
+int mp_isprime(mp_int *a);
+
 /* ---> radix conversion <--- */
 int mp_count_bits(mp_int *a);
 
