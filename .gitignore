@@ -1,7 +1,23 @@
 # suppress compiler/linker output
 *.[oa]
+*.obj
+*.gcda
+*.gcno
+*.lib
 Debug/
 Release/
+
+# suppress output of build process and *nix/windows test executables
+ltmtest
+ltmtest.exe
+test
+test.exe
+mtest
+mtest.exe
+
+# ignore eclipse project files
+.cproject
+.project
 
 # special MS Visual Studio section
 # ignore non-compressed browse file (holds information for ClassView, IntelliSense and WizardBar)

@@ -1,5 +1,5 @@
 #include <tommath.h>
-#ifdef BN_MP_INVMOD_C
+#ifdef BN_MP_ZERO_MULTI_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is a library that provides multiple-precision
@@ -14,27 +14,19 @@
  *
  * Tom St Denis, tomstdenis@gmail.com, http://libtom.org
  */
+#include <stdarg.h>
 
-/* hac 14.61, pp608 */
-int mp_invmod (mp_int * a, mp_int * b, mp_int * c)
+/* set to zero */
+void mp_zero_multi (mp_int * mp, ...)
 {
-  /* b cannot be negative */
-  if (b->sign == MP_NEG || mp_iszero(b) == 1) {
-    return MP_VAL;
-  }
-
-#ifdef BN_FAST_MP_INVMOD_C
-  /* if the modulus is odd we can use a faster routine instead */
-  if (mp_isodd (b) == 1) {
-    return fast_mp_invmod (a, b, c);
-  }
-#endif
-
-#ifdef BN_MP_INVMOD_SLOW_C
-  return mp_invmod_slow(a, b, c);
-#else
-  return MP_VAL;
-#endif
+    mp_int* next_mp = mp;
+    va_list args;
+    va_start(args, mp);
+    while (next_mp != NULL) {
+        mp_zero(next_mp);
+        next_mp = va_arg(args, mp_int*);
+    }
+    va_end(args);
 }
 #endif
 

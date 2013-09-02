@@ -44,11 +44,11 @@ int mp_read_radix (mp_int * a, const char *str, int radix)
   
   /* process each digit of the string */
   while (*str) {
-    /* if the radix < 36 the conversion is case insensitive
+    /* if the radix <= 36 the conversion is case insensitive
      * this allows numbers like 1AB and 1ab to represent the same  value
      * [e.g. in hex]
      */
-    ch = (char) ((radix < 36) ? toupper ((int)*str) : *str);
+    ch = (char) ((radix <= 36) ? toupper ((int)*str) : *str);
     for (y = 0; y < 64; y++) {
       if (ch == mp_s_rmap[y]) {
          break;
