@@ -226,6 +226,9 @@ int mp_init_size(mp_int *a, int size);
 /* set to zero */
 void mp_zero(mp_int *a);
 
+/* set to zero, multi */
+void mp_zero_multi(mp_int *a, ...);
+
 /* set to a digit */
 void mp_set(mp_int *a, mp_digit b);
 

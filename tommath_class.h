@@ -118,6 +118,7 @@
 #define BN_MP_UNSIGNED_BIN_SIZE_C
 #define BN_MP_XOR_C
 #define BN_MP_ZERO_C
+#define BN_MP_ZERO_MULTI_C
 #define BN_PRIME_TAB_C
 #define BN_REVERSE_C
 #define BN_S_MP_ADD_C
