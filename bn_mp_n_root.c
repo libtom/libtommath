@@ -22,13 +22,12 @@
  * This algorithm uses Newton's approximation 
  * x[i+1] = x[i] - f(x[i])/f'(x[i]) 
  * which will find the root in log(N) time where 
- * each step involves a fair bit.  This is not meant to 
- * find huge roots [square and cube, etc].
+ * each step involves a fair bit.
  */
 int mp_n_root (mp_int * a, mp_digit b, mp_int * c)
 {
   mp_int  t1, t2, t3;
-  int     res, neg;
+  int     res, neg, ilog2;
 
   /* input must be positive if b is even */
   if ((b & 1) == 0 && a->sign == MP_NEG) {
@@ -51,8 +50,17 @@ int mp_n_root (mp_int * a, mp_digit b, mp_int * c)
   neg     = a->sign;
   a->sign = MP_ZPOS;
 
-  /* t2 = 2 */
-  mp_set (&t2, 2);
+  /* Set initial value:
+   *     n-th root of r = exp(log_e(r) / n)
+   * That can be done with every base for the logarithm, so with base 2 and 
+   * integer logarithm:
+   *     n-th root of r < 2^( floor( ceil( log_2(r) ) / n) +1 )
+   */
+  ilog2 = mp_count_bits(a);
+  ilog2 = (int)( ( (mp_digit) ilog2 ) / b );
+  if ((  res = mp_2expt(&t2,ilog2+1)) != MP_OKAY) {
+    goto LBL_T2;
+  }
 
   do {
     /* t1 = t2 */
@@ -94,6 +102,15 @@ int mp_n_root (mp_int * a, mp_digit b, mp_int * c)
     }
   }  while (mp_cmp (&t1, &t2) != MP_EQ);
 
+  /* 
+     The value is most probable 1 (one) digit too large, so to save one
+     exponentiation subtract 1 (one) in advance.
+     TODO: check if that is always the case, as the author of the patch
+           conjectures.
+  */
+  if ((res = mp_sub_d (&t1, 1, &t1)) != MP_OKAY) {
+        goto LBL_T3;
+  }
   /* result can be off by a few so check */
   for (;;) {
     if ((res = mp_expt_d (&t1, b, &t2)) != MP_OKAY) {
