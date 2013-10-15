@@ -21,16 +21,25 @@
 -------------------------------------------------------------
  Intel P4 Northwood     /GCC v3.4.1   /        88/       128/LTM 0.32 ;-)
  AMD Athlon64           /GCC v3.4.4   /        80/       120/LTM 0.35
+
+Curious result:
+ AMD Duron (2x64k L1)    /GCC 4.4.5  /         48/       120/LTM 0.42
  
 */
 
-int     KARATSUBA_MUL_CUTOFF = 80,      /* Min. number of digits before Karatsuba multiplication is used. */
-        KARATSUBA_SQR_CUTOFF = 120,     /* Min. number of digits before Karatsuba squaring is used. */
+int     KARATSUBA_MUL_CUTOFF = 48;      /* Min. number of digits before Karatsuba multiplication is used. */
+int       KARATSUBA_SQR_CUTOFF = 120;     /* Min. number of digits before Karatsuba squaring is used. */
         
-        TOOM_MUL_CUTOFF      = 350,      /* no optimal values of these are known yet so set em high */
-        TOOM_SQR_CUTOFF      = 400; 
+int        TOOM_MUL_CUTOFF      = 190;      /* no optimal values of these are known yet so set em high */
+int       TOOM_SQR_CUTOFF      = 280;
+
+        /* No single numbers possible with the current implementation */
+int        FFT_MUL_CUTOFF       = 4000;
+int        FFT_UPPER_LIMIT      = 1<<23;    /* less than actual limit */
+int        FFT_SQR_CUTOFF       = 20000;
+
 #endif
 
 /* $Source$ */
-/* $Revision$ */
-/* $Date$ */
+/* $Revision: 0.41 $ */
+/* $Date: 2007-04-18 09:58:18 +0000 $ */
