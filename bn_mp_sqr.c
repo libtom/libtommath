@@ -20,6 +20,19 @@ int
 mp_sqr (mp_int * a, mp_int * b)
 {
   int     res;
+#ifdef  MP_28BIT
+  /* use FFT? */
+#ifdef BN_MP_FFT_SQR_C
+  /* 
+     FFT has an upper limit caused by rounding erors. After one round of
+     Toom-Cook it can cut in again.
+   */
+  if (a->used >= FFT_SQR_CUTOFF &&
+      a->used <= FFT_UPPER_LIMIT ) {
+    res = mp_fft_sqr(a, b);
+  } else 
+#endif
+#endif
 
 #ifdef BN_MP_TOOM_SQR_C
   /* use Toom-Cook? */
@@ -54,5 +67,5 @@ if (a->used >= KARATSUBA_SQR_CUTOFF) {
 #endif
 
 /* $Source$ */
-/* $Revision$ */
-/* $Date$ */
+/* $Revision: 0.41 $ */
+/* $Date: 2007-04-18 09:58:18 +0000 $ */
