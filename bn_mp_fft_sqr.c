@@ -40,11 +40,11 @@ int mp_fft_sqr(mp_int *a,mp_int *c){
   if( ( e = dp_to_fft_single(a, &fa, &length)) != MP_OKAY){
     if(fa != NULL) free(fa);
     return e;
-  }printf("length 1  = %d\n",length);
+  }
   if( ( e = fft_sqr(fa, length)) != MP_OKAY){
     if(fa != NULL) free(fa);
     return e;
-  }printf("length 2  = %d\n",length);
+  }
   if( ( e = fft_to_dp(fa, c, length)) != MP_OKAY){
     if(fa != NULL) free(fa);
     return e;
