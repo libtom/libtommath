@@ -42,6 +42,8 @@
 #define BN_MP_EXPTMOD_C
 #define BN_MP_EXPTMOD_FAST_C
 #define BN_MP_EXTEUCLID_C
+#define BN_MP_FFT_MUL_C
+#define BN_MP_FFT_SQR_C
 #define BN_MP_FREAD_C
 #define BN_MP_FWRITE_C
 #define BN_MP_GCD_C
@@ -371,6 +373,20 @@
    #define BN_MP_CLEAR_MULTI_C
 #endif
 
+#if defined(BN_MP_FFT_MUL_C)
+   #define BN_MP_SET_INT_C
+   #define BN_MP_FFT_C
+   #define BN_MP_GROW_C
+   #define BN_MP_CLAMP_C
+#endif
+
+#if defined(BN_MP_FFT_SQR_C)
+   #define BN_MP_SET_INT_C
+   #define BN_MP_FFT_C
+   #define BN_MP_GROW_C
+   #define BN_MP_CLAMP_C
+#endif
+
 #if defined(BN_MP_FREAD_C)
    #define BN_MP_ZERO_C
    #define BN_MP_S_RMAP_C
@@ -552,6 +568,7 @@
 #endif
 
 #if defined(BN_MP_MUL_C)
+   #define BN_MP_FFT_MUL_C
    #define BN_MP_TOOM_MUL_C
    #define BN_MP_KARATSUBA_MUL_C
    #define BN_FAST_S_MP_MUL_DIGS_C
@@ -796,6 +813,7 @@
 #endif
 
 #if defined(BN_MP_SQR_C)
+   #define BN_MP_FFT_SQR_C
    #define BN_MP_TOOM_SQR_C
    #define BN_MP_KARATSUBA_SQR_C
    #define BN_FAST_S_MP_SQR_C
@@ -995,5 +1013,5 @@
 #endif
 
 /* $Source$ */
-/* $Revision$ */
-/* $Date$ */
+/* $Revision: 0.36 $ */
+/* $Date: 2005-08-01 16:37:28 +0000 $ */
