@@ -20,6 +20,19 @@ int mp_mul (mp_int * a, mp_int * b, mp_int * c)
 {
   int     res, neg;
   neg = (a->sign == b->sign) ? MP_ZPOS : MP_NEG;
+#ifdef  MP_28BIT
+  /* use FFT? */
+#ifdef BN_MP_FFT_MUL_C
+  /* 
+     FFT has an upper limit caused by rounding erors. After one round of
+     Toom-Cook it can cut in again.
+   */
+  if (MIN (a->used, b->used) >= FFT_MUL_CUTOFF &&
+      MAX (a->used, b->used) <= FFT_UPPER_LIMIT ) {
+    res = mp_fft_mul(a, b, c);
+  } else 
+#endif
+#endif
 
   /* use Toom-Cook? */
 #ifdef BN_MP_TOOM_MUL_C
@@ -62,5 +75,5 @@ int mp_mul (mp_int * a, mp_int * b, mp_int * c)
 #endif
 
 /* $Source$ */
-/* $Revision$ */
-/* $Date$ */
+/* $Revision: 0.41 $ */
+/* $Date: 2007-04-18 09:58:18 +0000 $ */
