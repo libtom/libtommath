@@ -158,7 +158,10 @@ typedef int           mp_err;
 extern int KARATSUBA_MUL_CUTOFF,
            KARATSUBA_SQR_CUTOFF,
            TOOM_MUL_CUTOFF,
-           TOOM_SQR_CUTOFF;
+           TOOM_SQR_CUTOFF,
+           FFT_MUL_CUTOFF,
+           FFT_UPPER_LIMIT,
+           FFT_SQR_CUTOFF;
 
 /* define this to use lower memory usage routines (exptmods mostly) */
 /* #define MP_LOW_MEM */
@@ -190,7 +193,7 @@ typedef int ltm_prime_callback(unsigned char *dst, int len, void *dat);
 #define SIGN(m)    ((m)->sign)
 
 /* error code to char* string */
-const char *mp_error_to_string(int code);
+char *mp_error_to_string(int code);
 
 /* ---> init and deinit bignum functions <--- */
 /* init a bignum */
@@ -506,6 +509,7 @@ int mp_prime_next_prime(mp_int *a, int t, int bbs_style);
  * 
  *   LTM_PRIME_BBS      - make prime congruent to 3 mod 4
  *   LTM_PRIME_SAFE     - make sure (p-1)/2 is prime as well (implies LTM_PRIME_BBS)
+ *   LTM_PRIME_2MSB_OFF - make the 2nd highest bit zero
  *   LTM_PRIME_2MSB_ON  - make the 2nd highest bit one
  *
  * You have to supply a callback which fills in a buffer with random bytes.  "dat" is a parameter you can
@@ -568,6 +572,15 @@ int fast_mp_montgomery_reduce(mp_int *a, mp_int *m, mp_digit mp);
 int mp_exptmod_fast(mp_int *G, mp_int *X, mp_int *P, mp_int *Y, int mode);
 int s_mp_exptmod (mp_int * G, mp_int * X, mp_int * P, mp_int * Y, int mode);
 void bn_reverse(unsigned char *s, int len);
+int dp_to_fft(mp_int *a, double **fa,
+              mp_int *b, double **fb, int *length);
+int dp_to_fft_single(mp_int *a, double **fa, int *length);
+int fft_to_dp(double *fft_array, mp_int *a,int length);
+
+int fft(double *x, double *y, unsigned long length);
+int fft_sqr(double *x, unsigned long length);
+int mp_fft_mul(mp_int *a, mp_int *b, mp_int *c);
+int mp_fft_sqr(mp_int *a,mp_int *c);
 
 extern const char *mp_s_rmap;
 
@@ -579,5 +592,5 @@ extern const char *mp_s_rmap;
 
 
 /* $Source$ */
-/* $Revision$ */
-/* $Date$ */
+/* $Revision: 0.39 $ */
+/* $Date: 2006-04-06 19:49:59 +0000 $ */
