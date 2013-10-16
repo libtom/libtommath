@@ -42,6 +42,7 @@
 #define BN_MP_EXPTMOD_C
 #define BN_MP_EXPTMOD_FAST_C
 #define BN_MP_EXTEUCLID_C
+#define BN_MP_FACTORIAL_C
 #define BN_MP_FFT_MUL_C
 #define BN_MP_FFT_SQR_C
 #define BN_MP_FREAD_C
@@ -84,6 +85,7 @@
 #define BN_MP_PRIME_NEXT_PRIME_C
 #define BN_MP_PRIME_RABIN_MILLER_TRIALS_C
 #define BN_MP_PRIME_RANDOM_EX_C
+#define BN_MP_PRIMORIAL_C
 #define BN_MP_RADIX_SIZE_C
 #define BN_MP_RADIX_SMAP_C
 #define BN_MP_RAND_C
@@ -371,6 +373,14 @@
    #define BN_MP_NEG_C
    #define BN_MP_EXCH_C
    #define BN_MP_CLEAR_MULTI_C
+#endif
+
+#if defined(BN_MP_FACTORIAL_C)
+   #define BN_MP_SET_INT_C
+   #define BN_MP_MUL_C
+   #define BN_MP_MUL_D_C
+   #define BN_MP_SQR_C
+   #define BN_MP_PRIMORIAL_C
 #endif
 
 #if defined(BN_MP_FFT_MUL_C)
@@ -681,6 +691,13 @@
    #define BN_MP_DIV_2_C
    #define BN_MP_MUL_2_C
    #define BN_MP_ADD_D_C
+#endif
+
+#if defined(BN_MP_PRIMORIAL_C)
+   #define BN_MP_MUL_C
+   #define BN_MP_MUL_D_C
+   #define BN_MP_SET_INT_C
+   #define BN_MP_COPY_C
 #endif
 
 #if defined(BN_MP_RADIX_SIZE_C)
