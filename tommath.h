@@ -193,7 +193,7 @@ typedef int ltm_prime_callback(unsigned char *dst, int len, void *dat);
 #define SIGN(m)    ((m)->sign)
 
 /* error code to char* string */
-const char *mp_error_to_string(int code);
+char *mp_error_to_string(int code);
 
 /* ---> init and deinit bignum functions <--- */
 /* init a bignum */
@@ -572,15 +572,21 @@ int fast_mp_montgomery_reduce(mp_int *a, mp_int *m, mp_digit mp);
 int mp_exptmod_fast(mp_int *G, mp_int *X, mp_int *P, mp_int *Y, int mode);
 int s_mp_exptmod (mp_int * G, mp_int * X, mp_int * P, mp_int * Y, int mode);
 void bn_reverse(unsigned char *s, int len);
+
 int dp_to_fft(mp_int *a, double **fa,
               mp_int *b, double **fb, int *length);
 int dp_to_fft_single(mp_int *a, double **fa, int *length);
 int fft_to_dp(double *fft_array, mp_int *a,int length);
-
 int fft(double *x, double *y, unsigned long length);
 int fft_sqr(double *x, unsigned long length);
 int mp_fft_mul(mp_int *a, mp_int *b, mp_int *c);
 int mp_fft_sqr(mp_int *a,mp_int *c);
+
+unsigned long *fill_prime_list(unsigned long start, unsigned long stop,
+                                                          unsigned long *R);
+void mp_primorial(unsigned long a, unsigned long b, mp_int *result);
+unsigned long prime_divisors(unsigned long n,unsigned long p);
+int mp_factorial(unsigned long n, mp_int *result);
 
 extern const char *mp_s_rmap;
 
