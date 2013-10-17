@@ -110,6 +110,7 @@
 #define BN_MP_SQRT_C
 #define BN_MP_SUB_C
 #define BN_MP_SUB_D_C
+#define BN_MP_SUBFACTORIAL_C
 #define BN_MP_SUBMOD_C
 #define BN_MP_TO_SIGNED_BIN_C
 #define BN_MP_TO_SIGNED_BIN_N_C
@@ -868,6 +869,18 @@
    #define BN_MP_GROW_C
    #define BN_MP_ADD_D_C
    #define BN_MP_CLAMP_C
+#endif
+
+#if defined (BN_MP_SUBFACTORIAL_C)
+   #define BN_MP_INIT_MULTI_C
+   #define BN_MP_SET_INT_C
+   #define BN_MP_MUL_D_C
+   #define BN_MP_ADD_D_C
+   #define BN_MP_ADD_C
+   #define BN_MP_COPY_C
+   #define BN_MP_CLEAR_MULTI_C
+
+
 #endif
 
 #if defined(BN_MP_SUBMOD_C)
