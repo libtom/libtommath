@@ -572,7 +572,7 @@ int fast_mp_montgomery_reduce(mp_int *a, mp_int *m, mp_digit mp);
 int mp_exptmod_fast(mp_int *G, mp_int *X, mp_int *P, mp_int *Y, int mode);
 int s_mp_exptmod (mp_int * G, mp_int * X, mp_int * P, mp_int * Y, int mode);
 void bn_reverse(unsigned char *s, int len);
-
+/* Additions by CZ */
 int dp_to_fft(mp_int *a, double **fa,
               mp_int *b, double **fb, int *length);
 int dp_to_fft_single(mp_int *a, double **fa, int *length);
@@ -587,6 +587,10 @@ unsigned long *fill_prime_list(unsigned long start, unsigned long stop,
 void mp_primorial(unsigned long a, unsigned long b, mp_int *result);
 unsigned long prime_divisors(unsigned long n,unsigned long p);
 int mp_factorial(unsigned long n, mp_int *result);
+
+int mp_subfactorial(unsigned long n, mp_int *result);
+
+/* End of additions by CZ */
 
 extern const char *mp_s_rmap;
 
