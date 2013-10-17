@@ -85,7 +85,8 @@ bn_mp_prime_random_ex.o bn_mp_get_int.o bn_mp_sqrt.o bn_mp_is_square.o bn_mp_ini
 bn_mp_init_set_int.o bn_mp_invmod_slow.o bn_mp_prime_rabin_miller_trials.o \
 bn_mp_to_signed_bin_n.o bn_mp_to_unsigned_bin_n.o\
 bn_mp_fft.o bn_mp_fft_mul.o bn_mp_fft_sqr.o\
-bn_mp_factorial.o bn_mp_primorial.o
+bn_mp_factorial.o bn_mp_primorial.o\
+bn_mp_subfactorial.o
 
 $(LIBNAME):  $(OBJECTS)
 	$(AR) $(ARFLAGS) $@ $(OBJECTS)
