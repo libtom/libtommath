@@ -161,9 +161,6 @@ static mp_int *primorial__lowlevel(unsigned long a, unsigned long b ,
 {
   unsigned long  c;
   mp_word prod;
-
-  mp_init(&p_temp);
-
   mp_int ta,tb;
   
   if( b == a){
@@ -202,8 +199,11 @@ static mp_int *primorial__lowlevel(unsigned long a, unsigned long b ,
   return &p_temp;
 }
 void mp_primorial(unsigned long a, unsigned long b, mp_int *result){
-    unsigned long  r=0;
+    unsigned long  r=0; 
+    mp_init(&p_temp);
     primelist = fill_prime_list(a+1, b+1, &r);
-    *result = *primorial__lowlevel(0,r-1,1);
+    primorial__lowlevel(0,r-1,1);
+    mp_copy(&p_temp,result);
+    mp_clear(&p_temp);
 }
 #endif
