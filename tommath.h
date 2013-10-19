@@ -585,10 +585,56 @@ int mp_fft_sqr(mp_int *a,mp_int *c);
 unsigned long *fill_prime_list(unsigned long start, unsigned long stop,
                                                           unsigned long *R);
 void mp_primorial(unsigned long a, unsigned long b, mp_int *result);
+
+
+/* A general bitset, can be used elsewhere, too */
+#   define ERAT_BITS (sizeof(uint32_t)*CHAR_BIT)
+#   define GET_BIT(s,n)  ((*(s+(n/ERAT_BITS)) &   ( 1<<( n % ERAT_BITS ))) != 0)
+#   define SET_BIT(s,n)   (*(s+(n/ERAT_BITS)) |=  ( 1<<( n % ERAT_BITS )))
+#   define CLEAR_BIT(s,n) (*(s+(n/ERAT_BITS)) &= ~( 1<<( n % ERAT_BITS )))
+#   define TOG_BIT(s,n)   (*(s+(n/ERAT_BITS)) ^=  ( 1<<( n % ERAT_BITS )))
+/* bst.size is the size in bits, the overall size might be bigger */
+typedef struct bitset_t {
+    uint32_t size;
+    uint32_t *content;
+} bitset_t;
+#   define bitset_alloc(bst, n) \
+  do {\
+      (bst)->content=malloc(( n /(sizeof(uint32_t)) + 1 ));\
+      if ((bst)->content == NULL) {\
+          fprintf(stderr, "memory allocation for bitset failed");\
+          exit(EXIT_FAILURE);\
+        }\
+      (bst)->size = n;\
+  } while (0)
+#   define bitset_size(bst)  ((bst)->size)
+#   define bitset_setall(bst) memset((bst)->content,~0lu,\
+   (bst->size /(sizeof(uint32_t) ) +1 ))
+#   define bitset_clearall(bst) memset((bst)->content,0,\
+   (bst->size /(sizeof(uint32_t) ) +1 ))
+#   define bitset_clear(bst,n) CLEAR_BIT((bst)->content, n)
+#   define bitset_set(bst,n)     SET_BIT((bst)->content, n)
+#   define bitset_get(bst,n)     GET_BIT((bst)->content, n)
+#   define bitset_free(bst) \
+  do {\
+     free((bst)->content);\
+     free(bst);\
+  } while (0)
+
+uint32_t bitset_nextset(bitset_t * bst, uint32_t n);
+uint32_t bitset_prevset(bitset_t * bst, uint32_t n);
+void eratosthenes(bitset_t * bst);
+
 unsigned long prime_divisors(unsigned long n,unsigned long p);
 int mp_factorial(unsigned long n, mp_int *result);
 
 int mp_subfactorial(unsigned long n, mp_int *result);
+
+int mp_highbit(mp_int * a);
+int mp_lowbit(mp_int * a);
+int mp_isdivisible_d(mp_int * a, mp_digit d);
+int mp_isdivisible(mp_int * a, mp_int * d);
+int mp_isge32b(mp_int * a);
 
 /* End of additions by CZ */
 
