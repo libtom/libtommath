@@ -3,12 +3,12 @@
 int mp_isge32b(mp_int * a)
 {
     if (a->used == 1) {
-        if (DIGIT_BIT >= 32) {
-            if(a->dp[0] >= ((1LLU)<<32)){
-              return MP_YES;
-            }
-        }
-        return MP_NO;
+#ifdef MP_64BIT
+      if(a->dp[0] >= 0xffffffffllu)){
+           return MP_YES;
+      }
+#endif
+      return MP_NO;
     }
     return MP_YES;
 }
