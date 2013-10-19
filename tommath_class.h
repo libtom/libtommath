@@ -62,6 +62,7 @@
 #define BN_MP_ISDIVISIBLE_D_C
 #define BN_MP_ISDIVISIBLE_C
 #define BN_MP_ISGE32B_C
+#define BN_MP_ISPERFPOWER_C
 #define BN_MP_IS_SQUARE_C
 #define BN_MP_JACOBI_C
 #define BN_MP_KARATSUBA_MUL_C
@@ -502,6 +503,15 @@
 #if defined(BN_MP_ISGE32B_C)
    #define BN_MP_MOD_D_C
 #endif
+
+#if defined(BN_MP_ISPERFPOWER_C)
+  #define BN_MP_IS_SQUARE_C
+  #define BN_MP_PRIMORIAL_C
+  #define BN_MP_CMP_C
+  #define BN_MP_EXPT_D_C
+  #define BN_MP_CLEAR_MULTI_C
+#endif
+
 
 #if defined(BN_MP_IS_SQUARE_C)
    #define BN_MP_MOD_D_C

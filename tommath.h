@@ -20,7 +20,8 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <limits.h>
-
+#   include <stdint.h>
+#   include <inttypes.h>
 #include <tommath_class.h>
 
 #ifndef MIN
@@ -635,6 +636,8 @@ int mp_lowbit(mp_int * a);
 int mp_isdivisible_d(mp_int * a, mp_digit d);
 int mp_isdivisible(mp_int * a, mp_int * d);
 int mp_isge32b(mp_int * a);
+
+int mp_isperfpower(mp_int * z, mp_int * rootout, mp_int * exponent);
 
 /* End of additions by CZ */
 
