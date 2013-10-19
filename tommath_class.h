@@ -50,6 +50,7 @@
 #define BN_MP_GCD_C
 #define BN_MP_GET_INT_C
 #define BN_MP_GROW_C
+#define BN_MP_HIGHBIT_C
 #define BN_MP_INIT_C
 #define BN_MP_INIT_COPY_C
 #define BN_MP_INIT_MULTI_C
@@ -58,11 +59,15 @@
 #define BN_MP_INIT_SIZE_C
 #define BN_MP_INVMOD_C
 #define BN_MP_INVMOD_SLOW_C
+#define BN_MP_ISDIVISIBLE_D_C
+#define BN_MP_ISDIVISIBLE_C
+#define BN_MP_ISGE32B_C
 #define BN_MP_IS_SQUARE_C
 #define BN_MP_JACOBI_C
 #define BN_MP_KARATSUBA_MUL_C
 #define BN_MP_KARATSUBA_SQR_C
 #define BN_MP_LCM_C
+#define BN_MP_LOWBIT_C
 #define BN_MP_LSHD_C
 #define BN_MP_MOD_C
 #define BN_MP_MOD_2D_C
@@ -431,6 +436,10 @@
 #if defined(BN_MP_GROW_C)
 #endif
 
+#if defined(BN_MP_HIGHBIT_C)
+   #define BN_MP_COUNT_BITS_C
+#endif
+
 #if defined(BN_MP_INIT_C)
 #endif
 
@@ -483,6 +492,17 @@
    #define BN_MP_CLEAR_MULTI_C
 #endif
 
+#if defined(BN_MP_ISDIVISIBLE_C)
+   #define BN_MP_MOD_C
+#endif
+
+#if defined(BN_MP_ISDIVISIBLE_D_C)
+#endif
+
+#if defined(BN_MP_ISGE32B_C)
+   #define BN_MP_MOD_D_C
+#endif
+
 #if defined(BN_MP_IS_SQUARE_C)
    #define BN_MP_MOD_D_C
    #define BN_MP_INIT_SET_INT_C
@@ -532,6 +552,9 @@
    #define BN_MP_DIV_C
    #define BN_MP_MUL_C
    #define BN_MP_CLEAR_MULTI_C
+#endif
+
+#if defined(BN_MP_LOWBIT_C)
 #endif
 
 #if defined(BN_MP_LSHD_C)
