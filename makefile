@@ -86,7 +86,8 @@ bn_mp_init_set_int.o bn_mp_invmod_slow.o bn_mp_prime_rabin_miller_trials.o \
 bn_mp_to_signed_bin_n.o bn_mp_to_unsigned_bin_n.o\
 bn_mp_fft.o bn_mp_fft_mul.o bn_mp_fft_sqr.o\
 bn_mp_factorial.o bn_mp_primorial.o\
-bn_mp_subfactorial.o
+bn_mp_subfactorial.o\
+bn_mp_lowbit.o bn_mp_highbit.o bn_mp_isdivible_d.o bn_mp_isdivible.o bn_mp_isge32b.o
 
 $(LIBNAME):  $(OBJECTS)
 	$(AR) $(ARFLAGS) $@ $(OBJECTS)
