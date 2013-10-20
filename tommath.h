@@ -639,6 +639,9 @@ int mp_isge32b(mp_int * a);
 
 int mp_isperfpower(mp_int * z, mp_int * rootout, mp_int * exponent);
 
+mp_int *mp_max(mp_int *a, mp_int *b);
+mp_int *mp_min(mp_int *a, mp_int *b);
+
 /* End of additions by CZ */
 
 extern const char *mp_s_rmap;

@@ -70,6 +70,8 @@
 #define BN_MP_LCM_C
 #define BN_MP_LOWBIT_C
 #define BN_MP_LSHD_C
+#define BN_MP_MAX_C
+#define BN_MP_MIN_C
 #define BN_MP_MOD_C
 #define BN_MP_MOD_2D_C
 #define BN_MP_MOD_D_C
@@ -570,6 +572,14 @@
 #if defined(BN_MP_LSHD_C)
    #define BN_MP_GROW_C
    #define BN_MP_RSHD_C
+#endif
+
+#if defined(BN_MP_MAX_C)
+   #define BN_MP_CMP_C
+#endif
+
+#if defined(BN_MP_MAX_C)
+   #define BN_MP_CMP_C
 #endif
 
 #if defined(BN_MP_MOD_C)
