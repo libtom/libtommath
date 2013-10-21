@@ -89,7 +89,8 @@ bn_mp_factorial.o bn_mp_primorial.o\
 bn_mp_subfactorial.o\
 bn_mp_lowbit.o bn_mp_highbit.o bn_mp_isdivisible_d.o bn_mp_isdivisible.o bn_mp_isge32b.o\
 bn_mp_isperfpower.o\
-bn_mp_max.o bn_mp_min.o
+bn_mp_max.o bn_mp_min.o\
+bn_mp_expt.o
 
 $(LIBNAME):  $(OBJECTS)
 	$(AR) $(ARFLAGS) $@ $(OBJECTS)
