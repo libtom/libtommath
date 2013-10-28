@@ -9,7 +9,7 @@ static long highbit(unsigned  long n){
   return r;
 }
 
-unsigned long prime_divisors(unsigned long n,unsigned long p){
+unsigned long mp_prime_divisors(unsigned long n,unsigned long p){
     unsigned long q,m;
     q = n;
     m = 0LU;
@@ -33,19 +33,19 @@ static int factorial_borwein(unsigned long n, mp_int *result){
     mp_int temp;
 
     unsigned long  r=0;
-    p_list = fill_prime_list(3, n+1, &r);
+    p_list = mp_fill_prime_list(3, n+1, &r);
     exp_list = malloc(sizeof(unsigned long)* (r+1));
     if(exp_list == NULL){ return MP_MEM;}
 
     mp_set_int(result,1);
 
-    shift = (int)prime_divisors(n,2LU);
+    shift = (int)mp_prime_divisors(n,2LU);
 
     cut = n / 2 ;
 
     for(p = 0; p < r; p++) {
         if(p_list[p] > cut) break;
-        exp_list[p] = prime_divisors(n,p_list[p]);
+        exp_list[p] = mp_prime_divisors(n,p_list[p]);
     }
     mp_init(&temp);
     bit = (int)highbit(exp_list[0]);
@@ -116,7 +116,7 @@ static int factorial_binsplit(unsigned long n, mp_int *result){
       mp_set_int(&r,1);
       fbinsplit2a(n, &p, &r);
       mp_copy(&r,result);
-      mp_mul_2d (&r,(int)prime_divisors(n,2LU) , result);
+      mp_mul_2d (&r,(int)mp_prime_divisors(n,2LU) , result);
       return MP_OKAY;
 }
 #ifndef MP_DIGIT_SIZE

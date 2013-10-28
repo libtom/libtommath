@@ -38,7 +38,7 @@ static int highbit(int n){
   return r;
 }
 /* Transform multiplicands into floating point numbers with half sized digits*/
-int dp_to_fft(mp_int *a, double **fa,
+int mp_dp_to_fft(mp_int *a, double **fa,
               mp_int *b, double **fb, int *length){
    int length_a, length_b, length_needed, i,j, hb;
    double *fft_array_a,*fft_array_b;
@@ -94,7 +94,7 @@ int dp_to_fft(mp_int *a, double **fa,
 }
 
 /* same as dp_to_fft() for a single multiplicand for squaring */
-int dp_to_fft_single(mp_int *a, double **fa, int *length){
+int mp_dp_to_fft_single(mp_int *a, double **fa, int *length){
    int length_a,  length_needed, i,j, hb;
    double *fft_array_a;
    length_a = a->used;
@@ -122,7 +122,7 @@ int dp_to_fft_single(mp_int *a, double **fa, int *length){
    return MP_OKAY;
 }
 
-int fft_to_dp(double *fft_array, mp_int *a,int length){
+int mp_fft_to_dp(double *fft_array, mp_int *a,int length){
     int new_length, i,j,e;
     mp_word carry,temp;
 
@@ -452,7 +452,7 @@ static void fht_autoconv_core(double *f,unsigned long n, double v/*=0.0*/){
   return;
 }
 /* Public: FHT convolution */
-int fft(double *x, double *y, unsigned long length){
+int mp_fft(double *x, double *y, unsigned long length){
   unsigned long n;
   n = (length);
   if(n < 2) return MP_VAL;
@@ -463,7 +463,7 @@ int fft(double *x, double *y, unsigned long length){
   return MP_OKAY;
 }
 /* Public: FHT auto-convolution */
-int fft_sqr(double *x, unsigned long length){
+int mp_fft_sqr_d(double *x, unsigned long length){
   unsigned long n;
   n = (length);
   if(n < 2) return MP_VAL;

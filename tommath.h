@@ -574,16 +574,16 @@ int mp_exptmod_fast(mp_int *G, mp_int *X, mp_int *P, mp_int *Y, int mode);
 int s_mp_exptmod (mp_int * G, mp_int * X, mp_int * P, mp_int * Y, int mode);
 void bn_reverse(unsigned char *s, int len);
 /* Additions by CZ */
-int dp_to_fft(mp_int *a, double **fa,
+int mp_dp_to_fft(mp_int *a, double **fa,
               mp_int *b, double **fb, int *length);
-int dp_to_fft_single(mp_int *a, double **fa, int *length);
-int fft_to_dp(double *fft_array, mp_int *a,int length);
-int fft(double *x, double *y, unsigned long length);
-int fft_sqr(double *x, unsigned long length);
+int mp_dp_to_fft_single(mp_int *a, double **fa, int *length);
+int mp_fft_to_dp(double *fft_array, mp_int *a,int length);
+int mp_fft(double *x, double *y, unsigned long length);
+int mp_fft_sqr_d(double *x, unsigned long length);
 int mp_fft_mul(mp_int *a, mp_int *b, mp_int *c);
 int mp_fft_sqr(mp_int *a,mp_int *c);
 
-unsigned long *fill_prime_list(unsigned long start, unsigned long stop,
+unsigned long *mp_fill_prime_list(unsigned long start, unsigned long stop,
                                                           unsigned long *R);
 void mp_primorial(unsigned long a, unsigned long b, mp_int *result);
 
@@ -595,11 +595,11 @@ void mp_primorial(unsigned long a, unsigned long b, mp_int *result);
 #   define CLEAR_BIT(s,n) (*(s+(n/ERAT_BITS)) &= ~( 1<<( n % ERAT_BITS )))
 #   define TOG_BIT(s,n)   (*(s+(n/ERAT_BITS)) ^=  ( 1<<( n % ERAT_BITS )))
 /* bst.size is the size in bits, the overall size might be bigger */
-typedef struct bitset_t {
+typedef struct mp_bitset_t {
     uint32_t size;
     uint32_t *content;
-} bitset_t;
-#   define bitset_alloc(bst, n) \
+} mp_bitset_t;
+#   define mp_bitset_alloc(bst, n) \
   do {\
       (bst)->content=malloc(( n /(sizeof(uint32_t)) + 1 ));\
       if ((bst)->content == NULL) {\
@@ -608,25 +608,25 @@ typedef struct bitset_t {
         }\
       (bst)->size = n;\
   } while (0)
-#   define bitset_size(bst)  ((bst)->size)
-#   define bitset_setall(bst) memset((bst)->content,~0lu,\
+#   define mp_bitset_size(bst)  ((bst)->size)
+#   define mp_bitset_setall(bst) memset((bst)->content,~0lu,\
    (bst->size /(sizeof(uint32_t) ) +1 ))
-#   define bitset_clearall(bst) memset((bst)->content,0,\
+#   define mp_bitset_clearall(bst) memset((bst)->content,0,\
    (bst->size /(sizeof(uint32_t) ) +1 ))
-#   define bitset_clear(bst,n) CLEAR_BIT((bst)->content, n)
-#   define bitset_set(bst,n)     SET_BIT((bst)->content, n)
-#   define bitset_get(bst,n)     GET_BIT((bst)->content, n)
-#   define bitset_free(bst) \
+#   define mp_bitset_clear(bst,n) CLEAR_BIT((bst)->content, n)
+#   define mp_bitset_set(bst,n)     SET_BIT((bst)->content, n)
+#   define mp_bitset_get(bst,n)     GET_BIT((bst)->content, n)
+#   define mp_bitset_free(bst) \
   do {\
      free((bst)->content);\
      free(bst);\
   } while (0)
 
-uint32_t bitset_nextset(bitset_t * bst, uint32_t n);
-uint32_t bitset_prevset(bitset_t * bst, uint32_t n);
-void eratosthenes(bitset_t * bst);
+uint32_t mp_bitset_nextset(mp_bitset_t * bst, uint32_t n);
+uint32_t mp_bitset_prevset(mp_bitset_t * bst, uint32_t n);
+void mp_eratosthenes(mp_bitset_t * bst);
 
-unsigned long prime_divisors(unsigned long n,unsigned long p);
+unsigned long mp_prime_divisors(unsigned long n,unsigned long p);
 int mp_factorial(unsigned long n, mp_int *result);
 
 int mp_subfactorial(unsigned long n, mp_int *result);

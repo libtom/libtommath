@@ -37,15 +37,15 @@ int mp_fft_sqr(mp_int *a,mp_int *c){
     return MP_OKAY; 
   }
 
-  if( ( e = dp_to_fft_single(a, &fa, &length)) != MP_OKAY){
+  if( ( e = mp_dp_to_fft_single(a, &fa, &length)) != MP_OKAY){
     if(fa != NULL) free(fa);
     return e;
   }
-  if( ( e = fft_sqr(fa, length)) != MP_OKAY){
+  if( ( e = mp_fft_sqr_d(fa, length)) != MP_OKAY){
     if(fa != NULL) free(fa);
     return e;
   }
-  if( ( e = fft_to_dp(fa, c, length)) != MP_OKAY){
+  if( ( e = mp_fft_to_dp(fa, c, length)) != MP_OKAY){
     if(fa != NULL) free(fa);
     return e;
   } 

@@ -115,7 +115,7 @@ static int mp_issquare(mp_int * arg, int *ret, mp_int * t)
 int mp_isperfpower(mp_int * z, mp_int * rootout, mp_int * exponent)
 {
     mp_int root, power, tempr;
-    bitset_t *bst;
+    mp_bitset_t *bst;
     unsigned long p, max, highbit, lowbit;
     int ret, e;
     p = 2;
@@ -165,11 +165,11 @@ int mp_isperfpower(mp_int * z, mp_int * rootout, mp_int * exponent)
     }
 
     /* find perfection in higher powers */
-    bst = malloc(sizeof(bitset_t));
+    bst = malloc(sizeof(mp_bitset_t));
     if (bst == NULL) {
         return MP_MEM;
     }
-    bitset_alloc(bst, max);
+    mp_bitset_alloc(bst, max);
     /* 
        libtommath contains a small table (ltm_prime_tab) with the first 256
        primes, the largest is therefore 1619 which is not enough, sadly.
@@ -184,9 +184,9 @@ int mp_isperfpower(mp_int * z, mp_int * rootout, mp_int * exponent)
        BTW: it is nigh impossible to get specifications from the manufactoring
        companies, they are quite mute about their L* caches.
      */
-    eratosthenes(bst);
+    mp_eratosthenes(bst);
 
-    while ((p = bitset_nextset(bst, p + 1)) < max) {
+    while ((p = mp_bitset_nextset(bst, p + 1)) < max) {
         if ((e = mp_n_root(z, p, &root)) != MP_OKAY) {
             return e;
         }
@@ -208,7 +208,7 @@ int mp_isperfpower(mp_int * z, mp_int * rootout, mp_int * exponent)
                 }
             }
             mp_clear_multi(&tempr, &root, &power,NULL);
-            bitset_free(bst);
+            mp_bitset_free(bst);
             return MP_YES;
         }
     }
@@ -223,7 +223,7 @@ int mp_isperfpower(mp_int * z, mp_int * rootout, mp_int * exponent)
         }
     }
     mp_clear_multi(&root, &power,NULL);
-    bitset_free(bst);
+    mp_bitset_free(bst);
     return MP_NO;
 }
 

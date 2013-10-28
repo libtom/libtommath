@@ -45,17 +45,17 @@ int mp_fft_mul(mp_int *a, mp_int *b, mp_int *c){
     return MP_OKAY; 
   }
 
-  if( ( e = dp_to_fft(a, &fa, b, &fb, &length)) != MP_OKAY){
+  if( ( e = mp_dp_to_fft(a, &fa, b, &fb, &length)) != MP_OKAY){
     if(fa != NULL) free(fa);
     if(fb != NULL) free(fb);
     return e;
   }
-  if( ( e = fft(fa, fb, length)) != MP_OKAY){
+  if( ( e = mp_fft(fa, fb, length)) != MP_OKAY){
     if(fa != NULL) free(fa);
     if(fb != NULL) free(fb);
     return e;
   }
-  if( ( e = fft_to_dp(fb, c, length)) != MP_OKAY){
+  if( ( e = mp_fft_to_dp(fb, c, length)) != MP_OKAY){
     if(fa != NULL) free(fa);
     if(fb != NULL) free(fb);
     return e;

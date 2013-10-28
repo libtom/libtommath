@@ -31,17 +31,17 @@ static uint32_t isqrt(uint32_t n)
     }
     return root;
 }
-uint32_t bitset_nextset(bitset_t * bst, uint32_t n)
+uint32_t mp_bitset_nextset(mp_bitset_t * bst, uint32_t n)
 {
-    while ((n < bitset_size(bst)) && (!bitset_get(bst, n))) {
+    while ((n < mp_bitset_size(bst)) && (!mp_bitset_get(bst, n))) {
         n++;
     }
     return n;
 }
 
-uint32_t bitset_prevset(bitset_t * bst, uint32_t n)
+uint32_t mp_bitset_prevset(mp_bitset_t * bst, uint32_t n)
 {
-    while (n > 1 && (!bitset_get(bst, n))) {
+    while (n > 1 && (!mp_bitset_get(bst, n))) {
         n--;
     }
     return n;
@@ -51,35 +51,35 @@ uint32_t bitset_prevset(bitset_t * bst, uint32_t n)
  * Standard method, quite antique now, but good enough for the handfull
  * of primes needed here.
  */
-void eratosthenes(bitset_t * bst)
+void mp_eratosthenes(mp_bitset_t * bst)
 {
     uint32_t n, k, r, j;
 
-    bitset_setall(bst);
-    bitset_clear(bst, 0);
-    bitset_clear(bst, 1);
+    mp_bitset_setall(bst);
+    mp_bitset_clear(bst, 0);
+    mp_bitset_clear(bst, 1);
 
-    n = bitset_size(bst);
+    n = mp_bitset_size(bst);
     r = isqrt(n);
     for (k = 4; k < n; k += 2)
-        bitset_clear(bst, k);
+        mp_bitset_clear(bst, k);
     k = 0;
-    while ((k = bitset_nextset(bst, k + 1)) < n) {
+    while ((k = mp_bitset_nextset(bst, k + 1)) < n) {
         if (k > r) {
             break;
         }
         for (j = k * k; j < n; j += k * 2) {
-            bitset_clear(bst, j);
+            mp_bitset_clear(bst, j);
         }
     }
 }
 
 #define LN_113 1.25505871293247979696870747618124469168920275806274
-unsigned long *fill_prime_list(unsigned long start, unsigned long stop,
+unsigned long *mp_fill_prime_list(unsigned long start, unsigned long stop,
                                                           unsigned long *R)
 {
 
-    bitset_t *bst;
+    mp_bitset_t *bst;
     uint32_t n, k, j,i;
     unsigned long pix,*list;
 
@@ -90,28 +90,28 @@ unsigned long *fill_prime_list(unsigned long start, unsigned long stop,
       return 0;
     }
 
-    bst = malloc(sizeof(bitset_t));
-    bitset_alloc(bst, stop);
+    bst = malloc(sizeof(mp_bitset_t));
+    mp_bitset_alloc(bst, stop);
 
-    bitset_setall(bst);
-    bitset_clear(bst, 0);
-    bitset_clear(bst, 1);
+    mp_bitset_setall(bst);
+    mp_bitset_clear(bst, 0);
+    mp_bitset_clear(bst, 1);
 
-    n = bitset_size(bst);
+    n = mp_bitset_size(bst);
     for (k = 4; k < n; k += 2)
-        bitset_clear(bst, k);
+        mp_bitset_clear(bst, k);
     k = 0;
     i = 0;
-    while ((k = bitset_nextset(bst, k + 1)) < n) {
+    while ((k = mp_bitset_nextset(bst, k + 1)) < n) {
       if(k >= start){
          list[i++] = k;
       }
         for (j = k * k; j < n; j += k * 2) {
-            bitset_clear(bst, j);
+            mp_bitset_clear(bst, j);
 
         }
     }
-    bitset_free(bst);
+    mp_bitset_free(bst);
     list = realloc(list, sizeof(unsigned long)*(i + 1));
     *R = i;
     return list;
@@ -167,7 +167,7 @@ static mp_int *primorial__lowlevel(unsigned long a, unsigned long b ,
 void mp_primorial(unsigned long a, unsigned long b, mp_int *result){
     unsigned long  r=0; 
     mp_init(&p_temp);
-    primelist = fill_prime_list(a+1, b+1, &r);
+    primelist = mp_fill_prime_list(a+1, b+1, &r);
     primorial__lowlevel(0,r-1,1);
     mp_copy(&p_temp,result);
     mp_clear(&p_temp);
