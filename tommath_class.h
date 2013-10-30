@@ -20,6 +20,7 @@
 #define BN_MP_ADD_D_C
 #define BN_MP_ADDMOD_C
 #define BN_MP_AND_C
+#define BN_MP_BINOMIAL_C
 #define BN_MP_CLAMP_C
 #define BN_MP_CLEAR_C
 #define BN_MP_CLEAR_MULTI_C
@@ -27,6 +28,7 @@
 #define BN_MP_CMP_D_C
 #define BN_MP_CMP_MAG_C
 #define BN_MP_CNT_LSB_C
+#define BN_MP_COMPUTE_FACTORED_FACTORIAL_C
 #define BN_MP_COPY_C
 #define BN_MP_COUNT_BITS_C
 #define BN_MP_DIV_C
@@ -222,6 +224,11 @@
    #define BN_MP_CLEAR_C
 #endif
 
+#if defined(BN_MP_BINOMIAL_C)
+   #define BN_MP_PRIMORIAL_C
+   #define BN_MP_COMPUTE_FACTORED_FACTORIAL_C
+#endif
+
 #if defined(BN_MP_CLAMP_C)
 #endif
 
@@ -244,6 +251,15 @@
 
 #if defined(BN_MP_CNT_LSB_C)
    #define BN_MP_ISZERO_C
+#endif
+
+#if defined(BN_MP_COMPUTE_FACTORED_FACTORIAL_C)
+   #define BN_MP_MUL_2D_C
+   #define BN_MP_INIT_C
+   #define BN_MP_MUL_D_C
+   #define BN_MP_MUL_C
+   #define BN_MP_SET_INT_C
+   #define BN_MP_SQR_C
 #endif
 
 #if defined(BN_MP_COPY_C)

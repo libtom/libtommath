@@ -90,7 +90,7 @@ bn_mp_subfactorial.o\
 bn_mp_lowbit.o bn_mp_highbit.o bn_mp_isdivisible_d.o bn_mp_isdivisible.o bn_mp_isge32b.o\
 bn_mp_isperfpower.o\
 bn_mp_max.o bn_mp_min.o\
-bn_mp_expt.o
+bn_mp_expt.o bn_mp_compute_factored_factorial.o bn_mp_binomial.o
 
 $(LIBNAME):  $(OBJECTS)
 	$(AR) $(ARFLAGS) $@ $(OBJECTS)

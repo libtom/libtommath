@@ -644,6 +644,11 @@ mp_int *mp_min(mp_int *a, mp_int *b);
 
 int mp_expt(mp_int *a, mp_int *b, mp_int *c);
 
+int mp_compute_factored_factorial(unsigned long *f, unsigned long f_length,
+                                  mp_int *c,   unsigned long stop);
+
+int mp_binomial(unsigned long n,unsigned long  k, mp_int *c);
+
 /* End of additions by CZ */
 
 extern const char *mp_s_rmap;
