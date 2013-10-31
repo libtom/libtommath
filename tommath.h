@@ -655,6 +655,11 @@ int mp_doublefactorial(unsigned long n,mp_int *c);
 int mp_fibonacci(unsigned long n, mp_int * r);
 /* Lucas numbers */
 int mp_lucas(unsigned long n, mp_int * c);
+
+int mp_euler(unsigned long n, mp_int * c);
+void mp_euler_free(void);
+
+
 /* End of additions by CZ */
 
 extern const char *mp_s_rmap;

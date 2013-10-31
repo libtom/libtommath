@@ -41,6 +41,7 @@
 #define BN_MP_DR_IS_MODULUS_C
 #define BN_MP_DR_REDUCE_C
 #define BN_MP_DR_SETUP_C
+#define BN_MP_EULER_C
 #define BN_MP_EXCH_C
 #define BN_MP_EXPT_D_C
 #define BN_MP_EXPT_C
@@ -355,6 +356,14 @@
 #endif
 
 #if defined(BN_MP_DR_SETUP_C)
+#endif
+
+#if defined(BN_MP_EULER_C)
+   #define BN_MP_INIT_C
+   #define BN_MP_SET_INT_C
+   #define BN_MP_MUL_D_C
+   #define BN_MP_ADD_C
+   #define BN_MP_CLEAR_C
 #endif
 
 #if defined(BN_MP_EXCH_C)
