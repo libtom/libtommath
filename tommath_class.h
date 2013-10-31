@@ -50,6 +50,7 @@
 #define BN_MP_FACTORIAL_C
 #define BN_MP_FFT_MUL_C
 #define BN_MP_FFT_SQR_C
+#define BN_MP_FIBONACCI_C
 #define BN_MP_FREAD_C
 #define BN_MP_FWRITE_C
 #define BN_MP_GCD_C
@@ -75,6 +76,7 @@
 #define BN_MP_LCM_C
 #define BN_MP_LOWBIT_C
 #define BN_MP_LSHD_C
+#define BN_MP_LUCAS_C
 #define BN_MP_MAX_C
 #define BN_MP_MIN_C
 #define BN_MP_MOD_C
@@ -446,6 +448,17 @@
    #define BN_MP_CLAMP_C
 #endif
 
+#if defined(BN_MP_FIBONACCI_C)
+   #define BN_MP_INIT_MULTI_C
+   #define BN_MP_SET_C
+   #define BN_MP_COPY_C
+   #define BN_MP_MU_2d_C
+   #define BN_MP_MUL_C
+   #define BN_MP_ADD_C
+   #define BN_MP_SQR_C
+   #define BN_MP_CLEAR_MULTI_C
+#endif
+
 #if defined(BN_MP_FREAD_C)
    #define BN_MP_ZERO_C
    #define BN_MP_S_RMAP_C
@@ -612,6 +625,10 @@
 #if defined(BN_MP_LSHD_C)
    #define BN_MP_GROW_C
    #define BN_MP_RSHD_C
+#endif
+
+#if defined(BN_MP_LUCAS_C)
+   #define BN_MP_FIBONACCI_C
 #endif
 
 #if defined(BN_MP_MAX_C)
