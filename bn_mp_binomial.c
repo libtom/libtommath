@@ -105,7 +105,7 @@ static int mp_comb(unsigned long n, unsigned long k,mp_int *c){
 
 
 int mp_binomial(unsigned long n,unsigned long  k, mp_int *c){
- /*  Idea shamelssly stolen from Calc.
+ /*  Idea shamelessly stolen from Calc.
       Hey, wait, I wrote that calc-script myself!
       Oh well, my age's starting to show, I'm afraid ;-)*/
   
