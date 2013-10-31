@@ -21,6 +21,7 @@
 #define BN_MP_ADDMOD_C
 #define BN_MP_AND_C
 #define BN_MP_BINOMIAL_C
+#define BN_MP_CATALAN_C
 #define BN_MP_CLAMP_C
 #define BN_MP_CLEAR_C
 #define BN_MP_CLEAR_MULTI_C
@@ -227,6 +228,10 @@
 #if defined(BN_MP_BINOMIAL_C)
    #define BN_MP_PRIMORIAL_C
    #define BN_MP_COMPUTE_FACTORED_FACTORIAL_C
+#endif
+
+#if defined(BN_MP_CATALAN_C)
+   #define BN_MP_BINOMIAL_C
 #endif
 
 #if defined(BN_MP_CLAMP_C)
