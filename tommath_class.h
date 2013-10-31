@@ -37,6 +37,7 @@
 #define BN_MP_DIV_2D_C
 #define BN_MP_DIV_3_C
 #define BN_MP_DIV_D_C
+#define BN_MP_DOUBLEFACTORIAL_C
 #define BN_MP_DR_IS_MODULUS_C
 #define BN_MP_DR_REDUCE_C
 #define BN_MP_DR_SETUP_C
@@ -332,6 +333,13 @@
    #define BN_MP_CLAMP_C
    #define BN_MP_EXCH_C
    #define BN_MP_CLEAR_C
+#endif
+
+#if defined(BN_MP_DOUBLEFACTORIAL_C)
+   #define BN_MP_SET_C
+   #define BN_MP_PRIMORIAL_C
+   #define BN_MP_FACTORIAL_C
+   #define BN_MP_MUL_2D_C
 #endif
 
 #if defined(BN_MP_DR_IS_MODULUS_C)

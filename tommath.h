@@ -649,6 +649,8 @@ int mp_compute_factored_factorial(unsigned long *f, unsigned long f_length,
 
 int mp_binomial(unsigned long n,unsigned long  k, mp_int *c);
 int mp_catalan(unsigned long n, mp_int *c);
+/* for positve n only for now */
+int mp_doublefactorial(unsigned long n,mp_int *c);
 /* End of additions by CZ */
 
 extern const char *mp_s_rmap;
