@@ -1,6 +1,7 @@
 #include <tommath.h>
 #ifdef BN_MP_CATALAN_C
 int mp_catalan(unsigned long n, mp_int *c){
+  int e;
   if(n == 0 || n == 1){
     if( (e = mp_set_int(c,1LU) ) != MP_OKAY){
       return e;
