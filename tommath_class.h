@@ -460,6 +460,7 @@
 #if defined(BN_MP_FIBONACCI_C)
    #define BN_MP_INIT_MULTI_C
    #define BN_MP_SET_C
+   #define BN_MP_SET_INT_C
    #define BN_MP_COPY_C
    #define BN_MP_MU_2d_C
    #define BN_MP_MUL_C

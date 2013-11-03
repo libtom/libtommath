@@ -1,8 +1,8 @@
 #include <tommath.h>
 #ifdef BN_MP_FIBONACCI_C
-#if 0
+
 /* max n = 47 */
-static unsigned long fibonacci(unsigned long n)
+static unsigned long _fibonacci(unsigned long n)
 {
   unsigned long i = 1, j = 0, k, l;
   for (k = 1; k <= n; k++) {
@@ -12,13 +12,18 @@ static unsigned long fibonacci(unsigned long n)
   }
   return j;
 }
-#endif
+
 /* matrix expo. */
 int mp_fibonacci(unsigned long n, mp_int * r)
 {
   unsigned long i = n - 1;
   mp_int a, b, c, d, t, t1, t2, t3;
   int e;
+
+  if(n < 45){
+    mp_set_int(r,_fibonacci(n));
+    return MP_OKAY;
+  }
 
   if ((e = mp_init_multi(&a, &b, &c, &d, &t, &t1, &t2, &t3, NULL)) != MP_OKAY) {
     return e;
