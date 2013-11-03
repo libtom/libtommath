@@ -762,15 +762,15 @@
 
 #if defined(BN_MP_PELL_C)
    #define BN_MP_FPL_MATRIX
-#endif;
+#endif
 
 #if defined(BN_MP_PELL_LUCAS_C)
    #define BN_MP_FPL_MATRIX
-#endif;
+#endif
 
 #if defined(BN_MP_PELL_MODIFIED_C)
    #define BN_MP_FPL_MATRIX
-#endif;
+#endif
 
 #if defined(BN_MP_PRIME_FERMAT_C)
    #define BN_MP_CMP_D_C
