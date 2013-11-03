@@ -659,7 +659,11 @@ int mp_lucas(unsigned long n, mp_int * c);
 int mp_euler(unsigned long n, mp_int * c);
 void mp_euler_free(void);
 
-
+int mp_fpl_matrix(unsigned long n,int m11,int m12, int m21,int m22,
+                                  int M11,int M12, int M21,int M22, mp_int * r);
+int mp_pell(unsigned long n, mp_int * r);
+int mp_pell_lucas(unsigned long n, mp_int * r);
+int mp_pell_modified(unsigned long n, mp_int * r);
 /* End of additions by CZ */
 
 extern const char *mp_s_rmap;

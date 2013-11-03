@@ -52,6 +52,7 @@
 #define BN_MP_FFT_MUL_C
 #define BN_MP_FFT_SQR_C
 #define BN_MP_FIBONACCI_C
+#define BN_MP_FPL_MATRIX_C
 #define BN_MP_FREAD_C
 #define BN_MP_FWRITE_C
 #define BN_MP_GCD_C
@@ -94,6 +95,9 @@
 #define BN_MP_N_ROOT_C
 #define BN_MP_NEG_C
 #define BN_MP_OR_C
+#define BN_MP_PELL_C
+#define BN_MP_PELL_LUCAS_C
+#define BN_MP_PELL_MODIFIED_C
 #define BN_MP_PRIME_FERMAT_C
 #define BN_MP_PRIME_IS_DIVISIBLE_C
 #define BN_MP_PRIME_IS_PRIME_C
@@ -469,6 +473,15 @@
    #define BN_MP_CLEAR_MULTI_C
 #endif
 
+#if defined(BN_MP_FPL_MATRIX_C)
+   #define BN_MP_INIT_MULTI_C
+   #define BN_MP_MUL_C
+   #define BN_MP_ADD_C
+   #define BN_MP_COPY_C
+   #define BN_MP_SET_C
+   #define BN_MP_CLEAR_C
+#endif
+
 #if defined(BN_MP_FREAD_C)
    #define BN_MP_ZERO_C
    #define BN_MP_S_RMAP_C
@@ -746,6 +759,18 @@
    #define BN_MP_EXCH_C
    #define BN_MP_CLEAR_C
 #endif
+
+#if defined(BN_MP_PELL_C)
+   #define BN_MP_FPL_MATRIX
+#endif;
+
+#if defined(BN_MP_PELL_LUCAS_C)
+   #define BN_MP_FPL_MATRIX
+#endif;
+
+#if defined(BN_MP_PELL_MODIFIED_C)
+   #define BN_MP_FPL_MATRIX
+#endif;
 
 #if defined(BN_MP_PRIME_FERMAT_C)
    #define BN_MP_CMP_D_C
