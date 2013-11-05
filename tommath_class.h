@@ -18,6 +18,7 @@
 #define BN_MP_ABS_C
 #define BN_MP_ADD_C
 #define BN_MP_ADD_D_C
+#define BN_MP_ADD_FACTORED_FACTORIALS_C
 #define BN_MP_ADDMOD_C
 #define BN_MP_AND_C
 #define BN_MP_BINOMIAL_C
@@ -30,6 +31,7 @@
 #define BN_MP_CMP_MAG_C
 #define BN_MP_CNT_LSB_C
 #define BN_MP_COMPUTE_FACTORED_FACTORIAL_C
+#define BN_MP_COMPUTE_SIGNED_FACTORED_FACTORIALS_C
 #define BN_MP_COPY_C
 #define BN_MP_COUNT_BITS_C
 #define BN_MP_DIV_C
@@ -48,6 +50,7 @@
 #define BN_MP_EXPTMOD_C
 #define BN_MP_EXPTMOD_FAST_C
 #define BN_MP_EXTEUCLID_C
+#define BN_MP_FACTOR_FACTORIAL_C
 #define BN_MP_FACTORIAL_C
 #define BN_MP_FFT_C
 #define BN_MP_FFT_MUL_C
@@ -98,12 +101,14 @@
 #define BN_MP_MULMOD_C
 #define BN_MP_N_ROOT_C
 #define BN_MP_NEG_C
+#define BN_MP_NEGATE_FACTORED_FACTORIALS_C
 #define BN_MP_OR_C
 #define BN_MP_PADOVAN_C
 #define BN_MP_PELL_C
 #define BN_MP_PELL_LUCAS_C
 #define BN_MP_PELL_MODIFIED_C
 #define BN_MP_PERRIN_C
+#define BN_MP_POWER_FACTORED_FACTORIALS_C
 #define BN_MP_PRIME_FERMAT_C
 #define BN_MP_PRIME_IS_DIVISIBLE_C
 #define BN_MP_PRIME_IS_PRIME_C
@@ -138,6 +143,7 @@
 #define BN_MP_SUB_D_C
 #define BN_MP_SUBFACTORIAL_C
 #define BN_MP_SUBMOD_C
+#define BN_MP_SUBTRACT_FACTORED_FACTORIALS_C
 #define BN_MP_TO_SIGNED_BIN_C
 #define BN_MP_TO_SIGNED_BIN_N_C
 #define BN_MP_TO_UNSIGNED_BIN_C
@@ -225,6 +231,10 @@
    #define BN_MP_CLAMP_C
 #endif
 
+#if defined(BN_MP_ADD_FACTORED_FACTORIALS_C)
+   #define BN_MP_SUBTRACT_FACTORED_FACTORIALS_C
+#endif
+
 #if defined(BN_MP_ADDMOD_C)
    #define BN_MP_INIT_C
    #define BN_MP_ADD_C
@@ -294,6 +304,18 @@
    #define BN_MP_MUL_D_C
    #define BN_MP_MUL_C
    #define BN_MP_MUL_2D_C
+#endif
+
+#if defined(BN_MP_COMPUTE_SIGNED_FACTORED_FACTORIALS_C)
+   #define BN_MP_COMPUTE_FACTORED_FACTORIALS_C
+   #define BN_MP_SET_INT_C
+   #define BN_MP_MUL_D_C
+   #define BN_MP_SQR_C
+   #define BN_MP_MUL_2D_C
+   #define BN_MP_INIT_C
+   #define BN_MP_DIV_C
+   #define BN_MP_COPY_C
+   #define BN_MP_CLEAR_C
 #endif
 
 #if defined(BN_MP_COPY_C)
@@ -467,6 +489,14 @@
    #define BN_MP_NEG_C
    #define BN_MP_EXCH_C
    #define BN_MP_CLEAR_MULTI_C
+#endif
+
+#if defined(BN_MP_FACTOR_FACTORIAL_C)
+   #define BN_MP_BITSET_T_C
+   #define BN_MP_BITSET_ALLOC_C
+   #define BN_MP_ERATOSTHENES_C
+   #define BN_MP_PRIME_DIVISORS_C
+   #define BN_MP_BITSET_NEXTSET_C
 #endif
 
 #if defined(BN_MP_FACTORIAL_C)
@@ -858,6 +888,9 @@
    #define BN_MP_ISZERO_C
 #endif
 
+#if defined(BN_MP_NEGATE_FACTORED_FACTORIALS_C)
+#endif
+
 #if defined(BN_MP_OR_C)
    #define BN_MP_INIT_COPY_C
    #define BN_MP_CLAMP_C
@@ -896,6 +929,9 @@
    #define BN_MP_FWRITE_C
    #define BN_MP_CLEAR_MULTI_C
    #define BN_MP_CLEAR_C
+#endif
+
+#if defined(BN_MP_POWER_FACTORED_FACTORIALS_C)
 #endif
 
 #if defined(BN_MP_PRIME_FERMAT_C)
@@ -1164,6 +1200,9 @@
    #define BN_MP_SUB_C
    #define BN_MP_CLEAR_C
    #define BN_MP_MOD_C
+#endif
+
+#if defined(BN_MP_SUBTRACT_FACTORED_FACTORIALS_C)
 #endif
 
 #if defined(BN_MP_TO_SIGNED_BIN_C)

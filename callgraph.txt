@@ -4436,6 +4436,10 @@ BN_MP_REDUCE_2K_C
 BN_ERROR_C
 
 
+BN_MP_ADD_FACTORED_FACTORIALS_C
++--->BN_MP_SUBTRACT_FACTORED_FACTORIALS_C
+
+
 BN_MP_EXPT_D_C
 +--->BN_MP_INIT_COPY_C
 |   +--->BN_MP_COPY_C
@@ -7452,6 +7456,151 @@ BN_MP_CMP_C
 
 
 BNCORE_C
+
+
+BN_MP_COMPUTE_SIGNED_FACTORED_FACTORIALS_C
++--->BN_MP_SET_INT_C
+|   +--->BN_MP_ZERO_C
+|   +--->BN_MP_MUL_2D_C
+|   |   +--->BN_MP_COPY_C
+|   |   |   +--->BN_MP_GROW_C
+|   |   +--->BN_MP_GROW_C
+|   |   +--->BN_MP_LSHD_C
+|   |   |   +--->BN_MP_RSHD_C
+|   |   +--->BN_MP_CLAMP_C
+|   +--->BN_MP_CLAMP_C
++--->BN_MP_MUL_D_C
+|   +--->BN_MP_GROW_C
+|   +--->BN_MP_CLAMP_C
++--->BN_MP_SQR_C
+|   +--->BN_MP_FFT_SQR_C
+|   +--->BN_MP_TOOM_SQR_C
+|   |   +--->BN_MP_INIT_MULTI_C
+|   |   |   +--->BN_MP_INIT_C
+|   |   |   +--->BN_MP_CLEAR_C
+|   |   +--->BN_MP_MOD_2D_C
+|   |   |   +--->BN_MP_ZERO_C
+|   |   |   +--->BN_MP_COPY_C
+|   |   |   |   +--->BN_MP_GROW_C
+|   |   |   +--->BN_MP_CLAMP_C
+|   |   +--->BN_MP_COPY_C
+|   |   |   +--->BN_MP_GROW_C
+|   |   +--->BN_MP_RSHD_C
+|   |   |   +--->BN_MP_ZERO_C
+|   |   +--->BN_MP_MUL_2_C
+|   |   |   +--->BN_MP_GROW_C
+|   |   +--->BN_MP_ADD_C
+|   |   |   +--->BN_S_MP_ADD_C
+|   |   |   |   +--->BN_MP_GROW_C
+|   |   |   |   +--->BN_MP_CLAMP_C
+|   |   |   +--->BN_MP_CMP_MAG_C
+|   |   |   +--->BN_S_MP_SUB_C
+|   |   |   |   +--->BN_MP_GROW_C
+|   |   |   |   +--->BN_MP_CLAMP_C
+|   |   +--->BN_MP_SUB_C
+|   |   |   +--->BN_S_MP_ADD_C
+|   |   |   |   +--->BN_MP_GROW_C
+|   |   |   |   +--->BN_MP_CLAMP_C
+|   |   |   +--->BN_MP_CMP_MAG_C
+|   |   |   +--->BN_S_MP_SUB_C
+|   |   |   |   +--->BN_MP_GROW_C
+|   |   |   |   +--->BN_MP_CLAMP_C
+|   |   +--->BN_MP_DIV_2_C
+|   |   |   +--->BN_MP_GROW_C
+|   |   |   +--->BN_MP_CLAMP_C
+|   |   +--->BN_MP_MUL_2D_C
+|   |   |   +--->BN_MP_GROW_C
+|   |   |   +--->BN_MP_LSHD_C
+|   |   |   +--->BN_MP_CLAMP_C
+|   |   +--->BN_MP_DIV_3_C
+|   |   |   +--->BN_MP_INIT_SIZE_C
+|   |   |   |   +--->BN_MP_INIT_C
+|   |   |   +--->BN_MP_CLAMP_C
+|   |   |   +--->BN_MP_EXCH_C
+|   |   |   +--->BN_MP_CLEAR_C
+|   |   +--->BN_MP_LSHD_C
+|   |   |   +--->BN_MP_GROW_C
+|   |   +--->BN_MP_CLEAR_MULTI_C
+|   |   |   +--->BN_MP_CLEAR_C
+|   +--->BN_MP_KARATSUBA_SQR_C
+|   |   +--->BN_MP_INIT_SIZE_C
+|   |   |   +--->BN_MP_INIT_C
+|   |   +--->BN_MP_CLAMP_C
+|   |   +--->BN_S_MP_ADD_C
+|   |   |   +--->BN_MP_GROW_C
+|   |   +--->BN_S_MP_SUB_C
+|   |   |   +--->BN_MP_GROW_C
+|   |   +--->BN_MP_LSHD_C
+|   |   |   +--->BN_MP_GROW_C
+|   |   |   +--->BN_MP_RSHD_C
+|   |   |   |   +--->BN_MP_ZERO_C
+|   |   +--->BN_MP_ADD_C
+|   |   |   +--->BN_MP_CMP_MAG_C
+|   |   +--->BN_MP_CLEAR_C
+|   +--->BN_FAST_S_MP_SQR_C
+|   |   +--->BN_MP_GROW_C
+|   |   +--->BN_MP_CLAMP_C
+|   +--->BN_S_MP_SQR_C
+|   |   +--->BN_MP_INIT_SIZE_C
+|   |   |   +--->BN_MP_INIT_C
+|   |   +--->BN_MP_CLAMP_C
+|   |   +--->BN_MP_EXCH_C
+|   |   +--->BN_MP_CLEAR_C
++--->BN_MP_MUL_2D_C
+|   +--->BN_MP_COPY_C
+|   |   +--->BN_MP_GROW_C
+|   +--->BN_MP_GROW_C
+|   +--->BN_MP_LSHD_C
+|   |   +--->BN_MP_RSHD_C
+|   |   |   +--->BN_MP_ZERO_C
+|   +--->BN_MP_CLAMP_C
++--->BN_MP_INIT_C
++--->BN_MP_DIV_C
+|   +--->BN_MP_CMP_MAG_C
+|   +--->BN_MP_COPY_C
+|   |   +--->BN_MP_GROW_C
+|   +--->BN_MP_ZERO_C
+|   +--->BN_MP_INIT_MULTI_C
+|   |   +--->BN_MP_CLEAR_C
+|   +--->BN_MP_SET_C
+|   +--->BN_MP_COUNT_BITS_C
+|   +--->BN_MP_ABS_C
+|   +--->BN_MP_CMP_C
+|   +--->BN_MP_SUB_C
+|   |   +--->BN_S_MP_ADD_C
+|   |   |   +--->BN_MP_GROW_C
+|   |   |   +--->BN_MP_CLAMP_C
+|   |   +--->BN_S_MP_SUB_C
+|   |   |   +--->BN_MP_GROW_C
+|   |   |   +--->BN_MP_CLAMP_C
+|   +--->BN_MP_ADD_C
+|   |   +--->BN_S_MP_ADD_C
+|   |   |   +--->BN_MP_GROW_C
+|   |   |   +--->BN_MP_CLAMP_C
+|   |   +--->BN_S_MP_SUB_C
+|   |   |   +--->BN_MP_GROW_C
+|   |   |   +--->BN_MP_CLAMP_C
+|   +--->BN_MP_DIV_2D_C
+|   |   +--->BN_MP_MOD_2D_C
+|   |   |   +--->BN_MP_CLAMP_C
+|   |   +--->BN_MP_CLEAR_C
+|   |   +--->BN_MP_RSHD_C
+|   |   +--->BN_MP_CLAMP_C
+|   |   +--->BN_MP_EXCH_C
+|   +--->BN_MP_EXCH_C
+|   +--->BN_MP_CLEAR_MULTI_C
+|   |   +--->BN_MP_CLEAR_C
+|   +--->BN_MP_INIT_SIZE_C
+|   +--->BN_MP_INIT_COPY_C
+|   +--->BN_MP_LSHD_C
+|   |   +--->BN_MP_GROW_C
+|   |   +--->BN_MP_RSHD_C
+|   +--->BN_MP_RSHD_C
+|   +--->BN_MP_CLAMP_C
+|   +--->BN_MP_CLEAR_C
++--->BN_MP_COPY_C
+|   +--->BN_MP_GROW_C
++--->BN_MP_CLEAR_C
 
 
 BN_MP_ADD_D_C
@@ -10674,6 +10823,95 @@ BN_MP_PELL_LUCAS_C
 |   +--->BN_MP_CLEAR_C
 
 
+BN_MP_SQR_C
++--->BN_MP_FFT_SQR_C
+|   +--->BN_MP_SET_INT_C
+|   |   +--->BN_MP_ZERO_C
+|   |   +--->BN_MP_MUL_2D_C
+|   |   |   +--->BN_MP_COPY_C
+|   |   |   |   +--->BN_MP_GROW_C
+|   |   |   +--->BN_MP_GROW_C
+|   |   |   +--->BN_MP_LSHD_C
+|   |   |   |   +--->BN_MP_RSHD_C
+|   |   |   +--->BN_MP_CLAMP_C
+|   |   +--->BN_MP_CLAMP_C
++--->BN_MP_TOOM_SQR_C
+|   +--->BN_MP_INIT_MULTI_C
+|   |   +--->BN_MP_INIT_C
+|   |   +--->BN_MP_CLEAR_C
+|   +--->BN_MP_MOD_2D_C
+|   |   +--->BN_MP_ZERO_C
+|   |   +--->BN_MP_COPY_C
+|   |   |   +--->BN_MP_GROW_C
+|   |   +--->BN_MP_CLAMP_C
+|   +--->BN_MP_COPY_C
+|   |   +--->BN_MP_GROW_C
+|   +--->BN_MP_RSHD_C
+|   |   +--->BN_MP_ZERO_C
+|   +--->BN_MP_MUL_2_C
+|   |   +--->BN_MP_GROW_C
+|   +--->BN_MP_ADD_C
+|   |   +--->BN_S_MP_ADD_C
+|   |   |   +--->BN_MP_GROW_C
+|   |   |   +--->BN_MP_CLAMP_C
+|   |   +--->BN_MP_CMP_MAG_C
+|   |   +--->BN_S_MP_SUB_C
+|   |   |   +--->BN_MP_GROW_C
+|   |   |   +--->BN_MP_CLAMP_C
+|   +--->BN_MP_SUB_C
+|   |   +--->BN_S_MP_ADD_C
+|   |   |   +--->BN_MP_GROW_C
+|   |   |   +--->BN_MP_CLAMP_C
+|   |   +--->BN_MP_CMP_MAG_C
+|   |   +--->BN_S_MP_SUB_C
+|   |   |   +--->BN_MP_GROW_C
+|   |   |   +--->BN_MP_CLAMP_C
+|   +--->BN_MP_DIV_2_C
+|   |   +--->BN_MP_GROW_C
+|   |   +--->BN_MP_CLAMP_C
+|   +--->BN_MP_MUL_2D_C
+|   |   +--->BN_MP_GROW_C
+|   |   +--->BN_MP_LSHD_C
+|   |   +--->BN_MP_CLAMP_C
+|   +--->BN_MP_MUL_D_C
+|   |   +--->BN_MP_GROW_C
+|   |   +--->BN_MP_CLAMP_C
+|   +--->BN_MP_DIV_3_C
+|   |   +--->BN_MP_INIT_SIZE_C
+|   |   |   +--->BN_MP_INIT_C
+|   |   +--->BN_MP_CLAMP_C
+|   |   +--->BN_MP_EXCH_C
+|   |   +--->BN_MP_CLEAR_C
+|   +--->BN_MP_LSHD_C
+|   |   +--->BN_MP_GROW_C
+|   +--->BN_MP_CLEAR_MULTI_C
+|   |   +--->BN_MP_CLEAR_C
++--->BN_MP_KARATSUBA_SQR_C
+|   +--->BN_MP_INIT_SIZE_C
+|   |   +--->BN_MP_INIT_C
+|   +--->BN_MP_CLAMP_C
+|   +--->BN_S_MP_ADD_C
+|   |   +--->BN_MP_GROW_C
+|   +--->BN_S_MP_SUB_C
+|   |   +--->BN_MP_GROW_C
+|   +--->BN_MP_LSHD_C
+|   |   +--->BN_MP_GROW_C
+|   |   +--->BN_MP_RSHD_C
+|   |   |   +--->BN_MP_ZERO_C
+|   +--->BN_MP_ADD_C
+|   |   +--->BN_MP_CMP_MAG_C
+|   +--->BN_MP_CLEAR_C
++--->BN_FAST_S_MP_SQR_C
+|   +--->BN_MP_GROW_C
+|   +--->BN_MP_CLAMP_C
++--->BN_S_MP_SQR_C
+|   +--->BN_MP_INIT_SIZE_C
+|   |   +--->BN_MP_INIT_C
+|   +--->BN_MP_CLAMP_C
+|   +--->BN_MP_EXCH_C
+|   +--->BN_MP_CLEAR_C
+
+
 BN_MP_DIV_2D_C
 +--->BN_MP_COPY_C
 |   +--->BN_MP_GROW_C
@@ -10829,95 +11067,6 @@ BN_MP_MULMOD_C
 |   |   |   +--->BN_MP_CLAMP_C
 
 
-BN_MP_SQR_C
-+--->BN_MP_FFT_SQR_C
-|   +--->BN_MP_SET_INT_C
-|   |   +--->BN_MP_ZERO_C
-|   |   +--->BN_MP_MUL_2D_C
-|   |   |   +--->BN_MP_COPY_C
-|   |   |   |   +--->BN_MP_GROW_C
-|   |   |   +--->BN_MP_GROW_C
-|   |   |   +--->BN_MP_LSHD_C
-|   |   |   |   +--->BN_MP_RSHD_C
-|   |   |   +--->BN_MP_CLAMP_C
-|   |   +--->BN_MP_CLAMP_C
-+--->BN_MP_TOOM_SQR_C
-|   +--->BN_MP_INIT_MULTI_C
-|   |   +--->BN_MP_INIT_C
-|   |   +--->BN_MP_CLEAR_C
-|   +--->BN_MP_MOD_2D_C
-|   |   +--->BN_MP_ZERO_C
-|   |   +--->BN_MP_COPY_C
-|   |   |   +--->BN_MP_GROW_C
-|   |   +--->BN_MP_CLAMP_C
-|   +--->BN_MP_COPY_C
-|   |   +--->BN_MP_GROW_C
-|   +--->BN_MP_RSHD_C
-|   |   +--->BN_MP_ZERO_C
-|   +--->BN_MP_MUL_2_C
-|   |   +--->BN_MP_GROW_C
-|   +--->BN_MP_ADD_C
-|   |   +--->BN_S_MP_ADD_C
-|   |   |   +--->BN_MP_GROW_C
-|   |   |   +--->BN_MP_CLAMP_C
-|   |   +--->BN_MP_CMP_MAG_C
-|   |   +--->BN_S_MP_SUB_C
-|   |   |   +--->BN_MP_GROW_C
-|   |   |   +--->BN_MP_CLAMP_C
-|   +--->BN_MP_SUB_C
-|   |   +--->BN_S_MP_ADD_C
-|   |   |   +--->BN_MP_GROW_C
-|   |   |   +--->BN_MP_CLAMP_C
-|   |   +--->BN_MP_CMP_MAG_C
-|   |   +--->BN_S_MP_SUB_C
-|   |   |   +--->BN_MP_GROW_C
-|   |   |   +--->BN_MP_CLAMP_C
-|   +--->BN_MP_DIV_2_C
-|   |   +--->BN_MP_GROW_C
-|   |   +--->BN_MP_CLAMP_C
-|   +--->BN_MP_MUL_2D_C
-|   |   +--->BN_MP_GROW_C
-|   |   +--->BN_MP_LSHD_C
-|   |   +--->BN_MP_CLAMP_C
-|   +--->BN_MP_MUL_D_C
-|   |   +--->BN_MP_GROW_C
-|   |   +--->BN_MP_CLAMP_C
-|   +--->BN_MP_DIV_3_C
-|   |   +--->BN_MP_INIT_SIZE_C
-|   |   |   +--->BN_MP_INIT_C
-|   |   +--->BN_MP_CLAMP_C
-|   |   +--->BN_MP_EXCH_C
-|   |   +--->BN_MP_CLEAR_C
-|   +--->BN_MP_LSHD_C
-|   |   +--->BN_MP_GROW_C
-|   +--->BN_MP_CLEAR_MULTI_C
-|   |   +--->BN_MP_CLEAR_C
-+--->BN_MP_KARATSUBA_SQR_C
-|   +--->BN_MP_INIT_SIZE_C
-|   |   +--->BN_MP_INIT_C
-|   +--->BN_MP_CLAMP_C
-|   +--->BN_S_MP_ADD_C
-|   |   +--->BN_MP_GROW_C
-|   +--->BN_S_MP_SUB_C
-|   |   +--->BN_MP_GROW_C
-|   +--->BN_MP_LSHD_C
-|   |   +--->BN_MP_GROW_C
-|   |   +--->BN_MP_RSHD_C
-|   |   |   +--->BN_MP_ZERO_C
-|   +--->BN_MP_ADD_C
-|   |   +--->BN_MP_CMP_MAG_C
-|   +--->BN_MP_CLEAR_C
-+--->BN_FAST_S_MP_SQR_C
-|   +--->BN_MP_GROW_C
-|   +--->BN_MP_CLAMP_C
-+--->BN_S_MP_SQR_C
-|   +--->BN_MP_INIT_SIZE_C
-|   |   +--->BN_MP_INIT_C
-|   +--->BN_MP_CLAMP_C
-|   +--->BN_MP_EXCH_C
-|   +--->BN_MP_CLEAR_C
-
-
 BN_S_MP_ADD_C
 +--->BN_MP_GROW_C
 +--->BN_MP_CLAMP_C
@@ -10943,6 +11092,9 @@ BN_MP_XOR_C
 +--->BN_MP_CLAMP_C
 +--->BN_MP_EXCH_C
 +--->BN_MP_CLEAR_C
+
+
+BN_MP_POWER_FACTORED_FACTORIALS_C
 
 
 BN_MP_RADIX_SMAP_C
@@ -13731,14 +13883,17 @@ BN_MP_ABS_C
 |   +--->BN_MP_GROW_C
 
 
-BN_MP_ISGE32B_C
-
-
 BN_MP_SUB_D_C
 +--->BN_MP_GROW_C
 +--->BN_MP_ADD_D_C
 |   +--->BN_MP_CLAMP_C
 +--->BN_MP_CLAMP_C
+
+
+BN_MP_ISGE32B_C
+
+
+BN_MP_FACTOR_FACTORIAL_C
 
 
 BN_MP_DIV_2_C
@@ -13945,6 +14100,9 @@ BN_MP_FIBONACCI_C
 |   |   +--->BN_MP_CLEAR_C
 +--->BN_MP_CLEAR_MULTI_C
 |   +--->BN_MP_CLEAR_C
+
+
+BN_MP_NEGATE_FACTORED_FACTORIALS_C
 
 
 BN_MP_INIT_SIZE_C
@@ -16467,5 +16625,8 @@ BN_MP_PRIME_MILLER_RABIN_C
 |   |   |   |   +--->BN_MP_GROW_C
 |   |   |   |   +--->BN_MP_CLAMP_C
 +--->BN_MP_CLEAR_C
+
+
+BN_MP_SUBTRACT_FACTORED_FACTORIALS_C
 
 

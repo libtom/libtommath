@@ -670,6 +670,39 @@ int mp_jacobsthal(unsigned long n, mp_int * c);
 int mp_jacobsthal(unsigned long n, mp_int * c);
 int mp_padovan(unsigned long n, mp_int * r);
 
+
+int mp_factor_factorial(unsigned long n, unsigned long start, 
+                        long **prime_list,unsigned long *length);
+
+int mp_subtract_factored_factorials( long *subtrahend,
+                                    unsigned long l_subtrahend,
+                                     long *minuend,
+                                    unsigned long l_minuend,
+                                     long **difference,
+                                    unsigned long /* Vive */*l_difference/*!*/);
+
+int mp_add_factored_factorials(  long *summand_1,
+                                unsigned long l_summand_1,
+                                 long *summand_2,
+                                unsigned long l_summand_2,
+                                 long **sum,
+                                unsigned long *l_sum);
+
+int mp_power_factored_factorials(  long *input,
+                                unsigned long l_input,
+                                 long multiplicator,
+                                 long **product,
+                                unsigned long *l_product);
+
+int mp_negate_factored_factorials(  long *input,
+                                unsigned long l_input,
+                                 long **output,
+                                unsigned long *l_output);
+
+int mp_compute_signed_factored_factorials(long *f, unsigned long f_length,
+                                    mp_int *c, mp_int *r);
+
+
 /* End of additions by CZ */
 
 extern const char *mp_s_rmap;
