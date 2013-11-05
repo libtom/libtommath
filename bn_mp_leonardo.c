@@ -3,6 +3,7 @@
 int mp_leonardo(unsigned long n, mp_int * c)
 {
   mp_int r;
+  int e;
   if ((e = mp_init(&r)) != MP_OKAY) {
     return e;
   }

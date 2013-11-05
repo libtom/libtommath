@@ -3,12 +3,11 @@
 int mp_jacobsthal(unsigned long n, mp_int * c)
 {
   mp_int r;
+  int e;
   if ((e = mp_init(&r)) != MP_OKAY) {
     return e;
   }
-  if ((e = mp_set(&r, 1)) != MP_OKAY) {
-    return e;
-  }
+  mp_set(&r, 1);
   if (n & 0x1) {
     if ((e = mp_mul_2d(&r, n, &r)) != MP_OKAY) {
       return e;
