@@ -664,6 +664,12 @@ int mp_fpl_matrix(unsigned long n,int m11,int m12, int m21,int m22,
 int mp_pell(unsigned long n, mp_int * r);
 int mp_pell_lucas(unsigned long n, mp_int * r);
 int mp_pell_modified(unsigned long n, mp_int * r);
+int mp_perrin(unsigned long n, mp_int * r);
+int mp_leonardo(unsigned long n, mp_int * c);
+int mp_jacobsthal(unsigned long n, mp_int * c);
+int mp_jacobsthal(unsigned long n, mp_int * c);
+int mp_padovan(unsigned long n, mp_int * r);
+
 /* End of additions by CZ */
 
 extern const char *mp_s_rmap;

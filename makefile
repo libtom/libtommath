@@ -90,9 +90,11 @@ bn_mp_subfactorial.o\
 bn_mp_lowbit.o bn_mp_highbit.o bn_mp_isdivisible_d.o bn_mp_isdivisible.o bn_mp_isge32b.o\
 bn_mp_isperfpower.o\
 bn_mp_max.o bn_mp_min.o\
-bn_mp_expt.o bn_mp_compute_factored_factorial.o bn_mp_binomial.o bn_mp_binomial.o\
+bn_mp_expt.o bn_mp_compute_factored_factorial.o bn_mp_binomial.o\
 bn_mp_doublefactorial.o bn_mp_fibonacci.o bn_mp_lucas.o bn_mp_euler.o bn_mp_catalan.o\
-bn_mp_pell.o bn_mp_pell_lucas.o bn_mp_pell_modified.o
+bn_mp_pell.o bn_mp_pell_lucas.o bn_mp_pell_modified.o\
+bn_mp_perrin.o bn_mp_leonardo.o bn_mp_jacobsthal.o bn_mp_jacobsthal_lucas.o\
+bn_mp_padovan.o
 
 $(LIBNAME):  $(OBJECTS)
 	$(AR) $(ARFLAGS) $@ $(OBJECTS)
