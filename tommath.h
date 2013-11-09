@@ -702,7 +702,14 @@ int mp_negate_factored_factorials(  long *input,
 int mp_compute_signed_factored_factorials(long *f, unsigned long f_length,
                                     mp_int *c, mp_int *r);
 
-
+int mp_bell(unsigned long n, mp_int * c);
+int mp_bell_fast(unsigned long n, mp_int * c);
+int mp_stirling1(unsigned long n, unsigned long m, mp_int * c);
+int mp_stirling1_mat(unsigned long n, unsigned long m, mp_int * c);
+void mp_stirling1_free(void);
+int mp_stirling2(unsigned long n, unsigned long m, mp_int * c);
+int mp_stirling2_mat(unsigned long n, unsigned long m, mp_int * c);
+void mp_stirling2_free(void);
 /* End of additions by CZ */
 
 extern const char *mp_s_rmap;
