@@ -22,7 +22,7 @@ int mp_factor_factorial(unsigned long n, unsigned long start,
   }
   mp_bitset_alloc(bst, n+1);
   mp_eratosthenes(bst);
-  pix = (unsigned long) (LN_113 *  n/log(n) );
+  pix = (unsigned long) (LN_113 *  n/log(n) ) + 2 ;
 
   *prime_list = malloc(sizeof(long) * (pix) * 2);
   if (*prime_list == NULL) {
