@@ -36,7 +36,7 @@ int mp_add_factored_factorials(  long *summand_1,
     counter += 2;
   }
   if(l_summand_1 >= l_summand_2){
-    for(k=0;k<max_length;k+=2){
+    for(;k<max_length;k+=2){
       p = summand_1[k];
       s = summand_1[k+1];
       (*sum)[counter]   = p;
@@ -45,7 +45,7 @@ int mp_add_factored_factorials(  long *summand_1,
     } 
   }
   else{
-    for(k=0;k<max_length;k+=2){
+    for(;k<max_length;k+=2){
       p = summand_2[k];
       s = summand_2[k+1];
       (*sum)[counter]   = p;
