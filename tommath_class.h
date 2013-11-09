@@ -21,6 +21,8 @@
 #define BN_MP_ADD_FACTORED_FACTORIALS_C
 #define BN_MP_ADDMOD_C
 #define BN_MP_AND_C
+#define BN_MP_BELL_C
+#define BN_MP_BELL_FAST_C
 #define BN_MP_BINOMIAL_C
 #define BN_MP_CATALAN_C
 #define BN_MP_CLAMP_C
@@ -139,6 +141,10 @@
 #define BN_MP_SQR_C
 #define BN_MP_SQRMOD_C
 #define BN_MP_SQRT_C
+#define BN_MP_STIRLING1_C
+#define BN_MP_STIRLING1_MAT_C
+#define BN_MP_STIRLING2_C
+#define BN_MP_STIRLING2_MAT_C
 #define BN_MP_SUB_C
 #define BN_MP_SUB_D_C
 #define BN_MP_SUBFACTORIAL_C
@@ -247,6 +253,23 @@
    #define BN_MP_CLAMP_C
    #define BN_MP_EXCH_C
    #define BN_MP_CLEAR_C
+#endif
+
+#if defined(BN_MP_BELL_C)
+   #define BN_MP_INIT_MULTI_C
+   #define BN_MP_STIRLING2_C
+   #define BN_MP_ADD_C
+   #define BN_MP_EXCH_C
+   #define BN_MP_CLEAR_MULTI_C
+#endif
+
+#if defined(BN_MP_BELL_FAST_C)
+   #define BN_MP_INIT_MULTI_C
+   #define BN_MP_STIRLING2_MAT_C
+   #define BN_MP_ADD_C
+   #define BN_MP_EXCH_C
+   #define BN_MP_CLEAR_MULTI_C
+   #define BN_MP_STIRLING_2_FREE_C
 #endif
 
 #if defined(BN_MP_BINOMIAL_C)
@@ -723,13 +746,11 @@
 #endif
 
 #if defined(BN_MP_JACOBSTHAL_LUCAS_C)
-   #define BN_MP_JACOBSTHAL_C
    #define BN_MP_INIT_C
    #define BN_MP_SET_C
    #define BN_MP_MUL_2D_C
-   #define BN_MP_ADD_D_C
-   #define BN_MP_DIV_D_C
    #define BN_MP_SUB_D_C
+   #define BN_MP_ADD_D_C
    #define BN_MP_CLEAR_C
 #endif
 
@@ -1168,6 +1189,59 @@
    #define BN_MP_CMP_MAG_C
    #define BN_MP_EXCH_C
    #define BN_MP_CLEAR_C
+#endif
+
+#if defined(BN_MP_STIRLING1_C)
+   #define BN_MP_SET_C
+   #define BN_MP_COPY_C
+   #define BN_MP_FACTORIAL_C
+   #define BN_MP_NEG_C
+   #define BN_MP_BINOMIAL_C
+   #define BN_MP_INIT_C
+   #define BN_MP_SET_INT_C
+   #define BN_MP_MUL_C
+   #define BN_MP_SUB_C
+   #define BN_MP_CLEAR_C
+#endif
+
+#if defined(BN_MP_STIRLING1_MAT_C)
+   #define BN_MP_COPY_C
+   #define BN_MP_CLEAR_C
+   #define BN_MP_INIT_C
+   #define BN_MP_SET_C
+   #define BN_MP_SET_INT_C
+   #define BN_MP_MUL_C
+   #define BN_MP_SUB_C
+   #define BN_MP_STIRLING1_FREE_C
+#endif
+
+#if defined(BN_MP_STIRLING2_C)
+   #define BN_MP_SET_C
+   #define BN_MP_INIT_MULTI_C
+   #define BN_MP_SET_INT_C
+   #define BN_MP_EXPT_C
+   #define BN_MP_SUB_C
+   #define BN_MP_CLEAR_MULTI_C
+   #define BN_MP_BIOMIAL_C
+   #define BN_MP_MUL_C
+   #define BN_MP_MUL_D_C
+   #define BN_MP_DIV_C
+   #define BN_MP_DIV_D_C
+   #define BN_MP_EXPT_D_C
+   #define BN_MP_ADD_C
+   #define BN_MP_FACTORIAL_C
+   #define BN_MP_EXCH_C
+#endif
+
+#if defined(BN_MP_STIRLING2_MAT_C)
+   #define BN_MP_COPY_C
+   #define BN_MP_CLEAR_C
+   #define BN_MP_INIT_C
+   #define BN_MP_SET_C
+   #define BN_MP_SET_INT_C
+   #define BN_MP_MUL_C
+   #define BN_MP_ADD_C
+   #define BN_MP_STIRLING2_FREE_C
 #endif
 
 #if defined(BN_MP_SUB_C)

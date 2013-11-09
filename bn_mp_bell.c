@@ -1,3 +1,5 @@
+#include <tommath.h>
+#ifdef BN_MP_BELL_C
 int mp_bell(unsigned long n, mp_int * c)
 {
   unsigned long i = 0;
@@ -17,3 +19,4 @@ int mp_bell(unsigned long n, mp_int * c)
   mp_clear_multi(&s, &temp, NULL);
   return MP_OKAY;
 }
+#endif

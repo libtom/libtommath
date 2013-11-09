@@ -1,3 +1,5 @@
+#include <tommath.h>
+#ifdef BN_MP_STIRLING1_C
 
 static mp_int **stirling1_mat = NULL;
 static unsigned long stirling1_n = 0;
@@ -152,3 +154,4 @@ int mp_stirling1(unsigned long n, unsigned long m, mp_int * c)
 
   return MP_OKAY;
 }
+#endif

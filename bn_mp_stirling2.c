@@ -1,3 +1,5 @@
+#include <tommath.h>
+#ifdef BN_MP_STIRLING2_C
 /*
                   k
                  ====                 /   \
@@ -227,3 +229,4 @@ int mp_stirling2(unsigned long n, unsigned long k, mp_int * c)
   mp_clear_multi(&t, &jot, &sum, &temp, &enn, NULL);
   return MP_OKAY;
 }
+#endif

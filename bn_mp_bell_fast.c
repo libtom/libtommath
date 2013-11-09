@@ -1,3 +1,5 @@
+#include <tommath.h>
+#ifdef BN_MP_BELL_FAST_C
 int mp_bell_fast(unsigned long n, mp_int * c)
 {
   unsigned long i = 0;
@@ -19,3 +21,4 @@ int mp_bell_fast(unsigned long n, mp_int * c)
   mp_stirling_2_free();
   return MP_OKAY;
 }
+#endif

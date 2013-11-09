@@ -1,3 +1,5 @@
+#include <tommath.h>
+#ifdef BN_MP_STIRLING2_MAT_C
 static mp_int **stirling2_mat = NULL;
 static unsigned long stirling2_n = 0;
 static unsigned long stirling2_m = 0;
@@ -111,3 +113,4 @@ void mp_stirling2_free(void)
   stirling2_n = 0;
   stirling2_m = 0;
 }
+#endif
