@@ -53,7 +53,7 @@ int mp_doublefactorial(unsigned long n,mp_int *c){
       mp_bitset_alloc(bst, 2*n+1);
       mp_eratosthenes(bst);
 
-      pix = (unsigned long) (LN_113 *  (2*n)/log(2*n) );
+      pix = (unsigned long) (LN_113 *  (2*n)/log(2*n) ) + 2;
 
       prime_list = malloc(sizeof(unsigned long) * (pix) * 2);
       if (prime_list == NULL) {

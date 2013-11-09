@@ -83,7 +83,7 @@ unsigned long *mp_fill_prime_list(unsigned long start, unsigned long stop,
     uint32_t n, k, j,i;
     unsigned long pix,*list;
 
-    pix = (unsigned long) (LN_113 *  stop/log(stop) );
+    pix = (unsigned long) (LN_113 *  stop/log(stop) ) + 2;
 
     list = malloc(pix * sizeof(unsigned long));
     if(list == NULL){

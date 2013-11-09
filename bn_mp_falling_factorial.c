@@ -41,7 +41,7 @@ int mp_falling_factorial(unsigned long n, unsigned long k, mp_int * c)
   mp_bitset_alloc(bst, n + 1);
   mp_eratosthenes(bst);
   /* One could also count the number of primes in the already filled sieve */
-  pix = (unsigned long) (LN_113 * n / log(n));
+  pix = (unsigned long) (LN_113 * n / log(n)) + 2;
 
   prime_list = malloc(sizeof(unsigned long) * (pix) * 2);
   if (prime_list == NULL) {
