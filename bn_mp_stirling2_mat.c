@@ -60,9 +60,7 @@ int mp_stirling2_mat(unsigned long n, unsigned long m, mp_int * c)
   if ((e = mp_init(&temp)) != MP_OKAY) {
     return e;
   }
-  if ((e = mp_set(&(stirling2_mat)[0][0], 1)) != MP_OKAY) {
-    return e;
-  }
+  mp_set(&(stirling2_mat)[0][0], 1);
 
   for (i = 1; i <= n; i++) {
     for (j = 1; j <= m; j++) {
@@ -80,9 +78,7 @@ int mp_stirling2_mat(unsigned long n, unsigned long m, mp_int * c)
 	  return e;
 	}
       } else {
-	if ((e = mp_set(&(stirling2_mat)[i][j], 0)) != MP_OKAY) {
-	  return e;
-	}
+	mp_set(&(stirling2_mat)[i][j], 0);
       }
     }
   }

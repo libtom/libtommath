@@ -55,15 +55,11 @@ int mp_stirling2(unsigned long n, unsigned long k, mp_int * c)
   int e;
 
   if (n < k || k == 0) {
-    if ((e = mp_set(c, 0)) != MP_OKAY) {
-      return e;
-    }
+    mp_set(c, 0);
     return MP_OKAY;
   }
   if (k == 1) {
-    if ((e = mp_set(c, 1)) != MP_OKAY) {
-      return e;
-    }
+    mp_set(c, 1);
     return MP_OKAY;
   }
   if (k == 2) {
@@ -74,25 +70,21 @@ int mp_stirling2(unsigned long n, unsigned long k, mp_int * c)
       if ((e = mp_set_int(&enn, n - 1)) != MP_OKAY) {
 	return e;
       }
-      if ((e = mp_set(&temp, 2)) != MP_OKAY) {
-	return e;
-      }
+      mp_set(&temp, 2);
       if ((e = mp_expt(&temp, &enn, c)) != MP_OKAY) {
 	return e;
       }
-      if ((e = mp_sub(c, 1, c)) != MP_OKAY) {
+      if ((e = mp_sub_d(c, 1, c)) != MP_OKAY) {
 	return e;
       }
       mp_clear_multi(&temp, &enn, NULL);
       return MP_OKAY;
     } else {
-      if ((e = mp_set(c, 1)) != MP_OKAY) {
+      mp_set(c, 1);
+      if ((e = mp_expt_d(c, n - 1, c)) != MP_OKAY) {
 	return e;
       }
-      if ((e = mp_expt(c, n - 1, c)) != MP_OKAY) {
-	return e;
-      }
-      if ((e = mp_sub(c, 1, c)) != MP_OKAY) {
+      if ((e = mp_sub_d(c, 1, c)) != MP_OKAY) {
 	return e;
       }
       return MP_OKAY;
@@ -100,7 +92,7 @@ int mp_stirling2(unsigned long n, unsigned long k, mp_int * c)
     return MP_OKAY;
   }
   if ((n - k) == 1) {
-    if ((e = mp_biomial(n, 2)) != MP_OKAY) {
+    if ((e = mp_binomial(n, 2, c)) != MP_OKAY) {
       return e;
     }
     return MP_OKAY;
@@ -110,12 +102,8 @@ int mp_stirling2(unsigned long n, unsigned long k, mp_int * c)
     return e;
   }
 
-  if ((e = mp_set(&t, 1)) != MP_OKAY) {
-    return e;
-  }
-  if ((e = mp_set(&sum, 0)) != MP_OKAY) {
-    return e;
-  }
+  mp_set(&t, 1);
+  mp_set(&sum, 0);
 
   if ((e = mp_set_int(&enn, n)) != MP_OKAY) {
     return e;
@@ -181,7 +169,7 @@ int mp_stirling2(unsigned long n, unsigned long k, mp_int * c)
 	  return e;
 	}
       } else {
-	mif((e = p_expt_d(&jot, n, &jot)) != MP_OKAY) {
+	if((e = mp_expt_d(&jot, n, &jot)) != MP_OKAY) {
 	  return e;
 	}
       }
