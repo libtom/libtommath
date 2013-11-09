@@ -713,6 +713,8 @@ void mp_stirling2_free(void);
 
 int mp_rising_factorial(unsigned long n, unsigned long k, mp_int * c);
 int mp_falling_factorial(unsigned long n, unsigned long k, mp_int * c);
+int mp_superfactorial(unsigned long n, mp_int * c);
+
 /* End of additions by CZ */
 
 extern const char *mp_s_rmap;
