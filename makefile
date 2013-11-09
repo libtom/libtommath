@@ -99,7 +99,8 @@ bn_mp_factor_factorial.o  bn_mp_subtract_factored_factorials.o \
 bn_mp_add_factored_factorials.o  bn_mp_power_factored_factorials.o \
 bn_mp_negate_factored_factorials.o  bn_mp_compute_signed_factored_factorials.o\
 bn_mp_bell.o bn_mp_bell_fast.o bn_mp_stirling1.o bn_mp_stirling1_mat.o bn_mp_stirling2.o \
-bn_mp_stirling2_mat.o
+bn_mp_stirling2_mat.o\
+bn_mp_falling_factorial.o bn_mp_rising_factorial.o
 
 $(LIBNAME):  $(OBJECTS)
 	$(AR) $(ARFLAGS) $@ $(OBJECTS)

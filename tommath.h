@@ -710,6 +710,9 @@ void mp_stirling1_free(void);
 int mp_stirling2(unsigned long n, unsigned long m, mp_int * c);
 int mp_stirling2_mat(unsigned long n, unsigned long m, mp_int * c);
 void mp_stirling2_free(void);
+
+int mp_rising_factorial(unsigned long n, unsigned long k, mp_int * c);
+int mp_falling_factorial(unsigned long n, unsigned long k, mp_int * c);
 /* End of additions by CZ */
 
 extern const char *mp_s_rmap;
