@@ -138,6 +138,7 @@
 #define BN_MP_RSHD_C
 #define BN_MP_SET_C
 #define BN_MP_SET_INT_C
+#define BN_MP_SET_WORD_C
 #define BN_MP_SHRINK_C
 #define BN_MP_SIGNED_BIN_SIZE_C
 #define BN_MP_SQR_C
@@ -1172,6 +1173,10 @@
    #define BN_MP_ZERO_C
    #define BN_MP_MUL_2D_C
    #define BN_MP_CLAMP_C
+#endif
+
+#if defined(BN_MP_SET_WORD_C)
+   #define BN_MP_ZERO_C
 #endif
 
 #if defined(BN_MP_SHRINK_C)
