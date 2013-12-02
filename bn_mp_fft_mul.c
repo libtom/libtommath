@@ -45,6 +45,13 @@ int mp_fft_mul(mp_int *a, mp_int *b, mp_int *c){
     return MP_OKAY; 
   }
 
+  /* rounds the edges of the stair a bit (good for equal sized multipliers) */
+/*  il2 = ilog2((unsigned int)MAX(a->used,b->used));
+  extra = (il2<12)?powtwos[il2-2]:powtwos[8];
+  if( a->used < powtwos[il2]+extra ){
+    return mp_toom_cook_5_mul(a,b,c);
+  }  
+*/
   if( ( e = mp_dp_to_fft(a, &fa, b, &fb, &length)) != MP_OKAY){
     if(fa != NULL) free(fa);
     if(fb != NULL) free(fb);

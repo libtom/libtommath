@@ -36,7 +36,13 @@ int mp_fft_sqr(mp_int *a,mp_int *c){
     }
     return MP_OKAY; 
   }
-
+  /* rounds the edges of the stair a bit */
+  /*
+  il2 = ilog2((unsigned int)a->used);
+  if( a->used > powtwos[il2]  &&  a->used < powtwos[il2]+powtwos[il2-2]){
+    return mp_toom_cook_5_sqr(a,c);
+  }  
+  */
   if( ( e = mp_dp_to_fft_single(a, &fa, &length)) != MP_OKAY){
     if(fa != NULL) free(fa);
     return e;

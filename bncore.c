@@ -28,15 +28,17 @@ Curious result:
 */
 
 int     KARATSUBA_MUL_CUTOFF = 48;      /* Min. number of digits before Karatsuba multiplication is used. */
-int       KARATSUBA_SQR_CUTOFF = 120;     /* Min. number of digits before Karatsuba squaring is used. */
-        
+int       KARATSUBA_SQR_CUTOFF = 120;     /* Min. number of digits before Karatsuba squaring is used. */      
 int        TOOM_MUL_CUTOFF      = 190;      /* no optimal values of these are known yet so set em high */
-int       TOOM_SQR_CUTOFF      = 280;
-
+int        TOOM_SQR_CUTOFF      = 280;
+int        TOOM_COOK_4_MUL_CO   = 600; 
+int        TOOM_COOK_4_SQR_CO   = 2400;
+int        TOOM_COOK_5_MUL_CO   = 1200;
+int        TOOM_COOK_5_SQR_CO   = 3600;
         /* No single numbers possible with the current implementation */
-int        FFT_MUL_CUTOFF       = 4000;
+int        FFT_MUL_CUTOFF       = 512;
 int        FFT_UPPER_LIMIT      = 1<<23;    /* less than actual limit */
-int        FFT_SQR_CUTOFF       = 20000;
+int        FFT_SQR_CUTOFF       = 768;
 
 #endif
 

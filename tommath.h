@@ -156,13 +156,17 @@ extern "C" {
 typedef int           mp_err;
 
 /* you'll have to tune these... */
-extern int KARATSUBA_MUL_CUTOFF,
-           KARATSUBA_SQR_CUTOFF,
-           TOOM_MUL_CUTOFF,
-           TOOM_SQR_CUTOFF,
-           FFT_MUL_CUTOFF,
-           FFT_UPPER_LIMIT,
-           FFT_SQR_CUTOFF;
+extern int KARATSUBA_MUL_CUTOFF;
+extern int            KARATSUBA_SQR_CUTOFF;
+  extern int          TOOM_MUL_CUTOFF;
+ extern int           TOOM_SQR_CUTOFF;
+ extern int           FFT_MUL_CUTOFF;
+ extern int           FFT_UPPER_LIMIT;
+  extern int          FFT_SQR_CUTOFF;
+  extern int          TOOM_COOK_4_MUL_CO;
+  extern int          TOOM_COOK_4_SQR_CO;
+  extern int          TOOM_COOK_5_MUL_CO;
+  extern int          TOOM_COOK_5_SQR_CO;
 
 /* define this to use lower memory usage routines (exptmods mostly) */
 /* #define MP_LOW_MEM */
@@ -194,7 +198,7 @@ typedef int ltm_prime_callback(unsigned char *dst, int len, void *dat);
 #define SIGN(m)    ((m)->sign)
 
 /* error code to char* string */
-char *mp_error_to_string(int code);
+const char *mp_error_to_string(int code);
 
 /* ---> init and deinit bignum functions <--- */
 /* init a bignum */
@@ -715,6 +719,13 @@ int mp_rising_factorial(unsigned long n, unsigned long k, mp_int * c);
 int mp_falling_factorial(unsigned long n, unsigned long k, mp_int * c);
 int mp_superfactorial(unsigned long n, mp_int * c);
 int mp_set_word(mp_int *c,mp_word w);
+
+int mp_toom_cook_4_mul(mp_int * a, mp_int * b, mp_int * c);
+int mp_toom_cook_4_sqr(mp_int * a, mp_int * c);
+int mp_toom_cook_5_mul(mp_int * a, mp_int * b, mp_int * c);
+int mp_toom_cook_5_sqr(mp_int * a, mp_int * c);
+
+int mp_balance_mul(mp_int * a, mp_int * b, mp_int * c);
 
 /* End of additions by CZ */
 
