@@ -16,13 +16,13 @@
  */
 
 /* c = |a| * |b| using balancing multiplication.
- * If |a| is much less than |b|, 
- * we firstly split b into chunks such that length of each one is 
+ * If |a| is much less than |b|,
+ * we firstly split b into chunks such that length of each one is
  * roughly equal to that of |a|.
  */
 int mp_balance_mul (mp_int * a, mp_int * b, mp_int * c)
 {
-  /* the following algorithm is taken from 
+  /* the following algorithm is taken from
    * Ruby core; namely, function 'bigmul1_balance'
    * from 'bignum.c'
    */
@@ -86,7 +86,7 @@ int mp_balance_mul (mp_int * a, mp_int * b, mp_int * c)
       }
     }
     *tmpcn++ = u;
-    
+
     bn -= r;
     n += r;
   }
