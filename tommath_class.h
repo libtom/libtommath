@@ -41,6 +41,7 @@
 #define BN_MP_EXCH_C
 #define BN_MP_EXPORT_C
 #define BN_MP_EXPT_D_C
+#define BN_MP_EXPT_D_EX_C
 #define BN_MP_EXPTMOD_C
 #define BN_MP_EXPTMOD_FAST_C
 #define BN_MP_EXTEUCLID_C
@@ -333,6 +334,10 @@
 #endif
 
 #if defined(BN_MP_EXPT_D_C)
+   #define BN_MP_EXPT_D_EX_C
+#endif
+
+#if defined(BN_MP_EXPT_D_EX_C)
    #define BN_MP_INIT_COPY_C
    #define BN_MP_SET_C
    #define BN_MP_MUL_C

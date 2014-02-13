@@ -364,6 +364,7 @@ int mp_div_3(mp_int *a, mp_int *c, mp_digit *d);
 
 /* c = a**b */
 int mp_expt_d(mp_int *a, mp_digit b, mp_int *c);
+int mp_expt_d_ex (mp_int * a, mp_digit b, mp_int * c, int fast);
 
 /* c = a mod b, 0 <= c < b  */
 int mp_mod_d(mp_int *a, mp_digit b, mp_digit *c);
