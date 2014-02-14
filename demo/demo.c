@@ -22,6 +22,7 @@
 
 #include "tommath.h"
 
+#if LTM_DEMO_TEST_VS_MTEST
 void ndraw(mp_int * a, char *name)
 {
    char buf[16000];
@@ -35,6 +36,7 @@ static void draw(mp_int * a)
 {
    ndraw(a, "");
 }
+#endif
 
 
 unsigned long lfsr = 0xAAAAAAAAUL;
@@ -53,7 +55,7 @@ int lbit(void)
 int myrng(unsigned char *dst, int len, void *dat)
 {
    int x;
-
+   (void)dat;
    for (x = 0; x < len; x++)
       dst[x] = rand() & 0xFF;
    return len;
@@ -65,27 +67,28 @@ char cmd[4096], buf[4096];
 int main(void)
 {
    mp_int a, b, c, d, e, f;
-   unsigned long expt_n, add_n, sub_n, mul_n, div_n, sqr_n, mul2d_n, div2d_n,
-      gcd_n, lcm_n, inv_n, div2_n, mul2_n, add_d_n, sub_d_n, t;
+   unsigned long t;
    unsigned rr;
-   int i, n, err, cnt, ix, old_kara_m, old_kara_s;
+   int i, n, err, cnt, ix;
    mp_digit mp;
+#if LTM_DEMO_TEST_VS_MTEST
+   unsigned long expt_n, add_n, sub_n, mul_n, div_n, sqr_n, mul2d_n, div2d_n,
+      gcd_n, lcm_n, inv_n, div2_n, mul2_n, add_d_n, sub_d_n;
+   int old_kara_m, old_kara_s;
+#endif
 
+   mp_init_multi(&a, &b, &c, &d, &e, &f, NULL);
 
-   mp_init(&a);
-   mp_init(&b);
-   mp_init(&c);
-   mp_init(&d);
-   mp_init(&e);
-   mp_init(&f);
+   atexit(_cleanup);
 
    srand(LTM_DEMO_RAND_SEED);
 
 #if LTM_DEMO_TEST_VS_MTEST == 0
    // test montgomery
-   printf("Testing montgomery...\n");
+   printf("Testing: montgomery...\n");
    for (i = 1; i < 10; i++) {
-      printf("Testing digit size: %d\n", i);
+      printf(" digit size: %2d\r", i);
+      fflush(stdout);
       for (n = 0; n < 1000; n++) {
          mp_rand(&a, i);
          a.dp[0] |= 1;
@@ -110,42 +113,41 @@ mp_todecimal(&a, buf); printf("a = %s\n", buf);
 mp_todecimal(&e, buf); printf("e = %s\n", buf);
 mp_todecimal(&d, buf); printf("d = %s\n", buf);
 mp_todecimal(&c, buf); printf("c = %s\n", buf);
-printf("compare no compare!\n"); exit(EXIT_FAILURE); }
+printf("compare no compare!\n"); return EXIT_FAILURE; }
          }
       }
    }
-   printf("done\n");
 
    // test mp_get_int
-   printf("Testing: mp_get_int\n");
+   printf("\n\nTesting: mp_get_int");
    for (i = 0; i < 1000; ++i) {
       t = ((unsigned long) rand() * rand() + 1) & 0xFFFFFFFF;
       mp_set_int(&a, t);
       if (t != mp_get_int(&a)) {
-	 printf("mp_get_int() bad result!\n");
-	 return 1;
+	 printf("\nmp_get_int() bad result!");
+	 return EXIT_FAILURE;
       }
    }
    mp_set_int(&a, 0);
    if (mp_get_int(&a) != 0) {
-      printf("mp_get_int() bad result!\n");
-      return 1;
+      printf("\nmp_get_int() bad result!");
+      return EXIT_FAILURE;
    }
    mp_set_int(&a, 0xffffffff);
    if (mp_get_int(&a) != 0xffffffff) {
-      printf("mp_get_int() bad result!\n");
-      return 1;
+      printf("\nmp_get_int() bad result!");
+      return EXIT_FAILURE;
    }
    // test mp_sqrt
-   printf("Testing: mp_sqrt\n");
+   printf("\n\nTesting: mp_sqrt\n");
    for (i = 0; i < 1000; ++i) {
       printf("%6d\r", i);
       fflush(stdout);
       n = (rand() & 15) + 1;
       mp_rand(&a, n);
       if (mp_sqrt(&a, &b) != MP_OKAY) {
-	 printf("mp_sqrt() error!\n");
-	 return 1;
+	 printf("\nmp_sqrt() error!");
+	 return EXIT_FAILURE;
       }
       mp_n_root(&a, 2, &a);
       if (mp_cmp_mag(&b, &a) != MP_EQ) {
@@ -154,7 +156,7 @@ printf("compare no compare!\n"); exit(EXIT_FAILURE); }
       }
    }
 
-   printf("\nTesting: mp_is_square\n");
+   printf("\n\nTesting: mp_is_square\n");
    for (i = 0; i < 1000; ++i) {
       printf("%6d\r", i);
       fflush(stdout);
@@ -164,23 +166,23 @@ printf("compare no compare!\n"); exit(EXIT_FAILURE); }
       mp_rand(&a, n);
       mp_sqr(&a, &a);
       if (mp_is_square(&a, &n) != MP_OKAY) {
-	 printf("fn:mp_is_square() error!\n");
-	 return 1;
+	 printf("\nfn:mp_is_square() error!");
+	 return EXIT_FAILURE;
       }
       if (n == 0) {
-	 printf("fn:mp_is_square() bad result!\n");
-	 return 1;
+	 printf("\nfn:mp_is_square() bad result!");
+	 return EXIT_FAILURE;
       }
 
       /* test for false positives */
       mp_add_d(&a, 1, &a);
       if (mp_is_square(&a, &n) != MP_OKAY) {
-	 printf("fp:mp_is_square() error!\n");
-	 return 1;
+	 printf("\nfp:mp_is_square() error!");
+	 return EXIT_FAILURE;
       }
       if (n == 1) {
-	 printf("fp:mp_is_square() bad result!\n");
-	 return 1;
+	 printf("\nfp:mp_is_square() bad result!");
+	 return EXIT_FAILURE;
       }
 
    }
@@ -203,9 +205,10 @@ printf("compare no compare!\n"); exit(EXIT_FAILURE); }
 	 return EXIT_FAILURE;
       }
    }
+   printf("\n");
 
    for (ix = 16; ix < 128; ix++) {
-      printf("Testing (   safe-prime): %9d bits    \r", ix);
+      printf("Testing (    safe-prime): %9d bits    \r", ix);
       fflush(stdout);
       err =
 	 mp_prime_random_ex(&a, 8, ix,
@@ -251,18 +254,18 @@ printf("compare no compare!\n"); exit(EXIT_FAILURE); }
 #endif
 
    /* test mp_cnt_lsb */
-   printf("testing mp_cnt_lsb...\n");
+   printf("\n\nTesting: mp_cnt_lsb");
    mp_set(&a, 1);
    for (ix = 0; ix < 1024; ix++) {
       if (mp_cnt_lsb(&a) != ix) {
 	 printf("Failed at %d, %d\n", ix, mp_cnt_lsb(&a));
-	 return 0;
+	 return EXIT_FAILURE;
       }
       mp_mul_2(&a, &a);
    }
 
 /* test mp_reduce_2k */
-   printf("Testing mp_reduce_2k...\n");
+   printf("\n\nTesting: mp_reduce_2k\n");
    for (cnt = 3; cnt <= 128; ++cnt) {
       mp_digit tmp;
 
@@ -270,10 +273,10 @@ printf("compare no compare!\n"); exit(EXIT_FAILURE); }
       mp_sub_d(&a, 2, &a);	/* a = 2**cnt - 2 */
 
 
-      printf("\nTesting %4d bits", cnt);
+      printf("\r %4d bits", cnt);
       printf("(%d)", mp_reduce_is_2k(&a));
       mp_reduce_2k_setup(&a, &tmp);
-      printf("(%d)", tmp);
+      printf("(%lu)", (unsigned long)tmp);
       for (ix = 0; ix < 1000; ix++) {
 	 if (!(ix & 127)) {
 	    printf(".");
@@ -291,27 +294,30 @@ printf("compare no compare!\n"); exit(EXIT_FAILURE); }
    }
 
 /* test mp_div_3  */
-   printf("Testing mp_div_3...\n");
+   printf("\n\nTesting: mp_div_3...\n");
    mp_set(&d, 3);
    for (cnt = 0; cnt < 10000;) {
-      mp_digit r1, r2;
+      mp_digit r2;
 
       if (!(++cnt & 127))
-	 printf("%9d\r", cnt);
+      {
+        printf("%9d\r", cnt);
+        fflush(stdout);
+      }
       mp_rand(&a, abs(rand()) % 128 + 1);
       mp_div(&a, &d, &b, &e);
       mp_div_3(&a, &c, &r2);
 
       if (mp_cmp(&b, &c) || mp_cmp_d(&e, r2)) {
-	 printf("\n\nmp_div_3 => Failure\n");
+	 printf("\nmp_div_3 => Failure\n");
       }
    }
-   printf("\n\nPassed div_3 testing\n");
+   printf("\nPassed div_3 testing");
 
 /* test the DR reduction */
-   printf("testing mp_dr_reduce...\n");
+   printf("\n\nTesting: mp_dr_reduce...\n");
    for (cnt = 2; cnt < 32; cnt++) {
-      printf("%d digit modulus\n", cnt);
+      printf("\r%d digit modulus", cnt);
       mp_grow(&a, cnt);
       mp_zero(&a);
       for (ix = 1; ix < cnt; ix++) {
@@ -326,7 +332,7 @@ printf("compare no compare!\n"); exit(EXIT_FAILURE); }
       rr = 0;
       do {
 	 if (!(rr & 127)) {
-	    printf("%9lu\r", rr);
+	    printf(".");
 	    fflush(stdout);
 	 }
 	 mp_sqr(&b, &b);
@@ -337,12 +343,13 @@ printf("compare no compare!\n"); exit(EXIT_FAILURE); }
 	 mp_dr_reduce(&c, &a, (((mp_digit) 1) << DIGIT_BIT) - a.dp[0]);
 
 	 if (mp_cmp(&b, &c) != MP_EQ) {
-	    printf("Failed on trial %lu\n", rr);
+	    printf("Failed on trial %u\n", rr);
 	    exit(-1);
 
 	 }
       } while (++rr < 500);
-      printf("Passed DR test for %d digits\n", cnt);
+      printf(" passed");
+      fflush(stdout);
    }
 
 /* test the mp_reduce_2k_l code */
@@ -361,7 +368,7 @@ printf("compare no compare!\n"); exit(EXIT_FAILURE); }
 #endif
 
    mp_todecimal(&a, buf);
-   printf("p==%s\n", buf);
+   printf("\n\np==%s\n", buf);
 /* now mp_reduce_is_2k_l() should return */
    if (mp_reduce_is_2k_l(&a) != 1) {
       printf("mp_reduce_is_2k_l() return 0, should be 1\n");
@@ -372,7 +379,7 @@ printf("compare no compare!\n"); exit(EXIT_FAILURE); }
    mp_rand(&b, 64);
    mp_mod(&b, &a, &b);
    mp_copy(&b, &c);
-   printf("testing mp_reduce_2k_l...");
+   printf("Testing: mp_reduce_2k_l...");
    fflush(stdout);
    for (cnt = 0; cnt < (1UL << 20); cnt++) {
       mp_sqr(&b, &b);
@@ -457,7 +464,7 @@ printf("compare no compare!\n"); exit(EXIT_FAILURE); }
 	    printf("mul2d failed, rr == %d\n", rr);
 	    draw(&a);
 	    draw(&b);
-	    return 0;
+	    return EXIT_FAILURE;
 	 }
       } else if (!strcmp(cmd, "div2d")) {
 	 ++div2d_n;
@@ -477,7 +484,7 @@ printf("compare no compare!\n"); exit(EXIT_FAILURE); }
 	    printf("div2d failed, rr == %d\n", rr);
 	    draw(&a);
 	    draw(&b);
-	    return 0;
+	    return EXIT_FAILURE;
 	 }
       } else if (!strcmp(cmd, "add")) {
 	 ++add_n;
@@ -495,7 +502,7 @@ printf("compare no compare!\n"); exit(EXIT_FAILURE); }
 	    draw(&b);
 	    draw(&c);
 	    draw(&d);
-	    return 0;
+	    return EXIT_FAILURE;
 	 }
 
 	 /* test the sign/unsigned storage functions */
@@ -508,7 +515,7 @@ printf("compare no compare!\n"); exit(EXIT_FAILURE); }
 	    printf("mp_signed_bin failure!\n");
 	    draw(&c);
 	    draw(&d);
-	    return 0;
+	    return EXIT_FAILURE;
 	 }
 
 
@@ -520,7 +527,7 @@ printf("compare no compare!\n"); exit(EXIT_FAILURE); }
 	    printf("mp_unsigned_bin failure!\n");
 	    draw(&c);
 	    draw(&d);
-	    return 0;
+	    return EXIT_FAILURE;
 	 }
 
       } else if (!strcmp(cmd, "sub")) {
@@ -539,7 +546,7 @@ printf("compare no compare!\n"); exit(EXIT_FAILURE); }
 	    draw(&b);
 	    draw(&c);
 	    draw(&d);
-	    return 0;
+	    return EXIT_FAILURE;
 	 }
       } else if (!strcmp(cmd, "mul")) {
 	 ++mul_n;
@@ -557,7 +564,7 @@ printf("compare no compare!\n"); exit(EXIT_FAILURE); }
 	    draw(&b);
 	    draw(&c);
 	    draw(&d);
-	    return 0;
+	    return EXIT_FAILURE;
 	 }
       } else if (!strcmp(cmd, "div")) {
 	 ++div_n;
@@ -580,7 +587,7 @@ printf("compare no compare!\n"); exit(EXIT_FAILURE); }
 	    draw(&d);
 	    draw(&e);
 	    draw(&f);
-	    return 0;
+	    return EXIT_FAILURE;
 	 }
 
       } else if (!strcmp(cmd, "sqr")) {
@@ -596,7 +603,7 @@ printf("compare no compare!\n"); exit(EXIT_FAILURE); }
 	    draw(&a);
 	    draw(&b);
 	    draw(&c);
-	    return 0;
+	    return EXIT_FAILURE;
 	 }
       } else if (!strcmp(cmd, "gcd")) {
 	 ++gcd_n;
@@ -615,7 +622,7 @@ printf("compare no compare!\n"); exit(EXIT_FAILURE); }
 	    draw(&b);
 	    draw(&c);
 	    draw(&d);
-	    return 0;
+	    return EXIT_FAILURE;
 	 }
       } else if (!strcmp(cmd, "lcm")) {
 	 ++lcm_n;
@@ -634,7 +641,7 @@ printf("compare no compare!\n"); exit(EXIT_FAILURE); }
 	    draw(&b);
 	    draw(&c);
 	    draw(&d);
-	    return 0;
+	    return EXIT_FAILURE;
 	 }
       } else if (!strcmp(cmd, "expt")) {
 	 ++expt_n;
@@ -655,7 +662,7 @@ printf("compare no compare!\n"); exit(EXIT_FAILURE); }
 	    draw(&c);
 	    draw(&d);
 	    draw(&e);
-	    return 0;
+	    return EXIT_FAILURE;
 	 }
       } else if (!strcmp(cmd, "invmod")) {
 	 ++inv_n;
@@ -675,7 +682,7 @@ printf("compare no compare!\n"); exit(EXIT_FAILURE); }
 	    draw(&d);
 	    mp_gcd(&a, &b, &e);
 	    draw(&e);
-	    return 0;
+	    return EXIT_FAILURE;
 	 }
 
       } else if (!strcmp(cmd, "div2")) {
@@ -690,7 +697,7 @@ printf("compare no compare!\n"); exit(EXIT_FAILURE); }
 	    draw(&a);
 	    draw(&b);
 	    draw(&c);
-	    return 0;
+	    return EXIT_FAILURE;
 	 }
       } else if (!strcmp(cmd, "mul2")) {
 	 ++mul2_n;
@@ -704,7 +711,7 @@ printf("compare no compare!\n"); exit(EXIT_FAILURE); }
 	    draw(&a);
 	    draw(&b);
 	    draw(&c);
-	    return 0;
+	    return EXIT_FAILURE;
 	 }
       } else if (!strcmp(cmd, "add_d")) {
 	 ++add_d_n;
@@ -721,7 +728,7 @@ printf("compare no compare!\n"); exit(EXIT_FAILURE); }
 	    draw(&b);
 	    draw(&c);
 	    printf("d == %d\n", ix);
-	    return 0;
+	    return EXIT_FAILURE;
 	 }
       } else if (!strcmp(cmd, "sub_d")) {
 	 ++sub_d_n;
@@ -738,7 +745,7 @@ printf("compare no compare!\n"); exit(EXIT_FAILURE); }
 	    draw(&b);
 	    draw(&c);
 	    printf("d == %d\n", ix);
-	    return 0;
+	    return EXIT_FAILURE;
 	 }
       }
    }
