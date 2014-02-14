@@ -179,8 +179,13 @@ printf("compare no compare!\n"); return EXIT_FAILURE; }
 	 printf("\nmp_sqrt() error!");
 	 return EXIT_FAILURE;
       }
-      mp_n_root(&a, 2, &a);
-      if (mp_cmp_mag(&b, &a) != MP_EQ) {
+      mp_n_root_ex(&a, 2, &c, 0);
+      mp_n_root_ex(&a, 2, &d, 1);
+      if (mp_cmp_mag(&c, &d) != MP_EQ) {
+	 printf("\nmp_n_root_ex() bad result!");
+	 return EXIT_FAILURE;
+      }
+      if (mp_cmp_mag(&b, &c) != MP_EQ) {
 	 printf("mp_sqrt() bad result!\n");
 	 return 1;
       }
