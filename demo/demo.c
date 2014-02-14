@@ -7,6 +7,19 @@
 #define SLEEP
 #endif
 
+/*
+ * Configuration
+ */
+#ifndef LTM_DEMO_TEST_VS_MTEST
+#define LTM_DEMO_TEST_VS_MTEST 1
+#endif
+
+#ifdef LTM_DEMO_REAL_RAND
+#define LTM_DEMO_RAND_SEED  time(NULL)
+#else
+#define LTM_DEMO_RAND_SEED  23
+#endif
+
 #include "tommath.h"
 
 void ndraw(mp_int * a, char *name)
@@ -66,9 +79,9 @@ int main(void)
    mp_init(&e);
    mp_init(&f);
 
-   srand(time(NULL));
+   srand(LTM_DEMO_RAND_SEED);
 
-#if 0
+#if LTM_DEMO_TEST_VS_MTEST == 0
    // test montgomery
    printf("Testing montgomery...\n");
    for (i = 1; i < 10; i++) {
@@ -332,10 +345,7 @@ printf("compare no compare!\n"); exit(EXIT_FAILURE); }
       printf("Passed DR test for %d digits\n", cnt);
    }
 
-#endif
-
 /* test the mp_reduce_2k_l code */
-#if 0
 #if 0
 /* first load P with 2^1024 - 0x2A434 B9FDEC95 D8F9D550 FFFFFFFF FFFFFFFF */
    mp_2expt(&a, 1024);
@@ -381,7 +391,8 @@ printf("compare no compare!\n"); exit(EXIT_FAILURE); }
       }
    }
    printf("...Passed\n");
-#endif
+
+#else
 
    div2_n = mul2_n = inv_n = expt_n = lcm_n = gcd_n = add_n =
       sub_n = mul_n = div_n = sqr_n = mul2d_n = div2d_n = cnt = add_d_n =
@@ -731,6 +742,7 @@ printf("compare no compare!\n"); exit(EXIT_FAILURE); }
 	 }
       }
    }
+#endif
    return 0;
 }
 
