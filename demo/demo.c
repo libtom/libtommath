@@ -14,6 +14,15 @@
 #define LTM_DEMO_TEST_VS_MTEST 1
 #endif
 
+#ifndef LTM_DEMO_TEST_REDUCE_2K_L
+/* This test takes a moment so we disable it by default, but it can be:
+ * 0 to disable testing
+ * 1 to make the test with P = 2^1024 - 0x2A434 B9FDEC95 D8F9D550 FFFFFFFF FFFFFFFF
+ * 2 to make the test with P = 2^2048 - 0x1 00000000 00000000 00000000 00000000 4945DDBF 8EA2A91D 5776399B B83E188F
+ */
+#define LTM_DEMO_TEST_REDUCE_2K_L 0
+#endif
+
 #ifdef LTM_DEMO_REAL_RAND
 #define LTM_DEMO_RAND_SEED  time(NULL)
 #else
@@ -352,19 +361,22 @@ printf("compare no compare!\n"); return EXIT_FAILURE; }
       fflush(stdout);
    }
 
+#if LTM_DEMO_TEST_REDUCE_2K_L
 /* test the mp_reduce_2k_l code */
-#if 0
+#if LTM_DEMO_TEST_REDUCE_2K_L == 1
 /* first load P with 2^1024 - 0x2A434 B9FDEC95 D8F9D550 FFFFFFFF FFFFFFFF */
    mp_2expt(&a, 1024);
    mp_read_radix(&b, "2A434B9FDEC95D8F9D550FFFFFFFFFFFFFFFF", 16);
    mp_sub(&a, &b, &a);
-#elif 1
+#elif LTM_DEMO_TEST_REDUCE_2K_L == 2
 /*  p = 2^2048 - 0x1 00000000 00000000 00000000 00000000 4945DDBF 8EA2A91D 5776399B B83E188F  */
    mp_2expt(&a, 2048);
    mp_read_radix(&b,
 		 "1000000000000000000000000000000004945DDBF8EA2A91D5776399BB83E188F",
 		 16);
    mp_sub(&a, &b, &a);
+#else
+#error oops
 #endif
 
    mp_todecimal(&a, buf);
@@ -398,6 +410,7 @@ printf("compare no compare!\n"); return EXIT_FAILURE; }
       }
    }
    printf("...Passed\n");
+#endif /* LTM_DEMO_TEST_REDUCE_2K_L */
 
 #else
 
