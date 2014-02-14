@@ -400,6 +400,7 @@ int mp_lcm(mp_int *a, mp_int *b, mp_int *c);
  * returns error if a < 0 and b is even
  */
 int mp_n_root(mp_int *a, mp_digit b, mp_int *c);
+int mp_n_root_ex (mp_int * a, mp_digit b, mp_int * c, int fast);
 
 /* special sqrt algo */
 int mp_sqrt(mp_int *arg, mp_int *ret);
