@@ -69,7 +69,7 @@ int main(void)
    srand(time(NULL));
 
 #if 0
-   // test montgomery 
+   // test montgomery
    printf("Testing montgomery...\n");
    for (i = 1; i < 10; i++) {
       printf("Testing digit size: %d\n", i);
@@ -81,7 +81,7 @@ int main(void)
          mp_montgomery_calc_normalization(&b, &a);
          mp_montgomery_setup(&a, &mp);
 
-         // now test a random reduction 
+         // now test a random reduction
          for (ix = 0; ix < 100; ix++) {
              mp_rand(&c, 1 + abs(rand()) % (2*i));
              mp_copy(&c, &d);
@@ -91,7 +91,7 @@ int main(void)
              mp_montgomery_reduce(&c, &a, mp);
              mp_mulmod(&c, &b, &a, &c);
 
-             if (mp_cmp(&c, &d) != MP_EQ) { 
+             if (mp_cmp(&c, &d) != MP_EQ) {
 printf("d = e mod a, c = e MOD a\n");
 mp_todecimal(&a, buf); printf("a = %s\n", buf);
 mp_todecimal(&e, buf); printf("e = %s\n", buf);
