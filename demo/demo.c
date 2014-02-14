@@ -70,12 +70,16 @@ int myrng(unsigned char *dst, int len, void *dat)
    return len;
 }
 
+mp_int a, b, c, d, e, f;
 
+static void _cleanup(void)
+{
+  mp_clear_multi(&a, &b, &c, &d, &e, &f, NULL);
+}
 
 char cmd[4096], buf[4096];
 int main(void)
 {
-   mp_int a, b, c, d, e, f;
    unsigned long t;
    unsigned rr;
    int i, n, err, cnt, ix;
