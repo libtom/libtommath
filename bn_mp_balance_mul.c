@@ -26,12 +26,12 @@ int mp_balance_mul (mp_int * a, mp_int * b, mp_int * c)
    * Ruby core; namely, function 'bigmul1_balance'
    * from 'bignum.c'
    */
-  mp_int t1, t2, tmp;
+  mp_int t1, t2;
   long i, an, bn, r, n;
-  int res, olduse,  min, max;
+  int res,  min, max;
   int err = MP_MEM;
 
-  mp_digit *bds, *cds, *t1ds;
+  mp_digit *bds, *t1ds;
 
   an = a->used;
   bn = b->used;
@@ -44,7 +44,6 @@ int mp_balance_mul (mp_int * a, mp_int * b, mp_int * c)
   }
 
   bds = b->dp;
-  cds = c->dp;
   t1ds = t1.dp;
 
   n = 0;
@@ -70,17 +69,17 @@ int mp_balance_mul (mp_int * a, mp_int * b, mp_int * c)
     }
 
     register mp_digit u, *tmpx, *tmpt2, *tmpcn;
-    register int i;
+    register int j;
     tmpx = tmpcn = x.dp; tmpt2 = t2.dp;
     u = 0;
-    for (i = 0; i < min; i++) {
+    for (j = 0; j < min; j++) {
       *tmpcn = *tmpx++ + *tmpt2++ + u;
       u = *tmpcn >> ((mp_digit)DIGIT_BIT);
       *tmpcn++ &= MP_MASK;
     }
     if (min != max) {
-      for (; i < max; i++) {
-        *tmpcn = x.dp[i] + u;
+      for (; j < max; j++) {
+        *tmpcn = x.dp[j] + u;
         u = *tmpcn >> ((mp_digit)DIGIT_BIT);
         *tmpcn++ &= MP_MASK;
       }
