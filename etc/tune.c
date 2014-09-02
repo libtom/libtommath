@@ -6,7 +6,7 @@
 #include <time.h>
 
 /* how many times todo each size mult.  Depends on your computer.  For slow computers
- * this can be low like 5 or 10.  For fast [re: Athlon] should be 25 - 50 or so 
+ * this can be low like 5 or 10.  For fast [re: Athlon] should be 25 - 50 or so
  */
 #define TIMES (1UL<<14UL)
 
@@ -67,7 +67,7 @@ ulong64 time_mult(int size, int s)
   mp_rand (&a, size);
   mp_rand (&b, size);
 
-  if (s == 1) { 
+  if (s == 1) {
       KARATSUBA_MUL_CUTOFF = size;
   } else {
       KARATSUBA_MUL_CUTOFF = 100000;
@@ -95,7 +95,7 @@ ulong64 time_sqr(int size, int s)
 
   mp_rand (&a, size);
 
-  if (s == 1) { 
+  if (s == 1) {
       KARATSUBA_SQR_CUTOFF = size;
   } else {
       KARATSUBA_SQR_CUTOFF = 100000;
@@ -117,7 +117,7 @@ main (void)
   ulong64 t1, t2;
   int x, y;
 
-  for (x = 8; ; x += 2) { 
+  for (x = 8; ; x += 2) {
      t1 = time_mult(x, 0);
      t2 = time_mult(x, 1);
      printf("%d: %9llu %9llu, %9llu\n", x, t1, t2, t2 - t1);
@@ -125,7 +125,7 @@ main (void)
   }
   y = x;
 
-  for (x = 8; ; x += 2) { 
+  for (x = 8; ; x += 2) {
      t1 = time_sqr(x, 0);
      t2 = time_sqr(x, 1);
      printf("%d: %9llu %9llu, %9llu\n", x, t1, t2, t2 - t1);

@@ -2,7 +2,7 @@
 #
 #Tom St Denis
 
-#version of library 
+#version of library
 VERSION=0.42.0
 
 CFLAGS  +=  -I./ -Wall -W -Wshadow -Wsign-compare
@@ -23,10 +23,10 @@ endif
 
 ifndef IGNORE_SPEED
 
-#for speed 
+#for speed
 CFLAGS += -O3 -funroll-loops
 
-#for size 
+#for size
 #CFLAGS += -Os
 
 #x86 optimizations [should be valid for any GCC install though]
@@ -104,7 +104,7 @@ $(LIBNAME):  $(OBJECTS)
 #
 # This will build the library with profile generation
 # then run the test demo and rebuild the library.
-# 
+#
 # So far I've seen improvements in the MP math
 profiled:
 	make CFLAGS="$(CFLAGS) -fprofile-arcs -DTESTING" timing
@@ -112,7 +112,7 @@ profiled:
 	rm -f *.a *.o ltmtest
 	make CFLAGS="$(CFLAGS) -fbranch-probabilities"
 
-#make a single object profiled library 
+#make a single object profiled library
 profiled_single:
 	perl gen.pl
 	$(CC) $(CFLAGS) -fprofile-arcs -DTESTING -c mpi.c -o mpi.o
@@ -121,7 +121,7 @@ profiled_single:
 	rm -f *.o ltmtest
 	$(CC) $(CFLAGS) -fbranch-probabilities -DTESTING -c mpi.c -o mpi.o
 	$(AR) $(ARFLAGS) $(LIBNAME) mpi.o
-	ranlib $(LIBNAME)	
+	ranlib $(LIBNAME)
 
 install: $(LIBNAME)
 	install -d -g $(GROUP) -o $(USER) $(DESTDIR)$(LIBPATH)
@@ -131,16 +131,16 @@ install: $(LIBNAME)
 
 test: $(LIBNAME) demo/demo.o
 	$(CC) $(CFLAGS) demo/demo.o $(LIBNAME) -o test
-	
+
 mtest: test	
 	cd mtest ; $(CC) $(CFLAGS) mtest.c -o mtest
-        
+
 timing: $(LIBNAME)
 	$(CC) $(CFLAGS) -DTIMER demo/timing.c $(LIBNAME) -o ltmtest
 
 # makes the LTM book DVI file, requires tetex, perl and makeindex [part of tetex I think]
 docdvi: tommath.src
-	cd pics ; MAKE=${MAKE} ${MAKE} 
+	cd pics ; MAKE=${MAKE} ${MAKE}
 	echo "hello" > tommath.ind
 	perl booker.pl
 	latex tommath > /dev/null
@@ -151,14 +151,14 @@ docdvi: tommath.src
 # poster, makes the single page PDF poster
 poster: poster.tex
 	pdflatex poster
-	rm -f poster.aux poster.log 
+	rm -f poster.aux poster.log
 
 # makes the LTM book PDF file, requires tetex, cleans up the LaTeX temp files
 docs:   docdvi
 	dvipdf tommath
 	rm -f tommath.log tommath.aux tommath.dvi tommath.idx tommath.toc tommath.lof tommath.ind tommath.ilg
 	cd pics ; MAKE=${MAKE} ${MAKE} clean
-	
+
 #LTM user manual
 mandvi: bn.tex
 	echo "hello" > bn.ind
@@ -172,7 +172,7 @@ manual:	mandvi
 	pdflatex bn >/dev/null
 	rm -f bn.aux bn.dvi bn.log bn.idx bn.lof bn.out bn.toc
 
-pretty: 
+pretty:
 	perl pretty.build
 
 clean:
@@ -184,7 +184,7 @@ clean:
 
 #zipup the project (take that!)
 no_oops: clean
-	cd .. ; cvs commit 
+	cd .. ; cvs commit
 	echo Scanning for scratch/dirty files
 	find . -type f | grep -v CVS | xargs -n 1 bash mess.sh
 

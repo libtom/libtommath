@@ -37,3 +37,5 @@ mtest.exe
 *.ilg
 *.ind
 *.pdf
+*.out
+tommath.tex

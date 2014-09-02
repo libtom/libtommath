@@ -8,7 +8,7 @@
 CFLAGS  +=  -I./ -Wall -W -Wshadow -O3 -funroll-loops -mno-cygwin
 
 #x86 optimizations [should be valid for any GCC install though]
-CFLAGS  += -fomit-frame-pointer 
+CFLAGS  += -fomit-frame-pointer
 
 default: windll
 
