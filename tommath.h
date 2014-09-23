@@ -73,7 +73,7 @@ extern "C" {
    typedef signed long long   long64;
 #endif
 
-   typedef unsigned long      mp_digit;
+   typedef unsigned long long mp_digit;
    typedef unsigned long      mp_word __attribute__ ((mode(TI)));
 
    #define DIGIT_BIT          60
@@ -125,7 +125,11 @@ extern "C" {
 /* otherwise the bits per digit is calculated automatically from the size of a mp_digit */
 #ifndef DIGIT_BIT
    #define DIGIT_BIT     ((int)((CHAR_BIT * sizeof(mp_digit) - 1)))  /* bits per digit */
+   typedef unsigned long mp_min_u32;
+#else
+   typedef mp_digit mp_min_u32;
 #endif
+
 
 #define MP_DIGIT_BIT     DIGIT_BIT
 #define MP_MASK          ((((mp_digit)1)<<((mp_digit)DIGIT_BIT))-((mp_digit)1))
