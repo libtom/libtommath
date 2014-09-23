@@ -65,7 +65,7 @@ extern "C" {
    typedef unsigned short     mp_word;
 #elif defined(MP_16BIT)
    typedef unsigned short     mp_digit;
-   typedef unsigned long      mp_word;
+   typedef unsigned int       mp_word;
 #elif defined(MP_64BIT)
    /* for GCC only on supported platforms */
 #ifndef CRYPT
