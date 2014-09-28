@@ -41,6 +41,7 @@
 #define BN_MP_EXCH_C
 #define BN_MP_EXPORT_C
 #define BN_MP_EXPT_D_C
+#define BN_MP_EXPT_D_EX_C
 #define BN_MP_EXPTMOD_C
 #define BN_MP_EXPTMOD_FAST_C
 #define BN_MP_EXTEUCLID_C
@@ -76,6 +77,7 @@
 #define BN_MP_MUL_D_C
 #define BN_MP_MULMOD_C
 #define BN_MP_N_ROOT_C
+#define BN_MP_N_ROOT_EX_C
 #define BN_MP_NEG_C
 #define BN_MP_OR_C
 #define BN_MP_PRIME_FERMAT_C
@@ -333,6 +335,10 @@
 #endif
 
 #if defined(BN_MP_EXPT_D_C)
+   #define BN_MP_EXPT_D_EX_C
+#endif
+
+#if defined(BN_MP_EXPT_D_EX_C)
    #define BN_MP_INIT_COPY_C
    #define BN_MP_SET_C
    #define BN_MP_MUL_C
@@ -609,10 +615,14 @@
 #endif
 
 #if defined(BN_MP_N_ROOT_C)
+   #define BN_MP_N_ROOT_EX_C
+#endif
+
+#if defined(BN_MP_N_ROOT_EX_C)
    #define BN_MP_INIT_C
    #define BN_MP_SET_C
    #define BN_MP_COPY_C
-   #define BN_MP_EXPT_D_C
+   #define BN_MP_EXPT_D_EX_C
    #define BN_MP_MUL_C
    #define BN_MP_SUB_C
    #define BN_MP_MUL_D_C
@@ -1018,7 +1028,3 @@
 #else
 #define LTM_LAST
 #endif
-
-/* $Source$ */
-/* $Revision$ */
-/* $Date$ */
