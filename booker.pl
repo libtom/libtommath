@@ -82,7 +82,7 @@ while (<IN>) {
          # scan till next end of comment, e.g. skip license
          while (<SRC>) {
             $text[$line++] = $_;
-            last if ($_ =~ /math\.libtomcrypt\.com/);
+            last if ($_ =~ /libtom\.org/);
          }
          <SRC>;
       }
@@ -263,3 +263,5 @@ print "Read $readline lines, wrote $wroteline lines\n";
 
 close (OUT);
 close (IN);
+
+system('perl -pli -e "s/\s*$//" tommath.tex');

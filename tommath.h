@@ -47,7 +47,7 @@ extern "C" {
 
 /* detect 64-bit mode if possible */
 #if defined(__x86_64__)
-   #if !(defined(MP_64BIT) && defined(MP_16BIT) && defined(MP_8BIT))
+   #if !(defined(MP_32BIT) || defined(MP_16BIT) || defined(MP_8BIT))
       #define MP_64BIT
    #endif
 #endif
@@ -63,9 +63,15 @@ extern "C" {
 #ifdef MP_8BIT
    typedef unsigned char      mp_digit;
    typedef unsigned short     mp_word;
+#ifdef DIGIT_BIT
+#error You must not define DIGIT_BIT when using MP_8BIT
+#endif
 #elif defined(MP_16BIT)
    typedef unsigned short     mp_digit;
    typedef unsigned int       mp_word;
+#ifdef DIGIT_BIT
+#error You must not define DIGIT_BIT when using MP_16BIT
+#endif
 #elif defined(MP_64BIT)
    /* for GCC only on supported platforms */
 #ifndef CRYPT
