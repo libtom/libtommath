@@ -31,7 +31,6 @@
 
 #include "tommath.h"
 
-#if LTM_DEMO_TEST_VS_MTEST
 void ndraw(mp_int * a, char *name)
 {
    char buf[16000];
@@ -41,6 +40,7 @@ void ndraw(mp_int * a, char *name)
    printf("%s\n", buf);
 }
 
+#if LTM_DEMO_TEST_VS_MTEST
 static void draw(mp_int * a)
 {
    ndraw(a, "");
@@ -97,6 +97,23 @@ int main(void)
    srand(LTM_DEMO_RAND_SEED);
 
 #if LTM_DEMO_TEST_VS_MTEST == 0
+#ifdef MP_8BIT
+   printf("Digit size 8 Bit \n");
+#endif
+#ifdef MP_16BIT
+   printf("Digit size 16 Bit \n");
+#endif
+#ifdef MP_32BIT
+   printf("Digit size 32 Bit \n");
+#endif
+#ifdef MP_64BIT
+   printf("Digit size 64 Bit \n");
+#endif
+   printf("Size of mp_digit: %u\n", sizeof(mp_digit));
+   printf("Size of mp_word: %u\n", sizeof(mp_word));
+   printf("DIGIT_BIT: %d\n", DIGIT_BIT);
+   printf("MP_PREC: %d\n", MP_PREC);
+
    // test montgomery
    printf("Testing: montgomery...\n");
    for (i = 1; i < 10; i++) {

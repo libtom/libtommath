@@ -1,11 +1,13 @@
 # suppress compiler/linker output
 *.[oa]
+*.l[oa]
 *.obj
 *.gcda
 *.gcno
 *.lib
 Debug/
 Release/
+.libs/
 
 # suppress output of build process and *nix/windows test executables
 ltmtest

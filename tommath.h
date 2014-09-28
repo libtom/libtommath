@@ -47,7 +47,7 @@ extern "C" {
 
 /* detect 64-bit mode if possible */
 #if defined(__x86_64__)
-   #if !(defined(MP_64BIT) && defined(MP_16BIT) && defined(MP_8BIT))
+   #if !(defined(MP_32BIT) || defined(MP_16BIT) || defined(MP_8BIT))
       #define MP_64BIT
    #endif
 #endif
@@ -63,9 +63,15 @@ extern "C" {
 #ifdef MP_8BIT
    typedef unsigned char      mp_digit;
    typedef unsigned short     mp_word;
+#ifdef DIGIT_BIT
+#error You must not define DIGIT_BIT when using MP_8BIT
+#endif
 #elif defined(MP_16BIT)
    typedef unsigned short     mp_digit;
-   typedef unsigned long      mp_word;
+   typedef unsigned int       mp_word;
+#ifdef DIGIT_BIT
+#error You must not define DIGIT_BIT when using MP_16BIT
+#endif
 #elif defined(MP_64BIT)
    /* for GCC only on supported platforms */
 #ifndef CRYPT
@@ -73,7 +79,7 @@ extern "C" {
    typedef signed long long   long64;
 #endif
 
-   typedef unsigned long      mp_digit;
+   typedef unsigned long long mp_digit;
    typedef unsigned long      mp_word __attribute__ ((mode(TI)));
 
    #define DIGIT_BIT          60
@@ -125,7 +131,11 @@ extern "C" {
 /* otherwise the bits per digit is calculated automatically from the size of a mp_digit */
 #ifndef DIGIT_BIT
    #define DIGIT_BIT     ((int)((CHAR_BIT * sizeof(mp_digit) - 1)))  /* bits per digit */
+   typedef unsigned long mp_min_u32;
+#else
+   typedef mp_digit mp_min_u32;
 #endif
+
 
 #define MP_DIGIT_BIT     DIGIT_BIT
 #define MP_MASK          ((((mp_digit)1)<<((mp_digit)DIGIT_BIT))-((mp_digit)1))

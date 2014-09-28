@@ -12,7 +12,9 @@ ifndef PREFIX
   PREFIX=
 endif
 
-CC=$(PREFIX)gcc
+ifeq ($(CC),cc)
+  CC = $(PREFIX)gcc
+endif
 LD=$(PREFIX)ld
 AR=$(PREFIX)ar
 RANLIB=$(PREFIX)ranlib
@@ -116,7 +118,7 @@ profiled:
 profiled_single:
 	perl gen.pl
 	$(CC) $(CFLAGS) -fprofile-arcs -DTESTING -c mpi.c -o mpi.o
-	$(CC) $(CFLAGS) -DTESTING -DTIMER demo/timing.c mpi.o -o ltmtest
+	$(CC) $(CFLAGS) -DTESTING -DTIMER demo/timing.c mpi.o -lgcov -o ltmtest
 	./ltmtest
 	rm -f *.o ltmtest
 	$(CC) $(CFLAGS) -fbranch-probabilities -DTESTING -c mpi.c -o mpi.o
@@ -132,7 +134,7 @@ install: $(LIBNAME)
 test: $(LIBNAME) demo/demo.o
 	$(CC) $(CFLAGS) demo/demo.o $(LIBNAME) -o test
 
-mtest: test	
+mtest:
 	cd mtest ; $(CC) $(CFLAGS) mtest.c -o mtest
 
 timing: $(LIBNAME)

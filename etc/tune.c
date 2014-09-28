@@ -10,14 +10,19 @@
  */
 #define TIMES (1UL<<14UL)
 
+#ifndef X86_TIMER
+
 /* RDTSC from Scott Duplichan */
 static ulong64 TIMFUNC (void)
    {
    #if defined __GNUC__
       #if defined(__i386__) || defined(__x86_64__)
-         unsigned long long a;
-         __asm__ __volatile__ ("rdtsc\nmovl %%eax,%0\nmovl %%edx,4+%0\n"::"m"(a):"%eax","%edx");
-         return a;
+        /* version from http://www.mcs.anl.gov/~kazutomo/rdtsc.html
+         * the old code always got a warning issued by gcc, clang did not complain...
+         */
+        unsigned hi, lo;
+        __asm__ __volatile__ ("rdtsc" : "=a"(lo), "=d"(hi));
+        return ((ulong64)lo)|( ((ulong64)hi)<<32);
       #else /* gcc-IA64 version */
          unsigned long result;
          __asm__ __volatile__("mov %0=ar.itc" : "=r"(result) :: "memory");
@@ -41,8 +46,6 @@ static ulong64 TIMFUNC (void)
    #endif
    }
 
-
-#ifndef X86_TIMER
 
 /* generic ISO C timer */
 ulong64 LBL_T;
