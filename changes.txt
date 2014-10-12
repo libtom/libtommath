@@ -1,3 +1,18 @@
+XXX, 2014
+v0.43.0
+       -- Dirkjan Bussink provided a faster version of mp_expt_d()
+       -- Moritz Lenz contributed a fix to mp_mod()
+       -- Fixed bugs in mp_read_radix(), mp_radix_size
+          Thanks to shameister, Gerhard R,
+       -- Christopher Brown provided mp_export() and mp_import()
+       -- Improvements in the code of
+          Thanks to ramkumarkoppu,
+       -- lomereiter provided mp_balance_mul()
+       -- Alexander Boström from the heimdal project contributed patches to
+          mp_prime_next_prime() and mp_invmod() and added a mp_isneg() macro
+       -- Fix build issues for Linux x32 ABI
+
+
 July 23rd, 2010
 v0.42.0
        -- Fix for mp_prime_next_prime() bug when checking generated prime
