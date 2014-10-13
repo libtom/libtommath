@@ -69,6 +69,7 @@ LIBPATH=/usr/lib
 INCPATH=/usr/include
 DATAPATH=/usr/share/doc/libtommath/pdf
 
+#START_INS
 OBJECTS=bncore.o bn_mp_init.o bn_mp_clear.o bn_mp_exch.o bn_mp_grow.o bn_mp_shrink.o \
 bn_mp_clamp.o bn_mp_zero.o  bn_mp_set.o bn_mp_set_int.o bn_mp_init_size.o bn_mp_copy.o \
 bn_mp_init_copy.o bn_mp_abs.o bn_mp_neg.o bn_mp_cmp_mag.o bn_mp_cmp.o bn_mp_cmp_d.o \
@@ -97,6 +98,8 @@ bn_mp_prime_random_ex.o bn_mp_get_int.o bn_mp_sqrt.o bn_mp_is_square.o bn_mp_ini
 bn_mp_init_set_int.o bn_mp_invmod_slow.o bn_mp_prime_rabin_miller_trials.o \
 bn_mp_to_signed_bin_n.o bn_mp_to_unsigned_bin_n.o bn_mp_import.o bn_mp_export.o \
 bn_mp_balance_mul.o bn_mp_expt_d_ex.o bn_mp_n_root_ex.o
+
+#END_INS
 
 $(LIBNAME):  $(OBJECTS)
 	$(AR) $(ARFLAGS) $@ $(OBJECTS)
