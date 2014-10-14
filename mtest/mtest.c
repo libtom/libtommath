@@ -39,7 +39,12 @@ mulmod
 #include <time.h>
 #include "mpi.c"
 
+#ifdef LTM_MTEST_REAL_RAND
+#define getRandChar() fgetc(rng)
 FILE *rng;
+#else
+#define getRandChar() (rand()&0xFF)
+#endif
 
 void rand_num(mp_int *a)
 {
@@ -47,13 +52,21 @@ void rand_num(mp_int *a)
    unsigned char buf[2048];
    size_t sz;
 
-   size = 1 + ((fgetc(rng)<<8) + fgetc(rng)) % 101;
-   buf[0] = (fgetc(rng)&1)?1:0;
+   size = 1 + ((getRandChar()<<8) + getRandChar()) % 101;
+   buf[0] = (getRandChar()&1)?1:0;
+#ifdef LTM_MTEST_REAL_RAND
    sz = fread(buf+1, 1, size, rng);
+#else
+   sz = 1;
+   while (sz < (unsigned)size) {
+       buf[sz] = getRandChar();
+       ++sz;
+   }
+#endif
    if (sz != (unsigned)size) {
        fprintf(stderr, "\nWarning: fread failed\n\n");
    }
-   while (buf[1] == 0) buf[1] = fgetc(rng);
+   while (buf[1] == 0) buf[1] = getRandChar();
    mp_read_raw(a, buf, 1+size);
 }
 
@@ -63,13 +76,21 @@ void rand_num2(mp_int *a)
    unsigned char buf[2048];
    size_t sz;
 
-   size = 10 + ((fgetc(rng)<<8) + fgetc(rng)) % 101;
-   buf[0] = (fgetc(rng)&1)?1:0;
+   size = 10 + ((getRandChar()<<8) + getRandChar()) % 101;
+   buf[0] = (getRandChar()&1)?1:0;
+#ifdef LTM_MTEST_REAL_RAND
    sz = fread(buf+1, 1, size, rng);
+#else
+   sz = 1;
+   while (sz < (unsigned)size) {
+       buf[sz] = getRandChar();
+       ++sz;
+   }
+#endif
    if (sz != (unsigned)size) {
        fprintf(stderr, "\nWarning: fread failed\n\n");
    }
-   while (buf[1] == 0) buf[1] = fgetc(rng);
+   while (buf[1] == 0) buf[1] = getRandChar();
    mp_read_raw(a, buf, 1+size);
 }
 
@@ -79,7 +100,9 @@ int main(void)
 {
    int n, tmp;
    mp_int a, b, c, d, e;
+#ifdef MTEST_NO_FULLSPEED
    clock_t t1;
+#endif
    char buf[4096];
 
    mp_init(&a);
@@ -106,6 +129,7 @@ int main(void)
    }
 */
 
+#ifdef LTM_MTEST_REAL_RAND
    rng = fopen("/dev/urandom", "rb");
    if (rng == NULL) {
       rng = fopen("/dev/random", "rb");
@@ -114,16 +138,21 @@ int main(void)
          rng = stdin;
       }
    }
+#else
+   srand(23);
+#endif
 
+#ifdef MTEST_NO_FULLSPEED
    t1 = clock();
+#endif
    for (;;) {
-#if 0
+#ifdef MTEST_NO_FULLSPEED
       if (clock() - t1 > CLOCKS_PER_SEC) {
          sleep(2);
          t1 = clock();
       }
 #endif
-       n = fgetc(rng) % 15;
+       n = getRandChar() % 15;
 
    if (n == 0) {
        /* add tests */
@@ -188,7 +217,7 @@ int main(void)
       /* mul_2d test */
       rand_num(&a);
       mp_copy(&a, &b);
-      n = fgetc(rng) & 63;
+      n = getRandChar() & 63;
       mp_mul_2d(&b, n, &b);
       mp_to64(&a, buf);
       printf("mul2d\n");
@@ -200,7 +229,7 @@ int main(void)
       /* div_2d test */
       rand_num(&a);
       mp_copy(&a, &b);
-      n = fgetc(rng) & 63;
+      n = getRandChar() & 63;
       mp_div_2d(&b, n, &b, NULL);
       mp_to64(&a, buf);
       printf("div2d\n");
@@ -307,7 +336,9 @@ int main(void)
       printf("%s\n", buf);
    }
    }
+#ifdef LTM_MTEST_REAL_RAND
    fclose(rng);
+#endif
    return 0;
 }
 
