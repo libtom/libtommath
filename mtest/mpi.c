@@ -1264,7 +1264,7 @@ mp_err mp_expt(mp_int *a, mp_int *b, mp_int *c)
   mp_int   s, x;
   mp_err   res;
   mp_digit d;
-  int      dig, bit;
+  unsigned int bit, dig;
 
   ARGCHK(a != NULL && b != NULL && c != NULL, MP_BADARG);
 
@@ -1637,7 +1637,7 @@ mp_err mp_exptmod(mp_int *a, mp_int *b, mp_int *m, mp_int *c)
   mp_err   res;
   mp_digit d, *db = DIGITS(b);
   mp_size  ub = USED(b);
-  int      dig, bit;
+  unsigned int bit, dig;
 
   ARGCHK(a != NULL && b != NULL && c != NULL, MP_BADARG);
 
@@ -2387,7 +2387,7 @@ mp_err mp_to_unsigned_bin(mp_int *mp, unsigned char *str)
 
   /* Generate digits in reverse order */
   while(dp < end) {
-    int      ix;
+    unsigned int ix;
 
     d = *dp;
     for(ix = 0; ix < sizeof(mp_digit); ++ix) {
@@ -2541,7 +2541,7 @@ int    mp_value_radix_size(int num, int qty, int radix)
 
 /* {{{ mp_toradix(mp, str, radix) */
 
-mp_err mp_toradix(mp_int *mp, unsigned char *str, int radix)
+mp_err mp_toradix(mp_int *mp, char *str, int radix)
 {
   int  ix, pos = 0;
 
@@ -2587,10 +2587,10 @@ mp_err mp_toradix(mp_int *mp, unsigned char *str, int radix)
     /* Reverse the digits and sign indicator     */
     ix = 0;
     while(ix < pos) {
-      char tmp = str[ix];
+      char _tmp = str[ix];
 
       str[ix] = str[pos];
-      str[pos] = tmp;
+      str[pos] = _tmp;
       ++ix;
       --pos;
     }
@@ -2833,7 +2833,7 @@ mp_err   s_mp_lshd(mp_int *mp, mp_size p)
     dp[ix + p] = dp[ix];
 
   /* Fill the bottom digits with zeroes */
-  for(ix = 0; ix < p; ix++)
+  for(ix = 0; (unsigned)ix < p; ix++)
     dp[ix] = 0;
 
   return MP_OKAY;
@@ -2898,7 +2898,7 @@ void     s_mp_div_2(mp_int *mp)
 
 mp_err s_mp_mul_2(mp_int *mp)
 {
-  int      ix;
+  unsigned int ix;
   mp_digit kin = 0, kout, *dp = DIGITS(mp);
   mp_err   res;
 
@@ -2970,7 +2970,7 @@ mp_err    s_mp_mul_2d(mp_int *mp, mp_digit d)
   mp_err   res;
   mp_digit save, next, mask, *dp;
   mp_size  used;
-  int      ix;
+  unsigned int ix;
 
   if((res = s_mp_lshd(mp, d / DIGIT_BIT)) != MP_OKAY)
     return res;

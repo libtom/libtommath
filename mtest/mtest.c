@@ -43,24 +43,32 @@ FILE *rng;
 
 void rand_num(mp_int *a)
 {
-   int n, size;
+   int size;
    unsigned char buf[2048];
+   size_t sz;
 
    size = 1 + ((fgetc(rng)<<8) + fgetc(rng)) % 101;
    buf[0] = (fgetc(rng)&1)?1:0;
-   fread(buf+1, 1, size, rng);
+   sz = fread(buf+1, 1, size, rng);
+   if (sz != (unsigned)size) {
+       fprintf(stderr, "\nWarning: fread failed\n\n");
+   }
    while (buf[1] == 0) buf[1] = fgetc(rng);
    mp_read_raw(a, buf, 1+size);
 }
 
 void rand_num2(mp_int *a)
 {
-   int n, size;
+   int size;
    unsigned char buf[2048];
+   size_t sz;
 
    size = 10 + ((fgetc(rng)<<8) + fgetc(rng)) % 101;
    buf[0] = (fgetc(rng)&1)?1:0;
-   fread(buf+1, 1, size, rng);
+   sz = fread(buf+1, 1, size, rng);
+   if (sz != (unsigned)size) {
+       fprintf(stderr, "\nWarning: fread failed\n\n");
+   }
    while (buf[1] == 0) buf[1] = fgetc(rng);
    mp_read_raw(a, buf, 1+size);
 }
