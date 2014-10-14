@@ -1,5 +1,5 @@
 #include <tommath.h>
-#ifdef BN_MP_SET_INT_C
+#ifdef BN_MP_SET_LONG_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is a library that provides multiple-precision
