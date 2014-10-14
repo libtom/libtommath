@@ -132,6 +132,7 @@ install: $(LIBNAME)
 test: $(LIBNAME) demo/demo.o
 	$(CC) $(CFLAGS) demo/demo.o $(LIBNAME) -o test
 
+.PHONY: mtest
 mtest:
 	cd mtest ; $(CC) $(CFLAGS) mtest.c -o mtest
 
@@ -217,3 +218,7 @@ zipup: clean manual poster docs
 	tar -c libtommath-$(VERSION)/* | bzip2 -9vvc > ltm-$(VERSION).tar.bz2 ; \
 	zip -9 -r ltm-$(VERSION).zip libtommath-$(VERSION)/* ; \
 	mv -f ltm* ~ ; rm -rf libtommath-$(VERSION)
+
+new_file:
+	bash updatemakes.sh
+	perl dep.pl
