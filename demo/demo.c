@@ -798,6 +798,9 @@ printf("compare no compare!\n"); return EXIT_FAILURE; }
 	    printf("d == %d\n", ix);
 	    return EXIT_FAILURE;
 	 }
+      } else if (!strcmp(cmd, "exit")) {
+         printf("\nokay, exiting now\n");
+         break;
       }
    }
 #endif

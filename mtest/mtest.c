@@ -96,9 +96,10 @@ void rand_num2(mp_int *a)
 
 #define mp_to64(a, b) mp_toradix(a, b, 64)
 
-int main(void)
+int main(int argc, char *argv[])
 {
    int n, tmp;
+   long long max;
    mp_int a, b, c, d, e;
 #ifdef MTEST_NO_FULLSPEED
    clock_t t1;
@@ -110,6 +111,22 @@ int main(void)
    mp_init(&c);
    mp_init(&d);
    mp_init(&e);
+
+   if (argc > 1) {
+       max = strtol(argv[1], NULL, 0);
+       if (max < 0) {
+           if (max > -64) {
+               max = (1 << -(max)) + 1;
+           } else {
+               max = 1;
+           }
+       } else if (max == 0) {
+           max = 1;
+       }
+   }
+   else {
+       max = 0;
+   }
 
 
    /* initial (2^n - 1)^2 testing, makes sure the comba multiplier works [it has the new carry code] */
@@ -153,6 +170,12 @@ int main(void)
       }
 #endif
        n = getRandChar() % 15;
+
+       if (max != 0) {
+           --max;
+           if (max == 0)
+             n = 255;
+       }
 
    if (n == 0) {
        /* add tests */
@@ -334,7 +357,11 @@ int main(void)
       printf("%s\n%d\n", buf, tmp);
       mp_to64(&b, buf);
       printf("%s\n", buf);
+   } else if (n == 255) {
+      printf("exit\n");
+      break;
    }
+
    }
 #ifdef LTM_MTEST_REAL_RAND
    fclose(rng);
