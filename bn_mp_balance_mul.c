@@ -16,31 +16,32 @@
  */
 
 /* c = |a| * |b| using balancing multiplication.
- * If |a| is much less than |b|, 
- * we firstly split b into chunks such that length of each one is 
+ * If |a| is much less than |b|,
+ * we firstly split b into chunks such that length of each one is
  * roughly equal to that of |a|.
  */
 int mp_balance_mul (mp_int * a, mp_int * b, mp_int * c)
 {
-  /* the following algorithm is taken from 
+  /* the following algorithm is taken from
    * Ruby core; namely, function 'bigmul1_balance'
    * from 'bignum.c'
    */
   mp_int t1, t2;
-  long i, an, bn, r, n;
-  int res,  min, max;
+  int res,  min, max, an, bn, r, i, n;
   int err = MP_MEM;
-
   mp_digit *bds, *t1ds;
 
   an = a->used;
   bn = b->used;
-  if ((res = mp_grow(c, an + bn)) != MP_OKAY) {
+
+  if ((res = mp_init_size(&t1, an)) != MP_OKAY) {
     return res;
   }
-
-  if (mp_init_size(&t1, an) != MP_OKAY) {
+  if ((res = mp_init_size(&t2, an + bn)) != MP_OKAY) {
     goto ERR;
+  }
+  if ((res = mp_grow(c, an + bn)) != MP_OKAY) {
+    goto ERR2;
   }
 
   bds = b->dp;
@@ -57,8 +58,11 @@ int mp_balance_mul (mp_int * a, mp_int * b, mp_int * c)
       t1ds[i] = bds[n + i];
     t1.used = r;
 
-    mp_init_size(&t2, an + r);
-    mp_mul(a, &t1, &t2);
+    mp_zero(&t2);
+
+    if ((res = mp_mul(a, &t1, &t2)) != MP_OKAY) {
+      goto ERR2;
+    }
 
     if (t2.used > c->used - n) {
       min = c->used - n; max = t2.used;
@@ -85,13 +89,16 @@ int mp_balance_mul (mp_int * a, mp_int * b, mp_int * c)
       }
     }
     *tmpcn++ = u;
-    
+
     bn -= r;
     n += r;
   }
   mp_clamp(c);
   return MP_OKAY;
+ERR2:
+  mp_clear(&t2);
 ERR:
+  mp_clear(&t1);
   return err;
 }
 #endif
