@@ -132,6 +132,11 @@ install: $(LIBNAME)
 test: $(LIBNAME) demo/demo.o
 	$(CC) $(CFLAGS) demo/demo.o $(LIBNAME) -o test
 
+test_standalone: CFLAGS+=-DLTM_DEMO_TEST_VS_MTEST=0
+
+test_standalone: $(LIBNAME) demo/demo.o
+	$(CC) $(CFLAGS) demo/demo.o $(LIBNAME) -o test
+
 .PHONY: mtest
 mtest:
 	cd mtest ; $(CC) $(CFLAGS) mtest.c -o mtest
