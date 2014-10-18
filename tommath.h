@@ -577,6 +577,7 @@ int fast_s_mp_mul_high_digs(mp_int *a, mp_int *b, mp_int *c, int digs);
 int s_mp_mul_high_digs(mp_int *a, mp_int *b, mp_int *c, int digs);
 int fast_s_mp_sqr(mp_int *a, mp_int *b);
 int s_mp_sqr(mp_int *a, mp_int *b);
+int mp_balance_mul(mp_int *a, mp_int *b, mp_int *c);
 int mp_karatsuba_mul(mp_int *a, mp_int *b, mp_int *c);
 int mp_toom_mul(mp_int *a, mp_int *b, mp_int *c);
 int mp_karatsuba_sqr(mp_int *a, mp_int *b);

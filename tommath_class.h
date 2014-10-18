@@ -20,6 +20,7 @@
 #define BN_MP_ADD_D_C
 #define BN_MP_ADDMOD_C
 #define BN_MP_AND_C
+#define BN_MP_BALANCE_MUL_C
 #define BN_MP_CLAMP_C
 #define BN_MP_CLEAR_C
 #define BN_MP_CLEAR_MULTI_C
@@ -209,6 +210,15 @@
    #define BN_MP_INIT_COPY_C
    #define BN_MP_CLAMP_C
    #define BN_MP_EXCH_C
+   #define BN_MP_CLEAR_C
+#endif
+
+#if defined(BN_MP_BALANCE_MUL_C)
+   #define BN_MP_INIT_SIZE_C
+   #define BN_MP_GROW_C
+   #define BN_MP_ZERO_C
+   #define BN_MP_MUL_C
+   #define BN_MP_CLAMP_C
    #define BN_MP_CLEAR_C
 #endif
 
@@ -580,6 +590,7 @@
    #define BN_FAST_S_MP_MUL_DIGS_C
    #define BN_S_MP_MUL_C
    #define BN_S_MP_MUL_DIGS_C
+   #define BN_MP_BALANCE_MUL_C
 #endif
 
 #if defined(BN_MP_MUL_2_C)
