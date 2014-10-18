@@ -20,7 +20,6 @@
 #define BN_MP_ADD_D_C
 #define BN_MP_ADDMOD_C
 #define BN_MP_AND_C
-#define BN_MP_BALANCE_MUL_C
 #define BN_MP_CLAMP_C
 #define BN_MP_CLEAR_C
 #define BN_MP_CLEAR_MULTI_C

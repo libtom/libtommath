@@ -21,27 +21,15 @@ int mp_mul (mp_int * a, mp_int * b, mp_int * c)
   int     res, neg;
   neg = (a->sign == b->sign) ? MP_ZPOS : MP_NEG;
 
-  int     an, bn, tn;
-  mp_int * t;
-  an = a -> used;
-  bn = b -> used;
-  if (an > bn) {
-    tn = an; an = bn; bn = tn;
-    t = a; a = b; b = t;
-  }
-  /* now a->used <= b->used */
-
   /* use Toom-Cook? */
 #ifdef BN_MP_TOOM_MUL_C
-  if (a->used >= TOOM_MUL_CUTOFF) {
-    if (2 * an <= bn) goto balance;
+  if (MIN (a->used, b->used) >= TOOM_MUL_CUTOFF) {
     res = mp_toom_mul(a, b, c);
   } else 
 #endif
 #ifdef BN_MP_KARATSUBA_MUL_C
   /* use Karatsuba? */
-  if (a->used >= KARATSUBA_MUL_CUTOFF) {
-    if (2 * an <= bn) goto balance;
+  if (MIN (a->used, b->used) >= KARATSUBA_MUL_CUTOFF) {
     res = mp_karatsuba_mul (a, b, c);
   } else 
 #endif
@@ -56,7 +44,8 @@ int mp_mul (mp_int * a, mp_int * b, mp_int * c)
 
 #ifdef BN_FAST_S_MP_MUL_DIGS_C
     if ((digs < MP_WARRAY) &&
-        a->used <= (1 << ((CHAR_BIT * sizeof (mp_word)) - (2 * DIGIT_BIT)))) {
+        MIN(a->used, b->used) <= 
+        (1 << ((CHAR_BIT * sizeof (mp_word)) - (2 * DIGIT_BIT)))) {
       res = fast_s_mp_mul_digs (a, b, c, digs);
     } else 
 #endif
@@ -67,17 +56,8 @@ int mp_mul (mp_int * a, mp_int * b, mp_int * c)
 #endif
 
   }
-ret:
   c->sign = (c->used > 0) ? neg : MP_ZPOS;
   return res;
-
-balance:
-  /* if a is much smaller than b
-   * use balance multiplication
-   * (the idea is taken from Ruby core)
-   */
-  res = mp_balance_mul(a, b, c);
-  goto ret;
 }
 #endif
 
