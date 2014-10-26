@@ -3,7 +3,9 @@
 
 
 #include <math.h>
-#include <fenv.h>
+#if __STDC_VERSION__ >= 199901L
+    #include <fenv.h>
+#endif
 #include <float.h>
 /* Convert to double, assumes IEEE-754 conforming double. From code by 
    gerdr (Gerhard R.) https://github.com/gerdr */
@@ -39,7 +41,9 @@ int mp_get_double(mp_int * a, double *d)
 
     /* Handle overflow */
     if (*d == HUGE_VAL) {
+#if __STDC_VERSION__ >= 199901L
 	feraiseexcept(FE_OVERFLOW);
+#endif
 	return MP_RANGE;
     }
 
