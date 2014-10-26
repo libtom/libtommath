@@ -152,11 +152,11 @@ int mp_fft_to_dp(double *fft_array, mp_int *a,int length){
 #if __STDC_VERSION__ >= 199901L
 #define NEEDS_FE_RESET 1
   #include <fenv.h>
-  fenv_t *envp;
+  fenv_t envp;
   /* backup of floating point environment settings */
-  if(!fegetenv( &envp )) return MP_VAL;
+  if(fegetenv( &envp )) return MP_VAL;
   /* Set rounding mode to "nearest". Default, but better safe than sorry */
-  if(!fesetround(FE_TONEAREST)) return MP_VAL;
+  if(fesetround(FE_TONEAREST)) return MP_VAL;
 #endif
     /* re-marry the digits */
     for(i=0,j=0;j<new_length;i++,j+=2){
@@ -476,6 +476,6 @@ int mp_fft_sqr_d(double *x, unsigned long length){
 
 #if (__STDC_VERSION__ >= 199901L) &&  (NEEDS_FE_RESET == 1)
   /* Reset floating point environment settings  */
-  if(!fesetenv( &envp )) return MP_VAL;
+  if(fesetenv( envp )) return MP_VAL;
 #endif
 #endif
