@@ -1,6 +1,10 @@
 #include <tommath.h>
+#ifdef BN_MP_SET_DOUBLE_C
+
+
 #include <math.h>
 #include <fenv.h>
+
 /* integer part of a double, rounding mode defaults to FE_TONEAREST */
 int mp_set_double(mp_int * c, double d, int rounding_mode)
 {
@@ -58,3 +62,4 @@ int mp_set_double(mp_int * c, double d, int rounding_mode)
     return MP_OKAY;
 }
 
+#endif

@@ -1,6 +1,10 @@
 #include <tommath.h>
+#ifdef BN_MP_GET_DOUBLE_C
+
+
 #include <math.h>
 #include <fenv.h>
+
 /* Convert to double, assumes IEEE-754 conforming double. From code by 
    gerdr (Gerhard R.) https://github.com/gerdr */
 int mp_get_double(mp_int * a, double *d)
@@ -44,3 +48,4 @@ int mp_get_double(mp_int * a, double *d)
     return MP_OKAY;
 }
 
+#endif
