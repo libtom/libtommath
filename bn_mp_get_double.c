@@ -40,9 +40,11 @@ int mp_get_double(mp_int * a, double *d)
     *d *= pow(2.0, i * DIGIT_BIT);
 
     /* Handle overflow */
-    if (*d == HUGE_VAL) {
 #if __STDC_VERSION__ >= 199901L
+    if (*d == INFINITY) {
 	feraiseexcept(FE_OVERFLOW);
+#else
+    if (*d == HUGE_VAL) {
 #endif
 	return MP_RANGE;
     }
