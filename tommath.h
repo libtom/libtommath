@@ -242,6 +242,12 @@ int mp_set_int(mp_int *a, unsigned long b);
 /* get a 32-bit value */
 unsigned long mp_get_int(mp_int * a);
 
+/* set a double const */
+int mp_set_double(mp_int * c, double d, int rounding_mode);
+
+/* get a double value */
+int mp_get_double(mp_int * a, double *d);
+
 /* initialize and set a digit */
 int mp_init_set (mp_int * a, mp_digit b);
 
@@ -589,7 +595,7 @@ int mp_fft_sqr(mp_int *a,mp_int *c);
 
 unsigned long *mp_fill_prime_list(unsigned long start, unsigned long stop,
                                                           unsigned long *R);
-void mp_primorial(unsigned long a, unsigned long b, mp_int *result);
+int mp_primorial(unsigned long a, unsigned long b, mp_int *result);
 
 
 /* A general bitset, can be used elsewhere, too */

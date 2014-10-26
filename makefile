@@ -6,6 +6,8 @@
 VERSION=0.42.0
 
 CFLAGS  +=   -I./ -Wall -W -Wshadow -Wsign-compare
+LIBS += -lm
+
 
 ifndef MAKE
    MAKE=make
@@ -124,11 +126,11 @@ profiled:
 #make a single object profiled library 
 profiled_single:
 	perl gen.pl
-	$(CC) $(CFLAGS) -fprofile-arcs -DTESTING -c mpi.c -o mpi.o
-	$(CC) $(CFLAGS) -DTESTING -DTIMER demo/timing.c mpi.o -o ltmtest
+	$(CC) $(CFLAGS) -fprofile-arcs -DTESTING -c mpi.c -o mpi.o $(LIBS)
+	$(CC) $(CFLAGS) -DTESTING -DTIMER demo/timing.c mpi.o -o ltmtest $(LIBS)
 	./ltmtest
 	rm -f *.o ltmtest
-	$(CC) $(CFLAGS) -fbranch-probabilities -DTESTING -c mpi.c -o mpi.o
+	$(CC) $(CFLAGS) -fbranch-probabilities -DTESTING -c mpi.c -o mpi.o $(LIBS)
 	$(AR) $(ARFLAGS) $(LIBNAME) mpi.o
 	ranlib $(LIBNAME)	
 
@@ -139,13 +141,13 @@ install: $(LIBNAME)
 	install -g $(GROUP) -o $(USER) $(HEADERS) $(DESTDIR)$(INCPATH)
 
 test: $(LIBNAME) demo/demo.o
-	$(CC) $(CFLAGS) demo/demo.o $(LIBNAME) -o test
+	$(CC) $(CFLAGS) demo/demo.o $(LIBNAME) -o test $(LIBS)
 	
 mtest: test	
-	cd mtest ; $(CC) $(CFLAGS) mtest.c -o mtest
+	cd mtest ; $(CC) $(CFLAGS) mtest.c -o mtest $(LIBS)
         
 timing: $(LIBNAME)
-	$(CC) $(CFLAGS) -DTIMER demo/timing.c $(LIBNAME) -o ltmtest
+	$(CC) $(CFLAGS) -DTIMER demo/timing.c $(LIBNAME) -o ltmtest $(LIBS)
 
 # makes the LTM book DVI file, requires tetex, perl and makeindex [part of tetex I think]
 docdvi: tommath.src
