@@ -4,18 +4,16 @@
 
 #include <math.h>
 #include <fenv.h>
-
+#include <float.h>
 /* Convert to double, assumes IEEE-754 conforming double. From code by 
    gerdr (Gerhard R.) https://github.com/gerdr */
 int mp_get_double(mp_int * a, double *d)
 {
-    int digits_needed, i, limit, significand_length;
+    int digits_needed, i, limit;
     double multiplier;
 
-    /* fractional part plus implicit bit */
-    significand_length = 52 + 1;
     /* digits_needed * DIGIT_BIT >= 64 bit */
-    digits_needed = ((significand_length + DIGIT_BIT) / DIGIT_BIT) + 1;
+    digits_needed = ( (DBL_MANT_DIG + DIGIT_BIT) / DIGIT_BIT) + 1;
 
     multiplier = (double) (MP_MASK + 1);
 
