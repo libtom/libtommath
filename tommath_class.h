@@ -49,6 +49,7 @@
 #define BN_MP_GCD_C
 #define BN_MP_GET_INT_C
 #define BN_MP_GET_LONG_C
+#define BN_MP_GET_LONG_LONG_C
 #define BN_MP_GROW_C
 #define BN_MP_IMPORT_C
 #define BN_MP_INIT_C
@@ -105,6 +106,7 @@
 #define BN_MP_SET_C
 #define BN_MP_SET_INT_C
 #define BN_MP_SET_LONG_C
+#define BN_MP_SET_LONG_LONG_C
 #define BN_MP_SHRINK_C
 #define BN_MP_SIGNED_BIN_SIZE_C
 #define BN_MP_SQR_C
@@ -418,6 +420,10 @@
 #endif
 
 #if defined(BN_MP_GET_LONG_C)
+#endif
+
+#if defined(BN_MP_GET_LONG_LONG_C)
+   #define BN_MP_GET_LONG_C
 #endif
 
 #if defined(BN_MP_GROW_C)
@@ -820,9 +826,9 @@
 #endif
 
 #if defined(BN_MP_SET_LONG_C)
-   #define BN_MP_ZERO_C
-   #define BN_MP_MUL_2D_C
-   #define BN_MP_CLAMP_C
+#endif
+
+#if defined(BN_MP_SET_LONG_LONG_C)
 #endif
 
 #if defined(BN_MP_SHRINK_C)
