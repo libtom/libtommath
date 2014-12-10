@@ -97,6 +97,7 @@ int main(void)
    char* ret;
 #else
    unsigned long s, t;
+   unsigned long long q, r;
    mp_digit mp;
    int i, n, err;
 #endif
@@ -199,6 +200,26 @@ printf("compare no compare!\n"); return EXIT_FAILURE; }
          }
          t <<= 1;
       } while(t);
+   }
+
+   printf("\n\nTesting: mp_get_long_long\n");
+   for (i = 0; i < (int)sizeof(unsigned long long)*CHAR_BIT; ++i) {
+      r = (1ULL << (i+1)) - 1;
+      if (!r)
+         r = -1;
+      printf(" r = 0x%llx i = %d\r", r, i);
+      do {
+         if (mp_set_long_long(&a, r) != MP_OKAY) {
+            printf("\nmp_set_long_long() error!");
+            return EXIT_FAILURE;
+         }
+         q = mp_get_long_long(&a);
+         if (q != r) {
+            printf("\nmp_get_long_long() bad result! 0x%llx != 0x%llx", q, r);
+            return EXIT_FAILURE;
+         }
+         r <<= 1;
+      } while(r);
    }
 
    // test mp_sqrt
