@@ -63,12 +63,14 @@ extern "C" {
 #ifdef MP_8BIT
    typedef unsigned char      mp_digit;
    typedef unsigned short     mp_word;
+#define MP_SIZEOF_MP_DIGIT 1
 #ifdef DIGIT_BIT
 #error You must not define DIGIT_BIT when using MP_8BIT
 #endif
 #elif defined(MP_16BIT)
    typedef unsigned short     mp_digit;
    typedef unsigned int       mp_word;
+#define MP_SIZEOF_MP_DIGIT 2
 #ifdef DIGIT_BIT
 #error You must not define DIGIT_BIT when using MP_16BIT
 #endif
@@ -130,7 +132,7 @@ extern "C" {
 
 /* otherwise the bits per digit is calculated automatically from the size of a mp_digit */
 #ifndef DIGIT_BIT
-   #define DIGIT_BIT     ((int)((CHAR_BIT * sizeof(mp_digit) - 1)))  /* bits per digit */
+   #define DIGIT_BIT     (((CHAR_BIT * MP_SIZEOF_MP_DIGIT) - 1))  /* bits per digit */
    typedef unsigned long mp_min_u32;
 #else
    typedef mp_digit mp_min_u32;
