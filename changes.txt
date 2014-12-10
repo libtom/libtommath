@@ -2,15 +2,17 @@ XXX, 2014
 v0.43.0
        -- Dirkjan Bussink provided a faster version of mp_expt_d()
        -- Moritz Lenz contributed a fix to mp_mod()
+          and provided mp_get_long() and mp_set_long()
        -- Fixed bugs in mp_read_radix(), mp_radix_size
           Thanks to shameister, Gerhard R,
        -- Christopher Brown provided mp_export() and mp_import()
-       -- Improvements in the code of
+       -- Improvements in the code of mp_init_copy()
           Thanks to ramkumarkoppu,
        -- lomereiter provided mp_balance_mul()
        -- Alexander Boström from the heimdal project contributed patches to
           mp_prime_next_prime() and mp_invmod() and added a mp_isneg() macro
        -- Fix build issues for Linux x32 ABI
+       -- Added mp_get_long_long() and mp_set_long_long()
 
 
 July 23rd, 2010
