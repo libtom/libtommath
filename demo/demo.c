@@ -186,7 +186,7 @@ printf("compare no compare!\n"); return EXIT_FAILURE; }
       t = (1ULL << (i+1)) - 1;
       if (!t)
          t = -1;
-      printf("t = 0x%lx i = %d\n", t, i);
+      printf(" t = 0x%lx i = %d\r", t, i);
       do {
          if (mp_set_long(&a, t) != MP_OKAY) {
             printf("\nmp_set_long() error!");
