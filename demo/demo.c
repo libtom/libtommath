@@ -83,6 +83,7 @@ mp_int a, b, c, d, e, f;
 static void _cleanup(void)
 {
   mp_clear_multi(&a, &b, &c, &d, &e, &f, NULL);
+  printf("\n");
 }
 
 char cmd[4096], buf[4096];
@@ -95,7 +96,7 @@ int main(void)
       gcd_n, lcm_n, inv_n, div2_n, mul2_n, add_d_n, sub_d_n;
    char* ret;
 #else
-   unsigned long t;
+   unsigned long s, t;
    mp_digit mp;
    int i, n, err;
 #endif
@@ -179,6 +180,27 @@ printf("compare no compare!\n"); return EXIT_FAILURE; }
       printf("\nmp_get_int() bad result!");
       return EXIT_FAILURE;
    }
+
+   printf("\n\nTesting: mp_get_long\n");
+   for (i = 0; i < (int)sizeof(unsigned long)*CHAR_BIT; ++i) {
+      t = (1ULL << (i+1)) - 1;
+      if (!t)
+         t = -1;
+      printf("t = 0x%lx i = %d\n", t, i);
+      do {
+         if (mp_set_long(&a, t) != MP_OKAY) {
+            printf("\nmp_set_long() error!");
+            return EXIT_FAILURE;
+         }
+         s = mp_get_long(&a);
+         if (s != t) {
+            printf("\nmp_get_long() bad result! 0x%lx != 0x%lx", s, t);
+            return EXIT_FAILURE;
+         }
+         t <<= 1;
+      } while(t);
+   }
+
    // test mp_sqrt
    printf("\n\nTesting: mp_sqrt\n");
    for (i = 0; i < 1000; ++i) {
