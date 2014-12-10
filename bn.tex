@@ -735,6 +735,42 @@ This should output the following if the program succeeds.
 number == 654321
 \end{alltt}
 
+\subsection{Long Constants - platform dependant}
+
+\index{mp\_set\_long}
+\begin{alltt}
+int mp_set_long (mp_int * a, unsigned long b);
+\end{alltt}
+
+This will assign the value of the platform-dependant sized variable $b$ to the mp\_int $a$.
+
+To get the ``unsigned long'' copy of an mp\_int the following function can be used.
+
+\index{mp\_get\_long}
+\begin{alltt}
+unsigned long mp_get_long (mp_int * a);
+\end{alltt}
+
+This will return the least significant bits of the mp\_int $a$ that fit into an ``unsigned long''.
+
+\subsection{Long Long Constants}
+
+\index{mp\_set\_long\_long}
+\begin{alltt}
+int mp_set_long_long (mp_int * a, unsigned long long b);
+\end{alltt}
+
+This will assign the value of the 64-bit variable $b$ to the mp\_int $a$.
+
+To get the ``unsigned long long'' copy of an mp\_int the following function can be used.
+
+\index{mp\_get\_long\_long}
+\begin{alltt}
+unsigned long long mp_get_long_long (mp_int * a);
+\end{alltt}
+
+This will return the 64 least significant bits of the mp\_int $a$.
+
 \subsection{Initialize and Setting Constants}
 To both initialize and set small constants the following two functions are available.
 \index{mp\_init\_set} \index{mp\_init\_set\_int}
