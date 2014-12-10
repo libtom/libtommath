@@ -16,32 +16,7 @@
  */
 
 /* set a platform dependent unsigned long int */
-int mp_set_long (mp_int * a, unsigned long b)
-{
-  unsigned int  x;
-  int           res;
-
-  mp_zero (a);
-
-  /* set four bits at a time */
-  for (x = 0; x < sizeof(unsigned long) * 2; x++) {
-    /* shift the number up four bits */
-    if ((res = mp_mul_2d (a, 4, a)) != MP_OKAY) {
-      return res;
-    }
-
-    /* OR in the top four bits of the source */
-    a->dp[0] |= (b >> ((sizeof(unsigned long)) * 8 - 4)) & 15;
-
-    /* shift the source up to the next four bits */
-    b <<= 4;
-
-    /* ensure that digits are not clamped off */
-    a->used += 1;
-  }
-  mp_clamp (a);
-  return MP_OKAY;
-}
+MP_SET_XLONG(mp_set_long, unsigned long)
 #endif
 
 /* $Source$ */

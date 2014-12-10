@@ -596,6 +596,40 @@ void bn_reverse(unsigned char *s, int len);
 
 extern const char *mp_s_rmap;
 
+/* Fancy macro to set an MPI from another type.
+ * There are several things assumed:
+ *  x is the counter and unsigned
+ *  a is the pointer to the MPI
+ *  b is the original value that should be set in the MPI.
+ */
+#define MP_SET_XLONG(func_name, type)                    \
+int func_name (mp_int * a, type b)                       \
+{                                                        \
+  unsigned int  x;                                       \
+  int           res;                                     \
+                                                         \
+  mp_zero (a);                                           \
+                                                         \
+  /* set four bits at a time */                          \
+  for (x = 0; x < sizeof(type) * 2; x++) {               \
+    /* shift the number up four bits */                  \
+    if ((res = mp_mul_2d (a, 4, a)) != MP_OKAY) {        \
+      return res;                                        \
+    }                                                    \
+                                                         \
+    /* OR in the top four bits of the source */          \
+    a->dp[0] |= (b >> ((sizeof(type)) * 8 - 4)) & 15;    \
+                                                         \
+    /* shift the source up to the next four bits */      \
+    b <<= 4;                                             \
+                                                         \
+    /* ensure that digits are not clamped off */         \
+    a->used += 1;                                        \
+  }                                                      \
+  mp_clamp (a);                                          \
+  return MP_OKAY;                                        \
+}
+
 #ifdef __cplusplus
    }
 #endif
