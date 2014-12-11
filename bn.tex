@@ -1076,7 +1076,9 @@ If this program is successful it will print out the following text.
 2*number/2 < 7
 \end{alltt}
 
-Since $10 > 7$ and $5 < 7$.  To multiply by a power of two the following function can be used.
+Since $10 > 7$ and $5 < 7$.
+
+To multiply by a power of two the following function can be used.
 
 \index{mp\_mul\_2d}
 \begin{alltt}
@@ -1084,7 +1086,8 @@ int mp_mul_2d(mp_int * a, int b, mp_int * c);
 \end{alltt}
 
 This will multiply $a$ by $2^b$ and store the result in ``c''.  If the value of $b$ is less than or equal to
-zero the function will copy $a$ to ``c'' without performing any further actions.
+zero the function will copy $a$ to ``c'' without performing any further actions.  The multiplication itself
+is implemented as a right-shift operation of $a$ by $b$ bits.
 
 To divide by a power of two use the following.
 
@@ -1094,7 +1097,8 @@ int mp_div_2d (mp_int * a, int b, mp_int * c, mp_int * d);
 \end{alltt}
 Which will divide $a$ by $2^b$, store the quotient in ``c'' and the remainder in ``d'.  If $b \le 0$ then the
 function simply copies $a$ over to ``c'' and zeroes $d$.  The variable $d$ may be passed as a \textbf{NULL}
-value to signal that the remainder is not desired.
+value to signal that the remainder is not desired.  The division itself is implemented as a left-shift
+operation of $a$ by $b$ bits.
 
 \subsection{Polynomial Basis Operations}
 
