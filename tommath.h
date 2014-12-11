@@ -299,13 +299,13 @@ void mp_rshd(mp_int *a, int b);
 /* left shift by "b" digits */
 int mp_lshd(mp_int *a, int b);
 
-/* c = a / 2**b */
+/* c = a / 2**b, implemented as c = a >> b */
 int mp_div_2d(mp_int *a, int b, mp_int *c, mp_int *d);
 
 /* b = a/2 */
 int mp_div_2(mp_int *a, mp_int *b);
 
-/* c = a * 2**b */
+/* c = a * 2**b, implemented as c = a << b */
 int mp_mul_2d(mp_int *a, int b, mp_int *c);
 
 /* b = a*2 */
