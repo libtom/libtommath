@@ -1,0 +1,34 @@
+#
+# Include makefile for libtommath
+#
+
+CFLAGS += -I./ -Wall -Wsign-compare -Wextra -Wshadow
+
+ifndef NO_ADDTL_WARNINGS
+# additional warnings
+CFLAGS += -Wsystem-headers -Wdeclaration-after-statement -Wbad-function-cast -Wcast-align
+CFLAGS += -Wstrict-prototypes -Wpointer-arith
+endif
+
+ifndef IGNORE_SPEED
+#for speed
+CFLAGS += -O3 -funroll-loops
+
+#x86 optimizations [should be valid for any GCC install though]
+CFLAGS  += -fomit-frame-pointer
+endif
+
+ifdef COMPILE_SIZE
+#for size
+CFLAGS += -Os
+endif
+
+ifdef COMPILE_DEBUG
+#debug
+CFLAGS += -g3
+endif
+
+HEADERS=tommath.h tommath_class.h tommath_superclass.h
+
+
+

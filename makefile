@@ -5,7 +5,7 @@
 #version of library
 VERSION=0.42.0
 
-CFLAGS  +=  -I./ -Wall -W -Wshadow -Wsign-compare
+include makefile.include
 
 # Compiler and Linker Names
 ifndef PREFIX
@@ -21,22 +21,6 @@ RANLIB=$(PREFIX)ranlib
 
 ifndef MAKE
    MAKE=make
-endif
-
-ifndef IGNORE_SPEED
-
-#for speed
-CFLAGS += -O3 -funroll-loops
-
-#for size
-#CFLAGS += -Os
-
-#x86 optimizations [should be valid for any GCC install though]
-CFLAGS  += -fomit-frame-pointer
-
-#debug
-#CFLAGS += -g3
-
 endif
 
 #install as this user
@@ -58,8 +42,6 @@ ifndef LIBNAME
 endif
 
 default: ${LIBNAME}
-
-HEADERS=tommath.h tommath_class.h tommath_superclass.h
 
 #LIBPATH-The directory for libtommath to be installed to.
 #INCPATH-The directory to install the header files for libtommath.

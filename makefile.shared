@@ -3,23 +3,10 @@
 #Tom St Denis
 VERSION=0:42
 
+include makefile.include
+
 LT	?= libtool
 LTCOMPILE = $(LT) --mode=compile --tag=CC $(CC)
-
-CFLAGS  +=  -I./ -Wall -W -Wshadow -Wsign-compare
-
-ifndef IGNORE_SPEED
-
-#for speed
-CFLAGS += -O3 -funroll-loops
-
-#for size
-#CFLAGS += -Os
-
-#x86 optimizations [should be valid for any GCC install though]
-CFLAGS  += -fomit-frame-pointer
-
-endif
 
 #install as this user
 ifndef INSTALL_GROUP
@@ -78,8 +65,6 @@ bn_mp_to_unsigned_bin_n.o bn_mp_unsigned_bin_size.o bn_mp_xor.o bn_mp_zero.o bn_
 bn_s_mp_add.o bn_s_mp_exptmod.o bn_s_mp_mul_digs.o bn_s_mp_mul_high_digs.o bn_s_mp_sqr.o bn_s_mp_sub.o
 
 #END_INS
-
-HEADERS=tommath.h tommath_class.h tommath_superclass.h
 
 objs: $(OBJECTS)
 
