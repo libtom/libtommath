@@ -183,7 +183,7 @@ printf("compare no compare!\n"); return EXIT_FAILURE; }
    }
 
    printf("\n\nTesting: mp_get_long\n");
-   for (i = 0; i < (int)sizeof(unsigned long)*CHAR_BIT; ++i) {
+   for (i = 0; i < (int)(sizeof(unsigned long)*CHAR_BIT) - 1; ++i) {
       t = (1ULL << (i+1)) - 1;
       if (!t)
          t = -1;
@@ -203,7 +203,7 @@ printf("compare no compare!\n"); return EXIT_FAILURE; }
    }
 
    printf("\n\nTesting: mp_get_long_long\n");
-   for (i = 0; i < (int)sizeof(unsigned long long)*CHAR_BIT; ++i) {
+   for (i = 0; i < (int)(sizeof(unsigned long)*CHAR_BIT) - 1; ++i) {
       r = (1ULL << (i+1)) - 1;
       if (!r)
          r = -1;
