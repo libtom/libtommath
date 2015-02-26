@@ -49,8 +49,7 @@ int mp_set_double(mp_int * c, double d, int rounding_mode)
 	return MP_VAL;
     }
 #endif
-    frac = frexp(abs(rnd), &expnt);
-
+    frac = frexp(fabs(rnd), &expnt);
     if (frac == 0) {
 	c->sign = sign;
 	return MP_OKAY;
