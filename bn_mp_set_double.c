@@ -9,7 +9,7 @@
 /* integer part of a double, rounding mode defaults to FE_TONEAREST */
 int mp_set_double(mp_int * c, double d, int rounding_mode)
 {
-    int exp, res, sign;
+    int expnt, res, sign;
     double frac, rnd;
 #if __STDC_VERSION__ >= 199901L
     fenv_t envp;
@@ -49,14 +49,14 @@ int mp_set_double(mp_int * c, double d, int rounding_mode)
 	return MP_VAL;
     }
 #endif
-    frac = frexp(abs(rnd), &exp);
+    frac = frexp(abs(rnd), &expnt);
 
     if (frac == 0) {
 	c->sign = sign;
 	return MP_OKAY;
     }
 
-    while (exp-- >= 0) {
+    while (expnt-- >= 0) {
 	frac *= 2.0;
 	if (frac >= 1.0) {
 	    if ((res = mp_add_d(c, 1, c)) != MP_OKAY) {
@@ -64,7 +64,7 @@ int mp_set_double(mp_int * c, double d, int rounding_mode)
 	    }
 	    frac -= 1.0;
 	}
-	if (exp > 0) {
+	if (expnt > 0) {
 	    if ((res = mp_mul_2d(c, 1, c)) != MP_OKAY) {
 		return res;
 	    }

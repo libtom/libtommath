@@ -733,6 +733,10 @@ int mp_toom_cook_5_sqr(mp_int * a, mp_int * c);
 
 int mp_balance_mul(mp_int * a, mp_int * b, mp_int * c);
 
+int mp_get_double(mp_int * a, double *d);
+int mp_set_double(mp_int * c, double d, int rounding_mode);
+
+
 /* End of additions by CZ */
 
 extern const char *mp_s_rmap;
