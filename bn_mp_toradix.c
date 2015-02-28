@@ -34,7 +34,6 @@ int mp_toradix (mp_int * a, char *str, int radix)
      *str = '\0';
      return MP_OKAY;
   }
-
   if ((res = mp_init_copy (&t, a)) != MP_OKAY) {
     return res;
   }
@@ -57,7 +56,7 @@ int mp_toradix (mp_int * a, char *str, int radix)
   }
 
   /* reverse the digits of the string.  In this case _s points
-   * to the first digit [exluding the sign] of the number]
+   * to the first digit [excluding the sign] of the number
    */
   bn_reverse ((unsigned char *)_s, digs);
 

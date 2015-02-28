@@ -106,7 +106,10 @@ bn_mp_falling_factorial.o bn_mp_rising_factorial.o\
 bn_mp_superfactorial.o bn_mp_set_word.o\
 bn_mp_balance_mul.o bn_mp_toom_cook_4_mul.o bn_mp_toom_cook_4_sqr.o\
 bn_mp_toom_cook_5_mul.o bn_mp_toom_cook_5_sqr.o\
-bn_mp_get_double.o bn_mp_set_double.o
+bn_mp_get_double.o bn_mp_set_double.o\
+bn_mp_put.o bn_mp_fput.o\
+bn_mp_digits.o
+
 $(LIBNAME):  $(OBJECTS)
 	$(AR) $(ARFLAGS) $@ $(OBJECTS)
 	ranlib $@
