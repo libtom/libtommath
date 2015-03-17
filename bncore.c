@@ -40,6 +40,40 @@ int        FFT_MUL_CUTOFF       = 512;
 int        FFT_UPPER_LIMIT      = 1<<23;    /* less than actual limit */
 int        FFT_SQR_CUTOFF       = 768;
 
+/* 
+   Minimum size of the denominator for Burnikel-Ziegler division used
+   as a cutoff to school-division inside the algorithm.
+   
+   The theoretical minimum is 2* KARATS.-CUT. but we have some additional
+   overhead, hence the 10 limbs for angst-allowance.
+   
+   Published for easier changing because: YMMV and it easier this way.
+   If somebody has changed this file already: teh magic number 48 is the
+   value of the KARATSUBA_MUL_CUTOFF of the author's machine.
+   Please adjust accordingly
+*/
+int        DIV_BURN_ZIEG_CUTOFF = 2 * 48  + 10;
+
+/* 
+   Minimum sizes of for Burnikel-Ziegler division used
+   as a general cutoff to school-division.
+      
+    Published for easier changing because: YMMV
+*/
+int        BURN_ZIEG_NUM_CUTOFF =  250;
+int        BURN_ZIEG_UPPER_NUM_CUTOFF =  775; 
+int        BURN_ZIEG_DEN_CUTOFF =  125;
+/* ratio #numerator/#denominator should not be greater than 0.8 */
+int        BURN_ZIEG_UPPER_DEN_CUTOFF =  8;
+
+/*
+   Size of the denominator chunks inside the Burnikel-Ziegler algorithm.
+   
+   The actual size gets computed by the algorithm, this is just a start
+   value
+*/
+int        BURN_ZIEG_CHUNK_SIZE =  2 * 48 + 10;
+
 #endif
 
 /* $Source$ */

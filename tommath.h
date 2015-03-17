@@ -167,6 +167,12 @@ extern int            KARATSUBA_SQR_CUTOFF;
   extern int          TOOM_COOK_4_SQR_CO;
   extern int          TOOM_COOK_5_MUL_CO;
   extern int          TOOM_COOK_5_SQR_CO;
+  extern int          DIV_BURN_ZIEG_CUTOFF;
+  extern int          BURN_ZIEG_DEN_CUTOFF;
+  extern int          BURN_ZIEG_UPPER_DEN_CUTOFF;
+  extern int          BURN_ZIEG_NUM_CUTOFF;
+  extern int          BURN_ZIEG_UPPER_NUM_CUTOFF;
+  extern int          BURN_ZIEG_CHUNK_SIZE;
 
 /* define this to use lower memory usage routines (exptmods mostly) */
 /* #define MP_LOW_MEM */
@@ -335,6 +341,9 @@ int mp_sqr(mp_int *a, mp_int *b);
 
 /* a/b => cb + d == a */
 int mp_div(mp_int *a, mp_int *b, mp_int *c, mp_int *d);
+int mp_div_school(mp_int *a, mp_int *b, mp_int *c, mp_int *d);
+int mp_div_bz(mp_int * a, mp_int * b, mp_int * c, mp_int * d);
+int mp_div_newton(mp_int *a, mp_int *b, mp_int *c, mp_int *d);
 
 /* c = a mod b, 0 <= c < b  */
 int mp_mod(mp_int *a, mp_int *b, mp_int *c);
@@ -735,6 +744,13 @@ int mp_balance_mul(mp_int * a, mp_int * b, mp_int * c);
 
 int mp_get_double(mp_int * a, double *d);
 int mp_set_double(mp_int * c, double d, int rounding_mode);
+
+int mp_fput(mp_int * a, int base, FILE *stream);
+int mp_put(mp_int * a, int base);
+
+long mp_digits(mp_int * a, int base);
+
+int mp_giantsteps(int start, int end, int stepsize, int **precs, int *steps);
 
 
 /* End of additions by CZ */
