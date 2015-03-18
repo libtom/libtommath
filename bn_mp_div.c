@@ -113,7 +113,41 @@ int mp_div(mp_int * a, mp_int * b, mp_int * c, mp_int * d)
 
     /*
      * Subquadratic algorithms
-     *
+     */
+
+    /*
+     * Division by multiplication with the inverse (Newton division)
+     * TODO: the cutoff value depends also on the ratio albeit not as much as
+     *       the Burnikel-Ziegler algorithm; there is no upper limit for
+     *       example but a lower limit depending on the ratio and the absolute
+     *       value of the numerator.
+     */
+    if (b->used >= NEWTON_DEN_CUTOFF) {
+	if ((res = mp_init_copy(&x, a)) != MP_OKAY) {
+	    return res;
+	}
+	if ((res = mp_init_copy(&y, b)) != MP_OKAY) {
+	    mp_clear(&x);
+	    return res;
+	}
+	neg = (a->sign == b->sign) ? MP_ZPOS : MP_NEG;
+	x.sign = y.sign = MP_ZPOS;
+	if ((res = mp_div_newton(&x, &y, &x, &y)) != MP_OKAY) {
+	    mp_clear_multi(&x, &y, NULL);
+	    return res;
+	}
+	x.sign = neg;
+	if (c != NULL) {
+	    mp_exch(&x, c);
+	}
+	if (d != NULL) {
+	    mp_exch(&y, d);
+	}
+	mp_clear_multi(&x, &y, NULL);
+	return MP_OKAY;
+    }
+
+    /* 
      * The cutoffs depend on the ratio, absolute and relative sizes
      * of the participants. See also the comments in bn_mp_div_bz.c.
      */
@@ -121,10 +155,10 @@ int mp_div(mp_int * a, mp_int * b, mp_int * c, mp_int * d)
     /* pulled apart for legibility */
     if (a->used >= BURN_ZIEG_NUM_CUTOFF && b->used <= ratio) {
 
-	if ((res = mp_init_copy(&x,a)) != MP_OKAY) {
+	if ((res = mp_init_copy(&x, a)) != MP_OKAY) {
 	    return res;
 	}
-	if ((res = mp_init_copy(&y,b)) != MP_OKAY) {
+	if ((res = mp_init_copy(&y, b)) != MP_OKAY) {
 	    mp_clear(&x);
 	    return res;
 	}

@@ -173,7 +173,7 @@ extern int            KARATSUBA_SQR_CUTOFF;
   extern int          BURN_ZIEG_NUM_CUTOFF;
   extern int          BURN_ZIEG_UPPER_NUM_CUTOFF;
   extern int          BURN_ZIEG_CHUNK_SIZE;
-
+  extern int          NEWTON_DEN_CUTOFF;
 /* define this to use lower memory usage routines (exptmods mostly) */
 /* #define MP_LOW_MEM */
 

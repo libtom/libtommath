@@ -65,7 +65,6 @@ int        BURN_ZIEG_UPPER_NUM_CUTOFF =  775;
 int        BURN_ZIEG_DEN_CUTOFF =  125;
 /* ratio #numerator/#denominator should not be greater than 0.8 */
 int        BURN_ZIEG_UPPER_DEN_CUTOFF =  8;
-
 /*
    Size of the denominator chunks inside the Burnikel-Ziegler algorithm.
    
@@ -73,6 +72,10 @@ int        BURN_ZIEG_UPPER_DEN_CUTOFF =  8;
    value
 */
 int        BURN_ZIEG_CHUNK_SIZE =  2 * 48 + 10;
+
+/* Max. size of denominator for Newton division */
+int        NEWTON_DEN_CUTOFF =  15000;
+
 
 #endif
 

@@ -1,6 +1,24 @@
 #include <tommath.h>
 #ifdef BN_MP_GIANTSTEPS_C
+/*
+    Function quite alike the similarily named one from Python.
 
+    Example (error-handling ommitted):
+
+    int start, end, stepsize, *precs, steps, *s;
+        ...
+    mp_giantsteps(start, end, stepsize, &precs, &steps);
+
+    printf("steps = %d\n", steps);
+    s = precs;
+    for(i = 0;i<steps;i++){
+        printf("%d, ", *precs);
+        precs++;
+    }
+    puts("");
+    free(s);
+
+*/
 int mp_giantsteps(int start, int end, int stepsize, int **precs, int *steps)
 {
     int i, t;
@@ -27,8 +45,8 @@ int mp_giantsteps(int start, int end, int stepsize, int **precs, int *steps)
 	return MP_MEM;
     }
     *precs += i - 1;
-    **precs  = end;
-    *steps = i;
+    **precs = end;
+    *steps  = i;
     while (1) {
 	if (**precs <= start * stepsize) {
 	    break;
