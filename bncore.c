@@ -76,6 +76,8 @@ int        BURN_ZIEG_CHUNK_SIZE =  2 * 48 + 10;
 /* Max. size of denominator for Newton division */
 int        NEWTON_DEN_CUTOFF =  15000;
 
+/* limit where ilogb wins over native division in mp_radix_size() */
+int        RADIX_SIZE_CUTOFF = 110;
 
 #endif
 

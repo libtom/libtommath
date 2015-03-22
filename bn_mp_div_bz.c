@@ -22,40 +22,6 @@ static int div3n2n(mp_int * a, mp_int * b, int n, mp_int * c, mp_int * d);
 
    Cutoffs:
 
-   Beside the cutoffs given in bncore.c I found the following, more fine-grained
-   limits (with a Karatsuba cutoff at 48):
-
-   Num    Den   faster (0 = not)
-   199    2       0
-   200    2       1
-   201    2       0
-   202    2       1
-   203    2       0
-
-   500    2       0
-   501    2       0
-   502    2       0
-    .     .       .
-    .     .       .
-    .     .       .
-   505    2       1
-    .     .       .
-    .     .       .
-    .     .       .
-   511    2       0
-   512    2       1
-   513    2       1
-   514    2       0
-
-
-   The most interessting thing is that it is not this algorithm that is faster
-   but that in most cases the school-algorithm is the slower one.
-
-   But only in _most_ cases. TODO: Check the school-division
-
-   TODO: I generate the test numbers with the built-in mp_rand() which does not
-         fill the numbers fully.
-
    It equals out when the size of the numerator passes 750 limbs and is always
    faster at 775 limbs and more.
 
@@ -67,6 +33,12 @@ static int div3n2n(mp_int * a, mp_int * b, int n, mp_int * c, mp_int * d);
    of 775. The upper limit 0.8 of the denominator holds for these sizes, too.
 
    TODO: write a little script to test the values in between.
+
+   These values are too high, that is: this implementation is still too slow.
+   The problem has the same reason as with ll recursive algorithms: allocating
+   memory a lot of times. Here the amount of memory is known before (an upper
+   limit to be exact) and this knowledge should be used. But using it involves
+   heavy pointer juggling which would make this code nearly illegible.
 
 */
 int mp_div_bz(mp_int * a, mp_int * b, mp_int * c, mp_int * d)
@@ -123,9 +95,9 @@ int mp_div_bz(mp_int * a, mp_int * b, mp_int * c, mp_int * d)
     }
     /*
      * 4a.  Set B = 2^sigma to normalize B
-     * 
-     * We work on copy here, as always.
      */
+ 
+    // We work on copy here, as always.
     if ((err = mp_mul_2d(a, sigma, &aa)) != MP_OKAY) {
 	goto _ERR;
     }
@@ -250,7 +222,7 @@ int mp_div_bz(mp_int * a, mp_int * b, mp_int * c, mp_int * d)
     // want remainder?
     // Burnikel & Ziegler proposed a variant of this algorithm that avoids
     // doing some parts of the computation of the remainder if no remainder is
-    // wanted. This variant is not implemented here
+    // wanted. This variant is not implemented here.
     if (d != NULL) {
 	mp_exch(&r, d);
     }
