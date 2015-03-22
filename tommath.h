@@ -174,6 +174,7 @@ extern int            KARATSUBA_SQR_CUTOFF;
   extern int          BURN_ZIEG_UPPER_NUM_CUTOFF;
   extern int          BURN_ZIEG_CHUNK_SIZE;
   extern int          NEWTON_DEN_CUTOFF;
+  extern int          RADIX_SIZE_CUTOFF;
 /* define this to use lower memory usage routines (exptmods mostly) */
 /* #define MP_LOW_MEM */
 
@@ -751,6 +752,9 @@ int mp_put(mp_int * a, int base);
 long mp_digits(mp_int * a, int base);
 
 int mp_giantsteps(int start, int end, int stepsize, int **precs, int *steps);
+
+int mp_ilogb(mp_int * a, mp_int * base, mp_int * c);
+int mp_ilogb_d(mp_int * a, int base, mp_int * c);
 
 
 /* End of additions by CZ */

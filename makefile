@@ -111,7 +111,9 @@ bn_mp_put.o bn_mp_fput.o\
 bn_mp_digits.o\
 bn_mp_div_bz.o\
 bn_mp_div_newton.o\
-bn_mp_giantsteps.o
+bn_mp_giantsteps.o\
+bn_mp_ilogb_d.o bn_mp_ilogb.o
+
 
 $(LIBNAME):  $(OBJECTS)
 	$(AR) $(ARFLAGS) $@ $(OBJECTS)
