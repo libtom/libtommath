@@ -73,6 +73,8 @@
 #define BN_MP_GIANTSTEPS_C
 #define BN_MP_GROW_C
 #define BN_MP_HIGHBIT_C
+#define BN_MP_ILOGB_C
+#define BN_MP_ILOGB_D_C
 #define BN_MP_INIT_C
 #define BN_MP_INIT_COPY_C
 #define BN_MP_INIT_MULTI_C
@@ -394,9 +396,10 @@
    #define BN_MP_DIV_2D_C
    #define BN_MP_EXCH_C
    #define BN_MP_CLEAR_MULTI_C
-   #define BN_MP_DIV_BZ_C
    #define BN_MP_INIT_COPY_C
    #define BN_MP_CLEAR_C
+   #define BN_MP_DIV_NEWTON_C
+   #define BN_MP_DIV_BZ_C
    #define BN_MP_DIV_SCHOOL_C
    #define BN_MP_DIV_D_C
    #define BN_MP_INIT_SIZE_C
@@ -430,7 +433,6 @@
 #endif
 
 #if defined(BN_MP_DIV_BZ_C)
-   #define BN_MP_RAND_C
    #define BN_MP_INIT_MULTI_C
    #define BN_MP_MUL_2D_C
    #define BN_MP_GROW_C
@@ -466,12 +468,12 @@
    #define BN_MP_MUL_2D_C
    #define BN_MP_COUNT_BITS_C
    #define BN_MP_INIT_MULTI_C
+   #define BN_MP_GIANTSTEPS_C
    #define BN_MP_SET_C
    #define BN_MP_DIV_C
    #define BN_MP_SQR_C
    #define BN_MP_MUL_C
    #define BN_MP_SUB_C
-   #define BN_MP_PUT_C
    #define BN_MP_ADD_C
    #define BN_MP_ADD_D_C
    #define BN_MP_CMP_C
@@ -623,7 +625,7 @@
    #define BN_MP_COMPUTE_FACTORED_FACTORIAL_C
 #endif
 
-#if defined(BN_MP_FFT_C)
+#if (defined(BN_MP_FFT_C) && defined (MP_28BIT))
    #define BN_MP_DP_TO_FFT_C
    #define BN_MP_DP_TO_FFT_SINGLE_C
    #define BN_MP_FFT_TO_DP_C
@@ -632,7 +634,7 @@
    #define BN_MP_FFT_SQR_D_C
 #endif
 
-#if defined(BN_MP_FFT_MUL_C)
+#if (defined(BN_MP_FFT_MUL_C)&& defined (MP_28BIT))
    #define BN_MP_ISZERO_C
    #define BN_MP_COPY_C
    #define BN_MP_TOOM_COOK_5_MUL_C
@@ -718,6 +720,12 @@
 
 #if defined(BN_MP_HIGHBIT_C)
    #define BN_MP_COUNT_BITS_C
+#endif
+
+#if defined(BN_MP_ILOGB_C)
+#endif
+
+#if defined(BN_MP_ILOGB_D_C)
 #endif
 
 #if defined(BN_MP_INIT_C)

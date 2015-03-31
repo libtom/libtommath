@@ -1,5 +1,5 @@
 #include <tommath.h>
-#ifdef BN_MP_FFT_C
+#ifdef BN_MP_FFT_C_NOT
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is a library that provides multiple-precision
@@ -23,9 +23,9 @@
 
 #include <math.h>
 
-#define MP_DIGIT_SIZE (1<<DIGIT_BIT)
+#define MP_DIGIT_SIZE (1L<<DIGIT_BIT)
 #define MP_DIGIT_BIT_HALF (DIGIT_BIT>>1)
-#define MP_DIGIT_HALF (1<< MP_DIGIT_BIT_HALF )
+#define MP_DIGIT_HALF (1L<< MP_DIGIT_BIT_HALF )
 #define MP_DIGIT_MASK (MP_DIGIT_HALF-1)
 
 /* base two integer logarithm */

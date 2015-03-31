@@ -26,37 +26,37 @@ int mp_power_factored_factorials(  long *input,
     /* Two alternatives: use "long long" and hope for the best or do it the
        hard way */
 #ifdef MP_USE_LONG_LONG_AND_HOPE_FOR_THE_BEST
-    temp = p * (long long)p_1;
+    temp = p_2 * (long long)p_1;
     if ((temp > LONG_MAX) || (tmp < LONG_MIN)) {
       return MP_VAL;
     }
     prod = (long) temp;
 #else
-    if (p > 0) {
+    if (p_2 > 0) {
       if (p_1 > 0) {
-        if (p > (LONG_MAX / p_1)) {
+        if (p_2 > (LONG_MAX / p_1)) {
           return MP_VAL;
         }
       }
       else {
-        if (p_1 < (LONG_MIN / p)) {
+        if (p_1 < (LONG_MIN / p_2)) {
           return MP_VAL;
         }
       }
     } 
     else {
       if (p_1 > 0) {
-        if (p < (LONG_MIN / p_1)) {
+        if (p_2 < (LONG_MIN / p_1)) {
           return MP_VAL;
         }
       }
        else {
-        if ( (p != 0) && (p_1 < (LONG_MAX / p))) {
+        if ( (p_2 != 0) && (p_1 < (LONG_MAX / p_2))) {
           return MP_VAL;
         }
       }
     }
-    prod = p * p_1;
+    prod = p_2 * p_1;
 #endif
     (*product)[counter]   = p;
     (*product)[counter+1] = prod;

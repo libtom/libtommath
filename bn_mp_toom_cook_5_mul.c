@@ -8,7 +8,7 @@ int mp_toom_cook_5_mul(mp_int * a, mp_int * b, mp_int * c)
   mp_int a0, a1, a2, a3, a4;
   mp_int b0, b1, b2, b3, b4;
   int e = MP_OKAY;
-  int B, count, sign, j, k;
+  int B, count, sign;
 
   B = (MAX(a->used, b->used)) / 5;
 

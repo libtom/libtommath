@@ -49,7 +49,7 @@ int mp_compute_signed_factored_factorials(long *f, unsigned long f_length,
       count++;
     }
     /* Only primes up to 2^DIGIT_BIT because of mp_mul_d() */
-    if(f[k] >= 1<<DIGIT_BIT){
+    if(f[k] >= 1L<<DIGIT_BIT){
       return MP_VAL;
     }
   }
@@ -126,7 +126,7 @@ int mp_compute_signed_factored_factorials(long *f, unsigned long f_length,
 
   /* Compute c * 2^n if n!=0 */
   if(shift && shift > 0){
-    if(shift < 1<<DIGIT_BIT){
+    if(shift < 1L<<DIGIT_BIT){
       /* The choice of types is a bit questionable. Sometimes. */
       if( (e = mp_mul_2d (c, (mp_digit) shift, c) ) != MP_OKAY){
         return e;
@@ -135,7 +135,7 @@ int mp_compute_signed_factored_factorials(long *f, unsigned long f_length,
     else{
       long multiplicator = 0;
 another_round:
-      while(shift > 1<<DIGIT_BIT){
+      while(shift > 1L<<DIGIT_BIT){
         shift >>= 1;
         multiplicator++;
       }
@@ -192,7 +192,7 @@ another_round:
         return MP_VAL;
     }
     shift = -shift;
-    if(shift < 1<<DIGIT_BIT){
+    if(shift < 1L<<DIGIT_BIT){
       /* The choice of types is a bit questionable. Sometimes. */
       if( (e = mp_mul_2d (&temp, (mp_digit) shift, &temp) ) != MP_OKAY){
         return e;
@@ -201,7 +201,7 @@ another_round:
     else{
       long multiplicator = 0;
 and_another_round:
-      while(shift > 1<<DIGIT_BIT){
+      while(shift > 1L<<DIGIT_BIT){
         shift >>= 1;
         multiplicator++;
       }

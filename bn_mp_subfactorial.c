@@ -2,7 +2,7 @@
 #ifdef BN_MP_SUBFACTORIAL_C
 
 #ifndef MP_DIGIT_SIZE
-#define MP_DIGIT_SIZE (1<<DIGIT_BIT)
+#define MP_DIGIT_SIZE (1L<<DIGIT_BIT)
 #endif
 
 #ifdef SAVE_SOME_MEMORY

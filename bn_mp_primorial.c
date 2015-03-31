@@ -118,9 +118,9 @@ unsigned long *mp_fill_prime_list(unsigned long start, unsigned long stop,
   return list;
 }
 
-#   define MP_DIGIT_SIZE (1<<DIGIT_BIT)
+#   define MP_DIGIT_SIZE (1L<<DIGIT_BIT)
 #   define MP_DIGIT_BIT_HALF (DIGIT_BIT>>1)
-#   define MP_DIGIT_HALF (1<< MP_DIGIT_BIT_HALF )
+#   define MP_DIGIT_HALF (1L<< MP_DIGIT_BIT_HALF )
 #   define MP_DIGIT_MASK (MP_DIGIT_HALF-1)
 
 static int primorial__lowlevel(unsigned long *array, unsigned long n,

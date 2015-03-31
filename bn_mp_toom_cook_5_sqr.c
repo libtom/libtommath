@@ -7,7 +7,7 @@ int mp_toom_cook_5_sqr(mp_int * a, mp_int * c)
   mp_int tmp1;
   mp_int a0, a1, a2, a3, a4;
   int e = MP_OKAY;
-  int B, count, sign, j;
+  int B, count, j;
 
   B = (a->used) / 4;
 
@@ -17,8 +17,6 @@ int mp_toom_cook_5_sqr(mp_int * a, mp_int * c)
     }
     return MP_OKAY;
   }
-
-  sign = MP_ZPOS;
 
   if ((e =
        mp_init_multi(&w1, &w2, &w3, &w4, &w5, &w6, &w7, &w8, &w9, &tmp1,

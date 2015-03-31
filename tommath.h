@@ -629,7 +629,7 @@ typedef struct mp_bitset_t {
       (bst)->size = n;\
   } while (0)
 #   define mp_bitset_size(bst)  ((bst)->size)
-#   define mp_bitset_setall(bst) memset((bst)->content,~0lu,\
+#   define mp_bitset_setall(bst) memset((bst)->content,~(uint32_t)(0),\
    (bst->size /(sizeof(uint32_t) ) +1 ))
 #   define mp_bitset_clearall(bst) memset((bst)->content,0,\
    (bst->size /(sizeof(uint32_t) ) +1 ))

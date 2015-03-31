@@ -110,7 +110,7 @@ int mp_stirling2(unsigned long n, unsigned long k, mp_int * c)
   }
   /* binom(n,0) = 1 */
   for (j = 1; j <= (k / 2); j++) {
-    if (k + 1 - j >= 1 << DIGIT_BIT) {
+    if (k + 1 - j >= 1LU << DIGIT_BIT) {
       if ((e = mp_set_int(&temp, k + 1 - j)) != MP_OKAY) {
 	return e;
       }
@@ -122,7 +122,7 @@ int mp_stirling2(unsigned long n, unsigned long k, mp_int * c)
 	return e;
       }
     }
-    if (j >= 1 << DIGIT_BIT) {
+    if (j >= 1LU << DIGIT_BIT) {
       if ((e = mp_set_int(&temp, j)) != MP_OKAY) {
 	return e;
       }
@@ -137,7 +137,7 @@ int mp_stirling2(unsigned long n, unsigned long k, mp_int * c)
     if ((e = mp_set_int(&jot, j)) != MP_OKAY) {
       return e;
     }
-    if (n >= 1 << DIGIT_BIT) {
+    if (n >= 1LU << DIGIT_BIT) {
       if ((e = mp_expt(&jot, &enn, &jot)) != MP_OKAY) {
 	return e;
       }
@@ -164,7 +164,7 @@ int mp_stirling2(unsigned long n, unsigned long k, mp_int * c)
       if ((e = mp_set_int(&jot, k - j)) != MP_OKAY) {
 	return e;
       }
-      if (n >= 1 << DIGIT_BIT) {
+      if (n >= 1LU << DIGIT_BIT) {
 	if ((e = mp_expt(&jot, &enn, &jot)) != MP_OKAY) {
 	  return e;
 	}
@@ -191,7 +191,7 @@ int mp_stirling2(unsigned long n, unsigned long k, mp_int * c)
   if ((e = mp_set_int(&jot, k)) != MP_OKAY) {
     return e;
   }
-  if (n >= 1 << DIGIT_BIT) {
+  if (n >= 1LU << DIGIT_BIT) {
     if ((e = mp_expt(&jot, &enn, &jot)) != MP_OKAY) {
       return e;
     }

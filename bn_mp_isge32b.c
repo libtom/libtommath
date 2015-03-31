@@ -4,7 +4,7 @@ int mp_isge32b(mp_int * a)
 {
     if (a->used == 1) {
 #ifdef MP_64BIT
-      if(a->dp[0] >= 0xffffffffllu)){
+      if(a->dp[0] >= 0xffffffffllu){
            return MP_YES;
       }
 #endif

@@ -23,7 +23,7 @@ int mp_catalan(unsigned long n, mp_int *c){
   if( (e = mp_binomial(2*n,n,c) ) != MP_OKAY){
     return e;
   }
-  if((n+1) >= 1<<DIGIT_BIT){
+  if((n+1) >= 1LU<<DIGIT_BIT){
     mp_int temp;
     if( (e = mp_init(&temp) ) != MP_OKAY){
       return e;

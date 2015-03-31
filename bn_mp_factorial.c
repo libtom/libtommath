@@ -210,7 +210,7 @@ static int factorial_binsplit(unsigned long n, mp_int * result)
 }
 
 #   ifndef MP_DIGIT_SIZE
-#      define MP_DIGIT_SIZE (1<<DIGIT_BIT)
+#      define MP_DIGIT_SIZE (1L<<DIGIT_BIT)
 #   endif
 static int factorial_naive(unsigned long n, mp_int * result)
 {
