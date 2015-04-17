@@ -430,6 +430,9 @@ int mp_n_root_ex (mp_int * a, mp_digit b, mp_int * c, int fast);
 /* special sqrt algo */
 int mp_sqrt(mp_int *arg, mp_int *ret);
 
+/* special sqrt (mod prime) */
+int mp_sqrtmod_prime(mp_int *arg, mp_int *prime, mp_int *ret);
+
 /* is number a square? */
 int mp_is_square(mp_int *arg, int *ret);
 
