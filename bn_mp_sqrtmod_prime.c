@@ -19,7 +19,7 @@ int mp_sqrtmod_prime(mp_int *n, mp_int *prime, mp_int *ret)
 {
   int res, legendre;
   mp_int t1, C, Q, S, Z, M, T, R, two;
-  unsigned long i;
+  mp_digit i;
 
   /* first handle the simple cases */
   if (mp_cmp_d(n, 0) == MP_EQ) {
