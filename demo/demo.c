@@ -61,10 +61,23 @@ int lbit(void)
    }
 }
 
+#if defined(LTM_DEMO_REAL_RAND) && !defined(_WIN32)
+static FILE* fd_urandom;
+#endif
 int myrng(unsigned char *dst, int len, void *dat)
 {
    int x;
    (void)dat;
+#if defined(LTM_DEMO_REAL_RAND)
+   if (!fd_urandom) {
+#if !defined(_WIN32)
+      fprintf(stderr, "\nno /dev/urandom\n");
+#endif
+   }
+   else {
+      return fread(dst, 1, len, fd_urandom);
+   }
+#endif
    for (x = 0; x < len; x++)
       dst[x] = rand() & 0xFF;
    return len;
@@ -84,6 +97,11 @@ static void _cleanup(void)
 {
   mp_clear_multi(&a, &b, &c, &d, &e, &f, NULL);
   printf("\n");
+
+#ifdef LTM_DEMO_REAL_RAND
+  if(fd_urandom)
+     fclose(fd_urandom);
+#endif
 }
 
 char cmd[4096], buf[4096];
@@ -107,6 +125,16 @@ int main(void)
 
    atexit(_cleanup);
 
+#if defined(LTM_DEMO_REAL_RAND)
+   if (!fd_urandom) {
+      fd_urandom = fopen("/dev/urandom", "r");
+      if (!fd_urandom) {
+#if !defined(_WIN32)
+         fprintf(stderr, "\ncould not open /dev/urandom\n");
+#endif
+      }
+   }
+#endif
    srand(LTM_DEMO_RAND_SEED);
 
 #ifdef MP_8BIT
