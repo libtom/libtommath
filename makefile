@@ -7,22 +7,6 @@ VERSION=0.42.0
 
 include makefile.include
 
-# Compiler and Linker Names
-ifndef PREFIX
-  PREFIX=
-endif
-
-ifeq ($(CC),cc)
-  CC = $(PREFIX)gcc
-endif
-LD=$(PREFIX)ld
-AR=$(PREFIX)ar
-RANLIB=$(PREFIX)ranlib
-
-ifndef MAKE
-   MAKE=make
-endif
-
 #install as this user
 ifndef INSTALL_GROUP
    GROUP=wheel
@@ -113,8 +97,6 @@ install: $(LIBNAME)
 
 test: $(LIBNAME) demo/demo.o
 	$(CC) $(CFLAGS) demo/demo.o $(LIBNAME) -o test
-
-test_standalone: CFLAGS+=-DLTM_DEMO_TEST_VS_MTEST=0
 
 test_standalone: $(LIBNAME) demo/demo.o
 	$(CC) $(CFLAGS) demo/demo.o $(LIBNAME) -o test

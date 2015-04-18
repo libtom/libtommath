@@ -2,6 +2,22 @@
 # Include makefile for libtommath
 #
 
+# Compiler and Linker Names
+ifndef PREFIX
+  PREFIX=
+endif
+
+ifeq ($(CC),cc)
+  CC = $(PREFIX)gcc
+endif
+LD=$(PREFIX)ld
+AR=$(PREFIX)ar
+RANLIB=$(PREFIX)ranlib
+
+ifndef MAKE
+   MAKE=make
+endif
+
 CFLAGS += -I./ -Wall -Wsign-compare -Wextra -Wshadow
 
 ifndef NO_ADDTL_WARNINGS
@@ -30,5 +46,6 @@ endif
 
 HEADERS=tommath.h tommath_class.h tommath_superclass.h
 
+test_standalone: CFLAGS+=-DLTM_DEMO_TEST_VS_MTEST=0
 
 

@@ -82,7 +82,11 @@ install: $(LIBNAME)
 
 test: $(LIBNAME) demo/demo.o
 	$(CC) $(CFLAGS) -c demo/demo.c -o demo/demo.o
-	$(LT) --mode=link $(CC) $(LDFLAGS) -o test demo/demo.o $(LIBNAME_S)
+	$(LT) --mode=link $(CC) $(LDFLAGS) -o test demo/demo.o $(LIBNAME)
+
+test_standalone: $(LIBNAME) demo/demo.o
+	$(CC) $(CFLAGS) -c demo/demo.c -o demo/demo.o
+	$(LT) --mode=link $(CC) $(LDFLAGS) -o test demo/demo.o $(LIBNAME)
 
 mtest:
 	cd mtest ; $(CC) $(CFLAGS) $(LDFLAGS) mtest.c -o mtest
