@@ -96,17 +96,17 @@ install: $(LIBNAME)
 	install -g $(GROUP) -o $(USER) $(HEADERS) $(DESTDIR)$(INCPATH)
 
 test: $(LIBNAME) demo/demo.o
-	$(CC) $(CFLAGS) demo/demo.o $(LIBNAME) -o test
+	$(CC) $(CFLAGS) demo/demo.o $(LIBNAME) $(LFLAGS) -o test
 
 test_standalone: $(LIBNAME) demo/demo.o
-	$(CC) $(CFLAGS) demo/demo.o $(LIBNAME) -o test
+	$(CC) $(CFLAGS) demo/demo.o $(LIBNAME) $(LFLAGS) -o test
 
 .PHONY: mtest
 mtest:
-	cd mtest ; $(CC) $(CFLAGS) mtest.c -o mtest
+	cd mtest ; $(CC) $(CFLAGS) mtest.c $(LFLAGS) -o mtest
 
 timing: $(LIBNAME)
-	$(CC) $(CFLAGS) -DTIMER demo/timing.c $(LIBNAME) -o ltmtest
+	$(CC) $(CFLAGS) -DTIMER demo/timing.c $(LIBNAME) $(LFLAGS) -o ltmtest
 
 # makes the LTM book DVI file, requires tetex, perl and makeindex [part of tetex I think]
 docdvi: tommath.src
