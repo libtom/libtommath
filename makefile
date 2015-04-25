@@ -66,6 +66,15 @@ $(LIBNAME):  $(OBJECTS)
 	$(AR) $(ARFLAGS) $@ $(OBJECTS)
 	$(RANLIB) $@
 
+
+#make the code coverage of the library
+#
+coverage: CFLAGS += -fprofile-arcs -ftest-coverage
+coverage: LFLAGS += -lgcov
+
+coverage: test_standalone
+	./test
+
 #make a profiled library (takes a while!!!)
 #
 # This will build the library with profile generation

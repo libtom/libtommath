@@ -4,10 +4,12 @@
 *.obj
 *.gcda
 *.gcno
+*.gcov
 *.lib
 Debug/
 Release/
 .libs/
+.coveralls.yml
 
 # suppress output of build process and *nix/windows test executables
 ltmtest
