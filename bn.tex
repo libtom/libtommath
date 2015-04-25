@@ -1863,6 +1863,27 @@ symbol.  The result is stored in $c$ and can take on one of three values $\lbrac
 then the result will be $-1$ when $a$ is not a quadratic residue modulo $p$.  The result will be $0$ if $a$ divides $p$
 and the result will be $1$ if $a$ is a quadratic residue modulo $p$.
 
+\section{Modular square root}
+\index{mp\_sqrtmod\_prime}
+\begin{alltt}
+int mp_sqrtmod_prime(mp_int *n, mp_int *p, mp_int *r)
+\end{alltt}
+
+This will solve the modular equatioon $r^2 = n \mod p$ where $p$ is a prime number greater than 2 (odd prime).
+The result is returned in the third argument $r$, the function returns \textbf{MP\_OKAY} on success,
+other return values indicate failure.
+
+The implementation is split for two different cases:
+
+1. if $p \mod 4 == 3$ we apply \href{http://cacr.uwaterloo.ca/hac/}{Handbook of Applied Cryptography algorithm 3.36} and compute $r$ directly as
+$r = n^{(p+1)/4} \mod p$
+
+2. otherwise we use \href{https://en.wikipedia.org/wiki/Tonelli-Shanks_algorithm}{Tonelli-Shanks algorithm}
+
+The function does not check the primality of parameter $p$ thus it is up to the caller to assure that this parameter
+is a prime number. When $p$ is a composite the function behaviour is undefined, it may even return a false-positive
+\textbf{MP\_OKAY}.
+
 \section{Modular Inverse}
 \index{mp\_invmod}
 \begin{alltt}

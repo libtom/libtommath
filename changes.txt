@@ -15,6 +15,7 @@ v0.43.0
        -- Added mp_get_long_long() and mp_set_long_long()
        -- Carlin provided a patch to use arc4random() instead of rand()
           on platforms where it is supported
+       -- Karel Miko provided mp_sqrtmod_prime()
 
 
 July 23rd, 2010
