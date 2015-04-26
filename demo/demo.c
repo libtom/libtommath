@@ -103,6 +103,16 @@ static void _cleanup(void)
      fclose(fd_urandom);
 #endif
 }
+struct mp_sqrtmod_prime_st {
+   unsigned long p;
+   unsigned long n;
+   mp_digit r;
+};
+struct mp_sqrtmod_prime_st sqrtmod_prime[] = {
+      { 5, 14, 3 },
+      { 7, 9, 4 },
+      { 113, 2, 62 }
+};
 
 char cmd[4096], buf[4096];
 int main(void)
@@ -304,6 +314,21 @@ printf("compare no compare!\n"); return EXIT_FAILURE; }
 
    }
    printf("\n\n");
+
+   // r^2 = n (mod p)
+   for (i = 0; i < (int)(sizeof(sqrtmod_prime)/sizeof(sqrtmod_prime[0])); ++i) {
+      mp_set_int(&a, sqrtmod_prime[i].p);
+      mp_set_int(&b, sqrtmod_prime[i].n);
+      if (mp_sqrtmod_prime(&b, &a, &c) != MP_OKAY) {
+         printf("Failed executing %d. mp_sqrtmod_prime\n", (i+1));
+         return EXIT_FAILURE;
+      }
+      if (mp_cmp_d(&c, sqrtmod_prime[i].r) != MP_EQ) {
+         printf("Failed %d. trivial mp_sqrtmod_prime\n", (i+1));
+         ndraw(&c, "r");
+         return EXIT_FAILURE;
+      }
+   }
 
    /* test for size */
    for (ix = 10; ix < 128; ix++) {
