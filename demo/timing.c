@@ -81,6 +81,18 @@ static ulong64 TIMFUNC(void)
 //#define DO8(x) DO4(x); DO4(x);
 //#define DO(x)  DO8(x); DO8(x);
 
+#ifdef TIMING_NO_LOGS
+#define FOPEN(a, b)     NULL
+#define FPRINTF(a,b,c,d)
+#define FFLUSH(a)
+#define FCLOSE(a)       (void)(a)
+#else
+#define FOPEN(a,b)       fopen(a,b)
+#define FPRINTF(a,b,c,d) fprintf(a,b,c,d)
+#define FFLUSH(a)        fflush(a)
+#define FCLOSE(a)        fclose(a)
+#endif
+
 int main(void)
 {
    ulong64 tt, gg, CLK_PER_SEC;
@@ -104,7 +116,7 @@ int main(void)
    CLK_PER_SEC = TIMFUNC() - CLK_PER_SEC;
 
    printf("CLK_PER_SEC == %llu\n", CLK_PER_SEC);
-   log = fopen("logs/add.log", "w");
+   log = FOPEN("logs/add.log", "w");
    for (cnt = 8; cnt <= 128; cnt += 8) {
       SLEEP;
       mp_rand(&a, cnt);
@@ -120,12 +132,12 @@ int main(void)
       } while (++rr < 100000);
       printf("Adding\t\t%4d-bit => %9llu/sec, %9llu cycles\n",
 	     mp_count_bits(&a), CLK_PER_SEC / tt, tt);
-      fprintf(log, "%d %9llu\n", cnt * DIGIT_BIT, tt);
-      fflush(log);
+      FPRINTF(log, "%d %9llu\n", cnt * DIGIT_BIT, tt);
+      FFLUSH(log);
    }
-   fclose(log);
+   FCLOSE(log);
 
-   log = fopen("logs/sub.log", "w");
+   log = FOPEN("logs/sub.log", "w");
    for (cnt = 8; cnt <= 128; cnt += 8) {
       SLEEP;
       mp_rand(&a, cnt);
@@ -142,10 +154,10 @@ int main(void)
 
       printf("Subtracting\t\t%4d-bit => %9llu/sec, %9llu cycles\n",
 	     mp_count_bits(&a), CLK_PER_SEC / tt, tt);
-      fprintf(log, "%d %9llu\n", cnt * DIGIT_BIT, tt);
-      fflush(log);
+      FPRINTF(log, "%d %9llu\n", cnt * DIGIT_BIT, tt);
+      FFLUSH(log);
    }
-   fclose(log);
+   FCLOSE(log);
 
    /* do mult/square twice, first without karatsuba and second with */
    old_kara_m = KARATSUBA_MUL_CUTOFF;
@@ -161,7 +173,7 @@ int main(void)
       TOOM_MUL_CUTOFF = (ix == 2) ? old_toom_m : 9999;
       TOOM_SQR_CUTOFF = (ix == 2) ? old_toom_s : 9999;
 
-      log = fopen((ix == 0) ? "logs/mult.log" : (ix == 1) ? "logs/mult_kara.log" : "logs/mult_toom.log", "w");
+      log = FOPEN((ix == 0) ? "logs/mult.log" : (ix == 1) ? "logs/mult_kara.log" : "logs/mult_toom.log", "w");
       for (cnt = 4; cnt <= 10240 / DIGIT_BIT; cnt += 2) {
 	 SLEEP;
 	 mp_rand(&a, cnt);
@@ -177,12 +189,12 @@ int main(void)
 	 } while (++rr < 100);
 	 printf("Multiplying\t%4d-bit => %9llu/sec, %9llu cycles\n",
 		mp_count_bits(&a), CLK_PER_SEC / tt, tt);
-	 fprintf(log, "%d %9llu\n", mp_count_bits(&a), tt);
-	 fflush(log);
+	 FPRINTF(log, "%d %9llu\n", mp_count_bits(&a), tt);
+	 FFLUSH(log);
       }
-      fclose(log);
+      FCLOSE(log);
 
-      log = fopen((ix == 0) ? "logs/sqr.log" : (ix == 1) ? "logs/sqr_kara.log" : "logs/sqr_toom.log", "w");
+      log = FOPEN((ix == 0) ? "logs/sqr.log" : (ix == 1) ? "logs/sqr_kara.log" : "logs/sqr_toom.log", "w");
       for (cnt = 4; cnt <= 10240 / DIGIT_BIT; cnt += 2) {
 	 SLEEP;
 	 mp_rand(&a, cnt);
@@ -197,10 +209,10 @@ int main(void)
 	 } while (++rr < 100);
 	 printf("Squaring\t%4d-bit => %9llu/sec, %9llu cycles\n",
 		mp_count_bits(&a), CLK_PER_SEC / tt, tt);
-	 fprintf(log, "%d %9llu\n", mp_count_bits(&a), tt);
-	 fflush(log);
+	 FPRINTF(log, "%d %9llu\n", mp_count_bits(&a), tt);
+	 FFLUSH(log);
       }
-      fclose(log);
+      FCLOSE(log);
 
    }
 
@@ -237,10 +249,10 @@ int main(void)
 	 "1214855636816562637502584060163403830270705000634713483015101384881871978446801224798536155406895823305035467591632531067547890948695117172076954220727075688048751022421198712032848890056357845974246560748347918630050853933697792254955890439720297560693579400297062396904306270145886830719309296352765295712183040773146419022875165382778007040109957609739589875590885701126197906063620133954893216612678838507540777138437797705602453719559017633986486649523611975865005712371194067612263330335590526176087004421363598470302731349138773205901447704682181517904064735636518462452242791676541725292378925568296858010151852326316777511935037531017413910506921922450666933202278489024521263798482237150056835746454842662048692127173834433089016107854491097456725016327709663199738238442164843147132789153725513257167915555162094970853584447993125488607696008169807374736711297007473812256272245489405898470297178738029484459690836250560495461579533254473316340608217876781986188705928270735695752830825527963838355419762516246028680280988020401914551825487349990306976304093109384451438813251211051597392127491464898797406789175453067960072008590614886532333015881171367104445044718144312416815712216611576221546455968770801413440778423979",
 	 NULL
       };
-      log = fopen("logs/expt.log", "w");
-      logb = fopen("logs/expt_dr.log", "w");
-      logc = fopen("logs/expt_2k.log", "w");
-      logd = fopen("logs/expt_2kl.log", "w");
+      log = FOPEN("logs/expt.log", "w");
+      logb = FOPEN("logs/expt_dr.log", "w");
+      logc = FOPEN("logs/expt_2k.log", "w");
+      logd = FOPEN("logs/expt_2kl.log", "w");
       for (n = 0; primes[n]; n++) {
 	 SLEEP;
 	 mp_read_radix(&a, primes[n], 10);
@@ -273,16 +285,16 @@ int main(void)
 	 }
 	 printf("Exponentiating\t%4d-bit => %9llu/sec, %9llu cycles\n",
 		mp_count_bits(&a), CLK_PER_SEC / tt, tt);
-	 fprintf(n < 4 ? logd : (n < 9) ? logc : (n < 16) ? logb : log,
+	 FPRINTF(n < 4 ? logd : (n < 9) ? logc : (n < 16) ? logb : log,
 		 "%d %9llu\n", mp_count_bits(&a), tt);
       }
    }
-   fclose(log);
-   fclose(logb);
-   fclose(logc);
-   fclose(logd);
+   FCLOSE(log);
+   FCLOSE(logb);
+   FCLOSE(logc);
+   FCLOSE(logd);
 
-   log = fopen("logs/invmod.log", "w");
+   log = FOPEN("logs/invmod.log", "w");
    for (cnt = 4; cnt <= 32; cnt += 4) {
       SLEEP;
       mp_rand(&a, cnt);
@@ -309,9 +321,9 @@ int main(void)
       }
       printf("Inverting mod\t%4d-bit => %9llu/sec, %9llu cycles\n",
 	     mp_count_bits(&a), CLK_PER_SEC / tt, tt);
-      fprintf(log, "%d %9llu\n", cnt * DIGIT_BIT, tt);
+      FPRINTF(log, "%d %9llu\n", cnt * DIGIT_BIT, tt);
    }
-   fclose(log);
+   FCLOSE(log);
 
    return 0;
 }
