@@ -86,7 +86,7 @@ int main(void)
    ulong64 tt, gg, CLK_PER_SEC;
    FILE *log, *logb, *logc, *logd;
    mp_int a, b, c, d, e, f;
-   int n, cnt, ix, old_kara_m, old_kara_s;
+   int n, cnt, ix, old_kara_m, old_kara_s, old_toom_m, old_toom_s;
    unsigned rr;
 
    mp_init(&a);
@@ -99,15 +99,11 @@ int main(void)
    srand(time(NULL));
 
 
-   /* temp. turn off TOOM */
-   TOOM_MUL_CUTOFF = TOOM_SQR_CUTOFF = 100000;
-
    CLK_PER_SEC = TIMFUNC();
    sleep(1);
    CLK_PER_SEC = TIMFUNC() - CLK_PER_SEC;
 
    printf("CLK_PER_SEC == %llu\n", CLK_PER_SEC);
-   goto exptmod;
    log = fopen("logs/add.log", "w");
    for (cnt = 8; cnt <= 128; cnt += 8) {
       SLEEP;
@@ -152,16 +148,20 @@ int main(void)
    fclose(log);
 
    /* do mult/square twice, first without karatsuba and second with */
- multtest:
    old_kara_m = KARATSUBA_MUL_CUTOFF;
    old_kara_s = KARATSUBA_SQR_CUTOFF;
-   for (ix = 0; ix < 2; ix++) {
-      printf("With%s Karatsuba\n", (ix == 0) ? "out" : "");
+   /* currently toom-cook cut-off is too high to kick in, so we just use the karatsuba values */
+   old_toom_m = old_kara_m;
+   old_toom_s = old_kara_m;
+   for (ix = 0; ix < 3; ix++) {
+      printf("With%s Karatsuba, With%s Toom\n", (ix == 0) ? "out" : "", (ix == 1) ? "out" : "");
 
-      KARATSUBA_MUL_CUTOFF = (ix == 0) ? 9999 : old_kara_m;
-      KARATSUBA_SQR_CUTOFF = (ix == 0) ? 9999 : old_kara_s;
+      KARATSUBA_MUL_CUTOFF = (ix == 1) ? old_kara_m : 9999;
+      KARATSUBA_SQR_CUTOFF = (ix == 1) ? old_kara_s : 9999;
+      TOOM_MUL_CUTOFF = (ix == 2) ? old_toom_m : 9999;
+      TOOM_SQR_CUTOFF = (ix == 2) ? old_toom_s : 9999;
 
-      log = fopen((ix == 0) ? "logs/mult.log" : "logs/mult_kara.log", "w");
+      log = fopen((ix == 0) ? "logs/mult.log" : (ix == 1) ? "logs/mult_kara.log" : "logs/mult_toom.log", "w");
       for (cnt = 4; cnt <= 10240 / DIGIT_BIT; cnt += 2) {
 	 SLEEP;
 	 mp_rand(&a, cnt);
@@ -182,7 +182,7 @@ int main(void)
       }
       fclose(log);
 
-      log = fopen((ix == 0) ? "logs/sqr.log" : "logs/sqr_kara.log", "w");
+      log = fopen((ix == 0) ? "logs/sqr.log" : (ix == 1) ? "logs/sqr_kara.log" : "logs/sqr_toom.log", "w");
       for (cnt = 4; cnt <= 10240 / DIGIT_BIT; cnt += 2) {
 	 SLEEP;
 	 mp_rand(&a, cnt);
@@ -203,7 +203,6 @@ int main(void)
       fclose(log);
 
    }
- exptmod:
 
    {
       char *primes[] = {
@@ -284,7 +283,7 @@ int main(void)
    fclose(logd);
 
    log = fopen("logs/invmod.log", "w");
-   for (cnt = 4; cnt <= 128; cnt += 4) {
+   for (cnt = 4; cnt <= 32; cnt += 4) {
       SLEEP;
       mp_rand(&a, cnt);
       mp_rand(&b, cnt);
