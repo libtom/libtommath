@@ -165,6 +165,26 @@ int main(void)
    printf("MP_PREC: %d\n", MP_PREC);
 
 #if LTM_DEMO_TEST_VS_MTEST == 0
+   // trivial stuff
+   mp_set_int(&a, 5);
+   mp_neg(&a, &b);
+   if (mp_cmp(&a, &b) != MP_GT) {
+      return EXIT_FAILURE;
+   }
+   if (mp_cmp(&b, &a) != MP_LT) {
+      return EXIT_FAILURE;
+   }
+   mp_neg(&a, &a);
+   if (mp_cmp(&b, &a) != MP_EQ) {
+      return EXIT_FAILURE;
+   }
+   mp_abs(&a, &b);
+   if (mp_isneg(&b) != MP_NO) {
+      return EXIT_FAILURE;
+   }
+   mp_add_d(&a, 1, &b);
+   mp_add_d(&a, 6, &b);
+
    // test montgomery
    printf("Testing: montgomery...\n");
    for (i = 1; i < 10; i++) {
@@ -202,11 +222,11 @@ printf("compare no compare!\n"); return EXIT_FAILURE; }
    // test mp_get_int
    printf("\n\nTesting: mp_get_int");
    for (i = 0; i < 1000; ++i) {
-      t = ((unsigned long) rand() * rand() + 1) & 0xFFFFFFFF;
-      mp_set_int(&a, t);
-      if (t != mp_get_int(&a)) {
-	 printf("\nmp_get_int() bad result!");
-	 return EXIT_FAILURE;
+      t = ((unsigned long) rand () * rand () + 1) & 0xFFFFFFFF;
+      mp_set_int (&a, t);
+      if (t != mp_get_int (&a)) {
+         printf ("\nmp_get_int() bad result!");
+         return EXIT_FAILURE;
       }
    }
    mp_set_int(&a, 0);
@@ -263,53 +283,53 @@ printf("compare no compare!\n"); return EXIT_FAILURE; }
    // test mp_sqrt
    printf("\n\nTesting: mp_sqrt\n");
    for (i = 0; i < 1000; ++i) {
-      printf("%6d\r", i);
-      fflush(stdout);
-      n = (rand() & 15) + 1;
-      mp_rand(&a, n);
-      if (mp_sqrt(&a, &b) != MP_OKAY) {
-	 printf("\nmp_sqrt() error!");
-	 return EXIT_FAILURE;
+      printf ("%6d\r", i);
+      fflush (stdout);
+      n = (rand () & 15) + 1;
+      mp_rand (&a, n);
+      if (mp_sqrt (&a, &b) != MP_OKAY) {
+         printf ("\nmp_sqrt() error!");
+         return EXIT_FAILURE;
       }
-      mp_n_root_ex(&a, 2, &c, 0);
-      mp_n_root_ex(&a, 2, &d, 1);
-      if (mp_cmp_mag(&c, &d) != MP_EQ) {
-	 printf("\nmp_n_root_ex() bad result!");
-	 return EXIT_FAILURE;
+      mp_n_root_ex (&a, 2, &c, 0);
+      mp_n_root_ex (&a, 2, &d, 1);
+      if (mp_cmp_mag (&c, &d) != MP_EQ) {
+         printf ("\nmp_n_root_ex() bad result!");
+         return EXIT_FAILURE;
       }
-      if (mp_cmp_mag(&b, &c) != MP_EQ) {
-	 printf("mp_sqrt() bad result!\n");
-	 return 1;
+      if (mp_cmp_mag (&b, &c) != MP_EQ) {
+         printf ("mp_sqrt() bad result!\n");
+         return EXIT_FAILURE;
       }
    }
 
    printf("\n\nTesting: mp_is_square\n");
    for (i = 0; i < 1000; ++i) {
-      printf("%6d\r", i);
-      fflush(stdout);
+      printf ("%6d\r", i);
+      fflush (stdout);
 
       /* test mp_is_square false negatives */
-      n = (rand() & 7) + 1;
-      mp_rand(&a, n);
-      mp_sqr(&a, &a);
-      if (mp_is_square(&a, &n) != MP_OKAY) {
-	 printf("\nfn:mp_is_square() error!");
-	 return EXIT_FAILURE;
+      n = (rand () & 7) + 1;
+      mp_rand (&a, n);
+      mp_sqr (&a, &a);
+      if (mp_is_square (&a, &n) != MP_OKAY) {
+         printf ("\nfn:mp_is_square() error!");
+         return EXIT_FAILURE;
       }
       if (n == 0) {
-	 printf("\nfn:mp_is_square() bad result!");
-	 return EXIT_FAILURE;
+         printf ("\nfn:mp_is_square() bad result!");
+         return EXIT_FAILURE;
       }
 
       /* test for false positives */
-      mp_add_d(&a, 1, &a);
-      if (mp_is_square(&a, &n) != MP_OKAY) {
-	 printf("\nfp:mp_is_square() error!");
-	 return EXIT_FAILURE;
+      mp_add_d (&a, 1, &a);
+      if (mp_is_square (&a, &n) != MP_OKAY) {
+         printf ("\nfp:mp_is_square() error!");
+         return EXIT_FAILURE;
       }
       if (n == 1) {
-	 printf("\nfp:mp_is_square() bad result!");
-	 return EXIT_FAILURE;
+         printf ("\nfp:mp_is_square() bad result!");
+         return EXIT_FAILURE;
       }
 
    }
@@ -332,45 +352,43 @@ printf("compare no compare!\n"); return EXIT_FAILURE; }
 
    /* test for size */
    for (ix = 10; ix < 128; ix++) {
-      printf("Testing (not safe-prime): %9d bits    \r", ix);
-      fflush(stdout);
-      err =
-	 mp_prime_random_ex(&a, 8, ix,
-			    (rand() & 1) ? 0 : LTM_PRIME_2MSB_ON,
-				myrng, NULL);
+      printf ("Testing (not safe-prime): %9d bits    \r", ix);
+      fflush (stdout);
+      err = mp_prime_random_ex (&a, 8, ix,
+                                (rand () & 1) ? 0 : LTM_PRIME_2MSB_ON, myrng,
+                                NULL);
       if (err != MP_OKAY) {
-	 printf("failed with err code %d\n", err);
-	 return EXIT_FAILURE;
+         printf ("failed with err code %d\n", err);
+         return EXIT_FAILURE;
       }
-      if (mp_count_bits(&a) != ix) {
-	 printf("Prime is %d not %d bits!!!\n", mp_count_bits(&a), ix);
-	 return EXIT_FAILURE;
+      if (mp_count_bits (&a) != ix) {
+         printf ("Prime is %d not %d bits!!!\n", mp_count_bits (&a), ix);
+         return EXIT_FAILURE;
       }
    }
    printf("\n");
 
    for (ix = 16; ix < 128; ix++) {
-      printf("Testing (    safe-prime): %9d bits    \r", ix);
-      fflush(stdout);
-      err =
-	 mp_prime_random_ex(&a, 8, ix,
-			    ((rand() & 1) ? 0 : LTM_PRIME_2MSB_ON) | LTM_PRIME_SAFE,
-				 myrng, NULL);
+      printf ("Testing (    safe-prime): %9d bits    \r", ix);
+      fflush (stdout);
+      err = mp_prime_random_ex (
+            &a, 8, ix, ((rand () & 1) ? 0 : LTM_PRIME_2MSB_ON) | LTM_PRIME_SAFE,
+            myrng, NULL);
       if (err != MP_OKAY) {
-	 printf("failed with err code %d\n", err);
-	 return EXIT_FAILURE;
+         printf ("failed with err code %d\n", err);
+         return EXIT_FAILURE;
       }
-      if (mp_count_bits(&a) != ix) {
-	 printf("Prime is %d not %d bits!!!\n", mp_count_bits(&a), ix);
-	 return EXIT_FAILURE;
+      if (mp_count_bits (&a) != ix) {
+         printf ("Prime is %d not %d bits!!!\n", mp_count_bits (&a), ix);
+         return EXIT_FAILURE;
       }
       /* let's see if it's really a safe prime */
-      mp_sub_d(&a, 1, &a);
-      mp_div_2(&a, &a);
-      mp_prime_is_prime(&a, 8, &cnt);
+      mp_sub_d (&a, 1, &a);
+      mp_div_2 (&a, &a);
+      mp_prime_is_prime (&a, 8, &cnt);
       if (cnt != MP_YES) {
-	 printf("sub is not prime!\n");
-	 return EXIT_FAILURE;
+         printf ("sub is not prime!\n");
+         return EXIT_FAILURE;
       }
    }
 
@@ -399,11 +417,11 @@ printf("compare no compare!\n"); return EXIT_FAILURE; }
    printf("\n\nTesting: mp_cnt_lsb");
    mp_set(&a, 1);
    for (ix = 0; ix < 1024; ix++) {
-      if (mp_cnt_lsb(&a) != ix) {
-	 printf("Failed at %d, %d\n", ix, mp_cnt_lsb(&a));
-	 return EXIT_FAILURE;
+      if (mp_cnt_lsb (&a) != ix) {
+         printf ("Failed at %d, %d\n", ix, mp_cnt_lsb (&a));
+         return EXIT_FAILURE;
       }
-      mp_mul_2(&a, &a);
+      mp_mul_2 (&a, &a);
    }
 
 /* test mp_reduce_2k */
@@ -411,27 +429,26 @@ printf("compare no compare!\n"); return EXIT_FAILURE; }
    for (cnt = 3; cnt <= 128; ++cnt) {
       mp_digit tmp;
 
-      mp_2expt(&a, cnt);
-      mp_sub_d(&a, 2, &a);	/* a = 2**cnt - 2 */
+      mp_2expt (&a, cnt);
+      mp_sub_d (&a, 2, &a); /* a = 2**cnt - 2 */
 
-
-      printf("\r %4d bits", cnt);
-      printf("(%d)", mp_reduce_is_2k(&a));
-      mp_reduce_2k_setup(&a, &tmp);
-      printf("(%lu)", (unsigned long)tmp);
+      printf ("\r %4d bits", cnt);
+      printf ("(%d)", mp_reduce_is_2k (&a));
+      mp_reduce_2k_setup (&a, &tmp);
+      printf ("(%lu)", (unsigned long) tmp);
       for (ix = 0; ix < 1000; ix++) {
-	 if (!(ix & 127)) {
-	    printf(".");
-	    fflush(stdout);
-	 }
-	 mp_rand(&b, (cnt / DIGIT_BIT + 1) * 2);
-	 mp_copy(&c, &b);
-	 mp_mod(&c, &a, &c);
-	 mp_reduce_2k(&b, &a, 2);
-	 if (mp_cmp(&c, &b)) {
-	    printf("FAILED\n");
-	    exit(0);
-	 }
+         if (!(ix & 127)) {
+            printf (".");
+            fflush (stdout);
+         }
+         mp_rand (&b, (cnt / DIGIT_BIT + 1) * 2);
+         mp_copy (&c, &b);
+         mp_mod (&c, &a, &c);
+         mp_reduce_2k (&b, &a, 2);
+         if (mp_cmp (&c, &b)) {
+            printf ("FAILED\n");
+            return EXIT_FAILURE;
+         }
       }
    }
 
@@ -459,39 +476,39 @@ printf("compare no compare!\n"); return EXIT_FAILURE; }
 /* test the DR reduction */
    printf("\n\nTesting: mp_dr_reduce...\n");
    for (cnt = 2; cnt < 32; cnt++) {
-      printf("\r%d digit modulus", cnt);
-      mp_grow(&a, cnt);
-      mp_zero(&a);
+      printf ("\r%d digit modulus", cnt);
+      mp_grow (&a, cnt);
+      mp_zero (&a);
       for (ix = 1; ix < cnt; ix++) {
-	 a.dp[ix] = MP_MASK;
+         a.dp[ix] = MP_MASK;
       }
       a.used = cnt;
       a.dp[0] = 3;
 
-      mp_rand(&b, cnt - 1);
-      mp_copy(&b, &c);
+      mp_rand (&b, cnt - 1);
+      mp_copy (&b, &c);
 
       rr = 0;
       do {
-	 if (!(rr & 127)) {
-	    printf(".");
-	    fflush(stdout);
-	 }
-	 mp_sqr(&b, &b);
-	 mp_add_d(&b, 1, &b);
-	 mp_copy(&b, &c);
+         if (!(rr & 127)) {
+            printf (".");
+            fflush (stdout);
+         }
+         mp_sqr (&b, &b);
+         mp_add_d (&b, 1, &b);
+         mp_copy (&b, &c);
 
-	 mp_mod(&b, &a, &b);
-	 mp_dr_reduce(&c, &a, (((mp_digit) 1) << DIGIT_BIT) - a.dp[0]);
+         mp_mod (&b, &a, &b);
+         mp_dr_setup(&a, &mp),
+         mp_dr_reduce (&c, &a, mp);
 
-	 if (mp_cmp(&b, &c) != MP_EQ) {
-	    printf("Failed on trial %u\n", rr);
-	    exit(-1);
-
-	 }
+         if (mp_cmp (&b, &c) != MP_EQ) {
+            printf ("Failed on trial %u\n", rr);
+            return EXIT_FAILURE;
+         }
       } while (++rr < 500);
-      printf(" passed");
-      fflush(stdout);
+      printf (" passed");
+      fflush (stdout);
    }
 
 #if LTM_DEMO_TEST_REDUCE_2K_L
