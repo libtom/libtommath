@@ -88,6 +88,13 @@ coverage: LFLAGS += -lgcov
 coverage: test_standalone
 	./test
 
+lcov: coverage
+	lcov --capture --no-external --no-recursion --directory . --output-file coverage.info -q
+	genhtml coverage.info --output-directory coverage -q
+
+coveralls: coverage
+	cpp-coveralls
+
 #make a profiled library (takes a while!!!)
 #
 # This will build the library with profile generation

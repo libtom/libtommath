@@ -26,6 +26,16 @@ CFLAGS += -Wsystem-headers -Wdeclaration-after-statement -Wbad-function-cast -Wc
 CFLAGS += -Wstrict-prototypes -Wpointer-arith
 endif
 
+ifdef COMPILE_DEBUG
+#debug
+CFLAGS += -g3
+else
+
+ifdef COMPILE_SIZE
+#for size
+CFLAGS += -Os
+else
+
 ifndef IGNORE_SPEED
 #for speed
 CFLAGS += -O3 -funroll-loops
@@ -34,15 +44,8 @@ CFLAGS += -O3 -funroll-loops
 CFLAGS  += -fomit-frame-pointer
 endif
 
-ifdef COMPILE_SIZE
-#for size
-CFLAGS += -Os
-endif
-
-ifdef COMPILE_DEBUG
-#debug
-CFLAGS += -g3
-endif
+endif # COMPILE_SIZE
+endif # COMPILE_DEBUG
 
 HEADERS=tommath.h tommath_class.h tommath_superclass.h
 

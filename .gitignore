@@ -10,6 +10,8 @@ Debug/
 Release/
 .libs/
 .coveralls.yml
+coverage/
+coverage.info
 
 # suppress output of build process and *nix/windows test executables
 ltmtest
