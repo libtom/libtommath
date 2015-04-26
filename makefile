@@ -82,13 +82,15 @@ $(LIBNAME):  $(OBJECTS)
 
 #make the code coverage of the library
 #
-coverage: CFLAGS += -fprofile-arcs -ftest-coverage
+coverage: CFLAGS += -fprofile-arcs -ftest-coverage -DTIMING_NO_LOGS
 coverage: LFLAGS += -lgcov
 
-coverage: test_standalone
+coverage: test_standalone timing
 	./test
+	./ltmtest
 
 lcov: coverage
+	rm -f coverage.info
 	lcov --capture --no-external --no-recursion --directory . --output-file coverage.info -q
 	genhtml coverage.info --output-directory coverage -q
 
