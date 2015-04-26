@@ -187,7 +187,9 @@ int main(void)
 
    // test montgomery
    printf("Testing: montgomery...\n");
-   for (i = 1; i < 10; i++) {
+   for (i = 1; i <= 10; i++) {
+      if (i == 10)
+         i = 1000;
       printf(" digit size: %2d\r", i);
       fflush(stdout);
       for (n = 0; n < 1000; n++) {
@@ -215,6 +217,12 @@ mp_todecimal(&e, buf); printf("e = %s\n", buf);
 mp_todecimal(&d, buf); printf("d = %s\n", buf);
 mp_todecimal(&c, buf); printf("c = %s\n", buf);
 printf("compare no compare!\n"); return EXIT_FAILURE; }
+             /* only one big montgomery reduction */
+             if (i > 10)
+             {
+                n = 1000;
+                ix = 100;
+             }
          }
       }
    }
