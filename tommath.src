@@ -4587,12 +4587,12 @@ on step 3.1.  In the following step if the most significant bit of $b$ is one th
 of $b$ is shifted left one bit to make the next bit down from the most signficant bit the new most significant bit.  In effect each
 iteration of the loop moves the bits of the exponent $b$ upwards to the most significant location.
 
-EXAM,bn_mp_expt_d.c
+EXAM,bn_mp_expt_d_ex.c
 
-Line @29,mp_set@ sets the initial value of the result to $1$.  Next the loop on line @31,for@ steps through each bit of the exponent starting from
+This describes only the algorithm that is used when the parameter $fast$ is $0$.  Line @31,mp_set@ sets the initial value of the result to $1$.  Next the loop on line @54,for@ steps through each bit of the exponent starting from
 the most significant down towards the least significant. The invariant squaring operation placed on line @333,mp_sqr@ is performed first.  After
 the squaring the result $c$ is multiplied by the base $g$ if and only if the most significant bit of the exponent is set.  The shift on line
-@47,<<@ moves all of the bits of the exponent upwards towards the most significant location.
+@69,<<@ moves all of the bits of the exponent upwards towards the most significant location.
 
 \section{$k$-ary Exponentiation}
 When calculating an exponentiation the most time consuming bottleneck is the multiplications which are in general a small factor
