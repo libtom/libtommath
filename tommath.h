@@ -18,6 +18,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <ctype.h>
 #include <limits.h>
 
@@ -61,53 +62,56 @@ extern "C" {
  * [any size beyond that is ok provided it doesn't overflow the data type]
  */
 #ifdef MP_8BIT
-   typedef unsigned char      mp_digit;
-   typedef unsigned short     mp_word;
-#define MP_SIZEOF_MP_DIGIT 1
+   typedef uint8_t              mp_digit;
+   typedef uint16_t             mp_word;
+#define MP_SIZEOF_MP_DIGIT      1
 #ifdef DIGIT_BIT
 #error You must not define DIGIT_BIT when using MP_8BIT
 #endif
 #elif defined(MP_16BIT)
-   typedef unsigned short     mp_digit;
-   typedef unsigned int       mp_word;
-#define MP_SIZEOF_MP_DIGIT 2
+   typedef uint16_t             mp_digit;
+   typedef uint32_t             mp_word;
+#define MP_SIZEOF_MP_DIGIT      2
 #ifdef DIGIT_BIT
 #error You must not define DIGIT_BIT when using MP_16BIT
 #endif
 #elif defined(MP_64BIT)
    /* for GCC only on supported platforms */
 #ifndef CRYPT
-   typedef unsigned long long ulong64;
-   typedef signed long long   long64;
+   typedef unsigned long long   ulong64;
+   typedef signed long long     long64;
 #endif
 
-   typedef unsigned long long mp_digit;
-   typedef unsigned long      mp_word __attribute__ ((mode(TI)));
+   typedef uint64_t mp_digit;
+#if defined(_WIN32)
+   typedef unsigned __int128    mp_word;
+#elif defined(__GNUC__)
+   typedef unsigned long        mp_word __attribute__ ((mode(TI)));
+#else
+   /* it seems you have a problem
+    * but we assume you can somewhere define your own uint128_t */
+   typedef uint128_t            mp_word;
+#endif
 
-   #define DIGIT_BIT          60
+   #define DIGIT_BIT            60
 #else
    /* this is the default case, 28-bit digits */
 
    /* this is to make porting into LibTomCrypt easier :-) */
 #ifndef CRYPT
-   #if defined(_MSC_VER) || defined(__BORLANDC__)
-      typedef unsigned __int64   ulong64;
-      typedef signed __int64     long64;
-   #else
-      typedef unsigned long long ulong64;
-      typedef signed long long   long64;
-   #endif
+   typedef unsigned long long   ulong64;
+   typedef signed long long     long64;
 #endif
 
-   typedef unsigned long      mp_digit;
-   typedef ulong64            mp_word;
+   typedef uint32_t             mp_digit;
+   typedef uint64_t             mp_word;
 
 #ifdef MP_31BIT
    /* this is an extension that uses 31-bit digits */
-   #define DIGIT_BIT          31
+   #define DIGIT_BIT            31
 #else
    /* default case is 28-bit digits, defines MP_28BIT as a handy macro to test */
-   #define DIGIT_BIT          28
+   #define DIGIT_BIT            28
    #define MP_28BIT
 #endif
 #endif
@@ -133,7 +137,7 @@ extern "C" {
 /* otherwise the bits per digit is calculated automatically from the size of a mp_digit */
 #ifndef DIGIT_BIT
    #define DIGIT_BIT     (((CHAR_BIT * MP_SIZEOF_MP_DIGIT) - 1))  /* bits per digit */
-   typedef unsigned long mp_min_u32;
+   typedef uint_least32_t mp_min_u32;
 #else
    typedef mp_digit mp_min_u32;
 #endif
