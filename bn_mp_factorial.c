@@ -308,7 +308,7 @@ int mp_factorial(unsigned long n, mp_int * result)
   default:
     break;
   }
-  return factorial_borwein(n, result);
+  //return factorial_borwein(n, result);
   if (n < 1700) {
     return factorial_naive(n, result);
   } else if (n < 65536) {
