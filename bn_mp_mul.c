@@ -49,12 +49,13 @@ int mp_mul (mp_int * a, mp_int * b, mp_int * c)
       res = fast_s_mp_mul_digs (a, b, c, digs);
     } else 
 #endif
+    {
 #ifdef BN_S_MP_MUL_DIGS_C
       res = s_mp_mul (a, b, c); /* uses s_mp_mul_digs */
 #else
       res = MP_VAL;
 #endif
-
+    }
   }
   c->sign = (c->used > 0) ? neg : MP_ZPOS;
   return res;
