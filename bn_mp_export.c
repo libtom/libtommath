@@ -34,7 +34,8 @@ int mp_export(void* rop, size_t* countp, int order, size_t size,
 		union {
 			unsigned int i;
 			char c[4];
-		} lint = {0x01020304};
+		} lint;
+		lint.i = 0x01020304;
 
 		endian = (lint.c[0] == 4 ? -1 : 1);
 	}
