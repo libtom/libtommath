@@ -31,7 +31,7 @@ unsigned long mp_get_long(mp_int * a)
   /* get most significant digit of result */
   res = DIGIT(a,i);
 
-#if ULONG_MAX != 0xfffffffful || DIGIT_BIT < 32
+#if ULONG_MAX != 0xffffffffuL || DIGIT_BIT < 32
   while (--i >= 0) {
     res = (res << DIGIT_BIT) | DIGIT(a,i);
   }
