@@ -46,7 +46,7 @@ top:
    }
    
    if (mp_cmp_mag(a, n) != MP_LT) {
-      s_mp_sub(a, n, a);
+      (void)s_mp_sub(a, n, a);
       goto top;
    }
    

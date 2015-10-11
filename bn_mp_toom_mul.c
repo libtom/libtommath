@@ -46,7 +46,7 @@ int mp_toom_mul(mp_int *a, mp_int *b, mp_int *c)
        goto ERR;
     }
     mp_rshd(&a1, B);
-    mp_mod_2d(&a1, DIGIT_BIT * B, &a1);
+    (void)mp_mod_2d(&a1, DIGIT_BIT * B, &a1);
 
     if ((res = mp_copy(a, &a2)) != MP_OKAY) {
        goto ERR;
@@ -62,7 +62,7 @@ int mp_toom_mul(mp_int *a, mp_int *b, mp_int *c)
        goto ERR;
     }
     mp_rshd(&b1, B);
-    mp_mod_2d(&b1, DIGIT_BIT * B, &b1);
+    (void)mp_mod_2d(&b1, DIGIT_BIT * B, &b1);
 
     if ((res = mp_copy(b, &b2)) != MP_OKAY) {
        goto ERR;

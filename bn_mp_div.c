@@ -270,7 +270,7 @@ int mp_div (mp_int * a, mp_int * b, mp_int * c, mp_int * d)
   }
 
   if (d != NULL) {
-    mp_div_2d (&x, norm, &x, NULL);
+    (void)mp_div_2d (&x, norm, &x, NULL);
     mp_exch (&x, d);
   }
 
