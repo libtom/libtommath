@@ -190,7 +190,7 @@ int mp_div (mp_int * a, mp_int * b, mp_int * c, mp_int * d)
     /* step 3.1 if xi == yt then set q{i-t-1} to b-1,
      * otherwise set q{i-t-1} to (xi*b + x{i-1})/yt */
     if (x.dp[i] == y.dp[t]) {
-      q.dp[i - t - 1] = ((((mp_digit)1) << DIGIT_BIT) - 1);
+      q.dp[(i - t) - 1] = ((((mp_digit)1) << DIGIT_BIT) - 1);
     } else {
       mp_word tmp;
       tmp = ((mp_word) x.dp[i]) << ((mp_word) DIGIT_BIT);
@@ -199,7 +199,7 @@ int mp_div (mp_int * a, mp_int * b, mp_int * c, mp_int * d)
       if (tmp > (mp_word) MP_MASK) {
         tmp = MP_MASK;
       }
-      q.dp[i - t - 1] = (mp_digit) (tmp & (mp_word) (MP_MASK));
+      q.dp[(i - t) - 1] = (mp_digit) (tmp & (mp_word) (MP_MASK));
     }
 
     /* while (q{i-t-1} * (yt * b + y{t-1})) >
@@ -207,16 +207,16 @@ int mp_div (mp_int * a, mp_int * b, mp_int * c, mp_int * d)
 
        do q{i-t-1} -= 1;
     */
-    q.dp[i - t - 1] = (q.dp[i - t - 1] + 1) & MP_MASK;
+    q.dp[(i - t) - 1] = (q.dp[(i - t) - 1] + 1) & MP_MASK;
     do {
-      q.dp[i - t - 1] = (q.dp[i - t - 1] - 1) & MP_MASK;
+      q.dp[(i - t) - 1] = (q.dp[(i - t) - 1] - 1) & MP_MASK;
 
       /* find left hand */
       mp_zero (&t1);
       t1.dp[0] = ((t - 1) < 0) ? 0 : y.dp[t - 1];
       t1.dp[1] = y.dp[t];
       t1.used = 2;
-      if ((res = mp_mul_d (&t1, q.dp[i - t - 1], &t1)) != MP_OKAY) {
+      if ((res = mp_mul_d (&t1, q.dp[(i - t) - 1], &t1)) != MP_OKAY) {
         goto LBL_Y;
       }
 
@@ -228,11 +228,11 @@ int mp_div (mp_int * a, mp_int * b, mp_int * c, mp_int * d)
     } while (mp_cmp_mag(&t1, &t2) == MP_GT);
 
     /* step 3.3 x = x - q{i-t-1} * y * b**{i-t-1} */
-    if ((res = mp_mul_d (&y, q.dp[i - t - 1], &t1)) != MP_OKAY) {
+    if ((res = mp_mul_d (&y, q.dp[(i - t) - 1], &t1)) != MP_OKAY) {
       goto LBL_Y;
     }
 
-    if ((res = mp_lshd (&t1, i - t - 1)) != MP_OKAY) {
+    if ((res = mp_lshd (&t1, (i - t) - 1)) != MP_OKAY) {
       goto LBL_Y;
     }
 
@@ -245,14 +245,14 @@ int mp_div (mp_int * a, mp_int * b, mp_int * c, mp_int * d)
       if ((res = mp_copy (&y, &t1)) != MP_OKAY) {
         goto LBL_Y;
       }
-      if ((res = mp_lshd (&t1, i - t - 1)) != MP_OKAY) {
+      if ((res = mp_lshd (&t1, (i - t) - 1)) != MP_OKAY) {
         goto LBL_Y;
       }
       if ((res = mp_add (&x, &t1, &x)) != MP_OKAY) {
         goto LBL_Y;
       }
 
-      q.dp[i - t - 1] = (q.dp[i - t - 1] - 1UL) & MP_MASK;
+      q.dp[(i - t) - 1] = (q.dp[(i - t) - 1] - 1UL) & MP_MASK;
     }
   }
 
