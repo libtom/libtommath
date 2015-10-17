@@ -47,7 +47,7 @@ s_mp_sub (mp_int * a, mp_int * b, mp_int * c)
     u = 0;
     for (i = 0; i < min; i++) {
       /* T[i] = A[i] - B[i] - U */
-      *tmpc = *tmpa++ - *tmpb++ - u;
+      *tmpc = (*tmpa++ - *tmpb++) - u;
 
       /* U = carry bit of T[i]
        * Note this saves performing an AND operation since

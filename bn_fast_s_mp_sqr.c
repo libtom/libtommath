@@ -66,7 +66,7 @@ int fast_s_mp_sqr (mp_int * a, mp_int * b)
        * we halve the distance since they approach at a rate of 2x
        * and we have to round because odd cases need to be executed
        */
-      iy = MIN(iy, (ty-tx+1)>>1);
+      iy = MIN(iy, ((ty-tx)+1)>>1);
 
       /* execute loop */
       for (iz = 0; iz < iy; iz++) {

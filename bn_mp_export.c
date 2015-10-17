@@ -54,8 +54,8 @@ int mp_export(void* rop, size_t* countp, int order, size_t size,
 		for (j = 0; j < size; ++j) {
 			unsigned char* byte = (
 				(unsigned char*)rop + 
-				(((order == -1) ? i : (count - 1 - i)) * size) +
-				((endian == -1) ? j : (size - 1 - j))
+				(((order == -1) ? i : ((count - 1) - i)) * size) +
+				((endian == -1) ? j : ((size - 1) - j))
 			);
 
 			if (j >= (size - nail_bytes)) {
@@ -63,9 +63,9 @@ int mp_export(void* rop, size_t* countp, int order, size_t size,
 				continue;
 			}
 
-			*byte = (unsigned char)((j == (size - nail_bytes - 1)) ? (t.dp[0] & odd_nail_mask) : (t.dp[0] & 0xFF));
+			*byte = (unsigned char)((j == ((size - nail_bytes) - 1)) ? (t.dp[0] & odd_nail_mask) : (t.dp[0] & 0xFF));
 
-			if ((result = mp_div_2d(&t, ((j == (size - nail_bytes - 1)) ? (8 - odd_nails) : 8), &t, NULL)) != MP_OKAY) {
+			if ((result = mp_div_2d(&t, ((j == ((size - nail_bytes) - 1)) ? (8 - odd_nails) : 8), &t, NULL)) != MP_OKAY) {
 				mp_clear(&t);
 				return result;
 			}
