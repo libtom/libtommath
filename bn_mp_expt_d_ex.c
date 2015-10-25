@@ -41,9 +41,11 @@ int mp_expt_d_ex (mp_int * a, mp_digit b, mp_int * c, int fast)
       }
 
       /* square */
-      if (b > 1 && (res = mp_sqr (&g, &g)) != MP_OKAY) {
-        mp_clear (&g);
-        return res;
+      if (b > 1) {
+        if ((res = mp_sqr (&g, &g)) != MP_OKAY) {
+          mp_clear (&g);
+          return res;
+        }
       }
 
       /* shift to next bit */
