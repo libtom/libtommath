@@ -29,7 +29,7 @@ mp_sqr (mp_int * a, mp_int * b)
   } else 
 #endif
 #ifdef BN_MP_KARATSUBA_SQR_C
-if (a->used >= KARATSUBA_SQR_CUTOFF) {
+  if (a->used >= KARATSUBA_SQR_CUTOFF) {
     res = mp_karatsuba_sqr (a, b);
   } else 
 #endif

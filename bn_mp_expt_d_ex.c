@@ -69,9 +69,9 @@ int mp_expt_d_ex (mp_int * a, mp_digit b, mp_int * c, int fast)
       /* shift to next bit */
       b <<= 1;
     }
-    } /* if ... else */
+  } /* if ... else */
 
-    mp_clear (&g);
+  mp_clear (&g);
   return MP_OKAY;
 }
 #endif

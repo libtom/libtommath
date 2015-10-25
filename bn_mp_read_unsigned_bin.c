@@ -37,12 +37,12 @@ int mp_read_unsigned_bin (mp_int * a, const unsigned char *b, int c)
     }
 
 #ifndef MP_8BIT
-      a->dp[0] |= *b++;
-      a->used += 1;
+    a->dp[0] |= *b++;
+    a->used += 1;
 #else
-      a->dp[0] = (*b & MP_MASK);
-      a->dp[1] |= ((*b++ >> 7U) & 1);
-      a->used += 2;
+    a->dp[0] = (*b & MP_MASK);
+    a->dp[1] |= ((*b++ >> 7U) & 1);
+    a->used += 2;
 #endif
   }
   mp_clamp (a);
