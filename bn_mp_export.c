@@ -48,7 +48,7 @@ int mp_export(void* rop, size_t* countp, int order, size_t size,
 	nail_bytes = nails / 8;
 
 	bits = mp_count_bits(&t);
-	count = bits / (size * 8 - nails) + (bits % (size * 8 - nails) ? 1 : 0);
+	count = bits / (size * 8 - nails) + ((bits % (size * 8 - nails) != 0) ? 1 : 0);
 
 	for (i = 0; i < count; ++i) {
 		for (j = 0; j < size; ++j) {
@@ -74,7 +74,7 @@ int mp_export(void* rop, size_t* countp, int order, size_t size,
 
 	mp_clear(&t);
 
-	if (countp) {
+	if (countp != NULL) {
 		*countp = count;
 	}
 

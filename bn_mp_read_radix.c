@@ -43,7 +43,7 @@ int mp_read_radix (mp_int * a, const char *str, int radix)
   mp_zero (a);
   
   /* process each digit of the string */
-  while (*str) {
+  while (*str != '\0') {
     /* if the radix <= 36 the conversion is case insensitive
      * this allows numbers like 1AB and 1ab to represent the same  value
      * [e.g. in hex]
