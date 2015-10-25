@@ -26,7 +26,7 @@ int mp_to_unsigned_bin (mp_int * a, unsigned char *b)
   }
 
   x = 0;
-  while (mp_iszero (&t) == 0) {
+  while (mp_iszero (&t) == MP_NO) {
 #ifndef MP_8BIT
       b[x++] = (unsigned char) (t.dp[0] & 255);
 #else

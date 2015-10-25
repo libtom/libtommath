@@ -73,7 +73,7 @@ int mp_read_radix (mp_int * a, const char *str, int radix)
   }
   
   /* set the sign only if a != 0 */
-  if (mp_iszero(a) != 1) {
+  if (mp_iszero(a) != MP_YES) {
      a->sign = neg;
   }
   return MP_OKAY;

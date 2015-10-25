@@ -56,7 +56,7 @@ int mp_toradix_n(mp_int * a, char *str, int radix, int maxlen)
   }
 
   digs = 0;
-  while (mp_iszero (&t) == 0) {
+  while (mp_iszero (&t) == MP_NO) {
     if (--maxlen < 1) {
        /* no more room */
        break;

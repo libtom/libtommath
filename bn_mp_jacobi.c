@@ -30,7 +30,7 @@ int mp_jacobi (mp_int * a, mp_int * p, int *c)
   }
 
   /* step 1.  if a == 0, return 0 */
-  if (mp_iszero (a) == 1) {
+  if (mp_iszero (a) == MP_YES) {
     *c = 0;
     return MP_OKAY;
   }
