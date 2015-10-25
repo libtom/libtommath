@@ -24,7 +24,7 @@ int mp_div(mp_int * a, mp_int * b, mp_int * c, mp_int * d)
    int    res, n, n2;
 
   /* is divisor zero ? */
-  if (mp_iszero (b) == 1) {
+  if (mp_iszero (b) == MP_YES) {
     return MP_VAL;
   }
 
@@ -106,7 +106,7 @@ int mp_div (mp_int * a, mp_int * b, mp_int * c, mp_int * d)
   int     res, n, t, i, norm, neg;
 
   /* is divisor zero ? */
-  if (mp_iszero (b) == 1) {
+  if (mp_iszero (b) == MP_YES) {
     return MP_VAL;
   }
 
