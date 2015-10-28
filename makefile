@@ -2,6 +2,10 @@
 #
 #Tom St Denis
 
+%.o: %.c
+	@echo "   * ${CC} $@"
+	@${CC} -c ${CFLAGS} $^ -o $@
+
 #version of library
 VERSION=0.42.0
 
