@@ -30,7 +30,9 @@ int mp_sqrtmod_prime(mp_int *n, mp_int *prime, mp_int *ret)
   if ((res = mp_jacobi(n, prime, &legendre)) != MP_OKAY)        return res;
   if (legendre == -1)                                           return MP_VAL; /* quadratic non-residue mod prime */
 
-  mp_init_multi(&t1, &C, &Q, &S, &Z, &M, &T, &R, &two, NULL);
+  if ((res = mp_init_multi(&t1, &C, &Q, &S, &Z, &M, &T, &R, &two, NULL)) != MP_OKAY) {
+	return res;
+  }
 
   /* SPECIAL CASE: if prime mod 4 == 3
    * compute directly: res = n^(prime+1)/4 mod prime
