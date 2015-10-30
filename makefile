@@ -2,9 +2,17 @@
 #
 #Tom St Denis
 
+ifeq ($V,1)
+silent=
+else
+silent=@
+endif
+
 %.o: %.c
+ifneq ($V,1)
 	@echo "   * ${CC} $@"
-	@${CC} -c ${CFLAGS} $^ -o $@
+endif
+	${silent} ${CC} -c ${CFLAGS} $^ -o $@
 
 #version of library
 VERSION=0.42.0
