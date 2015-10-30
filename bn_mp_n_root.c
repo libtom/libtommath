@@ -12,7 +12,7 @@
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@gmail.com, http://libtom.org
+ * Tom St Denis, tstdenis82@gmail.com, http://libtom.org
  */
 
 /* wrapper function for mp_n_root_ex()
