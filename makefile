@@ -211,13 +211,20 @@ no_oops: clean
 	echo Scanning for scratch/dirty files
 	find . -type f | grep -v CVS | xargs -n 1 bash mess.sh
 
-zipup: clean manual poster docs
-	perl gen.pl ; mv mpi.c pre_gen/ ; \
-	cd .. ; rm -rf ltm* libtommath-$(VERSION) ; mkdir libtommath-$(VERSION) ; \
-	cp -R ./libtommath/* ./libtommath-$(VERSION)/ ; \
-	tar -c libtommath-$(VERSION)/* | bzip2 -9vvc > ltm-$(VERSION).tar.bz2 ; \
-	zip -9 -r ltm-$(VERSION).zip libtommath-$(VERSION)/* ; \
-	mv -f ltm* ~ ; rm -rf libtommath-$(VERSION)
+.PHONY: pre_gen
+pre_gen:
+	perl gen.pl
+	sed -e 's/[[:blank:]]*$$//' mpi.c > pre_gen/mpi.c
+	rm mpi.c
+
+zipup:
+	rm -rf ../libtommath-$(VERSION) && rm -f ../ltm-$(VERSION).zip ../ltm-$(VERSION).tar.bz2 && \
+	expsrc.sh -i . -o ../libtommath-$(VERSION) --svntags --no-fetch -p '*.c' -p '*.h' && \
+	MAKE=${MAKE} ${MAKE} -C ../libtommath-$(VERSION) clean manual poster docs && \
+	tar -c ../libtommath-$(VERSION)/* | xz -cz > ../ltm-$(VERSION).tar.xz && \
+	find ../libtommath-$(VERSION)/ -type f -exec unix2dos -q {} \; && \
+	zip -9 -r ../ltm-$(VERSION).zip ../libtommath-$(VERSION)/* && \
+	gpg -b -a ../ltm-$(VERSION).tar.xz && gpg -b -a ../ltm-$(VERSION).zip
 
 new_file:
 	bash updatemakes.sh
