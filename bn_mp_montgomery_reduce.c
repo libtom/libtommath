@@ -85,7 +85,7 @@ mp_montgomery_reduce (mp_int * x, mp_int * n, mp_digit rho)
 
 
       /* propagate carries upwards as required*/
-      while (u) {
+      while (u != 0) {
         *tmpx   += u;
         u        = *tmpx >> DIGIT_BIT;
         *tmpx++ &= MP_MASK;

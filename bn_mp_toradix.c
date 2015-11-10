@@ -29,7 +29,7 @@ int mp_toradix (mp_int * a, char *str, int radix)
   }
 
   /* quick out if its zero */
-  if (mp_iszero(a) == 1) {
+  if (mp_iszero(a) == MP_YES) {
      *str++ = '0';
      *str = '\0';
      return MP_OKAY;
@@ -47,7 +47,7 @@ int mp_toradix (mp_int * a, char *str, int radix)
   }
 
   digs = 0;
-  while (mp_iszero (&t) == 0) {
+  while (mp_iszero (&t) == MP_NO) {
     if ((res = mp_div_d (&t, (mp_digit) radix, &t, &d)) != MP_OKAY) {
       mp_clear (&t);
       return res;

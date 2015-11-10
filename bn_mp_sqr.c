@@ -29,7 +29,7 @@ mp_sqr (mp_int * a, mp_int * b)
   } else 
 #endif
 #ifdef BN_MP_KARATSUBA_SQR_C
-if (a->used >= KARATSUBA_SQR_CUTOFF) {
+  if (a->used >= KARATSUBA_SQR_CUTOFF) {
     res = mp_karatsuba_sqr (a, b);
   } else 
 #endif
@@ -42,11 +42,13 @@ if (a->used >= KARATSUBA_SQR_CUTOFF) {
       res = fast_s_mp_sqr (a, b);
     } else
 #endif
+    {
 #ifdef BN_S_MP_SQR_C
       res = s_mp_sqr (a, b);
 #else
       res = MP_VAL;
 #endif
+    }
   }
   b->sign = MP_ZPOS;
   return res;

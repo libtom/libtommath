@@ -37,7 +37,7 @@ int mp_init_multi(mp_int *mp, ...)
             /* now start cleaning up */            
             cur_arg = mp;
             va_start(clean_args, mp);
-            while (n--) {
+            while (n-- != 0) {
                 mp_clear(cur_arg);
                 cur_arg = va_arg(clean_args, mp_int*);
             }

@@ -43,12 +43,12 @@ int mp_read_radix (mp_int * a, const char *str, int radix)
   mp_zero (a);
   
   /* process each digit of the string */
-  while (*str) {
+  while (*str != '\0') {
     /* if the radix <= 36 the conversion is case insensitive
      * this allows numbers like 1AB and 1ab to represent the same  value
      * [e.g. in hex]
      */
-    ch = (char) ((radix <= 36) ? toupper ((int)*str) : *str);
+    ch = (radix <= 36) ? (char)toupper((int)*str) : *str;
     for (y = 0; y < 64; y++) {
       if (ch == mp_s_rmap[y]) {
          break;
@@ -73,7 +73,7 @@ int mp_read_radix (mp_int * a, const char *str, int radix)
   }
   
   /* set the sign only if a != 0 */
-  if (mp_iszero(a) != 1) {
+  if (mp_iszero(a) != MP_YES) {
      a->sign = neg;
   }
   return MP_OKAY;

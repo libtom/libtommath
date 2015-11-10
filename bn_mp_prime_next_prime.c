@@ -84,7 +84,7 @@ int mp_prime_next_prime(mp_int *a, int t, int bbs_style)
          if ((err = mp_sub_d(a, (a->dp[0] & 3) + 1, a)) != MP_OKAY) { return err; };
       }
    } else {
-      if (mp_iseven(a) == 1) {
+      if (mp_iseven(a) == MP_YES) {
          /* force odd */
          if ((err = mp_sub_d(a, 1, a)) != MP_OKAY) {
             return err;

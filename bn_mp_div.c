@@ -24,7 +24,7 @@ int mp_div(mp_int * a, mp_int * b, mp_int * c, mp_int * d)
    int    res, n, n2;
 
   /* is divisor zero ? */
-  if (mp_iszero (b) == 1) {
+  if (mp_iszero (b) == MP_YES) {
     return MP_VAL;
   }
 
@@ -106,7 +106,7 @@ int mp_div (mp_int * a, mp_int * b, mp_int * c, mp_int * d)
   int     res, n, t, i, norm, neg;
 
   /* is divisor zero ? */
-  if (mp_iszero (b) == 1) {
+  if (mp_iszero (b) == MP_YES) {
     return MP_VAL;
   }
 
@@ -196,8 +196,9 @@ int mp_div (mp_int * a, mp_int * b, mp_int * c, mp_int * d)
       tmp = ((mp_word) x.dp[i]) << ((mp_word) DIGIT_BIT);
       tmp |= ((mp_word) x.dp[i - 1]);
       tmp /= ((mp_word) y.dp[t]);
-      if (tmp > (mp_word) MP_MASK)
+      if (tmp > (mp_word) MP_MASK) {
         tmp = MP_MASK;
+      }
       q.dp[i - t - 1] = (mp_digit) (tmp & (mp_word) (MP_MASK));
     }
 
@@ -269,7 +270,7 @@ int mp_div (mp_int * a, mp_int * b, mp_int * c, mp_int * d)
   }
 
   if (d != NULL) {
-    mp_div_2d (&x, norm, &x, NULL);
+    (void)mp_div_2d (&x, norm, &x, NULL);
     mp_exch (&x, d);
   }
 

@@ -30,7 +30,8 @@ int mp_import(mp_int* rop, size_t count, int order, size_t size,
 		union {
 			unsigned int i;
 			char c[4];
-		} lint = {0x01020304};
+		} lint;
+		lint.i = 0x01020304;
 
 		endian = (lint.c[0] == 4 ? -1 : 1);
 	}
