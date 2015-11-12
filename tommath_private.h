@@ -66,9 +66,9 @@ int mp_karatsuba_sqr(mp_int *a, mp_int *b);
 int mp_toom_sqr(mp_int *a, mp_int *b);
 int fast_mp_invmod(mp_int *a, mp_int *b, mp_int *c);
 int mp_invmod_slow (mp_int * a, mp_int * b, mp_int * c);
-int fast_mp_montgomery_reduce(mp_int *a, mp_int *m, mp_digit mp);
-int mp_exptmod_fast(mp_int *G, mp_int *X, mp_int *P, mp_int *Y, int mode);
-int s_mp_exptmod (mp_int * G, mp_int * X, mp_int * P, mp_int * Y, int mode);
+int fast_mp_montgomery_reduce(mp_int *x, mp_int *n, mp_digit rho);
+int mp_exptmod_fast(mp_int *G, mp_int *X, mp_int *P, mp_int *Y, int redmode);
+int s_mp_exptmod (mp_int * G, mp_int * X, mp_int * P, mp_int * Y, int redmode);
 void bn_reverse(unsigned char *s, int len);
 
 extern const char *mp_s_rmap;
