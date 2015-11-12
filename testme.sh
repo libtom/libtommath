@@ -36,7 +36,7 @@ _runtest()
   timeout --foreground 120 ./test > test_$(echo ${1}${2}  | tr ' ' '_').txt || _die "running tests" $?
 }
 
-compilers=( clang gcc )
+compilers=( $COMPILERS clang gcc )
 
 echo "uname="$(uname -a)
 
