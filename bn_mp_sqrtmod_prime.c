@@ -56,7 +56,7 @@ int mp_sqrtmod_prime(mp_int *n, mp_int *prime, mp_int *ret)
   /* Q = prime - 1 */
   mp_zero(&S);
   /* S = 0 */
-  while (mp_iseven(&Q)) {
+  while (mp_iseven(&Q) != MP_NO) {
     if ((res = mp_div_2(&Q, &Q)) != MP_OKAY)                    goto cleanup;
     /* Q = Q / 2 */
     if ((res = mp_add_d(&S, 1, &S)) != MP_OKAY)                 goto cleanup;
