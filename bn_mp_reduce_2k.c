@@ -45,7 +45,9 @@ top:
    }
    
    if (mp_cmp_mag(a, n) != MP_LT) {
-      (void)s_mp_sub(a, n, a);
+      if ((res = s_mp_sub(a, n, a)) != MP_OKAY) {
+         goto ERR;
+      }
       goto top;
    }
    

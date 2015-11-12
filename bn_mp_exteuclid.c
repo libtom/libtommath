@@ -61,9 +61,9 @@ int mp_exteuclid(mp_int *a, mp_int *b, mp_int *U1, mp_int *U2, mp_int *U3)
 
    /* make sure U3 >= 0 */
    if (u3.sign == MP_NEG) {
-      (void)mp_neg(&u1, &u1);
-      (void)mp_neg(&u2, &u2);
-      (void)mp_neg(&u3, &u3);
+       if ((err = mp_neg(&u1, &u1)) != MP_OKAY)                                   { goto _ERR; }
+       if ((err = mp_neg(&u2, &u2)) != MP_OKAY)                                   { goto _ERR; }
+       if ((err = mp_neg(&u3, &u3)) != MP_OKAY)                                   { goto _ERR; }
    }
 
    /* copy result out */
