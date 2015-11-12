@@ -19,33 +19,12 @@ VERSION=0.43.0
 
 include makefile.include
 
-#install as this user
-ifndef INSTALL_GROUP
-   GROUP=wheel
-else
-   GROUP=$(INSTALL_GROUP)
-endif
-
-ifndef INSTALL_USER
-   USER=root
-else
-   USER=$(INSTALL_USER)
-endif
-
 #default files to install
 ifndef LIBNAME
    LIBNAME=libtommath.a
 endif
 
 default: ${LIBNAME}
-
-#LIBPATH-The directory for libtommath to be installed to.
-#INCPATH-The directory to install the header files for libtommath.
-#DATAPATH-The directory to install the pdf docs.
-DESTDIR=
-LIBPATH=/usr/lib
-INCPATH=/usr/include
-DATAPATH=/usr/share/doc/libtommath/pdf
 
 #START_INS
 OBJECTS=bncore.o bn_error.o bn_fast_mp_invmod.o bn_fast_mp_montgomery_reduce.o bn_fast_s_mp_mul_digs.o \
@@ -124,7 +103,7 @@ install: $(LIBNAME)
 	install -d -g $(GROUP) -o $(USER) $(DESTDIR)$(LIBPATH)
 	install -d -g $(GROUP) -o $(USER) $(DESTDIR)$(INCPATH)
 	install -g $(GROUP) -o $(USER) $(LIBNAME) $(DESTDIR)$(LIBPATH)
-	install -g $(GROUP) -o $(USER) $(HEADERS) $(DESTDIR)$(INCPATH)
+	install -g $(GROUP) -o $(USER) $(HEADERS_PUB) $(DESTDIR)$(INCPATH)
 
 test: $(LIBNAME) demo/demo.o
 	$(CC) $(CFLAGS) demo/demo.o $(LIBNAME) $(LFLAGS) -o test

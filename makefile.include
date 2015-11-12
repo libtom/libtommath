@@ -47,8 +47,28 @@ endif
 endif # COMPILE_SIZE
 endif # COMPILE_DEBUG
 
-HEADERS=tommath.h tommath_class.h tommath_superclass.h
+HEADERS_PUB=tommath.h tommath_class.h tommath_superclass.h
+HEADERS=tommath_private.h $(HEADERS_PUB)
 
 test_standalone: CFLAGS+=-DLTM_DEMO_TEST_VS_MTEST=0
 
+#install as this user
+ifndef INSTALL_GROUP
+   GROUP=wheel
+else
+   GROUP=$(INSTALL_GROUP)
+endif
+
+ifndef INSTALL_USER
+   USER=root
+else
+   USER=$(INSTALL_USER)
+endif
+
+#LIBPATH-The directory for libtommath to be installed to.
+#INCPATH-The directory to install the header files for libtommath.
+#DATAPATH-The directory to install the pdf docs.
+LIBPATH?=/usr/lib
+INCPATH?=/usr/include
+DATAPATH?=/usr/share/doc/libtommath/pdf
 
