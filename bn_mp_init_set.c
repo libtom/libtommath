@@ -1,4 +1,4 @@
-#include <tommath.h>
+#include <tommath_private.h>
 #ifdef BN_MP_INIT_SET_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
