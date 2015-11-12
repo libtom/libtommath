@@ -20,7 +20,7 @@ static int s_is_power_of_two(mp_digit b, int *p)
    int x;
 
    /* fast return if no power of two */
-   if ((b==0) || (b & (b-1))) {
+   if ((b == 0) || ((b & (b-1)) != 0)) {
       return 0;
    }
 
@@ -47,7 +47,7 @@ int mp_div_d (mp_int * a, mp_digit b, mp_int * c, mp_digit * d)
   }
 
   /* quick outs */
-  if (b == 1 || mp_iszero(a) == 1) {
+  if (b == 1 || mp_iszero(a) == MP_YES) {
      if (d != NULL) {
         *d = 0;
      }

@@ -26,12 +26,12 @@ int mp_cnt_lsb(mp_int *a)
    mp_digit q, qq;
 
    /* easy out */
-   if (mp_iszero(a) == 1) {
+   if (mp_iszero(a) == MP_YES) {
       return 0;
    }
 
    /* scan lower digits until non-zero */
-   for (x = 0; x < a->used && a->dp[x] == 0; x++);
+   for (x = 0; x < a->used && a->dp[x] == 0; x++) {}
    q = a->dp[x];
    x *= DIGIT_BIT;
 

@@ -70,7 +70,7 @@ int mp_gcd (mp_int * a, mp_int * b, mp_int * c)
      }
   }
 
-  while (mp_iszero(&v) == 0) {
+  while (mp_iszero(&v) == MP_NO) {
      /* make sure v is the largest */
      if (mp_cmp_mag(&u, &v) == MP_GT) {
         /* swap u and v to make sure v is >= u */

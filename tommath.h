@@ -25,11 +25,11 @@
 #include <tommath_class.h>
 
 #ifndef MIN
-   #define MIN(x,y) ((x)<(y)?(x):(y))
+   #define MIN(x,y) (((x) < (y)) ? (x) : (y))
 #endif
 
 #ifndef MAX
-   #define MAX(x,y) ((x)>(y)?(x):(y))
+   #define MAX(x,y) (((x) > (y)) ? (x) : (y))
 #endif
 
 #ifdef __cplusplus
@@ -200,7 +200,7 @@ extern int KARATSUBA_MUL_CUTOFF,
 #endif
 
 /* size of comba arrays, should be at least 2 * 2**(BITS_PER_WORD - BITS_PER_DIGIT*2) */
-#define MP_WARRAY               (1 << (sizeof(mp_word) * CHAR_BIT - 2 * DIGIT_BIT + 1))
+#define MP_WARRAY               (1 << (((sizeof(mp_word) * CHAR_BIT) - (2 * DIGIT_BIT)) + 1))
 
 /* the infamous mp_int structure */
 typedef struct  {
@@ -246,9 +246,9 @@ int mp_init_size(mp_int *a, int size);
 
 /* ---> Basic Manipulations <--- */
 #define mp_iszero(a) (((a)->used == 0) ? MP_YES : MP_NO)
-#define mp_iseven(a) (((a)->used > 0 && (((a)->dp[0] & 1) == 0)) ? MP_YES : MP_NO)
-#define mp_isodd(a)  (((a)->used > 0 && (((a)->dp[0] & 1) == 1)) ? MP_YES : MP_NO)
-#define mp_isneg(a)  (((a)->sign) ? MP_YES : MP_NO)
+#define mp_iseven(a) ((((a)->used > 0) && (((a)->dp[0] & 1) == 0)) ? MP_YES : MP_NO)
+#define mp_isodd(a)  ((((a)->used > 0) && (((a)->dp[0] & 1) == 1)) ? MP_YES : MP_NO)
+#define mp_isneg(a)  (((a)->sign != MP_ZPOS) ? MP_YES : MP_NO)
 
 /* set to zero */
 void mp_zero(mp_int *a);
@@ -504,7 +504,7 @@ int mp_exptmod(mp_int *a, mp_int *b, mp_int *c, mp_int *d);
 #endif
 
 /* table of first PRIME_SIZE primes */
-extern const mp_digit ltm_prime_tab[];
+extern const mp_digit ltm_prime_tab[PRIME_SIZE];
 
 /* result=1 if a is divisible by one of the first PRIME_SIZE primes */
 int mp_prime_is_divisible(mp_int *a, int *result);
@@ -639,14 +639,14 @@ int func_name (mp_int * a, type b)                       \
   mp_zero (a);                                           \
                                                          \
   /* set four bits at a time */                          \
-  for (x = 0; x < sizeof(type) * 2; x++) {               \
+  for (x = 0; x < (sizeof(type) * 2); x++) {             \
     /* shift the number up four bits */                  \
     if ((res = mp_mul_2d (a, 4, a)) != MP_OKAY) {        \
       return res;                                        \
     }                                                    \
                                                          \
     /* OR in the top four bits of the source */          \
-    a->dp[0] |= (b >> ((sizeof(type)) * 8 - 4)) & 15;    \
+    a->dp[0] |= (b >> ((sizeof(type) * 8) - 4)) & 15;    \
                                                          \
     /* shift the source up to the next four bits */      \
     b <<= 4;                                             \

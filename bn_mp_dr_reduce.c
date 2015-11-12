@@ -82,7 +82,9 @@ top:
    * Each successive "recursion" makes the input smaller and smaller.
    */
   if (mp_cmp_mag (x, n) != MP_LT) {
-    s_mp_sub(x, n, x);
+    if ((err = s_mp_sub(x, n, x)) != MP_OKAY) {
+      return err;
+    }
     goto top;
   }
   return MP_OKAY;

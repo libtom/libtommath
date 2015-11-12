@@ -15,7 +15,7 @@
  * Tom St Denis, tstdenis82@gmail.com, http://libtom.org
  */
 
-/* Extended euclidean algorithm of (a, b) produces 
+/* Extended euclidean algorithm of (a, b) produces
    a*u1 + b*u2 = u3
  */
 int mp_exteuclid(mp_int *a, mp_int *b, mp_int *U1, mp_int *U2, mp_int *U3)
@@ -61,9 +61,9 @@ int mp_exteuclid(mp_int *a, mp_int *b, mp_int *U1, mp_int *U2, mp_int *U3)
 
    /* make sure U3 >= 0 */
    if (u3.sign == MP_NEG) {
-      mp_neg(&u1, &u1);
-      mp_neg(&u2, &u2);
-      mp_neg(&u3, &u3);
+       if ((err = mp_neg(&u1, &u1)) != MP_OKAY)                                   { goto _ERR; }
+       if ((err = mp_neg(&u2, &u2)) != MP_OKAY)                                   { goto _ERR; }
+       if ((err = mp_neg(&u3, &u3)) != MP_OKAY)                                   { goto _ERR; }
    }
 
    /* copy result out */

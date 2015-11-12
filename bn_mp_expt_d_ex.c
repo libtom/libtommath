@@ -30,10 +30,10 @@ int mp_expt_d_ex (mp_int * a, mp_digit b, mp_int * c, int fast)
   /* set initial result */
   mp_set (c, 1);
 
-  if (fast) {
+  if (fast != 0) {
     while (b > 0) {
       /* if the bit is set multiply */
-      if (b & 1) {
+      if ((b & 1) != 0) {
         if ((res = mp_mul (c, &g, c)) != MP_OKAY) {
           mp_clear (&g);
           return res;
@@ -41,9 +41,11 @@ int mp_expt_d_ex (mp_int * a, mp_digit b, mp_int * c, int fast)
       }
 
       /* square */
-      if (b > 1 && (res = mp_sqr (&g, &g)) != MP_OKAY) {
-        mp_clear (&g);
-        return res;
+      if (b > 1) {
+        if ((res = mp_sqr (&g, &g)) != MP_OKAY) {
+          mp_clear (&g);
+          return res;
+        }
       }
 
       /* shift to next bit */
@@ -69,9 +71,9 @@ int mp_expt_d_ex (mp_int * a, mp_digit b, mp_int * c, int fast)
       /* shift to next bit */
       b <<= 1;
     }
-    } /* if ... else */
+  } /* if ... else */
 
-    mp_clear (&g);
+  mp_clear (&g);
   return MP_OKAY;
 }
 #endif
