@@ -64,7 +64,7 @@ int mp_sqrtmod_prime(mp_int *n, mp_int *prime, mp_int *ret)
   }
 
   /* find a Z such that the Legendre symbol (Z|prime) == -1 */
-  mp_set_int(&Z, 2);
+  if ((res = mp_set_int(&Z, 2)) != MP_OKAY)                     goto cleanup;
   /* Z = 2 */
   while(1) {
     if ((res = mp_jacobi(&Z, prime, &legendre)) != MP_OKAY)     goto cleanup;
@@ -96,7 +96,7 @@ int mp_sqrtmod_prime(mp_int *n, mp_int *prime, mp_int *ret)
       i++;
     }
     if (i == 0) {
-      mp_copy(&R, ret);
+      if ((res = mp_copy(&R, ret)) != MP_OKAY)                  goto cleanup;
       res = MP_OKAY;
       goto cleanup;
     }
