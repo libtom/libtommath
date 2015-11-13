@@ -197,13 +197,11 @@ pre_gen:
 	rm mpi.c
 
 zipup:
-	rm -rf ../libtommath-$(VERSION) && rm -f ../ltm-$(VERSION).zip ../ltm-$(VERSION).tar.bz2 && \
-	expsrc.sh -i . -o ../libtommath-$(VERSION) --svntags --no-fetch -p '*.c' -p '*.h' && \
-	MAKE=${MAKE} ${MAKE} -C ../libtommath-$(VERSION) clean manual poster docs && \
-	tar -c ../libtommath-$(VERSION)/* | xz -cz > ../ltm-$(VERSION).tar.xz && \
-	find ../libtommath-$(VERSION)/ -type f -exec unix2dos -q {} \; && \
-	zip -9 -r ../ltm-$(VERSION).zip ../libtommath-$(VERSION)/* && \
-	gpg -b -a ../ltm-$(VERSION).tar.xz && gpg -b -a ../ltm-$(VERSION).zip
+	rm -rf ../libtommath-$(VERSION) && rm -f ../ltm-$(VERSION).zip ../ltm-$(VERSION).tar.bz2
+	git archive HEAD --prefix=libtommath-$(VERSION)/ > ../libtommath-$(VERSION).tar
+	cd .. ; tar xf libtommath-$(VERSION).tar 
+	MAKE=${MAKE} ${MAKE} -C ../libtommath-$(VERSION) clean manual poster docs
+	tar -c ../libtommath-$(VERSION)/* | xz -9 > ../ltm-$(VERSION).tar.xz 
 
 new_file:
 	bash updatemakes.sh
