@@ -32,7 +32,7 @@ int fast_mp_montgomery_reduce (mp_int * x, mp_int * n, mp_digit rho)
   olduse = x->used;
 
   /* grow a as required */
-  if (x->alloc < n->used + 1) {
+  if (x->alloc < (n->used + 1)) {
     if ((res = mp_grow (x, n->used + 1)) != MP_OKAY) {
       return res;
     }
@@ -57,7 +57,7 @@ int fast_mp_montgomery_reduce (mp_int * x, mp_int * n, mp_digit rho)
     }
 
     /* zero the high words of W[a->used..m->used*2] */
-    for (; ix < n->used * 2 + 1; ix++) {
+    for (; ix < ((n->used * 2) + 1); ix++) {
       *_W++ = 0;
     }
   }
@@ -126,7 +126,7 @@ int fast_mp_montgomery_reduce (mp_int * x, mp_int * n, mp_digit rho)
     /* alias for next word, where the carry goes */
     _W = W + ++ix;
 
-    for (; ix <= n->used * 2 + 1; ix++) {
+    for (; ix <= ((n->used * 2) + 1); ix++) {
       *_W++ += *_W1++ >> ((mp_word) DIGIT_BIT);
     }
 
@@ -143,7 +143,7 @@ int fast_mp_montgomery_reduce (mp_int * x, mp_int * n, mp_digit rho)
     /* alias for shifted double precision result */
     _W = W + n->used;
 
-    for (ix = 0; ix < n->used + 1; ix++) {
+    for (ix = 0; ix < (n->used + 1); ix++) {
       *tmpx++ = (mp_digit)(*_W++ & ((mp_word) MP_MASK));
     }
 

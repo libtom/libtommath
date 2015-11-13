@@ -66,9 +66,9 @@ int mp_jacobi (mp_int * a, mp_int * p, int *c)
     /* else set s=1 if p = 1/7 (mod 8) or s=-1 if p = 3/5 (mod 8) */
     residue = p->dp[0] & 7;
 
-    if (residue == 1 || residue == 7) {
+    if ((residue == 1) || (residue == 7)) {
       s = 1;
-    } else if (residue == 3 || residue == 5) {
+    } else if ((residue == 3) || (residue == 5)) {
       s = -1;
     }
   }

@@ -22,7 +22,7 @@ int mp_invmod_slow (mp_int * a, mp_int * b, mp_int * c)
   int     res;
 
   /* b cannot be negative */
-  if (b->sign == MP_NEG || mp_iszero(b) == MP_YES) {
+  if ((b->sign == MP_NEG) || (mp_iszero(b) == MP_YES)) {
     return MP_VAL;
   }
 
@@ -41,7 +41,7 @@ int mp_invmod_slow (mp_int * a, mp_int * b, mp_int * c)
   }
 
   /* 2. [modified] if x,y are both even then return an error! */
-  if (mp_iseven (&x) == MP_YES && mp_iseven (&y) == MP_YES) {
+  if ((mp_iseven (&x) == MP_YES) && (mp_iseven (&y) == MP_YES)) {
     res = MP_VAL;
     goto LBL_ERR;
   }
@@ -64,7 +64,7 @@ top:
       goto LBL_ERR;
     }
     /* 4.2 if A or B is odd then */
-    if (mp_isodd (&A) == MP_YES || mp_isodd (&B) == MP_YES) {
+    if ((mp_isodd (&A) == MP_YES) || (mp_isodd (&B) == MP_YES)) {
       /* A = (A+y)/2, B = (B-x)/2 */
       if ((res = mp_add (&A, &y, &A)) != MP_OKAY) {
          goto LBL_ERR;
@@ -89,7 +89,7 @@ top:
       goto LBL_ERR;
     }
     /* 5.2 if C or D is odd then */
-    if (mp_isodd (&C) == MP_YES || mp_isodd (&D) == MP_YES) {
+    if ((mp_isodd (&C) == MP_YES) || (mp_isodd (&D) == MP_YES)) {
       /* C = (C+y)/2, D = (D-x)/2 */
       if ((res = mp_add (&C, &y, &C)) != MP_OKAY) {
          goto LBL_ERR;

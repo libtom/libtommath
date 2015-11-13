@@ -33,7 +33,7 @@ int mp_import(mp_int* rop, size_t count, int order, size_t size,
 		} lint;
 		lint.i = 0x01020304;
 
-		endian = (lint.c[0] == 4 ? -1 : 1);
+		endian = (lint.c[0] == 4) ? -1 : 1;
 	}
 
 	odd_nails = (nails % 8);
@@ -44,19 +44,19 @@ int mp_import(mp_int* rop, size_t count, int order, size_t size,
 	nail_bytes = nails / 8;
 
 	for (i = 0; i < count; ++i) {
-		for (j = 0; j < size - nail_bytes; ++j) {
+		for (j = 0; j < (size - nail_bytes); ++j) {
 			unsigned char byte = *(
 					(unsigned char*)op + 
-					(order == 1 ? i : count - 1 - i) * size + 
-					(endian == 1 ? j + nail_bytes : size - 1 - j - nail_bytes)
+					(((order == 1) ? i : (count - 1 - i)) * size) +
+					((endian == 1) ? (j + nail_bytes) : (size - 1 - j - nail_bytes))
 				);
 
 			if (
-				(result = mp_mul_2d(rop, (j == 0 ? 8 - odd_nails : 8), rop)) != MP_OKAY) {
+				(result = mp_mul_2d(rop, ((j == 0) ? (8 - odd_nails) : 8), rop)) != MP_OKAY) {
 				return result;
 			}
 
-			rop->dp[0] |= (j == 0 ? (byte & odd_nail_mask) : byte);
+			rop->dp[0] |= (j == 0) ? (byte & odd_nail_mask) : byte;
 			rop->used  += 1;
 		}
 	}

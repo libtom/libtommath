@@ -71,7 +71,7 @@ int mp_div(mp_int * a, mp_int * b, mp_int * c, mp_int * d)
 
   /* now q == quotient and ta == remainder */
   n  = a->sign;
-  n2 = (a->sign == b->sign ? MP_ZPOS : MP_NEG);
+  n2 = (a->sign == b->sign) ? MP_ZPOS : MP_NEG;
   if (c != NULL) {
      mp_exch(c, &q);
      c->sign  = (mp_iszero(c) == MP_YES) ? MP_ZPOS : n2;
@@ -213,7 +213,7 @@ int mp_div (mp_int * a, mp_int * b, mp_int * c, mp_int * d)
 
       /* find left hand */
       mp_zero (&t1);
-      t1.dp[0] = (t - 1 < 0) ? 0 : y.dp[t - 1];
+      t1.dp[0] = ((t - 1) < 0) ? 0 : y.dp[t - 1];
       t1.dp[1] = y.dp[t];
       t1.used = 2;
       if ((res = mp_mul_d (&t1, q.dp[i - t - 1], &t1)) != MP_OKAY) {
@@ -221,8 +221,8 @@ int mp_div (mp_int * a, mp_int * b, mp_int * c, mp_int * d)
       }
 
       /* find right hand */
-      t2.dp[0] = (i - 2 < 0) ? 0 : x.dp[i - 2];
-      t2.dp[1] = (i - 1 < 0) ? 0 : x.dp[i - 1];
+      t2.dp[0] = ((i - 2) < 0) ? 0 : x.dp[i - 2];
+      t2.dp[1] = ((i - 1) < 0) ? 0 : x.dp[i - 1];
       t2.dp[2] = x.dp[i];
       t2.used = 3;
     } while (mp_cmp_mag(&t1, &t2) == MP_GT);
@@ -261,7 +261,7 @@ int mp_div (mp_int * a, mp_int * b, mp_int * c, mp_int * d)
    */
 
   /* get sign before writing to c */
-  x.sign = x.used == 0 ? MP_ZPOS : a->sign;
+  x.sign = (x.used == 0) ? MP_ZPOS : a->sign;
 
   if (c != NULL) {
     mp_clamp (&q);

@@ -39,7 +39,7 @@ mp_mod_2d (mp_int * a, int b, mp_int * c)
   }
 
   /* zero digits above the last digit of the modulus */
-  for (x = (b / DIGIT_BIT) + ((b % DIGIT_BIT) == 0 ? 0 : 1); x < c->used; x++) {
+  for (x = (b / DIGIT_BIT) + (((b % DIGIT_BIT) == 0) ? 0 : 1); x < c->used; x++) {
     c->dp[x] = 0;
   }
   /* clear the digit that is not completely outside/inside the modulus */

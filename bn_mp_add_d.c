@@ -23,14 +23,14 @@ mp_add_d (mp_int * a, mp_digit b, mp_int * c)
   mp_digit *tmpa, *tmpc, mu;
 
   /* grow c as required */
-  if (c->alloc < a->used + 1) {
+  if (c->alloc < (a->used + 1)) {
      if ((res = mp_grow(c, a->used + 1)) != MP_OKAY) {
         return res;
      }
   }
 
   /* if a is negative and |a| >= b, call c = |a| - b */
-  if (a->sign == MP_NEG && (a->used > 1 || a->dp[0] >= b)) {
+  if ((a->sign == MP_NEG) && ((a->used > 1) || (a->dp[0] >= b))) {
      /* temporarily fix sign of a */
      a->sign = MP_ZPOS;
 

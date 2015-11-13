@@ -31,7 +31,7 @@ int mp_cnt_lsb(mp_int *a)
    }
 
    /* scan lower digits until non-zero */
-   for (x = 0; x < a->used && a->dp[x] == 0; x++) {}
+   for (x = 0; (x < a->used) && (a->dp[x] == 0); x++) {}
    q = a->dp[x];
    x *= DIGIT_BIT;
 
