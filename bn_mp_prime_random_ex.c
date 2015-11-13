@@ -36,7 +36,7 @@ int mp_prime_random_ex(mp_int *a, int t, int size, int flags, ltm_prime_callback
    int res, err, bsize, maskOR_msb_offset;
 
    /* sanity check the input */
-   if (size <= 1 || t <= 0) {
+   if ((size <= 1) || (t <= 0)) {
       return MP_VAL;
    }
 

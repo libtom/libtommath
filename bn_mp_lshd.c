@@ -26,7 +26,7 @@ int mp_lshd (mp_int * a, int b)
   }
 
   /* grow to fit the new digits */
-  if (a->alloc < a->used + b) {
+  if (a->alloc < (a->used + b)) {
      if ((res = mp_grow (a, a->used + b)) != MP_OKAY) {
        return res;
      }

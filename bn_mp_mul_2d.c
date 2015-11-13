@@ -28,8 +28,8 @@ int mp_mul_2d (mp_int * a, int b, mp_int * c)
      }
   }
 
-  if (c->alloc < (int)(c->used + b/DIGIT_BIT + 1)) {
-     if ((res = mp_grow (c, c->used + b / DIGIT_BIT + 1)) != MP_OKAY) {
+  if (c->alloc < (int)(c->used + (b / DIGIT_BIT) + 1)) {
+     if ((res = mp_grow (c, c->used + (b / DIGIT_BIT) + 1)) != MP_OKAY) {
        return res;
      }
   }

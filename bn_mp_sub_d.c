@@ -23,7 +23,7 @@ mp_sub_d (mp_int * a, mp_digit b, mp_int * c)
   int       res, ix, oldused;
 
   /* grow c as required */
-  if (c->alloc < a->used + 1) {
+  if (c->alloc < (a->used + 1)) {
      if ((res = mp_grow(c, a->used + 1)) != MP_OKAY) {
         return res;
      }
@@ -49,7 +49,7 @@ mp_sub_d (mp_int * a, mp_digit b, mp_int * c)
   tmpc    = c->dp;
 
   /* if a <= b simply fix the single digit */
-  if ((a->used == 1 && a->dp[0] <= b) || a->used == 0) {
+  if (((a->used == 1) && (a->dp[0] <= b)) || (a->used == 0)) {
      if (a->used == 1) {
         *tmpc++ = b - *tmpa;
      } else {
@@ -67,13 +67,13 @@ mp_sub_d (mp_int * a, mp_digit b, mp_int * c)
 
      /* subtract first digit */
      *tmpc    = *tmpa++ - b;
-     mu       = *tmpc >> (sizeof(mp_digit) * CHAR_BIT - 1);
+     mu       = *tmpc >> ((sizeof(mp_digit) * CHAR_BIT) - 1);
      *tmpc++ &= MP_MASK;
 
      /* handle rest of the digits */
      for (ix = 1; ix < a->used; ix++) {
         *tmpc    = *tmpa++ - mu;
-        mu       = *tmpc >> (sizeof(mp_digit) * CHAR_BIT - 1);
+        mu       = *tmpc >> ((sizeof(mp_digit) * CHAR_BIT) - 1);
         *tmpc++ &= MP_MASK;
      }
   }

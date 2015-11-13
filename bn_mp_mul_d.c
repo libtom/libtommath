@@ -24,7 +24,7 @@ mp_mul_d (mp_int * a, mp_digit b, mp_int * c)
   int      ix, res, olduse;
 
   /* make sure c is big enough to hold a*b */
-  if (c->alloc < a->used + 1) {
+  if (c->alloc < (a->used + 1)) {
     if ((res = mp_grow (c, a->used + 1)) != MP_OKAY) {
       return res;
     }
@@ -48,7 +48,7 @@ mp_mul_d (mp_int * a, mp_digit b, mp_int * c)
   /* compute columns */
   for (ix = 0; ix < a->used; ix++) {
     /* compute product and carry sum for this term */
-    r       = ((mp_word) u) + ((mp_word)*tmpa++) * ((mp_word)b);
+    r       = (mp_word)u + ((mp_word)*tmpa++ * (mp_word)b);
 
     /* mask off higher bits to get a single digit */
     *tmpc++ = (mp_digit) (r & ((mp_word) MP_MASK));

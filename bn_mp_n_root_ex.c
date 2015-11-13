@@ -31,7 +31,7 @@ int mp_n_root_ex (mp_int * a, mp_digit b, mp_int * c, int fast)
   int     res, neg;
 
   /* input must be positive if b is even */
-  if ((b & 1) == 0 && a->sign == MP_NEG) {
+  if (((b & 1) == 0) && (a->sign == MP_NEG)) {
     return MP_VAL;
   }
 

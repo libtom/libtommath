@@ -31,7 +31,7 @@ mp_mod (mp_int * a, mp_int * b, mp_int * c)
     return res;
   }
 
-  if (mp_iszero(&t) != MP_NO || t.sign == b->sign) {
+  if ((mp_iszero(&t) != MP_NO) || (t.sign == b->sign)) {
     res = MP_OKAY;
     mp_exch (&t, c);
   } else {

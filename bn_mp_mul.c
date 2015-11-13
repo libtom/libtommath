@@ -44,8 +44,8 @@ int mp_mul (mp_int * a, mp_int * b, mp_int * c)
 
 #ifdef BN_FAST_S_MP_MUL_DIGS_C
     if ((digs < MP_WARRAY) &&
-        MIN(a->used, b->used) <= 
-        (1 << ((CHAR_BIT * sizeof (mp_word)) - (2 * DIGIT_BIT)))) {
+        (MIN(a->used, b->used) <= 
+         (1 << ((CHAR_BIT * sizeof(mp_word)) - (2 * DIGIT_BIT))))) {
       res = fast_s_mp_mul_digs (a, b, c, digs);
     } else 
 #endif
