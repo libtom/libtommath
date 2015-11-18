@@ -1,0 +1,15 @@
+language: c
+compiler:
+  - gcc
+
+script:
+  - make
+  - make test
+  - make mtest
+  - ./mtest/mtest 666666 | ./test > test.log
+  - head -n 5 test.log
+  - tail -n 2 test.log
+
+branches:
+  only:
+    - develop
