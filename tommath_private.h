@@ -18,8 +18,36 @@
 #include <tommath.h>
 #include <ctype.h>
 
+#define MIN(x,y) (((x) < (y)) ? (x) : (y))
+
+#define MAX(x,y) (((x) > (y)) ? (x) : (y))
+
 #ifdef __cplusplus
 extern "C" {
+
+/* C++ compilers don't like assigning void * to mp_digit * */
+#define  OPT_CAST(x)  (x *)
+
+#else
+
+/* C on the other hand doesn't care */
+#define  OPT_CAST(x)
+
+#endif
+
+/* define heap macros */
+#ifndef XMALLOC
+   /* default to libc stuff */
+   #define XMALLOC  malloc
+   #define XFREE    free
+   #define XREALLOC realloc
+   #define XCALLOC  calloc
+#else
+   /* prototypes for our heap functions */
+   extern void *XMALLOC(size_t n);
+   extern void *XREALLOC(void *p, size_t n);
+   extern void *XCALLOC(size_t n, size_t s);
+   extern void XFREE(void *p);
 #endif
 
 /* lowlevel functions, do not call! */
