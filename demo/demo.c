@@ -1,3 +1,4 @@
+#include <string.h>
 #include <time.h>
 
 #ifdef IOWNANATHLON

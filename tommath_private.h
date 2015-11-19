@@ -16,6 +16,7 @@
 #define TOMMATH_PRIV_H_
 
 #include <tommath.h>
+#include <ctype.h>
 
 #ifdef __cplusplus
 extern "C" {
