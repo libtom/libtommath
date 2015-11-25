@@ -17,6 +17,8 @@
 
 /* computes the jacobi c = (a | n) (or Legendre if n is prime)
  * HAC pp. 73 Algorithm 2.149
+ * HAC is wrong here, as the special case of (0 | 1) is not
+ * handled correctly.
  */
 int mp_jacobi (mp_int * a, mp_int * n, int *c)
 {
@@ -29,10 +31,15 @@ int mp_jacobi (mp_int * a, mp_int * n, int *c)
      return MP_VAL;
   }
 
-  /* step 1.  if a == 0, return 0 */
+  /* step 1. handle case of a == 0 */
   if (mp_iszero (a) == MP_YES) {
-    *c = 0;
-    return MP_OKAY;
+     /* special case of a == 0 and n == 1 */
+     if (mp_cmp_d (n, 1) == MP_EQ) {
+       *c = 1;
+     } else {
+       *c = 0;
+     }
+     return MP_OKAY;
   }
 
   /* step 2.  if a == 1, return 1 */
