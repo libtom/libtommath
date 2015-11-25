@@ -35,7 +35,7 @@ int fast_s_mp_mul_digs (mp_int * a, mp_int * b, mp_int * c, int digs)
 {
   int     olduse, res, pa, ix, iz;
   mp_digit W[MP_WARRAY];
-  register mp_word  _W;
+  mp_word  _W;
 
   /* grow the destination as required */
   if (c->alloc < digs) {
@@ -85,7 +85,7 @@ int fast_s_mp_mul_digs (mp_int * a, mp_int * b, mp_int * c, int digs)
   c->used = pa;
 
   {
-    register mp_digit *tmpc;
+    mp_digit *tmpc;
     tmpc = c->dp;
     for (ix = 0; ix < pa+1; ix++) {
       /* now extract the previous digit [below the carry] */

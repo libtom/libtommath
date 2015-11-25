@@ -42,8 +42,8 @@ int fast_mp_montgomery_reduce (mp_int * x, mp_int * n, mp_digit rho)
    * an array of double precision words W[...]
    */
   {
-    register mp_word *_W;
-    register mp_digit *tmpx;
+    mp_word *_W;
+    mp_digit *tmpx;
 
     /* alias for the W[] array */
     _W   = W;
@@ -72,7 +72,7 @@ int fast_mp_montgomery_reduce (mp_int * x, mp_int * n, mp_digit rho)
      * by casting the value down to a mp_digit.  Note this requires
      * that W[ix-1] have  the carry cleared (see after the inner loop)
      */
-    register mp_digit mu;
+    mp_digit mu;
     mu = (mp_digit) (((W[ix] & MP_MASK) * rho) & MP_MASK);
 
     /* a = a + mu * m * b**i
@@ -90,9 +90,9 @@ int fast_mp_montgomery_reduce (mp_int * x, mp_int * n, mp_digit rho)
      * first m->used words of W[] have the carries fixed
      */
     {
-      register int iy;
-      register mp_digit *tmpn;
-      register mp_word *_W;
+      int iy;
+      mp_digit *tmpn;
+      mp_word *_W;
 
       /* alias for the digits of the modulus */
       tmpn = n->dp;
@@ -115,8 +115,8 @@ int fast_mp_montgomery_reduce (mp_int * x, mp_int * n, mp_digit rho)
    * significant digits we zeroed].
    */
   {
-    register mp_digit *tmpx;
-    register mp_word *_W, *_W1;
+    mp_digit *tmpx;
+    mp_word *_W, *_W1;
 
     /* nox fix rest of carries */
 

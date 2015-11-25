@@ -30,7 +30,7 @@ int mp_div_2(mp_int * a, mp_int * b)
   oldused = b->used;
   b->used = a->used;
   {
-    register mp_digit r, rr, *tmpa, *tmpb;
+    mp_digit r, rr, *tmpa, *tmpb;
 
     /* source alias */
     tmpa = a->dp + b->used - 1;

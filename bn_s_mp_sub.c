@@ -35,8 +35,8 @@ s_mp_sub (mp_int * a, mp_int * b, mp_int * c)
   c->used = max;
 
   {
-    register mp_digit u, *tmpa, *tmpb, *tmpc;
-    register int i;
+    mp_digit u, *tmpa, *tmpb, *tmpc;
+    int i;
 
     /* alias for digit pointers */
     tmpa = a->dp;
