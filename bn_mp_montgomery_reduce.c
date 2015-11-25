@@ -56,9 +56,9 @@ mp_montgomery_reduce (mp_int * x, mp_int * n, mp_digit rho)
 
     /* a = a + mu * m * b**i */
     {
-      register int iy;
-      register mp_digit *tmpn, *tmpx, u;
-      register mp_word r;
+      int iy;
+      mp_digit *tmpn, *tmpx, u;
+      mp_word r;
 
       /* alias for digits of the modulus */
       tmpn = n->dp;

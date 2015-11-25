@@ -33,7 +33,7 @@ int mp_lshd (mp_int * a, int b)
   }
 
   {
-    register mp_digit *top, *bottom;
+    mp_digit *top, *bottom;
 
     /* increment the used by the shift amount then copy upwards */
     a->used += b;

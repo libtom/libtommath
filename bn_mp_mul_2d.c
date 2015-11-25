@@ -44,8 +44,8 @@ int mp_mul_2d (mp_int * a, int b, mp_int * c)
   /* shift any bit count < DIGIT_BIT */
   d = (mp_digit) (b % DIGIT_BIT);
   if (d != 0) {
-    register mp_digit *tmpc, shift, mask, r, rr;
-    register int x;
+    mp_digit *tmpc, shift, mask, r, rr;
+    int x;
 
     /* bitmask for carries */
     mask = (((mp_digit)1) << d) - 1;

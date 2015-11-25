@@ -82,8 +82,8 @@ int mp_karatsuba_mul (mp_int * a, mp_int * b, mp_int * c)
   y1.used = b->used - B;
 
   {
-    register int x;
-    register mp_digit *tmpa, *tmpb, *tmpx, *tmpy;
+    int x;
+    mp_digit *tmpa, *tmpb, *tmpx, *tmpy;
 
     /* we copy the digits directly instead of using higher level functions
      * since we also need to shift the digits
