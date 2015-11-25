@@ -31,12 +31,12 @@ _runtest()
 {
   echo -ne " Compile $1 $2"
   make clean > /dev/null
-  CC="$1" CFLAGS="$2 $TEST_CFLAGS" make test_standalone $MAKE_OPTIONS > /dev/null 2>test_errors.txt
+  CC="$1" CFLAGS="$2 $TEST_CFLAGS" make -j8 test_standalone $MAKE_OPTIONS > /dev/null 2>test_errors.txt
   echo -e "\rRun test $1 $2"
-  timeout --foreground 120 ./test > test_$(echo ${1}${2}  | tr ' ' '_').txt || _die "running tests" $?
+  timeout --foreground 90 ./test > test_$(echo ${1}${2}  | tr ' ' '_').txt || _die "running tests" $?
 }
 
-compilers=( $COMPILERS clang gcc )
+compilers=( $COMPILERS gcc )
 
 echo "uname="$(uname -a)
 
