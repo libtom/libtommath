@@ -18,14 +18,14 @@
 /* computes the jacobi c = (a | n) (or Legendre if n is prime)
  * HAC pp. 73 Algorithm 2.149
  */
-int mp_jacobi (mp_int * a, mp_int * p, int *c)
+int mp_jacobi (mp_int * a, mp_int * n, int *c)
 {
   mp_int  a1, p1;
   int     k, s, r, res;
   mp_digit residue;
 
-  /* if p <= 0 return MP_VAL */
-  if (mp_cmp_d(p, 0) != MP_GT) {
+  /* if n <= 0 return MP_VAL */
+  if (mp_cmp_d(n, 0) != MP_GT) {
      return MP_VAL;
   }
 
@@ -64,7 +64,7 @@ int mp_jacobi (mp_int * a, mp_int * p, int *c)
     s = 1;
   } else {
     /* else set s=1 if p = 1/7 (mod 8) or s=-1 if p = 3/5 (mod 8) */
-    residue = p->dp[0] & 7;
+    residue = n->dp[0] & 7;
 
     if (residue == 1 || residue == 7) {
       s = 1;
@@ -74,7 +74,7 @@ int mp_jacobi (mp_int * a, mp_int * p, int *c)
   }
 
   /* step 5.  if p == 3 (mod 4) *and* a1 == 3 (mod 4) then s = -s */
-  if ( ((p->dp[0] & 3) == 3) && ((a1.dp[0] & 3) == 3)) {
+  if ( ((n->dp[0] & 3) == 3) && ((a1.dp[0] & 3) == 3)) {
     s = -s;
   }
 
@@ -83,7 +83,7 @@ int mp_jacobi (mp_int * a, mp_int * p, int *c)
     *c = s;
   } else {
     /* n1 = n mod a1 */
-    if ((res = mp_mod (p, &a1, &p1)) != MP_OKAY) {
+    if ((res = mp_mod (n, &a1, &p1)) != MP_OKAY) {
       goto LBL_P1;
     }
     if ((res = mp_jacobi (&p1, &a1, &r)) != MP_OKAY) {
