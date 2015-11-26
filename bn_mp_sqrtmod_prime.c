@@ -31,7 +31,7 @@ int mp_sqrtmod_prime(mp_int *n, mp_int *prime, mp_int *ret)
   if (legendre == -1)                                           return MP_VAL; /* quadratic non-residue mod prime */
 
   if ((res = mp_init_multi(&t1, &C, &Q, &S, &Z, &M, &T, &R, &two, NULL)) != MP_OKAY) {
-	return res;
+    return res;
   }
 
   /* SPECIAL CASE: if prime mod 4 == 3
