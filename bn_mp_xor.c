@@ -16,8 +16,7 @@
  */
 
 /* XOR two ints together */
-int
-mp_xor (mp_int * a, mp_int * b, mp_int * c)
+int mp_xor (mp_int * a, mp_int * b, mp_int * c)
 {
   int     res, ix, px;
   mp_int  t, *x;
