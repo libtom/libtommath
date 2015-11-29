@@ -12,7 +12,7 @@
  * Configuration
  */
 #ifndef LTM_DEMO_TEST_VS_MTEST
-#define LTM_DEMO_TEST_VS_MTEST 1
+#define LTM_DEMO_TEST_VS_MTEST 0
 #endif
 
 #ifndef LTM_DEMO_TEST_REDUCE_2K_L
@@ -114,6 +114,16 @@ struct mp_sqrtmod_prime_st sqrtmod_prime[] = {
       { 7, 9, 4 },
       { 113, 2, 62 }
 };
+struct mp_jacobi_st {
+   unsigned long n;
+   int c[16];
+};
+struct mp_jacobi_st jacobi[] = {
+      { 3, {  1, -1,  0,  1, -1,  0,  1, -1,  0,  1, -1,  0,  1, -1,  0,  1 } },
+      { 5, {  0,  1, -1, -1,  1,  0,  1, -1, -1,  1,  0,  1, -1, -1,  1,  0 } },
+      { 7, {  1, -1,  1, -1, -1,  0,  1,  1, -1,  1, -1, -1,  0,  1,  1, -1 } },
+      { 9, { -1,  1,  0,  1,  1,  0,  1,  1,  0,  1,  1,  0,  1,  1,  0,  1 } },
+};
 
 char cmd[4096], buf[4096];
 int main(void)
@@ -185,6 +195,35 @@ int main(void)
    }
    mp_add_d(&a, 1, &b);
    mp_add_d(&a, 6, &b);
+
+
+   mp_set_int(&a, 0);
+   mp_set_int(&b, 1);
+   if ((ix = mp_jacobi(&a, &b, &i)) != MP_OKAY) {
+      printf("Failed executing mp_jacobi(0 | 1) %s.\n", mp_error_to_string(ix));
+      return EXIT_FAILURE;
+   }
+   if (i != 1) {
+      printf("Failed trivial mp_jacobi(0 | 1) %d != 1\n", i);
+      return EXIT_FAILURE;
+   }
+   for (cnt = 0; cnt < (int)(sizeof(jacobi)/sizeof(jacobi[0])); ++cnt) {
+      mp_set_int(&b, jacobi[cnt].n);
+      /* only test positive values of a */
+//      for (n = -5; n <= 10; ++n) {
+      for (n = 0; n <= 10; ++n) {
+         mp_set_int(&a, abs(n));
+         if (n < 0) mp_neg(&a, &a);
+         if ((ix = mp_jacobi(&a, &b, &i)) != MP_OKAY) {
+            printf("Failed executing mp_jacobi(%d | %lu) %s.\n", n, jacobi[cnt].n, mp_error_to_string(ix));
+            return EXIT_FAILURE;
+         }
+         if (i != jacobi[cnt].c[n + 5]) {
+            printf("Failed trivial mp_jacobi(%d | %lu) %d != %d\n", n, jacobi[cnt].n, i, jacobi[cnt].c[n + 5]);
+            return EXIT_FAILURE;
+         }
+      }
+   }
 
    // test montgomery
    printf("Testing: montgomery...\n");
