@@ -12,7 +12,7 @@
  * Configuration
  */
 #ifndef LTM_DEMO_TEST_VS_MTEST
-#define LTM_DEMO_TEST_VS_MTEST 0
+#define LTM_DEMO_TEST_VS_MTEST 1
 #endif
 
 #ifndef LTM_DEMO_TEST_REDUCE_2K_L
