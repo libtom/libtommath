@@ -1,4 +1,4 @@
-#include <tommath.h>
+#include <tommath_private.h>
 #ifdef BN_MP_GET_INT_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
@@ -12,14 +12,14 @@
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@gmail.com, http://libtom.org
+ * Tom St Denis, tstdenis82@gmail.com, http://libtom.org
  */
 
 /* get the lower 32-bits of an mp_int */
-unsigned long mp_get_int(mp_int * a) 
+unsigned long mp_get_int(mp_int * a)
 {
   int i;
-  unsigned long res;
+  mp_min_u32 res;
 
   if (a->used == 0) {
      return 0;
@@ -30,7 +30,7 @@ unsigned long mp_get_int(mp_int * a)
 
   /* get most significant digit of result */
   res = DIGIT(a,i);
-   
+
   while (--i >= 0) {
     res = (res << DIGIT_BIT) | DIGIT(a,i);
   }

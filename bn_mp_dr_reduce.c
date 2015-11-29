@@ -1,4 +1,4 @@
-#include <tommath.h>
+#include <tommath_private.h>
 #ifdef BN_MP_DR_REDUCE_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
@@ -12,7 +12,7 @@
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@gmail.com, http://libtom.org
+ * Tom St Denis, tstdenis82@gmail.com, http://libtom.org
  */
 
 /* reduce "x" in place modulo "n" using the Diminished Radix algorithm.
@@ -82,7 +82,9 @@ top:
    * Each successive "recursion" makes the input smaller and smaller.
    */
   if (mp_cmp_mag (x, n) != MP_LT) {
-    s_mp_sub(x, n, x);
+    if ((err = s_mp_sub(x, n, x)) != MP_OKAY) {
+      return err;
+    }
     goto top;
   }
   return MP_OKAY;
