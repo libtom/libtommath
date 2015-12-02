@@ -24,7 +24,7 @@ int mp_toradix (mp_int * a, char *str, int radix)
   char   *_s = str;
 
   /* check range of the radix */
-  if (radix < 2 || radix > 64) {
+  if ((radix < 2) || (radix > 64)) {
     return MP_VAL;
   }
 

@@ -31,7 +31,7 @@ int mp_prime_is_prime (mp_int * a, int t, int *result)
   *result = MP_NO;
 
   /* valid value of t? */
-  if (t <= 0 || t > PRIME_SIZE) {
+  if ((t <= 0) || (t > PRIME_SIZE)) {
     return MP_VAL;
   }
 

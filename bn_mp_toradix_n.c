@@ -27,7 +27,7 @@ int mp_toradix_n(mp_int * a, char *str, int radix, int maxlen)
   char   *_s = str;
 
   /* check range of the maxlen, radix */
-  if (maxlen < 2 || radix < 2 || radix > 64) {
+  if ((maxlen < 2) || (radix < 2) || (radix > 64)) {
     return MP_VAL;
   }
 

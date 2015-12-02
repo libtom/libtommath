@@ -40,7 +40,7 @@ mp_dr_reduce (mp_int * x, mp_int * n, mp_digit k)
   m = n->used;
 
   /* ensure that "x" has at least 2m digits */
-  if (x->alloc < m + m) {
+  if (x->alloc < (m + m)) {
     if ((err = mp_grow (x, m + m)) != MP_OKAY) {
       return err;
     }
@@ -62,7 +62,7 @@ top:
 
   /* compute (x mod B**m) + k * [x/B**m] inline and inplace */
   for (i = 0; i < m; i++) {
-      r         = ((mp_word)*tmpx2++) * ((mp_word)k) + *tmpx1 + mu;
+      r         = (((mp_word)*tmpx2++) * (mp_word)k) + *tmpx1 + mu;
       *tmpx1++  = (mp_digit)(r & MP_MASK);
       mu        = (mp_digit)(r >> ((mp_word)DIGIT_BIT));
   }

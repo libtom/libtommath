@@ -164,12 +164,12 @@ int s_mp_exptmod (mp_int * G, mp_int * X, mp_int * P, mp_int * Y, int redmode)
      * in the exponent.  Technically this opt is not required but it
      * does lower the # of trivial squaring/reductions used
      */
-    if (mode == 0 && y == 0) {
+    if ((mode == 0) && (y == 0)) {
       continue;
     }
 
     /* if the bit is zero and mode == 1 then we square */
-    if (mode == 1 && y == 0) {
+    if ((mode == 1) && (y == 0)) {
       if ((err = mp_sqr (&res, &res)) != MP_OKAY) {
         goto LBL_RES;
       }
@@ -211,7 +211,7 @@ int s_mp_exptmod (mp_int * G, mp_int * X, mp_int * P, mp_int * Y, int redmode)
   }
 
   /* if bits remain then square/multiply */
-  if (mode == 2 && bitcpy > 0) {
+  if ((mode == 2) && (bitcpy > 0)) {
     /* square then multiply if the bit is set */
     for (x = 0; x < bitcpy; x++) {
       if ((err = mp_sqr (&res, &res)) != MP_OKAY) {

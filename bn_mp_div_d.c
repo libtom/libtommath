@@ -47,7 +47,7 @@ int mp_div_d (mp_int * a, mp_digit b, mp_int * c, mp_digit * d)
   }
 
   /* quick outs */
-  if (b == 1 || mp_iszero(a) == MP_YES) {
+  if ((b == 1) || (mp_iszero(a) == MP_YES)) {
      if (d != NULL) {
         *d = 0;
      }

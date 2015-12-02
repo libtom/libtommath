@@ -25,7 +25,7 @@ int mp_radix_size (mp_int * a, int radix, int *size)
   *size = 0;
 
   /* make sure the radix is in range */
-  if (radix < 2 || radix > 64) {
+  if ((radix < 2) || (radix > 64)) {
     return MP_VAL;
   }
 
@@ -36,7 +36,7 @@ int mp_radix_size (mp_int * a, int radix, int *size)
 
   /* special case for binary */
   if (radix == 2) {
-    *size = mp_count_bits (a) + (a->sign == MP_NEG ? 1 : 0) + 1;
+    *size = mp_count_bits (a) + ((a->sign == MP_NEG) ? 1 : 0) + 1;
     return MP_OKAY;
   }
 

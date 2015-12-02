@@ -26,7 +26,7 @@ int mp_lshd (mp_int * a, int b)
   }
 
   /* grow to fit the new digits */
-  if (a->alloc < a->used + b) {
+  if (a->alloc < (a->used + b)) {
      if ((res = mp_grow (a, a->used + b)) != MP_OKAY) {
        return res;
      }
@@ -42,7 +42,7 @@ int mp_lshd (mp_int * a, int b)
     top = a->dp + a->used - 1;
 
     /* base */
-    bottom = a->dp + a->used - 1 - b;
+    bottom = (a->dp + a->used - 1) - b;
 
     /* much like mp_rshd this is implemented using a sliding window
      * except the window goes the otherway around.  Copying from

@@ -25,7 +25,7 @@ int mp_read_radix (mp_int * a, const char *str, int radix)
   mp_zero(a);
 
   /* make sure the radix is ok */
-  if (radix < 2 || radix > 64) {
+  if ((radix < 2) || (radix > 64)) {
     return MP_VAL;
   }
 

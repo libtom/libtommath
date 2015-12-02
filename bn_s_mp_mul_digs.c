@@ -29,8 +29,8 @@ int s_mp_mul_digs (mp_int * a, mp_int * b, mp_int * c, int digs)
 
   /* can we use the fast multiplier? */
   if (((digs) < MP_WARRAY) &&
-      MIN (a->used, b->used) < 
-          (1 << ((CHAR_BIT * sizeof (mp_word)) - (2 * DIGIT_BIT)))) {
+      (MIN (a->used, b->used) < 
+          (1 << ((CHAR_BIT * sizeof(mp_word)) - (2 * DIGIT_BIT))))) {
     return fast_s_mp_mul_digs (a, b, c, digs);
   }
 
@@ -61,9 +61,9 @@ int s_mp_mul_digs (mp_int * a, mp_int * b, mp_int * c, int digs)
     /* compute the columns of the output and propagate the carry */
     for (iy = 0; iy < pb; iy++) {
       /* compute the column as a mp_word */
-      r       = ((mp_word)*tmpt) +
-                ((mp_word)tmpx) * ((mp_word)*tmpy++) +
-                ((mp_word) u);
+      r       = (mp_word)*tmpt +
+                ((mp_word)tmpx * (mp_word)*tmpy++) +
+                (mp_word)u;
 
       /* the new column is the lower part of the result */
       *tmpt++ = (mp_digit) (r & ((mp_word) MP_MASK));
@@ -72,7 +72,7 @@ int s_mp_mul_digs (mp_int * a, mp_int * b, mp_int * c, int digs)
       u       = (mp_digit) (r >> ((mp_word) DIGIT_BIT));
     }
     /* set carry if it is placed below digs */
-    if (ix + iy < digs) {
+    if ((ix + iy) < digs) {
       *tmpt = u;
     }
   }
