@@ -39,6 +39,8 @@ void ndraw(mp_int * a, char *name)
    printf("%s: ", name);
    mp_toradix(a, buf, 10);
    printf("%s\n", buf);
+   mp_toradix(a, buf, 16);
+   printf("0x%s\n", buf);
 }
 
 #if LTM_DEMO_TEST_VS_MTEST
@@ -79,8 +81,13 @@ int myrng(unsigned char *dst, int len, void *dat)
       return fread(dst, 1, len, fd_urandom);
    }
 #endif
-   for (x = 0; x < len; x++)
-      dst[x] = rand() & 0xFF;
+   for (x = 0; x < len; ) {
+      unsigned int r = (unsigned int)rand();
+      do {
+         dst[x++] = r & 0xFF;
+         r >>= 8;
+      } while((r != 0) && (x < len));
+   }
    return len;
 }
 
@@ -225,48 +232,6 @@ int main(void)
       }
    }
 
-   // test montgomery
-   printf("Testing: montgomery...\n");
-   for (i = 1; i <= 10; i++) {
-      if (i == 10)
-         i = 1000;
-      printf(" digit size: %2d\r", i);
-      fflush(stdout);
-      for (n = 0; n < 1000; n++) {
-         mp_rand(&a, i);
-         a.dp[0] |= 1;
-
-         // let's see if R is right
-         mp_montgomery_calc_normalization(&b, &a);
-         mp_montgomery_setup(&a, &mp);
-
-         // now test a random reduction
-         for (ix = 0; ix < 100; ix++) {
-             mp_rand(&c, 1 + abs(rand()) % (2*i));
-             mp_copy(&c, &d);
-             mp_copy(&c, &e);
-
-             mp_mod(&d, &a, &d);
-             mp_montgomery_reduce(&c, &a, mp);
-             mp_mulmod(&c, &b, &a, &c);
-
-             if (mp_cmp(&c, &d) != MP_EQ) {
-printf("d = e mod a, c = e MOD a\n");
-mp_todecimal(&a, buf); printf("a = %s\n", buf);
-mp_todecimal(&e, buf); printf("e = %s\n", buf);
-mp_todecimal(&d, buf); printf("d = %s\n", buf);
-mp_todecimal(&c, buf); printf("c = %s\n", buf);
-printf("compare no compare!\n"); return EXIT_FAILURE; }
-             /* only one big montgomery reduction */
-             if (i > 10)
-             {
-                n = 1000;
-                ix = 100;
-             }
-         }
-      }
-   }
-
    // test mp_get_int
    printf("\n\nTesting: mp_get_int");
    for (i = 0; i < 1000; ++i) {
@@ -309,7 +274,7 @@ printf("compare no compare!\n"); return EXIT_FAILURE; }
    }
 
    printf("\n\nTesting: mp_get_long_long\n");
-   for (i = 0; i < (int)(sizeof(unsigned long)*CHAR_BIT) - 1; ++i) {
+   for (i = 0; i < (int)(sizeof(unsigned long long)*CHAR_BIT) - 1; ++i) {
       r = (1ULL << (i+1)) - 1;
       if (!r)
          r = -1;
@@ -437,6 +402,50 @@ printf("compare no compare!\n"); return EXIT_FAILURE; }
       if (cnt != MP_YES) {
          printf ("sub is not prime!\n");
          return EXIT_FAILURE;
+      }
+   }
+
+   printf("\n\n");
+
+   // test montgomery
+   printf("Testing: montgomery...\n");
+   for (i = 1; i <= 10; i++) {
+      if (i == 10)
+         i = 1000;
+      printf(" digit size: %2d\r", i);
+      fflush(stdout);
+      for (n = 0; n < 1000; n++) {
+         mp_rand(&a, i);
+         a.dp[0] |= 1;
+
+         // let's see if R is right
+         mp_montgomery_calc_normalization(&b, &a);
+         mp_montgomery_setup(&a, &mp);
+
+         // now test a random reduction
+         for (ix = 0; ix < 100; ix++) {
+             mp_rand(&c, 1 + abs(rand()) % (2*i));
+             mp_copy(&c, &d);
+             mp_copy(&c, &e);
+
+             mp_mod(&d, &a, &d);
+             mp_montgomery_reduce(&c, &a, mp);
+             mp_mulmod(&c, &b, &a, &c);
+
+             if (mp_cmp(&c, &d) != MP_EQ) {
+printf("d = e mod a, c = e MOD a\n");
+mp_todecimal(&a, buf); printf("a = %s\n", buf);
+mp_todecimal(&e, buf); printf("e = %s\n", buf);
+mp_todecimal(&d, buf); printf("d = %s\n", buf);
+mp_todecimal(&c, buf); printf("c = %s\n", buf);
+printf("compare no compare!\n"); return EXIT_FAILURE; }
+             /* only one big montgomery reduction */
+             if (i > 10)
+             {
+                n = 1000;
+                ix = 100;
+             }
+         }
       }
    }
 
