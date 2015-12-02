@@ -32,7 +32,7 @@ void mp_rshd (mp_int * a, int b)
   }
 
   {
-    register mp_digit *bottom, *top;
+    mp_digit *bottom, *top;
 
     /* shift the digits down */
 

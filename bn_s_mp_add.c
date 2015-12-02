@@ -47,8 +47,8 @@ s_mp_add (mp_int * a, mp_int * b, mp_int * c)
   c->used = max + 1;
 
   {
-    register mp_digit u, *tmpa, *tmpb, *tmpc;
-    register int i;
+    mp_digit u, *tmpa, *tmpb, *tmpc;
+    int i;
 
     /* alias for digit pointers */
 

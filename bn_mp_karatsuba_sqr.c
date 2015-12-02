@@ -52,8 +52,8 @@ int mp_karatsuba_sqr (mp_int * a, mp_int * b)
     goto X0X0;
 
   {
-    register int x;
-    register mp_digit *dst, *src;
+    int x;
+    mp_digit *dst, *src;
 
     src = a->dp;
 

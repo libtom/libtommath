@@ -35,7 +35,7 @@ mp_copy (mp_int * a, mp_int * b)
 
   /* zero b and copy the parameters over */
   {
-    register mp_digit *tmpa, *tmpb;
+    mp_digit *tmpa, *tmpb;
 
     /* pointer aliases */
 
