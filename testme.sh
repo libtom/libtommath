@@ -7,13 +7,45 @@
 
 set -e
 
+if [ -f /proc/cpuinfo ]
+then
+  MAKE_JOBS=$(( ($(cat /proc/cpuinfo | grep processor | tail -n -1 | cut -d':' -f2) + 1) * 2 + 1 ))
+else
+  MAKE_JOBS=8
+fi
+
 ret=0
 TEST_CFLAGS=""
 
-if [ "$#" == "1" ]
-then
-  MAKE_OPTIONS=$1
-fi
+_help()
+{
+  echo "Usage options for $(basename $0) [--with-cc=arg [other options]]"
+  echo
+  echo "Executing this script without any parameter will only run the default configuration"
+  echo "that has automatically been determined for the architecture you're running."
+  echo
+  echo "    --with-cc=*             The compiler(s) to use for the tests"
+  echo "        This is an option that will be iterated."
+  echo
+  echo "To be able to specify options a compiler has to be given."
+  echo "All options will be tested with all MP_xBIT configurations."
+  echo
+  echo "    --with-{m64,m32,mx32}   The architecture(s) to build and test for,"
+  echo "                            e.g. --with-mx32."
+  echo "        This is an option that will be iterated, multiple selections are possible."
+  echo "        The mx32 architecture is not supported by clang and will not be executed."
+  echo
+  echo "    --cflags=*              Give an option to the compiler,"
+  echo "                            e.g. --cflags=-g"
+  echo "        This is an option that will always be passed as parameter to CC."
+  echo
+  echo "    --make-option=*         Give an option to make,"
+  echo "                            e.g. --make-option=\"-f makefile.shared\""
+  echo "        This is an option that will always be passed as parameter to make."
+  echo
+  echo "    --help                  This message"
+  exit 0
+}
 
 _die()
 {
@@ -31,19 +63,79 @@ _runtest()
 {
   echo -ne " Compile $1 $2"
   make clean > /dev/null
-  CC="$1" CFLAGS="$2 $TEST_CFLAGS" make -j8 test_standalone $MAKE_OPTIONS > /dev/null 2>test_errors.txt
+  CC="$1" CFLAGS="$2 $TEST_CFLAGS" make -j$MAKE_JOBS test_standalone $MAKE_OPTIONS > /dev/null 2>test_errors.txt
   echo -e "\rRun test $1 $2"
   timeout --foreground 90 ./test > test_$(echo ${1}${2}  | tr ' ' '_').txt || _die "running tests" $?
 }
 
-compilers=( $COMPILERS gcc )
+_banner()
+{
+  echo "uname="$(uname -a)
+  [[ "$#" != "0" ]] && (echo $1=$($1 -dumpversion)) || true
+}
 
-echo "uname="$(uname -a)
+_exit()
+{
+  if [ "$ret" == "0" ]
+  then
+    echo "Tests successful"
+  else
+    echo "$ret tests timed out"
+  fi
+
+  exit $ret
+}
+
+ARCHFLAGS=""
+COMPILERS=""
+CFLAGS=""
+
+while [ $# -gt 0 ];
+do
+  case $1 in
+    "--with-m64" | "--with-m32" | "--with-mx32")
+      ARCHFLAGS="$ARCHFLAGS ${1:6}"
+    ;;
+    --with-cc=*)
+      COMPILERS="$COMPILERS ${1#*=}"
+    ;;
+    --cflags=*)
+      CFLAGS="$CFLAGS ${1#*=}"
+    ;;
+    --make-option=*)
+      MAKE_OPTIONS="$MAKE_OPTIONS ${1#*=}"
+    ;;
+    --help)
+      _help
+    ;;
+  esac
+  shift
+done
+
+# default to gcc if nothing is given
+if [[ "$COMPILERS" == "" ]]
+then
+  _banner gcc
+  _runtest "gcc" ""
+  _exit
+fi
+
+archflags=( $ARCHFLAGS )
+compilers=( $COMPILERS )
+
+# choosing a compiler without specifying an architecture will use the default architecture
+if [ "${#archflags[@]}" == "0" ]
+then
+  archflags[0]=" "
+fi
+
+_banner
 
 for i in "${compilers[@]}"
 do
   if [ -z "$(which $i)" ]
   then
+    echo "Skipped compiler $i, file not found"
     continue
   fi
   compiler_version=$(echo "$i="$($i -dumpversion))
@@ -55,28 +147,20 @@ do
     TEST_CFLAGS=""
   fi
   echo $compiler_version
-  _runtest "$i" ""
-  _runtest "$i" "-DMP_8BIT"
-  _runtest "$i" "-DMP_16BIT"
-  _runtest "$i" "-DMP_32BIT"
-  _runtest "$i -m32" ""
-  _runtest "$i -m32" "-DMP_8BIT"
-  _runtest "$i -m32" "-DMP_16BIT"
-  _runtest "$i -m32" "-DMP_32BIT"
-  if [ "$i" != "clang" ]
-  then
-    _runtest "$i -mx32" ""
-    _runtest "$i -mx32" "-DMP_8BIT"
-    _runtest "$i -mx32" "-DMP_16BIT"
-    _runtest "$i -mx32" "-DMP_32BIT"
-  fi
+
+  for a in "${archflags[@]}"
+  do
+    if [[ $(expr "$i" : "clang") && "$a" == "-mx32" ]]
+    then
+      echo "clang -mx32 tests skipped"
+      continue
+    fi
+
+    _runtest "$i $a" ""
+    _runtest "$i $a" "-DMP_8BIT"
+    _runtest "$i $a" "-DMP_16BIT"
+    _runtest "$i $a" "-DMP_32BIT"
+  done
 done
 
-if [ "$ret" == "0" ]
-then
-  echo "Tests successful"
-else
-  echo "$ret tests timed out"
-fi
-
-exit $ret
+_exit
