@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/fperrad/libtommath.png?branch=develop)](https://travis-ci.org/fperrad/libtommath)
+[![Build Status](https://travis-ci.org/libtom/libtommath.png?branch=develop)](https://travis-ci.org/libtom/libtommath)
 
 This is the git repository for [LibTomMath](http://www.libtom.org/), a free open source portable number theoretic multiple-precision integer (MPI) library written entirely in C.
 
