@@ -43,6 +43,10 @@ _help()
   echo "                            e.g. --make-option=\"-f makefile.shared\""
   echo "        This is an option that will always be passed as parameter to make."
   echo
+  echo "Godmode:"
+  echo
+  echo "    --all                   Choose all architectures and gcc and clang as compilers"
+  echo
   echo "    --help                  This message"
   exit 0
 }
@@ -104,6 +108,10 @@ do
     ;;
     --make-option=*)
       MAKE_OPTIONS="$MAKE_OPTIONS ${1#*=}"
+    ;;
+    --all)
+      COMPILERS="gcc clang"
+      ARCHFLAGS="-m64 -m32 -mx32"
     ;;
     --help)
       _help
