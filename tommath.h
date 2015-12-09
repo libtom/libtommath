@@ -395,7 +395,7 @@ int mp_n_root_ex(const mp_int *a, mp_digit b, mp_int *c, int fast);
 int mp_sqrt(const mp_int *arg, mp_int *ret);
 
 /* special sqrt (mod prime) */
-int mp_sqrtmod_prime(const mp_int *arg, const mp_int *prime, mp_int *ret);
+int mp_sqrtmod_prime(const mp_int *n, const mp_int *prime, mp_int *ret);
 
 /* is number a square? */
 int mp_is_square(const mp_int *arg, int *ret);
@@ -408,13 +408,13 @@ int mp_reduce_setup(mp_int *a, const mp_int *b);
 
 /* Barrett Reduction, computes a (mod b) with a precomputed value c
  *
- * Assumes that 0 < a <= b*b, note if 0 > a > -(b*b) then you can merely
- * compute the reduction as -1 * mp_reduce(mp_abs(a)) [pseudo code].
+ * Assumes that 0 < x <= m*m, note if 0 > x > -(m*m) then you can merely
+ * compute the reduction as -1 * mp_reduce(mp_abs(x)) [pseudo code].
  */
-int mp_reduce(mp_int *a, const mp_int *b, const mp_int *c);
+int mp_reduce(mp_int *x, const mp_int *m, const mp_int *mu);
 
 /* setups the montgomery reduction */
-int mp_montgomery_setup(const mp_int *a, mp_digit *mp);
+int mp_montgomery_setup(const mp_int *n, mp_digit *rho);
 
 /* computes a = B**n mod b without division or multiplication useful for
  * normalizing numbers in a Montgomery system.
@@ -422,7 +422,7 @@ int mp_montgomery_setup(const mp_int *a, mp_digit *mp);
 int mp_montgomery_calc_normalization(mp_int *a, const mp_int *b);
 
 /* computes x/R == x (mod N) via Montgomery Reduction */
-int mp_montgomery_reduce(mp_int *a, const mp_int *m, mp_digit mp);
+int mp_montgomery_reduce(mp_int *x, const mp_int *n, mp_digit rho);
 
 /* returns 1 if a is a valid DR modulus */
 int mp_dr_is_modulus(const mp_int *a);
@@ -430,8 +430,8 @@ int mp_dr_is_modulus(const mp_int *a);
 /* sets the value of "d" required for mp_dr_reduce */
 void mp_dr_setup(const mp_int *a, mp_digit *d);
 
-/* reduces a modulo b using the Diminished Radix method */
-int mp_dr_reduce(mp_int *a, const mp_int *b, mp_digit mp);
+/* reduces a modulo n using the Diminished Radix method */
+int mp_dr_reduce(mp_int *x, const mp_int *n, mp_digit k);
 
 /* returns true if a can be reduced with mp_reduce_2k */
 int mp_reduce_is_2k(const mp_int *a);
@@ -451,8 +451,8 @@ int mp_reduce_2k_setup_l(const mp_int *a, mp_int *d);
 /* reduces a modulo b where b is of the form 2**p - k [0 <= a] */
 int mp_reduce_2k_l(mp_int *a, const mp_int *n, const mp_int *d);
 
-/* d = a**b (mod c) */
-int mp_exptmod(const mp_int *a, const mp_int *b, const mp_int *c, mp_int *d);
+/* Y = G**X (mod P) */
+int mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y);
 
 /* ---> Primes <--- */
 
