@@ -193,3 +193,6 @@ zipup:
 new_file:
 	bash updatemakes.sh
 	perl dep.pl
+
+perlcritic:
+	perlcritic *.pl
