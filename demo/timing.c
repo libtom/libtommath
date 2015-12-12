@@ -11,6 +11,12 @@ ulong64 _tt;
 #define SLEEP
 #endif
 
+#ifdef LTM_TIMING_REAL_RAND
+#define LTM_TIMING_RAND_SEED  time(NULL)
+#else
+#define LTM_TIMING_RAND_SEED  23
+#endif
+
 
 void ndraw(mp_int * a, char *name)
 {
@@ -108,7 +114,7 @@ int main(void)
    mp_init(&e);
    mp_init(&f);
 
-   srand(time(NULL));
+   srand(LTM_TIMING_RAND_SEED);
 
 
    CLK_PER_SEC = TIMFUNC();
