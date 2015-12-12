@@ -14,17 +14,14 @@ ifneq ($V,1)
 endif
 	${silent} ${CC} -c ${CFLAGS} $^ -o $@
 
-#version of library
-VERSION=0.43.0
-
-include makefile.include
-
 #default files to install
 ifndef LIBNAME
    LIBNAME=libtommath.a
 endif
 
-default: ${LIBNAME}
+include makefile.include
+
+LCOV_ARGS=--directory .
 
 #START_INS
 OBJECTS=bncore.o bn_error.o bn_fast_mp_invmod.o bn_fast_mp_montgomery_reduce.o bn_fast_s_mp_mul_digs.o \
@@ -58,24 +55,6 @@ $(LIBNAME):  $(OBJECTS)
 	$(AR) $(ARFLAGS) $@ $(OBJECTS)
 	$(RANLIB) $@
 
-
-#make the code coverage of the library
-#
-coverage: CFLAGS += -fprofile-arcs -ftest-coverage -DTIMING_NO_LOGS
-coverage: LFLAGS += -lgcov
-
-coverage: test_standalone timing
-	./test
-	./ltmtest
-
-lcov: coverage
-	rm -f coverage.info
-	lcov --capture --no-external --no-recursion --directory . --output-file coverage.info -q
-	genhtml coverage.info --output-directory coverage -q
-
-coveralls: coverage
-	cpp-coveralls
-
 #make a profiled library (takes a while!!!)
 #
 # This will build the library with profile generation
@@ -100,10 +79,10 @@ profiled_single:
 	ranlib $(LIBNAME)
 
 install: $(LIBNAME)
-	install -d -g $(GROUP) -o $(USER) $(DESTDIR)$(LIBPATH)
-	install -d -g $(GROUP) -o $(USER) $(DESTDIR)$(INCPATH)
-	install -g $(GROUP) -o $(USER) $(LIBNAME) $(DESTDIR)$(LIBPATH)
-	install -g $(GROUP) -o $(USER) $(HEADERS_PUB) $(DESTDIR)$(INCPATH)
+	install -d $(DESTDIR)$(LIBPATH)
+	install -d $(DESTDIR)$(INCPATH)
+	install -m 644 $(LIBNAME) $(DESTDIR)$(LIBPATH)
+	install -m 644 $(HEADERS_PUB) $(DESTDIR)$(INCPATH)
 
 test: $(LIBNAME) demo/demo.o
 	$(CC) $(CFLAGS) demo/demo.o $(LIBNAME) $(LFLAGS) -o test
@@ -176,13 +155,6 @@ manual:	mandvi
 
 pretty:
 	perl pretty.build
-
-clean:
-	rm -f *.gcda *.gcno *.bat *.o *.a *.obj *.lib *.exe *.dll etclib/*.o demo/demo.o test ltmtest mpitest mtest/mtest mtest/mtest.exe \
-        *.idx *.toc *.log *.aux *.dvi *.lof *.ind *.ilg *.ps *.log *.s mpi.c *.da *.dyn *.dpi tommath.tex `find . -type f | grep [~] | xargs` *.lo *.la
-	rm -rf .libs
-	cd etc ; MAKE=${MAKE} ${MAKE} clean
-	cd pics ; MAKE=${MAKE} ${MAKE} clean
 
 #zipup the project (take that!)
 no_oops: clean

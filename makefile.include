@@ -2,6 +2,13 @@
 # Include makefile for libtommath
 #
 
+#version of library
+VERSION=0.43.0
+VERSION_SO=0:43
+
+# default make target
+default: ${LIBNAME}
+
 # Compiler and Linker Names
 ifndef PREFIX
   PREFIX=
@@ -52,19 +59,6 @@ HEADERS=tommath_private.h $(HEADERS_PUB)
 
 test_standalone: CFLAGS+=-DLTM_DEMO_TEST_VS_MTEST=0
 
-#install as this user
-ifndef INSTALL_GROUP
-   GROUP=wheel
-else
-   GROUP=$(INSTALL_GROUP)
-endif
-
-ifndef INSTALL_USER
-   USER=root
-else
-   USER=$(INSTALL_USER)
-endif
-
 #LIBPATH-The directory for libtommath to be installed to.
 #INCPATH-The directory to install the header files for libtommath.
 #DATAPATH-The directory to install the pdf docs.
@@ -72,3 +66,35 @@ LIBPATH?=/usr/lib
 INCPATH?=/usr/include
 DATAPATH?=/usr/share/doc/libtommath/pdf
 
+#make the code coverage of the library
+#
+coverage: CFLAGS += -fprofile-arcs -ftest-coverage -DTIMING_NO_LOGS
+coverage: LFLAGS += -lgcov
+coverage: LDFLAGS += -lgcov
+
+coverage: test_standalone timing
+	./test
+	./ltmtest
+
+lcov: coverage
+	rm -f coverage.info
+	lcov --capture --no-external --no-recursion $(LCOV_ARGS) --output-file coverage.info -q
+	genhtml coverage.info --output-directory coverage -q
+
+coveralls: coverage
+	cpp-coveralls
+
+# target that removes all coverage output
+cleancov-clean:
+	rm -f `find . -type f -name "*.info" | xargs`
+	rm -rf coverage/
+
+# cleans everything - coverage output and standard 'clean'
+cleancov: cleancov-clean clean
+
+clean:
+	rm -f *.gcda *.gcno *.bat *.o *.a *.obj *.lib *.exe *.dll etclib/*.o demo/demo.o test ltmtest mpitest mtest/mtest mtest/mtest.exe \
+        *.idx *.toc *.log *.aux *.dvi *.lof *.ind *.ilg *.ps *.log *.s mpi.c *.da *.dyn *.dpi tommath.tex `find . -type f | grep [~] | xargs` *.lo *.la
+	rm -rf .libs/
+	cd etc ; MAKE=${MAKE} ${MAKE} clean
+	cd pics ; MAKE=${MAKE} ${MAKE} clean

@@ -1,22 +1,18 @@
 #Makefile for GCC
 #
 #Tom St Denis
-VERSION=0:42
+
+#default files to install
+ifndef LIBNAME
+   LIBNAME=libtommath.la
+endif
 
 include makefile.include
 
 LT	?= libtool
 LTCOMPILE = $(LT) --mode=compile --tag=CC $(CC)
 
-default: libtommath.la
-
-#default files to install
-ifndef LIBNAME
-   LIBNAME=libtommath.la
-endif
-ifndef LIBNAME_S
-   LIBNAME_S=libtommath.a
-endif
+LCOV_ARGS=--directory .libs --directory .
 
 #START_INS
 OBJECTS=bncore.o bn_error.o bn_fast_mp_invmod.o bn_fast_mp_montgomery_reduce.o bn_fast_s_mp_mul_digs.o \
@@ -52,12 +48,12 @@ objs: $(OBJECTS)
 	$(LTCOMPILE) $(CFLAGS) $(LDFLAGS) -o $@ -c $<
 
 $(LIBNAME):  $(OBJECTS)
-	$(LT) --mode=link --tag=CC $(CC) $(LDFLAGS) *.lo -o $(LIBNAME) -rpath $(LIBPATH) -version-info $(VERSION)
+	$(LT) --mode=link --tag=CC $(CC) $(LDFLAGS) *.lo -o $(LIBNAME) -rpath $(LIBPATH) -version-info $(VERSION_SO)
 
 install: $(LIBNAME)
 	install -d $(DESTDIR)$(LIBPATH)
-	$(LT) --mode=install install -c $(LIBNAME) $(DESTDIR)$(LIBPATH)/$(LIBNAME)
 	install -d $(DESTDIR)$(INCPATH)
+	$(LT) --mode=install install -c $(LIBNAME) $(DESTDIR)$(LIBPATH)/$(LIBNAME)
 	install -m 644 $(HEADERS_PUB) $(DESTDIR)$(INCPATH)
 
 test: $(LIBNAME) demo/demo.o
@@ -72,4 +68,4 @@ mtest:
 	cd mtest ; $(CC) $(CFLAGS) $(LDFLAGS) mtest.c -o mtest
 
 timing: $(LIBNAME)
-	$(LT) --mode=link $(CC) $(CFLAGS) $(LDFLAGS) -DTIMER demo/timing.c $(LIBNAME_S) -o ltmtest
+	$(LT) --mode=link $(CC) $(CFLAGS) $(LDFLAGS) -DTIMER demo/timing.c $(LIBNAME) -o ltmtest
