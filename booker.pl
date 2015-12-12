@@ -28,13 +28,13 @@ while (<IN>) {
    if (!(++$x % 80)) { print "\n"; }
    #update the headings
    if (~($_ =~ /\*/)) {
-      if ($_ =~ /\\chapter{.+}/) {
+      if ($_ =~ /\\chapter\{.+}/) {
           ++$chapter;
           $section = $subsection = 0;
-      } elsif ($_ =~ /\\section{.+}/) {
+      } elsif ($_ =~ /\\section\{.+}/) {
           ++$section;
           $subsection = 0;
-      } elsif ($_ =~ /\\subsection{.+}/) {
+      } elsif ($_ =~ /\\subsection\{.+}/) {
           ++$subsection;
       }
    }

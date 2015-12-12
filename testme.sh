@@ -9,7 +9,7 @@ set -e
 
 if [ -f /proc/cpuinfo ]
 then
-  MAKE_JOBS=$(( ($(cat /proc/cpuinfo | grep processor | tail -n -1 | cut -d':' -f2) + 1) * 2 + 1 ))
+  MAKE_JOBS=$(( ($(cat /proc/cpuinfo | grep -E '^processor[[:space:]]*:' | tail -n -1 | cut -d':' -f2) + 1) * 2 + 1 ))
 else
   MAKE_JOBS=8
 fi
