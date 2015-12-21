@@ -60,7 +60,7 @@ int mp_toom_cook_5_sqr(mp_int * a, mp_int * c)
     a4.dp[j] = a->dp[count];
   }
   a4.used = j;
-
+  mp_clamp(&a0);mp_clamp(&a1);mp_clamp(&a2);mp_clamp(&a3);mp_clamp(&a4);
 // S1 = a0^2
   if ((e = mp_sqr(&a0, &w1)) != MP_OKAY) {
     goto ERR;

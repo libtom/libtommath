@@ -63,6 +63,7 @@ int mp_toom_cook_4_sqr(mp_int * a, mp_int * c)
       break;
     }
   }
+  mp_clamp(&a0);mp_clamp(&a1);mp_clamp(&a2);mp_clamp(&a3);
 // w1 = a0^2
   if ((e = mp_sqr(&a0, &w1)) != MP_OKAY) {
     goto ERR;

@@ -122,6 +122,7 @@ int mp_div(mp_int * a, mp_int * b, mp_int * c, mp_int * d)
      *       example but a lower limit depending on the ratio and the absolute
      *       value of the numerator.
      */
+
     if (b->used >= NEWTON_DEN_CUTOFF) {
 	if ((res = mp_init_copy(&x, a)) != MP_OKAY) {
 	    return res;

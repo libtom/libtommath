@@ -92,6 +92,7 @@ int mp_toom_cook_5_mul(mp_int * a, mp_int * b, mp_int * c)
       break;
     }
   }
+  mp_clamp(&a0);mp_clamp(&a1);mp_clamp(&a2);mp_clamp(&a3);mp_clamp(&a4);
   // B = b4*x^4 + b3*x^3 + b2*x^2 + b1*x + b0
   for (count = 0; count < b->used; count++) {
     switch (count / B) {
@@ -121,7 +122,7 @@ int mp_toom_cook_5_mul(mp_int * a, mp_int * b, mp_int * c)
       break;
     }
   }
-
+  mp_clamp(&b0);mp_clamp(&b1);mp_clamp(&b2);mp_clamp(&b3);mp_clamp(&b4);
 
 
 /*

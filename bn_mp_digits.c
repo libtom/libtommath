@@ -21,13 +21,13 @@ long mp_digits(mp_int * a, int base)
 	log210 = 3.0;
 	break;
     case 10:
-	log210 = 3.321928094887362347870319429489390175865;
+	log210 = 3.3219280948873623478703194294893901759;
 	break;
     case 16:
 	log210 = 4.0;
 	break;
     default:
-	log210 = log(bits) / log(2.0);
+	log210 = bits / (log(base)/log(2.0));
 	break;
     }
     return (long) (floor(bits / log210));

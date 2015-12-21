@@ -198,6 +198,7 @@ town:
     res = mp_toom_cook_5_mul(a, b, c);
   } else 
 #endif
+
 #ifdef BN_MP_TOOM_COOK_4_MUL_C
   if (MIN (a->used, b->used) >= TOOM_COOK_4_MUL_CO) {
     res = mp_toom_cook_4_mul(a, b, c);
