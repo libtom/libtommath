@@ -952,7 +952,7 @@ The number of digits $b$ requested is padded (line @22,MP_PREC@) by first augmen
 mp\_int is placed in a default state representing the integer zero.  Otherwise, the error code \textbf{MP\_MEM} will be
 returned (line @27,return@).
 
-The digits are allocated and set to zero at the same time with the calloc() function (line @25,XCALLOC@).  The
+The digits are allocated with the malloc() function (line @27,XMALLOC@) and set to zero afterwards (line @38,for@).  The
 \textbf{used} count is set to zero, the \textbf{alloc} count set to the padded digit count and the \textbf{sign} flag set
 to \textbf{MP\_ZPOS} to achieve a default valid mp\_int state (lines @29,used@, @30,alloc@ and @31,sign@).  If the function
 returns succesfully then it is correct to assume that the mp\_int structure is in a valid state for the remainder of the
@@ -4653,7 +4653,7 @@ A simple modification to the previous algorithm is only generate the upper half 
 this is a table for all values of $g$ where the most significant bit of $g$ is a one.  However, in order for this to be allowed in the
 algorithm values of $g$ in the range $0 \le g < 2^{k-1}$ must be avoided.
 
-Table~\ref{fig:OPTK2} lists optimal values of $k$ for various exponent sizes and compares the work required against algorithm~\ref{fig:KARY}.
+Table~\ref{fig:OPTK2} lists optimal values of $k$ for various exponent sizes and compares the work required against algorithm {\ref{fig:KARY}}.
 
 \begin{figure}[here]
 \begin{center}
@@ -5369,7 +5369,7 @@ EXAM,bn_mp_div_d.c
 Like the implementation of algorithm mp\_div this algorithm allows either of the quotient or remainder to be passed as a \textbf{NULL} pointer to
 indicate the respective value is not required.  This allows a trivial single digit modular reduction algorithm, mp\_mod\_d to be created.
 
-The division and remainder on lines @44,/@ and @45,%@ can be replaced often by a single division on most processors.  For example, the 32-bit x86 based
+The division and remainder on lines @90,/@ and @91,-@ can be replaced often by a single division on most processors.  For example, the 32-bit x86 based
 processors can divide a 64-bit quantity by a 32-bit quantity and produce the quotient and remainder simultaneously.  Unfortunately the GCC
 compiler does not recognize that optimization and will actually produce two function calls to find the quotient and remainder respectively.
 
