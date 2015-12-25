@@ -48,7 +48,7 @@ objs: $(OBJECTS)
 	$(LTCOMPILE) $(CFLAGS) $(LDFLAGS) -o $@ -c $<
 
 $(LIBNAME):  $(OBJECTS)
-	$(LT) --mode=link --tag=CC $(CC) $(LDFLAGS) *.lo -o $(LIBNAME) -rpath $(LIBPATH) -version-info $(VERSION_SO)
+	$(LT) --mode=link --tag=CC $(CC) $(LDFLAGS) *.lo -o $(LIBNAME) -rpath $(LIBPATH) -version-info $(VER_MAJOR):$(VER_MINOR)
 
 install: $(LIBNAME)
 	install -d $(DESTDIR)$(LIBPATH)

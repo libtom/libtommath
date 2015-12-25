@@ -169,11 +169,12 @@ pre_gen:
 	rm mpi.c
 
 zipup:
-	rm -rf ../libtommath-$(VERSION) && rm -f ../ltm-$(VERSION).zip ../ltm-$(VERSION).tar.bz2
-	git archive HEAD --prefix=libtommath-$(VERSION)/ > ../libtommath-$(VERSION).tar
-	cd .. ; tar xf libtommath-$(VERSION).tar 
-	MAKE=${MAKE} ${MAKE} -C ../libtommath-$(VERSION) clean manual poster docs
-	tar -c ../libtommath-$(VERSION)/* | xz -9 > ../ltm-$(VERSION).tar.xz 
+	rm -rf ../libtommath-$(VER_MAJOR).$(VER_MINOR).$(VER_PATCH) \
+		&& rm -f ../ltm-$(VER_MAJOR).$(VER_MINOR).$(VER_PATCH).zip ../ltm-$(VER_MAJOR).$(VER_MINOR).$(VER_PATCH).tar.bz2
+	git archive HEAD --prefix=libtommath-$(VER_MAJOR).$(VER_MINOR).$(VER_PATCH)/ > ../libtommath-$(VER_MAJOR).$(VER_MINOR).$(VER_PATCH).tar
+	cd .. ; tar xf libtommath-$(VER_MAJOR).$(VER_MINOR).$(VER_PATCH).tar
+	MAKE=${MAKE} ${MAKE} -C ../libtommath-$(VER_MAJOR).$(VER_MINOR).$(VER_PATCH) clean manual poster docs
+	tar -c ../libtommath-$(VER_MAJOR).$(VER_MINOR).$(VER_PATCH)/* | xz -9 > ../ltm-$(VER_MAJOR).$(VER_MINOR).$(VER_PATCH).tar.xz
 
 new_file:
 	bash updatemakes.sh
