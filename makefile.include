@@ -90,9 +90,6 @@ lcov: coverage
 	lcov --capture --no-external --no-recursion $(LCOV_ARGS) --output-file coverage.info -q
 	genhtml coverage.info --output-directory coverage -q
 
-coveralls: coverage
-	cpp-coveralls
-
 # target that removes all coverage output
 cleancov-clean:
 	rm -f `find . -type f -name "*.info" | xargs`

@@ -10,7 +10,7 @@ Debug/
 Release/
 .libs/
 .coveralls.yml
-coverage/
+coverage*/
 coverage.info
 
 # suppress output of build process and *nix/windows test executables

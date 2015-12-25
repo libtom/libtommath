@@ -97,6 +97,9 @@ mtest:
 timing: $(LIBNAME)
 	$(CC) $(CFLAGS) -DTIMER demo/timing.c $(LIBNAME) $(LFLAGS) -o ltmtest
 
+coveralls: coverage
+	cpp-coveralls
+
 # makes the LTM book DVI file, requires tetex, perl and makeindex [part of tetex I think]
 docdvi: tommath.src
 	cd pics ; MAKE=${MAKE} ${MAKE}
