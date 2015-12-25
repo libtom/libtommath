@@ -55,6 +55,15 @@ endif
 endif # COMPILE_SIZE
 endif # COMPILE_DEBUG
 
+# adjust coverage set
+ifneq ($(filter $(shell arch), i386 i686 x86_64 amd64 ia64),)
+   COVERAGE = test_standalone timing
+   COVERAGE_APP = ./test && ./ltmtest
+else
+   COVERAGE = test_standalone
+   COVERAGE_APP = ./test
+endif
+
 HEADERS_PUB=tommath.h tommath_class.h tommath_superclass.h
 HEADERS=tommath_private.h $(HEADERS_PUB)
 
@@ -73,9 +82,8 @@ coverage: CFLAGS += -fprofile-arcs -ftest-coverage -DTIMING_NO_LOGS
 coverage: LFLAGS += -lgcov
 coverage: LDFLAGS += -lgcov
 
-coverage: test_standalone timing
-	./test
-	./ltmtest
+coverage: $(COVERAGE)
+	$(COVERAGE_APP)
 
 lcov: coverage
 	rm -f coverage.info
