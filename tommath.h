@@ -32,6 +32,23 @@
    #define MAX(x,y) ((x)>(y)?(x):(y))
 #endif
 
+// Set a macro flagging 64 bit environment
+// TODO: add more
+#if _WIN32 || _WIN64
+#   if _WIN64
+#      define _ITS_64_BIT_
+#   else
+#      define _ITS_32_BIT_
+#   endif
+#elif __GNUC__
+#   if __x86_64__ || __ppc64__
+#      define _ITS_64_BIT_
+#   else
+#      define _ITS_32_BIT_
+#   endif
+#endif   
+
+
 #ifdef __cplusplus
 extern "C" {
 
@@ -756,6 +773,8 @@ int mp_giantsteps(int start, int end, int stepsize, int **precs, int *steps);
 int mp_ilogb(mp_int * a, mp_int * base, mp_int * c);
 int mp_ilogb_d(mp_int * a, int base, mp_int * c);
 
+void free_schoenhage_cache();
+int mp_get_str(mp_int *a, char *string, int digits, int base);
 
 /* End of additions by CZ */
 
