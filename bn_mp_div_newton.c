@@ -71,7 +71,7 @@ int mp_div_newton(mp_int * a, mp_int * b, mp_int * c, mp_int * d)
 	goto _ERR;
     }
     for (i = 0; i < steps; i++) {
-	gsi = *precs;printf("gsi  %d\n",gsi);
+	gsi = *precs;
 	precs++;
 	// Adjust numerator (2^k) to new precision
 	if ((err = lsh(&t1, gsi - gs0 + 1, &t3)) != MP_OKAY) {
