@@ -114,7 +114,7 @@ static int mp_get_str_intern(mp_int * a, char *string, int digits, int base)
   }
 
   if (schoenhagecache_len == 0) {
-    schoenhagecache = malloc(32 * sizeof(mp_int));
+    schoenhagecache = malloc( (sizeof(int) * CHAR_BIT) * sizeof(mp_int) );
     if (schoenhagecache == NULL) {
       return MP_MEM;
     }
