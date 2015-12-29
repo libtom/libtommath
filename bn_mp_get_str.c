@@ -60,6 +60,18 @@ static int SCHOENHAGE_CONVERSION_CUT = 10;
 
 static mp_int *schoenhagecache;
 static int schoenhagecache_len;
+static const int log_table[65] = {
+  0, 0, 1, 1, 2, 2, 2, 2,
+  3, 3, 3, 3, 3, 3, 3, 3,
+  4, 4, 4, 4, 4, 4, 4, 4,
+  4, 4, 4, 4, 4, 4, 4, 4,
+  4, 5, 5, 5, 5, 5, 5, 5,
+  5, 5, 5, 5, 5, 5, 5, 5,
+  5, 5, 5, 5, 5, 5, 5, 5,
+  5, 5, 5, 5, 5, 5, 5, 5,
+  6
+};
+
 
 static int mp_get_str_intern(mp_int * a, char *string, int digits, int base)
 {
@@ -95,7 +107,7 @@ static int mp_get_str_intern(mp_int * a, char *string, int digits, int base)
   }
 
   b = mp_count_bits(a);
-  n = ilog2(b / 6) - 1;
+  n = ilog2(b / (2 * log_table[base])) - 1;
 
   if (n >= (int) (sizeof(int) * CHAR_BIT) - 1) {
     return MP_VAL;
