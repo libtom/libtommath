@@ -67,12 +67,11 @@ int mp_div_newton(mp_int * a, mp_int * b, mp_int * c, mp_int * d)
     if ((err = mp_div_2d(b, blen - gs0, &t2, NULL)) != MP_OKAY) {
 	goto _ERR;
     }
-    if ((err = mp_div(&t1, &t2, &t1, NULL)) != MP_OKAY) {
+    if ((err = mp_div_bz(&t1, &t2, &t1, NULL)) != MP_OKAY) {
 	goto _ERR;
     }
-
     for (i = 0; i < steps; i++) {
-	gsi = *precs;
+	gsi = *precs;printf("gsi  %d\n",gsi);
 	precs++;
 	// Adjust numerator (2^k) to new precision
 	if ((err = lsh(&t1, gsi - gs0 + 1, &t3)) != MP_OKAY) {
