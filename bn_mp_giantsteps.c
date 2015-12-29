@@ -37,7 +37,7 @@ int mp_giantsteps(int start, int end, int stepsize, int **precs, int *steps)
 	    break;
 	}
 	i++;
-	t = (t / stepsize) + 2;
+	t = (t / stepsize) ;
     }
 
     *precs = malloc(i * sizeof(int));
