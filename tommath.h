@@ -775,7 +775,7 @@ int mp_ilogb_d(mp_int * a, int base, mp_int * c);
 
 void free_schoenhage_cache();
 int mp_get_str(mp_int *a, char *string, int digits, int base);
-
+int mp_set_str(mp_int * a, const char *string, int base);
 /* End of additions by CZ */
 
 extern const char *mp_s_rmap;
@@ -790,3 +790,4 @@ extern const char *mp_s_rmap;
 /* $Source$ */
 /* $Revision: 0.39 $ */
 /* $Date: 2006-04-06 19:49:59 +0000 $ */
+

@@ -113,7 +113,7 @@ bn_mp_div_bz.o\
 bn_mp_div_newton.o\
 bn_mp_giantsteps.o\
 bn_mp_ilogb_d.o bn_mp_ilogb.o\
-bn_mp_get_str.o
+bn_mp_get_str.o bn_mp_set_str.o
 
 
 $(LIBNAME):  $(OBJECTS)

@@ -153,6 +153,7 @@
 #define BN_MP_SET_C
 #define BN_MP_SET_DOUBLE_C
 #define BN_MP_SET_INT_C
+#define BN_MP_SET_STR_C
 #define BN_MP_SET_WORD_C
 #define BN_MP_SHRINK_C
 #define BN_MP_SIGNED_BIN_SIZE_C
@@ -475,7 +476,7 @@
    #define BN_MP_INIT_MULTI_C
    #define BN_MP_GIANTSTEPS_C
    #define BN_MP_SET_C
-   #define BN_MP_DIV_C
+   #define BN_MP_DIV_BZ_C
    #define BN_MP_SQR_C
    #define BN_MP_MUL_C
    #define BN_MP_SUB_C
@@ -718,12 +719,17 @@
 #endif
 
 #if defined(BN_MP_GET_STR_C)
+   #define BN_MP_GET_STR_INTERN_C
    #define BN_MP_DIGITS_C
    #define BN_MP_TORADIX_C
    #define BN_MP_COUNT_BITS_C
    #define BN_MP_INIT_SET_C
+   #define BN_MP_INIT_C
+   #define BN_MP_SQR_C
    #define BN_MP_INIT_MULTI_C
-   #define BN_MP_EXPT_D_C
+   #define BN_MP_DIV_C
+   #define BN_MP_CLEAR_MULTI_C
+   #define BN_MP_CLEAR_C
 #endif
 
 #if defined(BN_MP_GIANTSTEPS_C)
@@ -1346,6 +1352,18 @@
    #define BN_MP_ZERO_C
    #define BN_MP_MUL_2D_C
    #define BN_MP_CLAMP_C
+#endif
+
+#if defined(BN_MP_SET_STR_C)
+   #define BN_MP_SET_STR_INTERN_C
+   #define BN_MP_READ_RADIX_C
+   #define BN_MP_INIT_SET_C
+   #define BN_MP_INIT_MULTI_C
+   #define BN_MP_CLEAR_C
+   #define BN_MP_EXPT_D_C
+   #define BN_MP_MUL_C
+   #define BN_MP_ADD_C
+   #define BN_MP_CLEAR_MULTI_C
 #endif
 
 #if defined(BN_MP_SET_WORD_C)
