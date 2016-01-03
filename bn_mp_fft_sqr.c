@@ -1,5 +1,5 @@
 #include <tommath.h>
-#ifdef BN_MP_FFT_SQR_C_NOT
+#ifdef BN_MP_FFT_SQR_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is a library that provides multiple-precision
@@ -17,9 +17,7 @@
 
 /* Multiplication with FHT convolution */
 
-#ifndef  MP_28BIT
-  #error only for 28 bit digits for now
-#endif
+#if defined ( MP_28BIT) || defined (MP_64BIT)
 
 int mp_fft_sqr(mp_int *a,mp_int *c){
   double *fa, *fb;
@@ -58,5 +56,10 @@ int mp_fft_sqr(mp_int *a,mp_int *c){
   free(fa);
   return MP_OKAY;
 }
+
+
+#else
+  #error only for 28 bit digits for now
+#endif
 
 #endif

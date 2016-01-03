@@ -16,6 +16,7 @@ endif
 ifndef IGNORE_SPEED
 
 #for speed 
+#CFLAGS += -g3 -O3 -funroll-loops -fopenmp -DUSE_OPEN_MP
 CFLAGS += -g3 -O3 -funroll-loops
 
 #for size 

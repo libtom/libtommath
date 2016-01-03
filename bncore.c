@@ -36,9 +36,9 @@ int        TOOM_COOK_4_SQR_CO   = 2400;
 int        TOOM_COOK_5_MUL_CO   = 1200;
 int        TOOM_COOK_5_SQR_CO   = 3600;
         /* No single numbers possible with the current implementation */
-int        FFT_MUL_CUTOFF       = 512;
-int        FFT_UPPER_LIMIT      = 1<<23;    /* less than actual limit */
-int        FFT_SQR_CUTOFF       = 768;
+int        FFT_MUL_CUTOFF       = 1<<11; // 11
+int        FFT_UPPER_LIMIT      = 1<<15; /* less than theoretical limit (20 for 60 and 21 for 28) */
+int        FFT_SQR_CUTOFF       = 1<<5;// 2^10
 
 /* 
    Minimum size of the denominator for Burnikel-Ziegler division used
@@ -48,7 +48,7 @@ int        FFT_SQR_CUTOFF       = 768;
    overhead, hence the 10 limbs for angst-allowance.
    
    Published for easier changing because: YMMV and it easier this way.
-   If somebody has changed this file already: teh magic number 48 is the
+   If somebody has changed this file already: the magic number 48 is the
    value of the KARATSUBA_MUL_CUTOFF of the author's machine.
    Please adjust accordingly
 */

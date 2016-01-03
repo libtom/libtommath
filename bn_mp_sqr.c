@@ -119,13 +119,13 @@ int il2,extra;
 #endif
 #endif
 town:
-#ifdef BN_MP_TOOM_COOK_5_SQR_C_NOT
+#ifdef BN_MP_TOOM_COOK_5_SQR_C
   if (a->used >= TOOM_COOK_5_SQR_CO) {
     res = mp_toom_cook_5_sqr(a, b);
   } else 
 #endif
 
-#ifdef BN_MP_TOOM_COOK_4_SQR_C_NOT
+#ifdef BN_MP_TOOM_COOK_4_SQR_C
   if (a->used >= TOOM_COOK_4_SQR_CO) {
     res = mp_toom_cook_4_sqr(a, b);
   } else 
@@ -140,7 +140,7 @@ town:
 #endif
 #ifdef BN_MP_KARATSUBA_SQR_C
 if (a->used >= KARATSUBA_SQR_CUTOFF) {
-    res = mp_karatsuba_sqr (a, b);
+   res = mp_karatsuba_sqr (a, b);
   } else 
 #endif
   {

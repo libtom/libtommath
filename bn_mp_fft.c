@@ -1,5 +1,5 @@
 #include <tommath.h>
-#ifdef BN_MP_FFT_C_NOT
+#ifdef BN_MP_FFT_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is a library that provides multiple-precision
@@ -17,9 +17,8 @@
 
 /* Multiplication with FHT convolution - core functions */
 
-#ifndef  MP_28BIT
-  #warning only for 28 bit digits for now
-#endif
+#ifdef  MP_28BIT
+
 
 #include <math.h>
 
@@ -67,6 +66,7 @@ int mp_dp_to_fft(mp_int *a, double **fa,
      return MP_MEM;
    }
    /* Put splitted digits in double-array, in the same order as in mp_int */
+
    for(i = 0,j=0;i<length_needed/2;i++,j+=2){
       if(i < length_a){
         fft_array_a[j]   = (double) (a->dp[i]                        & MP_DIGIT_MASK);
@@ -173,6 +173,267 @@ int mp_fft_to_dp(double *fft_array, mp_int *a,int length){
     mp_clamp(a);
     return MP_OKAY;
 }
+
+
+#elif (defined MP_64BIT)
+
+#include <math.h>
+/* 60 bit long limbs with 64 bit machines, so we need a quarter (15 bits) */
+#define MP_DIGIT_SIZE (1L<<DIGIT_BIT)
+#define MP_DIGIT_BIT_QUARTER (DIGIT_BIT>>2)
+#define MP_DIGIT_QUARTER (1L<< MP_DIGIT_BIT_QUARTER )
+#define MP_DIGIT_MASK (MP_DIGIT_QUARTER-1)
+
+
+/* base two integer logarithm */
+static int highbit(int n){
+  int r=0;
+  int m=n;
+  while (m >>= 1) {
+    r++;
+  }
+  return r;
+}
+/* Transform multiplicands into floating point numbers with half sized digits*/
+int mp_dp_to_fft(mp_int *a, double **fa,
+              mp_int *b, double **fb, int *length){
+   int length_a, length_b, length_needed, i,j, hb;
+   double *fft_array_a,*fft_array_b;
+
+   /* Check of the multiplicands happens earlier */
+   length_a = a->used;
+   length_b = b->used;
+
+   /* Digits get split in quarter, so four times the length is needed*/
+   length_needed = ( (length_a + length_b)  )*4 ;
+   /* final length must be a power of two to keep the FFTs simple */
+   hb = highbit((unsigned  long) length_needed );
+   /* check for the rare case that it is already a power of 2 */
+   if(length_needed != 1<<hb){
+     length_needed = 1<<(hb+1);
+   }
+   /* Send computed length back to caller */
+   *length = length_needed;
+
+   fft_array_a = XMALLOC(sizeof(double) * length_needed);
+   if(fft_array_a == NULL){
+     return MP_MEM;
+   }
+   fft_array_b = XMALLOC(sizeof(double) * length_needed);
+   if(fft_array_b == NULL){
+     return MP_MEM;
+   }
+
+   j=0;
+#ifdef USE_OPEN_MP
+#include <omp.h>
+
+#pragma omp parallel for shared(a,b,fft_array_a) private(i)
+   /* Put splitted digits in double-array, in the same order as in mp_int */
+   for(i = 0;i<length_needed/4;i++){
+      if(i < length_a){
+        fft_array_a[(4*i)]   = (double) (a->dp[i]                               & MP_DIGIT_MASK);
+        fft_array_a[(4*i)+1] = (double)((a->dp[i] >>    MP_DIGIT_BIT_QUARTER  ) & MP_DIGIT_MASK);
+        fft_array_a[(4*i)+2] = (double)((a->dp[i] >> (2*MP_DIGIT_BIT_QUARTER) ) & MP_DIGIT_MASK);
+        fft_array_a[(4*i)+3] = (double)((a->dp[i] >> (3*MP_DIGIT_BIT_QUARTER) ) & MP_DIGIT_MASK);
+      }
+      /* padding a */
+      if(i >= length_a){
+        fft_array_a[(4*i)]   = 0.0;
+        fft_array_a[(4*i)+1] = 0.0;
+        fft_array_a[(4*i)+2] = 0.0;
+        fft_array_a[(4*i)+3] = 0.0;
+      }
+      if(i < length_b){
+        fft_array_b[(4*i)]   = (double) (b->dp[i]                               & MP_DIGIT_MASK);
+        fft_array_b[(4*i)+1] = (double)((b->dp[i] >>    MP_DIGIT_BIT_QUARTER  ) & MP_DIGIT_MASK);
+        fft_array_b[(4*i)+2] = (double)((b->dp[i] >> (2*MP_DIGIT_BIT_QUARTER) ) & MP_DIGIT_MASK);
+        fft_array_b[(4*i)+3] = (double)((b->dp[i] >> (3*MP_DIGIT_BIT_QUARTER) ) & MP_DIGIT_MASK);
+      }
+      /* padding b */
+      if(i >= length_b){
+        fft_array_b[(4*i)]   = 0.0;
+        fft_array_b[(4*i)+1] = 0.0;
+        fft_array_b[(4*i)+2] = 0.0;
+        fft_array_b[(4*i)+3] = 0.0;
+      }
+   }
+#else
+   /* Put splitted digits in double-array, in the same order as in mp_int */
+   for(i = 0,j=0;i<length_needed/4;i++,j+=4){
+      if(i < length_a){
+        fft_array_a[j]   = (double) (a->dp[i]                               & MP_DIGIT_MASK);
+        fft_array_a[j+1] = (double)((a->dp[i] >>    MP_DIGIT_BIT_QUARTER  ) & MP_DIGIT_MASK);
+        fft_array_a[j+2] = (double)((a->dp[i] >> (2*MP_DIGIT_BIT_QUARTER) ) & MP_DIGIT_MASK);
+        fft_array_a[j+3] = (double)((a->dp[i] >> (3*MP_DIGIT_BIT_QUARTER) ) & MP_DIGIT_MASK);
+      }
+      /* padding a */
+      if(i >= length_a){
+        fft_array_a[j]   = 0.0;
+        fft_array_a[j+1] = 0.0;
+        fft_array_a[j+2] = 0.0;
+        fft_array_a[j+3] = 0.0;
+      }
+      if(i < length_b){
+        fft_array_b[j]   = (double) (b->dp[i]                               & MP_DIGIT_MASK);
+        fft_array_b[j+1] = (double)((b->dp[i] >>    MP_DIGIT_BIT_QUARTER  ) & MP_DIGIT_MASK);
+        fft_array_b[j+2] = (double)((b->dp[i] >> (2*MP_DIGIT_BIT_QUARTER) ) & MP_DIGIT_MASK);
+        fft_array_b[j+3] = (double)((b->dp[i] >> (3*MP_DIGIT_BIT_QUARTER) ) & MP_DIGIT_MASK);
+      }
+      /* padding b */
+      if(i >= length_b){
+        fft_array_b[j]   = 0.0;
+        fft_array_b[j+1] = 0.0;
+        fft_array_b[j+2] = 0.0;
+        fft_array_b[j+3] = 0.0;
+      }
+   }
+#endif
+
+   /* Send the route to memory back to caller */
+   *fa = fft_array_a;
+   *fb = fft_array_b;
+   return MP_OKAY;
+}
+
+
+/* same as dp_to_fft() for a single multiplicand for squaring */
+int mp_dp_to_fft_single(mp_int *a, double **fa, int *length){
+   int length_a,  length_needed, i,j, hb;
+   double *fft_array_a;
+   length_a = a->used;
+   length_needed = ( length_a * 2   )*4 ;
+   hb = highbit((unsigned  long) length_needed );
+   if(length_needed != 1<<hb){
+     length_needed = 1<<(hb+1);
+   }
+   *length = length_needed;
+   fft_array_a = XMALLOC(sizeof(double) * length_needed);
+   if(fft_array_a == NULL){
+     return MP_MEM;
+   }
+   j = 0;
+#ifdef USE_OPEN_MP
+#include <omp.h>
+
+#pragma omp parallel for shared(a,fft_array_a) private(i)
+   for(i = 0;i<length_needed/4;i++){
+      if(i < length_a){
+        fft_array_a[(4*i)]   = (double) (a->dp[i]                        & MP_DIGIT_MASK);
+        fft_array_a[(4*i)+1] = (double)((a->dp[i] >> MP_DIGIT_BIT_QUARTER ) & MP_DIGIT_MASK);
+        fft_array_a[(4*i)+2] = (double)((a->dp[i] >> (2*MP_DIGIT_BIT_QUARTER) ) & MP_DIGIT_MASK);
+        fft_array_a[(4*i)+3] = (double)((a->dp[i] >> (3*MP_DIGIT_BIT_QUARTER) ) & MP_DIGIT_MASK);
+      }
+      if(i >= length_a){
+        fft_array_a[(4*i)]   = 0.0;
+        fft_array_a[(4*i)+1] = 0.0;
+        fft_array_a[(4*i)+2] = 0.0;
+        fft_array_a[(4*i)+3] = 0.0;
+      }
+      //#pragma omp critical
+      j+=4;
+   }
+#else
+   for(i = 0,j=0;i<length_needed/4;i++,j+=4){
+      if(i < length_a){
+        fft_array_a[j]   = (double) (a->dp[i]                        & MP_DIGIT_MASK);
+        fft_array_a[j+1] = (double)((a->dp[i] >> MP_DIGIT_BIT_QUARTER ) & MP_DIGIT_MASK);
+        fft_array_a[j+2] = (double)((a->dp[i] >> (2*MP_DIGIT_BIT_QUARTER) ) & MP_DIGIT_MASK);
+        fft_array_a[j+3] = (double)((a->dp[i] >> (3*MP_DIGIT_BIT_QUARTER) ) & MP_DIGIT_MASK);
+      }
+      if(i >= length_a){
+        fft_array_a[j]   = 0.0;
+        fft_array_a[j+1] = 0.0;
+        fft_array_a[j+2] = 0.0;
+        fft_array_a[j+3] = 0.0;
+      }
+   }
+#endif
+   *fa = fft_array_a;
+   return MP_OKAY;
+}
+
+int mp_fft_to_dp(double *fft_array, mp_int *a,int length){
+    int new_length, i,j,e;
+    mp_word carry = 0,temp;
+
+    /* Result cannot exceed length/2, hence add two */
+    new_length = length;
+
+    /* Preallocate some memory for the result. */
+    if (a->alloc < new_length  ) {
+      if ((e = mp_grow (a, new_length  )) != MP_OKAY) {
+        return e;
+      }
+    }
+
+    /* The FFT multiplication does no carry (it's one of the tricks of it) */
+
+    /* Hard to paralellize because of the carry */
+    for(i=0;i<length;i++){
+      temp = carry;
+      carry = 0;
+      temp  += (mp_word)(round(fft_array[i]));
+      if(temp >= MP_DIGIT_QUARTER){
+        carry = temp / (mp_word)MP_DIGIT_QUARTER;
+        temp  = temp % (mp_word)MP_DIGIT_QUARTER;
+      }
+      /* memory is still expensive, not a thing to waste easily */
+      fft_array[i] = (double)temp;
+    }
+
+#if __STDC_VERSION__ >= 199901L
+#define NEEDS_FE_RESET 1
+  #include <fenv.h>
+  fenv_t envp;
+  /* backup of floating point environment settings */
+  if(fegetenv( &envp )) return MP_VAL;
+  /* Set rounding mode to "nearest". Default, but better safe than sorry */
+  if(fesetround(FE_TONEAREST)) return MP_VAL;
+#endif
+
+#ifdef USE_OPEN_MP
+#include <omp.h>
+#pragma omp parallel for shared(fft_array,a)
+    for(i=0;i<new_length/4;i++){
+      a->dp[i]  = (mp_digit)(round(fft_array[(4*i)+3]))  & MP_DIGIT_MASK;
+      a->dp[i] <<= MP_DIGIT_BIT_QUARTER;
+      a->dp[i] |= (mp_digit)(round(fft_array[(4*i)+2]))  & MP_DIGIT_MASK;
+      a->dp[i] <<= MP_DIGIT_BIT_QUARTER;
+      a->dp[i] |= (mp_digit)(round(fft_array[(4*i)+1]))  & MP_DIGIT_MASK;
+      a->dp[i] <<= MP_DIGIT_BIT_QUARTER;
+      a->dp[i] |= (mp_digit)(round(fft_array[(4*i)]))    & MP_DIGIT_MASK;
+      #pragma omp atomic
+      a->used++;
+    }
+#else
+    /* re-marry the digits */
+    for(i=0,j=0;j<new_length;i++,j+=4){
+      a->dp[i]  = (mp_digit)(round(fft_array[j+3]))  & MP_DIGIT_MASK;
+      a->dp[i] <<= MP_DIGIT_BIT_QUARTER;
+      a->dp[i] |= (mp_digit)(round(fft_array[j+2]))  & MP_DIGIT_MASK;
+      a->dp[i] <<= MP_DIGIT_BIT_QUARTER;
+      a->dp[i] |= (mp_digit)(round(fft_array[j+1]))  & MP_DIGIT_MASK;
+      a->dp[i] <<= MP_DIGIT_BIT_QUARTER;
+      a->dp[i] |= (mp_digit)(round(fft_array[j]))    & MP_DIGIT_MASK;
+      /* and count them all */
+      a->used++;
+    }
+#endif
+    if(carry){
+      a->dp[i] = carry;
+      a->used++;
+    }
+    mp_clamp(a);
+    return MP_OKAY;
+}
+
+/* ifdef MP_28bit or MP_64BIT*/
+/* TODO: MP_8BIT would work, of course, but MP_16BIT is a bit large*/
+#else
+#error unsupported for now 
+#endif
+
 /*
   The size of the L1-cache in bytes. The nmber here is that of the data cache
   part of an AMD Duron. The Linux kernel gives a lot of information e.g.:
@@ -276,6 +537,27 @@ static void fht_dif_iterative(double *x, unsigned long n, int do_loop)
   functions in "am" from above to make the actual FFT function easier replacable
   with others e.g.: those in "src/transform.c". They are legible now, too.
 */
+#ifdef USE_OPEN_MP
+#include <omp.h>
+static void fht_dif_rec(double *x, unsigned long n)
+{
+    unsigned long nh;
+    if (n == 1)
+        return;
+    if (n < (unsigned long)(L1_SIZE / (2 * sizeof(double)))) {
+        fht_dif_iterative(x, (n),1);
+        return;
+    }
+    fht_dif_iterative(x, (n),0);
+    nh = n >> 1;
+       #pragma omp task shared(x,nh)
+       fht_dif_rec(x, nh);
+       #pragma omp task shared(x,nh)
+       fht_dif_rec(x + nh, nh);
+       #pragma omp taskwait
+    return;
+}
+#else
 static void fht_dif_rec(double *x, unsigned long n)
 {
     unsigned long nh;
@@ -291,6 +573,7 @@ static void fht_dif_rec(double *x, unsigned long n)
     fht_dif_rec(x + nh, nh);
     return;
 }
+#endif
 /* The iterative Hartley transform, decimation in time. Description above */
 static void fht_dit_iterative(double *x, unsigned long n, int do_loop)
 {
@@ -332,6 +615,29 @@ static void fht_dit_iterative(double *x, unsigned long n, int do_loop)
     return;
 }
 /* The binary splitting. Description above */
+#ifdef USE_OPEN_MP
+#include <omp.h>
+static void fht_dit_rec(double *x, unsigned long n)
+{
+    unsigned long nh;
+
+    if (n == 1)
+        return;
+    if (n < (unsigned long)(L1_SIZE / (2 * sizeof(double)))) {
+        fht_dit_iterative(x,n,1);
+        return;
+    }
+    nh = n >> 1;
+
+        #pragma omp task shared(x,nh)
+        fht_dit_rec(x, nh);
+        #pragma omp task shared(x,nh)
+        fht_dit_rec(x + nh, nh);
+        #pragma omp taskwait
+    fht_dit_iterative(x,n,0);return;
+    return;
+}
+#else
 static void fht_dit_rec(double *x, unsigned long n)
 {
     unsigned long nh;
@@ -347,7 +653,8 @@ static void fht_dit_rec(double *x, unsigned long n)
     fht_dit_rec(x + nh, nh);
     fht_dit_iterative(x,n,0);return;
     return;
-} 
+}
+#endif
 /*
   The FHT convolution from Jörg Arndt's book.
   The code looks a bit messy but only on the face of it. This method avoids
@@ -451,6 +758,81 @@ static void fht_autoconv_core(double *f,unsigned long n, double v/*=0.0*/){
 }
   return;
 }
+#ifdef USE_OPEN_MP
+#include <omp.h>
+/* Public: FHT convolution */
+int mp_fft(double *x, double *y, unsigned long length){
+  unsigned long n;
+  n = (length);
+  if(n < 2) return MP_VAL;
+
+    #pragma omp parallel shared( x,n)
+   {
+    #pragma omp single
+        {
+            fht_dif_rec(x,(n));
+        }
+   }
+
+    #pragma omp parallel shared( y,n)
+   {
+    #pragma omp single
+        {
+            fht_dif_rec(y,(n));
+        }
+   }
+
+    #pragma omp parallel shared(x, y,n)
+   {
+    #pragma omp single
+        {
+            fht_conv_core(x, y,(n), 0.0);
+        }
+   }
+
+    #pragma omp parallel shared(y,n)
+   {
+    #pragma omp single
+        {
+            fht_dit_rec(y, (n));
+        }
+   }
+
+  return MP_OKAY;
+}
+/* Public: FHT auto-convolution */
+int mp_fft_sqr_d(double *x, unsigned long length){
+  unsigned long n;
+  n = (length);
+  if(n < 2) return MP_VAL;
+
+    #pragma omp parallel shared(x,n)
+   {
+    #pragma omp single
+        {
+             fht_dif_rec(x,(n));
+        }
+   }
+
+    #pragma omp parallel shared(x,n)
+   {
+    #pragma omp single
+        {
+              fht_autoconv_core(x,(n), 0.0);
+        }
+   }
+
+    #pragma omp parallel shared(x,n)
+   {
+    #pragma omp single
+        {
+              fht_dit_rec(x, (n));
+        }
+   }
+
+  return MP_OKAY;
+}
+#else
 /* Public: FHT convolution */
 int mp_fft(double *x, double *y, unsigned long length){
   unsigned long n;
@@ -472,10 +854,13 @@ int mp_fft_sqr_d(double *x, unsigned long length){
   fht_dit_rec(x, (n));
   return MP_OKAY;
 }
-
+#endif
 
 #if (__STDC_VERSION__ >= 199901L) &&  (NEEDS_FE_RESET == 1)
   /* Reset floating point environment settings  */
   if(fesetenv( envp )) return MP_VAL;
 #endif
+
+
+
 #endif

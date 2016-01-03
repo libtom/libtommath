@@ -172,7 +172,7 @@ int il2,extra;
 GO_ON:
 #endif
 
-#ifdef  MP_28BIT
+#if defined  (MP_28BIT) || defined (MP_64BIT)
   /* use FFT? */
 #ifdef BN_MP_FFT_MUL_C
   /* 
