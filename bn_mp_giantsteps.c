@@ -28,7 +28,7 @@ int mp_giantsteps(int start, int end, int stepsize, int **precs, int *steps)
     }
 
     t = end;
-    i = 1;
+    i = 0;
 
     // we need to run this loop twice but it is cheap and runs only
     // log_2(end - start) times max.
@@ -40,18 +40,17 @@ int mp_giantsteps(int start, int end, int stepsize, int **precs, int *steps)
 	t = (t / stepsize) ;
     }
 
-    *precs = malloc(i * sizeof(int));
+    *precs = malloc((i+3) * sizeof(int));
     if (*precs == NULL) {
 	return MP_MEM;
     }
-    *precs += i - 1;
+    i--;
+    *precs += i ;
     **precs = end;
-    *steps  = i;
-    while (1) {
-	if (**precs <= start * stepsize) {
-	    break;
-	}
+    *steps  = 1;
+    while (i--) {
 	(*precs)--;
+        (*steps)++;
 	**precs = (*((*precs)+1) / stepsize) ;
     }
     return MP_OKAY;
