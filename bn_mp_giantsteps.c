@@ -52,7 +52,7 @@ int mp_giantsteps(int start, int end, int stepsize, int **precs, int *steps)
 	    break;
 	}
 	(*precs)--;
-	**precs = (*((*precs)+1) / stepsize) + 2;
+	**precs = (*((*precs)+1) / stepsize) ;
     }
     return MP_OKAY;
 }
