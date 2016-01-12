@@ -145,7 +145,7 @@ int main(void)
    unsigned long s, t;
    unsigned long long q, r;
    mp_digit mp;
-   int i, n, err;
+   int i, n, err, should;
 #endif
 
    if (mp_init_multi(&a, &b, &c, &d, &e, &f, NULL)!= MP_OKAY)
@@ -206,8 +206,8 @@ int main(void)
 
    mp_set_int(&a, 0);
    mp_set_int(&b, 1);
-   if ((ix = mp_jacobi(&a, &b, &i)) != MP_OKAY) {
-      printf("Failed executing mp_jacobi(0 | 1) %s.\n", mp_error_to_string(ix));
+   if ((err = mp_jacobi(&a, &b, &i)) != MP_OKAY) {
+      printf("Failed executing mp_jacobi(0 | 1) %s.\n", mp_error_to_string(err));
       return EXIT_FAILURE;
    }
    if (i != 1) {
@@ -217,15 +217,19 @@ int main(void)
    for (cnt = 0; cnt < (int)(sizeof(jacobi)/sizeof(jacobi[0])); ++cnt) {
       mp_set_int(&b, jacobi[cnt].n);
       /* only test positive values of a */
-//      for (n = -5; n <= 10; ++n) {
-      for (n = 0; n <= 10; ++n) {
+      for (n = -5; n <= 10; ++n) {
          mp_set_int(&a, abs(n));
-         if (n < 0) mp_neg(&a, &a);
-         if ((ix = mp_jacobi(&a, &b, &i)) != MP_OKAY) {
-            printf("Failed executing mp_jacobi(%d | %lu) %s.\n", n, jacobi[cnt].n, mp_error_to_string(ix));
+         should = MP_OKAY;
+         if (n < 0) {
+            mp_neg(&a, &a);
+            /* Until #44 is fixed the negative a's must fail */
+            should = MP_VAL;
+         }
+         if ((err = mp_jacobi(&a, &b, &i)) != should) {
+            printf("Failed executing mp_jacobi(%d | %lu) %s.\n", n, jacobi[cnt].n, mp_error_to_string(err));
             return EXIT_FAILURE;
          }
-         if (i != jacobi[cnt].c[n + 5]) {
+         if (err == MP_OKAY && i != jacobi[cnt].c[n + 5]) {
             printf("Failed trivial mp_jacobi(%d | %lu) %d != %d\n", n, jacobi[cnt].n, i, jacobi[cnt].c[n + 5]);
             return EXIT_FAILURE;
          }
