@@ -26,6 +26,11 @@ int mp_jacobi (mp_int * a, mp_int * n, int *c)
   int     k, s, r, res;
   mp_digit residue;
 
+  /* if a < 0 return MP_VAL */
+  if (mp_isneg(a) == MP_YES) {
+     return MP_VAL;
+  }
+
   /* if n <= 0 return MP_VAL */
   if (mp_cmp_d(n, 0) != MP_GT) {
      return MP_VAL;
