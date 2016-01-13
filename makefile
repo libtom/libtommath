@@ -19,6 +19,8 @@ ifndef LIBNAME
    LIBNAME=libtommath.a
 endif
 
+coverage: LIBNAME:=-Wl,--whole-archive $(LIBNAME)  -Wl,--no-whole-archive
+
 include makefile.include
 
 LCOV_ARGS=--directory .
