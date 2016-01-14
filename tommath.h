@@ -600,7 +600,13 @@ int fast_s_mp_mul_high_digs(mp_int *a, mp_int *b, mp_int *c, int digs);
 int s_mp_mul_high_digs(mp_int *a, mp_int *b, mp_int *c, int digs);
 int fast_s_mp_sqr(mp_int *a, mp_int *b);
 int s_mp_sqr(mp_int *a, mp_int *b);
+
+//nt mp_karatsuba_mul(mp_int *a, mp_int *b, mp_int *c);
+
 int mp_karatsuba_mul(mp_int *a, mp_int *b, mp_int *c);
+
+
+
 int mp_toom_mul(mp_int *a, mp_int *b, mp_int *c);
 int mp_karatsuba_sqr(mp_int *a, mp_int *b);
 int mp_toom_sqr(mp_int *a, mp_int *b);
@@ -776,6 +782,8 @@ int mp_ilogb_d(mp_int * a, int base, mp_int * c);
 void free_schoenhage_cache();
 int mp_get_str(mp_int *a, char *string, int digits, int base);
 int mp_set_str(mp_int * a, const char *string, int base);
+
+
 /* End of additions by CZ */
 
 extern const char *mp_s_rmap;

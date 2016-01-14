@@ -16,39 +16,39 @@
  */
 
 /* calculate c = a**b  using a square-multiply algorithm */
-int mp_expt_d (mp_int * a, mp_digit b, mp_int * c)
+int mp_expt_d(mp_int *a, mp_digit b, mp_int *c)
 {
-  int     res;
-  mp_int  g;
+   int     res;
+   mp_int  g;
 
-  if ((res = mp_init_copy (&g, a)) != MP_OKAY) {
-    return res;
-  }
-
-  /* set initial result */
-  mp_set (c, 1);
-
-  while (b > 0) {
-    /* if the bit is set multiply */
-    if (b & 1) {
-      if ((res = mp_mul (c, &g, c)) != MP_OKAY) {
-        mp_clear (&g);
-        return res;
-      }
-    }
-
-    /* square */
-    if (b > 1 && (res = mp_sqr (&g, &g)) != MP_OKAY) {
-      mp_clear (&g);
+   if ((res = mp_init_copy(&g, a)) != MP_OKAY) {
       return res;
-    }
+   }
 
-    /* shift to next bit */
-    b >>= 1;
-  }
+   /* set initial result */
+   mp_set(c, 1);
 
-  mp_clear (&g);
-  return MP_OKAY;
+   while (b > 0) {
+      /* if the bit is set multiply */
+      if (b & 1) {
+         if ((res = mp_mul(c, &g, c)) != MP_OKAY) {
+            mp_clear(&g);
+            return res;
+         }
+      }
+
+      /* square */
+      if (b > 1 && (res = mp_sqr(&g, &g)) != MP_OKAY) {
+         mp_clear(&g);
+         return res;
+      }
+
+      /* shift to next bit */
+      b >>= 1;
+   }
+
+   mp_clear(&g);
+   return MP_OKAY;
 }
 #endif
 

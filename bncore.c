@@ -24,29 +24,44 @@
 
 Curious result:
  AMD Duron (2x64k L1)    /GCC 4.4.5  /         48/       120/LTM 0.42
- 
+
 */
 
-int     KARATSUBA_MUL_CUTOFF = 48;      /* Min. number of digits before Karatsuba multiplication is used. */
-int       KARATSUBA_SQR_CUTOFF = 120;     /* Min. number of digits before Karatsuba squaring is used. */      
-int        TOOM_MUL_CUTOFF      = 190;      /* no optimal values of these are known yet so set em high */
-int        TOOM_SQR_CUTOFF      = 280;
-int        TOOM_COOK_4_MUL_CO   = 600; 
+// measured on an AMD AMD A8-6600K
+#ifdef MP_64BIT
+int KARATSUBA_MUL_CUTOFF = 125;
+int                                KARATSUBA_SQR_CUTOFF = 125;
+int TOOM_MUL_CUTOFF = 300;
+int                                TOOM_SQR_CUTOFF      = 600;
+int TOOM_COOK_4_MUL_CO = 625;
+int                                TOOM_COOK_4_SQR_CO   = 1000;
+int TOOM_COOK_5_MUL_CO = 1400;
+int                                TOOM_COOK_5_SQR_CO   = 1500;
+// FFT does not make much sense with 60 bit large limbs
+int        FFT_MUL_CUTOFF  = 1<<11;
+int        FFT_UPPER_LIMIT = 1<<31;
+int        FFT_SQR_CUTOFF  = 1<<11;
+#else
+int     KARATSUBA_MUL_CUTOFF = 250;      /* Min. number of digits before Karatsuba multiplication is used. */
+int       KARATSUBA_SQR_CUTOFF = 400;     /* 120 Min. number of digits before Karatsuba squaring is used. */
+int        TOOM_MUL_CUTOFF      = 500;      /* no optimal values of these are known yet so set em high */
+int        TOOM_SQR_CUTOFF      = 800;
+int        TOOM_COOK_4_MUL_CO   = 1200;
 int        TOOM_COOK_4_SQR_CO   = 2400;
-int        TOOM_COOK_5_MUL_CO   = 1200;
+int        TOOM_COOK_5_MUL_CO   = 2500;
 int        TOOM_COOK_5_SQR_CO   = 3600;
-        /* No single numbers possible with the current implementation */
-int        FFT_MUL_CUTOFF       = 1<<11; // 11
+/* No single numbers possible with the current implementation */
+int        FFT_MUL_CUTOFF       = 1<<12; // 11
 int        FFT_UPPER_LIMIT      = 1<<15; /* less than theoretical limit (20 for 60 and 21 for 28) */
-int        FFT_SQR_CUTOFF       = 1<<5;// 2^10
-
-/* 
+int        FFT_SQR_CUTOFF       = 1<<11;// 2^10
+#endif
+/*
    Minimum size of the denominator for Burnikel-Ziegler division used
    as a cutoff to school-division inside the algorithm.
-   
+
    The theoretical minimum is 2* KARATS.-CUT. but we have some additional
    overhead, hence the 10 limbs for angst-allowance.
-   
+
    Published for easier changing because: YMMV and it easier this way.
    If somebody has changed this file already: the magic number 48 is the
    value of the KARATSUBA_MUL_CUTOFF of the author's machine.
@@ -54,20 +69,20 @@ int        FFT_SQR_CUTOFF       = 1<<5;// 2^10
 */
 int        DIV_BURN_ZIEG_CUTOFF = 2 * 48  + 10;
 
-/* 
+/*
    Minimum sizes of for Burnikel-Ziegler division used
    as a general cutoff to school-division.
-      
+
     Published for easier changing because: YMMV
 */
 int        BURN_ZIEG_NUM_CUTOFF =  250;
-int        BURN_ZIEG_UPPER_NUM_CUTOFF =  775; 
+int        BURN_ZIEG_UPPER_NUM_CUTOFF =  775;
 int        BURN_ZIEG_DEN_CUTOFF =  125;
 /* ratio #numerator/#denominator should not be greater than 0.8 */
 int        BURN_ZIEG_UPPER_DEN_CUTOFF =  8;
 /*
    Size of the denominator chunks inside the Burnikel-Ziegler algorithm.
-   
+
    The actual size gets computed by the algorithm, this is just a start
    value
 */
@@ -78,6 +93,7 @@ int        NEWTON_DEN_CUTOFF =  15000;
 
 /* limit where ilogb wins over native division in mp_radix_size() */
 int        RADIX_SIZE_CUTOFF = 110;
+
 
 #endif
 

@@ -6,7 +6,8 @@
 VERSION=0.42.0
 
 CFLAGS  +=   -I./ -Wall -W -Wshadow -Wsign-compare
-LIBS += -lm
+LIBS += -lm 
+#LIBS += -ltcmalloc_minimal
 
 
 ifndef MAKE
@@ -16,8 +17,9 @@ endif
 ifndef IGNORE_SPEED
 
 #for speed 
-#CFLAGS += -g3 -O3 -funroll-loops -fopenmp -DUSE_OPEN_MP
-CFLAGS += -g3 -O3 -funroll-loops
+CFLAGS += -g3 -O3 -funroll-loops 
+#CFLAGS += -g3 -O3  -funroll-loops -DUSE_PTHREAD_FFT
+#CFLAGS += -g3 -O3 -funroll-loops -DUSE_THREADS_FOR_TOOM_5
 
 #for size 
 #CFLAGS += -Os

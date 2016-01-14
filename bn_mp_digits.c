@@ -9,27 +9,27 @@
  (e.g: both of the decimal numbers 9 and 10 need 4 bits)
 */
 
-long mp_digits(mp_int * a, int base)
+long mp_digits(mp_int *a, int base)
 {
-    double log210;
-    long bits = mp_count_bits(a);
-    switch (base) {
-    case 2:
-	log210 = 1.0;
-	break;
-    case 8:
-	log210 = 3.0;
-	break;
-    case 10:
-	log210 = 3.3219280948873623478703194294893901759;
-	break;
-    case 16:
-	log210 = 4.0;
-	break;
-    default:
-	log210 = bits / (log(base)/log(2.0));
-	break;
-    }
-    return (long) (floor(bits / log210));
+   double log210;
+   long bits = mp_count_bits(a);
+   switch (base) {
+   case 2:
+      log210 = 1.0;
+      break;
+   case 8:
+      log210 = 3.0;
+      break;
+   case 10:
+      log210 = 3.3219280948873623478703194294893901759;
+      break;
+   case 16:
+      log210 = 4.0;
+      break;
+   default:
+      log210 = bits / (log(base)/log(2.0));
+      break;
+   }
+   return (long)(floor(bits / log210));
 }
 #endif
