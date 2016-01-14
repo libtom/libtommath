@@ -1,12 +1,30 @@
 #include <tommath.h>
 #ifdef BN_MP_GET_DOUBLE_C
 
-
-#include <math.h>
-#if __STDC_VERSION__ >= 199901L
-#include <fenv.h>
+#ifndef DBL_MANT_DIG
+#define DBL_MANT_DIG 53
 #endif
-#include <float.h>
+
+static double st_pow(double d, int e){
+  double t;
+
+  if (e == 0) {
+     return d;
+  }
+  t = 1.0;
+  while(e > 1){
+     if(e % 2 == 0){
+        d *= d;
+        e /= 2;
+     } else {
+        t *= d;
+        d *= d;
+        e = (e - 1)/2;
+     }
+  }
+  return d * t;
+}
+
 /* Convert to double, assumes IEEE-754 conforming double. From code by
    gerdr (Gerhard R.) https://github.com/gerdr */
 int mp_get_double(mp_int *a, double *d)
@@ -37,17 +55,7 @@ int mp_get_double(mp_int *a, double *d)
       *d *= -1.0;
    }
 
-   *d *= pow(2.0, i * DIGIT_BIT);
-
-   /* Handle overflow */
-#if __STDC_VERSION__ >= 199901L
-   if (*d == INFINITY) {
-      feraiseexcept(FE_OVERFLOW);
-#else
-   if (*d == HUGE_VAL) {
-#endif
-      return MP_RANGE;
-   }
+   *d *= st_pow(2.0, i * DIGIT_BIT);
 
    return MP_OKAY;
 }
