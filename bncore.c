@@ -38,9 +38,9 @@ int                                TOOM_COOK_4_SQR_CO   = 1000;
 int TOOM_COOK_5_MUL_CO = 1400;
 int                                TOOM_COOK_5_SQR_CO   = 1500;
 // FFT does not make much sense with 60 bit large limbs
-int        FFT_MUL_CUTOFF  = 1<<11;
+int        FFT_MUL_CUTOFF  = 1<<15;
 int        FFT_UPPER_LIMIT = 1<<31;
-int        FFT_SQR_CUTOFF  = 1<<11;
+int        FFT_SQR_CUTOFF  = 1<<15;
 #else
 int     KARATSUBA_MUL_CUTOFF = 250;      /* Min. number of digits before Karatsuba multiplication is used. */
 int       KARATSUBA_SQR_CUTOFF = 400;     /* 120 Min. number of digits before Karatsuba squaring is used. */
