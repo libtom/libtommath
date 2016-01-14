@@ -5,6 +5,8 @@
 #include <tommath.h>
 #include <time.h>
 
+typedef unsigned long long ulong64;
+
 /* how many times todo each size mult.  Depends on your computer.  For slow computers
  * this can be low like 5 or 10.  For fast [re: Athlon] should be 25 - 50 or so
  */
