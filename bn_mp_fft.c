@@ -224,11 +224,11 @@ int mp_dp_to_fft(mp_int *a, double **fa,
    /* Send computed length back to caller */
    *length = length_needed;
 
-   fft_array_a = XMALLOC(sizeof(double) * length_needed);
+   fft_array_a = XMALLOC(sizeof(double) * (length_needed + 5));
    if (fft_array_a == NULL) {
       return MP_MEM;
    }
-   fft_array_b = XMALLOC(sizeof(double) * length_needed);
+   fft_array_b = XMALLOC(sizeof(double) * (length_needed + 5));
    if (fft_array_b == NULL) {
       return MP_MEM;
    }

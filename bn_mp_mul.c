@@ -16,35 +16,47 @@
  */
 
 /* high level multiplication (handles sign) */
+
+extern int some_flag;
+
 int mp_mul(mp_int *a, mp_int *b, mp_int *c)
 {
    int     res, neg;
-#ifdef BN_MP_BALANCE_MUL
-   int len_a,len_b;
+#ifdef BN_MP_BALANCE_MUL_C
+   int len_b, len_a;
 #endif
    neg = (a->sign == b->sign) ? MP_ZPOS : MP_NEG;
-#ifdef BN_MP_BALANCE_MUL
+
+#ifdef BN_MP_BALANCE_MUL_C
    len_a = a->used;
    len_b = b->used;
-   if (len_a == len_b)[
+
+   if (len_a == len_b){
       goto GO_ON;
    }
+
    // FFT has its own
    if (MIN(len_a, len_b) >= FFT_MUL_CUTOFF)
    {
       goto GO_ON;
    }
+
   /*
+   * Size check for linear balance
    * Check sizes. The smaller one needs to be larger than the Karatsuba cut-off.
    * The bigger one needs to be at about one KARATSUBA_MUL_CUTOFF bigger to make some
    * sense, but it depends on architecture, OS and position of the planets, so YMMV.
-   */
+  */
   if (MIN(len_a, len_b) < KARATSUBA_MUL_CUTOFF
-      || MAX(len_a, len_b) / 2 < KARATSUBA_MUL_CUTOFF) {
+      || (MAX(len_a, len_b)) / 2 < KARATSUBA_MUL_CUTOFF) {
+     goto GO_ON;
+  }
+  if( MAX(len_a, len_b) /  MIN(len_a, len_b) < 2 ){
      goto GO_ON;
   }
 
-  return mp_balance_mul(a,b,c);
+  //res = mp_balance_mul(a,b,c);
+  //goto END;
 
 GO_ON:
 #endif
@@ -117,6 +129,7 @@ if (MIN(a->used, b->used) >= FFT_MUL_CUTOFF &&
 #endif
 
             }
+END:
   c->sign = (c->used > 0) ? neg : MP_ZPOS;
   return res;
 }

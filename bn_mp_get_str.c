@@ -83,7 +83,7 @@ static int mp_get_str_intern(mp_int *a, char *string, int digits, int base)
    mp_int q, r;
    if (a->used <= SCHOENHAGE_CONVERSION_CUT) {
       size = (size_t)(mp_digits(a, 10) + 10);
-      str = malloc(size * sizeof(char));
+      str = malloc((size + 10) * sizeof(char));
       if (NULL == str) {
          fprintf(stderr, "malloc failed to allocate %lu bytes\n",
                  size * sizeof(char));
@@ -155,21 +155,7 @@ static int mp_get_str_intern(mp_int *a, char *string, int digits, int base)
    // TODO: 1<<n can overflow, check (but it's good for over 3 billion
    //       decimal digits at 32 bit)
    ed = 1 << n;
-#ifdef USE_OPEN_MP_NOT
-#include <omp.h>
-   digits = digits-ed;
-   #pragma omp task
-   err = mp_get_str_intern(&q, string, digits, base);
-   #pragma omp task
-   err2 = mp_get_str_intern(&r, string, ed, base);
-   #pragma omp taskwait
-   if(err != MP_OKAY){
-      return err;
-   }
-   if(err2 != MP_OKAY){
-      return err2;
-   }
-#else
+
    if ((err = mp_get_str_intern(&q, string, digits - ed, base)) != MP_OKAY) {
       mp_clear_multi(&q, &r, NULL);
       return err;
@@ -178,7 +164,7 @@ static int mp_get_str_intern(mp_int *a, char *string, int digits, int base)
       mp_clear_multi(&q, &r, NULL);
       return err;
    }
-#endif
+
    mp_clear_multi(&q, &r, NULL);
    return MP_OKAY;
 }

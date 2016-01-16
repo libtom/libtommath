@@ -147,13 +147,14 @@ int mp_div(mp_int *a, mp_int *b, mp_int *c, mp_int *d)
       mp_clear_multi(&x, &y, NULL);
       return MP_OKAY;
    }
-
+    
    /*
     * The cutoffs depend on the ratio, absolute and relative sizes
     * of the participants. See also the comments in bn_mp_div_bz.c.
     */
    ratio = (a->used * BURN_ZIEG_UPPER_DEN_CUTOFF) / 10;
    /* pulled apart for legibility */
+
    if (a->used >= BURN_ZIEG_NUM_CUTOFF && b->used <= ratio) {
 
       if ((res = mp_init_copy(&x, a)) != MP_OKAY) {
@@ -206,6 +207,7 @@ int mp_div(mp_int *a, mp_int *b, mp_int *c, mp_int *d)
          }
       }
    } else {
+
       return mp_div_school(a, b, c, d);
    }
    // should not get reached
