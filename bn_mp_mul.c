@@ -26,7 +26,6 @@ int mp_mul(mp_int *a, mp_int *b, mp_int *c)
    int len_b, len_a;
 #endif
    neg = (a->sign == b->sign) ? MP_ZPOS : MP_NEG;
-
 #ifdef BN_MP_BALANCE_MUL_C
    len_a = a->used;
    len_b = b->used;
@@ -41,22 +40,22 @@ int mp_mul(mp_int *a, mp_int *b, mp_int *c)
       goto GO_ON;
    }
 
-  /*
-   * Size check for linear balance
-   * Check sizes. The smaller one needs to be larger than the Karatsuba cut-off.
-   * The bigger one needs to be at about one KARATSUBA_MUL_CUTOFF bigger to make some
-   * sense, but it depends on architecture, OS and position of the planets, so YMMV.
-  */
-  if (MIN(len_a, len_b) < KARATSUBA_MUL_CUTOFF
-      || (MAX(len_a, len_b)) / 2 < KARATSUBA_MUL_CUTOFF) {
-     goto GO_ON;
-  }
-  if( MAX(len_a, len_b) /  MIN(len_a, len_b) < 2 ){
-     goto GO_ON;
-  }
+   /*
+    * Size check for linear balance
+    * Check sizes. The smaller one needs to be larger than the Karatsuba cut-off.
+    * The bigger one needs to be at about one KARATSUBA_MUL_CUTOFF bigger to make some
+    * sense, but it depends on architecture, OS and position of the planets, so YMMV.
+    */
+   if (MIN(len_a, len_b) < KARATSUBA_MUL_CUTOFF
+       || (MAX(len_a, len_b)) / 2 < KARATSUBA_MUL_CUTOFF) {
+      goto GO_ON;
+   }
+   if( MAX(len_a, len_b) /  MIN(len_a, len_b) < 2 ){
+      goto GO_ON;
+   }
 
-  //res = mp_balance_mul(a,b,c);
-  //goto END;
+   res = mp_balance_mul(a,b,c);
+   goto END;
 
 GO_ON:
 #endif

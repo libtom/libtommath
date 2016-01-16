@@ -6,7 +6,7 @@
 int mp_balance_mul(mp_int *a, mp_int *b, mp_int *c)
 {
    int e, count, len_a, len_b, nblocks, i, j, bsize;
-   mp_int a0, tmp, A , B;
+   mp_int a0, tmp, A , B, r;
 
    len_a = a->used;
    len_b = b->used;
@@ -17,22 +17,22 @@ int mp_balance_mul(mp_int *a, mp_int *b, mp_int *c)
    if ((e = mp_init_size(&a0, bsize + 2)) != MP_OKAY) {
       return e;
    }
-   if ((e = mp_init_multi(&tmp, &A, &B, NULL)) != MP_OKAY) {
+   if ((e = mp_init_multi(&tmp, &A, &B, &r, NULL)) != MP_OKAY) {
       mp_clear(&a0);
       return e;
    }
 
    /* Make sure that A is the larger one*/
    if (len_a < len_b) {
-      mp_copy(a,&B);
-      mp_copy(b,&A);
-      //B = *a;
-      //A = *b;
+      //mp_copy(a,&B);
+      //mp_copy(b,&A);
+      B = *a;
+      A = *b;
    } else {
-      mp_copy(a,&A);
-      mp_copy(b,&B);
-      // B = *b;
-      // A = *a;
+      //mp_copy(a,&A);
+      //mp_copy(b,&B);
+      B = *b;
+      A = *a;
    }
    for (i = 0, j=0; i < nblocks; i++) {
       /* Cut a slice off of a */
@@ -50,7 +50,7 @@ int mp_balance_mul(mp_int *a, mp_int *b, mp_int *c)
          goto ERR;
       }
       /* Add to output. No carry needed */
-      if ((e = mp_add(c, &tmp, c)) != MP_OKAY) {
+      if ((e = mp_add(&r, &tmp, &r)) != MP_OKAY) {
          goto ERR;
       }
    }
@@ -67,13 +67,14 @@ int mp_balance_mul(mp_int *a, mp_int *b, mp_int *c)
       if ((e = mp_lshd(&tmp, bsize * i)) != MP_OKAY) {
          goto ERR;
       }
-      if ((e = mp_add(c, &tmp, c)) != MP_OKAY) {
+      if ((e = mp_add(&r, &tmp, &r)) != MP_OKAY) {
          goto ERR;
       }
    }
 
+   mp_exch(&r,c);
 ERR:
-   mp_clear_multi(&a0, &tmp, &A, &B, NULL);
+   mp_clear_multi(&a0, &tmp, &A, &B, &r,NULL);
    return MP_OKAY;
 }
 
