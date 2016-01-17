@@ -11,9 +11,13 @@ int mp_balance_mul(mp_int *a, mp_int *b, mp_int *c)
    len_a = a->used;
    len_b = b->used;
 
+   /*
+    * TODO: For very large values choose the size of nblocks
+    *       to fit the necessities of the FFT multiplication
+    */
    nblocks = MAX(a->used, b->used) / MIN(a->used, b->used);
    bsize = MIN(a->used, b->used) ;
-
+   e = MP_OKAY;
    if ((e = mp_init_size(&a0, bsize + 2)) != MP_OKAY) {
       return e;
    }
@@ -23,17 +27,23 @@ int mp_balance_mul(mp_int *a, mp_int *b, mp_int *c)
    }
 
    /* Make sure that A is the larger one*/
+
    if (len_a < len_b) {
-      //mp_copy(a,&B);
-      //mp_copy(b,&A);
-      B = *a;
-      A = *b;
+      if ((e = mp_copy(a,&B)) != MP_OKAY) {
+         goto ERR;
+      }
+      if ((e = mp_copy(b,&A)) != MP_OKAY) {
+         goto ERR;
+      }
    } else {
-      //mp_copy(a,&A);
-      //mp_copy(b,&B);
-      B = *b;
-      A = *a;
+      if ((e = mp_copy(a,&A)) != MP_OKAY) {
+         goto ERR;
+      }
+      if ((e = mp_copy(b,&B)) != MP_OKAY) {
+         goto ERR;
+      }
    }
+
    for (i = 0, j=0; i < nblocks; i++) {
       /* Cut a slice off of a */
       a0.used = 0;
@@ -75,35 +85,44 @@ int mp_balance_mul(mp_int *a, mp_int *b, mp_int *c)
    mp_exch(&r,c);
 ERR:
    mp_clear_multi(&a0, &tmp, &A, &B, &r,NULL);
-   return MP_OKAY;
+   return e;
 }
 
 
 int mp_balance_recursive(mp_int *a, mp_int *b, mp_int *c)
 {
    int e, len_a, len_b, count;
-   mp_int a_0, a_1, A , B;
+   mp_int a_0, a_1, A , B, r;
 
    len_a = a->used;
    len_b = b->used;
 
-   if (len_a < len_b) {
-      B = *a;
-      A = *b;
-   } else {
-      B = *b;
-      A = *a;
+
+
+   e = MP_OKAY;
+   if ((e = mp_init_multi(&A, &B, &r, NULL)) != MP_OKAY) {
+      return e;
    }
+
+   if (len_a < len_b) {
+      mp_copy(a,&B);
+      mp_copy(b,&A);
+   } else {
+      mp_copy(a,&A);
+      mp_copy(b,&B);
+   }
+
    /*
     * Cut larger one in two parts a1, a0 with the smaller part a0 of the same
     * length as the smaller input number b_0. Work on copy to make things simpler
     */
    if ((e = mp_init_size(&a_0, B.used + 1)) != MP_OKAY) {
+      mp_clear_multi(&A, &B, &r, NULL);
       return e;
    }
    a_0.used = B.used;
    if ((e = mp_init_size(&a_1, A.used - B.used + 1)) != MP_OKAY) {
-      mp_clear(&a_0);
+      mp_clear_multi(&a_0, &A, &B, &r, NULL);
       return e;
    }
    a_1.used = A.used - B.used;
@@ -129,11 +148,12 @@ int mp_balance_recursive(mp_int *a, mp_int *b, mp_int *c)
       goto ERR;
    }
    /* c = a_1 + a_0 */
-   if ((e = mp_add(&a_1, &a_0, c)) != MP_OKAY) {
+   if ((e = mp_add(&a_1, &a_0, &r)) != MP_OKAY) {
       goto ERR;
    }
+   mp_exch(&r,c);
 ERR:
-   mp_clear_multi(&a_0, &a_1, NULL);
+   mp_clear_multi(&a_0, &a_1, &A, &B, &r, NULL);
    return e;
 }
 

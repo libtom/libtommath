@@ -35,19 +35,25 @@
 // Set a macro flagging 64 bit environment
 // TODO: add more
 #if _WIN32 || _WIN64
-#   if _WIN64
-#      define _ITS_64_BIT_
-#   else
-#      define _ITS_32_BIT_
-#   endif
+   #if _WIN64
+      #define _ITS_64_BIT_
+   #else
+      #define _ITS_32_BIT_
+   #endif
 #elif __GNUC__
-#   if __x86_64__ || __ppc64__
-#      define _ITS_64_BIT_
-#   else
-#      define _ITS_32_BIT_
-#   endif
+   #if __x86_64__ || __ppc64__
+      #define _ITS_64_BIT_
+   #else
+      #define _ITS_32_BIT_
+   #endif
 #endif   
 
+#ifndef _MULTI_TRHEADED_
+   #ifdef USE_PTHREAD
+      #define _MULTI_TRHEADED_
+      #include <pthread.h>
+   #endif
+#endif
 
 #ifdef __cplusplus
 extern "C" {

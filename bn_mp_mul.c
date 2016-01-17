@@ -43,18 +43,22 @@ int mp_mul(mp_int *a, mp_int *b, mp_int *c)
    /*
     * Size check for linear balance
     * Check sizes. The smaller one needs to be larger than the Karatsuba cut-off.
-    * The bigger one needs to be at about one KARATSUBA_MUL_CUTOFF bigger to make some
+    * The bigger one needs to be at leat about one KARATSUBA_MUL_CUTOFF bigger to make some
     * sense, but it depends on architecture, OS and position of the planets, so YMMV.
     */
    if (MIN(len_a, len_b) < KARATSUBA_MUL_CUTOFF
        || (MAX(len_a, len_b)) / 2 < KARATSUBA_MUL_CUTOFF) {
       goto GO_ON;
    }
+   /*
+    * Not much effect was observed below a ratio of 1:2, but YMMV.
+    */
    if( MAX(len_a, len_b) /  MIN(len_a, len_b) < 2 ){
       goto GO_ON;
    }
 
-   res = mp_balance_mul(a,b,c);
+   //res = mp_balance_mul(a,b,c);
+   res = mp_balance_recursive(a,b,c);
    goto END;
 
 GO_ON:
