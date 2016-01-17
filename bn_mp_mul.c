@@ -57,8 +57,8 @@ int mp_mul(mp_int *a, mp_int *b, mp_int *c)
       goto GO_ON;
    }
 
-   //res = mp_balance_mul(a,b,c);
-   res = mp_balance_recursive(a,b,c);
+   res = mp_balance_mul(a,b,c);
+   //res = mp_balance_recursive(a,b,c);
    goto END;
 
 GO_ON:
