@@ -267,7 +267,7 @@ int mp_dp_to_fft(mp_int *a, double **fa,
    }
    // there is a small problem with divisibility of 2^n and 5, so ...
    rest = (length_needed/5)*5;
-   for(i=rest;i<length_needed;i++){
+   for(i=rest;i<length_needed + 5;i++){
       fft_array_a[i] = 0.0;
       fft_array_b[i] = 0.0;
    }
@@ -290,7 +290,7 @@ int mp_dp_to_fft_single(mp_int *a, double **fa, int *length)
       length_needed = 1<<(hb+1);
    }
    *length = length_needed;
-   fft_array_a = XMALLOC(sizeof(double) * length_needed);
+   fft_array_a = XMALLOC(sizeof(double) * (length_needed + 5));
    if (fft_array_a == NULL) {
       return MP_MEM;
    }
@@ -311,7 +311,7 @@ int mp_dp_to_fft_single(mp_int *a, double **fa, int *length)
       }
    }
    rest = (length_needed/5)*5;
-   for(i=rest;i<length_needed;i++){
+   for(i=rest;i<length_needed + 5;i++){
       fft_array_a[i] = 0.0;
    }
    *fa = fft_array_a;
