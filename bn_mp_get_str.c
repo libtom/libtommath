@@ -178,7 +178,7 @@ void free_schoenhage_cache()
 }
 
 //TODO: needs one char more than necessary for the number
-int mp_get_str(mp_int *a, char *string, int digits, int base)
+int mp_get_str(mp_int *a, char *string, int base)
 {
    int sign, e;
    // we need a defined starting point
@@ -190,19 +190,11 @@ int mp_get_str(mp_int *a, char *string, int digits, int base)
       *string = '\0';
    }
    a->sign = MP_ZPOS;
-#ifdef USE_OPEN_MP_NOT
-#include <omp.h>
-   #pragma omp parallel
-   #pragma omp single
-   e =  mp_get_str_intern(a, string, digits, base);
-   if(e != MP_OKAY){
+
+   if ((e = mp_get_str_intern(a, string, 0, base)) != MP_OKAY) {
       return e;
    }
-#else
-   if ((e = mp_get_str_intern(a, string, digits, base)) != MP_OKAY) {
-      return e;
-   }
-#endif
+
    a->sign = sign;
    return MP_OKAY;
 }
