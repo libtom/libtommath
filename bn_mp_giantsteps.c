@@ -18,6 +18,11 @@
     puts("");
     free(s);
 
+    CAVEAT: the maximum value is listed twice! This has the reason that
+            some algorithms (e.g.: integer division with Newton-Raphson)
+            need a last round with full precision. It won't hurt the
+            result if ignored when not needed it will just add some extra
+            run-time.
 */
 int mp_giantsteps(int start, int end, int stepsize, int **precs, int *steps)
 {
@@ -44,10 +49,11 @@ int mp_giantsteps(int start, int end, int stepsize, int **precs, int *steps)
    if (*precs == NULL) {
       return MP_MEM;
    }
-   i--;
+   // i--;
    *precs += i ;
    **precs = end;
-   *steps  = 1;
+i--;(*precs)--;**precs = end;
+   *steps  = 2;
    while (i--) {
       (*precs)--;
       (*steps)++;

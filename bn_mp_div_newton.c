@@ -29,10 +29,10 @@ int mp_div_newton(mp_int *a, mp_int *b, mp_int *c, mp_int *d)
 
    int alen, blen, rlen, extra, err;
    mp_int t1, t2, t3, t4, ts, q, r;
-   int steps, gs0, gsi, startprecision, i, *precs, *ps;
+   int steps, gs0, gsi, startprecision, i, *precs;
 
    err = MP_OKAY;
-
+   fprintf(stderr,"a = %d, b = %d\n", a->used, b->used);
    alen = mp_count_bits(a);
    blen = mp_count_bits(b);
    rlen = alen - blen;
@@ -57,7 +57,6 @@ int mp_div_newton(mp_int *a, mp_int *b, mp_int *c, mp_int *d)
            mp_giantsteps(startprecision, rlen, 2, &precs, &steps)) != MP_OKAY) {
       goto _ERR;
    }
-   ps = precs;
    gs0 = *precs;
 
    mp_set(&t1, 1);
@@ -73,8 +72,7 @@ int mp_div_newton(mp_int *a, mp_int *b, mp_int *c, mp_int *d)
    }
 
    for (i = 0; i < steps; i++) {
-      gsi = *precs;
-      if (i< steps -1)precs++;
+      gsi = *(precs + i);
       // Adjust numerator (2^k) to new precision
       if ((err = lsh(&t1, gsi - gs0 + 1, &t3)) != MP_OKAY) {
          goto _ERR;
@@ -101,7 +99,7 @@ int mp_div_newton(mp_int *a, mp_int *b, mp_int *c, mp_int *d)
       }
       gs0 = gsi;
    }
-   free(ps);
+   free(precs);
 
    // the reciprocal is in t1, do the final multiplication to get the quotient
    // Adjust the numerator's precision to the precision of the denominator
@@ -123,21 +121,24 @@ int mp_div_newton(mp_int *a, mp_int *b, mp_int *c, mp_int *d)
    if ((err = mp_sub(a, &t1, &r)) != MP_OKAY) {
       goto _ERR;
    }
+
    // The N_R algorithm as implemented can be off by one, correct it
    if (r.sign == MP_NEG) {
       if ((err = mp_add(&r, b, &r)) != MP_OKAY) {
          goto _ERR;
       }
-      if ((err = mp_add_d(&q, 1, &q)) != MP_OKAY) {
-         goto _ERR;
-      }
-   } else if (mp_cmp(&r, b) == MP_GT) {
-      if ((err = mp_sub(&r, b, &r)) != MP_OKAY) {
-         goto _ERR;
-      }
       if ((err = mp_sub_d(&q, 1, &q)) != MP_OKAY) {
          goto _ERR;
       }
+   } else if (mp_cmp(&r, b) == MP_GT) {
+
+      if ((err = mp_sub(&r, b, &r)) != MP_OKAY) {
+         goto _ERR;
+      }
+      if ((err = mp_add_d(&q, 1, &q)) != MP_OKAY) {
+         goto _ERR;
+      }
+
    }
 
    if (c != NULL) {

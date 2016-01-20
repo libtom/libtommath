@@ -122,7 +122,6 @@ int mp_div(mp_int *a, mp_int *b, mp_int *c, mp_int *d)
     *       example but a lower limit depending on the ratio and the absolute
     *       value of the numerator.
     */
-
    if (b->used >= NEWTON_DEN_CUTOFF) {
       if ((res = mp_init_copy(&x, a)) != MP_OKAY) {
          return res;
@@ -147,7 +146,7 @@ int mp_div(mp_int *a, mp_int *b, mp_int *c, mp_int *d)
       mp_clear_multi(&x, &y, NULL);
       return MP_OKAY;
    }
-    
+
    /*
     * The cutoffs depend on the ratio, absolute and relative sizes
     * of the participants. See also the comments in bn_mp_div_bz.c.

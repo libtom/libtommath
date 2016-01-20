@@ -82,20 +82,19 @@ static int mp_get_str_intern(mp_int *a, char *string, int digits, int base)
    size_t size;
    mp_int q, r;
    if (a->used <= SCHOENHAGE_CONVERSION_CUT) {
-      size = (size_t)(mp_digits(a, 10) + 10);
+      size = (size_t)(mp_digits(a, base) + 10);
       str = malloc((size + 10) * sizeof(char));
       if (NULL == str) {
          fprintf(stderr, "malloc failed to allocate %lu bytes\n",
                  size * sizeof(char));
          return MP_MEM;
       }
-      s0 = str;
-      while (--size) {
-         *s0++ = '\0';
-      }
+      str = memset(str,'\0',((size + 10) * sizeof(char)));
+
       if ((err = mp_toradix(a, str, base)) != MP_OKAY) {
          return err;
       }
+
       if ((strlen(str) < (unsigned) digits) && (strlen(string) > 0)) {
          for (i = strlen(str); i < digits; i++) {
             string = strncat(string, "0", 1);
@@ -181,6 +180,7 @@ void free_schoenhage_cache()
 int mp_get_str(mp_int *a, char *string, int base)
 {
    int sign, e;
+
    // we need a defined starting point
    *string = '\0';
    sign = a->sign;
@@ -190,6 +190,7 @@ int mp_get_str(mp_int *a, char *string, int base)
       *string = '\0';
    }
    a->sign = MP_ZPOS;
+
 
    if ((e = mp_get_str_intern(a, string, 0, base)) != MP_OKAY) {
       return e;
