@@ -26,6 +26,8 @@ int mp_fft_mul(mp_int *a, mp_int *b, mp_int *c)
    fa = NULL;
    fb = NULL;
    int length, e;
+   mp_int r;
+
    if (mp_iszero(a) == MP_YES || mp_iszero(b) == MP_YES) {
       return MP_OKAY;
    }
@@ -63,13 +65,19 @@ int mp_fft_mul(mp_int *a, mp_int *b, mp_int *c)
       if (fb != NULL) free(fb);
       return e;
    }
-   if ((e = mp_fft_to_dp(fb, c, length)) != MP_OKAY) {
+   if( (e = mp_init(&r) ) != MP_OKAY){
+      return e;
+   }
+   if ((e = mp_fft_to_dp(fb, &r, length)) != MP_OKAY) {
       if (fa != NULL) free(fa);
       if (fb != NULL) free(fb);
+      mp_clear(&r);
       return e;
    }
    free(fa);
    free(fb);
+   mp_exch(&r,c);
+   mp_clear(&r);
    return MP_OKAY;
 }
 

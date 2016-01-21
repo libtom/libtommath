@@ -277,6 +277,207 @@ ERR:
    return res;
 }
 
+
+/*
+Evaluation at {0,-2,1,-1,1/0}
+
+M. Bodrato, "Towards Optimal Toom-Cook Multiplication for Univariate and Multivariate
+Polynomials in Characteristic 2 and 0", "WAIFI'07 proceedings" (C.Carlet and B.Sunar, eds.)
+Springer, Madrid, Spain, June 2007, pp. 116-133.
+
+M. Bodrato, A. Zanoni, "Integer and Polynomial Multiplication: Towards Optimal Toom-Cook
+Matrices", "Proceedings of the ISSAC 2007 conference", pp. 17-24
+ACM press, Waterloo, Ontario, Canada, July 29-August 1, 2007
+
+The following paper is behind a paywall and was hard to get.
+
+M. Bodrato, "High degree Toom'n'half for balanced and unbalanced multiplication",
+"Proceedings of the 20th IEEE symposium on Computer Arithmetic", pp 15-22, Tuebingen,
+Germany, 2011
+*/
+int mp_toom_mul_new(mp_int *a, mp_int *b, mp_int *c){
+   mp_int a0, a1, a2, b0, b1, b2, w0, w1, w2, w3, w4;
+
+   int e = MP_OKAY;
+   int B, count;
+
+   B = ((MAX(a->used, b->used)) / 3);
+
+   if (MIN(a->used, b->used) < TOOM_MUL_CUTOFF) {
+      if ((e = mp_mul(a, b, c)) != MP_OKAY) {
+         return e;
+      }
+      return MP_OKAY;
+   }
+
+   if ((e = mp_init_multi(&w0, &w1, &w2, &w3, &w4, NULL)) != MP_OKAY) {
+      goto ERR0;
+   }
+
+   if ((e = mp_init_size(&a0, B)) != MP_OKAY) {
+      goto ERRa0;
+   }
+   if ((e = mp_init_size(&a1, B)) != MP_OKAY) {
+      goto ERRa1;
+   }
+   if ((e = mp_init_size(&a2, B)) != MP_OKAY) {
+      goto ERRa2;
+   }
+
+   if ((e = mp_init_size(&b0, B)) != MP_OKAY) {
+      goto ERRb0;
+   }
+   if ((e = mp_init_size(&b1, B)) != MP_OKAY) {
+      goto ERRb1;
+   }
+   if ((e = mp_init_size(&b2, B)) != MP_OKAY) {
+      goto ERRb2;
+   }
+
+   for (count = 0; count < a->used; count++) {
+      switch (count / B) {
+      case 0:
+         a0.dp[count] = a->dp[count];
+         a0.used++;
+         break;
+      case 1:
+         a1.dp[count - B] = a->dp[count];
+         a1.used++;
+         break;
+      case 2:
+         a2.dp[count - 2 * B] = a->dp[count];
+         a2.used++;
+         break;
+      default:
+         a2.dp[count - 2 * B] = a->dp[count];
+         a2.used++;
+         break;
+      }
+   }
+   mp_clamp(&a0);
+   mp_clamp(&a1);
+   mp_clamp(&a2);
+   for (count = 0; count < b->used; count++) {
+      switch (count / B) {
+      case 0:
+         b0.dp[count] = b->dp[count];
+         b0.used++;
+         break;
+      case 1:
+         b1.dp[count - B] = b->dp[count];
+         b1.used++;
+         break;
+      case 2:
+         b2.dp[count - 2 * B] = b->dp[count];
+         b2.used++;
+         break;
+      default:
+         b2.dp[count - 2 * B] = b->dp[count];
+         b2.used++;
+         break;
+      }
+   }
+   mp_clamp(&b0);
+   mp_clamp(&b1);
+   mp_clamp(&b2);
+
+// w0 = a0 * b0
+mp_mul(&a0,&b0,&w0);
+// w4 = a2 * b2
+mp_mul(&a2,&b2,&w4);
+
+// w1 = (a2+a1+a0) * (b2+b1+b0)
+mp_add(&a2,&a1,&w1);
+mp_add(&w1,&a0,&w1);
+
+mp_add(&b2,&b1,&w2);
+mp_add(&w2,&b0,&w2);
+
+mp_mul(&w1,&w2,&w1);
+
+// w2 = (4*a2+2*a1+a0) * (4*b2+2*b1+b0)
+mp_mul_2d(&a2,2,&w2);
+mp_add(&w2,&a0,&w2);
+mp_mul_2(&a1,&a1);
+mp_add(&w2,&a1,&w2);
+mp_div_2(&a1,&a1);
+
+mp_mul_2d(&b2,2,&w3);
+mp_add(&w3,&b0,&w3);
+mp_mul_2(&b1,&b1);
+mp_add(&w3,&b1,&w3);
+mp_div_2(&b1,&b1);
+
+mp_mul(&w2,&w3,&w2);
+
+// w3 = (a2-a1+a0) * (b2-b1+b0)
+mp_sub(&a2,&a1,&w3);
+mp_add(&w3,&a0,&w3);
+
+// protect the environment, and reuse your variables!
+mp_sub(&b2,&b1,&a0);
+mp_add(&a0,&b0,&a0);
+
+mp_mul(&a0,&w3,&w3);
+
+// w2 = (w2 - w3)/3 exact division by 3
+mp_sub(&w2,&w3,&w2);
+mp_div_3(&w2,&w2,NULL);
+
+// w3 = (w1 - w3)/2
+mp_sub(&w1,&w3,&w3);
+mp_div_2(&w3,&w3);
+
+// w1 = w1 - w0
+mp_sub(&w1,&w0,&w1);
+
+// w2 = (w2 - w1)/2
+mp_sub(&w2,&w1,&w2);
+mp_div_2(&w2,&w2);
+
+// w1 = w1 - w3 - w4
+mp_sub(&w1,&w3,&w1);
+mp_sub(&w1,&w4,&w1);
+
+// w2 = w2 - 2*w4
+mp_mul_2(&w4,&a0);
+mp_sub(&w2,&a0,&w2);
+
+// w3 = w3 - w2
+mp_sub(&w3,&w2,&w3);
+
+// w4*b^4+ w2*b^3+ w1*b^2+ w3*b + w0; don't just glimpse, look carefully!
+mp_lshd(&w4,4 * B);
+mp_lshd(&w2,3 * B);
+mp_lshd(&w1,2 * B);
+mp_lshd(&w3,    B);
+mp_add(&w4,&w2,&w4);
+mp_add(&w4,&w1,&w4);
+mp_add(&w4,&w3,&w4);
+mp_add(&w4,&w0,&w4);
+
+mp_exch(&w4,c);
+
+
+ERR:
+ERRb2:
+   mp_clear(&b2);
+ERRb1:
+   mp_clear(&b1);
+ERRb0:
+   mp_clear(&b0);
+
+ERRa2:
+   mp_clear(&a2);
+ERRa1:
+   mp_clear(&a1);
+ERRa0:
+   mp_clear(&a0);
+ERR0:
+
+   mp_clear_multi(&w0, &w1, &w2, &w3, &w4, NULL);
+   return e;
+}
 #endif
 
 /* $Source$ */

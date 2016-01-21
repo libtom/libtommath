@@ -221,6 +221,7 @@ int mp_dp_to_fft(mp_int *a, double **fa,
    if (length_needed != 1<<hb) {
       length_needed = 1<<(hb+1);
    }
+ //  fprintf(stderr,"length_needed %d\n",length_needed );
    /* Send computed length back to caller */
    *length = length_needed;
 
@@ -228,6 +229,8 @@ int mp_dp_to_fft(mp_int *a, double **fa,
    if (fft_array_a == NULL) {
       return MP_MEM;
    }
+
+
    fft_array_b = XMALLOC(sizeof(double) * (length_needed + 5));
    if (fft_array_b == NULL) {
       return MP_MEM;
@@ -266,11 +269,13 @@ int mp_dp_to_fft(mp_int *a, double **fa,
       }
    }
    // there is a small problem with divisibility of 2^n and 5, so ...
+
    rest = (length_needed/5)*5;
    for(i=rest;i<length_needed + 5;i++){
       fft_array_a[i] = 0.0;
       fft_array_b[i] = 0.0;
    }
+
    /* Send the route to memory back to caller */
    *fa = fft_array_a;
    *fb = fft_array_b;
@@ -373,12 +378,13 @@ int mp_fft_to_dp(double *fft_array, mp_int *a,int length)
       /* and count them all */
       a->used++;
    }
-
+  // fprintf(stderr,"a.used %d\n",a->used );
    if (carry) {
       a->dp[i] = carry;
       a->used++;
    }
    mp_clamp(a);
+//   fprintf(stderr,"a.used %d\n",a->used );
    return MP_OKAY;
 }
 

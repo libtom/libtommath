@@ -21,9 +21,8 @@
 
 int mp_fft_sqr(mp_int *a,mp_int *c)
 {
-   double *fa, *fb;
+   double *fa;
    fa = NULL;
-   fb = NULL;
    int length, e;
    if (mp_iszero(a) == MP_YES) {
       return MP_OKAY;

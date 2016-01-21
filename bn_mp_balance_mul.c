@@ -1,11 +1,20 @@
 #include <tommath.h>
 #ifdef BN_MP_BALANCE_MUL_C
 
-
+/* base two integer logarithm */
+static int highbit(int n)
+{
+   int r=0;
+   int m=n;
+   while (m >>= 1) {
+      r++;
+   }
+   return r;
+}
 /* single-digit multiplication with b as the single-digit */
 int mp_balance_mul(mp_int *a, mp_int *b, mp_int *c)
 {
-   int e, count, len_a, len_b, nblocks, i, j, bsize;
+   int e, count, len_a, len_b, nblocks, i, j, bsize , bb, hb;
    mp_int a0, tmp, A , B, r;
 
    len_a = a->used;
@@ -18,6 +27,21 @@ int mp_balance_mul(mp_int *a, mp_int *b, mp_int *c)
    nblocks = MAX(a->used, b->used) / MIN(a->used, b->used);
    bsize = MIN(a->used, b->used) ;
    e = MP_OKAY;
+/*
+   if(bsize > FFT_MUL_CUTOFF){
+     // mp_64BIT!
+     bb = bsize * 2 * 5;
+     hb = highbit(bb);
+     if(bb != 1<<hb ) {
+        bb = 1 << (hb + 1);
+     }
+     if( MAX(a->used, b->used)/bb > 2){
+        bsize = bb;
+        nblocks = MAX(a->used, b->used)/bb;
+     }
+   }
+*/
+
    if ((e = mp_init_size(&a0, bsize + 2)) != MP_OKAY) {
       return e;
    }
