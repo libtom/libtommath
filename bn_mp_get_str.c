@@ -56,7 +56,7 @@ static int ilog2(int value)
 #endif
 
 
-static int SCHOENHAGE_CONVERSION_CUT = 10;
+#define SCHOENHAGE_CONVERSION_CUT  10
 
 static mp_int *schoenhagecache;
 static int schoenhagecache_len;
@@ -73,16 +73,17 @@ static const int log_table[65] = {
 };
 
 
-static int mp_get_str_intern(mp_int *a, char *string, int digits, int base)
+static int mp_get_str_intern(mp_int *a, char *string, int digits, int base, char *ls)
 {
-   char *str, *s0;
+   char *str;
    int b, n;
    int ed;
-   int err, err2, i;
+   int err, i;
    size_t size;
    mp_int q, r;
    if (a->used <= SCHOENHAGE_CONVERSION_CUT) {
       size = (size_t)(mp_digits(a, base) + 10);
+/*
       str = malloc((size + 10) * sizeof(char));
       if (NULL == str) {
          fprintf(stderr, "malloc failed to allocate %lu bytes\n",
@@ -102,6 +103,19 @@ static int mp_get_str_intern(mp_int *a, char *string, int digits, int base)
       }
       string = strcat(string, str);
       free(str);
+*/
+     ls = memset(ls,'\0',SCHOENHAGE_CONVERSION_CUT * MP_DIGIT_BIT + 1);
+
+      if ((err = mp_toradix(a, ls, base)) != MP_OKAY) {
+         return err;
+      }
+      if ((strlen(ls) < (unsigned) digits) && (strlen(string) > 0)) {
+         for (i = strlen(ls); i < digits; i++) {
+            string = strncat(string, "0", 1);
+         }
+      }
+      string = strcat(string, ls);
+
       return MP_OKAY;
    }
 
@@ -155,11 +169,11 @@ static int mp_get_str_intern(mp_int *a, char *string, int digits, int base)
    //       decimal digits at 32 bit)
    ed = 1 << n;
 
-   if ((err = mp_get_str_intern(&q, string, digits - ed, base)) != MP_OKAY) {
+   if ((err = mp_get_str_intern(&q, string, digits - ed, base, ls)) != MP_OKAY) {
       mp_clear_multi(&q, &r, NULL);
       return err;
    }
-   if ((err = mp_get_str_intern(&r, string, ed, base)) != MP_OKAY) {
+   if ((err = mp_get_str_intern(&r, string, ed, base, ls)) != MP_OKAY) {
       mp_clear_multi(&q, &r, NULL);
       return err;
    }
@@ -180,7 +194,10 @@ void free_schoenhage_cache()
 int mp_get_str(mp_int *a, char *string, int base)
 {
    int sign, e;
+   // maximum from base 2
+   char s[SCHOENHAGE_CONVERSION_CUT * MP_DIGIT_BIT + 1];
 
+   //s = malloc((SCHOENHAGE_CONVERSION_CUT * MP_DIGIT_BIT + 1) * sizeof(char));
    // we need a defined starting point
    *string = '\0';
    sign = a->sign;
@@ -192,10 +209,10 @@ int mp_get_str(mp_int *a, char *string, int base)
    a->sign = MP_ZPOS;
 
 
-   if ((e = mp_get_str_intern(a, string, 0, base)) != MP_OKAY) {
+   if ((e = mp_get_str_intern(a, string, 0, base, s)) != MP_OKAY) {
       return e;
    }
-
+   //free(s);
    a->sign = sign;
    return MP_OKAY;
 }
