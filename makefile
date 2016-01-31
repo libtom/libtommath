@@ -94,7 +94,7 @@ test_standalone: $(LIBNAME) demo/demo.o
 
 .PHONY: mtest
 mtest:
-	cd mtest ; $(CC) $(CFLAGS) mtest.c $(LFLAGS) -o mtest
+	cd mtest ; $(CC) $(CFLAGS) -O0 mtest.c $(LFLAGS) -o mtest
 
 timing: $(LIBNAME)
 	$(CC) $(CFLAGS) -DTIMER demo/timing.c $(LIBNAME) $(LFLAGS) -o ltmtest
