@@ -161,7 +161,7 @@ manual:	mandvi
 pretty:
 	perl pretty.build
 
-#zipup the project (take that!)
+#\zipup the project (take that!)
 no_oops: clean
 	cd .. ; cvs commit
 	echo Scanning for scratch/dirty files
@@ -180,6 +180,7 @@ zipup:
 	cd .. ; tar xf libtommath-$(VER_MAJOR).$(VER_MINOR).$(VER_PATCH).tar
 	MAKE=${MAKE} ${MAKE} -C ../libtommath-$(VER_MAJOR).$(VER_MINOR).$(VER_PATCH) clean manual poster docs
 	tar -c ../libtommath-$(VER_MAJOR).$(VER_MINOR).$(VER_PATCH)/* | xz -9 > ../ltm-$(VER_MAJOR).$(VER_MINOR).$(VER_PATCH).tar.xz
+	cd .. ; zip -9r ltm-$(VER_MAJOR).$(VER_MINOR).$(VER_PATCH).zip libtommath-$(VER_MAJOR).$(VER_MINOR).$(VER_PATCH)
 
 new_file:
 	bash updatemakes.sh
