@@ -3,8 +3,8 @@
 #
 
 #version of library
-VER_MAJOR=0
-VER_MINOR=43
+VER_MAJOR=1
+VER_MINOR=0
 VER_PATCH=0
 
 # default make target
