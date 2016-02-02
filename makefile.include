@@ -3,9 +3,8 @@
 #
 
 #version of library
-VER_MAJOR=1
-VER_MINOR=0
-VER_PATCH=0
+VERSION=1.0
+VERSION_SO=1:0
 
 # default make target
 default: ${LIBNAME}
