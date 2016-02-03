@@ -180,6 +180,7 @@ zipup:
 	cd .. ; tar xf libtommath-$(VERSION).tar
 	MAKE=${MAKE} ${MAKE} -C ../libtommath-$(VERSION) clean manual poster docs
 	tar -c ../libtommath-$(VERSION)/* | xz -9 > ../ltm-$(VERSION).tar.xz
+	find ../libtommath-$(VERSION)/ -type f -exec unix2dos -q {} \;
 	cd .. ; zip -9r ltm-$(VERSION).zip libtommath-$(VERSION)
 	gpg -b -a ../ltm-$(VERSION).tar.xz && gpg -b -a ../ltm-$(VERSION).zip
 
