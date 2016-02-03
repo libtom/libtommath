@@ -1,8 +1,9 @@
 #include <tommath.h>
 #include <time.h>
 #include <unistd.h>
+#include <stdint.h>
 
-ulong64 _tt;
+uint64_t _tt;
 
 #ifdef IOWNANATHLON
 #include <unistd.h>
@@ -47,7 +48,7 @@ int lbit(void)
 }
 
 /* RDTSC from Scott Duplichan */
-static ulong64 TIMFUNC(void)
+static uint64_t TIMFUNC(void)
 {
 #if defined __GNUC__
 #if defined(__i386__) || defined(__x86_64__)
@@ -56,7 +57,7 @@ static ulong64 TIMFUNC(void)
    */
   unsigned hi, lo;
   __asm__ __volatile__ ("rdtsc" : "=a"(lo), "=d"(hi));
-  return ((ulong64)lo)|( ((ulong64)hi)<<32);
+  return ((uint64_t)lo)|( ((uint64_t)hi)<<32);
 #else /* gcc-IA64 version */
    unsigned long result;
    __asm__ __volatile__("mov %0=ar.itc":"=r"(result)::"memory");
@@ -101,7 +102,7 @@ static ulong64 TIMFUNC(void)
 
 int main(void)
 {
-   ulong64 tt, gg, CLK_PER_SEC;
+   uint64_t tt, gg, CLK_PER_SEC;
    FILE *log, *logb, *logc, *logd;
    mp_int a, b, c, d, e, f;
    int n, cnt, ix, old_kara_m, old_kara_s, old_toom_m, old_toom_s;
