@@ -2,6 +2,7 @@
 #include <time.h>
 #include <unistd.h>
 
+typedef unsigned long long ulong64;
 ulong64 _tt;
 
 #ifdef IOWNANATHLON
