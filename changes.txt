@@ -1,6 +1,6 @@
 Feb 5th, 2016
-v1.0.0
-       -- Bump to 1.0.0
+v1.0
+       -- Bump to 1.0
        -- Dirkjan Bussink provided a faster version of mp_expt_d()
        -- Moritz Lenz contributed a fix to mp_mod()
           and provided mp_get_long() and mp_set_long()
