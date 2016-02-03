@@ -175,12 +175,13 @@ pre_gen:
 
 zipup:
 	rm -rf ../libtommath-$(VERSION) \
-		&& rm -f ../ltm-$(VERSION).zip ../ltm-$(VERSION).tar.bz2
+		&& rm -f ../ltm-$(VERSION).zip ../ltm-$(VERSION).zip.asc ../ltm-$(VERSION).tar.xz ../ltm-$(VERSION).tar.xz.asc
 	git archive HEAD --prefix=libtommath-$(VERSION)/ > ../libtommath-$(VERSION).tar
 	cd .. ; tar xf libtommath-$(VERSION).tar
 	MAKE=${MAKE} ${MAKE} -C ../libtommath-$(VERSION) clean manual poster docs
 	tar -c ../libtommath-$(VERSION)/* | xz -9 > ../ltm-$(VERSION).tar.xz
 	cd .. ; zip -9r ltm-$(VERSION).zip libtommath-$(VERSION)
+	gpg -b -a ../ltm-$(VERSION).tar.xz && gpg -b -a ../ltm-$(VERSION).zip
 
 new_file:
 	bash updatemakes.sh
