@@ -55,9 +55,11 @@ static int primorial__lowlevel(unsigned long *array, unsigned long n,
   }
   if ((e =
        primorial__lowlevel(array + second_half, first_half, &tmp)) != MP_OKAY) {
+    mp_clear(&tmp);
     return e;
   }
   if ((e = mp_mul(result, &tmp, result)) != MP_OKAY) {
+    mp_clear(&tmp);
     return e;
   }
   mp_clear(&tmp);
@@ -113,11 +115,13 @@ static int factorial_borwein(unsigned long n, mp_int * result)
   if (n < MP_FACTORIAL_BORW_LOOP_CUTOFF) {
     for (; bit >= 0; bit--) {
       if ((e = mp_sqr(result, result)) != MP_OKAY) {
+	mp_clear(&temp);
 	return e;
       }
       for (i = 0; i < p; i++) {
 	if ((exp_list[i] & (1 << bit)) != 0) {
 	  if ((e = mp_mul_d(result, (mp_digit) p_list[i], result)) != MP_OKAY) {
+	    mp_clear(&temp);
 	    return e;
 	  }
 	}
@@ -126,10 +130,18 @@ static int factorial_borwein(unsigned long n, mp_int * result)
   } else {
     for (; bit >= 0; bit--) {
       arr = malloc(sizeof(unsigned long) * (r + 1));
+      if (arr == NULL) {
+	mp_clear(&temp);
+	return MP_MEM;
+      }
       if ((e = mp_sqr(result, result)) != MP_OKAY) {
+	mp_clear(&temp);
+	free(arr);
 	return e;
       }
       if ((e = mp_set_int(&temp, 1)) != MP_OKAY) {
+	mp_clear(&temp);
+	free(arr);
 	return e;
       }
       for (i = 0, j = 0; i < p; i++) {
@@ -144,6 +156,8 @@ static int factorial_borwein(unsigned long n, mp_int * result)
       }
       primorial__lowlevel(arr, j, &temp);
       if ((e = mp_mul(&temp, result, result)) != MP_OKAY) {
+	mp_clear(&temp);
+	free(arr);
 	return e;
       }
       free(arr);
@@ -152,20 +166,25 @@ static int factorial_borwein(unsigned long n, mp_int * result)
   if (n < MP_FACTORIAL_BORW_PRIMORIAL_CUTOFF) {
     for (; p < r; p++) {
       if ((e = mp_mul_d(result, (mp_digit) p_list[p], result)) != MP_OKAY) {
+	mp_clear(&temp);
 	return e;
       }
     }
   } else {
     if ((e = mp_primorial(cut, n, &temp)) != MP_OKAY) {
+      mp_clear(&temp);
       return e;
     }
     if ((e = mp_mul(result, &temp, result)) != MP_OKAY) {
+      mp_clear(&temp);
       return e;
     }
   }
   if ((e = mp_mul_2d(result, shift, result)) != MP_OKAY) {
+    mp_clear(&temp);
     return e;
   }
+  mp_clear(&temp);
   return MP_OKAY;
 }
 
@@ -193,15 +212,19 @@ static int fbinsplit2b(unsigned long n, unsigned long m, mp_int * temp)
     return e;
   }
   if ((e = fbinsplit2b(n, k, temp)) != MP_OKAY) {
+    mp_clear(&t1);
     return e;
   }
   if ((e = mp_copy(temp, &t1)) != MP_OKAY) {
+    mp_clear(&t1);
     return e;
   }
   if ((e = fbinsplit2b(k + 2, m, temp)) != MP_OKAY) {
+    mp_clear(&t1);
     return e;
   }
   if ((e = mp_mul(&t1, temp, temp)) != MP_OKAY) {
+    mp_clear(&t1);
     return e;
   }
   mp_clear(&t1);
@@ -218,14 +241,17 @@ static int fbinsplit2a(unsigned long n, mp_int * p, mp_int * r)
     return e;
   }
   if ((e = mp_init(&temp)) != MP_OKAY) {
+    mp_clear(&temp);
     return e;
   }
   if ((e =
        fbinsplit2b(n / 2 + 1 + ((n / 2) & 1), n - 1 + (n & 1),
 		   &temp)) != MP_OKAY) {
+    mp_clear(&temp);
     return e;
   }
   if ((e = mp_mul(p, &temp, p)) != MP_OKAY) {
+    mp_clear(&temp);
     return e;
   }
   mp_clear(&temp);
@@ -243,20 +269,22 @@ static int factorial_binsplit(unsigned long n, mp_int * result)
     return e;
   }
   if ((e = mp_set_int(&p, 1)) != MP_OKAY) {
+    mp_clear_multi(&p, &r, NULL);
     return e;
   }
   if ((e = mp_set_int(&r, 1)) != MP_OKAY) {
+    mp_clear_multi(&p, &r, NULL);
     return e;
   }
   if ((e = fbinsplit2a(n, &p, &r)) != MP_OKAY) {
-    return e;
-  }
-  if ((e = mp_copy(&r, result)) != MP_OKAY) {
+    mp_clear_multi(&p, &r, NULL);
     return e;
   }
   if ((e = mp_mul_2d(&r, (int) mp_prime_divisors(n, 2LU), result)) != MP_OKAY) {
+    mp_clear_multi(&p, &r, NULL);
     return e;
   }
+  mp_clear_multi(&p, &r, NULL);
   return MP_OKAY;
 }
 
