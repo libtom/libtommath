@@ -17,36 +17,36 @@
 
 /* makes a pseudo-random int of a given size */
 int
-mp_rand (mp_int * a, int digits)
+mp_rand(mp_int *a, int digits)
 {
-  int     res;
-  mp_digit d;
+   int     res;
+   mp_digit d;
 
-  mp_zero (a);
-  if (digits <= 0) {
-    return MP_OKAY;
-  }
+   mp_zero(a);
+   if (digits <= 0) {
+      return MP_OKAY;
+   }
 
-  /* first place a random non-zero digit */
-  do {
-    d = ((mp_digit) abs (rand ())) & MP_MASK;
-  } while (d == 0);
+   /* first place a random non-zero digit */
+   do {
+      d = ((mp_digit) abs(rand())) & MP_MASK;
+   } while (d == 0);
 
-  if ((res = mp_add_d (a, d, a)) != MP_OKAY) {
-    return res;
-  }
-
-  while (--digits > 0) {
-    if ((res = mp_lshd (a, 1)) != MP_OKAY) {
+   if ((res = mp_add_d(a, d, a)) != MP_OKAY) {
       return res;
-    }
+   }
 
-    if ((res = mp_add_d (a, ((mp_digit) abs (rand ())), a)) != MP_OKAY) {
-      return res;
-    }
-  }
+   while (--digits > 0) {
+      if ((res = mp_lshd(a, 1)) != MP_OKAY) {
+         return res;
+      }
 
-  return MP_OKAY;
+      if ((res = mp_add_d(a, ((mp_digit) abs(rand())), a)) != MP_OKAY) {
+         return res;
+      }
+   }
+
+   return MP_OKAY;
 }
 #endif
 

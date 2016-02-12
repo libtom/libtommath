@@ -20,7 +20,8 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <limits.h>
-
+#   include <stdint.h>
+#   include <inttypes.h>
 #include <tommath_class.h>
 
 #ifndef MIN
@@ -29,6 +30,29 @@
 
 #ifndef MAX
    #define MAX(x,y) ((x)>(y)?(x):(y))
+#endif
+
+// Set a macro flagging 64 bit environment
+// TODO: add more
+#if _WIN32 || _WIN64
+   #if _WIN64
+      #define _ITS_64_BIT_
+   #else
+      #define _ITS_32_BIT_
+   #endif
+#elif __GNUC__
+   #if __x86_64__ || __ppc64__
+      #define _ITS_64_BIT_
+   #else
+      #define _ITS_32_BIT_
+   #endif
+#endif   
+
+#ifndef _MULTI_TRHEADED_
+   #ifdef USE_PTHREAD
+      #define _MULTI_TRHEADED_
+      #include <pthread.h>
+   #endif
 #endif
 
 #ifdef __cplusplus
@@ -155,11 +179,25 @@ extern "C" {
 typedef int           mp_err;
 
 /* you'll have to tune these... */
-extern int KARATSUBA_MUL_CUTOFF,
-           KARATSUBA_SQR_CUTOFF,
-           TOOM_MUL_CUTOFF,
-           TOOM_SQR_CUTOFF;
-
+extern int KARATSUBA_MUL_CUTOFF;
+extern int            KARATSUBA_SQR_CUTOFF;
+  extern int          TOOM_MUL_CUTOFF;
+ extern int           TOOM_SQR_CUTOFF;
+ extern int           FFT_MUL_CUTOFF;
+ extern int           FFT_UPPER_LIMIT;
+  extern int          FFT_SQR_CUTOFF;
+  extern int          TOOM_COOK_4_MUL_CO;
+  extern int          TOOM_COOK_4_SQR_CO;
+  extern int          TOOM_COOK_5_MUL_CO;
+  extern int          TOOM_COOK_5_SQR_CO;
+  extern int          DIV_BURN_ZIEG_CUTOFF;
+  extern int          BURN_ZIEG_DEN_CUTOFF;
+  extern int          BURN_ZIEG_UPPER_DEN_CUTOFF;
+  extern int          BURN_ZIEG_NUM_CUTOFF;
+  extern int          BURN_ZIEG_UPPER_NUM_CUTOFF;
+  extern int          BURN_ZIEG_CHUNK_SIZE;
+  extern int          NEWTON_DEN_CUTOFF;
+  extern int          RADIX_SIZE_CUTOFF;
 /* define this to use lower memory usage routines (exptmods mostly) */
 /* #define MP_LOW_MEM */
 
@@ -233,6 +271,12 @@ int mp_set_int(mp_int *a, unsigned long b);
 
 /* get a 32-bit value */
 unsigned long mp_get_int(mp_int * a);
+
+/* set a double const */
+int mp_set_double(mp_int * c, double d, int rounding_mode);
+
+/* get a double value */
+int mp_get_double(mp_int * a, double *d);
 
 /* initialize and set a digit */
 int mp_init_set (mp_int * a, mp_digit b);
@@ -321,6 +365,9 @@ int mp_sqr(mp_int *a, mp_int *b);
 
 /* a/b => cb + d == a */
 int mp_div(mp_int *a, mp_int *b, mp_int *c, mp_int *d);
+int mp_div_school(mp_int *a, mp_int *b, mp_int *c, mp_int *d);
+int mp_div_bz(mp_int * a, mp_int * b, mp_int * c, mp_int * d);
+int mp_div_newton(mp_int *a, mp_int *b, mp_int *c, mp_int *d);
 
 /* c = a mod b, 0 <= c < b  */
 int mp_mod(mp_int *a, mp_int *b, mp_int *c);
@@ -506,6 +553,7 @@ int mp_prime_next_prime(mp_int *a, int t, int bbs_style);
  * 
  *   LTM_PRIME_BBS      - make prime congruent to 3 mod 4
  *   LTM_PRIME_SAFE     - make sure (p-1)/2 is prime as well (implies LTM_PRIME_BBS)
+ *   LTM_PRIME_2MSB_OFF - make the 2nd highest bit zero
  *   LTM_PRIME_2MSB_ON  - make the 2nd highest bit one
  *
  * You have to supply a callback which fills in a buffer with random bytes.  "dat" is a parameter you can
@@ -558,7 +606,13 @@ int fast_s_mp_mul_high_digs(mp_int *a, mp_int *b, mp_int *c, int digs);
 int s_mp_mul_high_digs(mp_int *a, mp_int *b, mp_int *c, int digs);
 int fast_s_mp_sqr(mp_int *a, mp_int *b);
 int s_mp_sqr(mp_int *a, mp_int *b);
+
+//nt mp_karatsuba_mul(mp_int *a, mp_int *b, mp_int *c);
+
 int mp_karatsuba_mul(mp_int *a, mp_int *b, mp_int *c);
+
+
+
 int mp_toom_mul(mp_int *a, mp_int *b, mp_int *c);
 int mp_karatsuba_sqr(mp_int *a, mp_int *b);
 int mp_toom_sqr(mp_int *a, mp_int *b);
@@ -568,6 +622,175 @@ int fast_mp_montgomery_reduce(mp_int *a, mp_int *m, mp_digit mp);
 int mp_exptmod_fast(mp_int *G, mp_int *X, mp_int *P, mp_int *Y, int mode);
 int s_mp_exptmod (mp_int * G, mp_int * X, mp_int * P, mp_int * Y, int mode);
 void bn_reverse(unsigned char *s, int len);
+/* Additions by CZ */
+int mp_dp_to_fft(mp_int *a, double **fa,
+              mp_int *b, double **fb, int *length);
+int mp_dp_to_fft_single(mp_int *a, double **fa, int *length);
+int mp_fft_to_dp(double *fft_array, mp_int *a,int length);
+int mp_fft(double *x, double *y, unsigned long length);
+int mp_fft_sqr_d(double *x, unsigned long length);
+int mp_fft_mul(mp_int *a, mp_int *b, mp_int *c);
+int mp_fft_sqr(mp_int *a,mp_int *c);
+
+unsigned long *mp_fill_prime_list(unsigned long start, unsigned long stop,
+                                                          unsigned long *R);
+int mp_primorial(unsigned long a, unsigned long b, mp_int *result);
+
+
+/* A general bitset, can be used elsewhere, too */
+#   define ERAT_BITS (sizeof(uint32_t)*CHAR_BIT)
+#   define GET_BIT(s,n)  ((*(s+(n/ERAT_BITS)) &   ( 1<<( n % ERAT_BITS ))) != 0)
+#   define SET_BIT(s,n)   (*(s+(n/ERAT_BITS)) |=  ( 1<<( n % ERAT_BITS )))
+#   define CLEAR_BIT(s,n) (*(s+(n/ERAT_BITS)) &= ~( 1<<( n % ERAT_BITS )))
+#   define TOG_BIT(s,n)   (*(s+(n/ERAT_BITS)) ^=  ( 1<<( n % ERAT_BITS )))
+/* bst.size is the size in bits, the overall size might be bigger */
+typedef struct mp_bitset_t {
+    uint32_t size;
+    uint32_t *content;
+} mp_bitset_t;
+#   define mp_bitset_alloc(bst, n) \
+  do {\
+      (bst)->content=malloc(( n /(sizeof(uint32_t)) + 1 ));\
+      if ((bst)->content == NULL) {\
+          fprintf(stderr, "memory allocation for bitset failed");\
+          exit(EXIT_FAILURE);\
+        }\
+      (bst)->size = n;\
+  } while (0)
+#   define mp_bitset_size(bst)  ((bst)->size)
+#   define mp_bitset_setall(bst) memset((bst)->content,~(uint32_t)(0),\
+   (bst->size /(sizeof(uint32_t) ) +1 ))
+#   define mp_bitset_clearall(bst) memset((bst)->content,0,\
+   (bst->size /(sizeof(uint32_t) ) +1 ))
+#   define mp_bitset_clear(bst,n) CLEAR_BIT((bst)->content, n)
+#   define mp_bitset_set(bst,n)     SET_BIT((bst)->content, n)
+#   define mp_bitset_get(bst,n)     GET_BIT((bst)->content, n)
+#   define mp_bitset_free(bst) \
+  do {\
+     free((bst)->content);\
+     free(bst);\
+  } while (0)
+
+uint32_t mp_bitset_nextset(mp_bitset_t * bst, uint32_t n);
+uint32_t mp_bitset_prevset(mp_bitset_t * bst, uint32_t n);
+void mp_eratosthenes(mp_bitset_t * bst);
+
+unsigned long mp_prime_divisors(unsigned long n,unsigned long p);
+int mp_factorial(unsigned long n, mp_int *result);
+
+int mp_subfactorial(unsigned long n, mp_int *result);
+
+int mp_highbit(mp_int * a);
+int mp_lowbit(mp_int * a);
+int mp_isdivisible_d(mp_int * a, mp_digit d);
+int mp_isdivisible(mp_int * a, mp_int * d);
+int mp_isge32b(mp_int * a);
+
+int mp_isperfpower(mp_int * z, mp_int * rootout, mp_int * exponent);
+
+mp_int *mp_max(mp_int *a, mp_int *b);
+mp_int *mp_min(mp_int *a, mp_int *b);
+
+int mp_expt(mp_int *a, mp_int *b, mp_int *c);
+
+int mp_compute_factored_factorial(unsigned long *f, unsigned long f_length,
+                                  mp_int *c,   unsigned long stop);
+
+int mp_binomial(unsigned long n,unsigned long  k, mp_int *c);
+int mp_catalan(unsigned long n, mp_int *c);
+/* for positve n only for now */
+int mp_doublefactorial(unsigned long n,mp_int *c);
+/* Fibonacci numbers */
+int mp_fibonacci(unsigned long n, mp_int * r);
+/* Lucas numbers */
+int mp_lucas(unsigned long n, mp_int * c);
+
+int mp_euler(unsigned long n, mp_int * c);
+void mp_euler_free(void);
+
+int mp_fpl_matrix(unsigned long n,int m11,int m12, int m21,int m22,
+                                  int M11,int M12, int M21,int M22, mp_int * r);
+int mp_pell(unsigned long n, mp_int * r);
+int mp_pell_lucas(unsigned long n, mp_int * r);
+int mp_pell_modified(unsigned long n, mp_int * r);
+int mp_perrin(unsigned long n, mp_int * r);
+int mp_leonardo(unsigned long n, mp_int * c);
+int mp_jacobsthal(unsigned long n, mp_int * c);
+int mp_jacobsthal(unsigned long n, mp_int * c);
+int mp_padovan(unsigned long n, mp_int * r);
+
+
+int mp_factor_factorial(unsigned long n, unsigned long start, 
+                        long **prime_list,unsigned long *length);
+
+int mp_subtract_factored_factorials( long *subtrahend,
+                                    unsigned long l_subtrahend,
+                                     long *minuend,
+                                    unsigned long l_minuend,
+                                     long **difference,
+                                    unsigned long /* Vive */*l_difference/*!*/);
+
+int mp_add_factored_factorials(  long *summand_1,
+                                unsigned long l_summand_1,
+                                 long *summand_2,
+                                unsigned long l_summand_2,
+                                 long **sum,
+                                unsigned long *l_sum);
+
+int mp_power_factored_factorials(  long *input,
+                                unsigned long l_input,
+                                 long multiplicator,
+                                 long **product,
+                                unsigned long *l_product);
+
+int mp_negate_factored_factorials(  long *input,
+                                unsigned long l_input,
+                                 long **output,
+                                unsigned long *l_output);
+
+int mp_compute_signed_factored_factorials(long *f, unsigned long f_length,
+                                    mp_int *c, mp_int *r);
+
+int mp_bell(unsigned long n, mp_int * c);
+int mp_bell_fast(unsigned long n, mp_int * c);
+int mp_stirling1(unsigned long n, unsigned long m, mp_int * c);
+int mp_stirling1_mat(unsigned long n, unsigned long m, mp_int * c);
+void mp_stirling1_free(void);
+int mp_stirling2(unsigned long n, unsigned long m, mp_int * c);
+int mp_stirling2_mat(unsigned long n, unsigned long m, mp_int * c);
+void mp_stirling2_free(void);
+
+int mp_rising_factorial(unsigned long n, unsigned long k, mp_int * c);
+int mp_falling_factorial(unsigned long n, unsigned long k, mp_int * c);
+int mp_superfactorial(unsigned long n, mp_int * c);
+int mp_set_word(mp_int *c,mp_word w);
+
+int mp_toom_cook_4_mul(mp_int * a, mp_int * b, mp_int * c);
+int mp_toom_cook_4_sqr(mp_int * a, mp_int * c);
+int mp_toom_cook_5_mul(mp_int * a, mp_int * b, mp_int * c);
+int mp_toom_cook_5_sqr(mp_int * a, mp_int * c);
+
+int mp_balance_mul(mp_int * a, mp_int * b, mp_int * c);
+
+int mp_get_double(mp_int * a, double *d);
+int mp_set_double(mp_int * c, double d, int rounding_mode);
+
+int mp_fput(mp_int * a, int base, FILE *stream);
+int mp_put(mp_int * a, int base);
+
+long mp_digits(mp_int * a, int base);
+
+int mp_giantsteps(int start, int end, int stepsize, int **precs, int *steps);
+
+int mp_ilogb(mp_int * a, mp_int * base, mp_int * c);
+int mp_ilogb_d(mp_int * a, int base, mp_int * c);
+
+void free_schoenhage_cache();
+int mp_get_str(mp_int *a, char *string, int base);
+int mp_set_str(mp_int * a, const char *string, int base);
+
+
+/* End of additions by CZ */
 
 extern const char *mp_s_rmap;
 
@@ -579,5 +802,6 @@ extern const char *mp_s_rmap;
 
 
 /* $Source$ */
-/* $Revision$ */
-/* $Date$ */
+/* $Revision: 0.39 $ */
+/* $Date: 2006-04-06 19:49:59 +0000 $ */
+

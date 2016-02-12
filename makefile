@@ -5,7 +5,10 @@
 #version of library 
 VERSION=0.42.0
 
-CFLAGS  +=  -I./ -Wall -W -Wshadow -Wsign-compare
+CFLAGS  +=   -I./ -Wall -W -Wshadow -Wsign-compare
+LIBS += -lm 
+#LIBS += -ltcmalloc_minimal
+
 
 ifndef MAKE
    MAKE=make
@@ -14,7 +17,9 @@ endif
 ifndef IGNORE_SPEED
 
 #for speed 
-CFLAGS += -O3 -funroll-loops
+CFLAGS += -g3 -O3  -funroll-loops 
+#CFLAGS += -g3 -O3  -funroll-loops -DUSE_PTHREAD_FFT
+#CFLAGS += -g3 -O3 -funroll-loops -DUSE_THREADS_FOR_TOOM_5
 
 #for size 
 #CFLAGS += -Os
@@ -29,7 +34,7 @@ endif
 
 #install as this user
 ifndef INSTALL_GROUP
-   GROUP=wheel
+   GROUP=root
 else
    GROUP=$(INSTALL_GROUP)
 endif
@@ -83,7 +88,36 @@ bn_mp_fread.o bn_mp_fwrite.o bn_mp_cnt_lsb.o bn_error.o \
 bn_mp_init_multi.o bn_mp_clear_multi.o bn_mp_exteuclid.o bn_mp_toradix_n.o \
 bn_mp_prime_random_ex.o bn_mp_get_int.o bn_mp_sqrt.o bn_mp_is_square.o bn_mp_init_set.o \
 bn_mp_init_set_int.o bn_mp_invmod_slow.o bn_mp_prime_rabin_miller_trials.o \
-bn_mp_to_signed_bin_n.o bn_mp_to_unsigned_bin_n.o
+bn_mp_to_signed_bin_n.o bn_mp_to_unsigned_bin_n.o\
+bn_mp_fft.o bn_mp_fft_mul.o bn_mp_fft_sqr.o\
+bn_mp_factorial.o bn_mp_primorial.o\
+bn_mp_subfactorial.o\
+bn_mp_lowbit.o bn_mp_highbit.o bn_mp_isdivisible_d.o bn_mp_isdivisible.o bn_mp_isge32b.o\
+bn_mp_isperfpower.o\
+bn_mp_max.o bn_mp_min.o\
+bn_mp_expt.o bn_mp_compute_factored_factorial.o bn_mp_binomial.o\
+bn_mp_doublefactorial.o bn_mp_fibonacci.o bn_mp_lucas.o bn_mp_euler.o bn_mp_catalan.o\
+bn_mp_pell.o bn_mp_pell_lucas.o bn_mp_pell_modified.o\
+bn_mp_perrin.o bn_mp_leonardo.o bn_mp_jacobsthal.o bn_mp_jacobsthal_lucas.o\
+bn_mp_padovan.o\
+bn_mp_factor_factorial.o  bn_mp_subtract_factored_factorials.o \
+bn_mp_add_factored_factorials.o  bn_mp_power_factored_factorials.o \
+bn_mp_negate_factored_factorials.o  bn_mp_compute_signed_factored_factorials.o\
+bn_mp_bell.o bn_mp_bell_fast.o bn_mp_stirling1.o bn_mp_stirling1_mat.o bn_mp_stirling2.o \
+bn_mp_stirling2_mat.o\
+bn_mp_falling_factorial.o bn_mp_rising_factorial.o\
+bn_mp_superfactorial.o bn_mp_set_word.o\
+bn_mp_balance_mul.o bn_mp_toom_cook_4_mul.o bn_mp_toom_cook_4_sqr.o\
+bn_mp_toom_cook_5_mul.o bn_mp_toom_cook_5_sqr.o\
+bn_mp_get_double.o bn_mp_set_double.o\
+bn_mp_put.o bn_mp_fput.o\
+bn_mp_digits.o\
+bn_mp_div_bz.o\
+bn_mp_div_newton.o\
+bn_mp_giantsteps.o\
+bn_mp_ilogb_d.o bn_mp_ilogb.o\
+bn_mp_get_str.o bn_mp_set_str.o
+
 
 $(LIBNAME):  $(OBJECTS)
 	$(AR) $(ARFLAGS) $@ $(OBJECTS)
@@ -104,11 +138,11 @@ profiled:
 #make a single object profiled library 
 profiled_single:
 	perl gen.pl
-	$(CC) $(CFLAGS) -fprofile-arcs -DTESTING -c mpi.c -o mpi.o
-	$(CC) $(CFLAGS) -DTESTING -DTIMER demo/timing.c mpi.o -o ltmtest
+	$(CC) $(CFLAGS) -fprofile-arcs -DTESTING -c mpi.c -o mpi.o $(LIBS)
+	$(CC) $(CFLAGS) -DTESTING -DTIMER demo/timing.c mpi.o -o ltmtest $(LIBS)
 	./ltmtest
 	rm -f *.o ltmtest
-	$(CC) $(CFLAGS) -fbranch-probabilities -DTESTING -c mpi.c -o mpi.o
+	$(CC) $(CFLAGS) -fbranch-probabilities -DTESTING -c mpi.c -o mpi.o $(LIBS)
 	$(AR) $(ARFLAGS) $(LIBNAME) mpi.o
 	ranlib $(LIBNAME)	
 
@@ -119,13 +153,13 @@ install: $(LIBNAME)
 	install -g $(GROUP) -o $(USER) $(HEADERS) $(DESTDIR)$(INCPATH)
 
 test: $(LIBNAME) demo/demo.o
-	$(CC) $(CFLAGS) demo/demo.o $(LIBNAME) -o test
+	$(CC) $(CFLAGS) demo/demo.o $(LIBNAME) -o test $(LIBS)
 	
 mtest: test	
-	cd mtest ; $(CC) $(CFLAGS) mtest.c -o mtest
+	cd mtest ; $(CC) $(CFLAGS) mtest.c -o mtest $(LIBS)
         
 timing: $(LIBNAME)
-	$(CC) $(CFLAGS) -DTIMER demo/timing.c $(LIBNAME) -o ltmtest
+	$(CC) $(CFLAGS) -DTIMER demo/timing.c $(LIBNAME) -o ltmtest $(LIBS)
 
 # makes the LTM book DVI file, requires tetex, perl and makeindex [part of tetex I think]
 docdvi: tommath.src
