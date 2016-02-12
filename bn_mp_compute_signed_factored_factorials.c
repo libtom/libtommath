@@ -26,7 +26,10 @@ int mp_compute_signed_factored_factorials(long *f, unsigned long f_length,
       shift = f[1];
       if (f_length == 2) {
          if (shift > 0) {
-            if ((e = mp_set_int(c,1LU<<(unsigned long)f[1])) != MP_OKAY) {
+            if ((e = mp_set_int(c,1)) != MP_OKAY) {
+               return e;
+            }
+            if ((e = mp_mul_2d(c,(int)f[1],c)) != MP_OKAY) {
                return e;
             }
          }

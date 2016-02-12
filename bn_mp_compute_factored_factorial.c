@@ -30,7 +30,11 @@ int mp_compute_factored_factorial(unsigned long *f, unsigned long f_length,
    if (f[0] == 2 && f[1] > 0) {
       shift = f[1];
       if (f_length == 2) {
-         if ((e = mp_set_int(c,1LU<<f[1])) != MP_OKAY) {
+         // TODO: goto final_shift;
+         if ((e = mp_set_int(c,1)) != MP_OKAY) {
+            return e;
+         }
+         if ((e = mp_mul_2d(c,(int)f[1],c)) != MP_OKAY) {
             return e;
          }
          return MP_OKAY;
@@ -90,6 +94,7 @@ int mp_compute_factored_factorial(unsigned long *f, unsigned long f_length,
          }
       }
    }
+// TODO: final_shift:
    if (shift) {
       /* DIGIT_BIT might be 60 which makes this extra check necessary */
       if (shift < INT_MAX) {
