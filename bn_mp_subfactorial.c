@@ -5,106 +5,138 @@
 #define MP_DIGIT_SIZE (1L<<DIGIT_BIT)
 #endif
 
-#ifdef SAVE_SOME_MEMORY
-static int subfactorial_iterative(unsigned long n, mp_int *result)
-{
-   mp_int temp1, temp2;
-   mp_digit k;
-   int e;
+static int SUBFACTORIAL_CUTOFF = 5000;
 
-   if (n==0) {
-      return mp_set_int(result,1);
-   }
-   if (n==1) {
-      return mp_set_int(result,0);
-   }
-   if (n==2) {
-      return mp_set_int(result,1);
-   }
-   if ((e = mp_init_multi(&temp1, &temp2,NULL)) != MP_OKAY) {
-      return e;
-   }
-   if ((e = mp_set_int(&temp1, 0)) != MP_OKAY) {
-      mp_clear_multi(&temp1, &temp2,NULL);
-      return e;
-   }
-   if ((e = mp_set_int(result,1)) != MP_OKAY) {
-      mp_clear_multi(&temp1, &temp2,NULL);
-      return e;
-   }
-   for (k=3; k<=n; k++) {
-      mp_exch(&temp1,&temp2);
-      mp_exch(result, &temp1);
-      if ((e = mp_add(&temp1, &temp2,result))  != MP_OKAY) {
-         mp_clear_multi(&temp1, &temp2,NULL);
-         return e;
-      }
-      if ((e = mp_mul_d(result,(k-1),result))  != MP_OKAY) {
-         mp_clear_multi(&temp1, &temp2,NULL);
-         return e;
-      }
-   }
-   mp_clear_multi(&temp1, &temp2,NULL);
-   return MP_OKAY;
+static int subfactorial_iterative(mp_digit n, mp_int *c)
+{
+  mp_int r;
+  int err;
+  int one;
+  mp_digit k;
+
+  err = MP_OKAY;
+
+  if ((err = mp_init_set(&r, (mp_digit) 1)) != MP_OKAY) {
+    return err;
+  }
+  if (n == 0 || n == 2) {
+    mp_exch(&r, c);
+    goto _ERR;
+  }
+  if (n == 1) {
+    mp_zero(&r);
+    mp_exch(&r, c);
+    goto _ERR;
+  }
+  one = 1;
+  for (k = 3; k <= n; k++) {
+    one = -one;
+    if ((err = mp_mul_d(&r, k, &r)) != MP_OKAY) {
+      goto _ERR;
+    }
+    if ((err = mp_add_d(&r, one, &r)) != MP_OKAY) {
+      goto _ERR;
+    }
+  }
+  mp_exch(&r, c);
+_ERR:
+  mp_clear(&r);
+  return err;
 }
-#else
-static mp_int kill_the_stack;
-static int subfactorial_error = MP_OKAY;
-static mp_int *__subfactorialrecursive(unsigned long n)
+// Shamelessly stolen from libtomfloat
+static int binsplit(mp_int * a, mp_int * b, mp_int * P, mp_int * Q)
 {
+    int err;
+    mp_int p1, q1, p2, q2, t1, one;
+    if ((err = mp_init_multi(&p1, &q1, &p2, &q2, &t1, &one, NULL)) != MP_OKAY) {
+        return err;
+    }
 
-   mp_digit sign;
-   int e;
+    err = MP_OKAY;
+    mp_set(&one, 1);
+    if ((err = mp_sub(b, a, &t1)) != MP_OKAY) {
+        goto _ERR;
+    }
+    if (mp_cmp(&t1, &one) == MP_EQ) {
+        if ((err = mp_set_int(P, 1)) != MP_OKAY) {
+            goto _ERR;
+        }
+        if ((err = mp_copy(b, Q)) != MP_OKAY) {
+            goto _ERR;
+        }
+        goto _ERR;
+    }
+    if ((err = mp_add(a, b, &t1)) != MP_OKAY) {
+        goto _ERR;
+    }
+    if ((err = mp_div_2d(&t1, 1, &t1, NULL)) != MP_OKAY) {
+        goto _ERR;
+    }
 
-   if (n==0) {
-      if ((e =  mp_set_int(&kill_the_stack,1)) != MP_OKAY) {
-         subfactorial_error = e;
-      }
-      return &kill_the_stack;
-   }
-   if (n==1) {
-      if ((e =  mp_set_int(&kill_the_stack,0)) != MP_OKAY) {
-         subfactorial_error = e;
-      }
-      return &kill_the_stack;
-   }
-   if (n==2) {
-      if ((e =  mp_set_int(&kill_the_stack,1)) != MP_OKAY) {
-         subfactorial_error = e;
-      }
-      return &kill_the_stack;
-   }
-   if ((e =  mp_mul_d(__subfactorialrecursive(n-1),n,&kill_the_stack)) != MP_OKAY) {
-      subfactorial_error = e;
-   }
-   sign = (n&01)?-1:1;
-   if ((e =  mp_add_d(&kill_the_stack,sign,&kill_the_stack)) != MP_OKAY) {
-      subfactorial_error = e;
-   }
-   return &kill_the_stack;
+    if ((err = binsplit(a, &t1, &p1, &q1)) != MP_OKAY) {
+        goto _ERR;
+    }
+    if ((err = binsplit(&t1, b, &p2, &q2)) != MP_OKAY) {
+        goto _ERR;
+    }
+    //P = q2*p1 + p2
+    if ((err = mp_mul(&q2, &p1, &t1)) != MP_OKAY) {
+        goto _ERR;
+    }
+    if ((err = mp_add(&t1, &p2, P)) != MP_OKAY) {
+        goto _ERR;
+    }
+    //Q =  q1*q2
+    if ((err = mp_mul(&q1, &q2, Q)) != MP_OKAY) {
+        goto _ERR;
+    }
+
+  _ERR:
+    mp_clear_multi(&p1, &q1, &p2, &q2, &t1, &one, NULL);
+    return err;
 }
-static int subfactorial_recursive(unsigned long n, mp_int *result)
+
+static int subfactorial_binsplit(mp_digit n, mp_int * c)
 {
-   mp_init(&kill_the_stack);
-   subfactorial_error = MP_OKAY;
-   __subfactorialrecursive(n);
-   mp_copy(&kill_the_stack,result);
-   mp_clear(&kill_the_stack);
-   return subfactorial_error;
+  mp_int p, q, zero, N;
+  int err;
+  err = MP_OKAY;
+
+  mp_init_multi(&p, &q, &zero, &N, NULL);
+  mp_set(&N, n);
+  mp_zero(&zero);
+  if ((err = binsplit(&zero, &N, &p, &q)) != MP_OKAY) {
+    goto _ERR;
+  }
+
+  if ((err = mp_sqr(&q, &N)) != MP_OKAY) {
+    goto _ERR;
+  }
+  if ((err = mp_add(&N, &q, &N)) != MP_OKAY) {
+    goto _ERR;
+  }
+  if ((err = mp_add(&p, &q, &p)) != MP_OKAY) {
+    goto _ERR;
+  }
+  if ((err = mp_div(&N, &p, &p, NULL)) != MP_OKAY) {
+    goto _ERR;
+  }
+  mp_exch(&p, c);
+_ERR:
+  mp_clear_multi(&p, &q, &zero, &N, NULL);
+  return err;
 }
 
-#endif
-
-int mp_subfactorial(unsigned long n, mp_int *result)
+// TODO: change data type of n
+int mp_subfactorial(unsigned long n, mp_int * result)
 {
-   if (n > MP_DIGIT_SIZE) {
-      return MP_RANGE;
-   }
-#ifdef SAVE_SOME_MEMORY
-   return subfactorial_iterative(n, result);
-#else
-   return  subfactorial_recursive(n, result);
-#endif
+  if (n > MP_DIGIT_SIZE) {
+    return MP_RANGE;
+  }
+  if (n <= (mp_digit)SUBFACTORIAL_CUTOFF)
+    return subfactorial_iterative((mp_digit)n, result);
+  else
+    return subfactorial_binsplit((mp_digit)n, result);
 }
 
 #endif
