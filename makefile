@@ -17,8 +17,8 @@ endif
 ifndef IGNORE_SPEED
 
 #for speed 
-CFLAGS += -g3 -O3  -funroll-loops 
-#CFLAGS += -g3 -O3  -funroll-loops -DUSE_PTHREAD_FFT
+#CFLAGS += -g3 -O3  -funroll-loops 
+CFLAGS += -g3 -O3  -funroll-loops -DUSE_PTHREAD_FFT -DUSE_PTHREAD
 #CFLAGS += -g3 -O3 -funroll-loops -DUSE_THREADS_FOR_TOOM_5
 
 #for size 
@@ -97,7 +97,7 @@ bn_mp_isperfpower.o\
 bn_mp_max.o bn_mp_min.o\
 bn_mp_expt.o bn_mp_compute_factored_factorial.o bn_mp_binomial.o\
 bn_mp_doublefactorial.o bn_mp_fibonacci.o bn_mp_lucas.o bn_mp_euler.o bn_mp_catalan.o\
-bn_mp_pell.o bn_mp_pell_lucas.o bn_mp_pell_modified.o\
+bn_mp_pell.o bn_mp_pell_lucas.o bn_mp_pell_modified.o bn_mp_fpl_matrix.o \
 bn_mp_perrin.o bn_mp_leonardo.o bn_mp_jacobsthal.o bn_mp_jacobsthal_lucas.o\
 bn_mp_padovan.o\
 bn_mp_factor_factorial.o  bn_mp_subtract_factored_factorials.o \
@@ -116,7 +116,7 @@ bn_mp_div_bz.o\
 bn_mp_div_newton.o\
 bn_mp_giantsteps.o\
 bn_mp_ilogb_d.o bn_mp_ilogb.o\
-bn_mp_get_str.o bn_mp_set_str.o
+bn_mp_get_str.o bn_mp_set_str.o bn_mp_fft_float.o
 
 
 $(LIBNAME):  $(OBJECTS)
