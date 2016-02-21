@@ -96,14 +96,14 @@ static int binsplit(mp_int * a, mp_int * b, mp_int * P, mp_int * Q)
     return err;
 }
 
-static int subfactorial_binsplit(mp_digit n, mp_int * c)
+static int subfactorial_binsplit(unsigned long n, mp_int * c)
 {
   mp_int p, q, zero, N;
   int err;
   err = MP_OKAY;
 
   mp_init_multi(&p, &q, &zero, &N, NULL);
-  mp_set(&N, n);
+  mp_set_int(&N, n);
   mp_zero(&zero);
   if ((err = binsplit(&zero, &N, &p, &q)) != MP_OKAY) {
     goto _ERR;
@@ -127,16 +127,12 @@ _ERR:
   return err;
 }
 
-// TODO: change data type of n
 int mp_subfactorial(unsigned long n, mp_int * result)
 {
-  if (n > MP_DIGIT_SIZE) {
-    return MP_RANGE;
-  }
-  if (n <= (mp_digit)SUBFACTORIAL_CUTOFF)
+  if (n <= (unsigned long)SUBFACTORIAL_CUTOFF && n < MP_DIGIT_SIZE)
     return subfactorial_iterative((mp_digit)n, result);
   else
-    return subfactorial_binsplit((mp_digit)n, result);
+    return subfactorial_binsplit(n, result);
 }
 
 #endif
