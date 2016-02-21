@@ -60,6 +60,8 @@
 #define BN_MP_FACTORIAL_C
 #define BN_MP_FALLING_FACTORIAL_C
 #define BN_MP_FFT_C
+#define BN_MP_FFT_FLOAT_C
+#define BN_MP_FFT_FLOAT_TENTH_C
 #define BN_MP_FFT_MUL_C
 #define BN_MP_FFT_SQR_C
 #define BN_MP_FIBONACCI_C
@@ -93,6 +95,7 @@
 #define BN_MP_JACOBSTHAL_C
 #define BN_MP_JACOBSTHAL_LUCAS_C
 #define BN_MP_KARATSUBA_MUL_C
+#define BN_MP_KARATSUBA_MUL_ORIGINAL_C
 #define BN_MP_KARATSUBA_SQR_C
 #define BN_MP_LCM_C
 #define BN_MP_LEONARDO_C
@@ -139,6 +142,7 @@
 #define BN_MP_READ_RADIX_C
 #define BN_MP_READ_SIGNED_BIN_C
 #define BN_MP_READ_UNSIGNED_BIN_C
+#define BN_MP_RECONTRES_C
 #define BN_MP_REDUCE_C
 #define BN_MP_REDUCE_2K_C
 #define BN_MP_REDUCE_2K_L_C
@@ -281,12 +285,17 @@
 #endif
 
 #if defined(BN_MP_BALANCE_MUL_C)
-   #define BN_MP_MUL_C
-   #define BN_MP_EXCH_C
+   #define BN_MP_64_C
    #define BN_MP_INIT_SIZE_C
+   #define BN_MP_INIT_MULTI_C
+   #define BN_MP_CLEAR_C
+   #define BN_MP_COPY_C
+   #define BN_MP_MUL_C
    #define BN_MP_LSHD_C
    #define BN_MP_ADD_C
+   #define BN_MP_EXCH_C
    #define BN_MP_CLEAR_MULTI_C
+   #define BN_MP_BALANCE_RECURSIVE_C
 #endif
 
 #if defined(BN_MP_BELL_C)
@@ -356,19 +365,19 @@
 
 #if defined(BN_MP_COMPUTE_FACTORED_FACTORIAL_C)
    #define BN_MP_SET_INT_C
+   #define BN_MP_MUL_2D_C
    #define BN_MP_INIT_C
    #define BN_MP_SQR_C
    #define BN_MP_MUL_D_C
    #define BN_MP_MUL_C
-   #define BN_MP_MUL_2D_C
 #endif
 
 #if defined(BN_MP_COMPUTE_SIGNED_FACTORED_FACTORIALS_C)
    #define BN_MP_COMPUTE_FACTORED_FACTORIALS_C
    #define BN_MP_SET_INT_C
+   #define BN_MP_MUL_2D_C
    #define BN_MP_MUL_D_C
    #define BN_MP_SQR_C
-   #define BN_MP_MUL_2D_C
    #define BN_MP_INIT_C
    #define BN_MP_DIV_C
    #define BN_MP_COPY_C
@@ -384,6 +393,7 @@
 
 #if defined(BN_MP_DIGITS_C)
    #define BN_MP_COUNT_BITS_C
+   #define BN_MP_RADIX_SIZE_C
 #endif
 
 #if defined(BN_MP_DIV_C)
@@ -481,9 +491,9 @@
    #define BN_MP_MUL_C
    #define BN_MP_SUB_C
    #define BN_MP_ADD_C
-   #define BN_MP_ADD_D_C
-   #define BN_MP_CMP_C
    #define BN_MP_SUB_D_C
+   #define BN_MP_CMP_C
+   #define BN_MP_ADD_D_C
    #define BN_MP_EXCH_C
    #define BN_MP_CLEAR_MULTI_C
 #endif
@@ -607,15 +617,15 @@
    #define BN_MP_SET_C
    #define BN_MP_MUL_D_C
    #define BN_MP_INIT_C
-   #define BN_MP_MUL_C
    #define BN_MP_CLEAR_C
+   #define BN_MP_MUL_C
    #define BN_MP_FILL_PRIME_LIST_C
    #define BN_MP_SET_INT_C
    #define BN_MP_SQR_C
    #define BN_MP_PRIMORIAL_C
    #define BN_MP_MUL_2D_C
-   #define BN_MP_INIT_MULTI_C
    #define BN_MP_COPY_C
+   #define BN_MP_INIT_MULTI_C
    #define BN_MP_CLEAR_MULTI_C
 #endif
 
@@ -640,13 +650,39 @@
    #define BN_MP_FFT_SQR_D_C
 #endif
 
+#if defined(BN_MP_FFT_FLOAT_C)
+   #define BN_MP_DP_TO_FFT_FLOAT_C
+   #define BN_MP_DP_TO_FFT_SINGLE_FLOAT_C
+   #define BN_MP_FFT_TO_DP_FLOAT_C
+   #define BN_MP_GROW_C
+   #define BN_MP_CLAMP_C
+   #define BN_MP_FFT_SQR_D_FLOAT_C
+#endif
+
+#if defined(BN_MP_FFT_FLOAT_TENTH_C)
+   #define BN_MP_DP_TO_FFT_FLOAT_C
+   #define BN_MP_DP_TO_FFT_SINGLE_FLOAT_C
+   #define BN_MP_FFT_TO_DP_FLOAT_C
+   #define BN_MP_GROW_C
+   #define BN_MP_CLAMP_C
+   #define BN_MP_FFT_FLOAT_C
+   #define BN_MP_FFT_SQR_D_FLOAT_C
+#endif
+
 #if defined(BN_MP_FFT_MUL_C)
    #define BN_MP_ISZERO_C
    #define BN_MP_COPY_C
    #define BN_MP_TOOM_COOK_5_MUL_C
    #define BN_MP_DP_TO_FFT_C
    #define BN_MP_FFT_C
+   #define BN_MP_INIT_C
    #define BN_MP_FFT_TO_DP_C
+   #define BN_MP_CLEAR_C
+   #define BN_MP_EXCH_C
+   #define BN_MP_FFT_MUL_FLOAT_C
+   #define BN_MP_DP_TO_FFT_FLOAT_C
+   #define BN_MP_FFT_FLOAT_C
+   #define BN_MP_FFT_TO_DP_FLOAT_C
 #endif
 
 #if defined(BN_MP_FFT_SQR_C)
@@ -656,6 +692,10 @@
    #define BN_MP_DP_TO_FFT_SINGLE_C
    #define BN_MP_FFT_SQR_D_C
    #define BN_MP_FFT_TO_DP_C
+   #define BN_MP_FFT_SQR_FLOAT_C
+   #define BN_MP_DP_TO_FFT_SINGLE_FLOAT_C
+   #define BN_MP_FFT_SQR_D_FLOAT_C
+   #define BN_MP_FFT_TO_DP_FLOAT_C
 #endif
 
 #if defined(BN_MP_FIBONACCI_C)
@@ -676,7 +716,6 @@
    #define BN_MP_MUL_C
    #define BN_MP_ADD_C
    #define BN_MP_COPY_C
-   #define BN_MP_CLEAR_MULTI_C
    #define BN_MP_CLEAR_C
 #endif
 
@@ -913,10 +952,22 @@
    #define BN_MP_CLEAR_C
 #endif
 
-#if defined(BN_MP_KARATSUBA_SQR_C)
+#if defined(BN_MP_KARATSUBA_MUL_ORIGINAL_C)
+   #define BN_MP_MUL_C
+   #define BN_MP_KARATSUBA_MUL_C
    #define BN_MP_INIT_SIZE_C
    #define BN_MP_CLAMP_C
+   #define BN_S_MP_ADD_C
+   #define BN_MP_ADD_C
+   #define BN_S_MP_SUB_C
+   #define BN_MP_LSHD_C
+   #define BN_MP_CLEAR_C
+#endif
+
+#if defined(BN_MP_KARATSUBA_SQR_C)
    #define BN_MP_SQR_C
+   #define BN_MP_INIT_SIZE_C
+   #define BN_MP_CLAMP_C
    #define BN_S_MP_ADD_C
    #define BN_S_MP_SUB_C
    #define BN_MP_LSHD_C
@@ -1005,11 +1056,8 @@
 #endif
 
 #if defined(BN_MP_MUL_C)
-   #define BN_MP_EXCH_C
-   #define BN_MP_INIT_SIZE_C
-   #define BN_MP_LSHD_C
-   #define BN_MP_ADD_C
-   #define BN_MP_CLEAR_MULTI_C
+   #define BN_MP_BALANCE_MUL_C
+   #define BN_MP_BALANCE_RECURSIVE_C
    #define BN_MP_FFT_MUL_C
    #define BN_MP_TOOM_COOK_5_MUL_C
    #define BN_MP_TOOM_COOK_4_MUL_C
@@ -1257,6 +1305,14 @@
    #define BN_MP_CLAMP_C
 #endif
 
+#if defined(BN_MP_RECONTRES_C)
+   #define BN_MP_INIT_C
+   #define BN_MP_BINOMIAL_C
+   #define BN_MP_SUBFACTORIAL_C
+   #define BN_MP_MUL_C
+   #define BN_MP_CLEAR_C
+#endif
+
 #if defined(BN_MP_REDUCE_C)
    #define BN_MP_REDUCE_SETUP_C
    #define BN_MP_INIT_COPY_C
@@ -1343,6 +1399,7 @@
 #endif
 
 #if defined(BN_MP_SET_DOUBLE_C)
+   #define BN_MP_FREXP_C
    #define BN_MP_ZERO_C
    #define BN_MP_ADD_D_C
    #define BN_MP_MUL_2D_C
@@ -1475,16 +1532,24 @@
 #endif
 
 #if defined(BN_MP_SUBFACTORIAL_C)
-   #define BN_MP_SET_INT_C
-   #define BN_MP_INIT_MULTI_C
-   #define BN_MP_CLEAR_MULTI_C
+   #define BN_MP_INIT_SET_C
    #define BN_MP_EXCH_C
-   #define BN_MP_ADD_C
+   #define BN_MP_ZERO_C
    #define BN_MP_MUL_D_C
    #define BN_MP_ADD_D_C
-   #define BN_MP_INIT_C
-   #define BN_MP_COPY_C
    #define BN_MP_CLEAR_C
+   #define BN_MP_INIT_MULTI_C
+   #define BN_MP_SET_C
+   #define BN_MP_SUB_C
+   #define BN_MP_CMP_C
+   #define BN_MP_SET_INT_C
+   #define BN_MP_COPY_C
+   #define BN_MP_ADD_C
+   #define BN_MP_DIV_2D_C
+   #define BN_MP_MUL_C
+   #define BN_MP_CLEAR_MULTI_C
+   #define BN_MP_SQR_C
+   #define BN_MP_DIV_C
 #endif
 
 #if defined(BN_MP_SUBMOD_C)
@@ -1526,13 +1591,11 @@
 #endif
 
 #if defined(BN_MP_TOOM_COOK_4_MUL_C)
+   #define BN_MP_TOOM_COOK_4_MUL_THREADED_C
    #define BN_MP_MUL_C
    #define BN_MP_INIT_MULTI_C
    #define BN_MP_INIT_SIZE_C
    #define BN_MP_CLAMP_C
-   #define BN_MP_MOD_2D_C
-   #define BN_MP_COPY_C
-   #define BN_MP_RSHD_C
    #define BN_MP_MUL_2D_C
    #define BN_MP_ADD_C
    #define BN_MP_SUB_C
@@ -1541,9 +1604,13 @@
    #define BN_MP_NEG_C
    #define BN_MP_DIV_D_C
    #define BN_MP_DIV_3_C
+   #define BN_MP_COPY_C
    #define BN_MP_LSHD_C
    #define BN_MP_CLEAR_C
    #define BN_MP_CLEAR_MULTI_C
+   #define BN_MP_EXCH_C
+   #define BN_MP_MOD_2D_C
+   #define BN_MP_RSHD_C
 #endif
 
 #if defined(BN_MP_TOOM_COOK_4_MUL_NEW_C)
@@ -1569,6 +1636,7 @@
 #endif
 
 #if defined(BN_MP_TOOM_COOK_4_SQR_C)
+   #define BN_MP_TOOM_COOK_4_SQR_THREADED_C
    #define BN_MP_SQR_C
    #define BN_MP_INIT_MULTI_C
    #define BN_MP_INIT_SIZE_C
@@ -1582,16 +1650,15 @@
    #define BN_MP_LSHD_C
    #define BN_MP_CLEAR_C
    #define BN_MP_CLEAR_MULTI_C
+   #define BN_MP_EXCH_C
 #endif
 
 #if defined(BN_MP_TOOM_COOK_5_MUL_C)
+   #define BN_MP_TOOM_COOK_5_MUL_THREADED_C
    #define BN_MP_MUL_C
    #define BN_MP_INIT_MULTI_C
    #define BN_MP_INIT_SIZE_C
    #define BN_MP_CLAMP_C
-   #define BN_MP_MOD_2D_C
-   #define BN_MP_COPY_C
-   #define BN_MP_RSHD_C
    #define BN_MP_MUL_2D_C
    #define BN_MP_SUB_C
    #define BN_MP_ADD_C
@@ -1599,12 +1666,17 @@
    #define BN_MP_NEG_C
    #define BN_MP_MUL_D_C
    #define BN_MP_DIV_D_C
+   #define BN_MP_COPY_C
    #define BN_MP_LSHD_C
    #define BN_MP_CLEAR_C
    #define BN_MP_CLEAR_MULTI_C
+   #define BN_MP_EXCH_C
+   #define BN_MP_MOD_2D_C
+   #define BN_MP_RSHD_C
 #endif
 
 #if defined(BN_MP_TOOM_COOK_5_SQR_C)
+   #define BN_MP_TOOM_COOK_5_SQR_THREADED_C
    #define BN_MP_SQR_C
    #define BN_MP_INIT_MULTI_C
    #define BN_MP_INIT_SIZE_C
@@ -1618,6 +1690,7 @@
    #define BN_MP_LSHD_C
    #define BN_MP_CLEAR_C
    #define BN_MP_CLEAR_MULTI_C
+   #define BN_MP_EXCH_C
 #endif
 
 #if defined(BN_MP_TOOM_MUL_C)
@@ -1635,6 +1708,11 @@
    #define BN_MP_DIV_3_C
    #define BN_MP_LSHD_C
    #define BN_MP_CLEAR_MULTI_C
+   #define BN_MP_TOOM_MUL_NEW_C
+   #define BN_MP_INIT_SIZE_C
+   #define BN_MP_CLAMP_C
+   #define BN_MP_EXCH_C
+   #define BN_MP_CLEAR_C
 #endif
 
 #if defined(BN_MP_TOOM_SQR_C)

@@ -48,12 +48,15 @@
    #endif
 #endif   
 
-#ifndef _MULTI_TRHEADED_
-   #ifdef USE_PTHREAD
-      #define _MULTI_TRHEADED_
-      #include <pthread.h>
-   #endif
+
+#ifdef USE_PTHREAD
+   #define _MULTI_TRHEADED_
+   #include <pthread.h>
+   // Best set to number of cores - 1
+   #define LTM_NUM_THREADS 3
 #endif
+
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -180,24 +183,25 @@ typedef int           mp_err;
 
 /* you'll have to tune these... */
 extern int KARATSUBA_MUL_CUTOFF;
-extern int            KARATSUBA_SQR_CUTOFF;
-  extern int          TOOM_MUL_CUTOFF;
- extern int           TOOM_SQR_CUTOFF;
- extern int           FFT_MUL_CUTOFF;
- extern int           FFT_UPPER_LIMIT;
-  extern int          FFT_SQR_CUTOFF;
-  extern int          TOOM_COOK_4_MUL_CO;
-  extern int          TOOM_COOK_4_SQR_CO;
-  extern int          TOOM_COOK_5_MUL_CO;
-  extern int          TOOM_COOK_5_SQR_CO;
-  extern int          DIV_BURN_ZIEG_CUTOFF;
-  extern int          BURN_ZIEG_DEN_CUTOFF;
-  extern int          BURN_ZIEG_UPPER_DEN_CUTOFF;
-  extern int          BURN_ZIEG_NUM_CUTOFF;
-  extern int          BURN_ZIEG_UPPER_NUM_CUTOFF;
-  extern int          BURN_ZIEG_CHUNK_SIZE;
-  extern int          NEWTON_DEN_CUTOFF;
-  extern int          RADIX_SIZE_CUTOFF;
+extern int KARATSUBA_SQR_CUTOFF;
+extern int TOOM_MUL_CUTOFF;
+extern int TOOM_SQR_CUTOFF;
+extern int FFT_MUL_CUTOFF;
+extern int FFT_UPPER_LIMIT;
+extern int FFT_SQR_CUTOFF;
+extern int TOOM_COOK_4_MUL_CO;
+extern int TOOM_COOK_4_SQR_CO;
+extern int TOOM_COOK_5_MUL_CO;
+extern int TOOM_COOK_5_SQR_CO;
+extern int DIV_BURN_ZIEG_CUTOFF;
+extern int BURN_ZIEG_DEN_CUTOFF;
+extern int BURN_ZIEG_UPPER_DEN_CUTOFF;
+extern int BURN_ZIEG_NUM_CUTOFF;
+extern int BURN_ZIEG_UPPER_NUM_CUTOFF;
+extern int BURN_ZIEG_CHUNK_SIZE;
+extern int NEWTON_DEN_CUTOFF;
+extern int RADIX_SIZE_CUTOFF;
+extern unsigned int FFT_THREADS_CUTOFF;
 /* define this to use lower memory usage routines (exptmods mostly) */
 /* #define MP_LOW_MEM */
 
@@ -632,6 +636,16 @@ int mp_fft_sqr_d(double *x, unsigned long length);
 int mp_fft_mul(mp_int *a, mp_int *b, mp_int *c);
 int mp_fft_sqr(mp_int *a,mp_int *c);
 
+int mp_dp_to_fft_float(mp_int *a, float **fa,
+              mp_int *b, float **fb, int *length);
+int mp_dp_to_fft_single_float(mp_int *a, float **fa, int *length);
+int mp_fft_to_dp_float(float *fft_array, mp_int *a,int length);
+int mp_fft_float(float *x, float *y, unsigned long length);
+int mp_fft_sqr_d_float(float *x, unsigned long length);
+int mp_fft_mul_float(mp_int *a, mp_int *b, mp_int *c);
+int mp_fft_sqr_float(mp_int *a,mp_int *c);
+
+
 unsigned long *mp_fill_prime_list(unsigned long start, unsigned long stop,
                                                           unsigned long *R);
 int mp_primorial(unsigned long a, unsigned long b, mp_int *result);
@@ -679,6 +693,7 @@ unsigned long mp_prime_divisors(unsigned long n,unsigned long p);
 int mp_factorial(unsigned long n, mp_int *result);
 
 int mp_subfactorial(unsigned long n, mp_int *result);
+int mp_recontres(unsigned long n, unsigned long k, mp_int * c);
 
 int mp_highbit(mp_int * a);
 int mp_lowbit(mp_int * a);
