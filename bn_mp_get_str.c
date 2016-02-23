@@ -60,6 +60,7 @@ static int ilog2(int value)
 
 static mp_int *schoenhagecache;
 static int schoenhagecache_len;
+static int schoenhagecache_base;
 static const int log_table[65] = {
    0, 0, 1, 1, 2, 2, 2, 2,
    3, 3, 3, 3, 3, 3, 3, 3,
@@ -75,15 +76,15 @@ static const int log_table[65] = {
 
 static int mp_get_str_intern(mp_int *a, char *string, int digits, int base, char *ls)
 {
-   char *str;
+//   char *str;
    int b, n;
    int ed;
    int err, i;
-   size_t size;
+//   size_t size;
    mp_int q, r;
    if (a->used <= SCHOENHAGE_CONVERSION_CUT) {
-      size = (size_t)(mp_digits(a, base) + 10);
-/*
+/*     size = (size_t)(mp_digits(a, base) + 10);
+
       str = malloc((size + 10) * sizeof(char));
       if (NULL == str) {
          fprintf(stderr, "malloc failed to allocate %lu bytes\n",
@@ -165,8 +166,7 @@ static int mp_get_str_intern(mp_int *a, char *string, int digits, int base, char
       mp_clear_multi(&q, &r, NULL);
       return err;
    }
-   // TODO: 1<<n can overflow, check (but it's good for over 3 billion
-   //       decimal digits at 32 bit)
+
    ed = 1 << n;
 
    if ((err = mp_get_str_intern(&q, string, digits - ed, base, ls)) != MP_OKAY) {
@@ -191,31 +191,36 @@ void free_schoenhage_cache()
 }
 
 //TODO: needs one char more than necessary for the number
-int mp_get_str(mp_int *a, char *string, int base)
+int mp_get_str(mp_int * a, char *string, int base)
 {
-   int sign, e;
-   // maximum from base 2
-   char s[SCHOENHAGE_CONVERSION_CUT * MP_DIGIT_BIT + 1];
+  int sign, e;
+  // maximum from base 2
+  char s[SCHOENHAGE_CONVERSION_CUT * MP_DIGIT_BIT + 1];
 
-   //s = malloc((SCHOENHAGE_CONVERSION_CUT * MP_DIGIT_BIT + 1) * sizeof(char));
-   // we need a defined starting point
-   *string = '\0';
-   sign = a->sign;
-   if (sign == MP_NEG) {
-      *string = '-';
-      string++;
-      *string = '\0';
-   }
-   a->sign = MP_ZPOS;
+  //s = malloc((SCHOENHAGE_CONVERSION_CUT * MP_DIGIT_BIT + 1) * sizeof(char));
+  // we need a defined starting point
+  *string = '\0';
+  sign = a->sign;
+  if (sign == MP_NEG) {
+    *string = '-';
+    string++;
+    *string = '\0';
+  }
+  a->sign = MP_ZPOS;
 
+  if (schoenhagecache_base != base) {
+    free_schoenhage_cache();
+  }
+  schoenhagecache_base = base;
 
-   if ((e = mp_get_str_intern(a, string, 0, base, s)) != MP_OKAY) {
-      return e;
-   }
-   //free(s);
-   a->sign = sign;
-   return MP_OKAY;
+  if ((e = mp_get_str_intern(a, string, 0, base, s)) != MP_OKAY) {
+    return e;
+  }
+  //free(s);
+  a->sign = sign;
+  return MP_OKAY;
 }
+
 
 
 #endif
