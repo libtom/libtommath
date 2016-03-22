@@ -668,7 +668,7 @@ int mp_toom_cook_4_mul(mp_int *a, mp_int *b, mp_int *c)
 
 
    if ((e = mp_init_multi(&w1, &w2, &w3, &w4, &w5, &w6, &w7, &tmp1, &tmp2,
-                          &a0, &a1, &a2, &a3,&b0, &b1,&b2,&b3,
+                          //&a0, &a1, &a2, &a3,&b0, &b1,&b2,&b3,
                           NULL)) != MP_OKAY) {
       goto ERR0;
       //goto ERR;
