@@ -16,6 +16,18 @@
  */
 
 /* makes a pseudo-random int of a given size */
+static mp_digit mp_gen_random(void)
+{
+  mp_digit d;
+  d = ((mp_digit) abs (MP_GEN_RANDOM()));
+#if MP_DIGIT_BIT > 32
+  d <<= 32;
+  d |= ((mp_digit) abs (MP_GEN_RANDOM()));
+#endif
+  d &= MP_MASK;
+  return d;
+}
+
 int
 mp_rand (mp_int * a, int digits)
 {
@@ -29,7 +41,7 @@ mp_rand (mp_int * a, int digits)
 
   /* first place a random non-zero digit */
   do {
-    d = ((mp_digit) abs (MP_GEN_RANDOM())) & MP_MASK;
+    d = mp_gen_random();
   } while (d == 0);
 
   if ((res = mp_add_d (a, d, a)) != MP_OKAY) {
@@ -41,7 +53,7 @@ mp_rand (mp_int * a, int digits)
       return res;
     }
 
-    if ((res = mp_add_d (a, ((mp_digit) abs (MP_GEN_RANDOM())), a)) != MP_OKAY) {
+    if ((res = mp_add_d (a, mp_gen_random(), a)) != MP_OKAY) {
       return res;
     }
   }
