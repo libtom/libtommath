@@ -13,6 +13,7 @@ script:
 
 branches:
   only:
+    - master
     - develop
 notifications:
   irc: "chat.freenode.net#libtom"
