@@ -222,6 +222,12 @@ int main(void)
    if (mp_get_int(&a) != 1) {
       return EXIT_FAILURE;
    }
+   mp_zero(&a);
+   // a: 0-> a: 6
+   mp_add_d(&a, 6, &a);
+   if (mp_get_int(&a) != 6) {
+      return EXIT_FAILURE;
+   }
 
 
    mp_set_int(&a, 0);
