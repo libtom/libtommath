@@ -102,8 +102,10 @@ extern "C" {
 /* use arc4random on platforms that support it */
 #ifdef MP_USE_ALT_RAND
     #define MP_GEN_RANDOM()    arc4random()
+    #define MP_GEN_RANDOM_MAX  0xffffffff
 #else
     #define MP_GEN_RANDOM()    rand()
+    #define MP_GEN_RANDOM_MAX  RAND_MAX
 #endif
 
 #define MP_DIGIT_BIT     DIGIT_BIT
