@@ -3,16 +3,14 @@ compiler:
   - gcc
 
 script:
-  - make
-  - make test
-  - make mtest
-  - ./mtest/mtest 666666 | ./test > test.log
+  - make travis_mtest
   - head -n 5 test.log
   - tail -n 2 test.log
   - ./testme.sh
 
 branches:
   only:
+    - master
     - develop
 notifications:
   irc: "chat.freenode.net#libtom"
