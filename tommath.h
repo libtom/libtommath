@@ -27,7 +27,7 @@ extern "C" {
 #endif
 
 /* detect 64-bit mode if possible */
-#if defined(__x86_64__)
+#if defined(__x86_64__) && !defined(__ILP32__)
    #if !(defined(MP_32BIT) || defined(MP_16BIT) || defined(MP_8BIT))
       #define MP_64BIT
    #endif
