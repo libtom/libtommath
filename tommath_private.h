@@ -18,9 +18,13 @@
 #include <tommath.h>
 #include <ctype.h>
 
-#define MIN(x,y) (((x) < (y)) ? (x) : (y))
+#ifndef MIN
+  #define MIN(x,y) (((x) < (y)) ? (x) : (y))
+#endif
 
-#define MAX(x,y) (((x) > (y)) ? (x) : (y))
+#ifndef MAX
+  #define MAX(x,y) (((x) > (y)) ? (x) : (y))
+#endif
 
 #ifdef __cplusplus
 extern "C" {
