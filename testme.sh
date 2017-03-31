@@ -113,7 +113,7 @@ do
       COMPILERS="gcc clang"
       ARCHFLAGS="-m64 -m32 -mx32"
     ;;
-    --help)
+    --help | -h)
       _help
     ;;
   esac
@@ -158,7 +158,7 @@ do
 
   for a in "${archflags[@]}"
   do
-    if [[ $(expr "$i" : "clang") && "$a" == "-mx32" ]]
+    if [[ $(expr "$i" : "clang") -ne 0 && "$a" == "-mx32" ]]
     then
       echo "clang -mx32 tests skipped"
       continue

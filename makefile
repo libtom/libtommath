@@ -8,12 +8,6 @@ else
 silent=@
 endif
 
-%.o: %.c
-ifneq ($V,1)
-	@echo "   * ${CC} $@"
-endif
-	${silent} ${CC} -c ${CFLAGS} $^ -o $@
-
 #default files to install
 ifndef LIBNAME
    LIBNAME=libtommath.a
@@ -22,6 +16,12 @@ endif
 coverage: LIBNAME:=-Wl,--whole-archive $(LIBNAME)  -Wl,--no-whole-archive
 
 include makefile.include
+
+%.o: %.c
+ifneq ($V,1)
+	@echo "   * ${CC} $@"
+endif
+	${silent} ${CC} -c ${CFLAGS} $< -o $@
 
 LCOV_ARGS=--directory .
 
@@ -52,6 +52,8 @@ bn_prime_tab.o bn_reverse.o bn_s_mp_add.o bn_s_mp_exptmod.o bn_s_mp_mul_digs.o b
 bn_s_mp_sqr.o bn_s_mp_sub.o
 
 #END_INS
+
+$(OBJECTS): $(HEADERS)
 
 $(LIBNAME):  $(OBJECTS)
 	$(AR) $(ARFLAGS) $@ $(OBJECTS)
