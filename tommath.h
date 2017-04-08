@@ -94,16 +94,14 @@ extern "C" {
    typedef mp_digit mp_min_u32;
 #endif
 
-/* platforms that can use a better rand function */
-#if defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__) || defined(__DragonFly__)
-    #define MP_USE_ALT_RAND 1
-#endif
-
 /* use arc4random on platforms that support it */
-#ifdef MP_USE_ALT_RAND
+#if defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__) || defined(__DragonFly__)
     #define MP_GEN_RANDOM()    arc4random()
     #define MP_GEN_RANDOM_MAX  0xffffffff
-#else
+#endif
+
+/* use rand() as fall-back if there's no better rand function */
+#ifndef MP_GEN_RANDOM
     #define MP_GEN_RANDOM()    rand()
     #define MP_GEN_RANDOM_MAX  RAND_MAX
 #endif
