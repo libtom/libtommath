@@ -28,7 +28,7 @@
 #endif
 
 /* makes a pseudo-random int of a given size */
-static mp_digit mp_gen_random(void)
+static mp_digit s_gen_random(void)
 {
   mp_digit d = 0, msk = 0;
   do {
@@ -54,7 +54,7 @@ mp_rand (mp_int * a, int digits)
 
   /* first place a random non-zero digit */
   do {
-    d = mp_gen_random();
+    d = s_gen_random();
   } while (d == 0);
 
   if ((res = mp_add_d (a, d, a)) != MP_OKAY) {
@@ -66,7 +66,7 @@ mp_rand (mp_int * a, int digits)
       return res;
     }
 
-    if ((res = mp_add_d (a, mp_gen_random(), a)) != MP_OKAY) {
+    if ((res = mp_add_d (a, s_gen_random(), a)) != MP_OKAY) {
       return res;
     }
   }
