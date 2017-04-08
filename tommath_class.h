@@ -282,12 +282,9 @@
 #if defined(BN_MP_DIV_2D_C)
    #define BN_MP_COPY_C
    #define BN_MP_ZERO_C
-   #define BN_MP_INIT_C
    #define BN_MP_MOD_2D_C
-   #define BN_MP_CLEAR_C
    #define BN_MP_RSHD_C
    #define BN_MP_CLAMP_C
-   #define BN_MP_EXCH_C
 #endif
 
 #if defined(BN_MP_DIV_3_C)
@@ -441,6 +438,7 @@
 #if defined(BN_MP_INIT_COPY_C)
    #define BN_MP_INIT_SIZE_C
    #define BN_MP_COPY_C
+   #define BN_MP_CLEAR_C
 #endif
 
 #if defined(BN_MP_INIT_MULTI_C)
@@ -466,6 +464,7 @@
 #if defined(BN_MP_INVMOD_C)
    #define BN_MP_ISZERO_C
    #define BN_MP_ISODD_C
+   #define BN_MP_CMP_D_C
    #define BN_FAST_MP_INVMOD_C
    #define BN_MP_INVMOD_SLOW_C
 #endif
@@ -500,6 +499,7 @@
 #endif
 
 #if defined(BN_MP_JACOBI_C)
+   #define BN_MP_ISNEG_C
    #define BN_MP_CMP_D_C
    #define BN_MP_ISZERO_C
    #define BN_MP_INIT_COPY_C
