@@ -35,7 +35,7 @@ static mp_digit s_gen_random(void)
     d <<= MP_GEN_RANDOM_SHIFT;
     d |= ((mp_digit) MP_GEN_RANDOM());
     msk <<= MP_GEN_RANDOM_SHIFT;
-    msk |= MP_GEN_RANDOM_MAX;
+    msk |= (MP_MASK & MP_GEN_RANDOM_MAX);
   } while ((MP_MASK & msk) != MP_MASK);
   d &= MP_MASK;
   return d;
