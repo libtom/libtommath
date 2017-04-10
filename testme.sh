@@ -67,9 +67,16 @@ _runtest()
 {
   echo -ne " Compile $1 $2"
   make clean > /dev/null
-  CC="$1" CFLAGS="$2 $TEST_CFLAGS" make -j$MAKE_JOBS test_standalone $MAKE_OPTIONS > /dev/null 2>test_errors.txt
+  suffix=$(echo ${1}${2}  | tr ' ' '_')
+  CC="$1" CFLAGS="$2 $TEST_CFLAGS" make -j$MAKE_JOBS test_standalone $MAKE_OPTIONS > /dev/null 2>gcc_errors_${suffix}.txt
+  errcnt=$(wc -l < gcc_errors_${suffix}.txt)
+  if [[ ${errcnt} -gt 1 ]]; then
+    echo " failed"
+    cat gcc_errors_${suffix}.txt
+    exit 128
+  fi
   echo -e "\rRun test $1 $2"
-  timeout --foreground 90 ./test > test_$(echo ${1}${2}  | tr ' ' '_').txt || _die "running tests" $?
+  timeout --foreground 90 ./test > test_${suffix}.txt || _die "running tests" $?
 }
 
 _banner()
@@ -120,8 +127,12 @@ do
   shift
 done
 
-# default to gcc if nothing is given
-if [[ "$COMPILERS" == "" ]]
+# default to gcc if no compiler is defined but some other options
+if [[ "$COMPILERS" == "" ]] && [[ "$ARCHFLAGS$MAKE_OPTIONS$CFLAGS" != "" ]]
+then
+   COMPILERS="gcc"
+# default to gcc and run only default config if no option is given
+elif [[ "$COMPILERS" == "" ]]
 then
   _banner gcc
   _runtest "gcc" ""
@@ -164,10 +175,10 @@ do
       continue
     fi
 
-    _runtest "$i $a" ""
-    _runtest "$i $a" "-DMP_8BIT"
-    _runtest "$i $a" "-DMP_16BIT"
-    _runtest "$i $a" "-DMP_32BIT"
+    _runtest "$i $a" "$CFLAGS"
+    _runtest "$i $a" "-DMP_8BIT $CFLAGS"
+    _runtest "$i $a" "-DMP_16BIT $CFLAGS"
+    _runtest "$i $a" "-DMP_32BIT $CFLAGS"
   done
 done
 
