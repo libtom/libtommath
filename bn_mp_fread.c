@@ -15,6 +15,7 @@
  * Tom St Denis, tstdenis82@gmail.com, http://libtom.org
  */
 
+#ifndef LTM_NO_FILE
 /* read a bigint from a file stream in ASCII */
 int mp_fread(mp_int *a, int radix, FILE *stream)
 {
@@ -59,6 +60,7 @@ int mp_fread(mp_int *a, int radix, FILE *stream)
    
    return MP_OKAY;
 }
+#endif
 
 #endif
 
