@@ -6,7 +6,7 @@ script:
   - make travis_mtest
   - head -n 5 test.log
   - tail -n 2 test.log
-  - ./testme.sh --with-cc=gcc
+  - ./testme.sh --with-cc=gcc --with-low-mp
 
 branches:
   only:

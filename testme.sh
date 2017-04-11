@@ -43,6 +43,8 @@ _help()
   echo "                            e.g. --make-option=\"-f makefile.shared\""
   echo "        This is an option that will always be passed as parameter to make."
   echo
+  echo "    --with-low-mp           Also build&run tests with -DMP_{8,16,32}BIT."
+  echo
   echo "Godmode:"
   echo
   echo "    --all                   Choose all architectures and gcc and clang as compilers"
@@ -100,6 +102,7 @@ _exit()
 ARCHFLAGS=""
 COMPILERS=""
 CFLAGS=""
+WITH_LOW_MP=""
 
 while [ $# -gt 0 ];
 do
@@ -116,12 +119,18 @@ do
     --make-option=*)
       MAKE_OPTIONS="$MAKE_OPTIONS ${1#*=}"
     ;;
+    --with-low-mp)
+      WITH_LOW_MP="1"
+    ;;
     --all)
       COMPILERS="gcc clang"
       ARCHFLAGS="-m64 -m32 -mx32"
     ;;
     --help | -h)
       _help
+    ;;
+    *)
+      echo "Ignoring option ${1}"
     ;;
   esac
   shift
@@ -176,6 +185,7 @@ do
     fi
 
     _runtest "$i $a" "$CFLAGS"
+    [ "$WITH_LOW_MP" != "1" ] && continue
     _runtest "$i $a" "-DMP_8BIT $CFLAGS"
     _runtest "$i $a" "-DMP_16BIT $CFLAGS"
     _runtest "$i $a" "-DMP_32BIT $CFLAGS"
