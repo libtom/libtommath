@@ -51,10 +51,10 @@ $(LIBNAME):  $(OBJECTS)
 	$(LT) --mode=link --tag=CC $(CC) $(LDFLAGS) *.lo -o $(LIBNAME) -rpath $(LIBPATH) -version-info $(VERSION_SO)
 
 install: $(LIBNAME)
-	install -d $(DESTDIR)$(LIBPATH)
-	install -d $(DESTDIR)$(INCPATH)
-	$(LT) --mode=install install -c $(LIBNAME) $(DESTDIR)$(LIBPATH)/$(LIBNAME)
-	install -m 644 $(HEADERS_PUB) $(DESTDIR)$(INCPATH)
+	install -d $(LIBPATH)
+	install -d $(INCPATH)
+	$(LT) --mode=install install -c $(LIBNAME) $(LIBPATH)/$(LIBNAME)
+	install -m 644 $(HEADERS_PUB) $(INCPATH)
 
 test: $(LIBNAME) demo/demo.o
 	$(CC) $(CFLAGS) -c demo/demo.c -o demo/demo.o

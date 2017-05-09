@@ -71,9 +71,10 @@ test_standalone: CFLAGS+=-DLTM_DEMO_TEST_VS_MTEST=0
 #LIBPATH-The directory for libtommath to be installed to.
 #INCPATH-The directory to install the header files for libtommath.
 #DATAPATH-The directory to install the pdf docs.
-LIBPATH?=/usr/lib
-INCPATH?=/usr/include
-DATAPATH?=/usr/share/doc/libtommath/pdf
+DESTDIR  ?= /usr/local
+LIBPATH  ?= $(DESTDIR)/lib
+INCPATH  ?= $(DESTDIR)/include
+DATAPATH ?= $(DESTDIR)/share/doc/libtommath/pdf
 
 #make the code coverage of the library
 #
