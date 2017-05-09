@@ -27,7 +27,12 @@ extern "C" {
 #endif
 
 /* detect 64-bit mode if possible */
-#if defined(__x86_64__)
+#if defined(__x86_64__) || defined(_M_X64) || defined(_M_AMD64) || \
+    defined(__powerpc64__) || defined(__ppc64__) || defined(__PPC64__) || \
+    defined(__s390x__) || defined(__arch64__) || defined(__aarch64__) || \
+    defined(__sparcv9) || defined(__sparc_v9__) || defined(__sparc64__) || \
+    defined(__ia64) || defined(__ia64__) || defined(__itanium__) || defined(_M_IA64) || \
+    defined(__LP64__) || defined(_LP64) || defined(__64BIT__)
    #if !(defined(MP_32BIT) || defined(MP_16BIT) || defined(MP_8BIT))
       #define MP_64BIT
    #endif
