@@ -55,6 +55,9 @@ install: $(LIBNAME)
 	install -d $(INCPATH)
 	$(LT) --mode=install install -c $(LIBNAME) $(LIBPATH)/$(LIBNAME)
 	install -m 644 $(HEADERS_PUB) $(INCPATH)
+	sed -e 's,^prefix=.*,prefix=$(DESTDIR),' -e 's,^Version:.*,Version: $(VERSION),' libtommath.pc.in > libtommath.pc
+	install -d $(LIBPATH)/pkgconfig
+	install -m 644 libtommath.pc $(LIBPATH)/pkgconfig/
 
 test: $(LIBNAME) demo/demo.o
 	$(CC) $(CFLAGS) -c demo/demo.c -o demo/demo.o
