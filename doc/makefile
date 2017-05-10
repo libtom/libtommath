@@ -42,7 +42,7 @@ poster: poster.tex
 docs: docdvi
 	dvipdf tommath
 	rm -f tommath.log tommath.aux tommath.dvi tommath.idx tommath.toc tommath.lof tommath.ind tommath.ilg
-	cd pics ; MAKE=${MAKE} ${MAKE} clean
+	${MAKE} -C pics/ clean MAKE=${MAKE}
 
 #LTM user manual
 mandvi: bn.tex
@@ -67,3 +67,7 @@ manual:	mandvi
 	sed -b -i 's,^/ID \[.*\]$$,/ID [<0> <0>],g' bn.pdf
 	mv bn.bak bn.tex
 	rm -f bn.aux bn.dvi bn.log bn.idx bn.lof bn.out bn.toc
+
+clean:
+	${MAKE} -C pics/ clean MAKE=${MAKE}
+	rm -f *.idx *.toc *.log *.aux *.dvi *.lof *.ind *.ilg *.ps *.log tommath.tex

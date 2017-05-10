@@ -53,7 +53,7 @@ $(LIBNAME):  $(OBJECTS)
 install: $(LIBNAME)
 	install -d $(LIBPATH)
 	install -d $(INCPATH)
-	$(LT) --mode=install install -c $(LIBNAME) $(LIBPATH)/$(LIBNAME)
+	$(LT) --mode=install install -m 644 $(LIBNAME) $(LIBPATH)/$(LIBNAME)
 	install -m 644 $(HEADERS_PUB) $(INCPATH)
 	sed -e 's,^prefix=.*,prefix=$(DESTDIR),' -e 's,^Version:.*,Version: $(VERSION),' libtommath.pc.in > libtommath.pc
 	install -d $(LIBPATH)/pkgconfig

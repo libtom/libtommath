@@ -83,10 +83,10 @@ profiled_single:
 	ranlib $(LIBNAME)
 
 install: $(LIBNAME)
-	install -d $(DESTDIR)$(LIBPATH)
-	install -d $(DESTDIR)$(INCPATH)
-	install -m 644 $(LIBNAME) $(DESTDIR)$(LIBPATH)
-	install -m 644 $(HEADERS_PUB) $(DESTDIR)$(INCPATH)
+	install -d $(LIBPATH)
+	install -d $(INCPATH)
+	install -m 644 $(LIBNAME) $(LIBPATH)
+	install -m 644 $(HEADERS_PUB) $(INCPATH)
 
 test: $(LIBNAME) demo/demo.o
 	$(CC) $(CFLAGS) demo/demo.o $(LIBNAME) $(LFLAGS) -o test
