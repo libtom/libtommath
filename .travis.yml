@@ -13,4 +13,4 @@ branches:
     - master
     - develop
 notifications:
-  irc: "chat.freenode.net#libtom"
+  irc: "chat.freenode.net#libtom-notifications"
