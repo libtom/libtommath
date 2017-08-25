@@ -105,8 +105,10 @@ travis_mtest: test mtest
 timing: $(LIBNAME)
 	$(CC) $(CFLAGS) -DTIMER demo/timing.c $(LIBNAME) $(LFLAGS) -o ltmtest
 
-coveralls: coverage
-	cpp-coveralls
+# You have to create a file .coveralls.yml with the content "repo_token: <the token>"
+# in the base folder to be able to submit to coveralls
+coveralls: lcov
+	coveralls-lcov
 
 docdvi poster docs mandvi manual:
 	$(MAKE) -C doc/ $@ V=$(V)
