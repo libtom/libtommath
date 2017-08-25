@@ -7,7 +7,7 @@ ifndef LIBNAME
    LIBNAME=libtommath.la
 endif
 
-include makefile.include
+include makefile_include.mk
 
 LT	?= libtool
 LTCOMPILE = $(LT) --mode=compile --tag=CC $(CC)

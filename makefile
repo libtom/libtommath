@@ -15,7 +15,7 @@ endif
 
 coverage: LIBNAME:=-Wl,--whole-archive $(LIBNAME)  -Wl,--no-whole-archive
 
-include makefile.include
+include makefile_include.mk
 
 %.o: %.c
 ifneq ($V,1)

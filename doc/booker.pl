@@ -68,7 +68,7 @@ while (<IN>) {
       # EXAM,file
       chomp($_);
       @m = split(",",$_);
-      open(SRC,"<$m[1]") or die "Error:$srcline:Can't open source file $m[1]";
+      open(SRC,"<../$m[1]") or die "Error:$srcline:Can't open source file $m[1]";
 
       print "$srcline:Inserting $m[1]:";
 
