@@ -4435,7 +4435,7 @@ reduction can be written as a single function with the Comba technique it is muc
 calling the half precision multipliers, addition and division by $\beta$ algorithms.
 
 For almost every cryptographic algorithm Montgomery reduction is the algorithm of choice.  The one set of algorithms where Diminished Radix reduction truly
-shines are based on the discrete logarithm problem such as Diffie-Hellman \cite{DH} and ElGamal \cite{ELGAMAL}.  In these algorithms
+shines are based on the discrete logarithm problem such as Diffie-Hellman \cite{DHREF} and ElGamal \cite{ELGAMALREF}.  In these algorithms
 primes of the form $\beta^m - k$ can be found and shared amongst users.  These primes will allow the Diminished Radix algorithm to be used in
 modular exponentiation to greatly speed up the operation.
 
@@ -4725,7 +4725,7 @@ one of the algorithms presented in ~REDUCTION~.
 
 Before the actual modular exponentiation algorithm can be written a wrapper algorithm must be written first.  This algorithm
 will allow the exponent $b$ to be negative which is computed as $c \equiv \left (1 / a \right )^{\vert b \vert} \mbox{(mod }d\mbox{)}$. The
-value of $(1/a) \mbox{ mod }c$ is computed using the modular inverse (\textit{see \ref{sec;modinv}}).  If no inverse exists the algorithm
+value of $(1/a) \mbox{ mod }c$ is computed using the modular inverse (\textit{see \ref{sec:modinv}}).  If no inverse exists the algorithm
 terminates with an error.
 
 \begin{figure}[!h]
@@ -6142,8 +6142,9 @@ of the primes less than $\sqrt{n} + 1$ the algorithm cannot prove if a candidate
 
 The benefit of this test is that trial division by small values is fairly efficient.  Specially compared to the other algorithms that will be
 discussed shortly.  The probability that this approach correctly identifies a composite candidate when tested with all primes upto $q$ is given by
-$1 - {1.12 \over ln(q)}$.  The graph (\ref{pic:primality}, will be added later) demonstrates the probability of success for the range
-$3 \le q \le 100$.
+$1 - {1.12 \over ln(q)}$.  The graph (\ref{pic:primality}) demonstrates the probability of success for the range $3 \le q \le 100$.
+
+FIGU,primality,Probability of successful trial division to detect non-primes
 
 At approximately $q = 30$ the gain of performing further tests diminishes fairly quickly.  At $q = 90$ further testing is generally not going to
 be of any practical use.  In the case of LibTomMath the default limit $q = 256$ was chosen since it is not too high and will eliminate
@@ -6331,6 +6332,18 @@ JTC1/SC22/WG14, ISO/IEC 9899:1999, ``A draft rationale for the C99 standard.''
 
 \bibitem[19]{JAVA}
 The Sun Java Website, \url{http://java.sun.com/}
+
+\bibitem[20]{LeVeque}
+William LeVeque, \textit{Fundamentals of Number Theory}, Dover Publications, 2014
+
+\bibitem[21]{ELGAMALREF}
+T. Elgamal, \textit{A public key cryptosystem and a signature scheme based on discrete logarithms}, {IEEE} Transactions on Information Theory, 1985, pp. 469-472
+
+\bibitem[22]{TOOM}
+D. Knuth, \textit{The Art of Computer Programming; Volume 2. Third Edition}, Addison-Wesley, 1997, pg. 294
+
+\bibitem[23]{POSIX1}
+The Open Group, \url{http://www.opengroup.org/austin/papers/posix_faq.html}, 2017
 
 \end{thebibliography}
 
