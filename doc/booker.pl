@@ -251,7 +251,7 @@ while (<IN>) {
       # FIGU,file,caption
       chomp($_);
       @m = split(",", $_);
-      print OUT "\\begin{center}\n\\begin{figure}[here]\n\\includegraphics{pics/$m[1]$graph}\n";
+      print OUT "\\begin{center}\n\\begin{figure}[h]\n\\includegraphics{pics/$m[1]$graph}\n";
       print OUT "\\caption{$m[2]}\n\\label{pic:$m[1]}\n\\end{figure}\n\\end{center}\n";
       $wroteline += 4;
    } else {
