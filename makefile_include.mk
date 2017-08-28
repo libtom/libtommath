@@ -3,8 +3,9 @@
 #
 
 #version of library
-VERSION=1.0
-VERSION_SO=1:0
+VERSION=1.0.1-rc1
+VERSION_PC=1.0.1
+VERSION_SO=1:1
 
 # default make target
 default: ${LIBNAME}
