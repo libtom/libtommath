@@ -68,13 +68,14 @@ HEADERS=tommath_private.h $(HEADERS_PUB)
 
 test_standalone: CFLAGS+=-DLTM_DEMO_TEST_VS_MTEST=0
 
-#LIBPATH-The directory for libtommath to be installed to.
-#INCPATH-The directory to install the header files for libtommath.
-#DATAPATH-The directory to install the pdf docs.
-DESTDIR  ?= /usr/local
-LIBPATH  ?= $(DESTDIR)/lib
-INCPATH  ?= $(DESTDIR)/include
-DATAPATH ?= $(DESTDIR)/share/doc/libtommath/pdf
+#LIBPATH  The directory for libtommath to be installed to.
+#INCPATH  The directory to install the header files for libtommath.
+#DATAPATH The directory to install the pdf docs.
+DESTDIR  ?=
+PREFIX   ?= /usr/local
+LIBPATH  ?= $(PREFIX)/lib
+INCPATH  ?= $(PREFIX)/include
+DATAPATH ?= $(PREFIX)/share/doc/libtommath/pdf
 
 #make the code coverage of the library
 #
