@@ -120,28 +120,28 @@ docdvi poster docs mandvi manual:
 pretty:
 	perl pretty.build
 
-#\zipup the project (take that!)
-no_oops: clean
-	cd .. ; cvs commit
-	echo Scanning for scratch/dirty files
-	find . -type f | grep -v CVS | xargs -n 1 bash mess.sh
-
 .PHONY: pre_gen
 pre_gen:
 	perl gen.pl
 	sed -e 's/[[:blank:]]*$$//' mpi.c > pre_gen/mpi.c
 	rm mpi.c
 
-zipup:
-	rm -rf ../libtommath-$(VERSION) \
-		&& rm -f ../ltm-$(VERSION).zip ../ltm-$(VERSION).zip.asc ../ltm-$(VERSION).tar.xz ../ltm-$(VERSION).tar.xz.asc
-	git archive HEAD --prefix=libtommath-$(VERSION)/ > ../libtommath-$(VERSION).tar
-	cd .. ; tar xf libtommath-$(VERSION).tar
-	MAKE=${MAKE} ${MAKE} -C ../libtommath-$(VERSION) clean manual poster docs
-	tar -c ../libtommath-$(VERSION)/* | xz -9 > ../ltm-$(VERSION).tar.xz
-	find ../libtommath-$(VERSION)/ -type f -exec unix2dos -q {} \;
-	cd .. ; zip -9r ltm-$(VERSION).zip libtommath-$(VERSION)
-	gpg -b -a ../ltm-$(VERSION).tar.xz && gpg -b -a ../ltm-$(VERSION).zip
+zipup: clean pre_gen new_file manual poster docs
+	@# Update the index, so diff-index won't fail in case the pdf has been created.
+	@#   As the pdf creation modifies the tex files, git sometimes detects the
+	@#   modified files, but misses that it's put back to its original version.
+	@git update-index --refresh
+	@git diff-index --quiet HEAD -- || ( echo "FAILURE: uncommited changes or not a git" && exit 1 )
+	rm -rf libtommath-$(VERSION) ltm-$(VERSION).*
+	@# files/dirs excluded from "git archive" are defined in .gitattributes
+	git archive --format=tar --prefix=libtommath-$(VERSION)/ HEAD | tar x
+	mkdir -p libtommath-$(VERSION)/doc
+	cp doc/bn.pdf doc/tommath.pdf doc/poster.pdf libtommath-$(VERSION)/doc/
+	tar -c libtommath-$(VERSION)/ | xz -6e -c - > ltm-$(VERSION).tar.xz
+	zip -9rq ltm-$(VERSION).zip libtommath-$(VERSION)
+	rm -rf libtommath-$(VERSION)
+	gpg -b -a ltm-$(VERSION).tar.xz
+	gpg -b -a ltm-$(VERSION).zip
 
 new_file:
 	bash updatemakes.sh
