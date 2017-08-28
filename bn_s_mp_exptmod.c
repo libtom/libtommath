@@ -236,8 +236,10 @@ int s_mp_exptmod (mp_int * G, mp_int * X, mp_int * P, mp_int * Y, int redmode)
 
   mp_exch(&res, Y);
   err = MP_OKAY;
-LBL_RES:mp_clear(&res);
-LBL_MU:mp_clear(&mu);
+LBL_RES:
+  mp_clear(&res);
+LBL_MU:
+  mp_clear(&mu);
 LBL_M:
   mp_clear(&M[1]);
   for (x = 1<<(winsize-1); x < (1 << winsize); x++) {

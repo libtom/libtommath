@@ -278,11 +278,16 @@ int mp_div (mp_int * a, mp_int * b, mp_int * c, mp_int * d)
 
   res = MP_OKAY;
 
-LBL_Y:mp_clear(&y);
-LBL_X:mp_clear(&x);
-LBL_T2:mp_clear(&t2);
-LBL_T1:mp_clear(&t1);
-LBL_Q:mp_clear(&q);
+LBL_Y:
+  mp_clear(&y);
+LBL_X:
+  mp_clear(&x);
+LBL_T2:
+  mp_clear(&t2);
+LBL_T1:
+  mp_clear(&t1);
+LBL_Q:
+  mp_clear(&q);
   return res;
 }
 

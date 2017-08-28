@@ -52,7 +52,8 @@ int mp_prime_fermat (mp_int * a, mp_int * b, int *result)
   }
 
   err = MP_OKAY;
-LBL_T:mp_clear(&t);
+LBL_T:
+  mp_clear(&t);
   return err;
 }
 #endif

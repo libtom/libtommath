@@ -120,9 +120,12 @@ int mp_n_root_ex (mp_int * a, mp_digit b, mp_int * c, int fast)
 
   res = MP_OKAY;
 
-LBL_T3:mp_clear(&t3);
-LBL_T2:mp_clear(&t2);
-LBL_T1:mp_clear(&t1);
+LBL_T3:
+  mp_clear(&t3);
+LBL_T2:
+  mp_clear(&t2);
+LBL_T1:
+  mp_clear(&t1);
   return res;
 }
 #endif

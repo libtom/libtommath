@@ -91,9 +91,12 @@ int mp_prime_miller_rabin (mp_int * a, mp_int * b, int *result)
 
   /* probably prime now */
   *result = MP_YES;
-LBL_Y:mp_clear(&y);
-LBL_R:mp_clear(&r);
-LBL_N1:mp_clear(&n1);
+LBL_Y:
+  mp_clear(&y);
+LBL_R:
+  mp_clear(&r);
+LBL_N1:
+  mp_clear(&n1);
   return err;
 }
 #endif

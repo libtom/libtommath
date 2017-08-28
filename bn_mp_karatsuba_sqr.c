@@ -105,12 +105,18 @@ int mp_karatsuba_sqr (mp_int * a, mp_int * b)
 
   err = MP_OKAY;
 
-X1X1:mp_clear(&x1x1);
-X0X0:mp_clear(&x0x0);
-T2:mp_clear(&t2);
-T1:mp_clear(&t1);
-X1:mp_clear(&x1);
-X0:mp_clear(&x0);
+X1X1:
+  mp_clear(&x1x1);
+X0X0:
+  mp_clear(&x0x0);
+T2:
+  mp_clear(&t2);
+T1:
+  mp_clear(&t1);
+X1:
+  mp_clear(&x1);
+X0:
+  mp_clear(&x0);
 ERR:
   return err;
 }

@@ -150,13 +150,20 @@ int mp_karatsuba_mul (mp_int * a, mp_int * b, mp_int * c)
   /* Algorithm succeeded set the return code to MP_OKAY */
   err = MP_OKAY;
 
-X1Y1:mp_clear(&x1y1);
-X0Y0:mp_clear(&x0y0);
-T1:mp_clear(&t1);
-Y1:mp_clear(&y1);
-Y0:mp_clear(&y0);
-X1:mp_clear(&x1);
-X0:mp_clear(&x0);
+X1Y1:
+  mp_clear(&x1y1);
+X0Y0:
+  mp_clear(&x0y0);
+T1:
+  mp_clear(&t1);
+Y1:
+  mp_clear(&y1);
+Y0:
+  mp_clear(&y0);
+X1:
+  mp_clear(&x1);
+X0:
+  mp_clear(&x0);
 ERR:
   return err;
 }

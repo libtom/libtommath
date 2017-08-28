@@ -99,7 +99,8 @@ int mp_is_square(mp_int *arg, int *ret)
   }
 
   *ret = (mp_cmp_mag(&t, arg) == MP_EQ) ? MP_YES : MP_NO;
-ERR:mp_clear(&t);
+ERR:
+  mp_clear(&t);
   return res;
 }
 #endif

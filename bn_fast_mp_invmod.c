@@ -138,7 +138,8 @@ top:
   c->sign = neg;
   res = MP_OKAY;
 
-LBL_ERR:mp_clear_multi(&x, &y, &u, &v, &B, &D, NULL);
+LBL_ERR:
+  mp_clear_multi(&x, &y, &u, &v, &B, &D, NULL);
   return res;
 }
 #endif

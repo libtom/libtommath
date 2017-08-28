@@ -69,8 +69,10 @@ int mp_sqrt(mp_int *arg, mp_int *ret)
 
   mp_exch(&t1, ret);
 
-E1: mp_clear(&t2);
-E2: mp_clear(&t1);
+E1:
+  mp_clear(&t2);
+E2:
+  mp_clear(&t1);
   return res;
 }
 

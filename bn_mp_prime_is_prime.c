@@ -73,7 +73,8 @@ int mp_prime_is_prime (mp_int * a, int t, int *result)
 
   /* passed the test */
   *result = MP_YES;
-LBL_B:mp_clear(&b);
+LBL_B:
+  mp_clear(&b);
   return err;
 }
 #endif

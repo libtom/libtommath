@@ -94,8 +94,10 @@ int mp_gcd (mp_int * a, mp_int * b, mp_int * c)
   }
   c->sign = MP_ZPOS;
   res = MP_OKAY;
-LBL_V:mp_clear(&u);
-LBL_U:mp_clear(&v);
+LBL_V:
+  mp_clear(&u);
+LBL_U:
+  mp_clear(&v);
   return res;
 }
 #endif

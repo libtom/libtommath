@@ -106,8 +106,10 @@ int mp_jacobi (mp_int * a, mp_int * n, int *c)
 
   /* done */
   res = MP_OKAY;
-LBL_P1:mp_clear(&p1);
-LBL_A1:mp_clear(&a1);
+LBL_P1:
+  mp_clear(&p1);
+LBL_A1:
+  mp_clear(&a1);
   return res;
 }
 #endif

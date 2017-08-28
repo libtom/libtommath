@@ -305,7 +305,8 @@ int mp_exptmod_fast (mp_int * G, mp_int * X, mp_int * P, mp_int * Y, int redmode
   /* swap res with Y */
   mp_exch(&res, Y);
   err = MP_OKAY;
-LBL_RES:mp_clear(&res);
+LBL_RES:
+  mp_clear(&res);
 LBL_M:
   mp_clear(&M[1]);
   for (x = 1<<(winsize-1); x < (1 << winsize); x++) {
