@@ -88,6 +88,10 @@ install: $(LIBNAME)
 	install -m 644 $(LIBNAME) $(DESTDIR)$(LIBPATH)
 	install -m 644 $(HEADERS_PUB) $(DESTDIR)$(INCPATH)
 
+uninstall:
+	rm $(DESTDIR)$(LIBPATH)/$(LIBNAME)
+	rm $(HEADERS_PUB:%=$(DESTDIR)$(INCPATH)/%)
+
 test: $(LIBNAME) demo/demo.o
 	$(CC) $(CFLAGS) demo/demo.o $(LIBNAME) $(LFLAGS) -o test
 

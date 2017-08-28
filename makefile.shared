@@ -61,6 +61,11 @@ install: $(LIBNAME)
 	install -d $(DESTDIR)$(LIBPATH)/pkgconfig
 	install -m 644 libtommath.pc $(DESTDIR)$(LIBPATH)/pkgconfig/
 
+uninstall:
+	$(LT) --mode=uninstall rm $(DESTDIR)$(LIBPATH)/$(LIBNAME)
+	rm $(HEADERS_PUB:%=$(DESTDIR)$(INCPATH)/%)
+	rm $(DESTDIR)$(LIBPATH)/pkgconfig/libtommath.pc
+
 test: $(LIBNAME) demo/demo.o
 	$(CC) $(CFLAGS) -c demo/demo.c -o demo/demo.o
 	$(LT) --mode=link $(CC) $(LDFLAGS) -o test demo/demo.o $(LIBNAME)
