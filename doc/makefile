@@ -17,6 +17,7 @@ docdvi: tommath.src
 	cd pics ; MAKE=${MAKE} ${MAKE}
 	echo "hello" ${silent_stdout}
 	perl booker.pl
+	touch tommath.ind
 	latex tommath ${silent_stdout}
 	latex tommath ${silent_stdout}
 	makeindex tommath
