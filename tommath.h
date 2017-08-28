@@ -565,6 +565,6 @@ int mp_fwrite(mp_int *a, int radix, FILE *stream);
 #endif
 
 
-/* $Source$ */
-/* $Revision$ */
-/* $Date$ */
+/* ref:         $Format:%D$ */
+/* git commit:  $Format:%H$ */
+/* commit time: $Format:%ai$ */

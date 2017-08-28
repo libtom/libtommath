@@ -81,6 +81,6 @@ int mp_div_2d (mp_int * a, int b, mp_int * c, mp_int * d)
 }
 #endif
 
-/* $Source$ */
-/* $Revision$ */
-/* $Date$ */
+/* ref:         $Format:%D$ */
+/* git commit:  $Format:%H$ */
+/* commit time: $Format:%ai$ */

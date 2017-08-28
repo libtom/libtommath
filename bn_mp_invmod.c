@@ -38,6 +38,6 @@ int mp_invmod (mp_int * a, mp_int * b, mp_int * c)
 }
 #endif
 
-/* $Source$ */
-/* $Revision$ */
-/* $Date$ */
+/* ref:         $Format:%D$ */
+/* git commit:  $Format:%H$ */
+/* commit time: $Format:%ai$ */
