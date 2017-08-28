@@ -26,14 +26,14 @@ unsigned long long mp_get_long_long (mp_int * a)
   }
 
   /* get number of digits of the lsb we have to read */
-  i = MIN(a->used,(int)(((sizeof(unsigned long long) * CHAR_BIT) + DIGIT_BIT - 1) / DIGIT_BIT)) - 1;
+  i = MIN(a->used, (int)(((sizeof(unsigned long long) * CHAR_BIT) + DIGIT_BIT - 1) / DIGIT_BIT)) - 1;
 
   /* get most significant digit of result */
-  res = DIGIT(a,i);
+  res = DIGIT(a, i);
 
 #if DIGIT_BIT < 64
   while (--i >= 0) {
-    res = (res << DIGIT_BIT) | DIGIT(a,i);
+    res = (res << DIGIT_BIT) | DIGIT(a, i);
   }
 #endif
   return res;

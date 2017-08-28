@@ -169,9 +169,9 @@ typedef struct  {
 typedef int ltm_prime_callback(unsigned char *dst, int len, void *dat);
 
 
-#define USED(m)    ((m)->used)
-#define DIGIT(m,k) ((m)->dp[(k)])
-#define SIGN(m)    ((m)->sign)
+#define USED(m)     ((m)->used)
+#define DIGIT(m, k) ((m)->dp[(k)])
+#define SIGN(m)     ((m)->sign)
 
 /* error code to char* string */
 const char *mp_error_to_string(int code);
