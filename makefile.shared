@@ -9,7 +9,16 @@ endif
 
 include makefile_include.mk
 
-LT	?= libtool
+
+PLATFORM := $(shell uname | sed -e 's/_.*//')
+
+ifndef LT
+  ifeq ($(PLATFORM), Darwin)
+    LT:=glibtool
+  else
+    LT:=libtool
+  endif
+endif
 LTCOMPILE = $(LT) --mode=compile --tag=CC $(CC)
 
 LCOV_ARGS=--directory .libs --directory .
