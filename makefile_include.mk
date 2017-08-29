@@ -11,16 +11,16 @@ VERSION_SO=1:1
 default: ${LIBNAME}
 
 # Compiler and Linker Names
-ifndef PREFIX
-  PREFIX=
+ifndef CROSS_COMPILE
+  CROSS_COMPILE=
 endif
 
 ifeq ($(CC),cc)
-  CC = $(PREFIX)gcc
+  CC = $(CROSS_COMPILE)gcc
 endif
-LD=$(PREFIX)ld
-AR=$(PREFIX)ar
-RANLIB=$(PREFIX)ranlib
+LD=$(CROSS_COMPILE)ld
+AR=$(CROSS_COMPILE)ar
+RANLIB=$(CROSS_COMPILE)ranlib
 
 ifndef MAKE
    MAKE=make
