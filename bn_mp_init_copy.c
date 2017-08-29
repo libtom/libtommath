@@ -24,7 +24,7 @@ int mp_init_copy (mp_int * a, mp_int * b)
     return res;
   }
 
-  if((res = mp_copy(b, a)) != MP_OKAY) {
+  if ((res = mp_copy(b, a)) != MP_OKAY) {
     mp_clear(a);
   }
 
