@@ -1,4 +1,5 @@
 #include <tommath_private.h>
+#include <string.h>
 #ifdef BN_FAST_S_MP_MUL_DIGS_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
@@ -36,6 +37,9 @@ int fast_s_mp_mul_digs (mp_int * a, mp_int * b, mp_int * c, int digs)
   int     olduse, res, pa, ix, iz;
   mp_digit W[MP_WARRAY];
   mp_word  _W;
+
+  /* clear the buffer */
+  memset(W, 0, MP_WARRAY*sizeof(mp_digit));
 
   /* grow the destination as required */
   if (c->alloc < digs) {
