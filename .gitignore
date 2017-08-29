@@ -53,3 +53,6 @@ test_*.txt
 
 *.bak
 *.orig
+*.asc
+*.tar.xz
+*.zip

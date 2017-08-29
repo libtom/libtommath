@@ -12,5 +12,7 @@ branches:
   only:
     - master
     - develop
+    - /^release\/.*$/
+
 notifications:
   irc: "chat.freenode.net#libtom-notifications"

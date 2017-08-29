@@ -23,6 +23,6 @@ foreach my $obj (@a) {
 
 print "\n\n";
 
-# $Source$
-# $Revision$
-# $Date$
+# ref:         $Format:%D$
+# git commit:  $Format:%H$
+# commit time: $Format:%ai$

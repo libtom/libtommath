@@ -356,7 +356,7 @@
 
 #if defined(BN_MP_EXPTMOD_FAST_C)
    #define BN_MP_COUNT_BITS_C
-   #define BN_MP_INIT_C
+   #define BN_MP_INIT_SIZE_C
    #define BN_MP_CLEAR_C
    #define BN_MP_MONTGOMERY_SETUP_C
    #define BN_FAST_MP_MONTGOMERY_REDUCE_C
@@ -546,7 +546,7 @@
 #endif
 
 #if defined(BN_MP_MOD_C)
-   #define BN_MP_INIT_C
+   #define BN_MP_INIT_SIZE_C
    #define BN_MP_DIV_C
    #define BN_MP_CLEAR_C
    #define BN_MP_ISZERO_C
@@ -610,7 +610,7 @@
 #endif
 
 #if defined(BN_MP_MULMOD_C)
-   #define BN_MP_INIT_C
+   #define BN_MP_INIT_SIZE_C
    #define BN_MP_MUL_C
    #define BN_MP_CLEAR_C
    #define BN_MP_MOD_C

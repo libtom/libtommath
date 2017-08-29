@@ -14,9 +14,10 @@ endif
 
 # makes the LTM book DVI file, requires tetex, perl and makeindex [part of tetex I think]
 docdvi: tommath.src
-	cd pics ; MAKE=${MAKE} ${MAKE}
+	${MAKE} -C pics/ MAKE=${MAKE}
 	echo "hello" ${silent_stdout}
 	perl booker.pl
+	touch tommath.ind
 	latex tommath ${silent_stdout}
 	latex tommath ${silent_stdout}
 	makeindex tommath
