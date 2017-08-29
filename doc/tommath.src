@@ -175,7 +175,7 @@ integers of significant magnitude to resist known cryptanalytic attacks.  For ex
 typical RSA modulus would be at least greater than $10^{309}$.  However, modern programming languages such as ISO C \cite{ISOC} and
 Java \cite{JAVA} only provide instrinsic support for integers which are relatively small and single precision.
 
-\begin{figure}[!here]
+\begin{figure}[!h]
 \begin{center}
 \begin{tabular}{|r|c|}
 \hline \textbf{Data Type} & \textbf{Range} \\
@@ -366,7 +366,7 @@ the problem.  However, unlike \cite{TAOCPV2} the problems do not get nearly as h
 exercises ranges from one (the easiest) to five (the hardest).  The following table sumarizes the
 scoring system used.
 
-\begin{figure}[here]
+\begin{figure}[h]
 \begin{center}
 \begin{small}
 \begin{tabular}{|c|l|}
@@ -573,7 +573,7 @@ any such data type but it does provide for making composite data types known as 
 used within LibTomMath.
 
 \index{mp\_int}
-\begin{figure}[here]
+\begin{figure}[h]
 \begin{center}
 \begin{small}
 %\begin{verbatim}
@@ -670,7 +670,7 @@ will it check pointers for validity.  Any function that can cause a runtime erro
 \textbf{int} data type with one of the following values (fig \ref{fig:errcodes}).
 
 \index{MP\_OKAY} \index{MP\_VAL} \index{MP\_MEM}
-\begin{figure}[here]
+\begin{figure}[h]
 \begin{center}
 \begin{tabular}{|l|l|}
 \hline \textbf{Value} & \textbf{Meaning} \\
@@ -719,7 +719,7 @@ An mp\_int is said to be initialized if it is set to a valid, preferably default
 structure are set to valid values.  The mp\_init algorithm will perform such an action.
 
 \index{mp\_init}
-\begin{figure}[here]
+\begin{figure}[h]
 \begin{center}
 \begin{tabular}{l}
 \hline Algorithm \textbf{mp\_init}. \\
@@ -793,7 +793,7 @@ mp\_int structure has been properly initialized and is safe to use with other fu
 When an mp\_int is no longer required by the application, the memory that has been allocated for its digits must be
 returned to the application's memory pool with the mp\_clear algorithm.
 
-\begin{figure}[here]
+\begin{figure}[h]
 \begin{center}
 \begin{tabular}{l}
 \hline Algorithm \textbf{mp\_clear}. \\
@@ -857,7 +857,7 @@ result of an operation without loss of precision.  Quite often the size of the a
 is large enough to simply increase the \textbf{used} digit count.  However, when the size of the array is too small it
 must be re-sized appropriately to accomodate the result.  The mp\_grow algorithm will provide this functionality.
 
-\newpage\begin{figure}[here]
+\newpage\begin{figure}[h]
 \begin{center}
 \begin{tabular}{l}
 \hline Algorithm \textbf{mp\_grow}. \\
@@ -911,7 +911,7 @@ Occasionally the number of digits required will be known in advance of an initia
 of input mp\_ints to a given algorithm.  The purpose of algorithm mp\_init\_size is similar to mp\_init except that it
 will allocate \textit{at least} a specified number of digits.
 
-\begin{figure}[here]
+\begin{figure}[h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -963,7 +963,7 @@ Occasionally a function will require a series of mp\_int data types to be made a
 The purpose of algorithm mp\_init\_multi is to initialize a variable length array of mp\_int structures in a single
 statement.  It is essentially a shortcut to multiple initializations.
 
-\newpage\begin{figure}[here]
+\newpage\begin{figure}[h]
 \begin{center}
 \begin{tabular}{l}
 \hline Algorithm \textbf{mp\_init\_multi}. \\
@@ -1022,7 +1022,7 @@ The mp\_clamp algorithm is designed to solve this very problem.  It will trim hi
 positive number which means that if the \textbf{used} count is decremented to zero, the sign must be set to
 \textbf{MP\_ZPOS}.
 
-\begin{figure}[here]
+\begin{figure}[h]
 \begin{center}
 \begin{tabular}{l}
 \hline Algorithm \textbf{mp\_clamp}. \\
@@ -1090,7 +1090,7 @@ Assigning the value that a given mp\_int structure represents to another mp\_int
 a copy for the purposes of this text.  The copy of the mp\_int will be a separate entity that represents the same
 value as the mp\_int it was copied from.  The mp\_copy algorithm provides this functionality.
 
-\newpage\begin{figure}[here]
+\newpage\begin{figure}[h]
 \begin{center}
 \begin{tabular}{l}
 \hline Algorithm \textbf{mp\_copy}. \\
@@ -1205,7 +1205,7 @@ and then copy another existing mp\_int into the newly intialized mp\_int will be
 useful within functions that need to modify an argument but do not wish to actually modify the original copy.  The
 mp\_init\_copy algorithm has been designed to help perform this task.
 
-\begin{figure}[here]
+\begin{figure}[h]
 \begin{center}
 \begin{tabular}{l}
 \hline Algorithm \textbf{mp\_init\_copy}. \\
@@ -1235,7 +1235,7 @@ and \textbf{a} will be left intact.
 Reseting an mp\_int to the default state is a common step in many algorithms.  The mp\_zero algorithm will be the algorithm used to
 perform this task.
 
-\begin{figure}[here]
+\begin{figure}[h]
 \begin{center}
 \begin{tabular}{l}
 \hline Algorithm \textbf{mp\_zero}. \\
@@ -1265,7 +1265,7 @@ After the function is completed, all of the digits are zeroed, the \textbf{used}
 With the mp\_int representation of an integer, calculating the absolute value is trivial.  The mp\_abs algorithm will compute
 the absolute value of an mp\_int.
 
-\begin{figure}[here]
+\begin{figure}[h]
 \begin{center}
 \begin{tabular}{l}
 \hline Algorithm \textbf{mp\_abs}. \\
@@ -1297,7 +1297,7 @@ This fairly trivial algorithm first eliminates non--required duplications (line 
 With the mp\_int representation of an integer, calculating the negation is also trivial.  The mp\_neg algorithm will compute
 the negative of an mp\_int input.
 
-\begin{figure}[here]
+\begin{figure}[h]
 \begin{center}
 \begin{tabular}{l}
 \hline Algorithm \textbf{mp\_neg}. \\
@@ -1334,7 +1334,7 @@ than the \textbf{sign} is hard--coded to \textbf{MP\_ZPOS}.
 \subsection{Setting Small Constants}
 Often a mp\_int must be set to a relatively small value such as $1$ or $2$.  For these cases the mp\_set algorithm is useful.
 
-\newpage\begin{figure}[here]
+\newpage\begin{figure}[h]
 \begin{center}
 \begin{tabular}{l}
 \hline Algorithm \textbf{mp\_set}. \\
@@ -1375,7 +1375,7 @@ this function should take that into account.  Only trivially small constants can
 To overcome the limitations of the mp\_set algorithm the mp\_set\_int algorithm is ideal.  It accepts a ``long''
 data type as input and will always treat it as a 32-bit integer.
 
-\begin{figure}[here]
+\begin{figure}[h]
 \begin{center}
 \begin{tabular}{l}
 \hline Algorithm \textbf{mp\_set\_int}. \\
@@ -1425,7 +1425,7 @@ signs are known to agree in advance.
 
 To facilitate working with the results of the comparison functions three constants are required.
 
-\begin{figure}[here]
+\begin{figure}[h]
 \begin{center}
 \begin{tabular}{|r|l|}
 \hline \textbf{Constant} & \textbf{Meaning} \\
@@ -1438,7 +1438,7 @@ To facilitate working with the results of the comparison functions three constan
 \caption{Comparison Return Codes}
 \end{figure}
 
-\begin{figure}[here]
+\begin{figure}[h]
 \begin{center}
 \begin{tabular}{l}
 \hline Algorithm \textbf{mp\_cmp\_mag}. \\
@@ -1479,7 +1479,7 @@ smaller than $a.used$, meaning that undefined values will be read from $b$ past 
 Comparing with sign considerations is also fairly critical in several routines (\textit{division for example}).  Based on an unsigned magnitude
 comparison a trivial signed comparison algorithm can be written.
 
-\begin{figure}[here]
+\begin{figure}[h]
 \begin{center}
 \begin{tabular}{l}
 \hline Algorithm \textbf{mp\_cmp}. \\
@@ -1560,7 +1560,7 @@ trailing digits first and propagate the resulting carry upwards.  Since this is 
 Historically that convention stems from the MPI library where ``s\_'' stood for static functions that were hidden from the developer entirely.
 
 \newpage
-\begin{figure}[!here]
+\begin{figure}[!h]
 \begin{center}
 \begin{small}
 \begin{tabular}{l}
@@ -1663,7 +1663,7 @@ mp\_digit (\textit{this implies $2^{\gamma} > \beta$}).
 For example, the default for LibTomMath is to use a ``unsigned long'' for the mp\_digit ``type'' while $\beta = 2^{28}$.  In ISO C an ``unsigned long''
 data type must be able to represent $0 \le x < 2^{32}$ meaning that in this case $\gamma \ge 32$.
 
-\newpage\begin{figure}[!here]
+\newpage\begin{figure}[!h]
 \begin{center}
 \begin{small}
 \begin{tabular}{l}
@@ -1754,7 +1754,7 @@ types.
 Recall from section 5.2 that an mp\_int represents an integer with an unsigned mantissa (\textit{the array of digits}) and a \textbf{sign}
 flag.  A high level addition is actually performed as a series of eight separate cases which can be optimized down to three unique cases.
 
-\begin{figure}[!here]
+\begin{figure}[!h]
 \begin{center}
 \begin{tabular}{l}
 \hline Algorithm \textbf{mp\_add}. \\
@@ -1783,7 +1783,7 @@ This algorithm performs the signed addition of two mp\_int variables.  There is 
 either \cite{TAOCPV2} or \cite{HAC} since they both only provide unsigned operations.  The algorithm is fairly
 straightforward but restricted since subtraction can only produce positive results.
 
-\begin{figure}[here]
+\begin{figure}[h]
 \begin{small}
 \begin{center}
 \begin{tabular}{|c|c|c|c|c|}
@@ -1833,7 +1833,7 @@ level functions do so.  Returning their return code is sufficient.
 \subsection{High Level Subtraction}
 The high level signed subtraction algorithm is essentially the same as the high level signed addition algorithm.
 
-\newpage\begin{figure}[!here]
+\newpage\begin{figure}[!h]
 \begin{center}
 \begin{tabular}{l}
 \hline Algorithm \textbf{mp\_sub}. \\
@@ -1865,7 +1865,7 @@ This algorithm performs the signed subtraction of two inputs.  Similar to algori
 \cite{HAC}.  Also this algorithm is restricted by algorithm s\_mp\_sub.  Chart \ref{fig:SubChart} lists the eight possible inputs and
 the operations required.
 
-\begin{figure}[!here]
+\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{|c|c|c|c|c|}
@@ -1911,7 +1911,7 @@ are on radix-$\beta$ digits.
 In a binary system where the radix is a power of two multiplication by two not only arises often in other algorithms it is a fairly efficient
 operation to perform.  A single precision logical shift left is sufficient to multiply a single digit by two.
 
-\newpage\begin{figure}[!here]
+\newpage\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -1967,7 +1967,7 @@ is the use of the logical shift operator on line @52,<<@ to perform a single pre
 \subsection{Division by Two}
 A division by two can just as easily be accomplished with a logical shift right as multiplication by two can be with a logical shift left.
 
-\newpage\begin{figure}[!here]
+\newpage\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -2024,7 +2024,7 @@ Given a polynomial in $x$ such as $f(x) = a_n x^n + a_{n-1} x^{n-1} + ... + a_0$
 degree.  In this case $f(x) \cdot x = a_n x^{n+1} + a_{n-1} x^n + ... + a_0 x$.  From a scalar basis point of view multiplying by $x$ is equivalent to
 multiplying by the integer $\beta$.
 
-\newpage\begin{figure}[!here]
+\newpage\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -2080,7 +2080,7 @@ window of exactly $b$ digits over the input.
 
 Division by powers of $x$ is easily achieved by shifting the digits right and removing any that will end up to the right of the zero'th digit.
 
-\newpage\begin{figure}[!here]
+\newpage\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -2136,7 +2136,7 @@ shifts $k$ times to achieve a multiplication by $2^{\pm k}$ a mixture of whole d
 
 \subsection{Multiplication by Power of Two}
 
-\newpage\begin{figure}[!here]
+\newpage\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -2199,7 +2199,7 @@ chain between consecutive iterations to propagate the carry.
 
 \subsection{Division by Power of Two}
 
-\newpage\begin{figure}[!here]
+\newpage\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -2252,7 +2252,7 @@ the direction of the shifts.
 The last algorithm in the series of polynomial basis power of two algorithms is calculating the remainder of division by $2^b$.  This
 algorithm benefits from the fact that in twos complement arithmetic $a \mbox{ (mod }2^b\mbox{)}$ is the same as $a$ AND $2^b - 1$.
 
-\begin{figure}[!here]
+\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -2363,7 +2363,7 @@ Recall from ~GAMMA~ the definition of $\gamma$ as the number of bits in the type
 include $\alpha$ which shall represent the number of bits in the type \textbf{mp\_word}.  This implies that $2^{\alpha} > 2 \cdot \beta^2$.  The
 constant $\delta = 2^{\alpha - 2lg(\beta)}$ will represent the maximal weight of any column in a product (\textit{see ~COMBA~ for more information}).
 
-\newpage\begin{figure}[!here]
+\newpage\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -2422,7 +2422,7 @@ innermost loop $a_{ix}$ is multiplied against $b$ and the result is added (\text
 For example, consider multiplying $576$ by $241$.  That is equivalent to computing $10^0(1)(576) + 10^1(4)(576) + 10^2(2)(576)$ which is best
 visualized in the following table.
 
-\begin{figure}[here]
+\begin{figure}[h]
 \begin{center}
 \begin{tabular}{|c|c|c|c|c|c|l|}
 \hline   &&          & 5 & 7 & 6 & \\
@@ -2500,7 +2500,7 @@ the product vector $\vec x$ as follows.
 Where $\vec x_n$ is the $n'th$ column of the output vector.  Consider the following example which computes the vector $\vec x$ for the multiplication
 of $576$ and $241$.
 
-\newpage\begin{figure}[here]
+\newpage\begin{figure}[h]
 \begin{small}
 \begin{center}
 \begin{tabular}{|c|c|c|c|c|c|}
@@ -2521,7 +2521,7 @@ At this point the vector $x = \left < 10, 34, 45, 31, 6 \right >$ is the result 
 Now the columns must be fixed by propagating the carry upwards.  The resultant vector will have one extra dimension over the input vector which is
 congruent to adding a leading zero digit.
 
-\begin{figure}[!here]
+\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -2577,7 +2577,7 @@ The defaults for LibTomMath are $\beta = 2^{28}$ and $\alpha = 2^{64}$ which mea
 the smaller input may not have more than $256$ digits if the Comba method is to be used.  This is quite satisfactory for most applications since
 $256$ digits would allow for numbers in the range of $0 \le x < 2^{7168}$ which, is much larger than most public key cryptographic algorithms require.
 
-\newpage\begin{figure}[!here]
+\newpage\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -2783,7 +2783,7 @@ By adding the first and last equation to the equation in the middle the term $w_
 of this system of equations has made Karatsuba fairly popular.  In fact the cutoff point is often fairly low\footnote{With LibTomMath 0.18 it is 70 and 109 digits for the Intel P4 and AMD Athlon respectively.}
 making it an ideal algorithm to speed up certain public key cryptosystems such as RSA and Diffie-Hellman.
 
-\newpage\begin{figure}[!here]
+\newpage\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -2888,7 +2888,7 @@ of two, two divisions by three and one multiplication by three.  All of these $1
 the algorithm can be faster than a baseline multiplication.  However, the greater complexity of this algorithm places the cutoff point
 (\textbf{TOOM\_MUL\_CUTOFF}) where Toom-Cook becomes more efficient much higher than the Karatsuba cutoff point.
 
-\begin{figure}[!here]
+\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -2925,7 +2925,7 @@ Continued on the next page.\\
 \caption{Algorithm mp\_toom\_mul}
 \end{figure}
 
-\newpage\begin{figure}[!here]
+\newpage\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -2997,7 +2997,7 @@ straight forward.
 Now that algorithms to handle multiplications of every useful dimensions have been developed, a rather simple finishing touch is required.  So far all
 of the multiplication algorithms have been unsigned multiplications which leaves only a signed multiplication algorithm to be established.
 
-\begin{figure}[!here]
+\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -3051,7 +3051,7 @@ and $3 \cdot 1 = 1 \cdot 3$.
 For any $n$-digit input, there are ${{\left (n^2 + n \right)}\over 2}$ possible unique single precision multiplications required compared to the $n^2$
 required for multiplication.  The following diagram gives an example of the operations required.
 
-\begin{figure}[here]
+\begin{figure}[h]
 \begin{center}
 \begin{tabular}{ccccc|c}
 &&1&2&3&\\
@@ -3080,7 +3080,7 @@ Column two of row one is a square and column three is the first unique column.
 The baseline squaring algorithm is meant to be a catch-all squaring algorithm.  It will handle any of the input sizes that the faster routines
 will not handle.
 
-\begin{figure}[!here]
+\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -3159,7 +3159,7 @@ However, we cannot simply double all of the columns, since the squares appear on
 mp\_word arrays.  One array will hold the squares and the other array will hold the double products.  With both arrays the doubling and
 carry propagation can be moved to a $O(n)$ work level outside the $O(n^2)$ level.  In this case, we have an even simpler solution in mind.
 
-\newpage\begin{figure}[!here]
+\newpage\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -3249,7 +3249,7 @@ Consider squaring a 200 digit number with this technique.  It will be split into
 The 100 digit halves will not be squared using Karatsuba, but instead using the faster Comba based squaring algorithm.  If Karatsuba multiplication
 were used instead, the 100 digit numbers would be squared with a slower Comba based multiplication.
 
-\newpage\begin{figure}[!here]
+\newpage\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -3342,7 +3342,7 @@ instead of multiplication to find the five relations.  The reader is encouraged 
 derive their own Toom-Cook squaring algorithm.
 
 \subsection{High Level Squaring}
-\newpage\begin{figure}[!here]
+\newpage\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -3560,7 +3560,7 @@ With both optimizations in place the algorithm is the algorithm Barrett proposed
 is considerably faster than the straightforward $3m^2$ method.
 
 \subsection{The Barrett Algorithm}
-\newpage\begin{figure}[!here]
+\newpage\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -3634,7 +3634,7 @@ safe to do so.
 In order to use algorithm mp\_reduce the value of $\mu$ must be calculated in advance.  Ideally this value should be computed once and stored for
 future use so that the Barrett algorithm can be used without delay.
 
-\newpage\begin{figure}[!here]
+\newpage\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -3680,7 +3680,7 @@ multiplication by $k^{-1}$ modulo $n$.
 
 From these two simple facts the following simple algorithm can be derived.
 
-\newpage\begin{figure}[!here]
+\newpage\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -3706,7 +3706,7 @@ $x$ is assumed to be initially much larger than $n$ the addition of $n$ will con
 final result of the Montgomery algorithm.  If $k > lg(n)$ and $0 \le x < n^2$ then the final result is limited to
 $0 \le r < \lfloor x/2^k \rfloor + n$.  As a result at most a single subtraction is required to get the residue desired.
 
-\begin{figure}[here]
+\begin{figure}[h]
 \begin{small}
 \begin{center}
 \begin{tabular}{|c|l|}
@@ -3736,7 +3736,7 @@ Let $k = \lfloor lg(n) \rfloor + 1$ represent the number of bits in $n$.  The cu
 and $k^2$ single precision additions.  At this rate the algorithm is most certainly slower than Barrett reduction and not terribly useful.
 Fortunately there exists an alternative representation of the algorithm.
 
-\begin{figure}[!here]
+\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -3758,7 +3758,7 @@ Fortunately there exists an alternative representation of the algorithm.
 This algorithm is equivalent since $2^tn$ is a multiple of $n$ and the lower $k$ bits of $x$ are zero by step 2.  The number of single
 precision shifts has now been reduced from $2k^2$ to $k^2 + k$ which is only a small improvement.
 
-\begin{figure}[here]
+\begin{figure}[h]
 \begin{small}
 \begin{center}
 \begin{tabular}{|c|l|r|}
@@ -3791,7 +3791,7 @@ zero and the appropriate multiple of $n$ does not need to be added to force the 
 Instead of computing the reduction on a bit-by-bit basis it is actually much faster to compute it on digit-by-digit basis.  Consider the
 previous algorithm re-written to compute the Montgomery reduction in this new fashion.
 
-\begin{figure}[!here]
+\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -3849,7 +3849,7 @@ the correct residue is $9 \cdot 15 \equiv 16 \mbox{ (mod }n\mbox{)}$.
 The baseline Montgomery reduction algorithm will produce the residue for any size input.  It is designed to be a catch-all algororithm for
 Montgomery reductions.
 
-\newpage\begin{figure}[!here]
+\newpage\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -3933,7 +3933,7 @@ Perform a Comba like multiplier and inside the outer loop just after the inner l
 With this change in place the Montgomery reduction algorithm can be performed with a Comba style multiplication loop which substantially increases
 the speed of the algorithm.
 
-\newpage\begin{figure}[!here]
+\newpage\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -4014,7 +4014,7 @@ digit, that is $\_ \hat W_{t} = \hat W_{n.used + t}$.
 \subsection{Montgomery Setup}
 To calculate the variable $\rho$ a relatively simple algorithm will be required.
 
-\begin{figure}[!here]
+\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -4070,7 +4070,7 @@ x \equiv qk + r  \mbox{ (mod }(n-k)\mbox{)}
 The variable $n$ reduces modulo $n - k$ to $k$.  By putting $q = \lfloor x/n \rfloor$ and $r = x \mbox{ mod } n$
 into the equation the original congruence is reproduced, thus concluding the proof.  The following algorithm is based on this observation.
 
-\begin{figure}[!here]
+\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -4183,7 +4183,7 @@ of this algorithm has been optimized to avoid additional overhead associated wit
 of $x$ and $q$.  The resulting algorithm is very efficient and can lead to substantial improvements over Barrett and Montgomery reduction when modular
 exponentiations are performed.
 
-\newpage\begin{figure}[!here]
+\newpage\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -4249,7 +4249,7 @@ does not need to be checked.
 To setup the restricted Diminished Radix algorithm the value $k = \beta - n_0$ is required.  This algorithm is not really complicated but provided for
 completeness.
 
-\begin{figure}[!here]
+\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -4271,7 +4271,7 @@ EXAM,bn_mp_dr_setup.c
 Another algorithm which will be useful is the ability to detect a restricted Diminished Radix modulus.  An integer is said to be
 of restricted Diminished Radix form if all of the digits are equal to $\beta - 1$ except the trailing digit which may be any value.
 
-\begin{figure}[!here]
+\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -4304,7 +4304,7 @@ is a straightforward adaptation of algorithm~\ref{fig:DR}.
 In general the restricted Diminished Radix reduction algorithm is much faster since it has considerably lower overhead.  However, this new
 algorithm is much faster than either Montgomery or Barrett reduction when the moduli are of the appropriate form.
 
-\begin{figure}[!here]
+\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -4346,7 +4346,7 @@ positive.  By using the unsigned versions the overhead is kept to a minimum.
 \subsubsection{Unrestricted Setup}
 To setup this reduction algorithm the value of $k = 2^p - n$ is required.
 
-\begin{figure}[!here]
+\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -4385,7 +4385,7 @@ one digit than it will always be of the correct form.  Otherwise all of the bits
 that there will be value of $k$ that when added to the modulus causes a carry in the first digit which propagates all the way to the most
 significant bit.  The resulting sum will be a power of two.
 
-\begin{figure}[!here]
+\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -4435,7 +4435,7 @@ reduction can be written as a single function with the Comba technique it is muc
 calling the half precision multipliers, addition and division by $\beta$ algorithms.
 
 For almost every cryptographic algorithm Montgomery reduction is the algorithm of choice.  The one set of algorithms where Diminished Radix reduction truly
-shines are based on the discrete logarithm problem such as Diffie-Hellman \cite{DH} and ElGamal \cite{ELGAMAL}.  In these algorithms
+shines are based on the discrete logarithm problem such as Diffie-Hellman \cite{DHREF} and ElGamal \cite{ELGAMALREF}.  In these algorithms
 primes of the form $\beta^m - k$ can be found and shared amongst users.  These primes will allow the Diminished Radix algorithm to be used in
 modular exponentiation to greatly speed up the operation.
 
@@ -4487,7 +4487,7 @@ $k \over 2$ multiplications to compute the result.  This is indeed quite an impr
 While this current method is a considerable speed up there are further improvements to be made.  For example, the $a^{2^i}$ term does not need to
 be computed in an auxilary variable.  Consider the following equivalent algorithm.
 
-\begin{figure}[!here]
+\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -4539,7 +4539,7 @@ The first algorithm in the series of exponentiation algorithms will be an unboun
 to be used when a small power of an input is required (\textit{e.g. $a^5$}).  It is faster than simply multiplying $b - 1$ times for all values of
 $b$ that are greater than three.
 
-\newpage\begin{figure}[!here]
+\newpage\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -4590,7 +4590,7 @@ the $i$'th $k$-bit digit of the exponent of $b$.  For $k = 1$ the definitions ar
 computes the same exponentiation.  A group of $k$ bits from the exponent is called a \textit{window}.  That is it is a small window on only a
 portion of the entire exponent.  Consider the following modification to the basic left to right exponentiation algorithm.
 
-\begin{figure}[!here]
+\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -4626,7 +4626,7 @@ An optimal value of $k$ will minimize $2^{k} + \lceil n / k \rceil + n - 1$ for 
 approach is to brute force search amongst the values $k = 2, 3, \ldots, 8$ for the lowest result.  Table~\ref{fig:OPTK} lists optimal values of $k$
 for various exponent sizes and compares the number of multiplication and squarings required against algorithm~\ref{fig:LTOR}.
 
-\begin{figure}[here]
+\begin{figure}[h]
 \begin{center}
 \begin{small}
 \begin{tabular}{|c|c|c|c|c|c|}
@@ -4655,7 +4655,7 @@ algorithm values of $g$ in the range $0 \le g < 2^{k-1}$ must be avoided.
 
 Table~\ref{fig:OPTK2} lists optimal values of $k$ for various exponent sizes and compares the work required against algorithm {\ref{fig:KARY}}.
 
-\begin{figure}[here]
+\begin{figure}[h]
 \begin{center}
 \begin{small}
 \begin{tabular}{|c|c|c|c|c|c|}
@@ -4677,7 +4677,7 @@ Table~\ref{fig:OPTK2} lists optimal values of $k$ for various exponent sizes and
 \label{fig:OPTK2}
 \end{figure}
 
-\newpage\begin{figure}[!here]
+\newpage\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -4725,10 +4725,10 @@ one of the algorithms presented in ~REDUCTION~.
 
 Before the actual modular exponentiation algorithm can be written a wrapper algorithm must be written first.  This algorithm
 will allow the exponent $b$ to be negative which is computed as $c \equiv \left (1 / a \right )^{\vert b \vert} \mbox{(mod }d\mbox{)}$. The
-value of $(1/a) \mbox{ mod }c$ is computed using the modular inverse (\textit{see \ref{sec;modinv}}).  If no inverse exists the algorithm
+value of $(1/a) \mbox{ mod }c$ is computed using the modular inverse (\textit{see \ref{sec:modinv}}).  If no inverse exists the algorithm
 terminates with an error.
 
-\begin{figure}[!here]
+\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -4780,7 +4780,7 @@ the slower s\_mp\_exptmod algorithm is used which uses Barrett reduction.
 
 \subsection{Barrett Modular Exponentiation}
 
-\newpage\begin{figure}[!here]
+\newpage\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -4830,7 +4830,7 @@ Continued on next page. \\
 \caption{Algorithm s\_mp\_exptmod}
 \end{figure}
 
-\newpage\begin{figure}[!here]
+\newpage\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -4944,7 +4944,7 @@ function that will be used for this modulus.
 Calculating $b = 2^a$ can be performed much quicker than with any of the previous algorithms.  Recall that a logical shift left $m << k$ is
 equivalent to $m \cdot 2^k$.  By this logic when $m = 1$ a quick power of two can be achieved.
 
-\begin{figure}[!here]
+\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -4986,7 +4986,7 @@ the basis of this algorithm is the long-hand division algorithm taught to school
 will be used.  Let $x$ represent the divisor and $y$ represent the dividend.  Let $q$ represent the integer quotient $\lfloor y / x \rfloor$ and
 let $r$ represent the remainder $r = y - x \lfloor y / x \rfloor$.  The following simple algorithm will be used to start the discussion.
 
-\newpage\begin{figure}[!here]
+\newpage\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -5082,7 +5082,7 @@ lie in the domain of a single digit.  Consider the maximum dividend $(\beta - 1)
 At most the quotient approaches $2\beta$, however, in practice this will not occur since that would imply the previous quotient digit was too small.
 
 \subsection{Radix-$\beta$ Division with Remainder}
-\newpage\begin{figure}[!here]
+\newpage\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -5125,7 +5125,7 @@ Continued on the next page. \\
 \caption{Algorithm mp\_div}
 \end{figure}
 
-\newpage\begin{figure}[!here]
+\newpage\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -5248,7 +5248,7 @@ the helper functions assume the single digit input is positive and will treat th
 Both addition and subtraction are performed by ``cheating'' and using mp\_set followed by the higher level addition or subtraction
 algorithms.   As a result these algorithms are subtantially simpler with a slight cost in performance.
 
-\newpage\begin{figure}[!here]
+\newpage\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -5281,7 +5281,7 @@ Single digit multiplication arises enough in division and radix conversion that 
 multiplication algorithm.  Essentially this algorithm is a modified version of algorithm s\_mp\_mul\_digs where one of the multiplicands
 only has one digit.
 
-\begin{figure}[!here]
+\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -5323,7 +5323,7 @@ read from the source.  This function uses pointer aliases $tmpa$ and $tmpc$ for 
 Like the single digit multiplication algorithm, single digit division is also a fairly common algorithm used in radix conversion.  Since the
 divisor is only a single digit a specialized variant of the division algorithm can be used to compute the quotient.
 
-\newpage\begin{figure}[!here]
+\newpage\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -5388,7 +5388,7 @@ simply $f'(x) = nx^{n - 1}$.  Of particular importance is that this algorithm wi
 such as the real numbers.  As a result the root found can be above the true root by few and must be manually adjusted.  Ideally at the end of the
 algorithm the $n$'th root $b$ of an integer $a$ is desired such that $b^n \le a$.
 
-\newpage\begin{figure}[!here]
+\newpage\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -5441,7 +5441,7 @@ Random numbers come up in a variety of activities from public key cryptography t
 factoring for example, can make use of random values as starting points to find factors of a composite integer.  In this case the algorithm presented
 is solely for simulations and not intended for cryptographic use.
 
-\newpage\begin{figure}[!here]
+\newpage\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -5483,7 +5483,7 @@ map are for the common representations up to hexadecimal.  After that they match
 such that they are printable.  While outputting as base64 may not be too helpful for human operators it does allow communication via non binary
 mediums.
 
-\newpage\begin{figure}[here]
+\newpage\begin{figure}[h]
 \begin{center}
 \begin{tabular}{cc|cc|cc|cc}
 \hline \textbf{Value} & \textbf{Char} & \textbf{Value} & \textbf{Char} & \textbf{Value} & \textbf{Char} &  \textbf{Value} & \textbf{Char} \\
@@ -5511,7 +5511,7 @@ mediums.
 \label{fig:ASC}
 \end{figure}
 
-\newpage\begin{figure}[!here]
+\newpage\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -5551,7 +5551,7 @@ EXAM,bn_mp_read_radix.c
 \subsection{Generating Radix-$n$ Output}
 Generating radix-$n$ output is fairly trivial with a division and remainder algorithm.
 
-\newpage\begin{figure}[!here]
+\newpage\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -5620,7 +5620,7 @@ simultaneously.
 The most common approach (cite) is to reduce one input modulo another.  That is if $a$ and $b$ are divisible by some integer $k$ and if $qa + r = b$ then
 $r$ is also divisible by $k$.  The reduction pattern follows $\left < a , b \right > \rightarrow \left < b, a \mbox{ mod } b \right >$.
 
-\newpage\begin{figure}[!here]
+\newpage\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -5646,7 +5646,7 @@ relatively expensive operations to perform and should ideally be avoided.  There
 greatest common divisors.  The faster approach is based on the observation that if $k$ divides both $a$ and $b$ it will also divide $a - b$.
 In particular, we would like $a - b$ to decrease in magnitude which implies that $b \ge a$.
 
-\begin{figure}[!here]
+\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -5680,7 +5680,7 @@ the greatest common divisor.
 However, instead of factoring $b - a$ to find a suitable value of $p$ the powers of $p$ can be removed from $a$ and $b$ that are in common first.
 Then inside the loop whenever $b - a$ is divisible by some power of $p$ it can be safely removed.
 
-\begin{figure}[!here]
+\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -5725,7 +5725,7 @@ largest of the pair.
 The algorithms presented so far cannot handle inputs which are zero or negative.  The following algorithm can handle all input cases properly
 and will produce the greatest common divisor.
 
-\newpage\begin{figure}[!here]
+\newpage\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -5812,7 +5812,7 @@ collide, that is be in synchronous states, after only $[ a, b ]$ iterations.  Th
 Linear Feedback Shift Registers (LFSR) tend to use registers with periods which are co-prime (\textit{e.g. the greatest common divisor is one.}).
 Similarly in number theory if a composite $n$ has two prime factors $p$ and $q$ then maximal order of any unit of $\Z/n\Z$ will be $[ p - 1, q - 1] $.
 
-\begin{figure}[!here]
+\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -5935,7 +5935,7 @@ $\left ( {2 \over p } \right )^k$ equals $1$ if $k$ is even otherwise it equals 
 factors of $p$ do not have to be known.  Furthermore, if $(a, p) = 1$ then the algorithm will terminate when the recursion requests the
 Jacobi symbol computation of $\left ( {1 \over a'} \right )$ which is simply $1$.
 
-\newpage\begin{figure}[!here]
+\newpage\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -6040,7 +6040,7 @@ binary approach is very similar to the binary greatest common divisor algorithm 
 equation.
 
 \subsection{General Case}
-\newpage\begin{figure}[!here]
+\newpage\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -6142,15 +6142,16 @@ of the primes less than $\sqrt{n} + 1$ the algorithm cannot prove if a candidate
 
 The benefit of this test is that trial division by small values is fairly efficient.  Specially compared to the other algorithms that will be
 discussed shortly.  The probability that this approach correctly identifies a composite candidate when tested with all primes upto $q$ is given by
-$1 - {1.12 \over ln(q)}$.  The graph (\ref{pic:primality}, will be added later) demonstrates the probability of success for the range
-$3 \le q \le 100$.
+$1 - {1.12 \over ln(q)}$.  The graph (\ref{pic:primality}) demonstrates the probability of success for the range $3 \le q \le 100$.
+
+FIGU,primality,Probability of successful trial division to detect non-primes
 
 At approximately $q = 30$ the gain of performing further tests diminishes fairly quickly.  At $q = 90$ further testing is generally not going to
 be of any practical use.  In the case of LibTomMath the default limit $q = 256$ was chosen since it is not too high and will eliminate
 approximately $80\%$ of all candidate integers.  The constant \textbf{PRIME\_SIZE} is equal to the number of primes in the test base.  The
 array \_\_prime\_tab is an array of the first \textbf{PRIME\_SIZE} prime numbers.
 
-\begin{figure}[!here]
+\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -6196,7 +6197,7 @@ of a base will divide $n - 1$ which would then be reported as prime.  Such a bas
 integers known as Carmichael numbers will be a pseudo-prime to all valid bases.  Fortunately such numbers are extremely rare as $n$ grows
 in size.
 
-\begin{figure}[!here]
+\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -6228,7 +6229,7 @@ candidate  integers.  The algorithm is based on the observation that if $n - 1 =
 value must be equal to $-1$.  The squarings are stopped as soon as $-1$ is observed.  If the value of $1$ is observed first it means that
 some value not congruent to $\pm 1$ when squared equals one which cannot occur if $n$ is prime.
 
-\begin{figure}[!here]
+\begin{figure}[!h]
 \begin{small}
 \begin{center}
 \begin{tabular}{l}
@@ -6331,6 +6332,18 @@ JTC1/SC22/WG14, ISO/IEC 9899:1999, ``A draft rationale for the C99 standard.''
 
 \bibitem[19]{JAVA}
 The Sun Java Website, \url{http://java.sun.com/}
+
+\bibitem[20]{LeVeque}
+William LeVeque, \textit{Fundamentals of Number Theory}, Dover Publications, 2014
+
+\bibitem[21]{ELGAMALREF}
+T. Elgamal, \textit{A public key cryptosystem and a signature scheme based on discrete logarithms}, {IEEE} Transactions on Information Theory, 1985, pp. 469-472
+
+\bibitem[22]{TOOM}
+D. Knuth, \textit{The Art of Computer Programming; Volume 2. Third Edition}, Addison-Wesley, 1997, pg. 294
+
+\bibitem[23]{POSIX1}
+The Open Group, \url{http://www.opengroup.org/austin/papers/posix_faq.html}, 2017
 
 \end{thebibliography}
 

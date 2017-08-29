@@ -49,7 +49,7 @@
 \begin{document}
 \frontmatter
 \pagestyle{empty}
-\title{LibTomMath User Manual \\ v1.0}
+\title{LibTomMath User Manual \\ v1.0.1}
 \author{Tom St Denis \\ tstdenis82@gmail.com}
 \maketitle
 This text, the library and the accompanying textbook are all hereby placed in the public domain.  This book has been
@@ -258,7 +258,7 @@ the library (beat that!).
 So you may be thinking ``should I use LibTomMath?'' and the answer is a definite maybe.  Let me tabulate what I think
 are the pros and cons of LibTomMath by comparing it to the math routines from GnuPG\footnote{GnuPG v1.2.3 versus LibTomMath v0.28}.
 
-\newpage\begin{figure}[here]
+\newpage\begin{figure}[h]
 \begin{small}
 \begin{center}
 \begin{tabular}{|l|c|c|l|}
@@ -300,7 +300,7 @@ libtommath.a).  There is no library initialization required and the entire libra
 There are three possible return codes a function may return.
 
 \index{MP\_OKAY}\index{MP\_YES}\index{MP\_NO}\index{MP\_VAL}\index{MP\_MEM}
-\begin{figure}[here!]
+\begin{figure}[h!]
 \begin{center}
 \begin{small}
 \begin{tabular}{|l|l|}
@@ -823,7 +823,7 @@ Comparisons in LibTomMath are always performed in a ``left to right'' fashion.  
 for any comparison.
 
 \index{MP\_GT} \index{MP\_EQ} \index{MP\_LT}
-\begin{figure}[here]
+\begin{figure}[h]
 \begin{center}
 \begin{tabular}{|c|c|}
 \hline \textbf{Result Code} & \textbf{Meaning} \\
@@ -1290,7 +1290,7 @@ make XXX
 \end{alltt}
 Where ``XXX'' is one of the following entries from the table \ref{fig:tuning}.
 
-\begin{figure}[here]
+\begin{figure}[h]
 \begin{center}
 \begin{small}
 \begin{tabular}{|l|l|}
@@ -1739,7 +1739,7 @@ specifies the bit length of the prime desired.  The variable $flags$ specifies o
 (see fig. \ref{fig:primeopts}) which can be OR'ed together.  The callback parameters are used as in
 mp\_prime\_random().
 
-\begin{figure}[here]
+\begin{figure}[h]
 \begin{center}
 \begin{small}
 \begin{tabular}{|r|l|}
