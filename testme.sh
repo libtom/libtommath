@@ -78,7 +78,9 @@ _runtest()
     exit 128
   fi
   echo -e "\rRun test $1 $2"
-  timeout --foreground 90 ./test > test_${suffix}.txt || _die "running tests" $?
+  local _timeout=""
+  which timeout >/dev/null && _timeout="timeout --foreground 90"
+  $_timeout ./test > test_${suffix}.txt || _die "running tests" $?
 }
 
 _banner()
