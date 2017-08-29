@@ -27,21 +27,21 @@ After that loop you do the squares and add them in.
 
 int fast_s_mp_sqr(mp_int *a, mp_int *b)
 {
-  int       olduse, res, pa, ix, iz;
-  mp_digit   W[MP_WARRAY], *tmpx;
-  mp_word   W1;
+   int       olduse, res, pa, ix, iz;
+   mp_digit   W[MP_WARRAY], *tmpx;
+   mp_word   W1;
 
-  /* grow the destination as required */
-  pa = a->used + a->used;
-  if (b->alloc < pa) {
-    if ((res = mp_grow(b, pa)) != MP_OKAY) {
-      return res;
-    }
-  }
+   /* grow the destination as required */
+   pa = a->used + a->used;
+   if (b->alloc < pa) {
+      if ((res = mp_grow(b, pa)) != MP_OKAY) {
+         return res;
+      }
+   }
 
-  /* number of output digits to produce */
-  W1 = 0;
-  for (ix = 0; ix < pa; ix++) {
+   /* number of output digits to produce */
+   W1 = 0;
+   for (ix = 0; ix < pa; ix++) {
       int      tx, ty, iy;
       mp_word  _W;
       mp_digit *tmpy;
@@ -86,26 +86,26 @@ int fast_s_mp_sqr(mp_int *a, mp_int *b)
 
       /* make next carry */
       W1 = _W >> ((mp_word)DIGIT_BIT);
-  }
+   }
 
-  /* setup dest */
-  olduse  = b->used;
-  b->used = a->used+a->used;
+   /* setup dest */
+   olduse  = b->used;
+   b->used = a->used+a->used;
 
-  {
-    mp_digit *tmpb;
-    tmpb = b->dp;
-    for (ix = 0; ix < pa; ix++) {
-      *tmpb++ = W[ix] & MP_MASK;
-    }
+   {
+      mp_digit *tmpb;
+      tmpb = b->dp;
+      for (ix = 0; ix < pa; ix++) {
+         *tmpb++ = W[ix] & MP_MASK;
+      }
 
-    /* clear unused digits [that existed in the old copy of c] */
-    for (; ix < olduse; ix++) {
-      *tmpb++ = 0;
-    }
-  }
-  mp_clamp(b);
-  return MP_OKAY;
+      /* clear unused digits [that existed in the old copy of c] */
+      for (; ix < olduse; ix++) {
+         *tmpb++ = 0;
+      }
+   }
+   mp_clamp(b);
+   return MP_OKAY;
 }
 #endif
 

@@ -24,17 +24,17 @@
  */
 void mp_clamp(mp_int *a)
 {
-  /* decrease used while the most significant digit is
-   * zero.
-   */
-  while ((a->used > 0) && (a->dp[a->used - 1] == 0)) {
-    --(a->used);
-  }
+   /* decrease used while the most significant digit is
+    * zero.
+    */
+   while ((a->used > 0) && (a->dp[a->used - 1] == 0)) {
+      --(a->used);
+   }
 
-  /* reset the sign flag if used == 0 */
-  if (a->used == 0) {
-    a->sign = MP_ZPOS;
-  }
+   /* reset the sign flag if used == 0 */
+   if (a->used == 0) {
+      a->sign = MP_ZPOS;
+   }
 }
 #endif
 

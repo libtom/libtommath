@@ -20,11 +20,11 @@
  */
 void mp_exch(mp_int *a, mp_int *b)
 {
-  mp_int  t;
+   mp_int  t;
 
-  t  = *a;
-  *a = *b;
-  *b = t;
+   t  = *a;
+   *a = *b;
+   *b = t;
 }
 #endif
 

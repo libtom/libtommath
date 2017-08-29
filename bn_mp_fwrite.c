@@ -36,10 +36,10 @@ int mp_fwrite(mp_int *a, int radix, FILE *stream)
    }
 
    for (x = 0; x < len; x++) {
-       if (fputc(buf[x], stream) == EOF) {
-          XFREE(buf);
-          return MP_VAL;
-       }
+      if (fputc(buf[x], stream) == EOF) {
+         XFREE(buf);
+         return MP_VAL;
+      }
    }
 
    XFREE(buf);

@@ -36,9 +36,9 @@ int mp_fread(mp_int *a, int radix, FILE *stream)
    for (;;) {
       /* find y in the radix map */
       for (y = 0; y < radix; y++) {
-          if (mp_s_rmap[y] == ch) {
-             break;
-          }
+         if (mp_s_rmap[y] == ch) {
+            break;
+         }
       }
       if (y == radix) {
          break;
