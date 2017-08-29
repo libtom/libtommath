@@ -10,8 +10,6 @@ endif
 include makefile_include.mk
 
 
-PLATFORM := $(shell uname | sed -e 's/_.*//')
-
 ifndef LT
   ifeq ($(PLATFORM), Darwin)
     LT:=glibtool

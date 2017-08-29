@@ -7,6 +7,8 @@ VERSION=1.0.1-rc2
 VERSION_PC=1.0.1
 VERSION_SO=1:1
 
+PLATFORM := $(shell uname | sed -e 's/_.*//')
+
 # default make target
 default: ${LIBNAME}
 
@@ -54,6 +56,13 @@ endif
 
 endif # COMPILE_SIZE
 endif # COMPILE_DEBUG
+
+ifneq ($(findstring clang,$(CC)),)
+CFLAGS += -Wno-typedef-redefinition -Wno-tautological-compare -Wno-builtin-requires-header
+endif
+ifeq ($(PLATFORM), Darwin)
+CFLAGS += -Wno-nullability-completeness
+endif
 
 # adjust coverage set
 ifneq ($(filter $(shell arch), i386 i686 x86_64 amd64 ia64),)
