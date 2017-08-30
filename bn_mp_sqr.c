@@ -26,12 +26,12 @@ mp_sqr (mp_int * a, mp_int * b)
   if (a->used >= TOOM_SQR_CUTOFF) {
     res = mp_toom_sqr(a, b);
   /* Karatsuba? */
-  } else 
+  } else
 #endif
 #ifdef BN_MP_KARATSUBA_SQR_C
   if (a->used >= KARATSUBA_SQR_CUTOFF) {
     res = mp_karatsuba_sqr (a, b);
-  } else 
+  } else
 #endif
   {
 #ifdef BN_FAST_S_MP_SQR_C

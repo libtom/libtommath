@@ -18,7 +18,7 @@
 /* makes a truly random prime of a given size (bits),
  *
  * Flags are as follows:
- * 
+ *
  *   LTM_PRIME_BBS      - make prime congruent to 3 mod 4
  *   LTM_PRIME_SAFE     - make sure (p-1)/2 is prime as well (implies LTM_PRIME_BBS)
  *   LTM_PRIME_2MSB_ON  - make the 2nd highest bit one
@@ -62,7 +62,7 @@ int mp_prime_random_ex(mp_int *a, int t, int size, int flags, ltm_prime_callback
    maskOR_msb_offset = ((size & 7) == 1) ? 1 : 0;
    if ((flags & LTM_PRIME_2MSB_ON) != 0) {
       maskOR_msb       |= 0x80 >> ((9 - size) & 7);
-   }  
+   }
 
    /* get the maskOR_lsb */
    maskOR_lsb         = 1;
@@ -76,7 +76,7 @@ int mp_prime_random_ex(mp_int *a, int t, int size, int flags, ltm_prime_callback
          err = MP_VAL;
          goto error;
       }
- 
+
       /* work over the MSbyte */
       tmp[0]    &= maskAND;
       tmp[0]    |= 1 << ((size - 1) & 7);
@@ -90,7 +90,7 @@ int mp_prime_random_ex(mp_int *a, int t, int size, int flags, ltm_prime_callback
 
       /* is it prime? */
       if ((err = mp_prime_is_prime(a, t, &res)) != MP_OKAY)           { goto error; }
-      if (res == MP_NO) {  
+      if (res == MP_NO) {
          continue;
       }
 
@@ -98,7 +98,7 @@ int mp_prime_random_ex(mp_int *a, int t, int size, int flags, ltm_prime_callback
          /* see if (a-1)/2 is prime */
          if ((err = mp_sub_d(a, 1, a)) != MP_OKAY)                    { goto error; }
          if ((err = mp_div_2(a, a)) != MP_OKAY)                       { goto error; }
- 
+
          /* is it prime? */
          if ((err = mp_prime_is_prime(a, t, &res)) != MP_OKAY)        { goto error; }
       }

@@ -18,7 +18,7 @@
 /* based on gmp's mpz_import.
  * see http://gmplib.org/manual/Integer-Import-and-Export.html
  */
-int mp_import(mp_int* rop, size_t count, int order, size_t size, 
+int mp_import(mp_int* rop, size_t count, int order, size_t size,
                             int endian, size_t nails, const void* op) {
 	int result;
 	size_t odd_nails, nail_bytes, i, j;
@@ -46,7 +46,7 @@ int mp_import(mp_int* rop, size_t count, int order, size_t size,
 	for (i = 0; i < count; ++i) {
 		for (j = 0; j < (size - nail_bytes); ++j) {
 			unsigned char byte = *(
-					(unsigned char*)op + 
+					(unsigned char*)op +
 					(((order == 1) ? i : ((count - 1) - i)) * size) +
 					((endian == 1) ? (j + nail_bytes) : (((size - 1) - j) - nail_bytes))
 				);
