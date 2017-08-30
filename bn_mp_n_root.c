@@ -20,7 +20,7 @@
  */
 int mp_n_root(mp_int *a, mp_digit b, mp_int *c)
 {
-  return mp_n_root_ex(a, b, c, 0);
+   return mp_n_root_ex(a, b, c, 0);
 }
 
 #endif
