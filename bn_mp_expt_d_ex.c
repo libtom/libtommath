@@ -51,8 +51,7 @@ int mp_expt_d_ex (mp_int * a, mp_digit b, mp_int * c, int fast)
       /* shift to next bit */
       b >>= 1;
     }
-  }
-  else {
+  } else {
     for (x = 0; x < DIGIT_BIT; x++) {
       /* square */
       if ((res = mp_sqr(c, c)) != MP_OKAY) {

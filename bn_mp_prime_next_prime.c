@@ -81,7 +81,9 @@ int mp_prime_next_prime(mp_int *a, int t, int bbs_style)
    if (bbs_style == 1) {
       /* if a mod 4 != 3 subtract the correct value to make it so */
       if ((a->dp[0] & 3) != 3) {
-         if ((err = mp_sub_d(a, (a->dp[0] & 3) + 1, a)) != MP_OKAY) { return err; };
+         if ((err = mp_sub_d(a, (a->dp[0] & 3) + 1, a)) != MP_OKAY) {
+            return err;
+         };
       }
    } else {
       if (mp_iseven(a) == MP_YES) {
