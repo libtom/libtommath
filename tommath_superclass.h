@@ -33,13 +33,13 @@
 #   define BN_REVERSE_C
 #   define BN_PRIME_TAB_C
 
-   /* other modifiers */
+/* other modifiers */
 #   define BN_MP_DIV_SMALL                    /* Slower division, not critical */
 
-   /* here we are on the last pass so we turn things off.  The functions classes are still there
-    * but we remove them specifically from the build.  This also invokes tweaks in functions
-    * like removing support for even moduli, etc...
-    */
+/* here we are on the last pass so we turn things off.  The functions classes are still there
+ * but we remove them specifically from the build.  This also invokes tweaks in functions
+ * like removing support for even moduli, etc...
+ */
 #   ifdef LTM_LAST
 #      undef BN_MP_TOOM_MUL_C
 #      undef BN_MP_TOOM_SQR_C
@@ -59,11 +59,11 @@
 #      undef BN_FAST_S_MP_MUL_HIGH_DIGS_C
 #      undef BN_FAST_MP_INVMOD_C
 
-   /* To safely undefine these you have to make sure your RSA key won't exceed the Comba threshold
-    * which is roughly 255 digits [7140 bits for 32-bit machines, 15300 bits for 64-bit machines]
-    * which means roughly speaking you can handle upto 2536-bit RSA keys with these defined without
-    * trouble.
-    */
+/* To safely undefine these you have to make sure your RSA key won't exceed the Comba threshold
+ * which is roughly 255 digits [7140 bits for 32-bit machines, 15300 bits for 64-bit machines]
+ * which means roughly speaking you can handle upto 2536-bit RSA keys with these defined without
+ * trouble.
+ */
 #      undef BN_S_MP_MUL_DIGS_C
 #      undef BN_S_MP_SQR_C
 #      undef BN_MP_MONTGOMERY_REDUCE_C
