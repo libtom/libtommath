@@ -30,22 +30,22 @@
 extern "C" {
 
 /* C++ compilers don't like assigning void * to mp_digit * */
-#define  OPT_CAST(x)  (x *)
+#define OPT_CAST(x) (x *)
 
 #else
 
 /* C on the other hand doesn't care */
-#define  OPT_CAST(x)
+#define OPT_CAST(x)
 
 #endif
 
 /* define heap macros */
 #ifndef XMALLOC
    /* default to libc stuff */
-   #define XMALLOC  malloc
-   #define XFREE    free
-   #define XREALLOC realloc
-   #define XCALLOC  calloc
+#   define XMALLOC   malloc
+#   define XFREE     free
+#   define XREALLOC  realloc
+#   define XCALLOC   calloc
 #else
    /* prototypes for our heap functions */
    extern void *XMALLOC(size_t n);

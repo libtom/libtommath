@@ -24,9 +24,9 @@
  */
 
 #ifdef MP_LOW_MEM
-   #define TAB_SIZE 32
+#   define TAB_SIZE 32
 #else
-   #define TAB_SIZE 256
+#   define TAB_SIZE 256
 #endif
 
 int mp_exptmod_fast (mp_int * G, mp_int * X, mp_int * P, mp_int * Y, int redmode)
