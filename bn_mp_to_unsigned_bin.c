@@ -21,24 +21,24 @@ int mp_to_unsigned_bin (mp_int * a, unsigned char *b)
   int     x, res;
   mp_int  t;
 
-  if ((res = mp_init_copy (&t, a)) != MP_OKAY) {
+  if ((res = mp_init_copy(&t, a)) != MP_OKAY) {
     return res;
   }
 
   x = 0;
-  while (mp_iszero (&t) == MP_NO) {
+  while (mp_iszero(&t) == MP_NO) {
 #ifndef MP_8BIT
-      b[x++] = (unsigned char) (t.dp[0] & 255);
+      b[x++] = (unsigned char)(t.dp[0] & 255);
 #else
-      b[x++] = (unsigned char) (t.dp[0] | ((t.dp[1] & 0x01) << 7));
+      b[x++] = (unsigned char)(t.dp[0] | ((t.dp[1] & 0x01) << 7));
 #endif
-    if ((res = mp_div_2d (&t, 8, &t, NULL)) != MP_OKAY) {
-      mp_clear (&t);
+    if ((res = mp_div_2d(&t, 8, &t, NULL)) != MP_OKAY) {
+      mp_clear(&t);
       return res;
     }
   }
-  bn_reverse (b, x);
-  mp_clear (&t);
+  bn_reverse(b, x);
+  mp_clear(&t);
   return MP_OKAY;
 }
 #endif

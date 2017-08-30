@@ -42,7 +42,7 @@ int mp_exptmod_fast (mp_int * G, mp_int * X, mp_int * P, mp_int * Y, int redmode
   int     (*redux)(mp_int*,mp_int*,mp_digit);
 
   /* find window size */
-  x = mp_count_bits (X);
+  x = mp_count_bits(X);
   if (x <= 7) {
     winsize = 2;
   } else if (x <= 36) {
@@ -75,7 +75,7 @@ int mp_exptmod_fast (mp_int * G, mp_int * X, mp_int * P, mp_int * Y, int redmode
   for (x = 1<<(winsize-1); x < (1 << winsize); x++) {
     if ((err = mp_init_size(&M[x], P->alloc)) != MP_OKAY) {
       for (y = 1<<(winsize-1); y < x; y++) {
-        mp_clear (&M[y]);
+        mp_clear(&M[y]);
       }
       mp_clear(&M[1]);
       return err;
@@ -86,7 +86,7 @@ int mp_exptmod_fast (mp_int * G, mp_int * X, mp_int * P, mp_int * Y, int redmode
   if (redmode == 0) {
 #ifdef BN_MP_MONTGOMERY_SETUP_C
      /* now setup montgomery  */
-     if ((err = mp_montgomery_setup (P, &mp)) != MP_OKAY) {
+     if ((err = mp_montgomery_setup(P, &mp)) != MP_OKAY) {
         goto LBL_M;
      }
 #else
@@ -133,7 +133,7 @@ int mp_exptmod_fast (mp_int * G, mp_int * X, mp_int * P, mp_int * Y, int redmode
   }
 
   /* setup result */
-  if ((err = mp_init_size (&res, P->alloc)) != MP_OKAY) {
+  if ((err = mp_init_size(&res, P->alloc)) != MP_OKAY) {
     goto LBL_M;
   }
 
@@ -147,12 +147,12 @@ int mp_exptmod_fast (mp_int * G, mp_int * X, mp_int * P, mp_int * Y, int redmode
   if (redmode == 0) {
 #ifdef BN_MP_MONTGOMERY_CALC_NORMALIZATION_C
      /* now we need R mod m */
-     if ((err = mp_montgomery_calc_normalization (&res, P)) != MP_OKAY) {
+     if ((err = mp_montgomery_calc_normalization(&res, P)) != MP_OKAY) {
        goto LBL_RES;
      }
 
      /* now set M[1] to G * R mod m */
-     if ((err = mp_mulmod (G, &res, P, &M[1])) != MP_OKAY) {
+     if ((err = mp_mulmod(G, &res, P, &M[1])) != MP_OKAY) {
        goto LBL_RES;
      }
 #else
@@ -167,25 +167,25 @@ int mp_exptmod_fast (mp_int * G, mp_int * X, mp_int * P, mp_int * Y, int redmode
   }
 
   /* compute the value at M[1<<(winsize-1)] by squaring M[1] (winsize-1) times */
-  if ((err = mp_copy (&M[1], &M[1 << (winsize - 1)])) != MP_OKAY) {
+  if ((err = mp_copy(&M[1], &M[1 << (winsize - 1)])) != MP_OKAY) {
     goto LBL_RES;
   }
 
   for (x = 0; x < (winsize - 1); x++) {
-    if ((err = mp_sqr (&M[1 << (winsize - 1)], &M[1 << (winsize - 1)])) != MP_OKAY) {
+    if ((err = mp_sqr(&M[1 << (winsize - 1)], &M[1 << (winsize - 1)])) != MP_OKAY) {
       goto LBL_RES;
     }
-    if ((err = redux (&M[1 << (winsize - 1)], P, mp)) != MP_OKAY) {
+    if ((err = redux(&M[1 << (winsize - 1)], P, mp)) != MP_OKAY) {
       goto LBL_RES;
     }
   }
 
   /* create upper table */
   for (x = (1 << (winsize - 1)) + 1; x < (1 << winsize); x++) {
-    if ((err = mp_mul (&M[x - 1], &M[1], &M[x])) != MP_OKAY) {
+    if ((err = mp_mul(&M[x - 1], &M[1], &M[x])) != MP_OKAY) {
       goto LBL_RES;
     }
-    if ((err = redux (&M[x], P, mp)) != MP_OKAY) {
+    if ((err = redux(&M[x], P, mp)) != MP_OKAY) {
       goto LBL_RES;
     }
   }
@@ -225,10 +225,10 @@ int mp_exptmod_fast (mp_int * G, mp_int * X, mp_int * P, mp_int * Y, int redmode
 
     /* if the bit is zero and mode == 1 then we square */
     if ((mode == 1) && (y == 0)) {
-      if ((err = mp_sqr (&res, &res)) != MP_OKAY) {
+      if ((err = mp_sqr(&res, &res)) != MP_OKAY) {
         goto LBL_RES;
       }
-      if ((err = redux (&res, P, mp)) != MP_OKAY) {
+      if ((err = redux(&res, P, mp)) != MP_OKAY) {
         goto LBL_RES;
       }
       continue;
@@ -242,19 +242,19 @@ int mp_exptmod_fast (mp_int * G, mp_int * X, mp_int * P, mp_int * Y, int redmode
       /* ok window is filled so square as required and multiply  */
       /* square first */
       for (x = 0; x < winsize; x++) {
-        if ((err = mp_sqr (&res, &res)) != MP_OKAY) {
+        if ((err = mp_sqr(&res, &res)) != MP_OKAY) {
           goto LBL_RES;
         }
-        if ((err = redux (&res, P, mp)) != MP_OKAY) {
+        if ((err = redux(&res, P, mp)) != MP_OKAY) {
           goto LBL_RES;
         }
       }
 
       /* then multiply */
-      if ((err = mp_mul (&res, &M[bitbuf], &res)) != MP_OKAY) {
+      if ((err = mp_mul(&res, &M[bitbuf], &res)) != MP_OKAY) {
         goto LBL_RES;
       }
-      if ((err = redux (&res, P, mp)) != MP_OKAY) {
+      if ((err = redux(&res, P, mp)) != MP_OKAY) {
         goto LBL_RES;
       }
 
@@ -269,10 +269,10 @@ int mp_exptmod_fast (mp_int * G, mp_int * X, mp_int * P, mp_int * Y, int redmode
   if ((mode == 2) && (bitcpy > 0)) {
     /* square then multiply if the bit is set */
     for (x = 0; x < bitcpy; x++) {
-      if ((err = mp_sqr (&res, &res)) != MP_OKAY) {
+      if ((err = mp_sqr(&res, &res)) != MP_OKAY) {
         goto LBL_RES;
       }
-      if ((err = redux (&res, P, mp)) != MP_OKAY) {
+      if ((err = redux(&res, P, mp)) != MP_OKAY) {
         goto LBL_RES;
       }
 
@@ -280,10 +280,10 @@ int mp_exptmod_fast (mp_int * G, mp_int * X, mp_int * P, mp_int * Y, int redmode
       bitbuf <<= 1;
       if ((bitbuf & (1 << winsize)) != 0) {
         /* then multiply */
-        if ((err = mp_mul (&res, &M[1], &res)) != MP_OKAY) {
+        if ((err = mp_mul(&res, &M[1], &res)) != MP_OKAY) {
           goto LBL_RES;
         }
-        if ((err = redux (&res, P, mp)) != MP_OKAY) {
+        if ((err = redux(&res, P, mp)) != MP_OKAY) {
           goto LBL_RES;
         }
       }
@@ -303,13 +303,13 @@ int mp_exptmod_fast (mp_int * G, mp_int * X, mp_int * P, mp_int * Y, int redmode
   }
 
   /* swap res with Y */
-  mp_exch (&res, Y);
+  mp_exch(&res, Y);
   err = MP_OKAY;
-LBL_RES:mp_clear (&res);
+LBL_RES:mp_clear(&res);
 LBL_M:
   mp_clear(&M[1]);
   for (x = 1<<(winsize-1); x < (1 << winsize); x++) {
-    mp_clear (&M[x]);
+    mp_clear(&M[x]);
   }
   return err;
 }

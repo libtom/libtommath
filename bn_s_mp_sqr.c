@@ -24,7 +24,7 @@ int s_mp_sqr (mp_int * a, mp_int * b)
   mp_digit u, tmpx, *tmpt;
 
   pa = a->used;
-  if ((res = mp_init_size (&t, (2 * pa) + 1)) != MP_OKAY) {
+  if ((res = mp_init_size(&t, (2 * pa) + 1)) != MP_OKAY) {
     return res;
   }
 
@@ -38,10 +38,10 @@ int s_mp_sqr (mp_int * a, mp_int * b)
         ((mp_word)a->dp[ix] * (mp_word)a->dp[ix]);
 
     /* store lower part in result */
-    t.dp[ix+ix] = (mp_digit) (r & ((mp_word) MP_MASK));
+    t.dp[ix+ix] = (mp_digit) (r & ((mp_word)MP_MASK));
 
     /* get the carry */
-    u           = (mp_digit)(r >> ((mp_word) DIGIT_BIT));
+    u           = (mp_digit)(r >> ((mp_word)DIGIT_BIT));
 
     /* left hand side of A[ix] * A[iy] */
     tmpx        = a->dp[ix];
@@ -59,7 +59,7 @@ int s_mp_sqr (mp_int * a, mp_int * b)
       r       = ((mp_word) *tmpt) + r + r + ((mp_word) u);
 
       /* store lower part */
-      *tmpt++ = (mp_digit) (r & ((mp_word) MP_MASK));
+      *tmpt++ = (mp_digit)(r & ((mp_word) MP_MASK));
 
       /* get carry */
       u       = (mp_digit)(r >> ((mp_word) DIGIT_BIT));
@@ -67,14 +67,14 @@ int s_mp_sqr (mp_int * a, mp_int * b)
     /* propagate upwards */
     while (u != ((mp_digit) 0)) {
       r       = ((mp_word) *tmpt) + ((mp_word) u);
-      *tmpt++ = (mp_digit) (r & ((mp_word) MP_MASK));
+      *tmpt++ = (mp_digit)(r & ((mp_word) MP_MASK));
       u       = (mp_digit)(r >> ((mp_word) DIGIT_BIT));
     }
   }
 
-  mp_clamp (&t);
-  mp_exch (&t, b);
-  mp_clear (&t);
+  mp_clamp(&t);
+  mp_exch(&t, b);
+  mp_clear(&t);
   return MP_OKAY;
 }
 #endif

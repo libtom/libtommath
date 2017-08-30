@@ -41,7 +41,7 @@ int mp_sqrt(mp_int *arg, mp_int *ret)
   }
 
   /* First approx. (not very bad for large arg) */
-  mp_rshd (&t1, t1.used/2);
+  mp_rshd(&t1, t1.used/2);
 
   /* t1 > 0  */
   if ((res = mp_div(arg, &t1, &t2, NULL)) != MP_OKAY) {

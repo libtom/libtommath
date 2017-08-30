@@ -34,7 +34,7 @@ int fast_s_mp_sqr (mp_int * a, mp_int * b)
   /* grow the destination as required */
   pa = a->used + a->used;
   if (b->alloc < pa) {
-    if ((res = mp_grow (b, pa)) != MP_OKAY) {
+    if ((res = mp_grow(b, pa)) != MP_OKAY) {
       return res;
     }
   }
@@ -104,7 +104,7 @@ int fast_s_mp_sqr (mp_int * a, mp_int * b)
       *tmpb++ = 0;
     }
   }
-  mp_clamp (b);
+  mp_clamp(b);
   return MP_OKAY;
 }
 #endif

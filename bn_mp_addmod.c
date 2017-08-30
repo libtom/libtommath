@@ -22,16 +22,16 @@ mp_addmod (mp_int * a, mp_int * b, mp_int * c, mp_int * d)
   int     res;
   mp_int  t;
 
-  if ((res = mp_init (&t)) != MP_OKAY) {
+  if ((res = mp_init(&t)) != MP_OKAY) {
     return res;
   }
 
-  if ((res = mp_add (a, b, &t)) != MP_OKAY) {
-    mp_clear (&t);
+  if ((res = mp_add(a, b, &t)) != MP_OKAY) {
+    mp_clear(&t);
     return res;
   }
-  res = mp_mod (&t, c, d);
-  mp_clear (&t);
+  res = mp_mod(&t, c, d);
+  mp_clear(&t);
   return res;
 }
 #endif

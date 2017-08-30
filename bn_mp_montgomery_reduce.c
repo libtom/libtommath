@@ -32,12 +32,12 @@ mp_montgomery_reduce (mp_int * x, mp_int * n, mp_digit rho)
   if ((digs < MP_WARRAY) &&
       (n->used <
       (1 << ((CHAR_BIT * sizeof(mp_word)) - (2 * DIGIT_BIT))))) {
-    return fast_mp_montgomery_reduce (x, n, rho);
+    return fast_mp_montgomery_reduce(x, n, rho);
   }
 
   /* grow the input as required */
   if (x->alloc < digs) {
-    if ((res = mp_grow (x, digs)) != MP_OKAY) {
+    if ((res = mp_grow(x, digs)) != MP_OKAY) {
       return res;
     }
   }
@@ -52,7 +52,7 @@ mp_montgomery_reduce (mp_int * x, mp_int * n, mp_digit rho)
      * following inner loop to reduce the
      * input one digit at a time
      */
-    mu = (mp_digit) (((mp_word)x->dp[ix] * (mp_word)rho) & MP_MASK);
+    mu = (mp_digit)(((mp_word)x->dp[ix] * (mp_word)rho) & MP_MASK);
 
     /* a = a + mu * m * b**i */
     {
@@ -102,11 +102,11 @@ mp_montgomery_reduce (mp_int * x, mp_int * n, mp_digit rho)
 
   /* x = x/b**n.used */
   mp_clamp(x);
-  mp_rshd (x, n->used);
+  mp_rshd(x, n->used);
 
   /* if x >= n then x = x - n */
-  if (mp_cmp_mag (x, n) != MP_LT) {
-    return s_mp_sub (x, n, x);
+  if (mp_cmp_mag(x, n) != MP_LT) {
+    return s_mp_sub(x, n, x);
   }
 
   return MP_OKAY;

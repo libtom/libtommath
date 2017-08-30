@@ -35,15 +35,15 @@ int mp_n_root_ex (mp_int * a, mp_digit b, mp_int * c, int fast)
     return MP_VAL;
   }
 
-  if ((res = mp_init (&t1)) != MP_OKAY) {
+  if ((res = mp_init(&t1)) != MP_OKAY) {
     return res;
   }
 
-  if ((res = mp_init (&t2)) != MP_OKAY) {
+  if ((res = mp_init(&t2)) != MP_OKAY) {
     goto LBL_T1;
   }
 
-  if ((res = mp_init (&t3)) != MP_OKAY) {
+  if ((res = mp_init(&t3)) != MP_OKAY) {
     goto LBL_T2;
   }
 
@@ -52,56 +52,56 @@ int mp_n_root_ex (mp_int * a, mp_digit b, mp_int * c, int fast)
   a->sign = MP_ZPOS;
 
   /* t2 = 2 */
-  mp_set (&t2, 2);
+  mp_set(&t2, 2);
 
   do {
     /* t1 = t2 */
-    if ((res = mp_copy (&t2, &t1)) != MP_OKAY) {
+    if ((res = mp_copy(&t2, &t1)) != MP_OKAY) {
       goto LBL_T3;
     }
 
     /* t2 = t1 - ((t1**b - a) / (b * t1**(b-1))) */
 
     /* t3 = t1**(b-1) */
-    if ((res = mp_expt_d_ex (&t1, b - 1, &t3, fast)) != MP_OKAY) {
+    if ((res = mp_expt_d_ex(&t1, b - 1, &t3, fast)) != MP_OKAY) {
       goto LBL_T3;
     }
 
     /* numerator */
     /* t2 = t1**b */
-    if ((res = mp_mul (&t3, &t1, &t2)) != MP_OKAY) {
+    if ((res = mp_mul(&t3, &t1, &t2)) != MP_OKAY) {
       goto LBL_T3;
     }
 
     /* t2 = t1**b - a */
-    if ((res = mp_sub (&t2, a, &t2)) != MP_OKAY) {
+    if ((res = mp_sub(&t2, a, &t2)) != MP_OKAY) {
       goto LBL_T3;
     }
 
     /* denominator */
     /* t3 = t1**(b-1) * b  */
-    if ((res = mp_mul_d (&t3, b, &t3)) != MP_OKAY) {
+    if ((res = mp_mul_d(&t3, b, &t3)) != MP_OKAY) {
       goto LBL_T3;
     }
 
     /* t3 = (t1**b - a)/(b * t1**(b-1)) */
-    if ((res = mp_div (&t2, &t3, &t3, NULL)) != MP_OKAY) {
+    if ((res = mp_div(&t2, &t3, &t3, NULL)) != MP_OKAY) {
       goto LBL_T3;
     }
 
-    if ((res = mp_sub (&t1, &t3, &t2)) != MP_OKAY) {
+    if ((res = mp_sub(&t1, &t3, &t2)) != MP_OKAY) {
       goto LBL_T3;
     }
-  }  while (mp_cmp (&t1, &t2) != MP_EQ);
+  }  while (mp_cmp(&t1, &t2) != MP_EQ);
 
   /* result can be off by a few so check */
   for (;;) {
-    if ((res = mp_expt_d_ex (&t1, b, &t2, fast)) != MP_OKAY) {
+    if ((res = mp_expt_d_ex(&t1, b, &t2, fast)) != MP_OKAY) {
       goto LBL_T3;
     }
 
-    if (mp_cmp (&t2, a) == MP_GT) {
-      if ((res = mp_sub_d (&t1, 1, &t1)) != MP_OKAY) {
+    if (mp_cmp(&t2, a) == MP_GT) {
+      if ((res = mp_sub_d(&t1, 1, &t1)) != MP_OKAY) {
          goto LBL_T3;
       }
     } else {
@@ -113,16 +113,16 @@ int mp_n_root_ex (mp_int * a, mp_digit b, mp_int * c, int fast)
   a->sign = neg;
 
   /* set the result */
-  mp_exch (&t1, c);
+  mp_exch(&t1, c);
 
   /* set the sign of the result */
   c->sign = neg;
 
   res = MP_OKAY;
 
-LBL_T3:mp_clear (&t3);
-LBL_T2:mp_clear (&t2);
-LBL_T1:mp_clear (&t1);
+LBL_T3:mp_clear(&t3);
+LBL_T2:mp_clear(&t2);
+LBL_T1:mp_clear(&t1);
   return res;
 }
 #endif

@@ -89,13 +89,13 @@ int mp_exptmod (mp_int * G, mp_int * X, mp_int * P, mp_int * Y)
 
   /* if the modulus is odd or dr != 0 use the montgomery method */
 #ifdef BN_MP_EXPTMOD_FAST_C
-  if ((mp_isodd (P) == MP_YES) || (dr !=  0)) {
-    return mp_exptmod_fast (G, X, P, Y, dr);
+  if ((mp_isodd(P) == MP_YES) || (dr !=  0)) {
+    return mp_exptmod_fast(G, X, P, Y, dr);
   } else {
 #endif
 #ifdef BN_S_MP_EXPTMOD_C
     /* otherwise use the generic Barrett reduction technique */
-    return s_mp_exptmod (G, X, P, Y, 0);
+    return s_mp_exptmod(G, X, P, Y, 0);
 #else
     /* no exptmod for evens */
     return MP_VAL;

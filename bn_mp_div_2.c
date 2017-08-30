@@ -22,7 +22,7 @@ int mp_div_2(mp_int * a, mp_int * b)
 
   /* copy */
   if (b->alloc < a->used) {
-    if ((res = mp_grow (b, a->used)) != MP_OKAY) {
+    if ((res = mp_grow(b, a->used)) != MP_OKAY) {
       return res;
     }
   }
@@ -58,7 +58,7 @@ int mp_div_2(mp_int * a, mp_int * b)
     }
   }
   b->sign = a->sign;
-  mp_clamp (b);
+  mp_clamp(b);
   return MP_OKAY;
 }
 #endif

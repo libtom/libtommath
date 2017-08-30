@@ -28,11 +28,11 @@ int mp_read_unsigned_bin (mp_int * a, const unsigned char *b, int c)
   }
 
   /* zero the int */
-  mp_zero (a);
+  mp_zero(a);
 
   /* read the bytes in */
   while (c-- > 0) {
-    if ((res = mp_mul_2d (a, 8, a)) != MP_OKAY) {
+    if ((res = mp_mul_2d(a, 8, a)) != MP_OKAY) {
       return res;
     }
 
@@ -45,7 +45,7 @@ int mp_read_unsigned_bin (mp_int * a, const unsigned char *b, int c)
     a->used += 2;
 #endif
   }
-  mp_clamp (a);
+  mp_clamp(a);
   return MP_OKAY;
 }
 #endif

@@ -39,7 +39,7 @@ int fast_s_mp_mul_digs (mp_int * a, mp_int * b, mp_int * c, int digs)
 
   /* grow the destination as required */
   if (c->alloc < digs) {
-    if ((res = mp_grow (c, digs)) != MP_OKAY) {
+    if ((res = mp_grow(c, digs)) != MP_OKAY) {
       return res;
     }
   }
@@ -97,7 +97,7 @@ int fast_s_mp_mul_digs (mp_int * a, mp_int * b, mp_int * c, int digs)
       *tmpc++ = 0;
     }
   }
-  mp_clamp (c);
+  mp_clamp(c);
   return MP_OKAY;
 }
 #endif

@@ -27,7 +27,7 @@ void mp_rshd (mp_int * a, int b)
 
   /* if b > used then simply zero it and return */
   if (a->used <= b) {
-    mp_zero (a);
+    mp_zero(a);
     return;
   }
 

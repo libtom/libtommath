@@ -37,7 +37,7 @@ s_mp_add (mp_int * a, mp_int * b, mp_int * c)
 
   /* init result */
   if (c->alloc < (max + 1)) {
-    if ((res = mp_grow (c, max + 1)) != MP_OKAY) {
+    if ((res = mp_grow(c, max + 1)) != MP_OKAY) {
       return res;
     }
   }
@@ -99,7 +99,7 @@ s_mp_add (mp_int * a, mp_int * b, mp_int * c)
     }
   }
 
-  mp_clamp (c);
+  mp_clamp(c);
   return MP_OKAY;
 }
 #endif

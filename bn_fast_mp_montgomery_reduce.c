@@ -33,7 +33,7 @@ int fast_mp_montgomery_reduce (mp_int * x, mp_int * n, mp_digit rho)
 
   /* grow a as required */
   if (x->alloc < (n->used + 1)) {
-    if ((res = mp_grow (x, n->used + 1)) != MP_OKAY) {
+    if ((res = mp_grow(x, n->used + 1)) != MP_OKAY) {
       return res;
     }
   }
@@ -73,7 +73,7 @@ int fast_mp_montgomery_reduce (mp_int * x, mp_int * n, mp_digit rho)
      * that W[ix-1] have  the carry cleared (see after the inner loop)
      */
     mp_digit mu;
-    mu = (mp_digit) (((W[ix] & MP_MASK) * rho) & MP_MASK);
+    mu = (mp_digit)(((W[ix] & MP_MASK) * rho) & MP_MASK);
 
     /* a = a + mu * m * b**i
      *
@@ -157,11 +157,11 @@ int fast_mp_montgomery_reduce (mp_int * x, mp_int * n, mp_digit rho)
 
   /* set the max used and clamp */
   x->used = n->used + 1;
-  mp_clamp (x);
+  mp_clamp(x);
 
   /* if A >= m then A = A - m */
-  if (mp_cmp_mag (x, n) != MP_LT) {
-    return s_mp_sub (x, n, x);
+  if (mp_cmp_mag(x, n) != MP_LT) {
+    return s_mp_sub(x, n, x);
   }
   return MP_OKAY;
 }

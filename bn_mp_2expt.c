@@ -26,10 +26,10 @@ mp_2expt (mp_int * a, int b)
   int     res;
 
   /* zero a as per default */
-  mp_zero (a);
+  mp_zero(a);
 
   /* grow a to accomodate the single bit */
-  if ((res = mp_grow (a, (b / DIGIT_BIT) + 1)) != MP_OKAY) {
+  if ((res = mp_grow(a, (b / DIGIT_BIT) + 1)) != MP_OKAY) {
     return res;
   }
 

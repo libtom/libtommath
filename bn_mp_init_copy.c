@@ -20,11 +20,11 @@ int mp_init_copy (mp_int * a, mp_int * b)
 {
   int     res;
 
-  if ((res = mp_init_size (a, b->used)) != MP_OKAY) {
+  if ((res = mp_init_size(a, b->used)) != MP_OKAY) {
     return res;
   }
 
-  if((res = mp_copy (b, a)) != MP_OKAY) {
+  if((res = mp_copy(b, a)) != MP_OKAY) {
     mp_clear(a);
   }
 

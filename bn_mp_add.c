@@ -29,18 +29,18 @@ int mp_add (mp_int * a, mp_int * b, mp_int * c)
     /* both positive or both negative */
     /* add their magnitudes, copy the sign */
     c->sign = sa;
-    res = s_mp_add (a, b, c);
+    res = s_mp_add(a, b, c);
   } else {
     /* one positive, the other negative */
     /* subtract the one with the greater magnitude from */
     /* the one of the lesser magnitude.  The result gets */
     /* the sign of the one with the greater magnitude. */
-    if (mp_cmp_mag (a, b) == MP_LT) {
+    if (mp_cmp_mag(a, b) == MP_LT) {
       c->sign = sb;
-      res = s_mp_sub (b, a, c);
+      res = s_mp_sub(b, a, c);
     } else {
       c->sign = sa;
-      res = s_mp_sub (a, b, c);
+      res = s_mp_sub(a, b, c);
     }
   }
   return res;

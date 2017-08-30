@@ -35,7 +35,7 @@ int mp_toradix (mp_int * a, char *str, int radix)
      return MP_OKAY;
   }
 
-  if ((res = mp_init_copy (&t, a)) != MP_OKAY) {
+  if ((res = mp_init_copy(&t, a)) != MP_OKAY) {
     return res;
   }
 
@@ -47,9 +47,9 @@ int mp_toradix (mp_int * a, char *str, int radix)
   }
 
   digs = 0;
-  while (mp_iszero (&t) == MP_NO) {
-    if ((res = mp_div_d (&t, (mp_digit) radix, &t, &d)) != MP_OKAY) {
-      mp_clear (&t);
+  while (mp_iszero(&t) == MP_NO) {
+    if ((res = mp_div_d(&t, (mp_digit)radix, &t, &d)) != MP_OKAY) {
+      mp_clear(&t);
       return res;
     }
     *str++ = mp_s_rmap[d];
@@ -59,12 +59,12 @@ int mp_toradix (mp_int * a, char *str, int radix)
   /* reverse the digits of the string.  In this case _s points
    * to the first digit [exluding the sign] of the number]
    */
-  bn_reverse ((unsigned char *)_s, digs);
+  bn_reverse((unsigned char *)_s, digs);
 
   /* append a NULL so the string is properly terminated */
   *str = '\0';
 
-  mp_clear (&t);
+  mp_clear(&t);
   return MP_OKAY;
 }
 

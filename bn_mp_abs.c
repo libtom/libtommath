@@ -26,7 +26,7 @@ mp_abs (mp_int * a, mp_int * b)
 
   /* copy a to b */
   if (a != b) {
-     if ((res = mp_copy (a, b)) != MP_OKAY) {
+     if ((res = mp_copy(a, b)) != MP_OKAY) {
        return res;
      }
   }

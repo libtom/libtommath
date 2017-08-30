@@ -36,7 +36,7 @@ int mp_radix_size (mp_int * a, int radix, int *size)
 
   /* special case for binary */
   if (radix == 2) {
-    *size = mp_count_bits (a) + ((a->sign == MP_NEG) ? 1 : 0) + 1;
+    *size = mp_count_bits(a) + ((a->sign == MP_NEG) ? 1 : 0) + 1;
     return MP_OKAY;
   }
 
@@ -49,7 +49,7 @@ int mp_radix_size (mp_int * a, int radix, int *size)
   }
 
   /* init a copy of the input */
-  if ((res = mp_init_copy (&t, a)) != MP_OKAY) {
+  if ((res = mp_init_copy(&t, a)) != MP_OKAY) {
     return res;
   }
 
@@ -57,14 +57,14 @@ int mp_radix_size (mp_int * a, int radix, int *size)
   t.sign = MP_ZPOS;
 
   /* fetch out all of the digits */
-  while (mp_iszero (&t) == MP_NO) {
-    if ((res = mp_div_d (&t, (mp_digit) radix, &t, &d)) != MP_OKAY) {
-      mp_clear (&t);
+  while (mp_iszero(&t) == MP_NO) {
+    if ((res = mp_div_d(&t, (mp_digit)radix, &t, &d)) != MP_OKAY) {
+      mp_clear(&t);
       return res;
     }
     ++digs;
   }
-  mp_clear (&t);
+  mp_clear(&t);
 
   /* return digs + 1, the 1 is for the NULL byte that would be required. */
   *size = digs + 1;

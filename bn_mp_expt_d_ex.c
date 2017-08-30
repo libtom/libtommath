@@ -23,27 +23,27 @@ int mp_expt_d_ex (mp_int * a, mp_digit b, mp_int * c, int fast)
 
   mp_int  g;
 
-  if ((res = mp_init_copy (&g, a)) != MP_OKAY) {
+  if ((res = mp_init_copy(&g, a)) != MP_OKAY) {
     return res;
   }
 
   /* set initial result */
-  mp_set (c, 1);
+  mp_set(c, 1);
 
   if (fast != 0) {
     while (b > 0) {
       /* if the bit is set multiply */
       if ((b & 1) != 0) {
-        if ((res = mp_mul (c, &g, c)) != MP_OKAY) {
-          mp_clear (&g);
+        if ((res = mp_mul(c, &g, c)) != MP_OKAY) {
+          mp_clear(&g);
           return res;
         }
       }
 
       /* square */
       if (b > 1) {
-        if ((res = mp_sqr (&g, &g)) != MP_OKAY) {
-          mp_clear (&g);
+        if ((res = mp_sqr(&g, &g)) != MP_OKAY) {
+          mp_clear(&g);
           return res;
         }
       }
@@ -55,15 +55,15 @@ int mp_expt_d_ex (mp_int * a, mp_digit b, mp_int * c, int fast)
   else {
     for (x = 0; x < DIGIT_BIT; x++) {
       /* square */
-      if ((res = mp_sqr (c, c)) != MP_OKAY) {
-        mp_clear (&g);
+      if ((res = mp_sqr(c, c)) != MP_OKAY) {
+        mp_clear(&g);
         return res;
       }
 
       /* if the bit is set multiply */
-      if ((b & (mp_digit) (((mp_digit)1) << (DIGIT_BIT - 1))) != 0) {
-        if ((res = mp_mul (c, &g, c)) != MP_OKAY) {
-           mp_clear (&g);
+      if ((b & (mp_digit)(((mp_digit)1) << (DIGIT_BIT - 1))) != 0) {
+        if ((res = mp_mul(c, &g, c)) != MP_OKAY) {
+           mp_clear(&g);
            return res;
         }
       }
@@ -73,7 +73,7 @@ int mp_expt_d_ex (mp_int * a, mp_digit b, mp_int * c, int fast)
     }
   } /* if ... else */
 
-  mp_clear (&g);
+  mp_clear(&g);
   return MP_OKAY;
 }
 #endif

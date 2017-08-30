@@ -20,7 +20,7 @@ int mp_to_signed_bin (mp_int * a, unsigned char *b)
 {
   int     res;
 
-  if ((res = mp_to_unsigned_bin (a, b + 1)) != MP_OKAY) {
+  if ((res = mp_to_unsigned_bin(a, b + 1)) != MP_OKAY) {
     return res;
   }
   b[0] = (a->sign == MP_ZPOS) ? (unsigned char)0 : (unsigned char)1;

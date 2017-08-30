@@ -47,7 +47,7 @@ mp_rand (mp_int * a, int digits)
   int     res;
   mp_digit d;
 
-  mp_zero (a);
+  mp_zero(a);
   if (digits <= 0) {
     return MP_OKAY;
   }
@@ -57,16 +57,16 @@ mp_rand (mp_int * a, int digits)
     d = s_gen_random();
   } while (d == 0);
 
-  if ((res = mp_add_d (a, d, a)) != MP_OKAY) {
+  if ((res = mp_add_d(a, d, a)) != MP_OKAY) {
     return res;
   }
 
   while (--digits > 0) {
-    if ((res = mp_lshd (a, 1)) != MP_OKAY) {
+    if ((res = mp_lshd(a, 1)) != MP_OKAY) {
       return res;
     }
 
-    if ((res = mp_add_d (a, s_gen_random(), a)) != MP_OKAY) {
+    if ((res = mp_add_d(a, s_gen_random(), a)) != MP_OKAY) {
       return res;
     }
   }

@@ -23,26 +23,26 @@ int mp_mul_2d (mp_int * a, int b, mp_int * c)
 
   /* copy */
   if (a != c) {
-     if ((res = mp_copy (a, c)) != MP_OKAY) {
+     if ((res = mp_copy(a, c)) != MP_OKAY) {
        return res;
      }
   }
 
   if (c->alloc < (int)(c->used + (b / DIGIT_BIT) + 1)) {
-     if ((res = mp_grow (c, c->used + (b / DIGIT_BIT) + 1)) != MP_OKAY) {
+     if ((res = mp_grow(c, c->used + (b / DIGIT_BIT) + 1)) != MP_OKAY) {
        return res;
      }
   }
 
   /* shift by as many digits in the bit count */
   if (b >= (int)DIGIT_BIT) {
-    if ((res = mp_lshd (c, b / DIGIT_BIT)) != MP_OKAY) {
+    if ((res = mp_lshd(c, b / DIGIT_BIT)) != MP_OKAY) {
       return res;
     }
   }
 
   /* shift any bit count < DIGIT_BIT */
-  d = (mp_digit) (b % DIGIT_BIT);
+  d = (mp_digit)(b % DIGIT_BIT);
   if (d != 0) {
     mp_digit *tmpc, shift, mask, r, rr;
     int x;
@@ -75,7 +75,7 @@ int mp_mul_2d (mp_int * a, int b, mp_int * c)
        c->dp[(c->used)++] = r;
     }
   }
-  mp_clamp (c);
+  mp_clamp(c);
   return MP_OKAY;
 }
 #endif

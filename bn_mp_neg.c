@@ -20,7 +20,7 @@ int mp_neg (mp_int * a, mp_int * b)
 {
   int     res;
   if (a != b) {
-     if ((res = mp_copy (a, b)) != MP_OKAY) {
+     if ((res = mp_copy(a, b)) != MP_OKAY) {
         return res;
      }
   }

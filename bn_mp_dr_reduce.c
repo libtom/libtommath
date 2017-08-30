@@ -41,7 +41,7 @@ mp_dr_reduce (mp_int * x, mp_int * n, mp_digit k)
 
   /* ensure that "x" has at least 2m digits */
   if (x->alloc < (m + m)) {
-    if ((err = mp_grow (x, m + m)) != MP_OKAY) {
+    if ((err = mp_grow(x, m + m)) != MP_OKAY) {
       return err;
     }
   }
@@ -76,12 +76,12 @@ top:
   }
 
   /* clamp, sub and return */
-  mp_clamp (x);
+  mp_clamp(x);
 
   /* if x >= n then subtract and reduce again
    * Each successive "recursion" makes the input smaller and smaller.
    */
-  if (mp_cmp_mag (x, n) != MP_LT) {
+  if (mp_cmp_mag(x, n) != MP_LT) {
     if ((err = s_mp_sub(x, n, x)) != MP_OKAY) {
       return err;
     }

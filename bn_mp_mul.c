@@ -23,14 +23,14 @@ int mp_mul (mp_int * a, mp_int * b, mp_int * c)
 
   /* use Toom-Cook? */
 #ifdef BN_MP_TOOM_MUL_C
-  if (MIN (a->used, b->used) >= TOOM_MUL_CUTOFF) {
+  if (MIN(a->used, b->used) >= TOOM_MUL_CUTOFF) {
     res = mp_toom_mul(a, b, c);
   } else
 #endif
 #ifdef BN_MP_KARATSUBA_MUL_C
   /* use Karatsuba? */
-  if (MIN (a->used, b->used) >= KARATSUBA_MUL_CUTOFF) {
-    res = mp_karatsuba_mul (a, b, c);
+  if (MIN(a->used, b->used) >= KARATSUBA_MUL_CUTOFF) {
+    res = mp_karatsuba_mul(a, b, c);
   } else
 #endif
   {
@@ -46,12 +46,12 @@ int mp_mul (mp_int * a, mp_int * b, mp_int * c)
     if ((digs < MP_WARRAY) &&
         (MIN(a->used, b->used) <=
          (1 << ((CHAR_BIT * sizeof(mp_word)) - (2 * DIGIT_BIT))))) {
-      res = fast_s_mp_mul_digs (a, b, c, digs);
+      res = fast_s_mp_mul_digs(a, b, c, digs);
     } else
 #endif
     {
 #ifdef BN_S_MP_MUL_DIGS_C
-      res = s_mp_mul (a, b, c); /* uses s_mp_mul_digs */
+      res = s_mp_mul(a, b, c); /* uses s_mp_mul_digs */
 #else
       res = MP_VAL;
 #endif

@@ -22,19 +22,19 @@ int mp_gcd (mp_int * a, mp_int * b, mp_int * c)
   int     k, u_lsb, v_lsb, res;
 
   /* either zero than gcd is the largest */
-  if (mp_iszero (a) == MP_YES) {
-    return mp_abs (b, c);
+  if (mp_iszero(a) == MP_YES) {
+    return mp_abs(b, c);
   }
-  if (mp_iszero (b) == MP_YES) {
-    return mp_abs (a, c);
+  if (mp_iszero(b) == MP_YES) {
+    return mp_abs(a, c);
   }
 
   /* get copies of a and b we can modify */
-  if ((res = mp_init_copy (&u, a)) != MP_OKAY) {
+  if ((res = mp_init_copy(&u, a)) != MP_OKAY) {
     return res;
   }
 
-  if ((res = mp_init_copy (&v, b)) != MP_OKAY) {
+  if ((res = mp_init_copy(&v, b)) != MP_OKAY) {
     goto LBL_U;
   }
 
@@ -89,13 +89,13 @@ int mp_gcd (mp_int * a, mp_int * b, mp_int * c)
   }
 
   /* multiply by 2**k which we divided out at the beginning */
-  if ((res = mp_mul_2d (&u, k, c)) != MP_OKAY) {
+  if ((res = mp_mul_2d(&u, k, c)) != MP_OKAY) {
      goto LBL_V;
   }
   c->sign = MP_ZPOS;
   res = MP_OKAY;
-LBL_V:mp_clear (&u);
-LBL_U:mp_clear (&v);
+LBL_V:mp_clear(&u);
+LBL_U:mp_clear(&v);
   return res;
 }
 #endif

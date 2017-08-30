@@ -22,12 +22,12 @@ int mp_lcm (mp_int * a, mp_int * b, mp_int * c)
   mp_int  t1, t2;
 
 
-  if ((res = mp_init_multi (&t1, &t2, NULL)) != MP_OKAY) {
+  if ((res = mp_init_multi(&t1, &t2, NULL)) != MP_OKAY) {
     return res;
   }
 
   /* t1 = get the GCD of the two inputs */
-  if ((res = mp_gcd (a, b, &t1)) != MP_OKAY) {
+  if ((res = mp_gcd(a, b, &t1)) != MP_OKAY) {
     goto LBL_T;
   }
 
@@ -50,7 +50,7 @@ int mp_lcm (mp_int * a, mp_int * b, mp_int * c)
   c->sign = MP_ZPOS;
 
 LBL_T:
-  mp_clear_multi (&t1, &t2, NULL);
+  mp_clear_multi(&t1, &t2, NULL);
   return res;
 }
 #endif
