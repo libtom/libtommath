@@ -18,7 +18,7 @@
 #ifdef BN_MP_DIV_SMALL
 
 /* slower bit-bang division... also smaller */
-int mp_div(mp_int * a, mp_int * b, mp_int * c, mp_int * d)
+int mp_div(mp_int *a, mp_int *b, mp_int *c, mp_int *d)
 {
    mp_int ta, tb, tq, q;
    int    res, n, n2;

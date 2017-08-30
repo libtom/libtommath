@@ -16,7 +16,7 @@
  */
 
 /* OR two ints together */
-int mp_or (mp_int * a, mp_int * b, mp_int * c)
+int mp_or(mp_int *a, mp_int *b, mp_int *c)
 {
   int     res, ix, px;
   mp_int  t, *x;

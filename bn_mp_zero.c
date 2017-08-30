@@ -16,7 +16,7 @@
  */
 
 /* set to zero */
-void mp_zero (mp_int * a)
+void mp_zero(mp_int *a)
 {
   int       n;
   mp_digit *tmp;

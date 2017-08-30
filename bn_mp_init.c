@@ -16,7 +16,7 @@
  */
 
 /* init a new mp_int */
-int mp_init (mp_int * a)
+int mp_init(mp_int *a)
 {
   int i;
 

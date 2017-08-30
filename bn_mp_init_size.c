@@ -16,7 +16,7 @@
  */
 
 /* init an mp_init for a given size */
-int mp_init_size (mp_int * a, int size)
+int mp_init_size(mp_int *a, int size)
 {
   int x;
 

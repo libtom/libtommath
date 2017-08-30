@@ -16,7 +16,7 @@
  */
 
 /* grow as required */
-int mp_grow (mp_int * a, int size)
+int mp_grow(mp_int *a, int size)
 {
   int     i;
   mp_digit *tmp;
