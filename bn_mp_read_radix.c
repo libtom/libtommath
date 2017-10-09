@@ -19,6 +19,7 @@
 int mp_read_radix(mp_int *a, const char *str, int radix)
 {
    int     y, res, neg;
+   unsigned pos;
    char    ch;
 
    /* zero the digit bignum */
@@ -49,25 +50,24 @@ int mp_read_radix(mp_int *a, const char *str, int radix)
        * [e.g. in hex]
        */
       ch = (radix <= 36) ? (char)toupper((int)*str) : *str;
-      for (y = 0; y < 64; y++) {
-         if (ch == mp_s_rmap[y]) {
-            break;
-         }
+      pos = ch - '(';
+      if (mp_s_rmap_reverse_sz < pos) {
+         break;
       }
+      y = mp_s_rmap_reverse[pos];
 
       /* if the char was found in the map
        * and is less than the given radix add it
        * to the number, otherwise exit the loop.
        */
-      if (y < radix) {
-         if ((res = mp_mul_d(a, (mp_digit)radix, a)) != MP_OKAY) {
-            return res;
-         }
-         if ((res = mp_add_d(a, (mp_digit)y, a)) != MP_OKAY) {
-            return res;
-         }
-      } else {
+      if (y == 0xff || y >= radix) {
          break;
+      }
+      if ((res = mp_mul_d(a, (mp_digit)radix, a)) != MP_OKAY) {
+         return res;
+      }
+      if ((res = mp_add_d(a, (mp_digit)y, a)) != MP_OKAY) {
+         return res;
       }
       ++str;
    }

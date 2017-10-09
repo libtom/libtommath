@@ -20,6 +20,7 @@
 int mp_fread(mp_int *a, int radix, FILE *stream)
 {
    int err, ch, neg, y;
+   unsigned pos;
 
    /* clear a */
    mp_zero(a);
@@ -34,13 +35,14 @@ int mp_fread(mp_int *a, int radix, FILE *stream)
    }
 
    for (;;) {
-      /* find y in the radix map */
-      for (y = 0; y < radix; y++) {
-         if (mp_s_rmap[y] == ch) {
-            break;
-         }
+      pos = ch - '(';
+      if (mp_s_rmap_reverse_sz < pos) {
+         break;
       }
-      if (y == radix) {
+
+      y = mp_s_rmap_reverse[pos];
+
+      if (y == 0xff || y >= radix) {
          break;
       }
 
