@@ -229,6 +229,15 @@ int main(void)
       return EXIT_FAILURE;
    }
 
+   mp_set_int(&a, 42);
+   mp_set_int(&b, 1);
+   mp_neg(&b, &b);
+   mp_set_int(&c, 1);
+   mp_exptmod(&a, &b, &c, &d);
+
+   mp_set_int(&c, 7);
+   mp_exptmod(&a, &b, &c, &d);
+
 
    mp_set_int(&a, 0);
    mp_set_int(&b, 1);
