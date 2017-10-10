@@ -26,6 +26,11 @@
 extern "C" {
 #endif
 
+/* MS Visual C++ doesn't have a 128bit type for words, so fall back to 32bit MPI's (where words are 64bit) */
+#if defined(_MSC_VER) || defined(__LLP64__)
+#   define MP_32BIT
+#endif
+
 /* detect 64-bit mode if possible */
 #if defined(__x86_64__) || defined(_M_X64) || defined(_M_AMD64) || \
     defined(__powerpc64__) || defined(__ppc64__) || defined(__PPC64__) || \
@@ -63,9 +68,7 @@ typedef uint32_t             mp_word;
 #elif defined(MP_64BIT)
 /* for GCC only on supported platforms */
 typedef uint64_t mp_digit;
-#   if defined(_WIN32)
-typedef unsigned __int128    mp_word;
-#   elif defined(__GNUC__)
+#   if defined(__GNUC__)
 typedef unsigned long        mp_word __attribute__((mode(TI)));
 #   else
 /* it seems you have a problem
