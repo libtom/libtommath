@@ -21,8 +21,8 @@
 int mp_export(void *rop, size_t *countp, int order, size_t size,
               int endian, size_t nails, const mp_int *op)
 {
-   int result;
-   size_t odd_nails, nail_bytes, i, j, bits, count;
+   int result, n, odd_nails;
+   size_t nail_bytes, i, j, bits, count;
    unsigned char odd_nail_mask;
 
    mp_int t;
@@ -43,8 +43,8 @@ int mp_export(void *rop, size_t *countp, int order, size_t size,
 
    odd_nails = (nails % 8);
    odd_nail_mask = 0xff;
-   for (i = 0; i < odd_nails; ++i) {
-      odd_nail_mask ^= (1 << (7 - i));
+   for (n = 0; n < odd_nails; ++n) {
+      odd_nail_mask ^= (1 << (7 - n));
    }
    nail_bytes = nails / 8;
 
