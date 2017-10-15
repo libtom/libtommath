@@ -1,7 +1,7 @@
 #include <tommath.h>
 #include <time.h>
 #include <unistd.h>
-#include <stdint.h>
+#include <inttypes.h>
 
 uint64_t _tt;
 
@@ -122,7 +122,7 @@ int main(void)
    sleep(1);
    CLK_PER_SEC = TIMFUNC() - CLK_PER_SEC;
 
-   printf("CLK_PER_SEC == %llu\n", CLK_PER_SEC);
+   printf("CLK_PER_SEC == %" PRIu64 "\n", CLK_PER_SEC);
    log = FOPEN("logs/add.log", "w");
    for (cnt = 8; cnt <= 128; cnt += 8) {
       SLEEP;
@@ -137,9 +137,9 @@ int main(void)
 	 if (tt > gg)
 	    tt = gg;
       } while (++rr < 100000);
-      printf("Adding\t\t%4d-bit => %9llu/sec, %9llu cycles\n",
+      printf("Adding\t\t%4d-bit => %9" PRIu64 "/sec, %9" PRIu64 " cycles\n",
 	     mp_count_bits(&a), CLK_PER_SEC / tt, tt);
-      FPRINTF(log, "%d %9llu\n", cnt * DIGIT_BIT, tt);
+      FPRINTF(log, "%d %9" PRIu64 "\n", cnt * DIGIT_BIT, tt);
       FFLUSH(log);
    }
    FCLOSE(log);
@@ -159,9 +159,9 @@ int main(void)
 	    tt = gg;
       } while (++rr < 100000);
 
-      printf("Subtracting\t\t%4d-bit => %9llu/sec, %9llu cycles\n",
+      printf("Subtracting\t\t%4d-bit => %9" PRIu64 "/sec, %9" PRIu64 " cycles\n",
 	     mp_count_bits(&a), CLK_PER_SEC / tt, tt);
-      FPRINTF(log, "%d %9llu\n", cnt * DIGIT_BIT, tt);
+      FPRINTF(log, "%d %9" PRIu64 "\n", cnt * DIGIT_BIT, tt);
       FFLUSH(log);
    }
    FCLOSE(log);
@@ -194,9 +194,9 @@ int main(void)
 	    if (tt > gg)
 	       tt = gg;
 	 } while (++rr < 100);
-	 printf("Multiplying\t%4d-bit => %9llu/sec, %9llu cycles\n",
+	 printf("Multiplying\t%4d-bit => %9" PRIu64 "/sec, %9" PRIu64 " cycles\n",
 		mp_count_bits(&a), CLK_PER_SEC / tt, tt);
-	 FPRINTF(log, "%d %9llu\n", mp_count_bits(&a), tt);
+	 FPRINTF(log, "%d %9" PRIu64 "\n", mp_count_bits(&a), tt);
 	 FFLUSH(log);
       }
       FCLOSE(log);
@@ -214,9 +214,9 @@ int main(void)
 	    if (tt > gg)
 	       tt = gg;
 	 } while (++rr < 100);
-	 printf("Squaring\t%4d-bit => %9llu/sec, %9llu cycles\n",
+	 printf("Squaring\t%4d-bit => %9" PRIu64 "/sec, %9" PRIu64 " cycles\n",
 		mp_count_bits(&a), CLK_PER_SEC / tt, tt);
-	 FPRINTF(log, "%d %9llu\n", mp_count_bits(&a), tt);
+	 FPRINTF(log, "%d %9" PRIu64 "\n", mp_count_bits(&a), tt);
 	 FFLUSH(log);
       }
       FCLOSE(log);
@@ -290,10 +290,10 @@ int main(void)
 	    draw(&d);
 	    exit(0);
 	 }
-	 printf("Exponentiating\t%4d-bit => %9llu/sec, %9llu cycles\n",
+	 printf("Exponentiating\t%4d-bit => %9" PRIu64 "/sec, %9" PRIu64 " cycles\n",
 		mp_count_bits(&a), CLK_PER_SEC / tt, tt);
 	 FPRINTF(n < 4 ? logd : (n < 9) ? logc : (n < 16) ? logb : log,
-		 "%d %9llu\n", mp_count_bits(&a), tt);
+		 "%d %9" PRIu64 "\n", mp_count_bits(&a), tt);
       }
    }
    FCLOSE(log);
@@ -326,9 +326,9 @@ int main(void)
 	 printf("Failed to invert\n");
 	 return 0;
       }
-      printf("Inverting mod\t%4d-bit => %9llu/sec, %9llu cycles\n",
+      printf("Inverting mod\t%4d-bit => %9" PRIu64 "/sec, %9" PRIu64 " cycles\n",
 	     mp_count_bits(&a), CLK_PER_SEC / tt, tt);
-      FPRINTF(log, "%d %9llu\n", cnt * DIGIT_BIT, tt);
+      FPRINTF(log, "%d %9" PRIu64 "\n", cnt * DIGIT_BIT, tt);
    }
    FCLOSE(log);
 
