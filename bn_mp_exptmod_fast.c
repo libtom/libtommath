@@ -160,7 +160,7 @@ int mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y
       goto LBL_RES;
 #endif
    } else {
-      mp_set(&res, 1);
+      mp_set(&res, 1uL);
       if ((err = mp_mod(G, P, &M[1])) != MP_OKAY) {
          goto LBL_RES;
       }

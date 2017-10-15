@@ -62,8 +62,8 @@ int mp_prime_next_prime(mp_int *a, int t, int bbs_style)
          }
       }
       /* at this point a maybe 1 */
-      if (mp_cmp_d(a, 1) == MP_EQ) {
-         mp_set(a, 2);
+      if (mp_cmp_d(a, 1uL) == MP_EQ) {
+         mp_set(a, 2uL);
          return MP_OKAY;
       }
       /* fall through to the sieve */
@@ -88,7 +88,7 @@ int mp_prime_next_prime(mp_int *a, int t, int bbs_style)
    } else {
       if (mp_iseven(a) == MP_YES) {
          /* force odd */
-         if ((err = mp_sub_d(a, 1, a)) != MP_OKAY) {
+         if ((err = mp_sub_d(a, 1uL, a)) != MP_OKAY) {
             return err;
          }
       }

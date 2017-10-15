@@ -63,7 +63,7 @@ int mp_is_square(const mp_int *arg, int *ret)
    }
 
    /* Next check mod 105 (3*5*7) */
-   if ((res = mp_mod_d(arg, 105, &c)) != MP_OKAY) {
+   if ((res = mp_mod_d(arg, 105uL, &c)) != MP_OKAY) {
       return res;
    }
    if (rem_105[c] == 1) {

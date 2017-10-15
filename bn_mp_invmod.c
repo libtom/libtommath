@@ -19,7 +19,7 @@
 int mp_invmod(const mp_int *a, const mp_int *b, mp_int *c)
 {
    /* b cannot be negative and has to be >1 */
-   if ((b->sign == MP_NEG) || (mp_cmp_d(b, 1) != MP_GT)) {
+   if ((b->sign == MP_NEG) || (mp_cmp_d(b, 1uL) != MP_GT)) {
       return MP_VAL;
    }
 

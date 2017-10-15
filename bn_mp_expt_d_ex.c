@@ -28,7 +28,7 @@ int mp_expt_d_ex(const mp_int *a, mp_digit b, mp_int *c, int fast)
    }
 
    /* set initial result */
-   mp_set(c, 1);
+   mp_set(c, 1uL);
 
    if (fast != 0) {
       while (b > 0) {

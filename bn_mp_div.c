@@ -47,7 +47,7 @@ int mp_div(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d)
    }
 
 
-   mp_set(&tq, 1);
+   mp_set(&tq, 1uL);
    n = mp_count_bits(a) - mp_count_bits(b);
    if (((res = mp_abs(a, &ta)) != MP_OKAY) ||
        ((res = mp_abs(b, &tb)) != MP_OKAY) ||

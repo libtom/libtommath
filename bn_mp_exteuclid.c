@@ -28,13 +28,13 @@ int mp_exteuclid(const mp_int *a, const mp_int *b, mp_int *U1, mp_int *U2, mp_in
    }
 
    /* initialize, (u1,u2,u3) = (1,0,a) */
-   mp_set(&u1, 1);
+   mp_set(&u1, 1uL);
    if ((err = mp_copy(a, &u3)) != MP_OKAY)                                        {
       goto LBL_ERR;
    }
 
    /* initialize, (v1,v2,v3) = (0,1,b) */
-   mp_set(&v2, 1);
+   mp_set(&v2, 1uL);
    if ((err = mp_copy(b, &v3)) != MP_OKAY)                                        {
       goto LBL_ERR;
    }

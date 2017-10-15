@@ -56,7 +56,7 @@ int mp_fread(mp_int *a, int radix, FILE *stream)
 
       ch = fgetc(stream);
    }
-   if (mp_cmp_d(a, 0) != MP_EQ) {
+   if (mp_cmp_d(a, 0uL) != MP_EQ) {
       a->sign = neg;
    }
 

@@ -52,7 +52,7 @@ int mp_n_root_ex(const mp_int *a, mp_digit b, mp_int *c, int fast)
    a_.sign = MP_ZPOS;
 
    /* t2 = 2 */
-   mp_set(&t2, 2);
+   mp_set(&t2, 2uL);
 
    do {
       /* t1 = t2 */
@@ -101,7 +101,7 @@ int mp_n_root_ex(const mp_int *a, mp_digit b, mp_int *c, int fast)
       }
 
       if (mp_cmp(&t2, &a_) == MP_GT) {
-         if ((res = mp_sub_d(&t1, 1, &t1)) != MP_OKAY) {
+         if ((res = mp_sub_d(&t1, 1uL, &t1)) != MP_OKAY) {
             goto LBL_T3;
          }
       } else {
