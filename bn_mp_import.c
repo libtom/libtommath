@@ -54,7 +54,7 @@ int mp_import(mp_int *rop, size_t count, int order, size_t size,
             return result;
          }
 
-         rop->dp[0] |= (j == 0u) ? (byte & odd_nail_mask) : byte;
+         rop->dp[0] |= (j == 0u) ? (mp_digit)(byte & odd_nail_mask) : (mp_digit)byte;
          rop->used  += 1;
       }
    }

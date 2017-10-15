@@ -49,7 +49,7 @@ int mp_prime_random_ex(mp_int *a, int t, int size, int flags, ltm_prime_callback
    bsize = (size>>3) + ((size&7)?1:0);
 
    /* we need a buffer of bsize bytes */
-   tmp = OPT_CAST(unsigned char) XMALLOC(bsize);
+   tmp = OPT_CAST(unsigned char) XMALLOC((size_t)bsize);
    if (tmp == NULL) {
       return MP_MEM;
    }

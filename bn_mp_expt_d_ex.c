@@ -52,7 +52,7 @@ int mp_expt_d_ex(const mp_int *a, mp_digit b, mp_int *c, int fast)
          b >>= 1;
       }
    } else {
-      for (x = 0; x < DIGIT_BIT; x++) {
+      for (x = 0; x < (unsigned)DIGIT_BIT; x++) {
          /* square */
          if ((res = mp_sqr(c, c)) != MP_OKAY) {
             mp_clear(&g);
@@ -60,7 +60,7 @@ int mp_expt_d_ex(const mp_int *a, mp_digit b, mp_int *c, int fast)
          }
 
          /* if the bit is set multiply */
-         if ((b & (mp_digit)(1uL << (DIGIT_BIT - 1))) != 0u) {
+         if ((b & (1uL << (DIGIT_BIT - 1))) != 0u) {
             if ((res = mp_mul(c, &g, c)) != MP_OKAY) {
                mp_clear(&g);
                return res;

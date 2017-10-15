@@ -70,7 +70,7 @@ int fast_s_mp_sqr(const mp_int *a, mp_int *b)
 
       /* execute loop */
       for (iz = 0; iz < iy; iz++) {
-         _W += ((mp_word)*tmpx++)*((mp_word)*tmpy--);
+         _W += (mp_word)*tmpx++ * (mp_word)*tmpy--;
       }
 
       /* double the inner product and add carry */
@@ -78,14 +78,14 @@ int fast_s_mp_sqr(const mp_int *a, mp_int *b)
 
       /* even columns have the square term in them */
       if (((unsigned)ix & 1u) == 0u) {
-         _W += ((mp_word)a->dp[ix>>1])*((mp_word)a->dp[ix>>1]);
+         _W += (mp_word)a->dp[ix>>1] * (mp_word)a->dp[ix>>1];
       }
 
       /* store it */
-      W[ix] = (mp_digit)(_W & MP_MASK);
+      W[ix] = _W & MP_MASK;
 
       /* make next carry */
-      W1 = _W >> ((mp_word)DIGIT_BIT);
+      W1 = _W >> (mp_word)DIGIT_BIT;
    }
 
    /* setup dest */

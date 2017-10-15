@@ -28,14 +28,14 @@ int mp_mul_2d(const mp_int *a, int b, mp_int *c)
       }
    }
 
-   if (c->alloc < (int)(c->used + (b / DIGIT_BIT) + 1)) {
+   if (c->alloc < (c->used + (b / DIGIT_BIT) + 1)) {
       if ((res = mp_grow(c, c->used + (b / DIGIT_BIT) + 1)) != MP_OKAY) {
          return res;
       }
    }
 
    /* shift by as many digits in the bit count */
-   if (b >= (int)DIGIT_BIT) {
+   if (b >= DIGIT_BIT) {
       if ((res = mp_lshd(c, b / DIGIT_BIT)) != MP_OKAY) {
          return res;
       }
@@ -51,7 +51,7 @@ int mp_mul_2d(const mp_int *a, int b, mp_int *c)
       mask = (1uL << d) - 1uL;
 
       /* shift for msbs */
-      shift = DIGIT_BIT - d;
+      shift = (mp_digit)DIGIT_BIT - d;
 
       /* alias */
       tmpc = c->dp;

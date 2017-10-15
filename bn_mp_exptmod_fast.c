@@ -96,7 +96,7 @@ int mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y
 
       /* automatically pick the comba one if available (saves quite a few calls/ifs) */
 #ifdef BN_FAST_MP_MONTGOMERY_REDUCE_C
-      if ((((P->used * 2) + 1) < MP_WARRAY) &&
+      if ((((P->used * 2) + 1) < (int)MP_WARRAY) &&
           (P->used < (1 << ((CHAR_BIT * sizeof(mp_word)) - (2 * DIGIT_BIT))))) {
          redux = fast_mp_montgomery_reduce;
       } else

@@ -48,7 +48,7 @@ int mp_export(void *rop, size_t *countp, int order, size_t size,
    }
    nail_bytes = nails / 8u;
 
-   bits = mp_count_bits(&t);
+   bits = (size_t)mp_count_bits(&t);
    count = (bits / ((size * 8u) - nails)) + (((bits % ((size * 8u) - nails)) != 0u) ? 1u : 0u);
 
    for (i = 0; i < count; ++i) {
