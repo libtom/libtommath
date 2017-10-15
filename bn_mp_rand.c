@@ -15,7 +15,7 @@
  * Tom St Denis, tstdenis82@gmail.com, http://libtom.org
  */
 
-#if MP_GEN_RANDOM_MAX == 0xffffffff
+#if MP_GEN_RANDOM_MAX == 0xffffffffu
 #define MP_GEN_RANDOM_SHIFT  32
 #elif MP_GEN_RANDOM_MAX == 32767
 /* SHRT_MAX */
@@ -54,7 +54,7 @@ int mp_rand(mp_int *a, int digits)
    /* first place a random non-zero digit */
    do {
       d = s_gen_random();
-   } while (d == 0);
+   } while (d == 0u);
 
    if ((res = mp_add_d(a, d, a)) != MP_OKAY) {
       return res;

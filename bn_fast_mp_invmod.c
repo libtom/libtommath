@@ -59,7 +59,7 @@ int fast_mp_invmod(const mp_int *a, const mp_int *b, mp_int *c)
    if ((res = mp_copy(&y, &v)) != MP_OKAY) {
       goto LBL_ERR;
    }
-   mp_set(&D, 1);
+   mp_set(&D, 1uL);
 
 top:
    /* 4.  while u is even do */
@@ -128,7 +128,7 @@ top:
    /* now a = C, b = D, gcd == g*v */
 
    /* if v != 1 then there is no inverse */
-   if (mp_cmp_d(&v, 1) != MP_EQ) {
+   if (mp_cmp_d(&v, 1uL) != MP_EQ) {
       res = MP_VAL;
       goto LBL_ERR;
    }
