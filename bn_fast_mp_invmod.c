@@ -46,6 +46,12 @@ int fast_mp_invmod(const mp_int *a, const mp_int *b, mp_int *c)
       goto LBL_ERR;
    }
 
+   /* if one of x,y is zero return an error! */
+   if ((mp_iszero(&x) == MP_YES) || (mp_iszero(&y) == MP_YES)) {
+      res = MP_VAL;
+      goto LBL_ERR;
+   }
+
    /* 3. u=x, v=y, A=1, B=0, C=0,D=1 */
    if ((res = mp_copy(&x, &u)) != MP_OKAY) {
       goto LBL_ERR;
