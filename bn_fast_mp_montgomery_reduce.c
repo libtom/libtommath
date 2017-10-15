@@ -28,6 +28,10 @@ int fast_mp_montgomery_reduce(mp_int *x, const mp_int *n, mp_digit rho)
    int     ix, res, olduse;
    mp_word W[MP_WARRAY];
 
+   if (x->used > MP_WARRAY) {
+      return MP_VAL;
+   }
+
    /* get old used count */
    olduse = x->used;
 
