@@ -42,7 +42,7 @@ int mp_fread(mp_int *a, int radix, FILE *stream)
 
       y = (int)mp_s_rmap_reverse[pos];
 
-      if (y == 0xff || y >= radix) {
+      if ((y == 0xff) || (y >= radix)) {
          break;
       }
 
