@@ -39,7 +39,7 @@ int mp_sqrtmod_prime(const mp_int *n, const mp_int *prime, mp_int *ret)
     * Handbook of Applied Cryptography algorithm 3.36
     */
    if ((res = mp_mod_d(prime, 4uL, &i)) != MP_OKAY)               goto cleanup;
-   if (i == 3) {
+   if (i == 3u) {
       if ((res = mp_add_d(prime, 1uL, &t1)) != MP_OKAY)           goto cleanup;
       if ((res = mp_div_2(&t1, &t1)) != MP_OKAY)                  goto cleanup;
       if ((res = mp_div_2(&t1, &t1)) != MP_OKAY)                  goto cleanup;
@@ -64,7 +64,7 @@ int mp_sqrtmod_prime(const mp_int *n, const mp_int *prime, mp_int *ret)
    }
 
    /* find a Z such that the Legendre symbol (Z|prime) == -1 */
-   if ((res = mp_set_int(&Z, 2)) != MP_OKAY)                     goto cleanup;
+   if ((res = mp_set_int(&Z, 2uL)) != MP_OKAY)                    goto cleanup;
    /* Z = 2 */
    while (1) {
       if ((res = mp_jacobi(&Z, prime, &legendre)) != MP_OKAY)     goto cleanup;
@@ -84,7 +84,7 @@ int mp_sqrtmod_prime(const mp_int *n, const mp_int *prime, mp_int *ret)
    /* T = n ^ Q mod prime */
    if ((res = mp_copy(&S, &M)) != MP_OKAY)                       goto cleanup;
    /* M = S */
-   if ((res = mp_set_int(&two, 2)) != MP_OKAY)                   goto cleanup;
+   if ((res = mp_set_int(&two, 2uL)) != MP_OKAY)                 goto cleanup;
 
    res = MP_VAL;
    while (1) {
@@ -95,7 +95,7 @@ int mp_sqrtmod_prime(const mp_int *n, const mp_int *prime, mp_int *ret)
          if ((res = mp_exptmod(&t1, &two, prime, &t1)) != MP_OKAY) goto cleanup;
          i++;
       }
-      if (i == 0) {
+      if (i == 0u) {
          if ((res = mp_copy(&R, ret)) != MP_OKAY)                  goto cleanup;
          res = MP_OKAY;
          goto cleanup;

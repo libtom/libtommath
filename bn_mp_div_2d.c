@@ -50,11 +50,11 @@ int mp_div_2d(const mp_int *a, int b, mp_int *c, mp_int *d)
 
    /* shift any bit count < DIGIT_BIT */
    D = (mp_digit)(b % DIGIT_BIT);
-   if (D != 0) {
+   if (D != 0u) {
       mp_digit *tmpc, mask, shift;
 
       /* mask */
-      mask = (((mp_digit)1) << D) - 1;
+      mask = (1uL << D) - 1uL;
 
       /* shift for lsb */
       shift = DIGIT_BIT - D;

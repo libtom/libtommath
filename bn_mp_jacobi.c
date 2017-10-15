@@ -72,21 +72,21 @@ int mp_jacobi(const mp_int *a, const mp_int *n, int *c)
    }
 
    /* step 4.  if e is even set s=1 */
-   if ((k & 1) == 0) {
+   if (((unsigned)k & 1u) == 0u) {
       s = 1;
    } else {
       /* else set s=1 if p = 1/7 (mod 8) or s=-1 if p = 3/5 (mod 8) */
-      residue = n->dp[0] & 7;
+      residue = n->dp[0] & 7u;
 
-      if ((residue == 1) || (residue == 7)) {
+      if ((residue == 1u) || (residue == 7u)) {
          s = 1;
-      } else if ((residue == 3) || (residue == 5)) {
+      } else if ((residue == 3u) || (residue == 5u)) {
          s = -1;
       }
    }
 
    /* step 5.  if p == 3 (mod 4) *and* a1 == 3 (mod 4) then s = -s */
-   if (((n->dp[0] & 3) == 3) && ((a1.dp[0] & 3) == 3)) {
+   if (((n->dp[0] & 3u) == 3u) && ((a1.dp[0] & 3u) == 3u)) {
       s = -s;
    }
 

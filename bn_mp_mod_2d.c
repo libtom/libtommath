@@ -43,7 +43,7 @@ int mp_mod_2d(const mp_int *a, int b, mp_int *c)
    }
    /* clear the digit that is not completely outside/inside the modulus */
    c->dp[b / DIGIT_BIT] &=
-      (mp_digit)((((mp_digit) 1) << (((mp_digit) b) % DIGIT_BIT)) - ((mp_digit) 1));
+      (mp_digit)((1uL << (((mp_digit) b) % DIGIT_BIT)) - 1uL);
    mp_clamp(c);
    return MP_OKAY;
 }

@@ -31,7 +31,7 @@ int mp_montgomery_reduce(mp_int *x, const mp_int *n, mp_digit rho)
    if ((digs < MP_WARRAY) &&
        (x->used <= MP_WARRAY) &&
        (n->used <
-        (1 << ((CHAR_BIT * sizeof(mp_word)) - (2 * DIGIT_BIT))))) {
+        (int)(1u << (((size_t)CHAR_BIT * sizeof(mp_word)) - (2u * (size_t)DIGIT_BIT))))) {
       return fast_mp_montgomery_reduce(x, n, rho);
    }
 
@@ -85,7 +85,7 @@ int mp_montgomery_reduce(mp_int *x, const mp_int *n, mp_digit rho)
 
 
          /* propagate carries upwards as required*/
-         while (u != 0) {
+         while (u != 0u) {
             *tmpx   += u;
             u        = *tmpx >> DIGIT_BIT;
             *tmpx++ &= MP_MASK;

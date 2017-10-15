@@ -36,7 +36,7 @@ int mp_div_3(const mp_int *a, mp_int *c, mp_digit *d)
    for (ix = a->used - 1; ix >= 0; ix--) {
       w = (w << ((mp_word)DIGIT_BIT)) | ((mp_word)a->dp[ix]);
 
-      if (w >= 3) {
+      if (w >= 3u) {
          /* multiply w by [1/3] */
          t = (w * ((mp_word)b)) >> ((mp_word)DIGIT_BIT);
 
@@ -46,9 +46,9 @@ int mp_div_3(const mp_int *a, mp_int *c, mp_digit *d)
          /* fixup the remainder as required since
           * the optimization is not exact.
           */
-         while (w >= 3) {
-            t += 1;
-            w -= 3;
+         while (w >= 3u) {
+            t += 1u;
+            w -= 3u;
          }
       } else {
          t = 0;

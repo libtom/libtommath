@@ -49,7 +49,7 @@ int mp_mul_2(const mp_int *a, mp_int *b)
          rr = *tmpa >> ((mp_digit)(DIGIT_BIT - 1));
 
          /* now shift up this digit, add in the carry [from the previous] */
-         *tmpb++ = ((*tmpa++ << ((mp_digit)1)) | r) & MP_MASK;
+         *tmpb++ = ((*tmpa++ << 1uL) | r) & MP_MASK;
 
          /* copy the carry that would be from the source
           * digit into the next iteration
@@ -58,7 +58,7 @@ int mp_mul_2(const mp_int *a, mp_int *b)
       }
 
       /* new leading digit? */
-      if (r != 0) {
+      if (r != 0u) {
          /* add a MSB which is always 1 at this point */
          *tmpb = 1;
          ++(b->used);

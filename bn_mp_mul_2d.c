@@ -43,12 +43,12 @@ int mp_mul_2d(const mp_int *a, int b, mp_int *c)
 
    /* shift any bit count < DIGIT_BIT */
    d = (mp_digit)(b % DIGIT_BIT);
-   if (d != 0) {
+   if (d != 0u) {
       mp_digit *tmpc, shift, mask, r, rr;
       int x;
 
       /* bitmask for carries */
-      mask = (((mp_digit)1) << d) - 1;
+      mask = (1uL << d) - 1uL;
 
       /* shift for msbs */
       shift = DIGIT_BIT - d;
@@ -71,7 +71,7 @@ int mp_mul_2d(const mp_int *a, int b, mp_int *c)
       }
 
       /* set final carry */
-      if (r != 0) {
+      if (r != 0u) {
          c->dp[(c->used)++] = r;
       }
    }

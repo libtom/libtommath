@@ -105,7 +105,7 @@ typedef mp_digit mp_min_u32;
 /* use arc4random on platforms that support it */
 #if defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__) || defined(__DragonFly__)
 #   define MP_GEN_RANDOM()    arc4random()
-#   define MP_GEN_RANDOM_MAX  0xffffffff
+#   define MP_GEN_RANDOM_MAX  0xffffffffu
 #endif
 
 /* use rand() as fall-back if there's no better rand function */
@@ -160,7 +160,7 @@ extern int KARATSUBA_MUL_CUTOFF,
 #endif
 
 /* size of comba arrays, should be at least 2 * 2**(BITS_PER_WORD - BITS_PER_DIGIT*2) */
-#define MP_WARRAY               (1 << (((sizeof(mp_word) * CHAR_BIT) - (2 * DIGIT_BIT)) + 1))
+#define MP_WARRAY               (1u << (((sizeof(mp_word) * CHAR_BIT) - (2 * DIGIT_BIT)) + 1))
 
 /* the infamous mp_int structure */
 typedef struct  {

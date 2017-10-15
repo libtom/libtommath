@@ -77,7 +77,7 @@ int fast_s_mp_sqr(const mp_int *a, mp_int *b)
       _W = _W + _W + W1;
 
       /* even columns have the square term in them */
-      if ((ix&1) == 0) {
+      if (((unsigned)ix & 1u) == 0u) {
          _W += ((mp_word)a->dp[ix>>1])*((mp_word)a->dp[ix>>1]);
       }
 

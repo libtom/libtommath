@@ -65,7 +65,7 @@ int s_mp_sqr(const mp_int *a, mp_int *b)
          u       = (mp_digit)(r >> ((mp_word) DIGIT_BIT));
       }
       /* propagate upwards */
-      while (u != ((mp_digit) 0)) {
+      while (u != 0uL) {
          r       = ((mp_word) *tmpt) + ((mp_word) u);
          *tmpt++ = (mp_digit)(r & ((mp_word) MP_MASK));
          u       = (mp_digit)(r >> ((mp_word) DIGIT_BIT));

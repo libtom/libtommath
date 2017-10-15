@@ -20,12 +20,12 @@ static int s_is_power_of_two(mp_digit b, int *p)
    int x;
 
    /* fast return if no power of two */
-   if ((b == 0) || ((b & (b-1)) != 0)) {
+   if ((b == 0u) || ((b & (b-1u)) != 0u)) {
       return 0;
    }
 
    for (x = 0; x < DIGIT_BIT; x++) {
-      if (b == (((mp_digit)1)<<x)) {
+      if (b == (1uL<<x)) {
          *p = x;
          return 1;
       }
@@ -42,12 +42,12 @@ int mp_div_d(const mp_int *a, mp_digit b, mp_int *c, mp_digit *d)
    int     res, ix;
 
    /* cannot divide by zero */
-   if (b == 0) {
+   if (b == 0u) {
       return MP_VAL;
    }
 
    /* quick outs */
-   if ((b == 1) || (mp_iszero(a) == MP_YES)) {
+   if ((b == 1u) || (mp_iszero(a) == MP_YES)) {
       if (d != NULL) {
          *d = 0;
       }
@@ -60,7 +60,7 @@ int mp_div_d(const mp_int *a, mp_digit b, mp_int *c, mp_digit *d)
    /* power of two ? */
    if (s_is_power_of_two(b, &ix) == 1) {
       if (d != NULL) {
-         *d = a->dp[0] & ((((mp_digit)1)<<ix) - 1);
+         *d = a->dp[0] & ((1uL<<ix) - 1uL);
       }
       if (c != NULL) {
          return mp_div_2d(a, ix, c, NULL);
@@ -70,7 +70,7 @@ int mp_div_d(const mp_int *a, mp_digit b, mp_int *c, mp_digit *d)
 
 #ifdef BN_MP_DIV_3_C
    /* three? */
-   if (b == 3) {
+   if (b == 3u) {
       return mp_div_3(a, c, d);
    }
 #endif

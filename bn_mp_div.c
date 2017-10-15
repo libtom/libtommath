@@ -207,13 +207,13 @@ int mp_div(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d)
 
          do q{i-t-1} -= 1;
       */
-      q.dp[(i - t) - 1] = (q.dp[(i - t) - 1] + 1) & MP_MASK;
+      q.dp[(i - t) - 1] = (q.dp[(i - t) - 1] + 1uL) & MP_MASK;
       do {
-         q.dp[(i - t) - 1] = (q.dp[(i - t) - 1] - 1) & MP_MASK;
+         q.dp[(i - t) - 1] = (q.dp[(i - t) - 1] - 1uL) & MP_MASK;
 
          /* find left hand */
          mp_zero(&t1);
-         t1.dp[0] = ((t - 1) < 0) ? 0 : y.dp[t - 1];
+         t1.dp[0] = ((t - 1) < 0) ? 0u : y.dp[t - 1];
          t1.dp[1] = y.dp[t];
          t1.used = 2;
          if ((res = mp_mul_d(&t1, q.dp[(i - t) - 1], &t1)) != MP_OKAY) {
@@ -221,8 +221,8 @@ int mp_div(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d)
          }
 
          /* find right hand */
-         t2.dp[0] = ((i - 2) < 0) ? 0 : x.dp[i - 2];
-         t2.dp[1] = ((i - 1) < 0) ? 0 : x.dp[i - 1];
+         t2.dp[0] = ((i - 2) < 0) ? 0u : x.dp[i - 2];
+         t2.dp[1] = ((i - 1) < 0) ? 0u : x.dp[i - 1];
          t2.dp[2] = x.dp[i];
          t2.used = 3;
       } while (mp_cmp_mag(&t1, &t2) == MP_GT);
@@ -252,7 +252,7 @@ int mp_div(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d)
             goto LBL_Y;
          }
 
-         q.dp[(i - t) - 1] = (q.dp[(i - t) - 1] - 1UL) & MP_MASK;
+         q.dp[(i - t) - 1] = (q.dp[(i - t) - 1] - 1uL) & MP_MASK;
       }
    }
 
