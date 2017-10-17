@@ -1,4 +1,4 @@
-/* Finds Mersenne primes using the Lucas-Lehmer test 
+/* Finds Mersenne primes using the Lucas-Lehmer test
  *
  * Tom St Denis, tomstdenis@gmail.com
  */
@@ -10,7 +10,7 @@ is_mersenne (long s, int *pp)
 {
   mp_int  n, u;
   int     res, k;
-  
+
   *pp = 0;
 
   if ((res = mp_init (&n)) != MP_OKAY) {
