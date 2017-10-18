@@ -17,13 +17,13 @@ int main(void)
 
    out = fopen("2kprime.1", "w");
    for (x = 0; x < (int)(sizeof(sizes) / sizeof(sizes[0])); x++) {
-   top:
-       mp_2expt(&q, sizes[x]);
-       mp_add_d(&q, 3, &q);
-       z = -3;
+top:
+      mp_2expt(&q, sizes[x]);
+      mp_add_d(&q, 3, &q);
+      z = -3;
 
-       t1 = clock();
-       for(;;) {
+      t1 = clock();
+      for (;;) {
          mp_sub_d(&q, 4, &q);
          z += 4;
 
@@ -33,7 +33,8 @@ int main(void)
          }
 
          if (clock() - t1 > CLOCKS_PER_SEC) {
-            printf("."); fflush(stdout);
+            printf(".");
+            fflush(stdout);
 //            sleep((clock() - t1 + CLOCKS_PER_SEC/2)/CLOCKS_PER_SEC);
             t1 = clock();
          }
@@ -59,16 +60,17 @@ int main(void)
          }
 
          break;
-       }
+      }
 
-       if (y == 0) {
-          ++sizes[x];
-          goto top;
-       }
+      if (y == 0) {
+         ++sizes[x];
+         goto top;
+      }
 
-       mp_toradix(&q, buf, 10);
-       printf("\n\n%d-bits (k = %lu) = %s\n", sizes[x], z, buf);
-       fprintf(out, "%d-bits (k = %lu) = %s\n", sizes[x], z, buf); fflush(out);
+      mp_toradix(&q, buf, 10);
+      printf("\n\n%d-bits (k = %lu) = %s\n", sizes[x], z, buf);
+      fprintf(out, "%d-bits (k = %lu) = %s\n", sizes[x], z, buf);
+      fflush(out);
    }
 
    return 0;
