@@ -98,6 +98,12 @@ static void _panic(int l)
 }
 #endif
 
+#define FGETS(str, size, stream) \
+   { \
+      char *ret = fgets(str, size, stream); \
+      if (!ret) { _panic(__LINE__); } \
+   }
+
 mp_int a, b, c, d, e, f;
 
 static void _cleanup(void)
@@ -139,7 +145,6 @@ int main(void)
 #if LTM_DEMO_TEST_VS_MTEST
    unsigned long expt_n, add_n, sub_n, mul_n, div_n, sqr_n, mul2d_n, div2d_n,
             gcd_n, lcm_n, inv_n, div2_n, mul2_n, add_d_n, sub_d_n;
-   char *ret;
 #else
    unsigned long s, t;
    unsigned long long q, r;
@@ -701,29 +706,17 @@ printf("compare no compare!\n"); return EXIT_FAILURE;
       printf("%4lu/%4lu/%4lu/%4lu/%4lu/%4lu/%4lu/%4lu/%4lu/%4lu/%4lu/%4lu/%4lu/%4lu/%4lu ",
              add_n, sub_n, mul_n, div_n, sqr_n, mul2d_n, div2d_n, gcd_n, lcm_n,
              expt_n, inv_n, div2_n, mul2_n, add_d_n, sub_d_n);
-      ret=fgets(cmd, 4095, stdin);
-      if (!ret) {
-         _panic(__LINE__);
-      }
+      FGETS(cmd, 4095, stdin);
       cmd[strlen(cmd) - 1] = 0;
       printf("%-6s ]\r", cmd);
       fflush(stdout);
       if (!strcmp(cmd, "mul2d")) {
          ++mul2d_n;
-         ret=fgets(buf, 4095, stdin);
-         if (!ret) {
-            _panic(__LINE__);
-         }
+         FGETS(buf, 4095, stdin);
          mp_read_radix(&a, buf, 64);
-         ret=fgets(buf, 4095, stdin);
-         if (!ret) {
-            _panic(__LINE__);
-         }
+         FGETS(buf, 4095, stdin);
          sscanf(buf, "%d", &rr);
-         ret=fgets(buf, 4095, stdin);
-         if (!ret) {
-            _panic(__LINE__);
-         }
+         FGETS(buf, 4095, stdin);
          mp_read_radix(&b, buf, 64);
 
          mp_mul_2d(&a, rr, &a);
@@ -736,20 +729,11 @@ printf("compare no compare!\n"); return EXIT_FAILURE;
          }
       } else if (!strcmp(cmd, "div2d")) {
          ++div2d_n;
-         ret=fgets(buf, 4095, stdin);
-         if (!ret) {
-            _panic(__LINE__);
-         }
+         FGETS(buf, 4095, stdin);
          mp_read_radix(&a, buf, 64);
-         ret=fgets(buf, 4095, stdin);
-         if (!ret) {
-            _panic(__LINE__);
-         }
+         FGETS(buf, 4095, stdin);
          sscanf(buf, "%d", &rr);
-         ret=fgets(buf, 4095, stdin);
-         if (!ret) {
-            _panic(__LINE__);
-         }
+         FGETS(buf, 4095, stdin);
          mp_read_radix(&b, buf, 64);
 
          mp_div_2d(&a, rr, &a, &e);
@@ -765,20 +749,11 @@ printf("compare no compare!\n"); return EXIT_FAILURE;
          }
       } else if (!strcmp(cmd, "add")) {
          ++add_n;
-         ret=fgets(buf, 4095, stdin);
-         if (!ret) {
-            _panic(__LINE__);
-         }
+         FGETS(buf, 4095, stdin);
          mp_read_radix(&a, buf, 64);
-         ret=fgets(buf, 4095, stdin);
-         if (!ret) {
-            _panic(__LINE__);
-         }
+         FGETS(buf, 4095, stdin);
          mp_read_radix(&b, buf, 64);
-         ret=fgets(buf, 4095, stdin);
-         if (!ret) {
-            _panic(__LINE__);
-         }
+         FGETS(buf, 4095, stdin);
          mp_read_radix(&c, buf, 64);
          mp_copy(&a, &d);
          mp_add(&d, &b, &d);
@@ -818,20 +793,11 @@ printf("compare no compare!\n"); return EXIT_FAILURE;
 
       } else if (!strcmp(cmd, "sub")) {
          ++sub_n;
-         ret=fgets(buf, 4095, stdin);
-         if (!ret) {
-            _panic(__LINE__);
-         }
+         FGETS(buf, 4095, stdin);
          mp_read_radix(&a, buf, 64);
-         ret=fgets(buf, 4095, stdin);
-         if (!ret) {
-            _panic(__LINE__);
-         }
+         FGETS(buf, 4095, stdin);
          mp_read_radix(&b, buf, 64);
-         ret=fgets(buf, 4095, stdin);
-         if (!ret) {
-            _panic(__LINE__);
-         }
+         FGETS(buf, 4095, stdin);
          mp_read_radix(&c, buf, 64);
          mp_copy(&a, &d);
          mp_sub(&d, &b, &d);
@@ -845,20 +811,11 @@ printf("compare no compare!\n"); return EXIT_FAILURE;
          }
       } else if (!strcmp(cmd, "mul")) {
          ++mul_n;
-         ret=fgets(buf, 4095, stdin);
-         if (!ret) {
-            _panic(__LINE__);
-         }
+         FGETS(buf, 4095, stdin);
          mp_read_radix(&a, buf, 64);
-         ret=fgets(buf, 4095, stdin);
-         if (!ret) {
-            _panic(__LINE__);
-         }
+         FGETS(buf, 4095, stdin);
          mp_read_radix(&b, buf, 64);
-         ret=fgets(buf, 4095, stdin);
-         if (!ret) {
-            _panic(__LINE__);
-         }
+         FGETS(buf, 4095, stdin);
          mp_read_radix(&c, buf, 64);
          mp_copy(&a, &d);
          mp_mul(&d, &b, &d);
@@ -872,25 +829,13 @@ printf("compare no compare!\n"); return EXIT_FAILURE;
          }
       } else if (!strcmp(cmd, "div")) {
          ++div_n;
-         ret=fgets(buf, 4095, stdin);
-         if (!ret) {
-            _panic(__LINE__);
-         }
+         FGETS(buf, 4095, stdin);
          mp_read_radix(&a, buf, 64);
-         ret=fgets(buf, 4095, stdin);
-         if (!ret) {
-            _panic(__LINE__);
-         }
+         FGETS(buf, 4095, stdin);
          mp_read_radix(&b, buf, 64);
-         ret=fgets(buf, 4095, stdin);
-         if (!ret) {
-            _panic(__LINE__);
-         }
+         FGETS(buf, 4095, stdin);
          mp_read_radix(&c, buf, 64);
-         ret=fgets(buf, 4095, stdin);
-         if (!ret) {
-            _panic(__LINE__);
-         }
+         FGETS(buf, 4095, stdin);
          mp_read_radix(&d, buf, 64);
 
          mp_div(&a, &b, &e, &f);
@@ -908,15 +853,9 @@ printf("compare no compare!\n"); return EXIT_FAILURE;
 
       } else if (!strcmp(cmd, "sqr")) {
          ++sqr_n;
-         ret=fgets(buf, 4095, stdin);
-         if (!ret) {
-            _panic(__LINE__);
-         }
+         FGETS(buf, 4095, stdin);
          mp_read_radix(&a, buf, 64);
-         ret=fgets(buf, 4095, stdin);
-         if (!ret) {
-            _panic(__LINE__);
-         }
+         FGETS(buf, 4095, stdin);
          mp_read_radix(&b, buf, 64);
          mp_copy(&a, &c);
          mp_sqr(&c, &c);
@@ -929,20 +868,11 @@ printf("compare no compare!\n"); return EXIT_FAILURE;
          }
       } else if (!strcmp(cmd, "gcd")) {
          ++gcd_n;
-         ret=fgets(buf, 4095, stdin);
-         if (!ret) {
-            _panic(__LINE__);
-         }
+         FGETS(buf, 4095, stdin);
          mp_read_radix(&a, buf, 64);
-         ret=fgets(buf, 4095, stdin);
-         if (!ret) {
-            _panic(__LINE__);
-         }
+         FGETS(buf, 4095, stdin);
          mp_read_radix(&b, buf, 64);
-         ret=fgets(buf, 4095, stdin);
-         if (!ret) {
-            _panic(__LINE__);
-         }
+         FGETS(buf, 4095, stdin);
          mp_read_radix(&c, buf, 64);
          mp_copy(&a, &d);
          mp_gcd(&d, &b, &d);
@@ -957,20 +887,11 @@ printf("compare no compare!\n"); return EXIT_FAILURE;
          }
       } else if (!strcmp(cmd, "lcm")) {
          ++lcm_n;
-         ret=fgets(buf, 4095, stdin);
-         if (!ret) {
-            _panic(__LINE__);
-         }
+         FGETS(buf, 4095, stdin);
          mp_read_radix(&a, buf, 64);
-         ret=fgets(buf, 4095, stdin);
-         if (!ret) {
-            _panic(__LINE__);
-         }
+         FGETS(buf, 4095, stdin);
          mp_read_radix(&b, buf, 64);
-         ret=fgets(buf, 4095, stdin);
-         if (!ret) {
-            _panic(__LINE__);
-         }
+         FGETS(buf, 4095, stdin);
          mp_read_radix(&c, buf, 64);
          mp_copy(&a, &d);
          mp_lcm(&d, &b, &d);
@@ -985,25 +906,13 @@ printf("compare no compare!\n"); return EXIT_FAILURE;
          }
       } else if (!strcmp(cmd, "expt")) {
          ++expt_n;
-         ret=fgets(buf, 4095, stdin);
-         if (!ret) {
-            _panic(__LINE__);
-         }
+         FGETS(buf, 4095, stdin);
          mp_read_radix(&a, buf, 64);
-         ret=fgets(buf, 4095, stdin);
-         if (!ret) {
-            _panic(__LINE__);
-         }
+         FGETS(buf, 4095, stdin);
          mp_read_radix(&b, buf, 64);
-         ret=fgets(buf, 4095, stdin);
-         if (!ret) {
-            _panic(__LINE__);
-         }
+         FGETS(buf, 4095, stdin);
          mp_read_radix(&c, buf, 64);
-         ret=fgets(buf, 4095, stdin);
-         if (!ret) {
-            _panic(__LINE__);
-         }
+         FGETS(buf, 4095, stdin);
          mp_read_radix(&d, buf, 64);
          mp_copy(&a, &e);
          mp_exptmod(&e, &b, &c, &e);
@@ -1018,20 +927,11 @@ printf("compare no compare!\n"); return EXIT_FAILURE;
          }
       } else if (!strcmp(cmd, "invmod")) {
          ++inv_n;
-         ret=fgets(buf, 4095, stdin);
-         if (!ret) {
-            _panic(__LINE__);
-         }
+         FGETS(buf, 4095, stdin);
          mp_read_radix(&a, buf, 64);
-         ret=fgets(buf, 4095, stdin);
-         if (!ret) {
-            _panic(__LINE__);
-         }
+         FGETS(buf, 4095, stdin);
          mp_read_radix(&b, buf, 64);
-         ret=fgets(buf, 4095, stdin);
-         if (!ret) {
-            _panic(__LINE__);
-         }
+         FGETS(buf, 4095, stdin);
          mp_read_radix(&c, buf, 64);
          mp_invmod(&a, &b, &d);
          mp_mulmod(&d, &a, &b, &e);
@@ -1049,15 +949,9 @@ printf("compare no compare!\n"); return EXIT_FAILURE;
 
       } else if (!strcmp(cmd, "div2")) {
          ++div2_n;
-         ret=fgets(buf, 4095, stdin);
-         if (!ret) {
-            _panic(__LINE__);
-         }
+         FGETS(buf, 4095, stdin);
          mp_read_radix(&a, buf, 64);
-         ret=fgets(buf, 4095, stdin);
-         if (!ret) {
-            _panic(__LINE__);
-         }
+         FGETS(buf, 4095, stdin);
          mp_read_radix(&b, buf, 64);
          mp_div_2(&a, &c);
          if (mp_cmp(&c, &b) != MP_EQ) {
@@ -1069,15 +963,9 @@ printf("compare no compare!\n"); return EXIT_FAILURE;
          }
       } else if (!strcmp(cmd, "mul2")) {
          ++mul2_n;
-         ret=fgets(buf, 4095, stdin);
-         if (!ret) {
-            _panic(__LINE__);
-         }
+         FGETS(buf, 4095, stdin);
          mp_read_radix(&a, buf, 64);
-         ret=fgets(buf, 4095, stdin);
-         if (!ret) {
-            _panic(__LINE__);
-         }
+         FGETS(buf, 4095, stdin);
          mp_read_radix(&b, buf, 64);
          mp_mul_2(&a, &c);
          if (mp_cmp(&c, &b) != MP_EQ) {
@@ -1089,20 +977,11 @@ printf("compare no compare!\n"); return EXIT_FAILURE;
          }
       } else if (!strcmp(cmd, "add_d")) {
          ++add_d_n;
-         ret=fgets(buf, 4095, stdin);
-         if (!ret) {
-            _panic(__LINE__);
-         }
+         FGETS(buf, 4095, stdin);
          mp_read_radix(&a, buf, 64);
-         ret=fgets(buf, 4095, stdin);
-         if (!ret) {
-            _panic(__LINE__);
-         }
+         FGETS(buf, 4095, stdin);
          sscanf(buf, "%d", &ix);
-         ret=fgets(buf, 4095, stdin);
-         if (!ret) {
-            _panic(__LINE__);
-         }
+         FGETS(buf, 4095, stdin);
          mp_read_radix(&b, buf, 64);
          mp_add_d(&a, ix, &c);
          if (mp_cmp(&b, &c) != MP_EQ) {
@@ -1115,20 +994,11 @@ printf("compare no compare!\n"); return EXIT_FAILURE;
          }
       } else if (!strcmp(cmd, "sub_d")) {
          ++sub_d_n;
-         ret=fgets(buf, 4095, stdin);
-         if (!ret) {
-            _panic(__LINE__);
-         }
+         FGETS(buf, 4095, stdin);
          mp_read_radix(&a, buf, 64);
-         ret=fgets(buf, 4095, stdin);
-         if (!ret) {
-            _panic(__LINE__);
-         }
+         FGETS(buf, 4095, stdin);
          sscanf(buf, "%d", &ix);
-         ret=fgets(buf, 4095, stdin);
-         if (!ret) {
-            _panic(__LINE__);
-         }
+         FGETS(buf, 4095, stdin);
          mp_read_radix(&b, buf, 64);
          mp_sub_d(&a, ix, &c);
          if (mp_cmp(&b, &c) != MP_EQ) {
