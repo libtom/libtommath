@@ -48,7 +48,7 @@ int mp_mul_2d(const mp_int *a, int b, mp_int *c)
       int x;
 
       /* bitmask for carries */
-      mask = (1uL << d) - 1uL;
+      mask = ((mp_digit)1 << d) - (mp_digit)1;
 
       /* shift for msbs */
       shift = (mp_digit)DIGIT_BIT - d;
