@@ -48,6 +48,8 @@ _help()
   echo
   echo "    --with-low-mp           Also build&run tests with -DMP_{8,16,32}BIT."
   echo
+  echo "    --mtest-real-rand       Use real random data when running mtest."
+  echo
   echo "Godmode:"
   echo
   echo "    --all                   Choose all architectures and gcc and clang as compilers"
@@ -115,6 +117,7 @@ COMPILERS=""
 CFLAGS=""
 WITH_LOW_MP=""
 TEST_VS_MTEST=""
+MTEST_RAND=""
 
 while [ $# -gt 0 ];
 do
@@ -141,6 +144,9 @@ do
          echo "--test-vs-mtest Parameter has to be int"
          exit -1
       fi
+    ;;
+    --mtest-real-rand)
+      MTEST_RAND="-DLTM_MTEST_REAL_RAND"
     ;;
     --all)
       COMPILERS="gcc clang"
@@ -184,7 +190,7 @@ then
    make clean > /dev/null
    _make "${compilers[0]} ${archflags[0]}" "$CFLAGS" "test"
    echo
-   _make "gcc" "" "mtest"
+   _make "gcc" "$MTEST_RAND" "mtest"
    echo
    echo "Run test vs. mtest for $TEST_VS_MTEST iterations"
    for i in `seq 1 10` ; do sleep 500 && echo alive; done &
