@@ -1,18 +1,33 @@
 language: c
-compiler:
-  - gcc
 
-script:
-  - make travis_mtest
-  - head -n 5 test.log
-  - tail -n 2 test.log
-  - ./testme.sh --with-cc=gcc --with-low-mp
+install:
+    - sudo apt-get update -qq
+    - sudo apt-get install gcc-multilib
 
+matrix:
+  fast_finish: true
 branches:
   only:
     - master
     - develop
     - /^release\/.*$/
+
+compiler:
+  - gcc
+  - clang
+script:
+  - ./testme.sh --with-cc=$CC ${BUILDOPTIONS}
+env:
+  - |
+    BUILDOPTIONS="--test-vs-mtest=666666"
+  - |
+    BUILDOPTIONS="--with-low-mp"
+  - |
+    BUILDOPTIONS="--with-m64 --with-m32 --with-mx32"
+
+after_failure:
+  - cat test_*.log
+  - cat gcc_errors_*.log
 
 notifications:
   irc: "chat.freenode.net#libtom-notifications"

@@ -102,10 +102,6 @@ test_standalone: $(LIBNAME) demo/demo.o
 mtest:
 	cd mtest ; $(CC) $(CFLAGS) -O0 mtest.c $(LFLAGS) -o mtest
 
-travis_mtest: test mtest
-	@ for i in `seq 1 10` ; do sleep 500 && echo alive; done &
-	./mtest/mtest 666666 | ./test > test.log
-
 timing: $(LIBNAME)
 	$(CC) $(CFLAGS) -DTIMER demo/timing.c $(LIBNAME) $(LFLAGS) -o ltmtest
 
