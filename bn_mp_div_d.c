@@ -25,7 +25,7 @@ static int s_is_power_of_two(mp_digit b, int *p)
    }
 
    for (x = 0; x < DIGIT_BIT; x++) {
-      if (b == (1uL<<(mp_digit)x)) {
+      if (b == ((mp_digit)1<<(mp_digit)x)) {
          *p = x;
          return 1;
       }
@@ -60,7 +60,7 @@ int mp_div_d(const mp_int *a, mp_digit b, mp_int *c, mp_digit *d)
    /* power of two ? */
    if (s_is_power_of_two(b, &ix) == 1) {
       if (d != NULL) {
-         *d = a->dp[0] & ((1uL<<(mp_digit)ix) - 1uL);
+         *d = a->dp[0] & (((mp_digit)1<<(mp_digit)ix) - 1uL);
       }
       if (c != NULL) {
          return mp_div_2d(a, ix, c, NULL);

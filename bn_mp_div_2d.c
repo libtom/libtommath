@@ -54,7 +54,7 @@ int mp_div_2d(const mp_int *a, int b, mp_int *c, mp_int *d)
       mp_digit *tmpc, mask, shift;
 
       /* mask */
-      mask = (1uL << D) - 1uL;
+      mask = ((mp_digit)1 << D) - 1uL;
 
       /* shift for lsb */
       shift = (mp_digit)DIGIT_BIT - D;
