@@ -151,8 +151,9 @@ int main(int argc, char *argv[])
    if (rng == NULL) {
       rng = fopen("/dev/random", "rb");
       if (rng == NULL) {
-         fprintf(stderr, "\nWarning:  stdin used as random source\n\n");
-         rng = stdin;
+         fprintf(stderr, "\nWarning:  no /dev/[u]random available\n\n");
+         printf("exit\n");
+         return 1;
       }
    }
 #else
