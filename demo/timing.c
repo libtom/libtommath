@@ -3,8 +3,6 @@
 #include <unistd.h>
 #include <inttypes.h>
 
-uint64_t _tt;
-
 #ifdef IOWNANATHLON
 #include <unistd.h>
 #define SLEEP sleep(4)
