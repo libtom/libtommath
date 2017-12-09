@@ -3,7 +3,6 @@
  * Tom St Denis, tstdenis82@gmail.com
  */
 #include <tommath.h>
-#include <time.h>
 #include <stdint.h>
 
 /* how many times todo each size mult.  Depends on your computer.  For slow computers
