@@ -32,7 +32,7 @@
 
 #include "tommath.h"
 
-static void ndraw(mp_int *a, char *name)
+static void ndraw(mp_int *a, const char *name)
 {
    char buf[16000];
 
