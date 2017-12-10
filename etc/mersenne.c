@@ -32,7 +32,7 @@ static int is_mersenne(long s, int *pp)
    mp_set(&u, 4);
 
    /* for k=1 to s-2 do */
-   for (k = 1; k <= s - 2; k++) {
+   for (k = 1; k <= (s - 2); k++) {
       /* u = u^2 - 2 mod n */
       if ((res = mp_sqr(&u, &u)) != MP_OKAY) {
          goto LBL_MU;
@@ -79,7 +79,7 @@ static long i_sqrt(long x)
       x2 = x1 - ((x1 * x1) - x) / (2 * x1);
    } while (x1 != x2);
 
-   if (x1 * x1 > x) {
+   if ((x1 * x1) > x) {
       --x1;
    }
 

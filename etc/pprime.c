@@ -21,7 +21,7 @@ static mp_digit i_sqrt(mp_word x)
       x2 = x1 - ((x1 * x1) - x) / (2 * x1);
    } while (x1 != x2);
 
-   if (x1 * x1 > x) {
+   if ((x1 * x1) > x) {
       --x1;
    }
 

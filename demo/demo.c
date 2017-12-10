@@ -746,7 +746,7 @@ printf("compare no compare!\n"); return EXIT_FAILURE;
 
          mp_div_2d(&a, rr, &a, &e);
          a.sign = b.sign;
-         if (a.used == b.used && a.used == 0) {
+         if ((a.used == b.used) && (a.used == 0)) {
             a.sign = b.sign = MP_ZPOS;
          }
          if (mp_cmp(&a, &b) != MP_EQ) {
@@ -847,7 +847,7 @@ printf("compare no compare!\n"); return EXIT_FAILURE;
          mp_read_radix(&d, buf, 64);
 
          mp_div(&a, &b, &e, &f);
-         if (mp_cmp(&c, &e) != MP_EQ || mp_cmp(&d, &f) != MP_EQ) {
+         if ((mp_cmp(&c, &e) != MP_EQ) || (mp_cmp(&d, &f) != MP_EQ)) {
             printf("div %lu %d, %d, failure!\n", div_n, mp_cmp(&c, &e),
                    mp_cmp(&d, &f));
             draw(&a);
