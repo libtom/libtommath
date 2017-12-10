@@ -72,6 +72,7 @@ top:
       fprintf(out, "%d-bits (k = %lu) = %s\n", sizes[x], z, buf);
       fflush(out);
    }
+   fclose(out);
 
    return 0;
 }
