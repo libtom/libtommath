@@ -723,14 +723,14 @@ printf("compare no compare!\n"); return EXIT_FAILURE;
          FGETS(buf, 4095, stdin);
          mp_read_radix(&a, buf, 64);
          FGETS(buf, 4095, stdin);
-         sscanf(buf, "%d", &rr);
+         sscanf(buf, "%u", &rr);
          FGETS(buf, 4095, stdin);
          mp_read_radix(&b, buf, 64);
 
          mp_mul_2d(&a, rr, &a);
          a.sign = b.sign;
          if (mp_cmp(&a, &b) != MP_EQ) {
-            printf("mul2d failed, rr == %d\n", rr);
+            printf("mul2d failed, rr == %u\n", rr);
             draw(&a);
             draw(&b);
             return EXIT_FAILURE;
@@ -740,7 +740,7 @@ printf("compare no compare!\n"); return EXIT_FAILURE;
          FGETS(buf, 4095, stdin);
          mp_read_radix(&a, buf, 64);
          FGETS(buf, 4095, stdin);
-         sscanf(buf, "%d", &rr);
+         sscanf(buf, "%u", &rr);
          FGETS(buf, 4095, stdin);
          mp_read_radix(&b, buf, 64);
 
@@ -750,7 +750,7 @@ printf("compare no compare!\n"); return EXIT_FAILURE;
             a.sign = b.sign = MP_ZPOS;
          }
          if (mp_cmp(&a, &b) != MP_EQ) {
-            printf("div2d failed, rr == %d\n", rr);
+            printf("div2d failed, rr == %u\n", rr);
             draw(&a);
             draw(&b);
             return EXIT_FAILURE;

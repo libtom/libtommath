@@ -143,7 +143,7 @@ static void gen_prime(void)
       } while (x == 0);
       if (r > 31) {
          fwrite(&r, 1, sizeof(mp_digit), out);
-         printf("%9d\r", r);
+         printf("%9u\r", r);
          fflush(stdout);
       }
       if (r < 31) break;
