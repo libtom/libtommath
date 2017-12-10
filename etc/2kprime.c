@@ -16,63 +16,65 @@ int main(void)
    mp_init_multi(&q, &p, NULL);
 
    out = fopen("2kprime.1", "w");
-   for (x = 0; x < (int)(sizeof(sizes) / sizeof(sizes[0])); x++) {
+   if (out != NULL) {
+      for (x = 0; x < (int)(sizeof(sizes) / sizeof(sizes[0])); x++) {
 top:
-      mp_2expt(&q, sizes[x]);
-      mp_add_d(&q, 3, &q);
-      z = -3;
+         mp_2expt(&q, sizes[x]);
+         mp_add_d(&q, 3, &q);
+         z = -3;
 
-      t1 = clock();
-      for (;;) {
-         mp_sub_d(&q, 4, &q);
-         z += 4;
+         t1 = clock();
+         for (;;) {
+            mp_sub_d(&q, 4, &q);
+            z += 4;
 
-         if (z > MP_MASK) {
-            printf("No primes of size %d found\n", sizes[x]);
+            if (z > MP_MASK) {
+               printf("No primes of size %d found\n", sizes[x]);
+               break;
+            }
+
+            if ((clock() - t1) > CLOCKS_PER_SEC) {
+               printf(".");
+               fflush(stdout);
+//            sleep((clock() - t1 + CLOCKS_PER_SEC/2)/CLOCKS_PER_SEC);
+               t1 = clock();
+            }
+
+            /* quick test on q */
+            mp_prime_is_prime(&q, 1, &y);
+            if (y == 0) {
+               continue;
+            }
+
+            /* find (q-1)/2 */
+            mp_sub_d(&q, 1, &p);
+            mp_div_2(&p, &p);
+            mp_prime_is_prime(&p, 3, &y);
+            if (y == 0) {
+               continue;
+            }
+
+            /* test on q */
+            mp_prime_is_prime(&q, 3, &y);
+            if (y == 0) {
+               continue;
+            }
+
             break;
          }
 
-         if ((clock() - t1) > CLOCKS_PER_SEC) {
-            printf(".");
-            fflush(stdout);
-//            sleep((clock() - t1 + CLOCKS_PER_SEC/2)/CLOCKS_PER_SEC);
-            t1 = clock();
-         }
-
-         /* quick test on q */
-         mp_prime_is_prime(&q, 1, &y);
          if (y == 0) {
-            continue;
+            ++sizes[x];
+            goto top;
          }
 
-         /* find (q-1)/2 */
-         mp_sub_d(&q, 1, &p);
-         mp_div_2(&p, &p);
-         mp_prime_is_prime(&p, 3, &y);
-         if (y == 0) {
-            continue;
-         }
-
-         /* test on q */
-         mp_prime_is_prime(&q, 3, &y);
-         if (y == 0) {
-            continue;
-         }
-
-         break;
+         mp_toradix(&q, buf, 10);
+         printf("\n\n%d-bits (k = %lu) = %s\n", sizes[x], z, buf);
+         fprintf(out, "%d-bits (k = %lu) = %s\n", sizes[x], z, buf);
+         fflush(out);
       }
-
-      if (y == 0) {
-         ++sizes[x];
-         goto top;
-      }
-
-      mp_toradix(&q, buf, 10);
-      printf("\n\n%d-bits (k = %lu) = %s\n", sizes[x], z, buf);
-      fprintf(out, "%d-bits (k = %lu) = %s\n", sizes[x], z, buf);
-      fflush(out);
+      fclose(out);
    }
-   fclose(out);
 
    return 0;
 }
