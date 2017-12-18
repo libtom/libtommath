@@ -85,8 +85,12 @@ while (<$in>) {
 
       my $line = 0;
       my $tmp = $m[1];
+      my $fun = $tmp;
       $tmp =~ s/_/"\\_"/ge;
-      print {$out} "\\vspace{+3mm}\\begin{small}\n\\hspace{-5.1mm}{\\bf File}: $tmp\n\\vspace{-3mm}\n\\begin{alltt}\n";
+      $fun =~ s/^bn_//;
+      $fun =~ s/\.c$//;
+      $fun =~ s/_/"\\_"/ge;
+      print {$out} "\\index{$fun}\\vspace{+3mm}\\begin{small}\n\\hspace{-5.1mm}{\\bf File}: $tmp\n\\vspace{-3mm}\n\\begin{alltt}\n";
       $wroteline += 5;
 
       if ($skipheader == 1) {
