@@ -14,6 +14,7 @@
  *
  * Tom St Denis, tstdenis82@gmail.com, http://libtom.org
  */
+
 #ifdef MP_LOW_MEM
 #   define TAB_SIZE 32
 #else

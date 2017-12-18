@@ -92,17 +92,32 @@ while (<$in>) {
       if ($skipheader == 1) {
          # scan till next end of comment, e.g. skip license
          while (<$src>) {
+            if ($_ =~ /#ifdef BN/) {
+               printf {$out} ("%03d   ", $line);
+               for ($x = 0; $x < length($_); $x++) {
+                   print {$out} chr(vec($_, $x, 8));
+                   if ($x == 75) {
+                       print {$out} "\n      ";
+                       ++$wroteline;
+                   }
+               }
+               print {$out} "...\n";
+               ++$wroteline;
+            }
             $text[$line++] = $_;
             last if ($_ =~ /libtom\.org/);
          }
          <$src>;
+         $text[$line++] = $_;
+         <$src>;
+         $text[$line++] = $_;
       }
 
       my $inline = 0;
       while (<$src>) {
-      next if ($_ =~ /\$Source/);
-      next if ($_ =~ /\$Revision/);
-      next if ($_ =~ /\$Date/);
+      next if ($_ =~ /ref/);
+      next if ($_ =~ /git commit/);
+      next if ($_ =~ /commit time/);
          $text[$line++] = $_;
          ++$inline;
          chomp($_);
