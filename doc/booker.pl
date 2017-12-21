@@ -85,24 +85,43 @@ while (<$in>) {
 
       my $line = 0;
       my $tmp = $m[1];
+      my $fun = $tmp;
       $tmp =~ s/_/"\\_"/ge;
-      print {$out} "\\vspace{+3mm}\\begin{small}\n\\hspace{-5.1mm}{\\bf File}: $tmp\n\\vspace{-3mm}\n\\begin{alltt}\n";
+      $fun =~ s/^bn_//;
+      $fun =~ s/\.c$//;
+      $fun =~ s/_/"\\_"/ge;
+      print {$out} "\\index{$fun}\\vspace{+3mm}\\begin{small}\n\\hspace{-5.1mm}{\\bf File}: $tmp\n\\vspace{-3mm}\n\\begin{alltt}\n";
       $wroteline += 5;
 
       if ($skipheader == 1) {
          # scan till next end of comment, e.g. skip license
          while (<$src>) {
+            if ($_ =~ /#ifdef BN/) {
+               printf {$out} ("%03d   ", $line);
+               for ($x = 0; $x < length($_); $x++) {
+                   print {$out} chr(vec($_, $x, 8));
+                   if ($x == 75) {
+                       print {$out} "\n      ";
+                       ++$wroteline;
+                   }
+               }
+               print {$out} "...\n";
+               ++$wroteline;
+            }
             $text[$line++] = $_;
             last if ($_ =~ /libtom\.org/);
          }
          <$src>;
+         $text[$line++] = $_;
+         <$src>;
+         $text[$line++] = $_;
       }
 
       my $inline = 0;
       while (<$src>) {
-      next if ($_ =~ /\$Source/);
-      next if ($_ =~ /\$Revision/);
-      next if ($_ =~ /\$Date/);
+      next if ($_ =~ /ref/);
+      next if ($_ =~ /git commit/);
+      next if ($_ =~ /commit time/);
          $text[$line++] = $_;
          ++$inline;
          chomp($_);
