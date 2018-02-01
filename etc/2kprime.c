@@ -2,7 +2,7 @@
 #include <tommath.h>
 #include <time.h>
 
-int sizes[] = {256, 512, 768, 1024, 1536, 2048, 3072, 4096};
+static int sizes[] = {256, 512, 768, 1024, 1536, 2048, 3072, 4096};
 
 int main(void)
 {

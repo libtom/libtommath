@@ -5,7 +5,7 @@
 #include <time.h>
 #include <tommath.h>
 
-int is_mersenne(long s, int *pp)
+static int is_mersenne(long s, int *pp)
 {
    mp_int  n, u;
    int     res, k;
@@ -69,7 +69,7 @@ LBL_N:
 }
 
 /* square root of a long < 65536 */
-long i_sqrt(long x)
+static long i_sqrt(long x)
 {
    long    x1, x2;
 
@@ -87,7 +87,7 @@ long i_sqrt(long x)
 }
 
 /* is the long prime by brute force */
-int isprime(long k)
+static int isprime(long k)
 {
    long    y, z;
 

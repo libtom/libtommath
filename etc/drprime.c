@@ -1,7 +1,7 @@
 /* Makes safe primes of a DR nature */
 #include <tommath.h>
 
-int sizes[] = { 1+256/DIGIT_BIT, 1+512/DIGIT_BIT, 1+768/DIGIT_BIT, 1+1024/DIGIT_BIT, 1+2048/DIGIT_BIT, 1+4096/DIGIT_BIT };
+static int sizes[] = { 1+256/DIGIT_BIT, 1+512/DIGIT_BIT, 1+768/DIGIT_BIT, 1+1024/DIGIT_BIT, 1+2048/DIGIT_BIT, 1+4096/DIGIT_BIT };
 
 int main(void)
 {

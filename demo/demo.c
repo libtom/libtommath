@@ -32,7 +32,7 @@
 
 #include "tommath.h"
 
-void ndraw(mp_int *a, char *name)
+static void ndraw(mp_int *a, char *name)
 {
    char buf[16000];
 
@@ -50,10 +50,10 @@ static void draw(mp_int *a)
 }
 #endif
 
+#if 0
+static unsigned long lfsr = 0xAAAAAAAAUL;
 
-unsigned long lfsr = 0xAAAAAAAAUL;
-
-int lbit(void)
+static int lbit(void)
 {
    if (lfsr & 0x80000000UL) {
       lfsr = ((lfsr << 1) ^ 0x8000001BUL) & 0xFFFFFFFFUL;
@@ -63,11 +63,13 @@ int lbit(void)
       return 0;
    }
 }
+#endif
 
 #if defined(LTM_DEMO_REAL_RAND) && !defined(_WIN32)
 static FILE *fd_urandom;
 #endif
-int myrng(unsigned char *dst, int len, void *dat)
+#if LTM_DEMO_TEST_VS_MTEST == 0
+static int myrng(unsigned char *dst, int len, void *dat)
 {
    int x;
    (void)dat;
@@ -89,6 +91,7 @@ int myrng(unsigned char *dst, int len, void *dat)
    }
    return len;
 }
+#endif
 
 #if LTM_DEMO_TEST_VS_MTEST != 0
 static void _panic(int l)
@@ -104,7 +107,7 @@ static void _panic(int l)
       if (!ret) { _panic(__LINE__); } \
    }
 
-mp_int a, b, c, d, e, f;
+static mp_int a, b, c, d, e, f;
 
 static void _cleanup(void)
 {
@@ -116,12 +119,13 @@ static void _cleanup(void)
       fclose(fd_urandom);
 #endif
 }
+#if LTM_DEMO_TEST_VS_MTEST == 0
 struct mp_sqrtmod_prime_st {
    unsigned long p;
    unsigned long n;
    mp_digit r;
 };
-struct mp_sqrtmod_prime_st sqrtmod_prime[] = {
+static struct mp_sqrtmod_prime_st sqrtmod_prime[] = {
    { 5, 14, 3 },
    { 7, 9, 4 },
    { 113, 2, 62 }
@@ -130,14 +134,18 @@ struct mp_jacobi_st {
    unsigned long n;
    int c[16];
 };
-struct mp_jacobi_st jacobi[] = {
+static struct mp_jacobi_st jacobi[] = {
    { 3, {  1, -1,  0,  1, -1,  0,  1, -1,  0,  1, -1,  0,  1, -1,  0,  1 } },
    { 5, {  0,  1, -1, -1,  1,  0,  1, -1, -1,  1,  0,  1, -1, -1,  1,  0 } },
    { 7, {  1, -1,  1, -1, -1,  0,  1,  1, -1,  1, -1, -1,  0,  1,  1, -1 } },
    { 9, { -1,  1,  0,  1,  1,  0,  1,  1,  0,  1,  1,  0,  1,  1,  0,  1 } },
 };
+#endif
 
-char cmd[4096], buf[4096];
+#if LTM_DEMO_TEST_VS_MTEST != 0
+static char cmd[4096];
+#endif
+static char buf[4096];
 int main(void)
 {
    unsigned rr;

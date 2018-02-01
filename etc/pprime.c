@@ -7,8 +7,8 @@
 #include <time.h>
 #include "tommath.h"
 
-int   n_prime;
-FILE *primes;
+static int   n_prime;
+static FILE *primes;
 
 /* fast square root */
 static mp_digit i_sqrt(mp_word x)
@@ -152,7 +152,7 @@ static void gen_prime(void)
    fclose(out);
 }
 
-void load_tab(void)
+static void load_tab(void)
 {
    primes = fopen("pprime.dat", "rb");
    if (primes == NULL) {
@@ -163,7 +163,7 @@ void load_tab(void)
    n_prime = ftell(primes) / sizeof(mp_digit);
 }
 
-mp_digit prime_digit(void)
+static mp_digit prime_digit(void)
 {
    int n;
    mp_digit d;
@@ -176,7 +176,7 @@ mp_digit prime_digit(void)
 
 
 /* makes a prime of at least k bits */
-int pprime(int k, int li, mp_int *p, mp_int *q)
+static int pprime(int k, int li, mp_int *p, mp_int *q)
 {
    mp_int  a, b, c, n, x, y, z, v;
    int     res, ii;
