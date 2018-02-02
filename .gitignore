@@ -14,8 +14,8 @@ coverage*/
 coverage.info
 
 # suppress output of build process and *nix/windows test executables
-ltmtest
-ltmtest.exe
+timing
+timing.exe
 test
 test.exe
 mtest

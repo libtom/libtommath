@@ -84,5 +84,5 @@ test_standalone: $(LIBNAME) demo/demo.o
 mtest:
 	cd mtest ; $(CC) $(CFLAGS) $(LDFLAGS) mtest.c -o mtest
 
-timing: $(LIBNAME)
-	$(LT) --mode=link $(CC) $(CFLAGS) $(LDFLAGS) -DTIMER demo/timing.c $(LIBNAME) -o ltmtest
+timing: $(LIBNAME) demo/timing.c
+	$(LT) --mode=link $(CC) $(CFLAGS) $(LDFLAGS) -DTIMER demo/timing.c $(LIBNAME) -o timing
