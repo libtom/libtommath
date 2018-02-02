@@ -134,7 +134,6 @@ int main(void)
          k += 2;
       }
    }
-   return 0;
 }
 
 /* ref:         $Format:%D$ */
