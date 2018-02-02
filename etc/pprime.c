@@ -39,18 +39,18 @@ static void gen_prime(void)
    if (out != NULL) {
 
       /* write first set of primes */
-   /* *INDENT-OFF* */
-   r = 3; fwrite(&r, 1, sizeof(mp_digit), out);
-   r = 5; fwrite(&r, 1, sizeof(mp_digit), out);
-   r = 7; fwrite(&r, 1, sizeof(mp_digit), out);
-   r = 11; fwrite(&r, 1, sizeof(mp_digit), out);
-   r = 13; fwrite(&r, 1, sizeof(mp_digit), out);
-   r = 17; fwrite(&r, 1, sizeof(mp_digit), out);
-   r = 19; fwrite(&r, 1, sizeof(mp_digit), out);
-   r = 23; fwrite(&r, 1, sizeof(mp_digit), out);
-   r = 29; fwrite(&r, 1, sizeof(mp_digit), out);
-   r = 31; fwrite(&r, 1, sizeof(mp_digit), out);
-   /* *INDENT-ON* */
+      /* *INDENT-OFF* */
+      r = 3; fwrite(&r, 1, sizeof(mp_digit), out);
+      r = 5; fwrite(&r, 1, sizeof(mp_digit), out);
+      r = 7; fwrite(&r, 1, sizeof(mp_digit), out);
+      r = 11; fwrite(&r, 1, sizeof(mp_digit), out);
+      r = 13; fwrite(&r, 1, sizeof(mp_digit), out);
+      r = 17; fwrite(&r, 1, sizeof(mp_digit), out);
+      r = 19; fwrite(&r, 1, sizeof(mp_digit), out);
+      r = 23; fwrite(&r, 1, sizeof(mp_digit), out);
+      r = 29; fwrite(&r, 1, sizeof(mp_digit), out);
+      r = 31; fwrite(&r, 1, sizeof(mp_digit), out);
+      /* *INDENT-ON* */
 
       /* get square root, since if 'r' is composite its factors must be < than this */
       y = i_sqrt(r);
