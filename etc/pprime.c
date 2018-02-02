@@ -7,8 +7,8 @@
 #include <time.h>
 #include "tommath.h"
 
-int   n_prime;
-FILE *primes;
+static int   n_prime;
+static FILE *primes;
 
 /* fast square root */
 static mp_digit i_sqrt(mp_word x)
@@ -21,7 +21,7 @@ static mp_digit i_sqrt(mp_word x)
       x2 = x1 - ((x1 * x1) - x) / (2 * x1);
    } while (x1 != x2);
 
-   if (x1 * x1 > x) {
+   if ((x1 * x1) > x) {
       --x1;
    }
 
@@ -36,8 +36,9 @@ static void gen_prime(void)
    FILE *out;
 
    out = fopen("pprime.dat", "wb");
+   if (out != NULL) {
 
-   /* write first set of primes */
+      /* write first set of primes */
    /* *INDENT-OFF* */
    r = 3; fwrite(&r, 1, sizeof(mp_digit), out);
    r = 5; fwrite(&r, 1, sizeof(mp_digit), out);
@@ -51,108 +52,109 @@ static void gen_prime(void)
    r = 31; fwrite(&r, 1, sizeof(mp_digit), out);
    /* *INDENT-ON* */
 
-   /* get square root, since if 'r' is composite its factors must be < than this */
-   y = i_sqrt(r);
-   next = (y + 1) * (y + 1);
+      /* get square root, since if 'r' is composite its factors must be < than this */
+      y = i_sqrt(r);
+      next = (y + 1) * (y + 1);
 
-   for (;;) {
-      do {
-         r += 2;       /* next candidate */
-         r &= MP_MASK;
+      for (;;) {
+         do {
+            r += 2;       /* next candidate */
+            r &= MP_MASK;
+            if (r < 31) break;
+
+            /* update sqrt ? */
+            if (next <= r) {
+               ++y;
+               next = (y + 1) * (y + 1);
+            }
+
+            /* loop if divisible by 3,5,7,11,13,17,19,23,29  */
+            if ((r % 3) == 0) {
+               x = 0;
+               continue;
+            }
+            if ((r % 5) == 0) {
+               x = 0;
+               continue;
+            }
+            if ((r % 7) == 0) {
+               x = 0;
+               continue;
+            }
+            if ((r % 11) == 0) {
+               x = 0;
+               continue;
+            }
+            if ((r % 13) == 0) {
+               x = 0;
+               continue;
+            }
+            if ((r % 17) == 0) {
+               x = 0;
+               continue;
+            }
+            if ((r % 19) == 0) {
+               x = 0;
+               continue;
+            }
+            if ((r % 23) == 0) {
+               x = 0;
+               continue;
+            }
+            if ((r % 29) == 0) {
+               x = 0;
+               continue;
+            }
+
+            /* now check if r is divisible by x + k={1,7,11,13,17,19,23,29} */
+            for (x = 30; x <= y; x += 30) {
+               if ((r % (x + 1)) == 0) {
+                  x = 0;
+                  break;
+               }
+               if ((r % (x + 7)) == 0) {
+                  x = 0;
+                  break;
+               }
+               if ((r % (x + 11)) == 0) {
+                  x = 0;
+                  break;
+               }
+               if ((r % (x + 13)) == 0) {
+                  x = 0;
+                  break;
+               }
+               if ((r % (x + 17)) == 0) {
+                  x = 0;
+                  break;
+               }
+               if ((r % (x + 19)) == 0) {
+                  x = 0;
+                  break;
+               }
+               if ((r % (x + 23)) == 0) {
+                  x = 0;
+                  break;
+               }
+               if ((r % (x + 29)) == 0) {
+                  x = 0;
+                  break;
+               }
+            }
+         } while (x == 0);
+         if (r > 31) {
+            fwrite(&r, 1, sizeof(mp_digit), out);
+            printf("%9u\r", r);
+            fflush(stdout);
+         }
          if (r < 31) break;
-
-         /* update sqrt ? */
-         if (next <= r) {
-            ++y;
-            next = (y + 1) * (y + 1);
-         }
-
-         /* loop if divisible by 3,5,7,11,13,17,19,23,29  */
-         if ((r % 3) == 0) {
-            x = 0;
-            continue;
-         }
-         if ((r % 5) == 0) {
-            x = 0;
-            continue;
-         }
-         if ((r % 7) == 0) {
-            x = 0;
-            continue;
-         }
-         if ((r % 11) == 0) {
-            x = 0;
-            continue;
-         }
-         if ((r % 13) == 0) {
-            x = 0;
-            continue;
-         }
-         if ((r % 17) == 0) {
-            x = 0;
-            continue;
-         }
-         if ((r % 19) == 0) {
-            x = 0;
-            continue;
-         }
-         if ((r % 23) == 0) {
-            x = 0;
-            continue;
-         }
-         if ((r % 29) == 0) {
-            x = 0;
-            continue;
-         }
-
-         /* now check if r is divisible by x + k={1,7,11,13,17,19,23,29} */
-         for (x = 30; x <= y; x += 30) {
-            if ((r % (x + 1)) == 0) {
-               x = 0;
-               break;
-            }
-            if ((r % (x + 7)) == 0) {
-               x = 0;
-               break;
-            }
-            if ((r % (x + 11)) == 0) {
-               x = 0;
-               break;
-            }
-            if ((r % (x + 13)) == 0) {
-               x = 0;
-               break;
-            }
-            if ((r % (x + 17)) == 0) {
-               x = 0;
-               break;
-            }
-            if ((r % (x + 19)) == 0) {
-               x = 0;
-               break;
-            }
-            if ((r % (x + 23)) == 0) {
-               x = 0;
-               break;
-            }
-            if ((r % (x + 29)) == 0) {
-               x = 0;
-               break;
-            }
-         }
-      } while (x == 0);
-      if (r > 31) {
-         fwrite(&r, 1, sizeof(mp_digit), out);
-         printf("%9d\r", r);
-         fflush(stdout);
       }
-      if (r < 31) break;
-   }
 
-   fclose(out);
+      fclose(out);
+   }
 }
 
-void load_tab(void)
+static void load_tab(void)
 {
    primes = fopen("pprime.dat", "rb");
    if (primes == NULL) {
@@ -163,7 +165,7 @@ void load_tab(void)
    n_prime = ftell(primes) / sizeof(mp_digit);
 }
 
-mp_digit prime_digit(void)
+static mp_digit prime_digit(void)
 {
    int n;
    mp_digit d;
@@ -176,7 +178,7 @@ mp_digit prime_digit(void)
 
 
 /* makes a prime of at least k bits */
-int pprime(int k, int li, mp_int *p, mp_int *q)
+static int pprime(int k, int li, mp_int *p, mp_int *q)
 {
    mp_int  a, b, c, n, x, y, z, v;
    int     res, ii;

@@ -3,8 +3,6 @@
 #include <unistd.h>
 #include <inttypes.h>
 
-uint64_t _tt;
-
 #ifdef IOWNANATHLON
 #include <unistd.h>
 #define SLEEP sleep(4)
@@ -19,7 +17,7 @@ uint64_t _tt;
 #endif
 
 
-void ndraw(mp_int *a, char *name)
+static void ndraw(mp_int *a, const char *name)
 {
    char buf[4096];
 
@@ -34,9 +32,9 @@ static void draw(mp_int *a)
 }
 
 
-unsigned long lfsr = 0xAAAAAAAAUL;
+static unsigned long lfsr = 0xAAAAAAAAUL;
 
-int lbit(void)
+static int lbit(void)
 {
    if (lfsr & 0x80000000UL) {
       lfsr = ((lfsr << 1) ^ 0x8000001BUL) & 0xFFFFFFFFUL;
@@ -181,7 +179,7 @@ int main(void)
       TOOM_SQR_CUTOFF = (ix == 2) ? old_toom_s : 9999;
 
       log = FOPEN((ix == 0) ? "logs/mult.log" : (ix == 1) ? "logs/mult_kara.log" : "logs/mult_toom.log", "w");
-      for (cnt = 4; cnt <= 10240 / DIGIT_BIT; cnt += 2) {
+      for (cnt = 4; cnt <= (10240 / DIGIT_BIT); cnt += 2) {
          SLEEP;
          mp_rand(&a, cnt);
          mp_rand(&b, cnt);
@@ -202,7 +200,7 @@ int main(void)
       FCLOSE(log);
 
       log = FOPEN((ix == 0) ? "logs/sqr.log" : (ix == 1) ? "logs/sqr_kara.log" : "logs/sqr_toom.log", "w");
-      for (cnt = 4; cnt <= 10240 / DIGIT_BIT; cnt += 2) {
+      for (cnt = 4; cnt <= (10240 / DIGIT_BIT); cnt += 2) {
          SLEEP;
          mp_rand(&a, cnt);
          rr = 0;
@@ -224,7 +222,7 @@ int main(void)
    }
 
    {
-      char *primes[] = {
+      const char *primes[] = {
          /* 2K large moduli */
          "179769313486231590772930519078902473361797697894230657273430081157732675805500963132708477322407536021120113879871393357658789768814416622492847430639474124377767893424865485276302219601246094119453082952085005768838150682342462881473913110540827237163350510684586239334100047359817950870678242457666208137217",
          "32317006071311007300714876688669951960444102669715484032130345427524655138867890893197201411522913463688717960921898019494119559150490921095088152386448283120630877367300996091750197750389652106796057638384067568276792218642619756161838094338476170470581645852036305042887575891541065808607552399123930385521914333389668342420684974786564569494856176035326322058077805659331026192708460314150258592864177116725943603718461857357598351152301645904403697613233287231227125684710820209725157101726931323469678542580656697935045997268352998638099733077152121140120031150424541696791951097529546801429027668869927491725169",
@@ -292,7 +290,7 @@ int main(void)
          }
          printf("Exponentiating\t%4d-bit => %9" PRIu64 "/sec, %9" PRIu64 " cycles\n",
                 mp_count_bits(&a), CLK_PER_SEC / tt, tt);
-         FPRINTF(n < 4 ? logd : (n < 9) ? logc : (n < 16) ? logb : log,
+         FPRINTF((n < 4) ? logd : (n < 9) ? logc : (n < 16) ? logb : log,
                  "%d %9" PRIu64 "\n", mp_count_bits(&a), tt);
       }
    }

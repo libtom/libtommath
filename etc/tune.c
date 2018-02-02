@@ -3,7 +3,6 @@
  * Tom St Denis, tstdenis82@gmail.com
  */
 #include <tommath.h>
-#include <time.h>
 #include <stdint.h>
 
 /* how many times todo each size mult.  Depends on your computer.  For slow computers
@@ -50,9 +49,9 @@ static uint64_t TIMFUNC(void)
 
 /* *INDENT-OFF* */
 /* generic ISO C timer */
-uint64_t LBL_T;
-void t_start(void) { LBL_T = TIMFUNC(); }
-uint64_t t_read(void) { return TIMFUNC() - LBL_T; }
+static uint64_t LBL_T;
+static void t_start(void) { LBL_T = TIMFUNC(); }
+static uint64_t t_read(void) { return TIMFUNC() - LBL_T; }
 /* *INDENT-ON* */
 
 #else
@@ -60,7 +59,7 @@ extern void t_start(void);
 extern uint64_t t_read(void);
 #endif
 
-uint64_t time_mult(int size, int s)
+static uint64_t time_mult(int size, int s)
 {
    unsigned long     x;
    mp_int  a, b, c;
@@ -90,7 +89,7 @@ uint64_t time_mult(int size, int s)
    return t1;
 }
 
-uint64_t time_sqr(int size, int s)
+static uint64_t time_sqr(int size, int s)
 {
    unsigned long     x;
    mp_int  a, b;

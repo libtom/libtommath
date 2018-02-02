@@ -1,5 +1,6 @@
 /* tests the montgomery routines */
 #include <tommath.h>
+#include <time.h>
 
 int main(void)
 {
