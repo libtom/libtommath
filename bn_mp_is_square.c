@@ -11,8 +11,6 @@
  *
  * The library is free for all purposes without any express
  * guarantee it works.
- *
- * Tom St Denis, tstdenis82@gmail.com, http://libtom.org
  */
 
 /* Check if remainders are possible squares - fast exclude non-squares */

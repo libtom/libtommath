@@ -11,8 +11,6 @@
  *
  * The library is free for all purposes without any express
  * guarantee it works.
- *
- * Tom St Denis, tstdenis82@gmail.com, http://libtom.org
  */
 
 /* wrapper function for mp_expt_d_ex() */

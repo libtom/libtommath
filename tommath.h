@@ -9,8 +9,6 @@
  *
  * The library is free for all purposes without any express
  * guarantee it works.
- *
- * Tom St Denis, tstdenis82@gmail.com, http://math.libtomcrypt.com
  */
 #ifndef BN_H_
 #define BN_H_

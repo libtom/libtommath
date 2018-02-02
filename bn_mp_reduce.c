@@ -11,8 +11,6 @@
  *
  * The library is free for all purposes without any express
  * guarantee it works.
- *
- * Tom St Denis, tstdenis82@gmail.com, http://libtom.org
  */
 
 /* reduces x mod m, assumes 0 < x < m**2, mu is

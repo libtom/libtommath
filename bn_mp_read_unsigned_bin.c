@@ -11,8 +11,6 @@
  *
  * The library is free for all purposes without any express
  * guarantee it works.
- *
- * Tom St Denis, tstdenis82@gmail.com, http://libtom.org
  */
 
 /* reads a unsigned char array, assumes the msb is stored first [big endian] */
