@@ -131,6 +131,8 @@ zipup: clean pre_gen new_file manual poster docs
 	rm -rf libtommath-$(VERSION) ltm-$(VERSION).*
 	@# files/dirs excluded from "git archive" are defined in .gitattributes
 	git archive --format=tar --prefix=libtommath-$(VERSION)/ HEAD | tar x
+	@echo 'fixme check'
+	-@(find libtommath-$(VERSION)/ -type f | xargs grep 'FIXM[E]') && echo '############## BEWARE: the "fixme" marker was found !!! ##############' || true
 	mkdir -p libtommath-$(VERSION)/doc
 	cp doc/bn.pdf doc/tommath.pdf doc/poster.pdf libtommath-$(VERSION)/doc/
 	tar -c libtommath-$(VERSION)/ | xz -6e -c - > ltm-$(VERSION).tar.xz
