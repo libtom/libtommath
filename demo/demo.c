@@ -1,13 +1,6 @@
 #include <string.h>
 #include <time.h>
 
-#ifdef IOWNANATHLON
-#include <unistd.h>
-#define SLEEP sleep(4)
-#else
-#define SLEEP
-#endif
-
 /*
  * Configuration
  */
@@ -47,21 +40,6 @@ static void ndraw(mp_int *a, const char *name)
 static void draw(mp_int *a)
 {
    ndraw(a, "");
-}
-#endif
-
-#if 0
-static unsigned long lfsr = 0xAAAAAAAAUL;
-
-static int lbit(void)
-{
-   if (lfsr & 0x80000000UL) {
-      lfsr = ((lfsr << 1) ^ 0x8000001BUL) & 0xFFFFFFFFUL;
-      return 1;
-   } else {
-      lfsr <<= 1;
-      return 0;
-   }
 }
 #endif
 
