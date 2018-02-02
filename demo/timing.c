@@ -36,7 +36,7 @@ static unsigned long lfsr = 0xAAAAAAAAUL;
 
 static int lbit(void)
 {
-   if (lfsr & 0x80000000UL) {
+   if ((lfsr & 0x80000000UL) != 0UL) {
       lfsr = ((lfsr << 1) ^ 0x8000001BUL) & 0xFFFFFFFFUL;
       return 1;
    } else {
@@ -258,7 +258,7 @@ int main(void)
       logb = FOPEN("logs/expt_dr.log", "w");
       logc = FOPEN("logs/expt_2k.log", "w");
       logd = FOPEN("logs/expt_2kl.log", "w");
-      for (n = 0; primes[n]; n++) {
+      for (n = 0; primes[n] != NULL; n++) {
          SLEEP;
          mp_read_radix(&a, primes[n], 10);
          mp_zero(&b);
@@ -283,7 +283,7 @@ int main(void)
          mp_sub(&e, &b, &b);
          mp_exptmod(&c, &b, &a, &e);  /* c^(p-1-b) mod a */
          mp_mulmod(&e, &d, &a, &d);   /* c^b * c^(p-1-b) == c^p-1 == 1 */
-         if (mp_cmp_d(&d, 1)) {
+         if (mp_cmp_d(&d, 1) != MP_EQ) {
             printf("Different (%d)!!!\n", mp_count_bits(&a));
             draw(&d);
             exit(0);

@@ -696,7 +696,7 @@ printf("compare no compare!\n"); return EXIT_FAILURE;
       cmd[strlen(cmd) - 1] = 0;
       printf("%-6s ]\r", cmd);
       fflush(stdout);
-      if (!strcmp(cmd, "mul2d")) {
+      if (strcmp(cmd, "mul2d") == 0) {
          ++mul2d_n;
          FGETS(buf, 4095, stdin);
          mp_read_radix(&a, buf, 64);
@@ -713,7 +713,7 @@ printf("compare no compare!\n"); return EXIT_FAILURE;
             draw(&b);
             return EXIT_FAILURE;
          }
-      } else if (!strcmp(cmd, "div2d")) {
+      } else if (strcmp(cmd, "div2d") == 0) {
          ++div2d_n;
          FGETS(buf, 4095, stdin);
          mp_read_radix(&a, buf, 64);
@@ -733,7 +733,7 @@ printf("compare no compare!\n"); return EXIT_FAILURE;
             draw(&b);
             return EXIT_FAILURE;
          }
-      } else if (!strcmp(cmd, "add")) {
+      } else if (strcmp(cmd, "add") == 0) {
          ++add_n;
          FGETS(buf, 4095, stdin);
          mp_read_radix(&a, buf, 64);
@@ -777,7 +777,7 @@ printf("compare no compare!\n"); return EXIT_FAILURE;
             return EXIT_FAILURE;
          }
 
-      } else if (!strcmp(cmd, "sub")) {
+      } else if (strcmp(cmd, "sub") == 0) {
          ++sub_n;
          FGETS(buf, 4095, stdin);
          mp_read_radix(&a, buf, 64);
@@ -795,7 +795,7 @@ printf("compare no compare!\n"); return EXIT_FAILURE;
             draw(&d);
             return EXIT_FAILURE;
          }
-      } else if (!strcmp(cmd, "mul")) {
+      } else if (strcmp(cmd, "mul") == 0) {
          ++mul_n;
          FGETS(buf, 4095, stdin);
          mp_read_radix(&a, buf, 64);
@@ -813,7 +813,7 @@ printf("compare no compare!\n"); return EXIT_FAILURE;
             draw(&d);
             return EXIT_FAILURE;
          }
-      } else if (!strcmp(cmd, "div")) {
+      } else if (strcmp(cmd, "div") == 0) {
          ++div_n;
          FGETS(buf, 4095, stdin);
          mp_read_radix(&a, buf, 64);
@@ -837,7 +837,7 @@ printf("compare no compare!\n"); return EXIT_FAILURE;
             return EXIT_FAILURE;
          }
 
-      } else if (!strcmp(cmd, "sqr")) {
+      } else if (strcmp(cmd, "sqr") == 0) {
          ++sqr_n;
          FGETS(buf, 4095, stdin);
          mp_read_radix(&a, buf, 64);
@@ -852,7 +852,7 @@ printf("compare no compare!\n"); return EXIT_FAILURE;
             draw(&c);
             return EXIT_FAILURE;
          }
-      } else if (!strcmp(cmd, "gcd")) {
+      } else if (strcmp(cmd, "gcd") == 0) {
          ++gcd_n;
          FGETS(buf, 4095, stdin);
          mp_read_radix(&a, buf, 64);
@@ -871,7 +871,7 @@ printf("compare no compare!\n"); return EXIT_FAILURE;
             draw(&d);
             return EXIT_FAILURE;
          }
-      } else if (!strcmp(cmd, "lcm")) {
+      } else if (strcmp(cmd, "lcm") == 0) {
          ++lcm_n;
          FGETS(buf, 4095, stdin);
          mp_read_radix(&a, buf, 64);
@@ -890,7 +890,7 @@ printf("compare no compare!\n"); return EXIT_FAILURE;
             draw(&d);
             return EXIT_FAILURE;
          }
-      } else if (!strcmp(cmd, "expt")) {
+      } else if (strcmp(cmd, "expt") == 0) {
          ++expt_n;
          FGETS(buf, 4095, stdin);
          mp_read_radix(&a, buf, 64);
@@ -911,7 +911,7 @@ printf("compare no compare!\n"); return EXIT_FAILURE;
             draw(&e);
             return EXIT_FAILURE;
          }
-      } else if (!strcmp(cmd, "invmod")) {
+      } else if (strcmp(cmd, "invmod") == 0) {
          ++inv_n;
          FGETS(buf, 4095, stdin);
          mp_read_radix(&a, buf, 64);
@@ -933,7 +933,7 @@ printf("compare no compare!\n"); return EXIT_FAILURE;
             return EXIT_FAILURE;
          }
 
-      } else if (!strcmp(cmd, "div2")) {
+      } else if (strcmp(cmd, "div2") == 0) {
          ++div2_n;
          FGETS(buf, 4095, stdin);
          mp_read_radix(&a, buf, 64);
@@ -947,7 +947,7 @@ printf("compare no compare!\n"); return EXIT_FAILURE;
             draw(&c);
             return EXIT_FAILURE;
          }
-      } else if (!strcmp(cmd, "mul2")) {
+      } else if (strcmp(cmd, "mul2") == 0) {
          ++mul2_n;
          FGETS(buf, 4095, stdin);
          mp_read_radix(&a, buf, 64);
@@ -961,7 +961,7 @@ printf("compare no compare!\n"); return EXIT_FAILURE;
             draw(&c);
             return EXIT_FAILURE;
          }
-      } else if (!strcmp(cmd, "add_d")) {
+      } else if (strcmp(cmd, "add_d") == 0) {
          ++add_d_n;
          FGETS(buf, 4095, stdin);
          mp_read_radix(&a, buf, 64);
@@ -978,7 +978,7 @@ printf("compare no compare!\n"); return EXIT_FAILURE;
             printf("d == %d\n", ix);
             return EXIT_FAILURE;
          }
-      } else if (!strcmp(cmd, "sub_d")) {
+      } else if (strcmp(cmd, "sub_d") == 0) {
          ++sub_d_n;
          FGETS(buf, 4095, stdin);
          mp_read_radix(&a, buf, 64);
@@ -995,7 +995,7 @@ printf("compare no compare!\n"); return EXIT_FAILURE;
             printf("d == %d\n", ix);
             return EXIT_FAILURE;
          }
-      } else if (!strcmp(cmd, "exit")) {
+      } else if (strcmp(cmd, "exit") == 0) {
          printf("\nokay, exiting now\n");
          break;
       }
