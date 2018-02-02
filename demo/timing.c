@@ -290,7 +290,7 @@ int main(void)
          }
          printf("Exponentiating\t%4d-bit => %9" PRIu64 "/sec, %9" PRIu64 " cycles\n",
                 mp_count_bits(&a), CLK_PER_SEC / tt, tt);
-         FPRINTF((n < 4) ? logd : (n < 9) ? logc : (n < 16) ? logb : log,
+         FPRINTF((n < 3) ? logd : (n < 9) ? logc : (n < 16) ? logb : log,
                  "%6d %9" PRIu64 "\n", mp_count_bits(&a), tt);
       }
    }
