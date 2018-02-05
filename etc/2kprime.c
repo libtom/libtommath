@@ -7,7 +7,8 @@ static int sizes[] = {256, 512, 768, 1024, 1536, 2048, 3072, 4096};
 int main(void)
 {
    char buf[2000];
-   int x, y;
+   size_t x;
+   int y;
    mp_int q, p;
    FILE *out;
    clock_t t1;
@@ -17,7 +18,7 @@ int main(void)
 
    out = fopen("2kprime.1", "w");
    if (out != NULL) {
-      for (x = 0; x < (int)(sizeof(sizes) / sizeof(sizes[0])); x++) {
+      for (x = 0; x < (sizeof(sizes) / sizeof(sizes[0])); x++) {
 top:
          mp_2expt(&q, sizes[x]);
          mp_add_d(&q, 3uL, &q);

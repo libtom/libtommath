@@ -34,14 +34,14 @@ static void draw(mp_int *a)
 
 static unsigned long lfsr = 0xAAAAAAAAuL;
 
-static int lbit(void)
+static unsigned int lbit(void)
 {
    if ((lfsr & 0x80000000uL) != 0uL) {
       lfsr = ((lfsr << 1) ^ 0x8000001BuL) & 0xFFFFFFFFuL;
-      return 1;
+      return 1u;
    } else {
       lfsr <<= 1;
-      return 0;
+      return 0u;
    }
 }
 

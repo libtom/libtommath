@@ -21,7 +21,7 @@ static int is_mersenne(long s, int *pp)
    }
 
    /* n = 2^s - 1 */
-   if ((res = mp_2expt(&n, s)) != MP_OKAY) {
+   if ((res = mp_2expt(&n, (int)s)) != MP_OKAY) {
       goto LBL_MU;
    }
    if ((res = mp_sub_d(&n, 1uL, &n)) != MP_OKAY) {

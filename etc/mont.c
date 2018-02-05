@@ -6,14 +6,14 @@ int main(void)
 {
    mp_int modulus, R, p, pp;
    mp_digit mp;
-   long x, y;
+   int x, y;
 
    srand(time(NULL));
    mp_init_multi(&modulus, &R, &p, &pp, NULL);
 
    /* loop through various sizes */
    for (x = 4; x < 256; x++) {
-      printf("DIGITS == %3ld...", x);
+      printf("DIGITS == %3d...", x);
       fflush(stdout);
 
       /* make up the odd modulus */

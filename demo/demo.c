@@ -264,7 +264,7 @@ int main(void)
    // test mp_get_int
    printf("\n\nTesting: mp_get_int");
    for (i = 0; i < 1000; ++i) {
-      t = ((unsigned long) rand() * rand() + 1) & 0xFFFFFFFFuL;
+      t = (unsigned long)(rand() * rand() + 1) & 0xFFFFFFFFuL;
       mp_set_int(&a, t);
       if (t != mp_get_int(&a)) {
          printf("\nmp_get_int() bad result!");
