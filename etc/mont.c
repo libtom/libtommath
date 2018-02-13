@@ -18,7 +18,7 @@ int main(void)
 
       /* make up the odd modulus */
       mp_rand(&modulus, x);
-      modulus.dp[0] |= 1;
+      modulus.dp[0] |= 1uL;
 
       /* now find the R value */
       mp_montgomery_calc_normalization(&R, &modulus);

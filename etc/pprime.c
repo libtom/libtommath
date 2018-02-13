@@ -18,7 +18,7 @@ static mp_digit i_sqrt(mp_word x)
    x2 = x;
    do {
       x1 = x2;
-      x2 = x1 - ((x1 * x1) - x) / (2 * x1);
+      x2 = x1 - ((x1 * x1) - x) / (2u * x1);
    } while (x1 != x2);
 
    if ((x1 * x1) > x) {
@@ -40,114 +40,114 @@ static void gen_prime(void)
 
       /* write first set of primes */
       /* *INDENT-OFF* */
-      r = 3; fwrite(&r, 1, sizeof(mp_digit), out);
-      r = 5; fwrite(&r, 1, sizeof(mp_digit), out);
-      r = 7; fwrite(&r, 1, sizeof(mp_digit), out);
-      r = 11; fwrite(&r, 1, sizeof(mp_digit), out);
-      r = 13; fwrite(&r, 1, sizeof(mp_digit), out);
-      r = 17; fwrite(&r, 1, sizeof(mp_digit), out);
-      r = 19; fwrite(&r, 1, sizeof(mp_digit), out);
-      r = 23; fwrite(&r, 1, sizeof(mp_digit), out);
-      r = 29; fwrite(&r, 1, sizeof(mp_digit), out);
-      r = 31; fwrite(&r, 1, sizeof(mp_digit), out);
+      r = 3uL; fwrite(&r, 1uL, sizeof(mp_digit), out);
+      r = 5uL; fwrite(&r, 1uL, sizeof(mp_digit), out);
+      r = 7uL; fwrite(&r, 1uL, sizeof(mp_digit), out);
+      r = 11uL; fwrite(&r, 1uL, sizeof(mp_digit), out);
+      r = 13uL; fwrite(&r, 1uL, sizeof(mp_digit), out);
+      r = 17uL; fwrite(&r, 1uL, sizeof(mp_digit), out);
+      r = 19uL; fwrite(&r, 1uL, sizeof(mp_digit), out);
+      r = 23uL; fwrite(&r, 1uL, sizeof(mp_digit), out);
+      r = 29uL; fwrite(&r, 1uL, sizeof(mp_digit), out);
+      r = 31uL; fwrite(&r, 1uL, sizeof(mp_digit), out);
       /* *INDENT-ON* */
 
       /* get square root, since if 'r' is composite its factors must be < than this */
       y = i_sqrt(r);
-      next = (y + 1) * (y + 1);
+      next = (y + 1uL) * (y + 1uL);
 
       for (;;) {
          do {
-            r += 2;       /* next candidate */
+            r += 2uL;       /* next candidate */
             r &= MP_MASK;
-            if (r < 31) break;
+            if (r < 31uL) break;
 
             /* update sqrt ? */
             if (next <= r) {
                ++y;
-               next = (y + 1) * (y + 1);
+               next = (y + 1uL) * (y + 1uL);
             }
 
             /* loop if divisible by 3,5,7,11,13,17,19,23,29  */
-            if ((r % 3) == 0) {
-               x = 0;
+            if ((r % 3uL) == 0uL) {
+               x = 0uL;
                continue;
             }
-            if ((r % 5) == 0) {
-               x = 0;
+            if ((r % 5uL) == 0uL) {
+               x = 0uL;
                continue;
             }
-            if ((r % 7) == 0) {
-               x = 0;
+            if ((r % 7uL) == 0uL) {
+               x = 0uL;
                continue;
             }
-            if ((r % 11) == 0) {
-               x = 0;
+            if ((r % 11uL) == 0uL) {
+               x = 0uL;
                continue;
             }
-            if ((r % 13) == 0) {
-               x = 0;
+            if ((r % 13uL) == 0uL) {
+               x = 0uL;
                continue;
             }
-            if ((r % 17) == 0) {
-               x = 0;
+            if ((r % 17uL) == 0uL) {
+               x = 0uL;
                continue;
             }
-            if ((r % 19) == 0) {
-               x = 0;
+            if ((r % 19uL) == 0uL) {
+               x = 0uL;
                continue;
             }
-            if ((r % 23) == 0) {
-               x = 0;
+            if ((r % 23uL) == 0uL) {
+               x = 0uL;
                continue;
             }
-            if ((r % 29) == 0) {
-               x = 0;
+            if ((r % 29uL) == 0uL) {
+               x = 0uL;
                continue;
             }
 
             /* now check if r is divisible by x + k={1,7,11,13,17,19,23,29} */
-            for (x = 30; x <= y; x += 30) {
-               if ((r % (x + 1)) == 0) {
-                  x = 0;
+            for (x = 30uL; x <= y; x += 30uL) {
+               if ((r % (x + 1uL)) == 0uL) {
+                  x = 0uL;
                   break;
                }
-               if ((r % (x + 7)) == 0) {
-                  x = 0;
+               if ((r % (x + 7uL)) == 0uL) {
+                  x = 0uL;
                   break;
                }
-               if ((r % (x + 11)) == 0) {
-                  x = 0;
+               if ((r % (x + 11uL)) == 0uL) {
+                  x = 0uL;
                   break;
                }
-               if ((r % (x + 13)) == 0) {
-                  x = 0;
+               if ((r % (x + 13uL)) == 0uL) {
+                  x = 0uL;
                   break;
                }
-               if ((r % (x + 17)) == 0) {
-                  x = 0;
+               if ((r % (x + 17uL)) == 0uL) {
+                  x = 0uL;
                   break;
                }
-               if ((r % (x + 19)) == 0) {
-                  x = 0;
+               if ((r % (x + 19uL)) == 0uL) {
+                  x = 0uL;
                   break;
                }
-               if ((r % (x + 23)) == 0) {
-                  x = 0;
+               if ((r % (x + 23uL)) == 0uL) {
+                  x = 0uL;
                   break;
                }
-               if ((r % (x + 29)) == 0) {
-                  x = 0;
+               if ((r % (x + 29uL)) == 0uL) {
+                  x = 0uL;
                   break;
                }
             }
-         } while (x == 0);
-         if (r > 31) {
-            fwrite(&r, 1, sizeof(mp_digit), out);
+         } while (x == 0uL);
+         if (r > 31uL) {
+            fwrite(&r, 1uL, sizeof(mp_digit), out);
             printf("%9u\r", r);
             fflush(stdout);
          }
-         if (r < 31) break;
+         if (r < 31uL) break;
       }
 
       fclose(out);
@@ -161,7 +161,7 @@ static void load_tab(void)
       gen_prime();
       primes = fopen("pprime.dat", "rb");
    }
-   fseek(primes, 0, SEEK_END);
+   fseek(primes, 0L, SEEK_END);
    n_prime = ftell(primes) / sizeof(mp_digit);
 }
 
@@ -172,7 +172,7 @@ static mp_digit prime_digit(void)
 
    n = abs(rand()) % n_prime;
    fseek(primes, n * sizeof(mp_digit), SEEK_SET);
-   fread(&d, 1, sizeof(mp_digit), primes);
+   fread(&d, 1uL, sizeof(mp_digit), primes);
    return d;
 }
 
@@ -254,7 +254,7 @@ top:
       }
 
       /* n = z + 1 */
-      if ((res = mp_add_d(&z, 1, &n)) != MP_OKAY) {  /* n = z + 1 */
+      if ((res = mp_add_d(&z, 1uL, &n)) != MP_OKAY) {  /* n = z + 1 */
          goto LBL_Z;
       }
 
@@ -263,7 +263,7 @@ top:
          goto LBL_Z;
       }
 
-      if (mp_cmp_d(&y, 1) != MP_EQ)
+      if (mp_cmp_d(&y, 1uL) != MP_EQ)
          goto top;
 
       /* now try base x=bases[ii]  */
@@ -276,7 +276,7 @@ top:
          }
 
          /* if y == 1 loop */
-         if (mp_cmp_d(&y, 1) == MP_EQ)
+         if (mp_cmp_d(&y, 1uL) == MP_EQ)
             continue;
 
          /* now x^2a mod n */
@@ -284,7 +284,7 @@ top:
             goto LBL_Z;
          }
 
-         if (mp_cmp_d(&y, 1) == MP_EQ)
+         if (mp_cmp_d(&y, 1uL) == MP_EQ)
             continue;
 
          /* compute x^b mod n */
@@ -293,7 +293,7 @@ top:
          }
 
          /* if y == 1 loop */
-         if (mp_cmp_d(&y, 1) == MP_EQ)
+         if (mp_cmp_d(&y, 1uL) == MP_EQ)
             continue;
 
          /* now x^2b mod n */
@@ -301,7 +301,7 @@ top:
             goto LBL_Z;
          }
 
-         if (mp_cmp_d(&y, 1) == MP_EQ)
+         if (mp_cmp_d(&y, 1uL) == MP_EQ)
             continue;
 
          /* compute x^c mod n == x^ab mod n */
@@ -310,7 +310,7 @@ top:
          }
 
          /* if y == 1 loop */
-         if (mp_cmp_d(&y, 1) == MP_EQ)
+         if (mp_cmp_d(&y, 1uL) == MP_EQ)
             continue;
 
          /* now compute (x^c mod n)^2 */
@@ -319,7 +319,7 @@ top:
          }
 
          /* y should be 1 */
-         if (mp_cmp_d(&y, 1) != MP_EQ)
+         if (mp_cmp_d(&y, 1uL) != MP_EQ)
             continue;
          break;
       }
@@ -345,7 +345,7 @@ top:
    }
 
    /* get q to be the order of the large prime subgroup */
-   mp_sub_d(&n, 1, q);
+   mp_sub_d(&n, 1uL, q);
    mp_div_2(q, q);
    mp_div(q, &b, q, NULL);
 

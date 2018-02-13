@@ -20,13 +20,13 @@ int main(void)
       for (x = 0; x < (int)(sizeof(sizes) / sizeof(sizes[0])); x++) {
 top:
          mp_2expt(&q, sizes[x]);
-         mp_add_d(&q, 3, &q);
+         mp_add_d(&q, 3uL, &q);
          z = -3;
 
          t1 = clock();
          for (;;) {
-            mp_sub_d(&q, 4, &q);
-            z += 4;
+            mp_sub_d(&q, 4uL, &q);
+            z += 4uL;
 
             if (z > MP_MASK) {
                printf("No primes of size %d found\n", sizes[x]);
@@ -47,7 +47,7 @@ top:
             }
 
             /* find (q-1)/2 */
-            mp_sub_d(&q, 1, &p);
+            mp_sub_d(&q, 1uL, &p);
             mp_div_2(&p, &p);
             mp_prime_is_prime(&p, 3, &y);
             if (y == 0) {

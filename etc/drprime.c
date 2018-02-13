@@ -31,13 +31,13 @@ top:
          /* now loop */
          res = 0;
          for (;;) {
-            a.dp[0] += 4;
+            a.dp[0] += 4uL;
             if (a.dp[0] >= MP_MASK) break;
             mp_prime_is_prime(&a, 1, &res);
             if (res == 0) continue;
             printf(".");
             fflush(stdout);
-            mp_sub_d(&a, 1, &b);
+            mp_sub_d(&a, 1uL, &b);
             mp_div_2(&b, &b);
             mp_prime_is_prime(&b, 3, &res);
             if (res == 0) continue;
