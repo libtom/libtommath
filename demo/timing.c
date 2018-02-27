@@ -32,16 +32,16 @@ static void draw(mp_int *a)
 }
 
 
-static unsigned long lfsr = 0xAAAAAAAAUL;
+static unsigned long lfsr = 0xAAAAAAAAuL;
 
-static int lbit(void)
+static unsigned int lbit(void)
 {
-   if (lfsr & 0x80000000UL) {
-      lfsr = ((lfsr << 1) ^ 0x8000001BUL) & 0xFFFFFFFFUL;
-      return 1;
+   if ((lfsr & 0x80000000uL) != 0uL) {
+      lfsr = ((lfsr << 1) ^ 0x8000001BuL) & 0xFFFFFFFFuL;
+      return 1u;
    } else {
       lfsr <<= 1;
-      return 0;
+      return 0u;
    }
 }
 
@@ -126,15 +126,15 @@ int main(void)
       SLEEP;
       mp_rand(&a, cnt);
       mp_rand(&b, cnt);
-      rr = 0;
-      tt = -1;
+      rr = 0u;
+      tt = UINT64_MAX;
       do {
          gg = TIMFUNC();
          DO(mp_add(&a, &b, &c));
          gg = (TIMFUNC() - gg) >> 1;
          if (tt > gg)
             tt = gg;
-      } while (++rr < 100000);
+      } while (++rr < 100000u);
       printf("Adding\t\t%4d-bit => %9" PRIu64 "/sec, %9" PRIu64 " cycles\n",
              mp_count_bits(&a), CLK_PER_SEC / tt, tt);
       FPRINTF(log, "%d %9" PRIu64 "\n", cnt * DIGIT_BIT, tt);
@@ -147,15 +147,15 @@ int main(void)
       SLEEP;
       mp_rand(&a, cnt);
       mp_rand(&b, cnt);
-      rr = 0;
-      tt = -1;
+      rr = 0u;
+      tt = UINT64_MAX;
       do {
          gg = TIMFUNC();
          DO(mp_sub(&a, &b, &c));
          gg = (TIMFUNC() - gg) >> 1;
          if (tt > gg)
             tt = gg;
-      } while (++rr < 100000);
+      } while (++rr < 100000u);
 
       printf("Subtracting\t\t%4d-bit => %9" PRIu64 "/sec, %9" PRIu64 " cycles\n",
              mp_count_bits(&a), CLK_PER_SEC / tt, tt);
@@ -183,15 +183,15 @@ int main(void)
          SLEEP;
          mp_rand(&a, cnt);
          mp_rand(&b, cnt);
-         rr = 0;
-         tt = -1;
+         rr = 0u;
+         tt = UINT64_MAX;
          do {
             gg = TIMFUNC();
             DO(mp_mul(&a, &b, &c));
             gg = (TIMFUNC() - gg) >> 1;
             if (tt > gg)
                tt = gg;
-         } while (++rr < 100);
+         } while (++rr < 100u);
          printf("Multiplying\t%4d-bit => %9" PRIu64 "/sec, %9" PRIu64 " cycles\n",
                 mp_count_bits(&a), CLK_PER_SEC / tt, tt);
          FPRINTF(log, "%d %9" PRIu64 "\n", mp_count_bits(&a), tt);
@@ -203,15 +203,15 @@ int main(void)
       for (cnt = 4; cnt <= (10240 / DIGIT_BIT); cnt += 2) {
          SLEEP;
          mp_rand(&a, cnt);
-         rr = 0;
-         tt = -1;
+         rr = 0u;
+         tt = UINT64_MAX;
          do {
             gg = TIMFUNC();
             DO(mp_sqr(&a, &b));
             gg = (TIMFUNC() - gg) >> 1;
             if (tt > gg)
                tt = gg;
-         } while (++rr < 100);
+         } while (++rr < 100u);
          printf("Squaring\t%4d-bit => %9" PRIu64 "/sec, %9" PRIu64 " cycles\n",
                 mp_count_bits(&a), CLK_PER_SEC / tt, tt);
          FPRINTF(log, "%d %9" PRIu64 "\n", mp_count_bits(&a), tt);
@@ -258,7 +258,7 @@ int main(void)
       logb = FOPEN("logs/expt_dr.log", "w");
       logc = FOPEN("logs/expt_2k.log", "w");
       logd = FOPEN("logs/expt_2kl.log", "w");
-      for (n = 0; primes[n]; n++) {
+      for (n = 0; primes[n] != NULL; n++) {
          SLEEP;
          mp_read_radix(&a, primes[n], 10);
          mp_zero(&b);
@@ -267,23 +267,23 @@ int main(void)
             b.dp[0] |= lbit();
             b.used += 1;
          }
-         mp_sub_d(&a, 1, &c);
+         mp_sub_d(&a, 1uL, &c);
          mp_mod(&b, &c, &b);
-         mp_set(&c, 3);
-         rr = 0;
-         tt = -1;
+         mp_set(&c, 3uL);
+         rr = 0u;
+         tt = UINT64_MAX;
          do {
             gg = TIMFUNC();
             DO(mp_exptmod(&c, &b, &a, &d));
             gg = (TIMFUNC() - gg) >> 1;
             if (tt > gg)
                tt = gg;
-         } while (++rr < 10);
-         mp_sub_d(&a, 1, &e);
+         } while (++rr < 10u);
+         mp_sub_d(&a, 1uL, &e);
          mp_sub(&e, &b, &b);
          mp_exptmod(&c, &b, &a, &e);  /* c^(p-1-b) mod a */
          mp_mulmod(&e, &d, &a, &d);   /* c^b * c^(p-1-b) == c^p-1 == 1 */
-         if (mp_cmp_d(&d, 1)) {
+         if (mp_cmp_d(&d, 1uL) != MP_EQ) {
             printf("Different (%d)!!!\n", mp_count_bits(&a));
             draw(&d);
             exit(0);
@@ -306,21 +306,21 @@ int main(void)
       mp_rand(&b, cnt);
 
       do {
-         mp_add_d(&b, 1, &b);
+         mp_add_d(&b, 1uL, &b);
          mp_gcd(&a, &b, &c);
-      } while (mp_cmp_d(&c, 1) != MP_EQ);
+      } while (mp_cmp_d(&c, 1uL) != MP_EQ);
 
-      rr = 0;
-      tt = -1;
+      rr = 0u;
+      tt = UINT64_MAX;
       do {
          gg = TIMFUNC();
          DO(mp_invmod(&b, &a, &c));
          gg = (TIMFUNC() - gg) >> 1;
          if (tt > gg)
             tt = gg;
-      } while (++rr < 1000);
+      } while (++rr < 1000u);
       mp_mulmod(&b, &c, &a, &d);
-      if (mp_cmp_d(&d, 1) != MP_EQ) {
+      if (mp_cmp_d(&d, 1uL) != MP_EQ) {
          printf("Failed to invert\n");
          return 0;
       }

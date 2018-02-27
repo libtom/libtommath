@@ -21,15 +21,15 @@ static int is_mersenne(long s, int *pp)
    }
 
    /* n = 2^s - 1 */
-   if ((res = mp_2expt(&n, s)) != MP_OKAY) {
+   if ((res = mp_2expt(&n, (int)s)) != MP_OKAY) {
       goto LBL_MU;
    }
-   if ((res = mp_sub_d(&n, 1, &n)) != MP_OKAY) {
+   if ((res = mp_sub_d(&n, 1uL, &n)) != MP_OKAY) {
       goto LBL_MU;
    }
 
    /* set u=4 */
-   mp_set(&u, 4);
+   mp_set(&u, 4uL);
 
    /* for k=1 to s-2 do */
    for (k = 1; k <= (s - 2); k++) {
@@ -37,7 +37,7 @@ static int is_mersenne(long s, int *pp)
       if ((res = mp_sqr(&u, &u)) != MP_OKAY) {
          goto LBL_MU;
       }
-      if ((res = mp_sub_d(&u, 2, &u)) != MP_OKAY) {
+      if ((res = mp_sub_d(&u, 2uL, &u)) != MP_OKAY) {
          goto LBL_MU;
       }
 
@@ -49,7 +49,7 @@ static int is_mersenne(long s, int *pp)
       }
 
       /* reduce */
-      if ((res = mp_reduce_2k(&u, &n, 1)) != MP_OKAY) {
+      if ((res = mp_reduce_2k(&u, &n, 1uL)) != MP_OKAY) {
          goto LBL_MU;
       }
    }
@@ -134,7 +134,6 @@ int main(void)
          k += 2;
       }
    }
-   return 0;
 }
 
 /* ref:         $Format:%D$ */
