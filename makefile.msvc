@@ -2,7 +2,7 @@
 #
 #Tom St Denis
 
-CFLAGS = /I. /Ox /DWIN32 /W3 /Fo$@
+LTM_CFLAGS  = /Ox /nologo /I. /D_CRT_SECURE_NO_WARNINGS /D_CRT_NONSTDC_NO_DEPRECATE /W3 $(CFLAGS)
 
 default: library
 
@@ -34,7 +34,10 @@ bn_s_mp_sqr.obj bn_s_mp_sub.obj
 
 #END_INS
 
-HEADERS=tommath.h tommath_class.h tommath_superclass.h
+HEADERS=tommath.h tommath_class.h tommath_private.h tommath_superclass.h
 
 library: $(OBJECTS)
 	lib /out:tommath.lib $(OBJECTS)
+
+.c.obj:
+	$(CC) $(LTM_CFLAGS) /c $< /Fo$@

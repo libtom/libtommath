@@ -67,17 +67,17 @@ $(LIBNAME):  $(OBJECTS)
 # So far I've seen improvements in the MP math
 profiled:
 	make CFLAGS="$(CFLAGS) -fprofile-arcs -DTESTING" timing
-	./ltmtest
-	rm -f *.a *.o ltmtest
+	./timing
+	rm -f *.a *.o timing
 	make CFLAGS="$(CFLAGS) -fbranch-probabilities"
 
 #make a single object profiled library
 profiled_single:
 	perl gen.pl
 	$(CC) $(CFLAGS) -fprofile-arcs -DTESTING -c mpi.c -o mpi.o
-	$(CC) $(CFLAGS) -DTESTING -DTIMER demo/timing.c mpi.o -lgcov -o ltmtest
-	./ltmtest
-	rm -f *.o ltmtest
+	$(CC) $(CFLAGS) -DTESTING -DTIMER demo/timing.c mpi.o -lgcov -o timing
+	./timing
+	rm -f *.o timing
 	$(CC) $(CFLAGS) -fbranch-probabilities -DTESTING -c mpi.c -o mpi.o
 	$(AR) $(ARFLAGS) $(LIBNAME) mpi.o
 	ranlib $(LIBNAME)
@@ -102,8 +102,8 @@ test_standalone: $(LIBNAME) demo/demo.o
 mtest:
 	cd mtest ; $(CC) $(CFLAGS) -O0 mtest.c $(LFLAGS) -o mtest
 
-timing: $(LIBNAME)
-	$(CC) $(CFLAGS) -DTIMER demo/timing.c $(LIBNAME) $(LFLAGS) -o ltmtest
+timing: $(LIBNAME) demo/timing.c
+	$(CC) $(CFLAGS) -DTIMER demo/timing.c $(LIBNAME) $(LFLAGS) -o timing
 
 # You have to create a file .coveralls.yml with the content "repo_token: <the token>"
 # in the base folder to be able to submit to coveralls
@@ -131,6 +131,8 @@ zipup: clean pre_gen new_file manual poster docs
 	rm -rf libtommath-$(VERSION) ltm-$(VERSION).*
 	@# files/dirs excluded from "git archive" are defined in .gitattributes
 	git archive --format=tar --prefix=libtommath-$(VERSION)/ HEAD | tar x
+	@echo 'fixme check'
+	-@(find libtommath-$(VERSION)/ -type f | xargs grep 'FIXM[E]') && echo '############## BEWARE: the "fixme" marker was found !!! ##############' || true
 	mkdir -p libtommath-$(VERSION)/doc
 	cp doc/bn.pdf doc/tommath.pdf doc/poster.pdf libtommath-$(VERSION)/doc/
 	tar -c libtommath-$(VERSION)/ | xz -6e -c - > ltm-$(VERSION).tar.xz

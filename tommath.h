@@ -9,8 +9,6 @@
  *
  * The library is free for all purposes without any express
  * guarantee it works.
- *
- * Tom St Denis, tstdenis82@gmail.com, http://math.libtomcrypt.com
  */
 #ifndef BN_H_
 #define BN_H_
@@ -27,7 +25,7 @@ extern "C" {
 #endif
 
 /* MS Visual C++ doesn't have a 128bit type for words, so fall back to 32bit MPI's (where words are 64bit) */
-#if defined(_MSC_VER) || defined(__LLP64__)
+#if defined(_MSC_VER) || defined(__LLP64__) || defined(__e2k__) || defined(__LCC__)
 #   define MP_32BIT
 #endif
 

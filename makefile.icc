@@ -80,17 +80,17 @@ libtommath.a:  $(OBJECTS)
 # So far I've seen improvements in the MP math
 profiled:
 	make -f makefile.icc CFLAGS="$(CFLAGS) -prof_gen -DTESTING" timing
-	./ltmtest
-	rm -f *.a *.o ltmtest
+	./timing
+	rm -f *.a *.o timing
 	make -f makefile.icc CFLAGS="$(CFLAGS) -prof_use"
 
 #make a single object profiled library
 profiled_single:
 	perl gen.pl
 	$(CC) $(CFLAGS) -prof_gen -DTESTING -c mpi.c -o mpi.o
-	$(CC) $(CFLAGS) -DTESTING -DTIMER demo/demo.c mpi.o -o ltmtest
-	./ltmtest
-	rm -f *.o ltmtest
+	$(CC) $(CFLAGS) -DTESTING -DTIMER demo/demo.c mpi.o -o timing
+	./timing
+	rm -f *.o timing
 	$(CC) $(CFLAGS) -prof_use -ip -DTESTING -c mpi.c -o mpi.o
 	$(AR) $(ARFLAGS) libtommath.a mpi.o
 	ranlib libtommath.a
@@ -107,11 +107,11 @@ test: libtommath.a demo/demo.o
 mtest: test
 	cd mtest ; $(CC) $(CFLAGS) mtest.c -o mtest
 
-timing: libtommath.a
-	$(CC) $(CFLAGS) -DTIMER demo/timing.c libtommath.a -o ltmtest
+timing: libtommath.a demo/timing.c
+	$(CC) $(CFLAGS) -DTIMER demo/timing.c libtommath.a -o timing
 
 clean:
-	rm -f *.bat *.pdf *.o *.a *.obj *.lib *.exe *.dll etclib/*.o demo/demo.o test ltmtest mpitest mtest/mtest mtest/mtest.exe \
+	rm -f *.bat *.pdf *.o *.a *.obj *.lib *.exe *.dll etclib/*.o demo/demo.o test timing mpitest mtest/mtest mtest/mtest.exe \
         *.idx *.toc *.log *.aux *.dvi *.lof *.ind *.ilg *.ps *.log *.s mpi.c *.il etc/*.il *.dyn
 	cd etc ; make clean
 	cd pics ; make clean

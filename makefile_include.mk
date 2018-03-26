@@ -70,7 +70,7 @@ endif
 # adjust coverage set
 ifneq ($(filter $(shell arch), i386 i686 x86_64 amd64 ia64),)
    COVERAGE = test_standalone timing
-   COVERAGE_APP = ./test && ./ltmtest
+   COVERAGE_APP = ./test && ./timing
 else
    COVERAGE = test_standalone
    COVERAGE_APP = ./test
@@ -113,7 +113,7 @@ cleancov-clean:
 cleancov: cleancov-clean clean
 
 clean:
-	rm -f *.gcda *.gcno *.gcov *.bat *.o *.a *.obj *.lib *.exe *.dll etclib/*.o demo/demo.o test ltmtest mpitest mtest/mtest mtest/mtest.exe \
+	rm -f *.gcda *.gcno *.gcov *.bat *.o *.a *.obj *.lib *.exe *.dll etclib/*.o demo/demo.o test timing mpitest mtest/mtest mtest/mtest.exe \
         *.idx *.toc *.log *.aux *.dvi *.lof *.ind *.ilg *.ps *.log *.s mpi.c *.da *.dyn *.dpi tommath.tex `find . -type f | grep [~] | xargs` *.lo *.la
 	rm -rf .libs/
 	${MAKE} -C etc/ clean MAKE=${MAKE}
