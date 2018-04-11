@@ -123,7 +123,7 @@ pre_gen:
 	sed -e 's/[[:blank:]]*$$//' mpi.c > pre_gen/mpi.c
 	rm mpi.c
 
-zipup: clean new_file manual poster docs
+zipup: clean astyle new_file manual poster docs
 	@# Update the index, so diff-index won't fail in case the pdf has been created.
 	@#   As the pdf creation modifies the tex files, git sometimes detects the
 	@#   modified files, but misses that it's put back to its original version.
