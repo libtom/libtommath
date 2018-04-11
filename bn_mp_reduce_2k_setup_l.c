@@ -24,14 +24,14 @@ int mp_reduce_2k_setup_l(const mp_int *a, mp_int *d)
    }
 
    if ((res = mp_2expt(&tmp, mp_count_bits(a))) != MP_OKAY) {
-      goto ERR;
+      goto LBL_ERR;
    }
 
    if ((res = s_mp_sub(&tmp, a, d)) != MP_OKAY) {
-      goto ERR;
+      goto LBL_ERR;
    }
 
-ERR:
+LBL_ERR:
    mp_clear(&tmp);
    return res;
 }

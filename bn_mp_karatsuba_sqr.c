@@ -35,7 +35,7 @@ int mp_karatsuba_sqr(const mp_int *a, mp_int *b)
 
    /* init copy all the temps */
    if (mp_init_size(&x0, B) != MP_OKAY)
-      goto ERR;
+      goto LBL_ERR;
    if (mp_init_size(&x1, a->used - B) != MP_OKAY)
       goto X0;
 
@@ -115,7 +115,7 @@ X1:
    mp_clear(&x1);
 X0:
    mp_clear(&x0);
-ERR:
+LBL_ERR:
    return err;
 }
 #endif
