@@ -12,6 +12,7 @@ Release/
 .coveralls.yml
 coverage*/
 coverage.info
+pre_gen/*
 
 # suppress output of build process and *nix/windows test executables
 timing
