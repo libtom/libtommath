@@ -45,7 +45,7 @@ EOS
       print {$out} $line;
    } else {
       print {$out} << "EOS";
-#include <tommath.h>
+#include "tommath_private.h"
 #ifdef $define
 $line
 EOS
