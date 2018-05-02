@@ -120,8 +120,8 @@ print {$class} << 'EOS';
 #   define LTM_LAST
 #endif
 
-#include "tommath_superclass.h"
-#include "tommath_class.h"
+#include <tommath_superclass.h>
+#include <tommath_class.h>
 #else
 #   define LTM_LAST
 #endif
