@@ -45,7 +45,7 @@ EOS
       print {$out} $line;
    } else {
       print {$out} << "EOS";
-#include <tommath.h>
+#include "tommath_private.h"
 #ifdef $define
 $line
 EOS
@@ -120,8 +120,8 @@ print {$class} << 'EOS';
 #   define LTM_LAST
 #endif
 
-#include <tommath_superclass.h>
-#include <tommath_class.h>
+#include "tommath_superclass.h"
+#include "tommath_class.h"
 #else
 #   define LTM_LAST
 #endif
