@@ -152,7 +152,7 @@ myprng | mtest/mtest | test
 
 This will output a row of numbers that are increasing.  Each column is a different test (such as addition, multiplication, etc)
 that is being performed.  The numbers represent how many times the test was invoked.  If an error is detected the program
-will exit with a dump of the relevent numbers it was working with.
+will exit with a dump of the relevant numbers it was working with.
 
 \section{Build Configuration}
 LibTomMath can configured at build time in three phases we shall call ``depends'', ``tweaks'' and ``trims''.
@@ -291,7 +291,7 @@ exponentiations.  It depends largely on the processor, compiler and the moduli b
 
 Essentially the only time you wouldn't use LibTomMath is when blazing speed is the primary concern.  However,
 on the other side of the coin LibTomMath offers you a totally free (public domain) well structured math library
-that is very flexible, complete and performs well in resource contrained environments.  Fast RSA for example can
+that is very flexible, complete and performs well in resource constrained environments.  Fast RSA for example can
 be performed with as little as 8KB of ram for data (again depending on build options).
 
 \chapter{Getting Started with LibTomMath}
@@ -641,7 +641,7 @@ int main(void)
 
 \chapter{Basic Operations}
 \section{Small Constants}
-Setting mp\_ints to small constants is a relatively common operation.  To accomodate these instances there are two
+Setting mp\_ints to small constants is a relatively common operation.  To accommodate these instances there are two
 small constant assignment functions.  The first function is used to set a single digit constant while the second sets
 an ISO C style ``unsigned long'' constant.  The reason for both functions is efficiency.  Setting a single digit is quick but the
 domain of a digit can change (it's always at least $0 \ldots 127$).
@@ -745,7 +745,7 @@ number == 654321
 int mp_set_long (mp_int * a, unsigned long b);
 \end{alltt}
 
-This will assign the value of the platform-dependant sized variable $b$ to the mp\_int $a$.
+This will assign the value of the platform-dependent sized variable $b$ to the mp\_int $a$.
 
 To get the ``unsigned long'' copy of an mp\_int the following function can be used.
 
@@ -1142,6 +1142,15 @@ int mp_xor (mp_int * a, mp_int * b, mp_int * c);
 
 Which compute $c = a \odot b$ where $\odot$ is one of OR, AND or XOR.
 
+\subsection{Bit Picking}
+\index{mp\_get\_bit}
+\begin{alltt}
+int mp_get_bit(mp_int *a, int b)
+\end{alltt}
+
+Pick a bit: returns \texttt{MP\_YES} if the bit at position $b$ (0-index) is set, that is if it is 1 (one), \texttt{MP\_NO}
+if the bit is 0 (zero) and \texttt{MP\_VAL} if $b < 0$.
+
 \section{Addition and Subtraction}
 
 To compute an addition or subtraction the following two functions can be used.
@@ -1533,9 +1542,9 @@ a single final reduction to correct for the normalization and the fast reduction
 
 For more details consider examining the file \textit{bn\_mp\_exptmod\_fast.c}.
 
-\section{Restricted Dimminished Radix}
+\section{Restricted Diminished Radix}
 
-``Dimminished Radix'' reduction refers to reduction with respect to moduli that are ameniable to simple
+``Diminished Radix'' reduction refers to reduction with respect to moduli that are amenable to simple
 digit shifting and small multiplications.  In this case the ``restricted'' variant refers to moduli of the
 form $\beta^k - p$ for some $k \ge 0$ and $0 < p < \beta$ where $\beta$ is the radix (default to $2^{28}$).
 
@@ -1556,8 +1565,8 @@ int mp_dr_reduce(mp_int *a, mp_int *b, mp_digit mp);
 \end{alltt}
 
 This reduces $a$ in place modulo $b$ with the pre--computed value $mp$.  $b$ must be of a restricted
-dimminished radix form and $a$ must be in the range $0 \le a < b^2$.  Dimminished radix reductions are
-much faster than both Barrett and Montgomery reductions as they have a much lower asymtotic running time.
+diminished radix form and $a$ must be in the range $0 \le a < b^2$.  Diminished radix reductions are
+much faster than both Barrett and Montgomery reductions as they have a much lower asymptotic running time.
 
 Since the moduli are restricted this algorithm is not particularly useful for something like Rabin, RSA or
 BBS cryptographic purposes.  This reduction algorithm is useful for Diffie-Hellman and ECC where fixed
@@ -1566,7 +1575,7 @@ primes are acceptable.
 Note that unlike Montgomery reduction there is no normalization process.  The result of this function is
 equal to the correct residue.
 
-\section{Unrestricted Dimminshed Radix}
+\section{Unrestricted Diminished Radix}
 
 Unrestricted reductions work much like the restricted counterparts except in this case the moduli is of the
 form $2^k - p$ for $0 < p < \beta$.  In this sense the unrestricted reductions are more flexible as they
@@ -1624,8 +1633,8 @@ $X$ the operation is performed as $Y \equiv (G^{-1} \mbox{ mod }P)^{\vert X \ver
 $gcd(G, P) = 1$.
 
 This function is actually a shell around the two internal exponentiation functions.  This routine will automatically
-detect when Barrett, Montgomery, Restricted and Unrestricted Dimminished Radix based exponentiation can be used.  Generally
-moduli of the a ``restricted dimminished radix'' form lead to the fastest modular exponentiations.  Followed by Montgomery
+detect when Barrett, Montgomery, Restricted and Unrestricted Diminished Radix based exponentiation can be used.  Generally
+moduli of the a ``restricted diminished radix'' form lead to the fastest modular exponentiations.  Followed by Montgomery
 and the other two algorithms.
 
 \section{Root Finding}
@@ -1692,21 +1701,49 @@ require ten tests whereas a 1024-bit number would only require four tests.
 
 You should always still perform a trial division before a Miller-Rabin test though.
 
+\section{Strong Lucas-Selfridge Test}
+\index{mp\_prime\_strong\_lucas\_selfridge}
+\begin{alltt}
+int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
+\end{alltt}
+Performs a strong Lucas-Selfridge test. The strong Lucas-Selfridge test together with the Rabin-Miler test with bases $2$ and $3$ resemble the BPSW test. The single internal use is as a compile-time option in \texttt{mp\_prime\_is\_prime} and can be excluded
+from the Libtommath build if not needed.
+
+\section{Frobenius (Underwood)  Test}
+\index{mp\_prime\_frobenius\_underwood}
+\begin{alltt}
+int mp_prime_frobenius_underwood(const mp_int *N, int *result)
+\end{alltt}
+Performs the variant of the Frobenius test as described by Paul Underwood. The single internal use is as a compile-time option in
+\texttt{mp\_prime\_is\_prime} and can be excluded from the Libtommath build if not needed.
+
 \section{Primality Testing}
 \index{mp\_prime\_is\_prime}
 \begin{alltt}
 int mp_prime_is_prime (mp_int * a, int t, int *result)
 \end{alltt}
-This will perform a trial division followed by $t$ rounds of Miller-Rabin tests on $a$ and store the result in $result$.
-If $a$ passes all of the tests $result$ is set to one, otherwise it is set to zero.  Note that $t$ is bounded by
-$1 \le t < PRIME\_SIZE$ where $PRIME\_SIZE$ is the number of primes in the prime number table (by default this is $256$).
+This will perform a trial division followed by two rounds of Miller-Rabin with bases 2 and 3. It is possible, although only at
+the compile time of this library for now, to include a strong Lucas-Selfridge test and/or a Frobenius test. See file
+\texttt{bn\_mp\_prime\_is\_prime.c} for the necessary details. It shall be noted that both functions are much slower than
+the Miller-Rabin test.
+
+If $t$ is set to a positive value $t$ additional rounds of the Miller-Rabin test with random bases will be performed to allow for Fips 186.4 (vid.~p.~126ff) compliance. The function \texttt{mp\_prime\_rabin\_miller\_trials} can be used to determine the number of rounds. It is vital that the function \texttt{mp\_rand()} has a cryptographically strong random number generator available.
+
+If  $t$ is set to a negative value the test will run the deterministic Miller-Rabin test for the primes up to
+$3317044064679887385961981$. That limit has to be checked by the caller. If $-t > 13$ than $-t - 13$ additional rounds of the
+Miller-Rabin test will be performed but note that $-t$ is bounded by $1 \le -t < PRIME\_SIZE$ where $PRIME\_SIZE$ is the number
+of primes in the prime number table (by default this is $256$) and the first 13 primes have already been used. It will return
+\texttt{MP\_VAL} in case of$-t > PRIME\_SIZE$.
+
+If $a$ passes all of the tests $result$ is set to one, otherwise it is set to zero.
 
 \section{Next Prime}
 \index{mp\_prime\_next\_prime}
 \begin{alltt}
 int mp_prime_next_prime(mp_int *a, int t, int bbs_style)
 \end{alltt}
-This finds the next prime after $a$ that passes mp\_prime\_is\_prime() with $t$ tests.  Set $bbs\_style$ to one if you
+This finds the next prime after $a$ that passes mp\_prime\_is\_prime() with $t$ tests but see the documentation for
+mp\_prime\_is\_prime for details regarding the use of the argument $t$.  Set $bbs\_style$ to one if you
 want only the next prime congruent to $3 \mbox{ mod } 4$, otherwise set it to zero to find any next prime.
 
 \section{Random Primes}
@@ -1716,7 +1753,8 @@ int mp_prime_random(mp_int *a, int t, int size, int bbs,
                     ltm_prime_callback cb, void *dat)
 \end{alltt}
 This will find a prime greater than $256^{size}$ which can be ``bbs\_style'' or not depending on $bbs$ and must pass
-$t$ rounds of tests.  The ``ltm\_prime\_callback'' is a typedef for
+$t$ rounds of tests but see the documentation for mp\_prime\_is\_prime for details regarding the use of the argument $t$.
+The ``ltm\_prime\_callback'' is a typedef for
 
 \begin{alltt}
 typedef int ltm_prime_callback(unsigned char *dst, int len, void *dat);
@@ -1840,7 +1878,7 @@ This finds the triple U1/U2/U3 using the Extended Euclidean algorithm such that 
 a \cdot U1 + b \cdot U2 = U3
 \end{equation}
 
-Any of the U1/U2/U3 paramters can be set to \textbf{NULL} if they are not desired.
+Any of the U1/U2/U3 parameters can be set to \textbf{NULL} if they are not desired.
 
 \section{Greatest Common Divisor}
 \index{mp\_gcd}
@@ -1865,6 +1903,14 @@ This will compute the Jacobi symbol for $a$ with respect to $p$.  If $p$ is prim
 symbol.  The result is stored in $c$ and can take on one of three values $\lbrace -1, 0, 1 \rbrace$.  If $p$ is prime
 then the result will be $-1$ when $a$ is not a quadratic residue modulo $p$.  The result will be $0$ if $a$ divides $p$
 and the result will be $1$ if $a$ is a quadratic residue modulo $p$.
+
+\section{Kronecker Symbol}
+\index{mp\_kronecker}
+\begin{alltt}
+int mp_kronecker (mp_int * a, mp_int * p, int *c)
+\end{alltt}
+Extension of the Jacoby symbol to all $\lbrace a, p \rbrace \in \mathbb{Z}$ .
+
 
 \section{Modular square root}
 \index{mp\_sqrtmod\_prime}
@@ -1910,6 +1956,12 @@ int mp_mod_d(mp_int *a, mp_digit b, mp_digit *c);
 These work like the full mp\_int capable variants except the second parameter $b$ is a mp\_digit.  These
 functions fairly handy if you have to work with relatively small numbers since you will not have to allocate
 an entire mp\_int to store a number like $1$ or $2$.
+
+\index{mp\_mul\_si}
+\begin{alltt}
+int mp_mul_si(mp_int *a, long b, mp_int *c);
+\end{alltt}
+Just like the functions above but with the ability to use a signed input as the small number.
 
 \input{bn.ind}
 
