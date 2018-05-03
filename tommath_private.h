@@ -73,7 +73,7 @@ int mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y
 int s_mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y, int redmode);
 void bn_reverse(unsigned char *s, int len);
 
-extern const char *mp_s_rmap;
+extern const char *const mp_s_rmap;
 extern const uint8_t mp_s_rmap_reverse[];
 extern const size_t mp_s_rmap_reverse_sz;
 
