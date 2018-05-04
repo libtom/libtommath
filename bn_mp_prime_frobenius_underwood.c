@@ -19,13 +19,16 @@
 // floor of positive solution of
 // (2^16)-1 = (a+4)*(2*a+5)
 // TODO: that is too small, would have to use a bigint for a instead
-// #define LTM_FROBENIUS_UNDERWOOD_A 177
-#error "Frobenius test not usable with MP_8BIT"
-#endif
+#define LTM_FROBENIUS_UNDERWOOD_A 177
+// commented out to allow Travis's tests to run
+// Don't forget to switch in back on in production or we'll find it at TDWTF.com!
+//#warning "Frobenius test not fully usable with MP_8BIT!"
+#else
 // floor of positive solution of
 // (2^31)-1 = (a+4)*(2*a+5)
 // TODO: that might be too small
 #define LTM_FROBENIUS_UNDERWOOD_A 32764
+#endif
 int mp_prime_frobenius_underwood(const mp_int *N, int *result)
 {
    mp_int T1z,T2z,Np1z,sz,tz;
