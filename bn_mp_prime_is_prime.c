@@ -109,7 +109,8 @@ int mp_prime_is_prime(const mp_int *a, int t, int *result)
    if (res == MP_NO) {
       goto LBL_B;
    }
-
+// strong Lucas Selfridge test needs some changes to be usable with 8-bit
+#ifndef MP_8BIT
 // commented out for testing purposes
 //#ifdef LTM_USE_STRONG_LUCAS_SELFRIDGE_TEST
    if ((err = mp_prime_strong_lucas_selfridge(a, &res)) != MP_OKAY) {
@@ -119,7 +120,7 @@ int mp_prime_is_prime(const mp_int *a, int t, int *result)
       goto LBL_B;
    }
 //#endif
-
+#endif
 //#ifdef LTM_USE_FROBENIUS_UNDERWOOD_TEST
    if ((err = mp_prime_frobenius_underwood(a, &res)) != MP_OKAY) {
       goto LBL_B;

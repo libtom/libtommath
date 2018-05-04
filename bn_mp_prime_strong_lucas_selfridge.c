@@ -14,9 +14,8 @@
  * guarantee it works.
  */
 
-#ifdef MP_8BIT
-#error "BPSW test not for MP_8BIT yet"
-#endif
+#ifndef MP_8BIT
+
 /*
     Strong Lucas-Selfridge test.
     returns MP_YES if it is a strong L-S prime, MP_NO if it is composite
@@ -354,5 +353,5 @@ LBL_LS_ERR:
    mp_clear_multi(&Dz, &gcd, &Np1, &Uz, &Vz, &U2mz, &V2mz, &Qmz, &Q2mz, &Qkdz, &T1z, &T2z, &T3z, &T4z, &Q2kdz, NULL);
    return e;
 }
-
+#endif
 #endif
