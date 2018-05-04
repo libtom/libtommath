@@ -66,6 +66,9 @@ _die()
     exit 128
   else
     echo "assuming timeout while running test - continue"
+    local _tail=""
+    which tail >/dev/null && _tail="tail -n 1 test_${suffix}.log" && \
+    echo "last line of test_"${suffix}".log was:" && $_tail && echo ""
     ret=$(( $ret + 1 ))
   fi
 }
