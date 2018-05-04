@@ -275,8 +275,9 @@ int mp_prime_is_prime(const mp_int *a, int t, int *result)
             fips_rand |= (unsigned int) b.dp[0];
          }
 #endif
-         len = (int) ((fips_rand & mask)/ DIGIT_BIT);
-         // Unlikely, but still possible.
+         // Ceil, because small numbers have a right to live, too,
+         len = (int) ( ((fips_rand & mask) + DIGIT_BIT) / DIGIT_BIT);
+         // Unlikely.
          if(len < 0){
             ix--;
             continue;
