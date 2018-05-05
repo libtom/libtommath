@@ -118,6 +118,35 @@ static struct mp_jacobi_st jacobi[] = {
    { 7, {  1, -1,  1, -1, -1,  0,  1,  1, -1,  1, -1, -1,  0,  1,  1, -1 } },
    { 9, { -1,  1,  0,  1,  1,  0,  1,  1,  0,  1,  1,  0,  1,  1,  0,  1 } },
 };
+
+struct mp_kronecker_st {
+   long n;
+   int c[21];
+};
+static struct mp_kronecker_st kronecker[] = {
+         //-10, -9, -8, -7,-6, -5, -4, -3, -2, -1, 0, 1,  2,  3, 4,  5,  6,  7,  8, 9, 10
+   { -10, {  0, -1,  0, -1, 0,  0,  0,  1,  0, -1, 0, 1,  0, -1, 0,  0,  0,  1,  0, 1,  0  } },
+   {  -9, { -1,  0, -1,  1, 0, -1, -1,  0, -1, -1, 0, 1,  1,  0, 1,  1,  0, -1,  1, 0,  1  } },
+   {  -8, {  0, -1,  0,  1, 0,  1,  0, -1,  0, -1, 0, 1,  0,  1, 0, -1,  0, -1,  0, 1,  0  } },
+   {  -7, {  1, -1, -1,  0, 1,  1, -1,  1, -1, -1, 0, 1,  1, -1, 1, -1, -1,  0,  1, 1, -1  } },
+   {  -6, {  0,  0,  0, -1, 0, -1,  0,  0,  0, -1, 0, 1,  0,  0, 0,  1,  0,  1,  0, 0,  0  } },
+   {  -5, {  0, -1,  1, -1, 1,  0, -1, -1,  1, -1, 0, 1, -1,  1, 1,  0, -1,  1, -1, 1,  0  } },
+   {  -4, {  0, -1,  0,  1, 0, -1,  0,  1,  0, -1, 0, 1,  0, -1, 0,  1,  0, -1,  0, 1,  0  } },
+   {  -3, { -1,  0,  1, -1, 0,  1, -1,  0,  1, -1, 0, 1, -1,  0, 1, -1,  0,  1, -1, 0,  1  } },
+   {  -2, {  0, -1,  0,  1, 0,  1,  0, -1,  0, -1, 0, 1,  0,  1, 0, -1,  0, -1,  0, 1,  0  } },
+   {  -1, { -1, -1, -1,  1, 1, -1, -1,  1, -1, -1, 1, 1,  1, -1, 1,  1, -1, -1,  1, 1,  1  } },
+   {   0, {  0,  0,  0,  0, 0,  0,  0,  0,  0,  1, 0, 1,  0,  0, 0,  0,  0,  0,  0, 0,  0  } },
+   {   1, {  1,  1,  1,  1, 1,  1,  1,  1,  1,  1, 1, 1,  1,  1, 1,  1,  1,  1,  1, 1,  1  } },
+   {   2, {  0,  1,  0,  1, 0, -1,  0, -1,  0,  1, 0, 1,  0, -1, 0, -1,  0,  1,  0, 1,  0  } },
+   {   3, {  1,  0, -1, -1, 0, -1,  1,  0, -1,  1, 0, 1, -1,  0, 1, -1,  0, -1, -1, 0,  1  } },
+   {   4, {  0,  1,  0,  1, 0,  1,  0,  1,  0,  1, 0, 1,  0,  1, 0,  1,  0,  1,  0, 1,  0  } },
+   {   5, {  0,  1, -1, -1, 1,  0,  1, -1, -1,  1, 0, 1, -1, -1, 1,  0,  1, -1, -1, 1,  0  } },
+   {   6, {  0,  0,  0, -1, 0,  1,  0,  0,  0,  1, 0, 1,  0,  0, 0,  1,  0, -1,  0, 0,  0  } },
+   {   7, { -1,  1,  1,  0, 1, -1,  1,  1,  1,  1, 0, 1,  1,  1, 1, -1,  1,  0,  1, 1, -1  } },
+   {   8, {  0,  1,  0,  1, 0, -1,  0, -1,  0,  1, 0, 1,  0, -1, 0, -1,  0,  1,  0, 1,  0  } },
+   {   9, {  1,  0,  1,  1, 0,  1,  1,  0,  1,  1, 0, 1,  1,  0, 1,  1,  0,  1,  1, 0,  1  } },
+   {  10, {  0,  1,  0, -1, 0,  0,  0,  1,  0,  1, 0, 1,  0,  1, 0,  0,  0, -1,  0, 1,  0  } }
+};
 #endif
 
 #if LTM_DEMO_TEST_VS_MTEST != 0
@@ -133,6 +162,7 @@ int main(void)
             gcd_n, lcm_n, inv_n, div2_n, mul2_n, add_d_n, sub_d_n;
 #else
    unsigned long s, t;
+   long k, m;
    unsigned long long q, r;
    mp_digit mp;
    int i, n, err, should;
@@ -261,6 +291,45 @@ int main(void)
       }
    }
 
+
+   mp_set_int(&a, 0);
+   mp_set_int(&b, 1u);
+   if ((err = mp_kronecker(&a, &b, &i)) != MP_OKAY) {
+      printf("Failed executing mp_kronecker(0 | 1) %s.\n", mp_error_to_string(err));
+      return EXIT_FAILURE;
+   }
+   if (i != 1) {
+      printf("Failed trivial mp_kronecker(0 | 1) %d != 1\n", i);
+      return EXIT_FAILURE;
+   }
+   for (cnt = 0; cnt < (int)(sizeof(kronecker)/sizeof(kronecker[0])); ++cnt) {
+      k = kronecker[cnt].n;
+      if (k < 0) {
+          mp_set_int(&a, (unsigned long) (-k));
+          mp_neg(&a, &a);
+      }
+      else {
+          mp_set_int(&a, (unsigned long) k);
+      }
+      /* only test positive values of a */
+      for (m = -10; m <= 10; m++) {
+         if (m < 0) {
+            mp_set_int(&b,(unsigned long) (-m));
+            mp_neg(&b, &b);
+         }
+         else {
+            mp_set_int(&b, (unsigned long) m);
+         }
+         if ((err = mp_kronecker(&a, &b, &i)) != MP_OKAY) {
+            printf("Failed executing mp_kronecker(%ld | %ld) %s.\n", kronecker[cnt].n, m, mp_error_to_string(err));
+            return EXIT_FAILURE;
+         }
+         if (err == MP_OKAY && i != kronecker[cnt].c[m + 10]) {
+            printf("Failed trivial mp_kronecker(%ld | %ld) %d != %d\n", kronecker[cnt].n, m, i, kronecker[cnt].c[m + 10]);
+            return EXIT_FAILURE;
+         }
+      }
+   }
    /* test mp_complement */
    printf("\n\nTesting: mp_complement");
    for (i = 0; i < 1000; ++i) {
@@ -604,6 +673,25 @@ int main(void)
    }
    printf("\n");
 
+
+   // strong Miller-Rabin pseudoprime to the first 200 primes (F. Arnault)
+   puts("Testing mp_prime_is_prime() with Arnault's pseudoprime  803...901 \n");
+   mp_read_radix(&a,"91xLNF3roobhzgTzoFIG6P13ZqhOVYSN60Fa7Cj2jVR1g0k89zdahO9/kAiRprpfO1VAp1aBHucLFV/qLKLFb+zonV7R2Vxp1K13ClwUXStpV0oxTNQVjwybmFb5NBEHImZ6V7P6+udRJuH8VbMEnS0H8/pSqQrg82OoQQ2fPpAk6G1hkjqoCv5s/Yr",64);
+   mp_prime_is_prime(&a, 8, &cnt);
+   if (cnt == MP_YES) {
+      printf("Arnault's pseudoprime is not prime but mp_prime_is_prime says it is.\n");
+      return EXIT_FAILURE;
+   }
+   // About the same size as Arnault's pseudoprime
+   puts("Testing mp_prime_is_prime() with certified prime 2^1119 + 53\n");
+   mp_set(&a,1u);
+   mp_mul_2d(&a,1119,&a);
+   mp_add_d(&a,53,&a);
+   mp_prime_is_prime(&a, 8, &cnt);
+   if (cnt == MP_NO) {
+      printf("A certified prime is a prime but mp_prime_is_prime says it not.\n");
+      return EXIT_FAILURE;
+   }
    for (ix = 16; ix < 128; ix++) {
       printf("Testing (    safe-prime): %9d bits    \r", ix);
       fflush(stdout);
