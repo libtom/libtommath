@@ -112,7 +112,9 @@ int mp_prime_is_prime(const mp_int *a, int t, int *result)
 
 
 #ifdef MP_8BIT
-   t = 8;
+   if(t >= 0 && t < 8) {
+      t = 8;
+   }
 #else
 // switched off, failed a test, said 2^1119 + 53 (a cert. prime) is not prime
 #ifdef LTM_USE_STRONG_LUCAS_SELFRIDGE_TEST
