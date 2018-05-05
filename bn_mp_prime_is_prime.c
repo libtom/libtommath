@@ -116,15 +116,15 @@ int mp_prime_is_prime(const mp_int *a, int t, int *result)
       t = 8;
    }
 #else
-// switched off, failed a test, said 2^1119 + 53 (a cert. prime) is not prime
-#ifdef LTM_USE_STRONG_LUCAS_SELFRIDGE_TEST
+// commented out for testing purposes
+//#ifdef LTM_USE_STRONG_LUCAS_SELFRIDGE_TEST
    if ((err = mp_prime_strong_lucas_selfridge(a, &res)) != MP_OKAY) {
       goto LBL_B;
    }
    if (res == MP_NO) {
       goto LBL_B;
    }
-#endif
+//#endif
 // commented out for testing purposes
 //#ifdef LTM_USE_FROBENIUS_UNDERWOOD_TEST
    if ((err = mp_prime_frobenius_underwood(a, &res)) != MP_OKAY) {

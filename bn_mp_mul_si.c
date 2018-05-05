@@ -19,14 +19,16 @@
 int mp_mul_si(const mp_int *a, long d, mp_int *c)
 {
    mp_int t;
-   int err;
+   int err, neg = 0;
 
    if ((err = mp_init(&t)) != MP_OKAY) {
       return err;
    }
    if (d < 0) {
+      neg = 1;
       d = -d;
    }
+
    // mp_digit might be smaller than a long, which excludes
    // the use of mp_mul_d() here.
    if ((err = mp_set_int(&t, (unsigned long) d)) != MP_OKAY) {
@@ -35,7 +37,7 @@ int mp_mul_si(const mp_int *a, long d, mp_int *c)
    if ((err = mp_mul(a, &t, c)) != MP_OKAY) {
       goto LBL_MPMULSI_ERR;
    }
-   if (d < 0) {
+   if (neg ==  1) {
       c->sign = (a->sign == MP_NEG) ? MP_ZPOS: MP_NEG;
    }
 LBL_MPMULSI_ERR:

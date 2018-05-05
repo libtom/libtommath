@@ -35,8 +35,8 @@
 */
 int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
 {
-   // TODO: choose better variable names! "Dz" and "dz"? Really?
-   mp_int Dz, gcd, Np1, dz, Uz, Vz, U2mz, V2mz, Qmz, Q2mz, Qkdz, T1z, T2z, T3z, T4z, Q2kdz;
+   // TODO: choose better variable names!
+   mp_int Dz, gcd, Np1, Uz, Vz, U2mz, V2mz, Qmz, Q2mz, Qkdz, T1z, T2z, T3z, T4z, Q2kdz;
    // TODO: Some of them need the full 32 bit, hence the (temporary) exclusion of MP_8BIT
    int32_t D, Ds, J, sign, P, Q, r, s, u, Nbits;
    int e = MP_OKAY;
@@ -52,13 +52,13 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
    included.
    */
 
-   D = 5;
-   sign = 1;
-
-   if ((e = mp_init_multi(&Dz, &gcd, &Np1, &dz, &Uz, &Vz, &U2mz, &V2mz, &Qmz, &Q2mz, &Qkdz, &T1z, &T2z, &T3z, &T4z, &Q2kdz,
+   if ((e = mp_init_multi(&Dz, &gcd, &Np1, &Uz, &Vz, &U2mz, &V2mz, &Qmz, &Q2mz, &Qkdz, &T1z, &T2z, &T3z, &T4z, &Q2kdz,
                           NULL)) != MP_OKAY) {
       return e;
    }
+
+   D = 5;
+   sign = 1;
 
    for (;;) {
       Ds   = sign * D;
@@ -72,15 +72,17 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
       /* if 1 < GCD < N then N is composite with factor "D", and
          Jacobi(D,N) is technically undefined (but often returned
          as zero). */
-      if ((gcd.used > 1 || gcd.dp[0] > 1)  && mp_cmp(&gcd,a) == MP_LT) {
+      if ( mp_cmp_d(&gcd,1u) == MP_GT  && mp_cmp(&gcd,a) == MP_LT) {
          goto LBL_LS_ERR;
       }
-
+      if (Ds < 0) {
+         Dz.sign = MP_NEG;
+      }
       if ((e = mp_kronecker(&Dz, a, &J)) != MP_OKAY) {
          goto LBL_LS_ERR;
       }
 
-      if (J < 0) {
+      if (J == -1) {
          break;
       }
       D += 2;
@@ -124,19 +126,17 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
       Baillie-PSW test based on the strong Lucas-Selfridge test
       should be more reliable. */
 
-   if ((e = mp_add_d(a,1,&Np1)) != MP_OKAY) {
+   if ((e = mp_add_d(a,1u,&Np1)) != MP_OKAY) {
       goto LBL_LS_ERR;
    }
    s = mp_cnt_lsb(&Np1);
 
    // this should round towards zero because
    // Thomas R. Nicely used GMP's mpz_tdiv_q_2exp()
-   // mp_div_2d() does that
-   if ((e = mp_div_2d(&Np1, s, &dz, NULL)) != MP_OKAY) {
+   // and mp_div_2d() is equivalent
+   if ((e = mp_div_2d(&Np1, s, &Dz, NULL)) != MP_OKAY) {
       goto LBL_LS_ERR;
    }
-
-
    /* We must now compute U_d and V_d. Since d is odd, the accumulated
       values U and V are initialized to U_1 and V_1 (if the target
       index were even, U and V would be initialized instead to U_0=0
@@ -158,22 +158,22 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
       if ((e = mp_set_int(&Qmz, (unsigned long) Q)) != MP_OKAY) {
          goto LBL_LS_ERR;
       }
-      Qmz.sign = MP_NEG;
-      if ((e = mp_set_int(&Q2mz, (unsigned long)(2 * Q))) != MP_OKAY) {
+      if ((e = mp_mul_2(&Qmz, &Q2mz)) != MP_OKAY) {
          goto LBL_LS_ERR;
       }
-      Q2mz.sign = MP_NEG;
       /* Initializes calculation of Q^d */
       if ((e = mp_set_int(&Qkdz, (unsigned long) Q)) != MP_OKAY) {
          goto LBL_LS_ERR;
       }
+      Qmz.sign = MP_NEG;
+      Q2mz.sign = MP_NEG;
       Qkdz.sign = MP_NEG;
       Q = -Q;
    } else {
       if ((e = mp_set_int(&Qmz, (unsigned long) Q)) != MP_OKAY) {
          goto LBL_LS_ERR;
       }
-      if ((e = mp_set_int(&Q2mz, (unsigned long)(2 * Q))) != MP_OKAY) {
+      if ((e = mp_mul_2(&Qmz, &Q2mz)) != MP_OKAY) {
          goto LBL_LS_ERR;
       }
       /* Initializes calculation of Q^d */
@@ -182,8 +182,7 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
       }
    }
 
-   Nbits = mp_count_bits(&dz);
-
+   Nbits = mp_count_bits(&Dz);
    for (u = 1; u < Nbits; u++) { /* zero bit off, already accounted for */
       /* Formulas for doubling of indices (carried out mod N). Note that
        * the indices denoted as "2m" are actually powers of 2, specifically
@@ -220,11 +219,10 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
          goto LBL_LS_ERR;
       }
 
-      if ((isset = mp_get_bit(&dz,u)) == MP_VAL) {
+      if ((isset = mp_get_bit(&Dz,u)) == MP_VAL) {
          e = isset;
          goto LBL_LS_ERR;
       }
-
       if (isset == MP_YES) {
          /* Formulas for addition of indices (carried out mod N);
           *
@@ -233,6 +231,7 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
           *
           * Be careful with division by 2 (mod N)!
           */
+
          if ((e = mp_mul(&U2mz,&Vz,&T1z)) != MP_OKAY) {
             goto LBL_LS_ERR;
          }
@@ -263,7 +262,7 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
             goto LBL_LS_ERR;
          }
          if (Uz.sign == MP_NEG && mp_isodd(&Uz)) {
-            if ((e = mp_sub_d(&Uz,1,&Uz)) != MP_OKAY) {
+            if ((e = mp_sub_d(&Uz,1u,&Uz)) != MP_OKAY) {
                goto LBL_LS_ERR;
             }
          }
@@ -278,7 +277,7 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
          if ((e = mp_div_2(&Vz,&Vz)) != MP_OKAY) {
             goto LBL_LS_ERR;
          }
-         if (Vz.sign == MP_NEG) {
+         if (Vz.sign == MP_NEG && mp_isodd(&Vz)) {
             if ((e = mp_sub_d(&Vz,1,&Vz)) != MP_OKAY) {
                goto LBL_LS_ERR;
             }
@@ -337,7 +336,7 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
          goto LBL_LS_ERR;
       }
       /* Calculate Q^{d*2^r} for next r (final iteration irrelevant). */
-      if (r < s - 1) {
+      if (r < (s - 1)) {
          if ((e = mp_sqr(&Qkdz,&Qkdz)) != MP_OKAY) {
             goto LBL_LS_ERR;
          }
