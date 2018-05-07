@@ -63,7 +63,7 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
    for (;;) {
       Ds   = sign * D;
       sign = -sign;
-      if ((e = mp_set_int(&Dz,(unsigned long) D)) != MP_OKAY) {
+      if ((e = mp_set_long(&Dz,(unsigned long) D)) != MP_OKAY) {
          goto LBL_LS_ERR;
       }
       if ((e = mp_gcd(a, &Dz, &gcd)) != MP_OKAY) {
@@ -155,14 +155,14 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
 
    if (Q < 0) {
       Q = -Q;
-      if ((e = mp_set_int(&Qmz, (unsigned long) Q)) != MP_OKAY) {
+      if ((e = mp_set_long(&Qmz, (unsigned long) Q)) != MP_OKAY) {
          goto LBL_LS_ERR;
       }
       if ((e = mp_mul_2(&Qmz, &Q2mz)) != MP_OKAY) {
          goto LBL_LS_ERR;
       }
       /* Initializes calculation of Q^d */
-      if ((e = mp_set_int(&Qkdz, (unsigned long) Q)) != MP_OKAY) {
+      if ((e = mp_set_long(&Qkdz, (unsigned long) Q)) != MP_OKAY) {
          goto LBL_LS_ERR;
       }
       Qmz.sign = MP_NEG;
@@ -170,14 +170,14 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
       Qkdz.sign = MP_NEG;
       Q = -Q;
    } else {
-      if ((e = mp_set_int(&Qmz, (unsigned long) Q)) != MP_OKAY) {
+      if ((e = mp_set_long(&Qmz, (unsigned long) Q)) != MP_OKAY) {
          goto LBL_LS_ERR;
       }
       if ((e = mp_mul_2(&Qmz, &Q2mz)) != MP_OKAY) {
          goto LBL_LS_ERR;
       }
       /* Initializes calculation of Q^d */
-      if ((e = mp_set_int(&Qkdz, (unsigned long) Q)) != MP_OKAY) {
+      if ((e = mp_set_long(&Qkdz, (unsigned long) Q)) != MP_OKAY) {
          goto LBL_LS_ERR;
       }
    }
