@@ -48,7 +48,7 @@ int mp_prime_frobenius_underwood(const mp_int *N, int *result)
          continue;
       }
       // (32764^2 - 4) < 2^31, no bigint for >MP_8BIT needed)
-      if ((e = mp_set_int(&T1z,(unsigned long)a)) != MP_OKAY) {
+      if ((e = mp_set_long(&T1z,(unsigned long)a)) != MP_OKAY) {
          goto LBL_FU_ERR;
       }
 
@@ -78,7 +78,7 @@ int mp_prime_frobenius_underwood(const mp_int *N, int *result)
       goto LBL_FU_ERR;
    }
    // Composite if N and (a+4)*(2*a+5) are not coprime
-   if ((e = mp_set_int(&T1z, (unsigned long)((a+4)*(2*a+5)))) != MP_OKAY) {
+   if ((e = mp_set_long(&T1z, (unsigned long)((a+4)*(2*a+5)))) != MP_OKAY) {
       goto LBL_FU_ERR;
    }
 
@@ -167,7 +167,7 @@ int mp_prime_frobenius_underwood(const mp_int *N, int *result)
       }
    }
 
-   if ((e = mp_set_int(&T1z, (unsigned long)(2 * a + 5))) != MP_OKAY) {
+   if ((e = mp_set_long(&T1z, (unsigned long)(2 * a + 5))) != MP_OKAY) {
       goto LBL_FU_ERR;
    }
    if ((e = mp_mod(&T1z,N,&T1z)) != MP_OKAY) {

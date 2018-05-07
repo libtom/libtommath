@@ -31,7 +31,7 @@ int mp_mul_si(const mp_int *a, long d, mp_int *c)
 
    // mp_digit might be smaller than a long, which excludes
    // the use of mp_mul_d() here.
-   if ((err = mp_set_int(&t, (unsigned long) d)) != MP_OKAY) {
+   if ((err = mp_set_long(&t, (unsigned long) d)) != MP_OKAY) {
       goto LBL_MPMULSI_ERR;
    }
    if ((err = mp_mul(a, &t, c)) != MP_OKAY) {
