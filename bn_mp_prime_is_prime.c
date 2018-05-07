@@ -35,7 +35,6 @@ int mp_prime_is_prime(const mp_int *a, int t, int *result)
 
    /* valid value of t? */
    if (t > PRIME_SIZE) {
-      puts("t > PRIME_SIZE");
       return MP_VAL;
    }
 
@@ -54,7 +53,6 @@ int mp_prime_is_prime(const mp_int *a, int t, int *result)
 
    /* N must be odd */
    if (mp_iseven(a) == MP_YES) {
-      *result = 0;
       return MP_OKAY;
    }
    /* N is not a perfect square: floor(sqrt(N))^2 != N */
@@ -62,14 +60,13 @@ int mp_prime_is_prime(const mp_int *a, int t, int *result)
       return err;
    }
    if (res != 0) {
-      *result = 0;
       return MP_OKAY;
    }
 
    /* is the input equal to one of the primes in the table? */
    for (ix = 0; ix < PRIME_SIZE; ix++) {
       if (mp_cmp_d(a, ltm_prime_tab[ix]) == MP_EQ) {
-         *result = 1;
+         *result = MP_YES;
          return MP_OKAY;
       }
    }
@@ -126,14 +123,14 @@ int mp_prime_is_prime(const mp_int *a, int t, int *result)
    }
 //#endif
 // commented out for testing purposes
-//#ifdef LTM_USE_FROBENIUS_UNDERWOOD_TEST
+#ifdef LTM_USE_FROBENIUS_UNDERWOOD_TEST
    if ((err = mp_prime_frobenius_underwood(a, &res)) != MP_OKAY) {
       goto LBL_B;
    }
    if (res == MP_NO) {
       goto LBL_B;
    }
-//#endif
+#endif
 #endif
 
    /*
