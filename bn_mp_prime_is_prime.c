@@ -70,6 +70,12 @@ int mp_prime_is_prime(const mp_int *a, int t, int *result)
          return MP_OKAY;
       }
    }
+#ifdef MP_8BIT
+   // The search in the loop above was exhaustive in this case
+   if (a->used == 1 && PRIME_SIZE >= 31) {
+      return MP_OKAY;
+   }
+#endif
 
    /* first perform trial division */
    if ((err = mp_prime_is_divisible(a, &res)) != MP_OKAY) {
@@ -276,21 +282,39 @@ int mp_prime_is_prime(const mp_int *a, int t, int *result)
             }
             fips_rand <<= sizeof(mp_digit) * CHAR_BIT;
             fips_rand |= (unsigned int) b.dp[0];
+            fips_rand &= mask;
          }
 #endif
          // Ceil, because small numbers have a right to live, too,
-         len = (int) ( ((fips_rand & mask) + DIGIT_BIT) / DIGIT_BIT);
+         len = (int) ( (fips_rand + DIGIT_BIT) / DIGIT_BIT);
          // Unlikely.
          if(len < 0){
             ix--;
             continue;
          }
+         // As mentioned above, one 8-bit digit is too small and
+         // although it can only happen in the unlikely case that
+         // an "unsigned int" is smaller than 16 bit a simple test
+         // is cheap and the correction even cheaper.
+#ifdef MP_8BIT
+         // All "a" < 2^8 have been caught before
+         if(len == 1){
+            len++;
+         }
+#endif
          if ((err = mp_rand(&b, len)) != MP_OKAY) {
             goto LBL_B;
          }
+         // That number might got too big and the witness has to be
+         // smaller than or equal to "a"
+         len = mp_count_bits(&b);
+         if (len > size_a) {
+            len = len - size_a;
+            mp_div_2d(&b, len, &b, NULL);
+         }
 
          // Although the chance for b <= 3 is miniscule, try again.
-         if(mp_cmp_d(&b,3) != MP_GT) {
+         if (mp_cmp_d(&b,3) != MP_GT) {
             ix--;
             continue;
          }
