@@ -28,16 +28,16 @@
     liability arising from its use
 
     The multi-line comments are made by Thomas R. Nicely and are copied verbatim.
-    Single-line comments are by the code-portist.
+    Additional comments marked "CZ" (without the quotes) are by the code-portist.
 
     (If that name sounds familiar, he is the guy who found the fdiv bug in the
      Pentium (P5x, I think) Intel processor)
 */
 int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
 {
-   // TODO: choose better variable names!
+   /* CZ TODO: choose better variable names! */
    mp_int Dz, gcd, Np1, Uz, Vz, U2mz, V2mz, Qmz, Q2mz, Qkdz, T1z, T2z, T3z, T4z, Q2kdz;
-   // TODO: Some of them need the full 32 bit, hence the (temporary) exclusion of MP_8BIT
+   /* CZ TODO: Some of them need the full 32 bit, hence the (temporary) exclusion of MP_8BIT */
    int32_t D, Ds, J, sign, P, Q, r, s, u, Nbits;
    int e = MP_OKAY;
    int isset;
@@ -131,9 +131,13 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
    }
    s = mp_cnt_lsb(&Np1);
 
-   // this should round towards zero because
-   // Thomas R. Nicely used GMP's mpz_tdiv_q_2exp()
-   // and mp_div_2d() is equivalent
+   /* CZ
+    * This should round towards zero because
+    * Thomas R. Nicely used GMP's mpz_tdiv_q_2exp()
+    * and mp_div_2d() is equivalent. Additionally:
+    * dividing an even number by two does not produce
+    * any leftovers.
+    */
    if ((e = mp_div_2d(&Np1, s, &Dz, NULL)) != MP_OKAY) {
       goto LBL_LS_ERR;
    }
@@ -211,7 +215,7 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
       if ((e = mp_sqr(&Qmz,&Qmz)) != MP_OKAY) {
          goto LBL_LS_ERR;
       }
-      /* prevents overflow */ // still necessary without a fixed prealloc'd mem.?
+      /* prevents overflow */ /* CZ  still necessary without a fixed prealloc'd mem.? */
       if ((e = mp_mod(&Qmz,a,&Qmz)) != MP_OKAY) {
          goto LBL_LS_ERR;
       }
@@ -255,9 +259,11 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
                goto LBL_LS_ERR;
             }
          }
-         // This should round towards negative infinity because
-         // Thomas R. Nicely used GMP's mpz_fdiv_q_2exp().
-         // But mp_div_2() does not do so, it is truncating instead.
+         /* CZ
+          * This should round towards negative infinity because
+          * Thomas R. Nicely used GMP's mpz_fdiv_q_2exp().
+          * But mp_div_2() does not do so, it is truncating instead.
+          */
          if ((e = mp_div_2(&Uz,&Uz)) != MP_OKAY) {
             goto LBL_LS_ERR;
          }
