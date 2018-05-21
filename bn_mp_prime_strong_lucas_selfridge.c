@@ -14,7 +14,48 @@
  * guarantee it works.
  */
 
+/*
+ *  8-bit is just too small. You can try the Frobenius test
+ *  but that frobenius test can fail, too, for the same reason.
+ */
 #ifndef MP_8BIT
+
+/*
+ * multiply bigint a with int d and put the result in c
+ * Like mp_mul_d() but with a signed long as the small input
+ */
+static int mp_mul_si(const mp_int *a, long d, mp_int *c)
+{
+   mp_int t;
+   int err, neg = 0;
+
+   if ((err = mp_init(&t)) != MP_OKAY) {
+      return err;
+   }
+   if (d < 0) {
+      neg = 1;
+      d = -d;
+   }
+
+   /*
+    * mp_digit might be smaller than a long, which excludes
+    * the use of mp_mul_d() here.
+    */
+   if ((err = mp_set_long(&t, (unsigned long) d)) != MP_OKAY) {
+      goto LBL_MPMULSI_ERR;
+   }
+   if ((err = mp_mul(a, &t, c)) != MP_OKAY) {
+      goto LBL_MPMULSI_ERR;
+   }
+   if (neg ==  1) {
+      c->sign = (a->sign == MP_NEG) ? MP_ZPOS: MP_NEG;
+   }
+LBL_MPMULSI_ERR:
+   mp_clear(&t);
+   return err;
+}
+
+
 
 /*
     Strong Lucas-Selfridge test.

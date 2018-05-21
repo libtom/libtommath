@@ -14,7 +14,6 @@
  * guarantee it works.
  */
 
-
 #ifdef MP_8BIT
 /*
  * floor of positive solution of

@@ -364,10 +364,6 @@ int mp_sub_d(const mp_int *a, mp_digit b, mp_int *c);
 /* c = a * b */
 int mp_mul_d(const mp_int *a, mp_digit b, mp_int *c);
 
-/* multiply bigint a with int d and put the result in c
-   Like mp_mul_d() but with a signed long as the small input */
-int mp_mul_si(const mp_int *a, long d, mp_int *c);
-
 /* a/b => cb + d == a */
 int mp_div_d(const mp_int *a, mp_digit b, mp_int *c, mp_digit *d);
 
