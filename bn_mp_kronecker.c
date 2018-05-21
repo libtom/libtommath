@@ -101,14 +101,16 @@ int mp_kronecker(const mp_int *a, const mp_int *p, int *c)
       }
 
       if (a1.sign == MP_NEG) {
-         // compute k = (-1)^((a1)*(p1-1)/4) * k
-         // a1.dp[0] + 1 cannot overflow because the MSB
-         // of the type mp_digit is not set by definition
+         /*
+          * Compute k = (-1)^((a1)*(p1-1)/4) * k
+          * a1.dp[0] + 1 cannot overflow because the MSB
+          * of the type mp_digit is not set by definition
+          */
          if ((a1.dp[0] + 1) & p1.dp[0] & 2u) {
             k = -k;
          }
       } else {
-         // compute k = (-1)^((a1-1)*(p1-1)/4) * k
+         /* compute k = (-1)^((a1-1)*(p1-1)/4) * k */
          if (a1.dp[0] & p1.dp[0] & 2u) {
             k = -k;
          }
@@ -128,9 +130,9 @@ int mp_kronecker(const mp_int *a, const mp_int *p, int *c)
 
 LBL_KRON:
    mp_clear(&r);
-LBL_KRON_0:
-   mp_clear(&a1);
 LBL_KRON_1:
+   mp_clear(&a1);
+LBL_KRON_0:
    mp_clear(&p1);
    return e;
 }

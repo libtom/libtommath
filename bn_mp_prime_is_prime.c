@@ -119,16 +119,16 @@ int mp_prime_is_prime(const mp_int *a, int t, int *result)
       t = 8;
    }
 #else
-// commented out for testing purposes
-//#ifdef LTM_USE_STRONG_LUCAS_SELFRIDGE_TEST
+/* commented out for testing purposes */
+/* #ifdef LTM_USE_STRONG_LUCAS_SELFRIDGE_TEST */
    if ((err = mp_prime_strong_lucas_selfridge(a, &res)) != MP_OKAY) {
       goto LBL_B;
    }
    if (res == MP_NO) {
       goto LBL_B;
    }
-//#endif
-// commented out for testing purposes
+/* #endif */
+/* commented out for testing purposes */
 #ifdef LTM_USE_FROBENIUS_UNDERWOOD_TEST
    if ((err = mp_prime_frobenius_underwood(a, &res)) != MP_OKAY) {
       goto LBL_B;
@@ -223,12 +223,14 @@ int mp_prime_is_prime(const mp_int *a, int t, int *result)
        See Fips 186.4 p. 126ff
    */
    else if (t > 0) {
-      // The mp_digit's have a defined bit-size but the size of the
-      // array a.dp is a simple 'int' and this library can not assume full
-      // compliance to the current C-standard (ISO/IEC 9899:2011) because
-      // it gets used for small embeded processors, too. Some of those MCUs
-      // have compilers that one cannot call standard compliant by any means.
-      // Hence the ugly type-fiddling in the following code.
+      /*
+       * The mp_digit's have a defined bit-size but the size of the
+       * array a.dp is a simple 'int' and this library can not assume full
+       * compliance to the current C-standard (ISO/IEC 9899:2011) because
+       * it gets used for small embeded processors, too. Some of those MCUs
+       * have compilers that one cannot call standard compliant by any means.
+       * Hence the ugly type-fiddling in the following code.
+       */
       size_a = mp_count_bits(a);
       mask = (1u << floor_ilog2(size_a)) - 1u;
       /*
@@ -266,16 +268,20 @@ int mp_prime_is_prime(const mp_int *a, int t, int *result)
         need to be prime.
       */
       for (ix = 0; ix < t; ix++) {
-         // mp_rand() guarantees the first digit to be non-zero
+         /* mp_rand() guarantees the first digit to be non-zero */
          if ((err = mp_rand(&b, 1)) != MP_OKAY) {
             goto LBL_B;
          }
-         // Reduce digit before casting because mp_digit might be bigger than
-         // an unsigned int and "mask" on the other side is most probably not.
+         /* 
+          * Reduce digit before casting because mp_digit might be bigger than
+          * an unsigned int and "mask" on the other side is most probably not.
+          */
          fips_rand = (unsigned int) (b.dp[0] & (mp_digit) mask);
 #ifdef MP_8BIT
-         // One 8-bit digit is too small, so concatenate two if the size of
-         // unsigned int allows for it.
+         /*
+          * One 8-bit digit is too small, so concatenate two if the size of
+          * unsigned int allows for it.
+          */
          if( (sizeof(unsigned int) * CHAR_BIT)/2 >= (sizeof(mp_digit) * CHAR_BIT) ) {
             if ((err = mp_rand(&b, 1)) != MP_OKAY) {
                goto LBL_B;
@@ -285,19 +291,21 @@ int mp_prime_is_prime(const mp_int *a, int t, int *result)
             fips_rand &= mask;
          }
 #endif
-         // Ceil, because small numbers have a right to live, too,
+         /* Ceil, because small numbers have a right to live, too, */
          len = (int) ( (fips_rand + DIGIT_BIT) / DIGIT_BIT);
-         // Unlikely.
+         /*  Unlikely. */
          if(len < 0){
             ix--;
             continue;
          }
-         // As mentioned above, one 8-bit digit is too small and
-         // although it can only happen in the unlikely case that
-         // an "unsigned int" is smaller than 16 bit a simple test
-         // is cheap and the correction even cheaper.
+         /*
+          * As mentioned above, one 8-bit digit is too small and
+          * although it can only happen in the unlikely case that
+          * an "unsigned int" is smaller than 16 bit a simple test
+          * is cheap and the correction even cheaper.
+          */
 #ifdef MP_8BIT
-         // All "a" < 2^8 have been caught before
+         /* All "a" < 2^8 have been caught before */
          if(len == 1){
             len++;
          }
@@ -305,15 +313,17 @@ int mp_prime_is_prime(const mp_int *a, int t, int *result)
          if ((err = mp_rand(&b, len)) != MP_OKAY) {
             goto LBL_B;
          }
-         // That number might got too big and the witness has to be
-         // smaller than or equal to "a"
+         /*
+          * That number might got too big and the witness has to be
+          * smaller than or equal to "a"
+          */
          len = mp_count_bits(&b);
          if (len > size_a) {
             len = len - size_a;
             mp_div_2d(&b, len, &b, NULL);
          }
 
-         // Although the chance for b <= 3 is miniscule, try again.
+         /* Although the chance for b <= 3 is miniscule, try again. */
          if (mp_cmp_d(&b,3) != MP_GT) {
             ix--;
             continue;

@@ -16,17 +16,23 @@
 
 
 #ifdef MP_8BIT
-// floor of positive solution of
-// (2^16)-1 = (a+4)*(2*a+5)
-// TODO: that is too small, would have to use a bigint for a instead
+/*
+ * floor of positive solution of
+ * (2^16)-1 = (a+4)*(2*a+5)
+ * TODO: that is too small, would have to use a bigint for a instead
+ */
 #define LTM_FROBENIUS_UNDERWOOD_A 177
-// commented out to allow Travis's tests to run
-// Don't forget to switch in back on in production or we'll find it at TDWTF.com!
-//#warning "Frobenius test not fully usable with MP_8BIT!"
+/*
+ * Commented out to allow Travis's tests to run
+ * Don't forget to switch it back on in production or we'll find it at TDWTF.com!
+ */
+ /* #warning "Frobenius test not fully usable with MP_8BIT!" */
 #else
-// floor of positive solution of
-// (2^31)-1 = (a+4)*(2*a+5)
-// TODO: that might be too small
+/*
+ * floor of positive solution of
+ * (2^31)-1 = (a+4)*(2*a+5)
+ * TODO: that might be too small
+ */
 #define LTM_FROBENIUS_UNDERWOOD_A 32764
 #endif
 int mp_prime_frobenius_underwood(const mp_int *N, int *result)
@@ -43,11 +49,11 @@ int mp_prime_frobenius_underwood(const mp_int *N, int *result)
    }
 
    for (a = 0; a < LTM_FROBENIUS_UNDERWOOD_A; a++) {
-      //TODO: That's ugly! No, really, it is!
+      /* TODO: That's ugly! No, really, it is! */
       if (a==2||a==4||a==7||a==8||a==10||a==14||a==18||a==23||a==26||a==28) {
          continue;
       }
-      // (32764^2 - 4) < 2^31, no bigint for >MP_8BIT needed)
+      /* (32764^2 - 4) < 2^31, no bigint for >MP_8BIT needed) */
       if ((e = mp_set_long(&T1z,(unsigned long)a)) != MP_OKAY) {
          goto LBL_FU_ERR;
       }
@@ -69,7 +75,7 @@ int mp_prime_frobenius_underwood(const mp_int *N, int *result)
       }
 
       if (j == 0) {
-         // composite
+         /* composite */
          goto LBL_FU_ERR;
       }
    }
@@ -77,7 +83,7 @@ int mp_prime_frobenius_underwood(const mp_int *N, int *result)
       e = MP_VAL;
       goto LBL_FU_ERR;
    }
-   // Composite if N and (a+4)*(2*a+5) are not coprime
+   /* Composite if N and (a+4)*(2*a+5) are not coprime */
    if ((e = mp_set_long(&T1z, (unsigned long)((a+4)*(2*a+5)))) != MP_OKAY) {
       goto LBL_FU_ERR;
    }
@@ -101,14 +107,14 @@ int mp_prime_frobenius_underwood(const mp_int *N, int *result)
 
    for (i = length - 2; i >= 0; i--) {
       /*
-         temp = (sz*(a*sz+2*tz))%N;
-         tz   = ((tz-sz)*(tz+sz))%N;
-         sz   = temp;
+       * temp = (sz*(a*sz+2*tz))%N;
+       * tz   = ((tz-sz)*(tz+sz))%N;
+       * sz   = temp;
        */
       if ((e = mp_mul_2(&tz,&T2z)) != MP_OKAY) {
          goto LBL_FU_ERR;
       }
-      // TODO: is this small saving worth the branch?
+      /* a = 0 at about 50% of the cases (non-square and odd input) */
       if (a != 0) {
          if ((e = mp_mul_d(&sz,(mp_digit)a,&T1z)) != MP_OKAY) {
             goto LBL_FU_ERR;
@@ -141,9 +147,9 @@ int mp_prime_frobenius_underwood(const mp_int *N, int *result)
       }
       if (isset == MP_YES) {
          /*
-             temp = (a+2) * sz + tz
-             tz   = 2 * tz - sz
-             sz   = temp
+          *  temp = (a+2) * sz + tz
+          *  tz   = 2 * tz - sz
+          *  sz   = temp
           */
          if (a == 0) {
             if ((e = mp_mul_2(&sz,&T1z)) != MP_OKAY) {
