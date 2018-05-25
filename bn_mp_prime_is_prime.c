@@ -13,7 +13,7 @@
  * guarantee it works.
  */
 
-// portable integer log of two with small footprint
+/* portable integer log of two with small footprint */
 static unsigned int floor_ilog2(int value)
 {
    unsigned int r = 0;
@@ -71,7 +71,7 @@ int mp_prime_is_prime(const mp_int *a, int t, int *result)
       }
    }
 #ifdef MP_8BIT
-   // The search in the loop above was exhaustive in this case
+   /* The search in the loop above was exhaustive in this case */
    if (a->used == 1 && PRIME_SIZE >= 31) {
       return MP_OKAY;
    }
@@ -113,31 +113,41 @@ int mp_prime_is_prime(const mp_int *a, int t, int *result)
       goto LBL_B;
    }
 
-
-#ifdef MP_8BIT
-   if(t >= 0 && t < 8) {
-      t = 8;
-   }
+/*
+ * Both, the Frobenius-Underwood test and the the Lucas-Selfridge test are quite
+ * slow so if speed is an issue, define LTM_USE_FIPS_ONLY to use M-R tests with
+ * bases 2, 3 and t random bases.
+ */
+#ifndef LTM_USE_FIPS_ONLY
+   if (t >= 0) {
+      /*
+       * Use a Frobenius-Underwood test instead of the Lucas-Selfridge test for
+       * MP_8BIT (It is unknown if the Lucas-Selfridge test works with 16-bit
+       * integers but the necesssary analysis is on the todo-list).
+       */
+#if defined (MP_8BIT) || defined (LTM_USE_FROBENIUS_TEST)
+      err = mp_prime_frobenius_underwood(a, &res);
+      if (err != MP_OKAY && err != MP_ITER) {
+         goto LBL_B;
+      }
+      if (res == MP_NO) {
+         goto LBL_B;
+      }
 #else
-/* commented out for testing purposes */
-/* #ifdef LTM_USE_STRONG_LUCAS_SELFRIDGE_TEST */
-   if ((err = mp_prime_strong_lucas_selfridge(a, &res)) != MP_OKAY) {
-      goto LBL_B;
-   }
-   if (res == MP_NO) {
-      goto LBL_B;
-   }
-/* #endif */
-/* commented out for testing purposes */
-#ifdef LTM_USE_FROBENIUS_UNDERWOOD_TEST
-   if ((err = mp_prime_frobenius_underwood(a, &res)) != MP_OKAY) {
-      goto LBL_B;
-   }
-   if (res == MP_NO) {
-      goto LBL_B;
+      if ((err = mp_prime_strong_lucas_selfridge(a, &res)) != MP_OKAY) {
+         goto LBL_B;
+      }
+      if (res == MP_NO) {
+         goto LBL_B;
+      }
+#endif
    }
 #endif
-#endif
+
+   /* run at least one Miller-Rabin test with a random base */
+   if(t == 0) {
+      t = 1;
+   }
 
    /*
       abs(t) extra rounds of M-R to extend the range of primes it can find if t < 0.
@@ -147,7 +157,7 @@ int mp_prime_is_prime(const mp_int *a, int t, int *result)
       The caller has to check the size.
 
       Not for cryptographic use because with known bases strong M-R pseudoprimes can
-      be constructed. Use at least one MM-R test with a random base (t >= 1).
+      be constructed. Use at least one M-R test with a random base (t >= 1).
 
       The 1119 bit large number
 

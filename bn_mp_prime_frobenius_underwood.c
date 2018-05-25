@@ -14,24 +14,23 @@
  * guarantee it works.
  */
 
+/*
+ *  See file bn_mp_prime_is_prime.c or the documentation in doc/bn.tex for the details
+ */
+#ifndef LTM_USE_FIPS_ONLY
+
 #ifdef MP_8BIT
 /*
  * floor of positive solution of
  * (2^16)-1 = (a+4)*(2*a+5)
- * TODO: that is too small, would have to use a bigint for a instead
+ * TODO: Both values are smaller than N^(1/4), would have to use a bigint
+ *       for a instead but any a biger than about 120 are already so rare that
+ *       it is possible to ignore them and still get enough pseudoprimes.
+ *       But it is still a restriction of the set of available pseudoprimes
+ *       which makes this implementation less secure if used stand-alone.
  */
 #define LTM_FROBENIUS_UNDERWOOD_A 177
-/*
- * Commented out to allow Travis's tests to run
- * Don't forget to switch it back on in production or we'll find it at TDWTF.com!
- */
- /* #warning "Frobenius test not fully usable with MP_8BIT!" */
 #else
-/*
- * floor of positive solution of
- * (2^31)-1 = (a+4)*(2*a+5)
- * TODO: that might be too small
- */
 #define LTM_FROBENIUS_UNDERWOOD_A 32764
 #endif
 int mp_prime_frobenius_underwood(const mp_int *N, int *result)
@@ -78,8 +77,9 @@ int mp_prime_frobenius_underwood(const mp_int *N, int *result)
          goto LBL_FU_ERR;
       }
    }
+   /* Tell it a composite and set return value accordingly */
    if (a >= LTM_FROBENIUS_UNDERWOOD_A) {
-      e = MP_VAL;
+      e = MP_ITER;
       goto LBL_FU_ERR;
    }
    /* Composite if N and (a+4)*(2*a+5) are not coprime */
@@ -113,6 +113,7 @@ int mp_prime_frobenius_underwood(const mp_int *N, int *result)
       if ((e = mp_mul_2(&tz,&T2z)) != MP_OKAY) {
          goto LBL_FU_ERR;
       }
+
       /* a = 0 at about 50% of the cases (non-square and odd input) */
       if (a != 0) {
          if ((e = mp_mul_d(&sz,(mp_digit)a,&T1z)) != MP_OKAY) {
@@ -122,6 +123,7 @@ int mp_prime_frobenius_underwood(const mp_int *N, int *result)
             goto LBL_FU_ERR;
          }
       }
+
       if ((e = mp_mul(&T2z, &sz, &T1z)) != MP_OKAY) {
          goto LBL_FU_ERR;
       }
@@ -151,9 +153,7 @@ int mp_prime_frobenius_underwood(const mp_int *N, int *result)
           *  sz   = temp
           */
          if (a == 0) {
-            if ((e = mp_mul_2(&sz,&T1z)) != MP_OKAY) {
-               goto LBL_FU_ERR;
-            }
+            if ((e = mp_mul_2(&sz,&T1z)) != MP_OKAY) {               goto LBL_FU_ERR;            }
          } else {
             if ((e = mp_mul_d(&sz, (mp_digit) ap2, &T1z)) != MP_OKAY) {
                goto LBL_FU_ERR;
@@ -188,4 +188,5 @@ LBL_FU_ERR:
    return e;
 }
 
+#endif
 #endif

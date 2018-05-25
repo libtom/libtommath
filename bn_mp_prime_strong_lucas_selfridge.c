@@ -15,6 +15,11 @@
  */
 
 /*
+ *  See file bn_mp_prime_is_prime.c or the documentation in doc/bn.tex for the details
+ */
+#ifndef LTM_USE_FIPS_ONLY
+
+/*
  *  8-bit is just too small. You can try the Frobenius test
  *  but that frobenius test can fail, too, for the same reason.
  */
@@ -399,5 +404,6 @@ LBL_LS_ERR:
    mp_clear_multi(&Dz, &gcd, &Np1, &Uz, &Vz, &U2mz, &V2mz, &Qmz, &Q2mz, &Qkdz, &T1z, &T2z, &T3z, &T4z, &Q2kdz, NULL);
    return e;
 }
+#endif
 #endif
 #endif
