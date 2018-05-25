@@ -1706,7 +1706,7 @@ You should always still perform a trial division before a Miller-Rabin test thou
 \begin{alltt}
 int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
 \end{alltt}
-Performs a strong Lucas-Selfridge test. The strong Lucas-Selfridge test together with the Rabin-Miler test with bases $2$ and $3$ resemble the BPSW test. The single internal use is as a compile-time option in \texttt{mp\_prime\_is\_prime} and can be excluded
+Performs a strong Lucas-Selfridge test. The strong Lucas-Selfridge test together with the Rabin-Miler test with bases $2$ and $3$ resemble the BPSW test. The single internal use is a compile-time option in \texttt{mp\_prime\_is\_prime} and can be excluded
 from the Libtommath build if not needed.
 
 \section{Frobenius (Underwood)  Test}
@@ -1714,20 +1714,24 @@ from the Libtommath build if not needed.
 \begin{alltt}
 int mp_prime_frobenius_underwood(const mp_int *N, int *result)
 \end{alltt}
-Performs the variant of the Frobenius test as described by Paul Underwood. The single internal use is as a compile-time option in
-\texttt{mp\_prime\_is\_prime} and can be excluded from the Libtommath build if not needed.
+Performs the variant of the Frobenius test as described by Paul Underwood. The single internal use is in
+\texttt{mp\_prime\_is\_prime} for \texttt{MP\_8BIT} only but can be included at build-time for all other sizes
+if the preprocessor macro \texttt{LTM\_USE\_FROBENIUS\_TEST} is defined.
+
+It returns \texttt{MP\_ITER} if the number of iterations is exhausted, assumes a composite as the input and sets \texttt{result} accordingly. This will reduce the set of available pseudoprimes by a very small amount: test with large datasets (more than $10^{10}$ numbers, both randomly chosen and sequences of odd numbers with a random start point) found only 31 (thirty-one) numbers with $a > 120$ and none at all with just an additional simple check for divisors $d < 2^8$.
 
 \section{Primality Testing}
 \index{mp\_prime\_is\_prime}
 \begin{alltt}
 int mp_prime_is_prime (mp_int * a, int t, int *result)
 \end{alltt}
-This will perform a trial division followed by two rounds of Miller-Rabin with bases 2 and 3. It is possible, although only at
-the compile time of this library for now, to include a strong Lucas-Selfridge test and/or a Frobenius test. See file
+This will perform a trial division followed by two rounds of Miller-Rabin with bases 2 and 3 and a Lucas-Selfridge test. The Lucas-Selfridge test is replaced with a Frobenius-Underwood for \texttt{MP\_8BIT}. The Frobenius-Underwood test for all other sizes is available as a compile-time option with the preprocessor macro \texttt{LTM\_USE\_FROBENIUS\_TEST}. See file
 \texttt{bn\_mp\_prime\_is\_prime.c} for the necessary details. It shall be noted that both functions are much slower than
-the Miller-Rabin test.
+the Miller-Rabin test and if speed is an essential issue, the macro \texttt{LTM\_USE\_FIPS\_ONLY} switches both functions, the Frobenius-Underwood test and the Lucas-Selfridge test off and their code will not even be compiled into the library.
 
 If $t$ is set to a positive value $t$ additional rounds of the Miller-Rabin test with random bases will be performed to allow for Fips 186.4 (vid.~p.~126ff) compliance. The function \texttt{mp\_prime\_rabin\_miller\_trials} can be used to determine the number of rounds. It is vital that the function \texttt{mp\_rand()} has a cryptographically strong random number generator available.
+
+One Miller-Rabin tests with a random base will be run automatically, so by setting $t$ to a positive value this function will run $t + 1$ Miller-Rabin tests with random bases.
 
 If  $t$ is set to a negative value the test will run the deterministic Miller-Rabin test for the primes up to
 $3317044064679887385961981$. That limit has to be checked by the caller. If $-t > 13$ than $-t - 13$ additional rounds of the
