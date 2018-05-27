@@ -192,7 +192,7 @@ int mp_prime_is_prime(const mp_int *a, int t, int *result)
           Sorenson, Jonathan; Webster, Jonathan (2015).
            "Strong Pseudoprimes to Twelve Prime Bases".
        */
-      /* 318665857834031151167461 */
+                                   /* 318665857834031151167461 */
       if ((err =   mp_read_radix(&b, "437ae92817f9fc85b7e5", 16)) != MP_OKAY) {
          goto LBL_B;
       }
@@ -200,14 +200,20 @@ int mp_prime_is_prime(const mp_int *a, int t, int *result)
       if (mp_cmp(a,&b) == MP_LT) {
          p_max = 12;
       }
-      /* 3317044064679887385961981 */
-      if ((err = mp_read_radix(&b, "2be6951adc5b22410a5fd", 16)) != MP_OKAY) {
-         goto LBL_B;
+      else {                       /* 3317044064679887385961981 */
+         if ((err = mp_read_radix(&b, "2be6951adc5b22410a5fd", 16)) != MP_OKAY) {
+            goto LBL_B;
+         }
+
+         if (mp_cmp(a,&b) == MP_LT) {
+            p_max = 13;
+         }
+         else {
+            err = MP_VAL;
+            goto LBL_B;
+         }
       }
 
-      if (mp_cmp(a,&b) == MP_LT) {
-         p_max = 13;
-      }
       // for compatibility with the current API (well, compatible within a sign's width)
       if (p_max < t) {
          p_max = t;

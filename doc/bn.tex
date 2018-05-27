@@ -1701,6 +1701,73 @@ require ten tests whereas a 1024-bit number would only require four tests.
 
 You should always still perform a trial division before a Miller-Rabin test though.
 
+A small table, broke in two for typographical reasons, with the number of rounds of Miller-Rabin tests is shown below.
+The first column is the number of bits $b$ in the prime $p = 2^b$, the numbers in the first row represent the 
+probability that the number that all of the Miller-Rabin tests deemed a pseudoprime is actually a composite. There is a deterministic test for numbers smaller than $2^{80}$.
+
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{c c c c c c c}
+\textbf{bits} & $\mathbf{2^{-80}}$ & $\mathbf{2^{-96}}$ & $\mathbf{2^{-112}}$ & $\mathbf{2^{-128}}$ & $\mathbf{2^{-160}}$ & $\mathbf{2^{-192}}$ \\
+80    & 31 & 39 & 47 & 55 & 71 & 87  \\
+96    & 29 & 37 & 45 & 53 & 69 & 85  \\
+128   & 24 & 32 & 40 & 48 & 64 & 80  \\
+160   & 19 & 27 & 35 & 43 & 59 & 75  \\
+192   & 15 & 21 & 29 & 37 & 53 & 69  \\
+256   & 10 & 15 & 20 & 27 & 43 & 59  \\
+384   & 7  & 9  & 12 & 16 & 25 & 38  \\
+512   & 5  & 7  & 9  & 12 & 18 & 26  \\
+768   & 4  & 5  & 6  & 8  & 11 & 16  \\
+1024  & 3  & 4  & 5  & 6  & 9  & 12  \\
+1536  & 2  & 3  & 3  & 4  & 6  & 8   \\
+2048  & 2  & 2  & 3  & 3  & 4  & 6   \\
+3072  & 1  & 2  & 2  & 2  & 3  & 4   \\
+4096  & 1  & 1  & 2  & 2  & 2  & 3   \\
+6144  & 1  & 1  & 1  & 1  & 2  & 2   \\
+8192  & 1  & 1  & 1  & 1  & 2  & 2   \\
+12288 & 1  & 1  & 1  & 1  & 1  & 1   \\
+16384 & 1  & 1  & 1  & 1  & 1  & 1   \\
+24576 & 1  & 1  & 1  & 1  & 1  & 1   \\
+32768 & 1  & 1  & 1  & 1  & 1  & 1
+\end{tabular}
+\caption{ Number of Miller-Rabin rounds. Part I } \label{table:millerrabinrunsp1}
+\end{center}
+\end{table}
+\newpage
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{c c c c c c c c}
+\textbf{bits} &$\mathbf{2^{-224}}$ & $\mathbf{2^{-256}}$ & $\mathbf{2^{-288}}$ & $\mathbf{2^{-320}}$ & $\mathbf{2^{-352}}$ & $\mathbf{2^{-384}}$ & $\mathbf{2^{-416}}$\\
+80    & 103 & 119 & 135 & 151 & 167 & 183 & 199 \\
+96    & 101 & 117 & 133 & 149 & 165 & 181 & 197 \\
+128   & 96  & 112 & 128 & 144 & 160 & 176 & 192 \\
+160   & 91  & 107 & 123 & 139 & 155 & 171 & 187 \\
+192   & 85  & 101 & 117 & 133 & 149 & 165 & 181 \\
+256   & 75  & 91  & 107 & 123 & 139 & 155 & 171 \\
+384   & 54  & 70  & 86  & 102 & 118 & 134 & 150 \\
+512   & 36  & 49  & 65  & 81  & 97  & 113 & 129 \\
+768   & 22  & 29  & 37  & 47  & 58  & 70  & 86  \\
+1024  & 16  & 21  & 26  & 33  & 40  & 48  & 58  \\
+1536  & 10  & 13  & 17  & 21  & 25  & 30  & 35  \\
+2048  & 8   & 10  & 13  & 15  & 18  & 22  & 26  \\
+3072  & 5   & 7   & 8	& 10  & 12  & 14  & 17  \\
+4096  & 4   & 5   & 6	& 8   & 9   & 11  & 12  \\
+6144  & 3   & 4   & 4	& 5   & 6   & 7   & 8	\\
+8192  & 2   & 3   & 3	& 4   & 5   & 6   & 6	\\
+12288 & 2   & 2   & 2	& 3   & 3   & 4   & 4	\\
+16384 & 1   & 2   & 2	& 2   & 3   & 3   & 3	\\
+24576 & 1   & 1   & 2	& 2   & 2   & 2   & 2	\\
+32768 & 1   & 1   & 1	& 1   & 2   & 2   & 2
+\end{tabular}
+\caption{ Number of Miller-Rabin rounds. Part II } \label{table:millerrabinrunsp2}
+\end{center}
+\end{table}
+
+Determining the probability needed to pick the right column is a bit harder. Fips 186.4, for example has $2^{-80}$ for $512$ bit large numbers, $2^{-112}$ for $1024$ bits, and $2^{128}$ for $1536$ bits. It can be seen in table \ref{table:millerrabinrunsp1} that those combinations follow the diagonal from $(512,2^{-80})$ downwards and to the right to gain a lower probabilty of getting a composite declared a pseudoprime for the same amount of work or less.
+
+If this version of the library has the strong Lucas-Selfridge and/or the Frobenius-Underwood test implemented only one or two rounds of the Miller-Rabin test with a random base is necesssary for numbers larger than or equal to $1024$ bits.
+
+
 \section{Strong Lucas-Selfridge Test}
 \index{mp\_prime\_strong\_lucas\_selfridge}
 \begin{alltt}
