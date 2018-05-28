@@ -17,7 +17,7 @@
 unsigned long mp_get_int(const mp_int *a)
 {
    int i;
-   mp_min_u32 res;
+   unsigned long long res;
 
    if (a->used == 0) {
       return 0;
@@ -34,7 +34,7 @@ unsigned long mp_get_int(const mp_int *a)
    }
 
    /* force result to 32-bits always so it is consistent on non 32-bit platforms */
-   return res & 0xFFFFFFFFUL;
+   return (unsigned long)(res & 0xFFFFFFFFUL);
 }
 #endif
 

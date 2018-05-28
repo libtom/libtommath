@@ -93,7 +93,7 @@ EOS
           $line = $';
           # now $& is the match, we want to skip over LTM keywords like
           # mp_int, mp_word, mp_digit
-          if (!($& eq 'mp_digit') && !($& eq 'mp_word') && !($& eq 'mp_int') && !($& eq 'mp_min_u32')) {
+          if (!($& eq 'mp_digit') && !($& eq 'mp_word') && !($& eq 'mp_int')) {
              my $a = $&;
              $a =~ tr/[a-z]/[A-Z]/;
              $a = 'BN_' . $a . '_C';

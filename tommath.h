@@ -95,9 +95,6 @@ typedef uint64_t             mp_word;
 /* otherwise the bits per digit is calculated automatically from the size of a mp_digit */
 #ifndef DIGIT_BIT
 #   define DIGIT_BIT (((CHAR_BIT * MP_SIZEOF_MP_DIGIT) - 1))  /* bits per digit */
-typedef uint_least32_t mp_min_u32;
-#else
-typedef mp_digit mp_min_u32;
 #endif
 
 #define MP_DIGIT_BIT     DIGIT_BIT
