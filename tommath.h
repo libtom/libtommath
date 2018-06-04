@@ -37,7 +37,13 @@ extern "C" {
     defined(__ia64) || defined(__ia64__) || defined(__itanium__) || defined(_M_IA64) || \
     defined(__LP64__) || defined(_LP64) || defined(__64BIT__)
 #   if !(defined(MP_32BIT) || defined(MP_16BIT) || defined(MP_8BIT))
-#      define MP_64BIT
+#      if defined(__GNUC__)
+          /* we support 128bit integers only via: __attribute__((mode(TI))) */
+#         define MP_64BIT
+#      else
+          /* otherwise we fall back to MP_32BIT even on 64bit platforms */
+#         define MP_32BIT
+#      endif
 #   endif
 #endif
 
@@ -66,14 +72,7 @@ typedef uint32_t             mp_word;
 #elif defined(MP_64BIT)
 /* for GCC only on supported platforms */
 typedef uint64_t mp_digit;
-#   if defined(__GNUC__)
 typedef unsigned long        mp_word __attribute__((mode(TI)));
-#   else
-/* it seems you have a problem
- * but we assume you can somewhere define your own uint128_t */
-typedef uint128_t            mp_word;
-#   endif
-
 #   define DIGIT_BIT 60
 #else
 /* this is the default case, 28-bit digits */
