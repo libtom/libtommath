@@ -413,6 +413,48 @@ int main(void)
       }
    }
 
+   // test mp_get_double/mp_set_double
+#if defined(__STDC_IEC_559__) || defined(__GCC_IEC_559)
+   printf("\n\nTesting: mp_get_double");
+   if (mp_set_double(&a, +1.0/0.0) != MP_VAL) {
+      printf("\nmp_set_double should return MP_VAL for +inf");
+      return EXIT_FAILURE;
+   }
+   if (mp_set_double(&a, -1.0/0.0) != MP_VAL) {
+      printf("\nmp_set_double should return MP_VAL for -inf");
+      return EXIT_FAILURE;
+   }
+   if (mp_set_double(&a, +0.0/0.0) != MP_VAL) {
+      printf("\nmp_set_double should return MP_VAL for NaN");
+      return EXIT_FAILURE;
+   }
+   if (mp_set_double(&a, -0.0/0.0) != MP_VAL) {
+      printf("\nmp_set_double should return MP_VAL for NaN");
+      return EXIT_FAILURE;
+   }
+
+   for (i = 0; i < 1000; ++i) {
+      int tmp = rand();
+      double dbl = (double)tmp * rand() + 1;
+      if (mp_set_double(&a, dbl) != MP_OKAY) {
+         printf("\nmp_set_double() failed");
+         return EXIT_FAILURE;
+      }
+      if (dbl != mp_get_double(&a)) {
+         printf("\nmp_get_double() bad result!");
+         return EXIT_FAILURE;
+      }
+      if (mp_set_double(&a, -dbl) != MP_OKAY) {
+         printf("\nmp_set_double() failed");
+         return EXIT_FAILURE;
+      }
+      if (-dbl != mp_get_double(&a)) {
+         printf("\nmp_get_double() bad result!");
+         return EXIT_FAILURE;
+      }
+   }
+#endif
+
    // test mp_get_int
    printf("\n\nTesting: mp_get_int");
    for (i = 0; i < 1000; ++i) {
