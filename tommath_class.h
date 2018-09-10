@@ -48,6 +48,7 @@
 #   define BN_MP_FREAD_C
 #   define BN_MP_FWRITE_C
 #   define BN_MP_GCD_C
+#   define BN_MP_GET_DOUBLE_C
 #   define BN_MP_GET_INT_C
 #   define BN_MP_GET_LONG_C
 #   define BN_MP_GET_LONG_LONG_C
@@ -105,6 +106,7 @@
 #   define BN_MP_REDUCE_SETUP_C
 #   define BN_MP_RSHD_C
 #   define BN_MP_SET_C
+#   define BN_MP_SET_DOUBLE_C
 #   define BN_MP_SET_INT_C
 #   define BN_MP_SET_LONG_C
 #   define BN_MP_SET_LONG_LONG_C
@@ -423,6 +425,10 @@
 #   define BN_S_MP_SUB_C
 #   define BN_MP_MUL_2D_C
 #   define BN_MP_CLEAR_C
+#endif
+
+#if defined(BN_MP_GET_DOUBLE_C)
+#   define BN_MP_ISNEG_C
 #endif
 
 #if defined(BN_MP_GET_INT_C)
@@ -831,6 +837,13 @@
 
 #if defined(BN_MP_SET_C)
 #   define BN_MP_ZERO_C
+#endif
+
+#if defined(BN_MP_SET_DOUBLE_C)
+#   define BN_MP_SET_LONG_LONG_C
+#   define BN_MP_DIV_2D_C
+#   define BN_MP_MUL_2D_C
+#   define BN_MP_ISZERO_C
 #endif
 
 #if defined(BN_MP_SET_INT_C)
