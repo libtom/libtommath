@@ -413,6 +413,23 @@ int main(void)
       }
    }
 
+   // test mp_get_double/mp_set_double
+   printf("\n\nTesting: mp_get_double");
+   for (i = 0; i < 1000; ++i) {
+      int tmp = rand();
+      double dbl = (double)tmp * rand() + 1;
+      mp_set_double(&a, dbl);
+      if (dbl != mp_get_double(&a)) {
+         printf("\nmp_get_double() bad result!");
+         return EXIT_FAILURE;
+      }
+      mp_set_double(&a, -dbl);
+      if (-dbl != mp_get_double(&a)) {
+         printf("\nmp_get_double() bad result!");
+         return EXIT_FAILURE;
+      }
+   }
+
    // test mp_get_int
    printf("\n\nTesting: mp_get_int");
    for (i = 0; i < 1000; ++i) {
