@@ -292,7 +292,22 @@ int mp_or(const mp_int *a, const mp_int *b, mp_int *c);
 /* c = a AND b */
 int mp_and(const mp_int *a, const mp_int *b, mp_int *c);
 
+/* c = a XOR b (two complement) */
+int mp_tc_xor(const mp_int *a, const mp_int *b, mp_int *c);
+
+/* c = a OR b (two complement) */
+int mp_tc_or(const mp_int *a, const mp_int *b, mp_int *c);
+
+/* c = a AND b (two complement) */
+int mp_tc_and(const mp_int *a, const mp_int *b, mp_int *c);
+
+/* right shift (two complement) */
+int mp_tc_div_2d(const mp_int *a, int b, mp_int *c);
+
 /* ---> Basic arithmetic <--- */
+
+/* b = ~a */
+int mp_complement(const mp_int *a, mp_int *b);
 
 /* b = -a */
 int mp_neg(const mp_int *a, mp_int *b);
