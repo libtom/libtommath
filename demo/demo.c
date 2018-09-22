@@ -261,6 +261,127 @@ int main(void)
       }
    }
 
+   // test mp_complement
+   printf("\n\nTesting: mp_complement");
+   for (i = 0; i < 1000; ++i) {
+      int l = (rand() * rand() + 1) * (rand() % 1 ? -1 : 1);
+      mp_set_int(&a, labs(l));
+      if (l < 0)
+         mp_neg(&a, &a);
+      mp_complement(&a, &b);
+
+      l = ~l;
+      mp_set_int(&c, labs(l));
+      if (l < 0)
+         mp_neg(&c, &c);
+
+      if (mp_cmp(&b, &c) != MP_EQ) {
+         printf("\nmp_complement() bad result!");
+         return EXIT_FAILURE;
+      }
+   }
+
+   // test mp_tc_div_2d
+   printf("\n\nTesting: mp_tc_div_2d");
+   for (i = 0; i < 1000; ++i) {
+      int l, m;
+
+      l = (rand() * rand() + 1) * (rand() % 1 ? -1 : 1);
+      mp_set_int(&a, labs(l));
+      if (l < 0)
+         mp_neg(&a, &a);
+
+      m = rand() % 32;
+
+      mp_set_int(&d, labs(l >> m));
+      if ((l >> m) < 0)
+         mp_neg(&d, &d);
+
+      mp_tc_div_2d(&a, m, &b);
+      if (mp_cmp(&b, &d) != MP_EQ) {
+         printf("\nmp_tc_div_2d() bad result!");
+         return EXIT_FAILURE;
+      }
+   }
+
+   // test mp_tc_xor
+   printf("\n\nTesting: mp_tc_or");
+   for (i = 0; i < 1000; ++i) {
+      int l, m;
+
+      l = (rand() * rand() + 1) * (rand() % 1 ? -1 : 1);
+      mp_set_int(&a, labs(l));
+      if (l < 0)
+         mp_neg(&a, &a);
+
+      m = (rand() * rand() + 1) * (rand() % 1 ? -1 : 1);
+      mp_set_int(&b, labs(m));
+      if (m < 0)
+         mp_neg(&b, &b);
+
+      mp_set_int(&d, labs(l ^ m));
+      if ((l ^ m) < 0)
+         mp_neg(&d, &d);
+
+      mp_tc_xor(&a, &b, &c);
+      if (mp_cmp(&c, &d) != MP_EQ) {
+         printf("\nmp_tc_xor() bad result!");
+         return EXIT_FAILURE;
+      }
+   }
+
+   // test mp_tc_or
+   printf("\n\nTesting: mp_tc_or");
+   for (i = 0; i < 1000; ++i) {
+      int l, m;
+
+      l = (rand() * rand() + 1) * (rand() % 1 ? -1 : 1);
+      mp_set_int(&a, labs(l));
+      if (l < 0)
+         mp_neg(&a, &a);
+
+      m = (rand() * rand() + 1) * (rand() % 1 ? -1 : 1);
+      mp_set_int(&b, labs(m));
+      if (m < 0)
+         mp_neg(&b, &b);
+
+      mp_set_int(&d, labs(l | m));
+      if ((l | m) < 0)
+         mp_neg(&d, &d);
+
+      mp_tc_or(&a, &b, &c);
+      if (mp_cmp(&c, &d) != MP_EQ) {
+         printf("\nmp_tc_or() bad result!");
+         return EXIT_FAILURE;
+      }
+   }
+
+   // test mp_tc_and
+   printf("\n\nTesting: mp_tc_and");
+   for (i = 0; i < 1000; ++i) {
+      int l, m;
+
+      l = (rand() * rand() + 1) * (rand() % 1 ? -1 : 1);
+      mp_set_int(&a, labs(l));
+      if (l < 0)
+         mp_neg(&a, &a);
+
+      m = (rand() * rand() + 1) * (rand() % 1 ? -1 : 1);
+      mp_set_int(&b, labs(m));
+      if (m < 0)
+         mp_neg(&b, &b);
+
+      mp_set_int(&d, labs(l & m));
+      if ((l & m) < 0)
+         mp_neg(&d, &d);
+
+      mp_tc_and(&a, &b, &c);
+      if (mp_cmp(&c, &d) != MP_EQ) {
+         printf("\nmp_tc_and() bad result!");
+         return EXIT_FAILURE;
+      }
+   }
+
    // test mp_get_int
    printf("\n\nTesting: mp_get_int");
    for (i = 0; i < 1000; ++i) {
