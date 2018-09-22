@@ -382,6 +382,37 @@ int main(void)
       }
    }
 
+   // mp_invmod corner-case of https://github.com/libtom/libtommath/issues/118
+   printf("\n\nTesting: mp_invmod");
+   {
+      const char *a_ = "47182BB8DF0FFE9F61B1F269BACC066B48BA145D35137D426328DC3F88A5EA44";
+      const char *b_ = "FFFFFFFEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00000000FFFFFFFFFFFFFFFF";
+      const char *should_ = "0521A82E10376F8E4FDEF9A32A427AC2A0FFF686E00290D39E3E4B5522409596";
+
+      if (mp_read_radix(&a, a_, 16) != MP_OKAY) {
+         printf("\nmp_read_radix(a) failed!");
+         return EXIT_FAILURE;
+      }
+      if (mp_read_radix(&b, b_, 16) != MP_OKAY) {
+         printf("\nmp_read_radix(b) failed!");
+         return EXIT_FAILURE;
+      }
+      if (mp_read_radix(&c, should_, 16) != MP_OKAY) {
+         printf("\nmp_read_radix(should) failed!");
+         return EXIT_FAILURE;
+      }
+
+      if (mp_invmod(&a, &b, &d) != MP_OKAY) {
+         printf("\nmp_invmod() failed!");
+         return EXIT_FAILURE;
+      }
+
+      if (mp_cmp(&c, &d) != MP_EQ) {
+         printf("\nmp_invmod() bad result!");
+         return EXIT_FAILURE;
+      }
+   }
+
    // test mp_get_int
    printf("\n\nTesting: mp_get_int");
    for (i = 0; i < 1000; ++i) {
