@@ -22,7 +22,7 @@
 #define MP_GEN_RANDOM_MAX     0xffffffffu
 #define MP_GEN_RANDOM_SHIFT   32
 
-static int s_read_arc4random(mp_digit* p)
+static int s_read_arc4random(mp_digit *p)
 {
    mp_digit d = 0, msk = 0;
    do {
@@ -40,11 +40,11 @@ static int s_read_arc4random(mp_digit* p)
 #define MP_WIN_CSP
 
 #ifndef _WIN32_WINNT
-   #define _WIN32_WINNT 0x0400
+#define _WIN32_WINNT 0x0400
 #endif
 #ifdef _WIN32_WCE
-   #define UNDER_CE
-   #define ARM
+#define UNDER_CE
+#define ARM
 #endif
 
 #define WIN32_LEAN_AND_MEAN
@@ -59,20 +59,20 @@ static void s_cleanup_win_csp(void)
    hProv = 0;
 }
 
-static int s_read_win_csp(mp_digit* p)
+static int s_read_win_csp(mp_digit *p)
 {
    int ret = -1;
    if (hProv == 0) {
       if (!CryptAcquireContext(&hProv, NULL, MS_DEF_PROV, PROV_RSA_FULL,
                                (CRYPT_VERIFYCONTEXT | CRYPT_MACHINE_KEYSET)) &&
-          !CryptAcquireContext (&hProv, NULL, MS_DEF_PROV, PROV_RSA_FULL,
+          !CryptAcquireContext(&hProv, NULL, MS_DEF_PROV, PROV_RSA_FULL,
                                CRYPT_VERIFYCONTEXT | CRYPT_MACHINE_KEYSET | CRYPT_NEWKEYSET)) {
          hProv = 0;
          return ret;
       }
       atexit(s_cleanup_win_csp);
    }
-   if (CryptGenRandom(hProv, sizeof(*p), (void*)p) == TRUE) {
+   if (CryptGenRandom(hProv, sizeof(*p), (void *)p) == TRUE) {
       ret = MP_OKAY;
    }
    return ret;
@@ -85,12 +85,12 @@ static int s_read_win_csp(mp_digit* p)
 #include <sys/random.h>
 #include <errno.h>
 
-static int s_read_getrandom(mp_digit* p)
+static int s_read_getrandom(mp_digit *p)
 {
    int ret;
    do {
       ret = getrandom(p, sizeof(*p), 0);
-   } while((ret == -1) && (errno == EINTR));
+   } while ((ret == -1) && (errno == EINTR));
    if (ret == sizeof(*p)) return MP_OKAY;
    return -1;
 }
@@ -108,17 +108,17 @@ static int s_read_getrandom(mp_digit* p)
 #include <errno.h>
 #include <unistd.h>
 
-static int s_read_dev_urandom(mp_digit* p)
+static int s_read_dev_urandom(mp_digit *p)
 {
    ssize_t r;
    int fd;
    do {
       fd = open(MP_DEV_URANDOM, O_RDONLY);
-   } while((fd == -1) && (errno == EINTR));
+   } while ((fd == -1) && (errno == EINTR));
    if (fd == -1) return -1;
    do {
       r = read(fd, p, sizeof(*p));
-   } while((r == -1) && (errno == EINTR));
+   } while ((r == -1) && (errno == EINTR));
    close(fd);
    if (r != sizeof(*p)) return -1;
    return MP_OKAY;
@@ -129,17 +129,17 @@ static int s_read_dev_urandom(mp_digit* p)
 unsigned long (*ltm_rng)(unsigned char *out, unsigned long outlen, void (*callback)(void));
 void (*ltm_rng_callback)(void);
 
-static int s_read_ltm_rng(mp_digit* p)
+static int s_read_ltm_rng(mp_digit *p)
 {
    unsigned long ret;
    if (ltm_rng == NULL) return -1;
-   ret = ltm_rng((void*)p, sizeof(*p), ltm_rng_callback);
+   ret = ltm_rng((void *)p, sizeof(*p), ltm_rng_callback);
    if (ret != sizeof(*p)) return -1;
    return MP_OKAY;
 }
 #endif
 
-static int s_rand_digit(mp_digit* p)
+static int s_rand_digit(mp_digit *p)
 {
    int ret = -1;
 

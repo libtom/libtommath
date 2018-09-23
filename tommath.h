@@ -38,10 +38,10 @@ extern "C" {
     defined(__LP64__) || defined(_LP64) || defined(__64BIT__)
 #   if !(defined(MP_32BIT) || defined(MP_16BIT) || defined(MP_8BIT))
 #      if defined(__GNUC__)
-          /* we support 128bit integers only via: __attribute__((mode(TI))) */
+/* we support 128bit integers only via: __attribute__((mode(TI))) */
 #         define MP_64BIT
 #      else
-          /* otherwise we fall back to MP_32BIT even on 64bit platforms */
+/* otherwise we fall back to MP_32BIT even on 64bit platforms */
 #         define MP_32BIT
 #      endif
 #   endif
