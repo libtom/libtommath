@@ -17,7 +17,7 @@
 int mp_complement(const mp_int *a, mp_int *b)
 {
    int res = mp_neg(a, b);
-   return res == MP_OKAY ? mp_sub_d(b, 1, b) : res;
+   return res == MP_OKAY ? mp_sub_d(b, 1uL, b) : res;
 }
 #endif
 

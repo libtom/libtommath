@@ -22,7 +22,7 @@ int mp_tc_or(const mp_int *a, const mp_int *b, mp_int *c)
 
    if (as || bs) {
       bits = MAX(mp_count_bits(a), mp_count_bits(b));
-      res = mp_init_set_int(&_mx, 1);
+      res = mp_init_set_int(&_mx, 1uL);
       if (res != MP_OKAY) {
          goto end;
       }
