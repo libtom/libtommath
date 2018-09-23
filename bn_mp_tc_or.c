@@ -20,7 +20,7 @@ int mp_tc_or(const mp_int *a, const mp_int *b, mp_int *c)
    int as = mp_isneg(a), bs = mp_isneg(b), s = 0;
    mp_int *mx = NULL, _mx, acpy, bcpy;
 
-   if (as || bs) {
+   if ((as != MP_NO) || (bs != MP_NO)) {
       bits = MAX(mp_count_bits(a), mp_count_bits(b));
       res = mp_init_set_int(&_mx, 1uL);
       if (res != MP_OKAY) {
@@ -33,7 +33,7 @@ int mp_tc_or(const mp_int *a, const mp_int *b, mp_int *c)
          goto end;
       }
 
-      if (as) {
+      if (as != MP_NO) {
          res = mp_init(&acpy);
          if (res != MP_OKAY) {
             goto end;
@@ -46,7 +46,7 @@ int mp_tc_or(const mp_int *a, const mp_int *b, mp_int *c)
          }
          a = &acpy;
       }
-      if (bs) {
+      if (bs != MP_NO) {
          res = mp_init(&bcpy);
          if (res != MP_OKAY) {
             goto end;

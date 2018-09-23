@@ -17,7 +17,7 @@
 int mp_tc_div_2d(const mp_int *a, int b, mp_int *c)
 {
   int res;
-  if (!mp_isneg(a)) {
+  if (mp_isneg(a) == MP_NO) {
     return mp_div_2d(a, b, c, NULL);
   }
 
@@ -27,7 +27,7 @@ int mp_tc_div_2d(const mp_int *a, int b, mp_int *c)
   }
 
   res = mp_div_2d(c, b, c, NULL);
-  return res == MP_OKAY ? mp_sub_d(c, 1uL, c) : res;
+  return (res == MP_OKAY) ? mp_sub_d(c, 1uL, c) : res;
 }
 #endif
 
