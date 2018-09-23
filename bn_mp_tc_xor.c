@@ -17,7 +17,7 @@
 int mp_tc_xor(const mp_int *a, const mp_int *b, mp_int *c)
 {
    int res = MP_OKAY, bits;
-   int as = mp_isneg(a), bs = mp_isneg(b), s = 0;
+   int as = mp_isneg(a), bs = mp_isneg(b);
    mp_int *mx = NULL, _mx, acpy, bcpy;
 
    if ((as != MP_NO) || (bs != MP_NO)) {
@@ -62,9 +62,8 @@ int mp_tc_xor(const mp_int *a, const mp_int *b, mp_int *c)
    }
 
    res = mp_xor(a, b, c);
-   s = as ^ bs;
 
-   if (s && res == MP_OKAY) {
+   if ((as != bs) && (res == MP_OKAY)) {
       res = mp_sub(c, mx, c);
    }
 
