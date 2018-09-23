@@ -17,17 +17,17 @@
 int mp_tc_div_2d(const mp_int *a, int b, mp_int *c)
 {
   int res;
-  if (!mp_isneg(a)) {
-    return mp_div_2d(a, b, c, 0);
+  if (mp_isneg(a) == MP_NO) {
+    return mp_div_2d(a, b, c, NULL);
   }
 
-  res = mp_add_d(a, 1, c);
+  res = mp_add_d(a, 1uL, c);
   if (res != MP_OKAY) {
     return res;
   }
 
-  res = mp_div_2d(c, b, c, 0);
-  return res == MP_OKAY ? mp_sub_d(c, 1, c) : res;
+  res = mp_div_2d(c, b, c, NULL);
+  return (res == MP_OKAY) ? mp_sub_d(c, 1uL, c) : res;
 }
 #endif
 

@@ -17,12 +17,12 @@
 int mp_tc_and(const mp_int *a, const mp_int *b, mp_int *c)
 {
    int res = MP_OKAY, bits;
-   int as = mp_isneg(a), bs = mp_isneg(b), s = 0;
-   mp_int *mx = 0, _mx, acpy, bcpy;
+   int as = mp_isneg(a), bs = mp_isneg(b);
+   mp_int *mx = NULL, _mx, acpy, bcpy;
 
-   if (as || bs) {
+   if ((as != MP_NO) || (bs != MP_NO)) {
       bits = MAX(mp_count_bits(a), mp_count_bits(b));
-      res = mp_init_set_int(&_mx, 1);
+      res = mp_init_set_int(&_mx, 1uL);
       if (res != MP_OKAY) {
          goto end;
       }
@@ -33,7 +33,7 @@ int mp_tc_and(const mp_int *a, const mp_int *b, mp_int *c)
          goto end;
       }
 
-      if (as) {
+      if (as != MP_NO) {
          res = mp_init(&acpy);
          if (res != MP_OKAY) {
             goto end;
@@ -46,7 +46,7 @@ int mp_tc_and(const mp_int *a, const mp_int *b, mp_int *c)
          }
          a = &acpy;
       }
-      if (bs) {
+      if (bs != MP_NO) {
          res = mp_init(&bcpy);
          if (res != MP_OKAY) {
             goto end;
@@ -62,9 +62,8 @@ int mp_tc_and(const mp_int *a, const mp_int *b, mp_int *c)
    }
 
    res = mp_and(a, b, c);
-   s = as & bs;
 
-   if (s && res == MP_OKAY) {
+   if ((as != MP_NO) && (bs != MP_NO) && (res == MP_OKAY)) {
       res = mp_sub(c, mx, c);
    }
 
