@@ -18,7 +18,7 @@ int mp_tc_or(const mp_int *a, const mp_int *b, mp_int *c)
 {
    int res = MP_OKAY, bits;
    int as = mp_isneg(a), bs = mp_isneg(b), s = 0;
-   mp_int *mx = 0, _mx, acpy, bcpy;
+   mp_int *mx = NULL, _mx, acpy, bcpy;
 
    if (as || bs) {
       bits = MAX(mp_count_bits(a), mp_count_bits(b));
