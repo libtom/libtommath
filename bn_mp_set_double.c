@@ -13,8 +13,6 @@
  * guarantee it works.
  */
 
-#include <math.h>
-
 int mp_set_double(mp_int *a, double d)
 {
 #if defined(__STDC_IEC_559__) && (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
@@ -26,11 +24,12 @@ int mp_set_double(mp_int *a, double d)
    } cast;
    cast.dbl = d;
 
-   if (!isfinite(d)) {
-      return MP_VAL;
-   }
    exp = ((int)(cast.bits >> 52) & 0x7FF) - 1023 - 52;
    frac = (cast.bits & ((1ULL << 52) - 1)) | (1ULL << 52);
+
+   if ((exp + 1022) == 2047) { /* +-inf, NaN */
+      return MP_VAL;
+   }
 
    res = mp_set_long_long(a, frac);
    if (res != MP_OKAY) {
