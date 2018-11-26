@@ -173,10 +173,10 @@ int main(void)
    printf("MP_PREC: %d\n", MP_PREC);
 
 #if LTM_DEMO_TEST_VS_MTEST == 0
-   // trivial stuff
-   // a: 0->5
+   /* trivial stuff */
+   /* a: 0->5 */
    mp_set_int(&a, 5);
-   // a: 5-> b: -5
+   /* a: 5-> b: -5 */
    mp_neg(&a, &b);
    if (mp_cmp(&a, &b) != MP_GT) {
       return EXIT_FAILURE;
@@ -184,17 +184,17 @@ int main(void)
    if (mp_cmp(&b, &a) != MP_LT) {
       return EXIT_FAILURE;
    }
-   // a: 5-> a: -5
+   /* a: 5-> a: -5 */
    mp_neg(&a, &a);
    if (mp_cmp(&b, &a) != MP_EQ) {
       return EXIT_FAILURE;
    }
-   // a: -5-> b: 5
+   /* a: -5-> b: 5 */
    mp_abs(&a, &b);
    if (mp_isneg(&b) != MP_NO) {
       return EXIT_FAILURE;
    }
-   // a: -5-> b: -4
+   /* a: -5-> b: -4 */
    mp_add_d(&a, 1uL, &b);
    if (mp_isneg(&b) != MP_YES) {
       return EXIT_FAILURE;
@@ -202,18 +202,18 @@ int main(void)
    if (mp_get_int(&b) != 4) {
       return EXIT_FAILURE;
    }
-   // a: -5-> b: 1
+   /* a: -5-> b: 1 */
    mp_add_d(&a, 6uL, &b);
    if (mp_get_int(&b) != 1) {
       return EXIT_FAILURE;
    }
-   // a: -5-> a: 1
+   /* a: -5-> a: 1 */
    mp_add_d(&a, 6uL, &a);
    if (mp_get_int(&a) != 1) {
       return EXIT_FAILURE;
    }
    mp_zero(&a);
-   // a: 0-> a: 6
+   /* a: 0-> a: 6 */
    mp_add_d(&a, 6uL, &a);
    if (mp_get_int(&a) != 6) {
       return EXIT_FAILURE;
@@ -261,7 +261,7 @@ int main(void)
       }
    }
 
-   // test mp_complement
+   /* test mp_complement */
    printf("\n\nTesting: mp_complement");
    for (i = 0; i < 1000; ++i) {
       int l = (rand() * rand() + 1) * (rand() % 1 ? -1 : 1);
@@ -281,7 +281,7 @@ int main(void)
       }
    }
 
-   // test mp_tc_div_2d
+   /* test mp_tc_div_2d */
    printf("\n\nTesting: mp_tc_div_2d");
    for (i = 0; i < 1000; ++i) {
       int l, m;
@@ -304,7 +304,7 @@ int main(void)
       }
    }
 
-   // test mp_tc_xor
+   /* test mp_tc_xor */
    printf("\n\nTesting: mp_tc_or");
    for (i = 0; i < 1000; ++i) {
       int l, m;
@@ -330,7 +330,7 @@ int main(void)
       }
    }
 
-   // test mp_tc_or
+   /* test mp_tc_or */
    printf("\n\nTesting: mp_tc_or");
    for (i = 0; i < 1000; ++i) {
       int l, m;
@@ -356,7 +356,7 @@ int main(void)
       }
    }
 
-   // test mp_tc_and
+   /* test mp_tc_and */
    printf("\n\nTesting: mp_tc_and");
    for (i = 0; i < 1000; ++i) {
       int l, m;
@@ -382,7 +382,7 @@ int main(void)
       }
    }
 
-   // mp_invmod corner-case of https://github.com/libtom/libtommath/issues/118
+   /* mp_invmod corner-case of https://github.com/libtom/libtommath/issues/118 */
    printf("\n\nTesting: mp_invmod");
    {
       const char *a_ = "47182BB8DF0FFE9F61B1F269BACC066B48BA145D35137D426328DC3F88A5EA44";
@@ -413,7 +413,7 @@ int main(void)
       }
    }
 
-   // test mp_get_double/mp_set_double
+   /* test mp_get_double/mp_set_double */
 #if defined(__STDC_IEC_559__) || defined(__GCC_IEC_559)
    printf("\n\nTesting: mp_get_double");
    if (mp_set_double(&a, +1.0/0.0) != MP_VAL) {
@@ -455,7 +455,7 @@ int main(void)
    }
 #endif
 
-   // test mp_get_int
+   /* test mp_get_int */
    printf("\n\nTesting: mp_get_int");
    for (i = 0; i < 1000; ++i) {
       t = (unsigned long)(rand() * rand() + 1) & 0xFFFFFFFFuL;
@@ -516,7 +516,7 @@ int main(void)
       } while (r);
    }
 
-   // test mp_sqrt
+   /* test mp_sqrt */
    printf("\n\nTesting: mp_sqrt\n");
    for (i = 0; i < 1000; ++i) {
       printf("%6d\r", i);
@@ -571,7 +571,7 @@ int main(void)
    }
    printf("\n\n");
 
-   // r^2 = n (mod p)
+   /* r^2 = n (mod p) */
    for (i = 0; i < (int)(sizeof(sqrtmod_prime)/sizeof(sqrtmod_prime[0])); ++i) {
       mp_set_int(&a, sqrtmod_prime[i].p);
       mp_set_int(&b, sqrtmod_prime[i].n);
@@ -630,7 +630,7 @@ int main(void)
 
    printf("\n\n");
 
-   // test montgomery
+   /* test montgomery */
    printf("Testing: montgomery...\n");
    for (i = 1; i <= 10; i++) {
       if (i == 10)
@@ -641,11 +641,11 @@ int main(void)
          mp_rand(&a, i);
          a.dp[0] |= 1;
 
-         // let's see if R is right
+         /* let's see if R is right */
          mp_montgomery_calc_normalization(&b, &a);
          mp_montgomery_setup(&a, &mp);
 
-         // now test a random reduction
+         /* now test a random reduction */
          for (ix = 0; ix < 100; ix++) {
             mp_rand(&c, 1 + abs(rand()) % (2*i));
             mp_copy(&c, &d);
