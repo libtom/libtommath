@@ -14,7 +14,7 @@
  */
 
 #if defined(__STDC_IEC_559__) || defined(__GCC_IEC_559)
-int mp_set_double(mp_int *a, double d)
+int mp_set_double(mp_int *a, double b)
 {
    uint64_t frac;
    int exp, res;
@@ -22,10 +22,10 @@ int mp_set_double(mp_int *a, double d)
       double   dbl;
       uint64_t bits;
    } cast;
-   cast.dbl = d;
+   cast.dbl = b;
 
-   exp = (int)(cast.bits >> 52) & 0x7FF;
-   frac = (cast.bits & ((1ULL << 52) - 1)) | (1ULL << 52);
+   exp = (unsigned)(cast.bits >> 52) & 0x7FFU;
+   frac = (cast.bits & ((1ULL << 52) - 1ULL)) | (1ULL << 52);
 
    if (exp == 0x7FF) { /* +-inf, NaN */
       return MP_VAL;
@@ -37,8 +37,8 @@ int mp_set_double(mp_int *a, double d)
       return res;
    }
 
-   res = exp < 0 ? mp_div_2d(a, -exp, a, 0) : mp_mul_2d(a, exp, a);
-   if ((cast.bits >> 63) && !mp_iszero(a)) {
+   res = (exp < 0) ? mp_div_2d(a, -exp, a, NULL) : mp_mul_2d(a, exp, a);
+   if (((cast.bits >> 63) != 0ULL) && (mp_iszero(a) == MP_NO)) {
       SIGN(a) = MP_NEG;
    }
 
