@@ -14,7 +14,7 @@
  */
 
 #if defined(__STDC_IEC_559__) || defined(__GCC_IEC_559)
-int mp_set_double(mp_int *a, double d)
+int mp_set_double(mp_int *a, double b)
 {
    uint64_t frac;
    int exp, res;
@@ -22,7 +22,7 @@ int mp_set_double(mp_int *a, double d)
       double   dbl;
       uint64_t bits;
    } cast;
-   cast.dbl = d;
+   cast.dbl = b;
 
    exp = (int)(cast.bits >> 52) & 0x7FF;
    frac = (cast.bits & ((1ULL << 52) - 1)) | (1ULL << 52);
