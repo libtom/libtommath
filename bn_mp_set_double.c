@@ -25,7 +25,7 @@ int mp_set_double(mp_int *a, double b)
    cast.dbl = b;
 
    exp = (int)(cast.bits >> 52) & 0x7FF;
-   frac = (cast.bits & ((1ULL << 52) - 1)) | (1ULL << 52);
+   frac = (cast.bits & ((1ULL << 52) - 1ULL)) | (1ULL << 52);
 
    if (exp == 0x7FF) { /* +-inf, NaN */
       return MP_VAL;
