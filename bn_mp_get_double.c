@@ -21,7 +21,7 @@ double mp_get_double(const mp_int *a)
       fac *= 2.0;
    }
    for (i = USED(a); i --> 0;) {
-      d = d * fac + (double)DIGIT(a, i);
+      d = (d * fac) + (double)DIGIT(a, i);
    }
    return (mp_isneg(a) != MP_NO) ? -d : d;
 }
