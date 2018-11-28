@@ -38,7 +38,7 @@ int mp_set_double(mp_int *a, double d)
    }
 
    res = exp < 0 ? mp_div_2d(a, -exp, a, 0) : mp_mul_2d(a, exp, a);
-   if ((cast.bits >> 63) && !mp_iszero(a)) {
+   if (((cast.bits >> 63) != 0ULL) && (mp_iszero(a) == MP_NO)) {
       SIGN(a) = MP_NEG;
    }
 

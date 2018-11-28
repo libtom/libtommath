@@ -23,7 +23,7 @@ double mp_get_double(const mp_int *a)
    for (i = USED(a); i --> 0;) {
       d = d * fac + (double)DIGIT(a, i);
    }
-   return mp_isneg(a) ? -d : d;
+   return (mp_isneg(a) != MP_NO) ? -d : d;
 }
 #endif
 
