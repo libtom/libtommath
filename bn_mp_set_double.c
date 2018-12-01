@@ -38,6 +38,10 @@ int mp_set_double(mp_int *a, double b)
    }
 
    res = (exp < 0) ? mp_div_2d(a, -exp, a, NULL) : mp_mul_2d(a, exp, a);
+   if (res != MP_OKAY) {
+      return res;
+   }
+
    if (((cast.bits >> 63) != 0ULL) && (mp_iszero(a) == MP_NO)) {
       SIGN(a) = MP_NEG;
    }
