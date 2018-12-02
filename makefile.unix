@@ -1,27 +1,35 @@
-#Makefile for GCC
+# MAKEFILE that is intended to be compatible with any kind of make (GNU make, BSD make, ...)
+# works on: Linux, *BSD, Cygwin, AIX, HP-UX and hopefully other UNIX systems
 #
-#Tom St Denis
+# Please do not use here neither any special make syntax nor any unusual tools/utilities!
 
-#default files to install
-ifndef LIBNAME
-   LIBNAME=libtommath.la
-endif
+# using ICC compiler:
+# make -f makefile.unix CC=icc CFLAGS="-O3 -xP -ip"
 
-include makefile_include.mk
+# using Borland C++Builder:
+# make -f makefile.unix CC=bcc32
 
+#The following can be overridden from command line e.g. "make -f makefile.unix CC=gcc ARFLAGS=rcs"
+DESTDIR   =
+PREFIX    = /usr/local
+LIBPATH   = $(PREFIX)/lib
+INCPATH   = $(PREFIX)/include
+CC        = cc
+AR        = ar
+ARFLAGS   = r
+RANLIB    = ranlib
+CFLAGS    = -O2
+LDFLAGS   =
 
-ifndef LIBTOOL
-  ifeq ($(PLATFORM), Darwin)
-    LIBTOOL:=glibtool
-  else
-    LIBTOOL:=libtool
-  endif
-endif
-LTCOMPILE = $(LIBTOOL) --mode=compile --tag=CC $(CC)
+VERSION   = 1.0.1
 
-LCOV_ARGS=--directory .libs --directory .
+#Compilation flags
+LTM_CFLAGS  = -I. $(CFLAGS)
+LTM_LDFLAGS = $(LDFLAGS)
 
-#START_INS
+#Library to be created (this makefile builds only static library)
+LIBMAIN_S = libtommath.a
+
 OBJECTS=bn_error.o bn_fast_mp_invmod.o bn_fast_mp_montgomery_reduce.o bn_fast_s_mp_mul_digs.o \
 bn_fast_s_mp_mul_high_digs.o bn_fast_s_mp_sqr.o bn_mp_2expt.o bn_mp_abs.o bn_mp_add.o bn_mp_add_d.o \
 bn_mp_addmod.o bn_mp_and.o bn_mp_clamp.o bn_mp_clear.o bn_mp_clear_multi.o bn_mp_cmp.o bn_mp_cmp_d.o \
@@ -48,42 +56,47 @@ bn_mp_to_unsigned_bin_n.o bn_mp_toom_mul.o bn_mp_toom_sqr.o bn_mp_toradix.o bn_m
 bn_mp_unsigned_bin_size.o bn_mp_xor.o bn_mp_zero.o bn_prime_tab.o bn_reverse.o bn_s_mp_add.o \
 bn_s_mp_exptmod.o bn_s_mp_mul_digs.o bn_s_mp_mul_high_digs.o bn_s_mp_sqr.o bn_s_mp_sub.o bncore.o
 
-#END_INS
+HEADERS_PUB=tommath.h tommath_class.h tommath_superclass.h
 
-objs: $(OBJECTS)
+HEADERS=tommath_private.h $(HEADERS_PUB)
 
+#The default rule for make builds the libtommath.a library (static)
+default: $(LIBMAIN_S)
+
+#Dependencies on *.h
+$(OBJECTS): $(HEADERS)
+
+#This is necessary for compatibility with BSD make (namely on OpenBSD)
+.SUFFIXES: .o .c
 .c.o:
-	$(LTCOMPILE) $(CFLAGS) $(LDFLAGS) -o $@ -c $<
+	$(CC) $(LTM_CFLAGS) -c $< -o $@
 
-LOBJECTS = $(OBJECTS:.o=.lo)
+#Create libtommath.a
+$(LIBMAIN_S): $(OBJECTS)
+	$(AR) $(ARFLAGS) $@ $(OBJECTS)
+	$(RANLIB) $@
 
-$(LIBNAME):  $(OBJECTS)
-	$(LIBTOOL) --mode=link --tag=CC $(CC) $(LDFLAGS) $(LOBJECTS) -o $(LIBNAME) -rpath $(LIBPATH) -version-info $(VERSION_SO) $(LIBTOOLFLAGS)
+#Build test_standalone suite
+test: $(LIBMAIN_S) demo/demo.c
+	$(CC) $(LTM_CFLAGS) $(LTM_LDFLAGS) demo/demo.c $(LIBMAIN_S) -DLTM_DEMO_TEST_VS_MTEST=0 -o $@
+	@echo "NOTICE: start the tests by: ./test"
 
-install: $(LIBNAME)
-	install -d $(DESTDIR)$(LIBPATH)
-	install -d $(DESTDIR)$(INCPATH)
-	$(LIBTOOL) --mode=install install -m 644 $(LIBNAME) $(DESTDIR)$(LIBPATH)/$(LIBNAME)
-	install -m 644 $(HEADERS_PUB) $(DESTDIR)$(INCPATH)
-	sed -e 's,^prefix=.*,prefix=$(PREFIX),' -e 's,^Version:.*,Version: $(VERSION_PC),' libtommath.pc.in > libtommath.pc
-	install -d $(DESTDIR)$(LIBPATH)/pkgconfig
-	install -m 644 libtommath.pc $(DESTDIR)$(LIBPATH)/pkgconfig/
+test_standalone: test
 
-uninstall:
-	$(LIBTOOL) --mode=uninstall rm $(DESTDIR)$(LIBPATH)/$(LIBNAME)
-	rm $(HEADERS_PUB:%=$(DESTDIR)$(INCPATH)/%)
-	rm $(DESTDIR)$(LIBPATH)/pkgconfig/libtommath.pc
+all: $(LIBMAIN_S) test_standalone
 
-test: $(LIBNAME) demo/demo.o
-	$(CC) $(CFLAGS) -c demo/demo.c -o demo/demo.o
-	$(LIBTOOL) --mode=link $(CC) $(LDFLAGS) -o test demo/demo.o $(LIBNAME)
+#NOTE: this makefile works also on cygwin, thus we need to delete *.exe
+clean:
+	-@rm -f $(OBJECTS) $(LIBMAIN_S)
+	-@rm -f demo/demo.o test test.exe
 
-test_standalone: $(LIBNAME) demo/demo.o
-	$(CC) $(CFLAGS) -c demo/demo.c -o demo/demo.o
-	$(LIBTOOL) --mode=link $(CC) $(LDFLAGS) -o test demo/demo.o $(LIBNAME)
+#Install the library + headers
+install: $(LIBMAIN_S)
+	@mkdir -p $(DESTDIR)$(INCPATH) $(DESTDIR)$(LIBPATH)/pkgconfig
+	@cp $(LIBMAIN_S) $(DESTDIR)$(LIBPATH)/
+	@cp $(HEADERS_PUB) $(DESTDIR)$(INCPATH)/
+	@sed -e 's,^prefix=.*,prefix=$(PREFIX),' -e 's,^Version:.*,Version: $(VERSION),' libtommath.pc.in > $(DESTDIR)$(LIBPATH)/pkgconfig/libtommath.pc
 
-mtest:
-	cd mtest ; $(CC) $(CFLAGS) $(LDFLAGS) mtest.c -o mtest
-
-timing: $(LIBNAME) demo/timing.c
-	$(LIBTOOL) --mode=link $(CC) $(CFLAGS) $(LDFLAGS) -DTIMER demo/timing.c $(LIBNAME) -o timing
+# ref:         $Format:%D$
+# git commit:  $Format:%H$
+# commit time: $Format:%ai$

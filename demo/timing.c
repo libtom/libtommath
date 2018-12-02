@@ -66,7 +66,7 @@ static uint64_t TIMFUNC(void)
    return result;
 #endif
 
-   // Microsoft and Intel Windows compilers
+   /* Microsoft and Intel Windows compilers */
 #elif defined _M_IX86
    __asm rdtsc
 #elif defined _M_AMD64
@@ -82,9 +82,9 @@ static uint64_t TIMFUNC(void)
 }
 
 #define DO(x) x; x;
-//#define DO4(x) DO2(x); DO2(x);
-//#define DO8(x) DO4(x); DO4(x);
-//#define DO(x)  DO8(x); DO8(x);
+/*#define DO4(x) DO2(x); DO2(x);*/
+/*#define DO8(x) DO4(x); DO4(x);*/
+/*#define DO(x)  DO8(x); DO8(x);*/
 
 #ifdef TIMING_NO_LOGS
 #define FOPEN(a, b)     NULL

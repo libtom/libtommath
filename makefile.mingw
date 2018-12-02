@@ -1,27 +1,34 @@
-#Makefile for GCC
+# MAKEFILE for MS Windows (mingw + gcc + gmake)
 #
-#Tom St Denis
+# BEWARE: variable OBJECTS is updated via ./updatemakes.sh
 
-#default files to install
-ifndef LIBNAME
-   LIBNAME=libtommath.la
-endif
+### USAGE:
+# Open a command prompt with gcc + gmake in PATH and start:
+#
+# gmake -f makefile.mingw all
+# test.exe
+# gmake -f makefile.mingw PREFIX=c:\devel\libtom install
 
-include makefile_include.mk
+#The following can be overridden from command line e.g. make -f makefile.mingw CC=gcc ARFLAGS=rcs
+PREFIX    = c:\mingw
+CC        = gcc
+AR        = ar
+ARFLAGS   = r
+RANLIB    = ranlib
+STRIP     = strip
+CFLAGS    = -O2
+LDFLAGS   =
 
+#Compilation flags
+LTM_CFLAGS  = -I. $(CFLAGS)
+LTM_LDFLAGS = $(LDFLAGS)
 
-ifndef LIBTOOL
-  ifeq ($(PLATFORM), Darwin)
-    LIBTOOL:=glibtool
-  else
-    LIBTOOL:=libtool
-  endif
-endif
-LTCOMPILE = $(LIBTOOL) --mode=compile --tag=CC $(CC)
+#Libraries to be created
+LIBMAIN_S =libtommath.a
+LIBMAIN_I =libtommath.dll.a
+LIBMAIN_D =libtommath.dll
 
-LCOV_ARGS=--directory .libs --directory .
-
-#START_INS
+#List of objects to compile (all goes to libtommath.a)
 OBJECTS=bn_error.o bn_fast_mp_invmod.o bn_fast_mp_montgomery_reduce.o bn_fast_s_mp_mul_digs.o \
 bn_fast_s_mp_mul_high_digs.o bn_fast_s_mp_sqr.o bn_mp_2expt.o bn_mp_abs.o bn_mp_add.o bn_mp_add_d.o \
 bn_mp_addmod.o bn_mp_and.o bn_mp_clamp.o bn_mp_clear.o bn_mp_clear_multi.o bn_mp_cmp.o bn_mp_cmp_d.o \
@@ -48,42 +55,51 @@ bn_mp_to_unsigned_bin_n.o bn_mp_toom_mul.o bn_mp_toom_sqr.o bn_mp_toradix.o bn_m
 bn_mp_unsigned_bin_size.o bn_mp_xor.o bn_mp_zero.o bn_prime_tab.o bn_reverse.o bn_s_mp_add.o \
 bn_s_mp_exptmod.o bn_s_mp_mul_digs.o bn_s_mp_mul_high_digs.o bn_s_mp_sqr.o bn_s_mp_sub.o bncore.o
 
-#END_INS
+HEADERS_PUB=tommath.h tommath_class.h tommath_superclass.h
 
-objs: $(OBJECTS)
+HEADERS=tommath_private.h $(HEADERS_PUB)
+
+#The default rule for make builds the libtommath.a library (static)
+default: $(LIBMAIN_S)
+
+#Dependencies on *.h
+$(OBJECTS): $(HEADERS)
 
 .c.o:
-	$(LTCOMPILE) $(CFLAGS) $(LDFLAGS) -o $@ -c $<
+	$(CC) $(LTM_CFLAGS) -c $< -o $@
 
-LOBJECTS = $(OBJECTS:.o=.lo)
+#Create libtommath.a
+$(LIBMAIN_S): $(OBJECTS)
+	$(AR) $(ARFLAGS) $@ $(OBJECTS)
+	$(RANLIB) $@
 
-$(LIBNAME):  $(OBJECTS)
-	$(LIBTOOL) --mode=link --tag=CC $(CC) $(LDFLAGS) $(LOBJECTS) -o $(LIBNAME) -rpath $(LIBPATH) -version-info $(VERSION_SO) $(LIBTOOLFLAGS)
+#Create DLL + import library libtommath.dll.a
+$(LIBMAIN_D) $(LIBMAIN_I): $(OBJECTS)
+	$(CC) -s -shared -o $(LIBMAIN_D) $^ -Wl,--enable-auto-import,--export-all -Wl,--out-implib=$(LIBMAIN_I) $(LTM_LDFLAGS)
+	$(STRIP) -S $(LIBMAIN_D)
 
-install: $(LIBNAME)
-	install -d $(DESTDIR)$(LIBPATH)
-	install -d $(DESTDIR)$(INCPATH)
-	$(LIBTOOL) --mode=install install -m 644 $(LIBNAME) $(DESTDIR)$(LIBPATH)/$(LIBNAME)
-	install -m 644 $(HEADERS_PUB) $(DESTDIR)$(INCPATH)
-	sed -e 's,^prefix=.*,prefix=$(PREFIX),' -e 's,^Version:.*,Version: $(VERSION_PC),' libtommath.pc.in > libtommath.pc
-	install -d $(DESTDIR)$(LIBPATH)/pkgconfig
-	install -m 644 libtommath.pc $(DESTDIR)$(LIBPATH)/pkgconfig/
+#Build test_standalone suite
+test.exe: $(LIBMAIN_S) demo/demo.c
+	$(CC) $(LTM_CFLAGS) $(LTM_LDFLAGS) demo/demo.c $(LIBMAIN_S) -DLTM_DEMO_TEST_VS_MTEST=0 -o $@
+	@echo NOTICE: start the tests by launching test.exe
 
-uninstall:
-	$(LIBTOOL) --mode=uninstall rm $(DESTDIR)$(LIBPATH)/$(LIBNAME)
-	rm $(HEADERS_PUB:%=$(DESTDIR)$(INCPATH)/%)
-	rm $(DESTDIR)$(LIBPATH)/pkgconfig/libtommath.pc
+test_standalone: test.exe
 
-test: $(LIBNAME) demo/demo.o
-	$(CC) $(CFLAGS) -c demo/demo.c -o demo/demo.o
-	$(LIBTOOL) --mode=link $(CC) $(LDFLAGS) -o test demo/demo.o $(LIBNAME)
+all: $(LIBMAIN_S) test_standalone
 
-test_standalone: $(LIBNAME) demo/demo.o
-	$(CC) $(CFLAGS) -c demo/demo.c -o demo/demo.o
-	$(LIBTOOL) --mode=link $(CC) $(LDFLAGS) -o test demo/demo.o $(LIBNAME)
+clean:
+	@-cmd /c del /Q /S *.o *.a *.exe *.dll 2>nul
 
-mtest:
-	cd mtest ; $(CC) $(CFLAGS) $(LDFLAGS) mtest.c -o mtest
+#Install the library + headers
+install: $(LIBMAIN_S) $(LIBMAIN_I) $(LIBMAIN_D)
+	cmd /c if not exist "$(PREFIX)\bin" mkdir "$(PREFIX)\bin"
+	cmd /c if not exist "$(PREFIX)\lib" mkdir "$(PREFIX)\lib"
+	cmd /c if not exist "$(PREFIX)\include" mkdir "$(PREFIX)\include"
+	copy /Y $(LIBMAIN_S) "$(PREFIX)\lib"
+	copy /Y $(LIBMAIN_I) "$(PREFIX)\lib"
+	copy /Y $(LIBMAIN_D) "$(PREFIX)\bin"
+	copy /Y tommath*.h "$(PREFIX)\include"
 
-timing: $(LIBNAME) demo/timing.c
-	$(LIBTOOL) --mode=link $(CC) $(CFLAGS) $(LDFLAGS) -DTIMER demo/timing.c $(LIBNAME) -o timing
+# ref:         $Format:%D$
+# git commit:  $Format:%H$
+# commit time: $Format:%ai$
