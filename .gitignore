@@ -6,8 +6,9 @@
 *.gcno
 *.gcov
 *.lib
-Debug/
-Release/
+[Dd]ebug/
+[Rr]elease/
+/MSVC_*
 .libs/
 .coveralls.yml
 coverage*/
