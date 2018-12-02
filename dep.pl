@@ -1,4 +1,4 @@
-#!/usr/bin/perl 
+#!/usr/bin/perl
 #
 # Walk through source, add labels and make classes
 #
@@ -7,7 +7,7 @@ use warnings;
 
 my %deplist;
 
-#open class file and write preamble 
+#open class file and write preamble
 open(my $class, '>', 'tommath_class.h') or die "Couldn't open tommath_class.h for writing\n";
 print {$class} << 'EOS';
 #if !(defined(LTM1) && defined(LTM2) && defined(LTM3))
@@ -34,7 +34,7 @@ foreach my $filename (glob 'bn*.c') {
 #   define $define
 EOS
 
-   # now copy text and apply #ifdef as required 
+   # now copy text and apply #ifdef as required
    my $apply = 0;
    open(my $src, '<', $filename);
    open(my $out, '>', 'tmp');
@@ -72,12 +72,12 @@ print {$class} << 'EOS';
 
 EOS
 
-# now do classes 
+# now do classes
 
 foreach my $filename (glob 'bn*.c') {
    open(my $src, '<', $filename) or die "Can't open source file!\n";
 
-   # convert filename to upper case so we can use it as a define 
+   # convert filename to upper case so we can use it as a define
    $filename =~ tr/[a-z]/[A-Z]/;
    $filename =~ tr/\./_/;
 
@@ -128,7 +128,7 @@ print {$class} << 'EOS';
 EOS
 close $class;
 
-#now let's make a cool call graph... 
+#now let's make a cool call graph...
 
 open(my $out, '>', 'callgraph.txt');
 my $indent = 0;
