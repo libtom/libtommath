@@ -76,12 +76,14 @@ $(LIBMAIN_S): $(OBJECTS)
 	$(AR) $(ARFLAGS) $@ $(OBJECTS)
 	$(RANLIB) $@
 
-#Build test suite
+#Build test_standalone suite
 test: $(LIBMAIN_S) demo/demo.c
 	$(CC) $(LTM_CFLAGS) $(LTM_LDFLAGS) demo/demo.c $(LIBMAIN_S) -DLTM_DEMO_TEST_VS_MTEST=0 -o $@
 	@echo "NOTICE: start the tests by: ./test"
 
-all: $(LIBMAIN_S) test
+test_standalone: test
+
+all: $(LIBMAIN_S) test_standalone
 
 #NOTE: this makefile works also on cygwin, thus we need to delete *.exe
 clean:

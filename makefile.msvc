@@ -64,14 +64,14 @@ $(OBJECTS): $(HEADERS)
 $(LIBMAIN_S): $(OBJECTS)
 	lib /out:$(LIBMAIN_S) $(OBJECTS)
 
-#Build test suite
+#Build test_standalone suite
 test.exe: $(LIBMAIN_S) demo/demo.c
 	cl $(LTM_CFLAGS) $(TOBJECTS) $(LIBMAIN_S) $(LTM_LDFLAGS) demo/demo.c /DLTM_DEMO_TEST_VS_MTEST=0 /Fe$@
 	@echo NOTICE: start the tests by launching test.exe
 
-all: $(LIBMAIN_S) test.exe
+test_standalone: test.exe
 
-test: test.exe
+all: $(LIBMAIN_S) test_standalone
 
 clean:
 	@-cmd /c del /Q /S *.OBJ *.LIB *.EXE *.DLL 2>nul

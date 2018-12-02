@@ -78,14 +78,14 @@ $(LIBMAIN_D) $(LIBMAIN_I): $(OBJECTS)
 	$(CC) -s -shared -o $(LIBMAIN_D) $^ -Wl,--enable-auto-import,--export-all -Wl,--out-implib=$(LIBMAIN_I) $(LTM_LDFLAGS)
 	$(STRIP) -S $(LIBMAIN_D)
 
-#Build test suite
+#Build test_standalone suite
 test.exe: $(LIBMAIN_S) demo/demo.c
 	$(CC) $(LTM_CFLAGS) $(LTM_LDFLAGS) demo/demo.c $(LIBMAIN_S) -DLTM_DEMO_TEST_VS_MTEST=0 -o $@
 	@echo NOTICE: start the tests by launching test.exe
 
-all: $(LIBMAIN_S) test.exe
+test_standalone: test.exe
 
-test: test.exe
+all: $(LIBMAIN_S) test_standalone
 
 clean:
 	@-cmd /c del /Q /S *.o *.a *.exe *.dll 2>nul
