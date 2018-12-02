@@ -243,7 +243,7 @@ sub process_makefiles {
   }
 
   # update OBJECTS + HEADERS in makefile*
-  for my $m (qw/ makefile makefile.shared makefile_include.mk makefile.msvc makefile.unix makefile.mingw makefile.bcc makefile.cygwin_dll makefile.icc /) {
+  for my $m (qw/ makefile makefile.shared makefile_include.mk makefile.msvc makefile.unix makefile.mingw makefile.cygwin_dll /) {
     my $old = read_file($m);
     my $new = $m eq 'makefile.msvc' ? patch_file($old, $var_obj)
                                     : patch_file($old, $var_o);

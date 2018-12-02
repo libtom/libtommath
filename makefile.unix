@@ -3,6 +3,12 @@
 #
 # Please do not use here neither any special make syntax nor any unusual tools/utilities!
 
+# using ICC compiler:
+# make -f makefile.unix CC=icc CFLAGS="-O3 -xP -ip"
+
+# using Borland C++Builder:
+# make -f makefile.unix CC=bcc32
+
 #The following can be overridden from command line e.g. "make -f makefile.unix CC=gcc ARFLAGS=rcs"
 DESTDIR   =
 PREFIX    = /usr/local
