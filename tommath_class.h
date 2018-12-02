@@ -1,15 +1,3 @@
-/* LibTomMath, multiple-precision integer library -- Tom St Denis
- *
- * LibTomMath is a library that provides multiple-precision
- * integer arithmetic as well as number theoretic functionality.
- *
- * The library was designed directly after the MPI library by
- * Michael Fromberger but has been written from scratch with
- * additional optimizations in place.
- *
- * The library is free for all purposes without any express
- * guarantee it works.
- */
 #if !(defined(LTM1) && defined(LTM2) && defined(LTM3))
 #if defined(LTM2)
 #   define LTM3
@@ -60,6 +48,7 @@
 #   define BN_MP_FREAD_C
 #   define BN_MP_FWRITE_C
 #   define BN_MP_GCD_C
+#   define BN_MP_GET_BIT_C
 #   define BN_MP_GET_DOUBLE_C
 #   define BN_MP_GET_INT_C
 #   define BN_MP_GET_LONG_C
@@ -78,6 +67,7 @@
 #   define BN_MP_JACOBI_C
 #   define BN_MP_KARATSUBA_MUL_C
 #   define BN_MP_KARATSUBA_SQR_C
+#   define BN_MP_KRONECKER_C
 #   define BN_MP_LCM_C
 #   define BN_MP_LSHD_C
 #   define BN_MP_MOD_C
@@ -96,12 +86,14 @@
 #   define BN_MP_NEG_C
 #   define BN_MP_OR_C
 #   define BN_MP_PRIME_FERMAT_C
+#   define BN_MP_PRIME_FROBENIUS_UNDERWOOD_C
 #   define BN_MP_PRIME_IS_DIVISIBLE_C
 #   define BN_MP_PRIME_IS_PRIME_C
 #   define BN_MP_PRIME_MILLER_RABIN_C
 #   define BN_MP_PRIME_NEXT_PRIME_C
 #   define BN_MP_PRIME_RABIN_MILLER_TRIALS_C
 #   define BN_MP_PRIME_RANDOM_EX_C
+#   define BN_MP_PRIME_STRONG_LUCAS_SELFRIDGE_C
 #   define BN_MP_RADIX_SIZE_C
 #   define BN_MP_RADIX_SMAP_C
 #   define BN_MP_RAND_C
@@ -174,6 +166,7 @@
 #   define BN_MP_CMP_C
 #   define BN_MP_CMP_D_C
 #   define BN_MP_ADD_C
+#   define BN_MP_CMP_MAG_C
 #   define BN_MP_EXCH_C
 #   define BN_MP_CLEAR_MULTI_C
 #endif
@@ -439,6 +432,10 @@
 #   define BN_MP_CLEAR_C
 #endif
 
+#if defined(BN_MP_GET_BIT_C)
+#   define BN_MP_ISZERO_C
+#endif
+
 #if defined(BN_MP_GET_DOUBLE_C)
 #   define BN_MP_ISNEG_C
 #endif
@@ -527,14 +524,9 @@
 #endif
 
 #if defined(BN_MP_JACOBI_C)
+#   define BN_MP_KRONECKER_C
 #   define BN_MP_ISNEG_C
 #   define BN_MP_CMP_D_C
-#   define BN_MP_ISZERO_C
-#   define BN_MP_INIT_COPY_C
-#   define BN_MP_CNT_LSB_C
-#   define BN_MP_DIV_2D_C
-#   define BN_MP_MOD_C
-#   define BN_MP_CLEAR_C
 #endif
 
 #if defined(BN_MP_KARATSUBA_MUL_C)
@@ -556,6 +548,18 @@
 #   define BN_S_MP_SUB_C
 #   define BN_MP_LSHD_C
 #   define BN_MP_ADD_C
+#   define BN_MP_CLEAR_C
+#endif
+
+#if defined(BN_MP_KRONECKER_C)
+#   define BN_MP_ISZERO_C
+#   define BN_MP_ISEVEN_C
+#   define BN_MP_INIT_COPY_C
+#   define BN_MP_CNT_LSB_C
+#   define BN_MP_DIV_2D_C
+#   define BN_MP_CMP_D_C
+#   define BN_MP_COPY_C
+#   define BN_MP_MOD_C
 #   define BN_MP_CLEAR_C
 #endif
 
@@ -684,16 +688,49 @@
 #   define BN_MP_CLEAR_C
 #endif
 
+#if defined(BN_MP_PRIME_FROBENIUS_UNDERWOOD_C)
+#   define BN_MP_PRIME_IS_PRIME_C
+#   define BN_MP_INIT_MULTI_C
+#   define BN_MP_SET_LONG_C
+#   define BN_MP_SQR_C
+#   define BN_MP_SUB_D_C
+#   define BN_MP_KRONECKER_C
+#   define BN_MP_GCD_C
+#   define BN_MP_ADD_D_C
+#   define BN_MP_SET_C
+#   define BN_MP_COUNT_BITS_C
+#   define BN_MP_MUL_2_C
+#   define BN_MP_MUL_D_C
+#   define BN_MP_ADD_C
+#   define BN_MP_MUL_C
+#   define BN_MP_SUB_C
+#   define BN_MP_MOD_C
+#   define BN_MP_GET_BIT_C
+#   define BN_MP_EXCH_C
+#   define BN_MP_ISZERO_C
+#   define BN_MP_CMP_C
+#   define BN_MP_CLEAR_MULTI_C
+#endif
+
 #if defined(BN_MP_PRIME_IS_DIVISIBLE_C)
 #   define BN_MP_MOD_D_C
 #endif
 
 #if defined(BN_MP_PRIME_IS_PRIME_C)
+#   define BN_MP_ISEVEN_C
+#   define BN_MP_IS_SQUARE_C
 #   define BN_MP_CMP_D_C
 #   define BN_MP_PRIME_IS_DIVISIBLE_C
-#   define BN_MP_INIT_C
-#   define BN_MP_SET_C
+#   define BN_MP_INIT_SET_C
 #   define BN_MP_PRIME_MILLER_RABIN_C
+#   define BN_MP_PRIME_FROBENIUS_UNDERWOOD_C
+#   define BN_MP_PRIME_STRONG_LUCAS_SELFRIDGE_C
+#   define BN_MP_READ_RADIX_C
+#   define BN_MP_CMP_C
+#   define BN_MP_SET_C
+#   define BN_MP_COUNT_BITS_C
+#   define BN_MP_RAND_C
+#   define BN_MP_DIV_2D_C
 #   define BN_MP_CLEAR_C
 #endif
 
@@ -717,7 +754,7 @@
 #   define BN_MP_MOD_D_C
 #   define BN_MP_INIT_C
 #   define BN_MP_ADD_D_C
-#   define BN_MP_PRIME_MILLER_RABIN_C
+#   define BN_MP_PRIME_IS_PRIME_C
 #   define BN_MP_CLEAR_C
 #endif
 
@@ -731,6 +768,37 @@
 #   define BN_MP_DIV_2_C
 #   define BN_MP_MUL_2_C
 #   define BN_MP_ADD_D_C
+#endif
+
+#if defined(BN_MP_PRIME_STRONG_LUCAS_SELFRIDGE_C)
+#   define BN_MP_PRIME_IS_PRIME_C
+#   define BN_MP_MUL_D_C
+#   define BN_MP_MUL_SI_C
+#   define BN_MP_INIT_C
+#   define BN_MP_SET_LONG_C
+#   define BN_MP_MUL_C
+#   define BN_MP_CLEAR_C
+#   define BN_MP_INIT_MULTI_C
+#   define BN_MP_GCD_C
+#   define BN_MP_CMP_D_C
+#   define BN_MP_CMP_C
+#   define BN_MP_KRONECKER_C
+#   define BN_MP_ADD_D_C
+#   define BN_MP_CNT_LSB_C
+#   define BN_MP_DIV_2D_C
+#   define BN_MP_SET_C
+#   define BN_MP_MUL_2_C
+#   define BN_MP_COUNT_BITS_C
+#   define BN_MP_MOD_C
+#   define BN_MP_SQR_C
+#   define BN_MP_SUB_C
+#   define BN_MP_GET_BIT_C
+#   define BN_MP_ADD_C
+#   define BN_MP_ISODD_C
+#   define BN_MP_DIV_2_C
+#   define BN_MP_SUB_D_C
+#   define BN_MP_ISZERO_C
+#   define BN_MP_CLEAR_MULTI_C
 #endif
 
 #if defined(BN_MP_RADIX_SIZE_C)
@@ -1133,12 +1201,8 @@
 #   define LTM_LAST
 #endif
 
-#include "tommath_superclass.h"
-#include "tommath_class.h"
+#include <tommath_superclass.h>
+#include <tommath_class.h>
 #else
 #   define LTM_LAST
 #endif
-
-/* ref:         $Format:%D$ */
-/* git commit:  $Format:%H$ */
-/* commit time: $Format:%ai$ */
