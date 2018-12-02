@@ -224,7 +224,7 @@ sub process_makefiles {
   my $write = shift;
   my $changed_count = 0;
   my @o = map { my $x = $_; $x =~ s/\.c$/.o/; $x } bsd_glob("*.c");
-  my @all = bsd_glob("*.c");
+  my @all = bsd_glob("*.{c,h}");
 
   my $var_o = prepare_variable("OBJECTS", @o);
   (my $var_obj = $var_o) =~ s/\.o\b/.obj/sg;
