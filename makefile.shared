@@ -58,7 +58,7 @@ objs: $(OBJECTS)
 LOBJECTS = $(OBJECTS:.o=.lo)
 
 $(LIBNAME):  $(OBJECTS)
-	$(LIBTOOL) --mode=link --tag=CC $(CC) $(LDFLAGS) $(LOBJECTS) -o $(LIBNAME) -rpath $(LIBPATH) -version-info $(VERSION_SO)
+	$(LIBTOOL) --mode=link --tag=CC $(CC) $(LDFLAGS) $(LOBJECTS) -o $(LIBNAME) -rpath $(LIBPATH) -version-info $(VERSION_SO) $(LIBTOOLFLAGS)
 
 install: $(LIBNAME)
 	install -d $(DESTDIR)$(LIBPATH)
