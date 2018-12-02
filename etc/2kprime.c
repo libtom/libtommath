@@ -37,7 +37,7 @@ top:
             if ((clock() - t1) > CLOCKS_PER_SEC) {
                printf(".");
                fflush(stdout);
-//            sleep((clock() - t1 + CLOCKS_PER_SEC/2)/CLOCKS_PER_SEC);
+/*            sleep((clock() - t1 + CLOCKS_PER_SEC/2)/CLOCKS_PER_SEC); */
                t1 = clock();
             }
 

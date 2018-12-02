@@ -31,7 +31,7 @@ static uint64_t TIMFUNC(void)
    return result;
 #      endif
 
-   // Microsoft and Intel Windows compilers
+   /* Microsoft and Intel Windows compilers */
 #   elif defined _M_IX86
    __asm rdtsc
 #   elif defined _M_AMD64
