@@ -473,6 +473,10 @@
 			>
 		</File>
 		<File
+			RelativePath="bn_mp_get_bit.c"
+			>
+		</File>
+		<File
 			RelativePath="bn_mp_get_double.c"
 			>
 		</File>
@@ -542,6 +546,10 @@
 		</File>
 		<File
 			RelativePath="bn_mp_karatsuba_sqr.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_mp_kronecker.c"
 			>
 		</File>
 		<File
@@ -617,6 +625,10 @@
 			>
 		</File>
 		<File
+			RelativePath="bn_mp_prime_frobenius_underwood.c"
+			>
+		</File>
+		<File
 			RelativePath="bn_mp_prime_is_divisible.c"
 			>
 		</File>
@@ -638,6 +650,10 @@
 		</File>
 		<File
 			RelativePath="bn_mp_prime_random_ex.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_mp_prime_strong_lucas_selfridge.c"
 			>
 		</File>
 		<File
