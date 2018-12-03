@@ -165,15 +165,15 @@ int mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y
    }
 
    /* compute the value at M[1<<(winsize-1)] by squaring M[1] (winsize-1) times */
-   if ((err = mp_copy(&M[1], &M[1 << (winsize - 1)])) != MP_OKAY) {
+   if ((err = mp_copy(&M[1], &M[(size_t)1 << (winsize - 1)])) != MP_OKAY) {
       goto LBL_RES;
    }
 
    for (x = 0; x < (winsize - 1); x++) {
-      if ((err = mp_sqr(&M[1 << (winsize - 1)], &M[1 << (winsize - 1)])) != MP_OKAY) {
+      if ((err = mp_sqr(&M[(size_t)1 << (winsize - 1)], &M[(size_t)1 << (winsize - 1)])) != MP_OKAY) {
          goto LBL_RES;
       }
-      if ((err = redux(&M[1 << (winsize - 1)], P, mp)) != MP_OKAY) {
+      if ((err = redux(&M[(size_t)1 << (winsize - 1)], P, mp)) != MP_OKAY) {
          goto LBL_RES;
       }
    }
