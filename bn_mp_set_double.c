@@ -49,7 +49,11 @@ int mp_set_double(mp_int *a, double b)
    return MP_OKAY;
 }
 #else
-#  warning "mp_set_double implementation is only available on platforms with IEEE754 floating point format"
+#  ifdef _MSC_VER
+#    pragma message("mp_set_double implementation is only available on platforms with IEEE754 floating point format")
+#  else
+#    warning "mp_set_double implementation is only available on platforms with IEEE754 floating point format"
+#  endif
 #endif
 #endif
 
