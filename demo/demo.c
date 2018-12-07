@@ -284,20 +284,20 @@ int main(void)
    /* test mp_tc_div_2d */
    printf("\n\nTesting: mp_tc_div_2d");
    for (i = 0; i < 1000; ++i) {
-      int l, m;
+      int l, em;
 
       l = (rand() * rand() + 1) * (rand() % 1 ? -1 : 1);
       mp_set_int(&a, labs(l));
       if (l < 0)
          mp_neg(&a, &a);
 
-      m = rand() % 32;
+      em = rand() % 32;
 
-      mp_set_int(&d, labs(l >> m));
-      if ((l >> m) < 0)
+      mp_set_int(&d, labs(l >> em));
+      if ((l >> em) < 0)
          mp_neg(&d, &d);
 
-      mp_tc_div_2d(&a, m, &b);
+      mp_tc_div_2d(&a, em, &b);
       if (mp_cmp(&b, &d) != MP_EQ) {
          printf("\nmp_tc_div_2d() bad result!");
          return EXIT_FAILURE;
@@ -305,22 +305,22 @@ int main(void)
    }
 
    /* test mp_tc_xor */
-   printf("\n\nTesting: mp_tc_or");
+   printf("\n\nTesting: mp_tc_xor");
    for (i = 0; i < 1000; ++i) {
-      int l, m;
+      int l, em;
 
       l = (rand() * rand() + 1) * (rand() % 1 ? -1 : 1);
       mp_set_int(&a, labs(l));
       if (l < 0)
          mp_neg(&a, &a);
 
-      m = (rand() * rand() + 1) * (rand() % 1 ? -1 : 1);
-      mp_set_int(&b, labs(m));
-      if (m < 0)
+      em = (rand() * rand() + 1) * (rand() % 1 ? -1 : 1);
+      mp_set_int(&b, labs(em));
+      if (em < 0)
          mp_neg(&b, &b);
 
-      mp_set_int(&d, labs(l ^ m));
-      if ((l ^ m) < 0)
+      mp_set_int(&d, labs(l ^ em));
+      if ((l ^ em) < 0)
          mp_neg(&d, &d);
 
       mp_tc_xor(&a, &b, &c);
@@ -333,20 +333,20 @@ int main(void)
    /* test mp_tc_or */
    printf("\n\nTesting: mp_tc_or");
    for (i = 0; i < 1000; ++i) {
-      int l, m;
+      int l, em;
 
       l = (rand() * rand() + 1) * (rand() % 1 ? -1 : 1);
       mp_set_int(&a, labs(l));
       if (l < 0)
          mp_neg(&a, &a);
 
-      m = (rand() * rand() + 1) * (rand() % 1 ? -1 : 1);
-      mp_set_int(&b, labs(m));
-      if (m < 0)
+      em = (rand() * rand() + 1) * (rand() % 1 ? -1 : 1);
+      mp_set_int(&b, labs(em));
+      if (em < 0)
          mp_neg(&b, &b);
 
-      mp_set_int(&d, labs(l | m));
-      if ((l | m) < 0)
+      mp_set_int(&d, labs(l | em));
+      if ((l | em) < 0)
          mp_neg(&d, &d);
 
       mp_tc_or(&a, &b, &c);
@@ -359,20 +359,20 @@ int main(void)
    /* test mp_tc_and */
    printf("\n\nTesting: mp_tc_and");
    for (i = 0; i < 1000; ++i) {
-      int l, m;
+      int l, em;
 
       l = (rand() * rand() + 1) * (rand() % 1 ? -1 : 1);
       mp_set_int(&a, labs(l));
       if (l < 0)
          mp_neg(&a, &a);
 
-      m = (rand() * rand() + 1) * (rand() % 1 ? -1 : 1);
-      mp_set_int(&b, labs(m));
-      if (m < 0)
+      em = (rand() * rand() + 1) * (rand() % 1 ? -1 : 1);
+      mp_set_int(&b, labs(em));
+      if (em < 0)
          mp_neg(&b, &b);
 
-      mp_set_int(&d, labs(l & m));
-      if ((l & m) < 0)
+      mp_set_int(&d, labs(l & em));
+      if ((l & em) < 0)
          mp_neg(&d, &d);
 
       mp_tc_and(&a, &b, &c);
