@@ -115,6 +115,30 @@ MARKER
   return $fails;
 }
 
+sub check_doc {
+  my $fails = 0;
+  my $tex = read_file('doc/bn.tex');
+  my $tmh = read_file('tommath.h');
+  my @functions = $tmh =~ /\n\s*[a-zA-Z0-9_* ]+?(mp_[a-z0-9_]+)\s*\([^\)]+\)\s*;/sg;
+  my @macros    = $tmh =~ /\n\s*#define\s+([a-z0-9_]+)\s*\([^\)]+\)/sg;
+  for my $n (sort @functions) {
+    (my $nn = $n) =~ s/_/\\_/g; # mp_sub_d >> mp\_sub\_d
+    if ($tex !~ /index\Q{$nn}\E/) {
+      warn "[missing_doc_for_function] $n\n";
+      $fails++
+    }
+  }
+  for my $n (sort @macros) {
+    (my $nn = $n) =~ s/_/\\_/g; # mp_iszero >> mp\_iszero
+    if ($tex !~ /index\Q{$nn}\E/) {
+      warn "[missing_doc_for_macro] $n\n";
+      $fails++
+    }
+  }
+  warn( $fails > 0 ? "check_doc:       FAIL $fails\n" : "check-doc:       PASS\n" );
+  return $fails;
+}
+
 sub prepare_variable {
   my ($varname, @list) = @_;
   my $output = "$varname=";
@@ -275,6 +299,7 @@ MARKER
 GetOptions( "s|check-source"        => \my $check_source,
             "o|check-comments"      => \my $check_comments,
             "m|check-makefiles"     => \my $check_makefiles,
+            "d|check-doc"           => \my $check_doc,
             "a|check-all"           => \my $check_all,
             "u|update-makefiles"    => \my $update_makefiles,
             "h|help"                => \my $help
@@ -283,6 +308,7 @@ GetOptions( "s|check-source"        => \my $check_source,
 my $failure;
 $failure ||= check_source()       if $check_all || $check_source;
 $failure ||= check_comments()     if $check_all || $check_comments;
+$failure ||= check_doc()          if $check_doc; # temporarily excluded from --check-all
 $failure ||= process_makefiles(0) if $check_all || $check_makefiles;
 $failure ||= process_makefiles(1) if $update_makefiles;
 
