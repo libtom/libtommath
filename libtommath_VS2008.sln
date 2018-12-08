@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libtommath", "libtommath_VS2008.vcproj", "{42109FEE-B0B9-4FCD-9E56-2863BF8C55D2}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tommath", "libtommath_VS2008.vcproj", "{42109FEE-B0B9-4FCD-9E56-2863BF8C55D2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -22,5 +22,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {83B84178-7B4F-4B78-9C5D-17B8201D5B61}
 	EndGlobalSection
 EndGlobal
