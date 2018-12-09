@@ -1,3 +1,13 @@
+\def\fixedpdfdate{D:20181209230255+01'00'}
+\pdfinfo{
+  /CreationDate (\fixedpdfdate)
+  /ModDate (\fixedpdfdate)
+}
+\def\fixedpdfdate{D:20181209230255+01'00'}
+\pdfinfo{
+  /CreationDate (\fixedpdfdate)
+  /ModDate (\fixedpdfdate)
+}
 \documentclass[synpaper]{book}
 \usepackage{hyperref}
 \usepackage{makeidx}
@@ -546,6 +556,25 @@ int main(void)
 \end{alltt} \end{small}
 
 \section{Maintenance Functions}
+\subsection{Clear Leading Zeros}
+
+This is used to ensure that leading zero digits are trimed and the leading "used" digit will be non-zero.
+It also fixes the sign if there are no more leading digits.
+
+\index{mp\_clamp}
+\begin{alltt}
+void mp_clamp(mp_int *a);
+\end{alltt}
+
+\subsection{Zero Out}
+
+This function will set the ``bigint'' to zeros without changing the amount of allocated memory.
+
+\index{mp\_zero}
+\begin{alltt}
+void mp_zero(mp_int *a);
+\end{alltt}
+
 
 \subsection{Reducing Memory Usage}
 When an mp\_int is in a state where it won't be changed again\footnote{A Diffie-Hellman modulus for instance.} excess
@@ -640,6 +669,39 @@ int main(void)
 \end{alltt} \end{small}
 
 \chapter{Basic Operations}
+\section{Copying}
+
+A so called ``deep copy'', where new memory is allocated and all contents of $a$ are copied verbatim into $b$ such that $b = a$ at the end.
+
+\index{mp\_copy}
+\begin{alltt}
+int mp_copy (mp_int * a, mp_int *b);
+\end{alltt}
+
+You can also just swap $a$ and $b$. It does the normal pointer changing with a temporary pointer variable, just that you do not have to.
+
+\index{mp\_exch}
+\begin{alltt}
+void mp_exch (mp_int * a, mp_int *b);
+\end{alltt}
+
+\section{Bit Counting}
+
+To get the position of the lowest bit set (LSB, the Lowest Significant Bit; the number of bits which are zero before the first zero bit )
+
+\index{mp\_cnt\_lsb}
+\begin{alltt}
+int mp_cnt_lsb(const mp_int *a);
+\end{alltt}
+
+To get the position of the highest bit set (MSB, the Most Significant Bit; the number of bits in teh ``bignum'')
+
+\index{mp\_count\_bits}
+\begin{alltt}
+int mp_count_bits(const mp_int *a);
+\end{alltt}
+
+
 \section{Small Constants}
 Setting mp\_ints to small constants is a relatively common operation.  To accomodate these instances there are two
 small constant assignment functions.  The first function is used to set a single digit constant while the second sets
@@ -1103,6 +1165,21 @@ function simply copies $a$ over to ``c'' and zeroes $d$.  The variable $d$ may b
 value to signal that the remainder is not desired.  The division itself is implemented as a left-shift
 operation of $a$ by $b$ bits.
 
+\index{mp\_tc\_div\_2d}\label{arithrightshift}
+\begin{alltt}
+int mp_tc_div_2d (mp_int * a, int b, mp_int * c, mp_int * d);
+\end{alltt}
+The two-co,mplement version of the function above. This can be used to implement arbitrary-precision two-complement integers together with the two-complement bit-wise operations at page \ref{tcbitwiseops}.
+
+
+It is also not very uncommon to need just the power of two $2^b$;  for example the startvalue for the Newton method.
+
+\index{mp\_2expt}
+\begin{alltt}
+int mp_2expt(mp_int *a, int b);
+\end{alltt}
+It is faster than doing it by shifting $1$ with \texttt{mp_mul_2d}.
+
 \subsection{Polynomial Basis Operations}
 
 Strictly speaking the organization of the integers within the mp\_int structures is what is known as a
@@ -1128,19 +1205,32 @@ void mp_rshd (mp_int * a, int b)
 This will divide $a$ in place by $x^b$ and discard the remainder.  This function cannot fail as it performs the operations
 in place and no new digits are required to complete it.
 
-\subsection{AND, OR and XOR Operations}
+\subsection{AND, OR, XOR and COMPLEMENT Operations}
 
 While AND, OR and XOR operations are not typical ``bignum functions'' they can be useful in several instances.  The
-three functions are prototyped as follows.
+four functions are prototyped as follows.
 
-\index{mp\_or} \index{mp\_and} \index{mp\_xor}
+\index{mp\_or} \index{mp\_and} \index{mp\_xor} \index {mp\_complement}
 \begin{alltt}
 int mp_or  (mp_int * a, mp_int * b, mp_int * c);
 int mp_and (mp_int * a, mp_int * b, mp_int * c);
 int mp_xor (mp_int * a, mp_int * b, mp_int * c);
+int mp_complement(const mp_int *a, mp_int *b);
 \end{alltt}
 
-Which compute $c = a \odot b$ where $\odot$ is one of OR, AND or XOR.
+Which compute $c = a \odot b$ where $\odot$ is one of OR, AND or XOR and $ b = \sim a $.
+
+There are also three functions that act as if the ``bignum'' would be a two-complement number.
+
+\index{mp\_tc\_or} \index{mp\_tc\_and} \index{mp\_tc\_xor}\label{tcbitwiseops}
+\begin{alltt}
+int mp_tc_or  (mp_int * a, mp_int * b, mp_int * c);
+int mp_tc_and (mp_int * a, mp_int * b, mp_int * c);
+int mp_tc_xor (mp_int * a, mp_int * b, mp_int * c);
+\end{alltt}
+
+The compute $c = a \odot b$ as above if both $a$ and $b$ are positive, negative values are converted into their two-complement representation first. This can be used to implement arbitrary-precision two-complement integers together with the arithmetic right-shift at page \ref{arithrightshift}.
+
 
 \section{Addition and Subtraction}
 
@@ -1170,7 +1260,7 @@ Which assigns $-a$ to $b$.
 \subsection{Absolute}
 Simple integer absolutes can be performed with the following.
 
-\index{mp\_neg}
+\index{mp\_abs}
 \begin{alltt}
 int mp_abs (mp_int * a, mp_int * b);
 \end{alltt}
@@ -1587,6 +1677,33 @@ int mp_reduce_2k(mp_int *a, mp_int *n, mp_digit d);
 This will reduce $a$ in place modulo $n$ with the pre--computed value $d$.  From my experience this routine is
 slower than mp\_dr\_reduce but faster for most moduli sizes than the Montgomery reduction.
 
+\section{Combined Modular Reduction}
+
+Some of the combinations of an arithmetic operations followed by a modular reduction can be done in a faster way. The ones implemented are:
+
+Addition $d = (a + b) \mod c$ 
+\index{mp\_addmod}
+\begin{alltt}
+int mp_addmod(const mp_int *a, const mp_int *b, const mp_int *c, mp_int *d);
+\end{alltt}
+
+Subtraction  $d = (a - b) \mod c$ 
+\begin{alltt}
+int mp_submod(const mp_int *a, const mp_int *b, const mp_int *c, mp_int *d);
+\end{alltt}
+
+Multiplication $d = (ab) \mod c$ 
+\begin{alltt}
+int mp_mulmod(const mp_int *a, const mp_int *b, const mp_int *c, mp_int *d);
+\end{alltt}
+
+Squaring  $d = (a^2) \mod c$ 
+\begin{alltt}
+int mp_sqrmod(const mp_int *a, const mp_int *b, const mp_int *c, mp_int *d);
+\end{alltt}
+
+
+
 \chapter{Exponentiation}
 \section{Single Digit Exponentiation}
 \index{mp\_expt\_d\_ex}
@@ -1628,6 +1745,13 @@ detect when Barrett, Montgomery, Restricted and Unrestricted Dimminished Radix b
 moduli of the a ``restricted dimminished radix'' form lead to the fastest modular exponentiations.  Followed by Montgomery
 and the other two algorithms.
 
+\section{Modulus a Power of Two}
+\index{mp\_mod_2d}
+\begin{alltt}
+int mp_mod_2d(const mp_int *a, int b, mp_int *c)
+\end{alltt}
+It calculates $c = a \mod 2^b$.
+
 \section{Root Finding}
 \index{mp\_n\_root}
 \begin{alltt}
@@ -1644,6 +1768,15 @@ the algorithm requires raising $a$ to the power of $b$ it is not ideal to attemp
 values of $b$.  If particularly large roots are required then a factor method could be used instead.  For example,
 $a^{1/16}$ is equivalent to $\left (a^{1/4} \right)^{1/4}$ or simply
 $\left ( \left ( \left ( a^{1/2} \right )^{1/2} \right )^{1/2} \right )^{1/2}$
+
+
+The square root  $c = a^{1/2}$ (with the same conditions $c^2 \le a$ and $(c+1)^2 > a$) is implemented with a faster algorithm.
+
+\index{mp\_sqrt}
+\begin{alltt}
+int mp_sqrt (mp_int * a, mp_digit b, mp_int * c)
+\end{alltt}
+
 
 \chapter{Prime Numbers}
 \section{Trial Division}
@@ -1693,6 +1826,13 @@ require ten tests whereas a 1024-bit number would only require four tests.
 You should always still perform a trial division before a Miller-Rabin test though.
 
 \section{Primality Testing}
+Testing if a number is a square can be done a bit faster than just by calculating the square root. It is used by the primality testing function described below.
+\index{mp\_is\_square}
+\begin{alltt}
+int mp_is_square(const mp_int *arg, int *ret);
+\end{alltt}
+
+
 \index{mp\_prime\_is\_prime}
 \begin{alltt}
 int mp_prime_is_prime (mp_int * a, int t, int *result)
@@ -1762,6 +1902,17 @@ mp\_prime\_random().
 \label{fig:primeopts}
 \end{figure}
 
+\chapter{Random Number Generation}
+\section{PRNG}
+\index{mp\_rand}
+\begin{alltt}
+int mp_rand(mp_int *a, int digits)
+\end{alltt}
+The function generates a random number of \texttt{digits} bits.
+
+This random number is cryptographically secure if the source of random numbers the operating systems offers is cryptographically secure. It will use \texttt{arc4random()} if the OS is a BSD flavor, Wincrypt on Windows, and \texttt{\dev\urandom} on all operating systems that have it.
+
+
 \chapter{Input and Output}
 \section{ASCII Conversions}
 \subsection{To ASCII}
@@ -1773,12 +1924,26 @@ This still store $a$ in ``str'' as a base-``radix'' string of ASCII chars.  This
 to terminate the string.  Valid values of ``radix'' line in the range $[2, 64]$.  To determine the size (exact) required
 by the conversion before storing any data use the following function.
 
+\index{mp\_toradix\_n}
+\begin{alltt}
+int mp_toradix_n (mp_int * a, char *str, int radix, int maxlen);
+\end{alltt}
+
+Like \texttt{mp\_toradix} but stores upto maxlen-1 chars and always a NULL byte.
+
 \index{mp\_radix\_size}
 \begin{alltt}
 int mp_radix_size (mp_int * a, int radix, int *size)
 \end{alltt}
 This stores in ``size'' the number of characters (including space for the NUL terminator) required.  Upon error this
 function returns an error code and ``size'' will be zero.
+
+If \texttt{LTM\_NO\_FILE} is not defined a function to write to a file is also available.
+\index{mp\_fwrite}
+\begin{alltt}
+int mp_fwrite(const mp_int *a, int radix, FILE *stream);
+\end{alltt}
+
 
 \subsection{From ASCII}
 \index{mp\_read\_radix}
@@ -1788,6 +1953,13 @@ int mp_read_radix (mp_int * a, char *str, int radix);
 This will read the base-``radix'' NUL terminated string from ``str'' into $a$.  It will stop reading when it reads a
 character it does not recognize (which happens to include th NUL char... imagine that...).  A single leading $-$ sign
 can be used to denote a negative number.
+
+If \texttt{LTM\_NO\_FILE} is not defined a function to read from a file is also available.
+\index{mp\_fread}
+\begin{alltt}
+int mp_fread(mp_int *a, int radix, FILE *stream);
+\end{alltt}
+
 
 \section{Binary Conversions}
 
@@ -1807,6 +1979,13 @@ int mp_to_unsigned_bin(mp_int *a, unsigned char *b);
 This will store $a$ into the buffer $b$ in big--endian format.  Fortunately this is exactly what DER (or is it ASN?)
 requires.  It does not store the sign of the integer.
 
+\index{mp\_to\_unsigned\_bin\_n}
+\begin{alltt}
+int mp_to_unsigned_bin_n(const mp_int *a, unsigned char *b, unsigned long *outlen)
+\end{alltt}
+Like \texttt{mp\_to\_unsigned\_bin} but checks if the value at \texttt{*outlen} is larger than or equal to the output of \texttt{mp\_unsigned\_bin\_size(a)} and sets \texttt{*outlen} to the output of \texttt{mp\_unsigned\_bin\_size(a)} or returns \texttt{MP\_VAL} if the test failed.
+
+
 \index{mp\_read\_unsigned\_bin}
 \begin{alltt}
 int mp_read_unsigned_bin(mp_int *a, unsigned char *b, int c);
@@ -1816,7 +1995,7 @@ integer $a$ will always be positive.
 
 For those who acknowledge the existence of negative numbers (heretic!) there are ``signed'' versions of the
 previous functions.
-
+\index{mp\_signed\_bin\_size} \index{mp\_to\_signed\_bin} \index{mp\_read\_signed\_bin}
 \begin{alltt}
 int mp_signed_bin_size(mp_int *a);
 int mp_read_signed_bin(mp_int *a, unsigned char *b, int c);
@@ -1825,6 +2004,13 @@ int mp_to_signed_bin(mp_int *a, unsigned char *b);
 They operate essentially the same as the unsigned copies except they prefix the data with zero or non--zero
 byte depending on the sign.  If the sign is zpos (e.g. not negative) the prefix is zero, otherwise the prefix
 is non--zero.
+
+The two functions \texttt{mp\_import} and \texttt{mp\_export} implement the corresponding GMP functions as described at \url{http://gmplib.org/manual/Integer-Import-and-Export.html}.
+\index{mp\_import} \index{mp\_export}
+\begin{alltt}
+int mp_import(mp_int *rop, size_t count, int order, size_t size, int endian, size_t nails, const void *op);
+int mp_export(void *rop, size_t *countp, int order, size_t size, int endian, size_t nails, const mp_int *op);
+\end{alltt}
 
 \chapter{Algebraic Functions}
 \section{Extended Euclidean Algorithm}
@@ -1910,6 +2096,111 @@ int mp_mod_d(mp_int *a, mp_digit b, mp_digit *c);
 These work like the full mp\_int capable variants except the second parameter $b$ is a mp\_digit.  These
 functions fairly handy if you have to work with relatively small numbers since you will not have to allocate
 an entire mp\_int to store a number like $1$ or $2$.
+
+The division by three can be made faster by replacing the division with a multiplication by the multiplicative inverse of three.
+
+\index{mp\_div\_3}
+\begin{alltt}
+int mp_div_3(const mp_int *a, mp_int *c, mp_digit *d);
+\end{alltt}
+
+\chapter{Little Helpers}
+It is never wrong to have some useful little shortcuts at hand.
+\section{Function Macros}
+To make this overview simpler the macros are given as function prototypes. The return of logic macros is \texttt{MP\_NO} or \texttt{MP\_YES} respectively.
+
+\index{mp\_iseven}
+\begin{alltt}
+int mp_iseven(mp_int *a)
+\end{alltt}
+Checks if $a = 0 mod 2$
+
+\index{mp\_isodd}
+\begin{alltt}
+int mp_isodd(mp_int *a)
+\end{alltt}
+Checks if $a = 1 mod 2$
+
+\index{mp\_isneg}
+\begin{alltt}
+int mp_isneg(mp_int *a)
+\end{alltt}
+Checks if $a < 0$
+
+
+\index{mp\_iszero}
+\begin{alltt}
+int mp_iszero(mp_int *a)
+\end{alltt}
+Checks if $a = 0$. It does not check if the amount of memory allocated for $a$ is also minimal.
+
+
+Other macros which are either shortcuts to normal functions or just other names for them do have their place in a programmer's life, too!
+
+\subsection{Renamings}
+\index{mp\_mag\_size}
+\begin{alltt}
+#define mp_mag_size(mp) mp_unsigned_bin_size(mp)
+\end{alltt}
+
+
+\index{mp\_raw\_size}
+\begin{alltt}
+#define mp_raw_size(mp) mp_signed_bin_size(mp)
+\end{alltt}
+
+
+\index{mp\_read\_mag}
+\begin{alltt}
+#define mp_read_mag(mp, str, len) mp_read_unsigned_bin((mp), (str), (len))
+\end{alltt}
+
+
+\index{mp\_read\_raw}
+\begin{alltt}
+ #define mp_read_raw(mp, str, len) mp_read_signed_bin((mp), (str), (len))
+\end{alltt}
+
+
+\index{mp\_tomag}
+\begin{alltt}
+#define mp_tomag(mp, str) mp_to_unsigned_bin((mp), (str))
+\end{alltt}
+
+
+\index{mp\_toraw}
+\begin{alltt}
+#define mp_toraw(mp, str)         mp_to_signed_bin((mp), (str))
+\end{alltt}
+
+
+
+\subsection{Shortcuts}
+
+\index{mp\_tobinary}
+\begin{alltt}
+#define mp_tobinary(M, S) mp_toradix((M), (S), 2)
+\end{alltt}
+
+
+\index{mp\_tooctal}
+\begin{alltt}
+#define mp_tooctal(M, S) mp_toradix((M), (S), 8)
+\end{alltt}
+
+
+\index{mp\_todecimal}
+\begin{alltt}
+#define mp_todecimal(M, S) mp_toradix((M), (S), 10)
+\end{alltt}
+
+
+\index{mp\_tohex}
+\begin{alltt}
+#define mp_tohex(M, S)     mp_toradix((M), (S), 16)
+\end{alltt}
+
+
 
 \input{bn.ind}
 
