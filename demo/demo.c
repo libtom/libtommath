@@ -124,7 +124,7 @@ struct mp_kronecker_st {
    int c[21];
 };
 static struct mp_kronecker_st kronecker[] = {
-         //-10, -9, -8, -7,-6, -5, -4, -3, -2, -1, 0, 1,  2,  3, 4,  5,  6,  7,  8, 9, 10
+         /*-10, -9, -8, -7,-6, -5, -4, -3, -2, -1, 0, 1,  2,  3, 4,  5,  6,  7,  8, 9, 10*/
    { -10, {  0, -1,  0, -1, 0,  0,  0,  1,  0, -1, 0, 1,  0, -1, 0,  0,  0,  1,  0, 1,  0  } },
    {  -9, { -1,  0, -1,  1, 0, -1, -1,  0, -1, -1, 0, 1,  1,  0, 1,  1,  0, -1,  1, 0,  1  } },
    {  -8, {  0, -1,  0,  1, 0,  1,  0, -1,  0, -1, 0, 1,  0,  1, 0, -1,  0, -1,  0, 1,  0  } },
@@ -674,7 +674,7 @@ int main(void)
    printf("\n");
 
 
-   // strong Miller-Rabin pseudoprime to the first 200 primes (F. Arnault)
+   /* strong Miller-Rabin pseudoprime to the first 200 primes (F. Arnault) */
    puts("Testing mp_prime_is_prime() with Arnault's pseudoprime  803...901 \n");
    mp_read_radix(&a,"91xLNF3roobhzgTzoFIG6P13ZqhOVYSN60Fa7Cj2jVR1g0k89zdahO9/kAiRprpfO1VAp1aBHucLFV/qLKLFb+zonV7R2Vxp1K13ClwUXStpV0oxTNQVjwybmFb5NBEHImZ6V7P6+udRJuH8VbMEnS0H8/pSqQrg82OoQQ2fPpAk6G1hkjqoCv5s/Yr",64);
    mp_prime_is_prime(&a, 8, &cnt);
@@ -682,7 +682,7 @@ int main(void)
       printf("Arnault's pseudoprime is not prime but mp_prime_is_prime says it is.\n");
       return EXIT_FAILURE;
    }
-   // About the same size as Arnault's pseudoprime
+   /* About the same size as Arnault's pseudoprime */
    puts("Testing mp_prime_is_prime() with certified prime 2^1119 + 53\n");
    mp_set(&a,1u);
    mp_mul_2d(&a,1119,&a);

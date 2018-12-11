@@ -14,7 +14,7 @@
  */
 
 /* portable integer log of two with small footprint */
-static unsigned int floor_ilog2(int value)
+static unsigned int s_floor_ilog2(int value)
 {
    unsigned int r = 0;
    while ((value >>= 1) != 0) {
@@ -214,7 +214,7 @@ int mp_prime_is_prime(const mp_int *a, int t, int *result)
          }
       }
 
-      // for compatibility with the current API (well, compatible within a sign's width)
+      /* for compatibility with the current API (well, compatible within a sign's width) */
       if (p_max < t) {
          p_max = t;
       }
@@ -252,8 +252,8 @@ int mp_prime_is_prime(const mp_int *a, int t, int *result)
       /*
          Assuming the General Rieman hypothesis (never thought to write that in a
          comment) the upper bound can be lowered to  2*(log a)^2.
-         E. Bach, “Explicit bounds for primality testing and related problems,”
-         Math. Comp. 55 (1990), 355–380.
+         E. Bach, "Explicit bounds for primality testing and related problems,"
+         Math. Comp. 55 (1990), 355-380.
 
             size_a = (size_a/10) * 7;
             len = 2 * (size_a * size_a);
@@ -262,7 +262,7 @@ int mp_prime_is_prime(const mp_int *a, int t, int *result)
 
             floor(2048/10)*7 = 1428
             2 * 1428^2       = 4078368
-            
+
          (would have been ~4030331.9962 with floats and natural log instead)
          That number is smaller than 2^28, the default bit-size of mp_digit.
       */
@@ -288,7 +288,7 @@ int mp_prime_is_prime(const mp_int *a, int t, int *result)
          if ((err = mp_rand(&b, 1)) != MP_OKAY) {
             goto LBL_B;
          }
-         /* 
+         /*
           * Reduce digit before casting because mp_digit might be bigger than
           * an unsigned int and "mask" on the other side is most probably not.
           */

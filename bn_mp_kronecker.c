@@ -131,11 +131,15 @@ int mp_kronecker(const mp_int *a, const mp_int *p, int *c)
 LBL_KRON:
    mp_clear(&r);
 LBL_KRON_1:
-   mp_clear(&a1);
-LBL_KRON_0:
    mp_clear(&p1);
+LBL_KRON_0:
+   mp_clear(&a1);
+
    return e;
 }
 
-
 #endif
+
+/* ref:         $Format:%D$ */
+/* git commit:  $Format:%H$ */
+/* commit time: $Format:%ai$ */

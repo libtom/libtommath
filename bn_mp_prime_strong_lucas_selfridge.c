@@ -29,7 +29,7 @@
  * multiply bigint a with int d and put the result in c
  * Like mp_mul_d() but with a signed long as the small input
  */
-static int mp_mul_si(const mp_int *a, long d, mp_int *c)
+static int s_mp_mul_si(const mp_int *a, long d, mp_int *c)
 {
    mp_int t;
    int err, neg = 0;
@@ -407,3 +407,7 @@ LBL_LS_ERR:
 #endif
 #endif
 #endif
+
+/* ref:         $Format:%D$ */
+/* git commit:  $Format:%H$ */
+/* commit time: $Format:%ai$ */
