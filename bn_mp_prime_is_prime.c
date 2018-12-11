@@ -248,7 +248,7 @@ int mp_prime_is_prime(const mp_int *a, int t, int *result)
        * Hence the ugly type-fiddling in the following code.
        */
       size_a = mp_count_bits(a);
-      mask = (1u << floor_ilog2(size_a)) - 1u;
+      mask = (1u << s_floor_ilog2(size_a)) - 1u;
       /*
          Assuming the General Rieman hypothesis (never thought to write that in a
          comment) the upper bound can be lowered to  2*(log a)^2.

@@ -294,7 +294,7 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
          if ((e = mp_mul(&U2mz,&Uz,&T4z)) != MP_OKAY) {
             goto LBL_LS_ERR;
          }
-         if ((e = mp_mul_si(&T4z,(long)Ds,&T4z)) != MP_OKAY) {
+         if ((e = s_mp_mul_si(&T4z,(long)Ds,&T4z)) != MP_OKAY) {
             goto LBL_LS_ERR;
          }
          if ((e = mp_add(&T1z,&T2z,&Uz)) != MP_OKAY) {
