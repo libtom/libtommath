@@ -43,7 +43,7 @@ int mp_prime_frobenius_underwood(const mp_int *N, int *result)
    *result = MP_NO;
 
    if ((e = mp_init_multi(&T1z,&T2z,&Np1z,&sz,&tz, NULL)) != MP_OKAY) {
-      goto LBL_FU_ERR;
+      return e;
    }
 
    for (a = 0; a < LTM_FROBENIUS_UNDERWOOD_A; a++) {
