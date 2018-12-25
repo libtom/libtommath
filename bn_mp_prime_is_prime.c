@@ -113,11 +113,11 @@ int mp_prime_is_prime(const mp_int *a, int t, int *result)
       goto LBL_B;
    }
 
-/*
- * Both, the Frobenius-Underwood test and the the Lucas-Selfridge test are quite
- * slow so if speed is an issue, define LTM_USE_FIPS_ONLY to use M-R tests with
- * bases 2, 3 and t random bases.
- */
+   /*
+    * Both, the Frobenius-Underwood test and the the Lucas-Selfridge test are quite
+    * slow so if speed is an issue, define LTM_USE_FIPS_ONLY to use M-R tests with
+    * bases 2, 3 and t random bases.
+    */
 #ifndef LTM_USE_FIPS_ONLY
    if (t >= 0) {
       /*
@@ -145,7 +145,7 @@ int mp_prime_is_prime(const mp_int *a, int t, int *result)
 #endif
 
    /* run at least one Miller-Rabin test with a random base */
-   if(t == 0) {
+   if (t == 0) {
       t = 1;
    }
 
@@ -192,23 +192,22 @@ int mp_prime_is_prime(const mp_int *a, int t, int *result)
           Sorenson, Jonathan; Webster, Jonathan (2015).
            "Strong Pseudoprimes to Twelve Prime Bases".
        */
-                                   /* 318665857834031151167461 */
+      /* 0x437ae92817f9fc85b7e5 = 318665857834031151167461 */
       if ((err =   mp_read_radix(&b, "437ae92817f9fc85b7e5", 16)) != MP_OKAY) {
          goto LBL_B;
       }
 
       if (mp_cmp(a,&b) == MP_LT) {
          p_max = 12;
-      }
-      else {                       /* 3317044064679887385961981 */
+      } else {
+         /* 0x2be6951adc5b22410a5fd = 3317044064679887385961981 */
          if ((err = mp_read_radix(&b, "2be6951adc5b22410a5fd", 16)) != MP_OKAY) {
             goto LBL_B;
          }
 
          if (mp_cmp(a,&b) == MP_LT) {
             p_max = 13;
-         }
-         else {
+         } else {
             err = MP_VAL;
             goto LBL_B;
          }
@@ -219,7 +218,7 @@ int mp_prime_is_prime(const mp_int *a, int t, int *result)
          p_max = t;
       }
 
-      if(p_max > PRIME_SIZE) {
+      if (p_max > PRIME_SIZE) {
          err = MP_VAL;
          goto LBL_B;
       }
@@ -292,13 +291,13 @@ int mp_prime_is_prime(const mp_int *a, int t, int *result)
           * Reduce digit before casting because mp_digit might be bigger than
           * an unsigned int and "mask" on the other side is most probably not.
           */
-         fips_rand = (unsigned int) (b.dp[0] & (mp_digit) mask);
+         fips_rand = (unsigned int)(b.dp[0] & (mp_digit) mask);
 #ifdef MP_8BIT
          /*
           * One 8-bit digit is too small, so concatenate two if the size of
           * unsigned int allows for it.
           */
-         if( (sizeof(unsigned int) * CHAR_BIT)/2 >= (sizeof(mp_digit) * CHAR_BIT) ) {
+         if ((sizeof(unsigned int) * CHAR_BIT)/2 >= (sizeof(mp_digit) * CHAR_BIT)) {
             if ((err = mp_rand(&b, 1)) != MP_OKAY) {
                goto LBL_B;
             }
@@ -308,9 +307,9 @@ int mp_prime_is_prime(const mp_int *a, int t, int *result)
          }
 #endif
          /* Ceil, because small numbers have a right to live, too, */
-         len = (int) ( (fips_rand + DIGIT_BIT) / DIGIT_BIT);
+         len = (int)((fips_rand + DIGIT_BIT) / DIGIT_BIT);
          /*  Unlikely. */
-         if(len < 0){
+         if (len < 0) {
             ix--;
             continue;
          }
@@ -322,7 +321,7 @@ int mp_prime_is_prime(const mp_int *a, int t, int *result)
           */
 #ifdef MP_8BIT
          /* All "a" < 2^8 have been caught before */
-         if(len == 1){
+         if (len == 1) {
             len++;
          }
 #endif

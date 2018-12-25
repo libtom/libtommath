@@ -104,7 +104,7 @@ int main(void)
    FILE *log, *logb, *logc, *logd;
    mp_int a, b, c, d, e, f;
 #ifdef LTM_TIMING_PRIME_IS_PRIME
-   const char* name;
+   const char *name;
    int m;
 #endif
    int n, cnt, ix, old_kara_m, old_kara_s, old_toom_m, old_toom_s;
@@ -130,7 +130,9 @@ int main(void)
    for (m = 0; m < 2; ++m) {
       if (m == 0) {
          name = "    Arnault";
-         mp_read_radix(&a,"91xLNF3roobhzgTzoFIG6P13ZqhOVYSN60Fa7Cj2jVR1g0k89zdahO9/kAiRprpfO1VAp1aBHucLFV/qLKLFb+zonV7R2Vxp1K13ClwUXStpV0oxTNQVjwybmFb5NBEHImZ6V7P6+udRJuH8VbMEnS0H8/pSqQrg82OoQQ2fPpAk6G1hkjqoCv5s/Yr",64);
+         mp_read_radix(&a,
+                       "91xLNF3roobhzgTzoFIG6P13ZqhOVYSN60Fa7Cj2jVR1g0k89zdahO9/kAiRprpfO1VAp1aBHucLFV/qLKLFb+zonV7R2Vxp1K13ClwUXStpV0oxTNQVjwybmFb5NBEHImZ6V7P6+udRJuH8VbMEnS0H8/pSqQrg82OoQQ2fPpAk6G1hkjqoCv5s/Yr",
+                       64);
       } else {
          name = "2^1119 + 53";
          mp_set(&a,1u);

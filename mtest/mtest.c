@@ -293,7 +293,7 @@ int main(int argc, char *argv[])
          rand_num2(&a);
          rand_num2(&b);
          rand_num2(&c);
-/*      if (c.dp[0]&1) mp_add_d(&c, 1, &c); */
+         /*      if (c.dp[0]&1) mp_add_d(&c, 1, &c); */
          a.sign = b.sign = c.sign = 0;
          mp_exptmod(&a, &b, &c, &d);
          printf("expt\n");

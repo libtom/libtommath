@@ -153,7 +153,9 @@ int mp_prime_frobenius_underwood(const mp_int *N, int *result)
           *  sz   = temp
           */
          if (a == 0) {
-            if ((e = mp_mul_2(&sz,&T1z)) != MP_OKAY) {               goto LBL_FU_ERR;            }
+            if ((e = mp_mul_2(&sz,&T1z)) != MP_OKAY) {
+               goto LBL_FU_ERR;
+            }
          } else {
             if ((e = mp_mul_d(&sz, (mp_digit) ap2, &T1z)) != MP_OKAY) {
                goto LBL_FU_ERR;

@@ -118,7 +118,7 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
       /* if 1 < GCD < N then N is composite with factor "D", and
          Jacobi(D,N) is technically undefined (but often returned
          as zero). */
-      if ( mp_cmp_d(&gcd,1u) == MP_GT  && mp_cmp(&gcd,a) == MP_LT) {
+      if ((mp_cmp_d(&gcd,1u) == MP_GT) && (mp_cmp(&gcd,a) == MP_LT)) {
          goto LBL_LS_ERR;
       }
       if (Ds < 0) {
@@ -313,7 +313,7 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
          if ((e = mp_div_2(&Uz,&Uz)) != MP_OKAY) {
             goto LBL_LS_ERR;
          }
-         if (Uz.sign == MP_NEG && mp_isodd(&Uz)) {
+         if ((Uz.sign == MP_NEG) && mp_isodd(&Uz)) {
             if ((e = mp_sub_d(&Uz,1u,&Uz)) != MP_OKAY) {
                goto LBL_LS_ERR;
             }
