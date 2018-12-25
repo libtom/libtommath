@@ -184,7 +184,7 @@ int mp_prime_frobenius_underwood(const mp_int *N, int *result)
    }
 
 LBL_FU_ERR:
-   mp_clear_multi(&T1z,&T2z,&Np1z,&sz,&tz, NULL);
+   mp_clear_multi(&tz,&sz,&Np1z,&T2z,&T1z, NULL);
    return e;
 }
 

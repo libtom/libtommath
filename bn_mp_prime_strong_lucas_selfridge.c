@@ -401,7 +401,7 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
       }
    }
 LBL_LS_ERR:
-   mp_clear_multi(&Dz, &gcd, &Np1, &Uz, &Vz, &U2mz, &V2mz, &Qmz, &Q2mz, &Qkdz, &T1z, &T2z, &T3z, &T4z, &Q2kdz, NULL);
+   mp_clear_multi(&Q2kdz, &T4z, &T3z, &T2z, &T1z, &Qkdz, &Q2mz, &Qmz, &V2mz, &U2mz, &Vz, &Uz, &Np1, &gcd, &Dz, NULL);
    return e;
 }
 #endif
