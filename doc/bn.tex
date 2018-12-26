@@ -1168,7 +1168,7 @@ It is also not very uncommon to need just the power of two $2^b$;  for example t
 \begin{alltt}
 int mp_2expt(mp_int *a, int b);
 \end{alltt}
-It is faster than doing it by shifting $1$ with \texttt{mp_mul_2d}.
+It is faster than doing it by shifting $1$ with \texttt{mp\_mul\_2d}.
 
 \subsection{Polynomial Basis Operations}
 
@@ -1680,23 +1680,23 @@ slower than mp\_dr\_reduce but faster for most moduli sizes than the Montgomery 
 
 Some of the combinations of an arithmetic operations followed by a modular reduction can be done in a faster way. The ones implemented are:
 
-Addition $d = (a + b) \mod c$ 
+Addition $d = (a + b) \mod c$
 \index{mp\_addmod}
 \begin{alltt}
 int mp_addmod(const mp_int *a, const mp_int *b, const mp_int *c, mp_int *d);
 \end{alltt}
 
-Subtraction  $d = (a - b) \mod c$ 
+Subtraction  $d = (a - b) \mod c$
 \begin{alltt}
 int mp_submod(const mp_int *a, const mp_int *b, const mp_int *c, mp_int *d);
 \end{alltt}
 
-Multiplication $d = (ab) \mod c$ 
+Multiplication $d = (ab) \mod c$
 \begin{alltt}
 int mp_mulmod(const mp_int *a, const mp_int *b, const mp_int *c, mp_int *d);
 \end{alltt}
 
-Squaring  $d = (a^2) \mod c$ 
+Squaring  $d = (a^2) \mod c$
 \begin{alltt}
 int mp_sqrmod(const mp_int *a, const mp_int *b, const mp_int *c, mp_int *d);
 \end{alltt}
@@ -1745,7 +1745,7 @@ moduli of the a ``restricted diminished radix'' form lead to the fastest modular
 and the other two algorithms.
 
 \section{Modulus a Power of Two}
-\index{mp\_mod_2d}
+\index{mp\_mod\_2d}
 \begin{alltt}
 int mp_mod_2d(const mp_int *a, int b, mp_int *c)
 \end{alltt}
@@ -1825,7 +1825,7 @@ require ten tests whereas a 1024-bit number would only require four tests.
 You should always still perform a trial division before a Miller-Rabin test though.
 
 A small table, broke in two for typographical reasons, with the number of rounds of Miller-Rabin tests is shown below.
-The first column is the number of bits $b$ in the prime $p = 2^b$, the numbers in the first row represent the 
+The first column is the number of bits $b$ in the prime $p = 2^b$, the numbers in the first row represent the
 probability that the number that all of the Miller-Rabin tests deemed a pseudoprime is actually a composite. There is a deterministic test for numbers smaller than $2^{80}$.
 
 \begin{table}[h]
