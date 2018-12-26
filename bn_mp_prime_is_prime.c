@@ -307,7 +307,7 @@ int mp_prime_is_prime(const mp_int *a, int t, int *result)
          }
 #endif
          /* Ceil, because small numbers have a right to live, too, */
-         len = (int)((fips_rand + DIGIT_BIT) / DIGIT_BIT);
+         len = (((int)fips_rand + DIGIT_BIT) / DIGIT_BIT);
          /*  Unlikely. */
          if (len < 0) {
             ix--;
