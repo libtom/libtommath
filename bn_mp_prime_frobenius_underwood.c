@@ -35,14 +35,14 @@
 #endif
 int mp_prime_frobenius_underwood(const mp_int *N, int *result)
 {
-   mp_int T1z,T2z,Np1z,sz,tz;
+   mp_int T1z, T2z, Np1z, sz, tz;
 
    int a, ap2, length, i, j, isset;
    int e;
 
    *result = MP_NO;
 
-   if ((e = mp_init_multi(&T1z,&T2z,&Np1z,&sz,&tz, NULL)) != MP_OKAY) {
+   if ((e = mp_init_multi(&T1z, &T2z, &Np1z, &sz, &tz, NULL)) != MP_OKAY) {
       return e;
    }
 
@@ -53,11 +53,11 @@ int mp_prime_frobenius_underwood(const mp_int *N, int *result)
          continue;
       }
       /* (32764^2 - 4) < 2^31, no bigint for >MP_8BIT needed) */
-      if ((e = mp_set_long(&T1z,(unsigned long)a)) != MP_OKAY) {
+      if ((e = mp_set_long(&T1z, (unsigned long)a)) != MP_OKAY) {
          goto LBL_FU_ERR;
       }
 
-      if ((e = mp_sqr(&T1z,&T1z)) != MP_OKAY) {
+      if ((e = mp_sqr(&T1z, &T1z)) != MP_OKAY) {
          goto LBL_FU_ERR;
       }
 
@@ -88,7 +88,7 @@ int mp_prime_frobenius_underwood(const mp_int *N, int *result)
       goto LBL_FU_ERR;
    }
 
-   if ((e = mp_gcd(N,&T1z,&T1z)) != MP_OKAY) {
+   if ((e = mp_gcd(N, &T1z, &T1z)) != MP_OKAY) {
       goto LBL_FU_ERR;
    }
 
@@ -111,16 +111,16 @@ int mp_prime_frobenius_underwood(const mp_int *N, int *result)
        * tz   = ((tz-sz)*(tz+sz))%N;
        * sz   = temp;
        */
-      if ((e = mp_mul_2(&tz,&T2z)) != MP_OKAY) {
+      if ((e = mp_mul_2(&tz, &T2z)) != MP_OKAY) {
          goto LBL_FU_ERR;
       }
 
       /* a = 0 at about 50% of the cases (non-square and odd input) */
       if (a != 0) {
-         if ((e = mp_mul_d(&sz,(mp_digit)a,&T1z)) != MP_OKAY) {
+         if ((e = mp_mul_d(&sz, (mp_digit)a, &T1z)) != MP_OKAY) {
             goto LBL_FU_ERR;
          }
-         if ((e = mp_add(&T1z,&T2z,&T2z)) != MP_OKAY) {
+         if ((e = mp_add(&T1z, &T2z, &T2z)) != MP_OKAY) {
             goto LBL_FU_ERR;
          }
       }
@@ -143,7 +143,7 @@ int mp_prime_frobenius_underwood(const mp_int *N, int *result)
       if ((e = mp_mod(&T1z, N, &sz)) != MP_OKAY) {
          goto LBL_FU_ERR;
       }
-      if ((isset = mp_get_bit(&Np1z,i)) == MP_VAL) {
+      if ((isset = mp_get_bit(&Np1z, i)) == MP_VAL) {
          e = isset;
          goto LBL_FU_ERR;
       }
@@ -154,11 +154,11 @@ int mp_prime_frobenius_underwood(const mp_int *N, int *result)
           *  sz   = temp
           */
          if (a == 0) {
-            if ((e = mp_mul_2(&sz,&T1z)) != MP_OKAY) {
+            if ((e = mp_mul_2(&sz, &T1z)) != MP_OKAY) {
                goto LBL_FU_ERR;
             }
          } else {
-            if ((e = mp_mul_d(&sz, (mp_digit) ap2, &T1z)) != MP_OKAY) {
+            if ((e = mp_mul_d(&sz, (mp_digit)ap2, &T1z)) != MP_OKAY) {
                goto LBL_FU_ERR;
             }
          }
@@ -171,14 +171,14 @@ int mp_prime_frobenius_underwood(const mp_int *N, int *result)
          if ((e = mp_sub(&T2z, &sz, &tz)) != MP_OKAY) {
             goto LBL_FU_ERR;
          }
-         mp_exch(&sz,&T1z);
+         mp_exch(&sz, &T1z);
       }
    }
 
    if ((e = mp_set_long(&T1z, (unsigned long)((2 * a) + 5))) != MP_OKAY) {
       goto LBL_FU_ERR;
    }
-   if ((e = mp_mod(&T1z,N,&T1z)) != MP_OKAY) {
+   if ((e = mp_mod(&T1z, N, &T1z)) != MP_OKAY) {
       goto LBL_FU_ERR;
    }
    if ((mp_iszero(&sz) != MP_NO) && (mp_cmp(&tz, &T1z) == MP_EQ)) {
@@ -187,7 +187,7 @@ int mp_prime_frobenius_underwood(const mp_int *N, int *result)
    }
 
 LBL_FU_ERR:
-   mp_clear_multi(&tz,&sz,&Np1z,&T2z,&T1z, NULL);
+   mp_clear_multi(&tz, &sz, &Np1z, &T2z, &T1z, NULL);
    return e;
 }
 

@@ -197,7 +197,7 @@ int mp_prime_is_prime(const mp_int *a, int t, int *result)
          goto LBL_B;
       }
 
-      if (mp_cmp(a,&b) == MP_LT) {
+      if (mp_cmp(a, &b) == MP_LT) {
          p_max = 12;
       } else {
          /* 0x2be6951adc5b22410a5fd = 3317044064679887385961981 */
@@ -205,7 +205,7 @@ int mp_prime_is_prime(const mp_int *a, int t, int *result)
             goto LBL_B;
          }
 
-         if (mp_cmp(a,&b) == MP_LT) {
+         if (mp_cmp(a, &b) == MP_LT) {
             p_max = 13;
          } else {
             err = MP_VAL;
@@ -224,7 +224,7 @@ int mp_prime_is_prime(const mp_int *a, int t, int *result)
       }
       /* we did bases 2 and 3  already, skip them */
       for (ix = 2; ix < p_max; ix++) {
-         mp_set(&b,ltm_prime_tab[ix]);
+         mp_set(&b, ltm_prime_tab[ix]);
          if ((err = mp_prime_miller_rabin(a, &b, &res)) != MP_OKAY) {
             goto LBL_B;
          }

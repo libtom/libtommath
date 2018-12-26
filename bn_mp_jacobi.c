@@ -28,7 +28,7 @@ int mp_jacobi(const mp_int *a, const mp_int *n, int *c)
       return MP_VAL;
    }
 
-   return mp_kronecker(a,n,c);
+   return mp_kronecker(a, n, c);
 }
 #endif
 

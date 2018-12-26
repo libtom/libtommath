@@ -116,7 +116,7 @@ int mp_kronecker(const mp_int *a, const mp_int *p, int *c)
          }
       }
 
-      if ((e = mp_copy(&a1,&r)) != MP_OKAY) {
+      if ((e = mp_copy(&a1, &r)) != MP_OKAY) {
          goto LBL_KRON;
       }
       r.sign = MP_ZPOS;
