@@ -133,7 +133,7 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
       }
       D += 2;
 
-      if (D > INT_MAX - 2) {
+      if (D > (INT_MAX - 2)) {
          e = MP_VAL;
          goto LBL_LS_ERR;
       }

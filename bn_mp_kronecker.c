@@ -37,7 +37,7 @@ int mp_kronecker(const mp_int *a, const mp_int *p, int *c)
    static const int table[8] = {0, 1, 0, -1, 0, -1, 0, 1};
 
    if (mp_iszero(p) != MP_NO) {
-      if (a->used == 1 && a->dp[0] == 1u) {
+      if ((a->used == 1) && (a->dp[0] == 1u)) {
          *c = 1;
          return e;
       } else {

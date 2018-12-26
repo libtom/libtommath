@@ -41,7 +41,7 @@ int mp_prime_is_prime(const mp_int *a, int t, int *result)
    /* Some shortcuts */
    /* N > 3 */
    if (a->used == 1) {
-      if (a->dp[0] == 0u || a->dp[0] == 1u) {
+      if ((a->dp[0] == 0u) || (a->dp[0] == 1u)) {
          *result = 0;
          return MP_OKAY;
       }
