@@ -180,7 +180,7 @@ int mp_prime_frobenius_underwood(const mp_int *N, int *result)
    if ((e = mp_mod(&T1z,N,&T1z)) != MP_OKAY) {
       goto LBL_FU_ERR;
    }
-   if (mp_iszero(&sz) && (mp_cmp(&tz, &T1z) == MP_EQ)) {
+   if ((mp_iszero(&sz) != MP_NO) && (mp_cmp(&tz, &T1z) == MP_EQ)) {
       *result = MP_YES;
       goto LBL_FU_ERR;
    }

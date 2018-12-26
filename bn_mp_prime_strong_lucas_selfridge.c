@@ -300,7 +300,7 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
          if ((e = mp_add(&T1z,&T2z,&Uz)) != MP_OKAY) {
             goto LBL_LS_ERR;
          }
-         if (mp_isodd(&Uz)) {
+         if (mp_isodd(&Uz) != MP_NO) {
             if ((e = mp_add(&Uz,a,&Uz)) != MP_OKAY) {
                goto LBL_LS_ERR;
             }
@@ -313,7 +313,7 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
          if ((e = mp_div_2(&Uz,&Uz)) != MP_OKAY) {
             goto LBL_LS_ERR;
          }
-         if ((Uz.sign == MP_NEG) && mp_isodd(&Uz)) {
+         if ((Uz.sign == MP_NEG) && (mp_isodd(&Uz) != MP_NO)) {
             if ((e = mp_sub_d(&Uz, 1uL, &Uz)) != MP_OKAY) {
                goto LBL_LS_ERR;
             }
@@ -321,7 +321,7 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
          if ((e = mp_add(&T3z,&T4z,&Vz)) != MP_OKAY) {
             goto LBL_LS_ERR;
          }
-         if (mp_isodd(&Vz)) {
+         if (mp_isodd(&Vz) != MP_NO) {
             if ((e = mp_add(&Vz,a,&Vz)) != MP_OKAY) {
                goto LBL_LS_ERR;
             }
@@ -329,7 +329,7 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
          if ((e = mp_div_2(&Vz,&Vz)) != MP_OKAY) {
             goto LBL_LS_ERR;
          }
-         if (Vz.sign == MP_NEG && mp_isodd(&Vz)) {
+         if ((Vz.sign == MP_NEG) && (mp_isodd(&Vz) != MP_NO)) {
             if ((e = mp_sub_d(&Vz, 1uL, &Vz)) != MP_OKAY) {
                goto LBL_LS_ERR;
             }
@@ -352,7 +352,7 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
 
    /* If U_d or V_d is congruent to 0 mod N, then N is a prime or a
       strong Lucas pseudoprime. */
-   if (mp_iszero(&Uz) || mp_iszero(&Vz)) {
+   if ((mp_iszero(&Uz) != MP_NO) || (mp_iszero(&Vz) != MP_NO)) {
       *result = MP_YES;
       goto LBL_LS_ERR;
    }
@@ -383,7 +383,7 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
       if ((e = mp_mod(&Vz,a,&Vz)) != MP_OKAY) {
          goto LBL_LS_ERR;
       }
-      if (mp_iszero(&Vz)) {
+      if (mp_iszero(&Vz) != MP_NO) {
          *result = MP_YES;
          goto LBL_LS_ERR;
       }
