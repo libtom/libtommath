@@ -38,7 +38,7 @@ int mp_prime_frobenius_underwood(const mp_int *N, int *result)
    mp_int T1z,T2z,Np1z,sz,tz;
 
    int a, ap2, length, i, j, isset;
-   int e = MP_OKAY;
+   int e;
 
    *result = MP_NO;
 
