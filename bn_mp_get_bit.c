@@ -34,7 +34,7 @@ int mp_get_bit(const mp_int *a, int b)
     * otherwise (limb >= a->used) would be true for a = 0
     */
 
-   if (mp_iszero(a)) {
+   if (mp_iszero(a) != MP_NO) {
       return MP_NO;
    }
 
@@ -45,7 +45,7 @@ int mp_get_bit(const mp_int *a, int b)
    bit = (mp_digit)(1) << (b % DIGIT_BIT);
 
    isset = a->dp[limb] & bit;
-   return (isset != 0) ? MP_YES : MP_NO;
+   return (isset != 0u) ? MP_YES : MP_NO;
 }
 
 #endif

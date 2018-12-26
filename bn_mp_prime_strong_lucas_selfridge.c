@@ -85,7 +85,7 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
    mp_int Dz, gcd, Np1, Uz, Vz, U2mz, V2mz, Qmz, Q2mz, Qkdz, T1z, T2z, T3z, T4z, Q2kdz;
    /* CZ TODO: Some of them need the full 32 bit, hence the (temporary) exclusion of MP_8BIT */
    int32_t D, Ds, J, sign, P, Q, r, s, u, Nbits;
-   int e = MP_OKAY;
+   int e;
    int isset;
 
    *result = MP_NO;
@@ -109,7 +109,7 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
    for (;;) {
       Ds   = sign * D;
       sign = -sign;
-      if ((e = mp_set_long(&Dz,(unsigned long) D)) != MP_OKAY) {
+      if ((e = mp_set_long(&Dz, (unsigned long)D)) != MP_OKAY) {
          goto LBL_LS_ERR;
       }
       if ((e = mp_gcd(a, &Dz, &gcd)) != MP_OKAY) {
@@ -118,7 +118,7 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
       /* if 1 < GCD < N then N is composite with factor "D", and
          Jacobi(D,N) is technically undefined (but often returned
          as zero). */
-      if ((mp_cmp_d(&gcd,1u) == MP_GT) && (mp_cmp(&gcd,a) == MP_LT)) {
+      if ((mp_cmp_d(&gcd, 1uL) == MP_GT) && (mp_cmp(&gcd, a) == MP_LT)) {
          goto LBL_LS_ERR;
       }
       if (Ds < 0) {
@@ -133,7 +133,7 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
       }
       D += 2;
 
-      if (D > INT_MAX - 2) {
+      if (D > (INT_MAX - 2)) {
          e = MP_VAL;
          goto LBL_LS_ERR;
       }
@@ -172,7 +172,7 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
       Baillie-PSW test based on the strong Lucas-Selfridge test
       should be more reliable. */
 
-   if ((e = mp_add_d(a,1u,&Np1)) != MP_OKAY) {
+   if ((e = mp_add_d(a, 1uL, &Np1)) != MP_OKAY) {
       goto LBL_LS_ERR;
    }
    s = mp_cnt_lsb(&Np1);
@@ -198,21 +198,21 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
       combined with the previous totals for U and V, using the
       composition formulas for addition of indices. */
 
-   mp_set(&Uz, 1u);    /* U=U_1 */
+   mp_set(&Uz, 1uL);    /* U=U_1 */
    mp_set(&Vz, (mp_digit)P);    /* V=V_1 */
-   mp_set(&U2mz, 1u);  /* U_1 */
+   mp_set(&U2mz, 1uL);  /* U_1 */
    mp_set(&V2mz, (mp_digit)P);  /* V_1 */
 
    if (Q < 0) {
       Q = -Q;
-      if ((e = mp_set_long(&Qmz, (unsigned long) Q)) != MP_OKAY) {
+      if ((e = mp_set_long(&Qmz, (unsigned long)Q)) != MP_OKAY) {
          goto LBL_LS_ERR;
       }
       if ((e = mp_mul_2(&Qmz, &Q2mz)) != MP_OKAY) {
          goto LBL_LS_ERR;
       }
       /* Initializes calculation of Q^d */
-      if ((e = mp_set_long(&Qkdz, (unsigned long) Q)) != MP_OKAY) {
+      if ((e = mp_set_long(&Qkdz, (unsigned long)Q)) != MP_OKAY) {
          goto LBL_LS_ERR;
       }
       Qmz.sign = MP_NEG;
@@ -220,14 +220,14 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
       Qkdz.sign = MP_NEG;
       Q = -Q;
    } else {
-      if ((e = mp_set_long(&Qmz, (unsigned long) Q)) != MP_OKAY) {
+      if ((e = mp_set_long(&Qmz, (unsigned long)Q)) != MP_OKAY) {
          goto LBL_LS_ERR;
       }
       if ((e = mp_mul_2(&Qmz, &Q2mz)) != MP_OKAY) {
          goto LBL_LS_ERR;
       }
       /* Initializes calculation of Q^d */
-      if ((e = mp_set_long(&Qkdz, (unsigned long) Q)) != MP_OKAY) {
+      if ((e = mp_set_long(&Qkdz, (unsigned long)Q)) != MP_OKAY) {
          goto LBL_LS_ERR;
       }
    }
@@ -242,34 +242,34 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
        * V_2m = V_m*V_m - 2*Q^m
        */
 
-      if ((e = mp_mul(&U2mz,&V2mz,&U2mz)) != MP_OKAY) {
+      if ((e = mp_mul(&U2mz, &V2mz, &U2mz)) != MP_OKAY) {
          goto LBL_LS_ERR;
       }
-      if ((e = mp_mod(&U2mz,a,&U2mz)) != MP_OKAY) {
+      if ((e = mp_mod(&U2mz, a, &U2mz)) != MP_OKAY) {
          goto LBL_LS_ERR;
       }
-      if ((e = mp_sqr(&V2mz,&V2mz)) != MP_OKAY) {
+      if ((e = mp_sqr(&V2mz, &V2mz)) != MP_OKAY) {
          goto LBL_LS_ERR;
       }
-      if ((e = mp_sub(&V2mz,&Q2mz,&V2mz)) != MP_OKAY) {
+      if ((e = mp_sub(&V2mz, &Q2mz, &V2mz)) != MP_OKAY) {
          goto LBL_LS_ERR;
       }
-      if ((e = mp_mod(&V2mz,a,&V2mz)) != MP_OKAY) {
+      if ((e = mp_mod(&V2mz, a, &V2mz)) != MP_OKAY) {
          goto LBL_LS_ERR;
       }
       /* Must calculate powers of Q for use in V_2m, also for Q^d later */
-      if ((e = mp_sqr(&Qmz,&Qmz)) != MP_OKAY) {
+      if ((e = mp_sqr(&Qmz, &Qmz)) != MP_OKAY) {
          goto LBL_LS_ERR;
       }
       /* prevents overflow */ /* CZ  still necessary without a fixed prealloc'd mem.? */
-      if ((e = mp_mod(&Qmz,a,&Qmz)) != MP_OKAY) {
+      if ((e = mp_mod(&Qmz, a, &Qmz)) != MP_OKAY) {
          goto LBL_LS_ERR;
       }
-      if ((e = mp_mul_2(&Qmz,&Q2mz)) != MP_OKAY) {
+      if ((e = mp_mul_2(&Qmz, &Q2mz)) != MP_OKAY) {
          goto LBL_LS_ERR;
       }
 
-      if ((isset = mp_get_bit(&Dz,u)) == MP_VAL) {
+      if ((isset = mp_get_bit(&Dz, u)) == MP_VAL) {
          e = isset;
          goto LBL_LS_ERR;
       }
@@ -282,26 +282,26 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
           * Be careful with division by 2 (mod N)!
           */
 
-         if ((e = mp_mul(&U2mz,&Vz,&T1z)) != MP_OKAY) {
+         if ((e = mp_mul(&U2mz, &Vz, &T1z)) != MP_OKAY) {
             goto LBL_LS_ERR;
          }
-         if ((e = mp_mul(&Uz,&V2mz,&T2z)) != MP_OKAY) {
+         if ((e = mp_mul(&Uz, &V2mz, &T2z)) != MP_OKAY) {
             goto LBL_LS_ERR;
          }
-         if ((e = mp_mul(&V2mz,&Vz,&T3z)) != MP_OKAY) {
+         if ((e = mp_mul(&V2mz, &Vz, &T3z)) != MP_OKAY) {
             goto LBL_LS_ERR;
          }
-         if ((e = mp_mul(&U2mz,&Uz,&T4z)) != MP_OKAY) {
+         if ((e = mp_mul(&U2mz, &Uz, &T4z)) != MP_OKAY) {
             goto LBL_LS_ERR;
          }
-         if ((e = s_mp_mul_si(&T4z,(long)Ds,&T4z)) != MP_OKAY) {
+         if ((e = s_mp_mul_si(&T4z, (long)Ds, &T4z)) != MP_OKAY) {
             goto LBL_LS_ERR;
          }
-         if ((e = mp_add(&T1z,&T2z,&Uz)) != MP_OKAY) {
+         if ((e = mp_add(&T1z, &T2z, &Uz)) != MP_OKAY) {
             goto LBL_LS_ERR;
          }
-         if (mp_isodd(&Uz)) {
-            if ((e = mp_add(&Uz,a,&Uz)) != MP_OKAY) {
+         if (mp_isodd(&Uz) != MP_NO) {
+            if ((e = mp_add(&Uz, a, &Uz)) != MP_OKAY) {
                goto LBL_LS_ERR;
             }
          }
@@ -310,41 +310,41 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
           * Thomas R. Nicely used GMP's mpz_fdiv_q_2exp().
           * But mp_div_2() does not do so, it is truncating instead.
           */
-         if ((e = mp_div_2(&Uz,&Uz)) != MP_OKAY) {
+         if ((e = mp_div_2(&Uz, &Uz)) != MP_OKAY) {
             goto LBL_LS_ERR;
          }
-         if ((Uz.sign == MP_NEG) && mp_isodd(&Uz)) {
-            if ((e = mp_sub_d(&Uz,1u,&Uz)) != MP_OKAY) {
+         if ((Uz.sign == MP_NEG) && (mp_isodd(&Uz) != MP_NO)) {
+            if ((e = mp_sub_d(&Uz, 1uL, &Uz)) != MP_OKAY) {
                goto LBL_LS_ERR;
             }
          }
-         if ((e = mp_add(&T3z,&T4z,&Vz)) != MP_OKAY) {
+         if ((e = mp_add(&T3z, &T4z, &Vz)) != MP_OKAY) {
             goto LBL_LS_ERR;
          }
-         if (mp_isodd(&Vz)) {
-            if ((e = mp_add(&Vz,a,&Vz)) != MP_OKAY) {
+         if (mp_isodd(&Vz) != MP_NO) {
+            if ((e = mp_add(&Vz, a, &Vz)) != MP_OKAY) {
                goto LBL_LS_ERR;
             }
          }
-         if ((e = mp_div_2(&Vz,&Vz)) != MP_OKAY) {
+         if ((e = mp_div_2(&Vz, &Vz)) != MP_OKAY) {
             goto LBL_LS_ERR;
          }
-         if (Vz.sign == MP_NEG && mp_isodd(&Vz)) {
-            if ((e = mp_sub_d(&Vz,1,&Vz)) != MP_OKAY) {
+         if ((Vz.sign == MP_NEG) && (mp_isodd(&Vz) != MP_NO)) {
+            if ((e = mp_sub_d(&Vz, 1uL, &Vz)) != MP_OKAY) {
                goto LBL_LS_ERR;
             }
          }
-         if ((e = mp_mod(&Uz,a,&Uz)) != MP_OKAY) {
+         if ((e = mp_mod(&Uz, a, &Uz)) != MP_OKAY) {
             goto LBL_LS_ERR;
          }
-         if ((e = mp_mod(&Vz,a,&Vz)) != MP_OKAY) {
+         if ((e = mp_mod(&Vz, a, &Vz)) != MP_OKAY) {
             goto LBL_LS_ERR;
          }
          /* Calculating Q^d for later use */
-         if ((e = mp_mul(&Qkdz,&Qmz,&Qkdz)) != MP_OKAY) {
+         if ((e = mp_mul(&Qkdz, &Qmz, &Qkdz)) != MP_OKAY) {
             goto LBL_LS_ERR;
          }
-         if ((e = mp_mod(&Qkdz,a,&Qkdz)) != MP_OKAY) {
+         if ((e = mp_mod(&Qkdz, a, &Qkdz)) != MP_OKAY) {
             goto LBL_LS_ERR;
          }
       }
@@ -352,7 +352,7 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
 
    /* If U_d or V_d is congruent to 0 mod N, then N is a prime or a
       strong Lucas pseudoprime. */
-   if (mp_iszero(&Uz) || mp_iszero(&Vz)) {
+   if ((mp_iszero(&Uz) != MP_NO) || (mp_iszero(&Vz) != MP_NO)) {
       *result = MP_YES;
       goto LBL_LS_ERR;
    }
@@ -369,33 +369,33 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
       Lucas pseudoprime. */
 
    /* Initialize 2*Q^(d*2^r) for V_2m */
-   if ((e = mp_mul_2(&Qkdz,&Q2kdz)) != MP_OKAY) {
+   if ((e = mp_mul_2(&Qkdz, &Q2kdz)) != MP_OKAY) {
       goto LBL_LS_ERR;
    }
 
    for (r = 1; r < s; r++) {
-      if ((e = mp_sqr(&Vz,&Vz)) != MP_OKAY) {
+      if ((e = mp_sqr(&Vz, &Vz)) != MP_OKAY) {
          goto LBL_LS_ERR;
       }
-      if ((e = mp_sub(&Vz,&Q2kdz,&Vz)) != MP_OKAY) {
+      if ((e = mp_sub(&Vz, &Q2kdz, &Vz)) != MP_OKAY) {
          goto LBL_LS_ERR;
       }
-      if ((e = mp_mod(&Vz,a,&Vz)) != MP_OKAY) {
+      if ((e = mp_mod(&Vz, a, &Vz)) != MP_OKAY) {
          goto LBL_LS_ERR;
       }
-      if (mp_iszero(&Vz)) {
+      if (mp_iszero(&Vz) != MP_NO) {
          *result = MP_YES;
          goto LBL_LS_ERR;
       }
       /* Calculate Q^{d*2^r} for next r (final iteration irrelevant). */
       if (r < (s - 1)) {
-         if ((e = mp_sqr(&Qkdz,&Qkdz)) != MP_OKAY) {
+         if ((e = mp_sqr(&Qkdz, &Qkdz)) != MP_OKAY) {
             goto LBL_LS_ERR;
          }
-         if ((e = mp_mod(&Qkdz,a,&Qkdz)) != MP_OKAY) {
+         if ((e = mp_mod(&Qkdz, a, &Qkdz)) != MP_OKAY) {
             goto LBL_LS_ERR;
          }
-         if ((e = mp_mul_2(&Qkdz,&Q2kdz)) != MP_OKAY) {
+         if ((e = mp_mul_2(&Qkdz, &Q2kdz)) != MP_OKAY) {
             goto LBL_LS_ERR;
          }
       }

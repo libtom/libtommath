@@ -41,11 +41,11 @@ int mp_prime_is_prime(const mp_int *a, int t, int *result)
    /* Some shortcuts */
    /* N > 3 */
    if (a->used == 1) {
-      if (a->dp[0] == 0 || a->dp[0] == 1) {
+      if ((a->dp[0] == 0u) || (a->dp[0] == 1u)) {
          *result = 0;
          return MP_OKAY;
       }
-      if (a->dp[0] == 2) {
+      if (a->dp[0] == 2u) {
          *result = 1;
          return MP_OKAY;
       }
@@ -90,7 +90,7 @@ int mp_prime_is_prime(const mp_int *a, int t, int *result)
    /*
        Run the Miller-Rabin test with base 2 for the BPSW test.
     */
-   if ((err = mp_init_set(&b,2)) != MP_OKAY) {
+   if ((err = mp_init_set(&b, 2uL)) != MP_OKAY) {
       return err;
    }
 
@@ -197,7 +197,7 @@ int mp_prime_is_prime(const mp_int *a, int t, int *result)
          goto LBL_B;
       }
 
-      if (mp_cmp(a,&b) == MP_LT) {
+      if (mp_cmp(a, &b) == MP_LT) {
          p_max = 12;
       } else {
          /* 0x2be6951adc5b22410a5fd = 3317044064679887385961981 */
@@ -205,7 +205,7 @@ int mp_prime_is_prime(const mp_int *a, int t, int *result)
             goto LBL_B;
          }
 
-         if (mp_cmp(a,&b) == MP_LT) {
+         if (mp_cmp(a, &b) == MP_LT) {
             p_max = 13;
          } else {
             err = MP_VAL;
@@ -224,7 +224,7 @@ int mp_prime_is_prime(const mp_int *a, int t, int *result)
       }
       /* we did bases 2 and 3  already, skip them */
       for (ix = 2; ix < p_max; ix++) {
-         mp_set(&b,ltm_prime_tab[ix]);
+         mp_set(&b, ltm_prime_tab[ix]);
          if ((err = mp_prime_miller_rabin(a, &b, &res)) != MP_OKAY) {
             goto LBL_B;
          }
@@ -307,7 +307,7 @@ int mp_prime_is_prime(const mp_int *a, int t, int *result)
          }
 #endif
          /* Ceil, because small numbers have a right to live, too, */
-         len = (int)((fips_rand + DIGIT_BIT) / DIGIT_BIT);
+         len = (((int)fips_rand + DIGIT_BIT) / DIGIT_BIT);
          /*  Unlikely. */
          if (len < 0) {
             ix--;
@@ -339,7 +339,7 @@ int mp_prime_is_prime(const mp_int *a, int t, int *result)
          }
 
          /* Although the chance for b <= 3 is miniscule, try again. */
-         if (mp_cmp_d(&b,3) != MP_GT) {
+         if (mp_cmp_d(&b, 3uL) != MP_GT) {
             ix--;
             continue;
          }
