@@ -335,7 +335,9 @@ int mp_prime_is_prime(const mp_int *a, int t, int *result)
          len = mp_count_bits(&b);
          if (len > size_a) {
             len = len - size_a;
-            mp_div_2d(&b, len, &b, NULL);
+            if ((err = mp_div_2d(&b, len, &b, NULL)) != MP_OKAY) {
+               goto LBL_B;
+            }
          }
 
          /* Although the chance for b <= 3 is miniscule, try again. */
