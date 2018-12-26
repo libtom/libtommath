@@ -118,7 +118,7 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
       /* if 1 < GCD < N then N is composite with factor "D", and
          Jacobi(D,N) is technically undefined (but often returned
          as zero). */
-      if ((mp_cmp_d(&gcd,1u) == MP_GT) && (mp_cmp(&gcd,a) == MP_LT)) {
+      if ((mp_cmp_d(&gcd, 1uL) == MP_GT) && (mp_cmp(&gcd, a) == MP_LT)) {
          goto LBL_LS_ERR;
       }
       if (Ds < 0) {
@@ -172,7 +172,7 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
       Baillie-PSW test based on the strong Lucas-Selfridge test
       should be more reliable. */
 
-   if ((e = mp_add_d(a,1u,&Np1)) != MP_OKAY) {
+   if ((e = mp_add_d(a, 1uL, &Np1)) != MP_OKAY) {
       goto LBL_LS_ERR;
    }
    s = mp_cnt_lsb(&Np1);
@@ -198,9 +198,9 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
       combined with the previous totals for U and V, using the
       composition formulas for addition of indices. */
 
-   mp_set(&Uz, 1u);    /* U=U_1 */
+   mp_set(&Uz, 1uL);    /* U=U_1 */
    mp_set(&Vz, (mp_digit)P);    /* V=V_1 */
-   mp_set(&U2mz, 1u);  /* U_1 */
+   mp_set(&U2mz, 1uL);  /* U_1 */
    mp_set(&V2mz, (mp_digit)P);  /* V_1 */
 
    if (Q < 0) {
@@ -314,7 +314,7 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
             goto LBL_LS_ERR;
          }
          if ((Uz.sign == MP_NEG) && mp_isodd(&Uz)) {
-            if ((e = mp_sub_d(&Uz,1u,&Uz)) != MP_OKAY) {
+            if ((e = mp_sub_d(&Uz, 1uL, &Uz)) != MP_OKAY) {
                goto LBL_LS_ERR;
             }
          }
@@ -330,7 +330,7 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
             goto LBL_LS_ERR;
          }
          if (Vz.sign == MP_NEG && mp_isodd(&Vz)) {
-            if ((e = mp_sub_d(&Vz,1,&Vz)) != MP_OKAY) {
+            if ((e = mp_sub_d(&Vz, 1uL, &Vz)) != MP_OKAY) {
                goto LBL_LS_ERR;
             }
          }

@@ -60,7 +60,7 @@ int mp_prime_frobenius_underwood(const mp_int *N, int *result)
          goto LBL_FU_ERR;
       }
 
-      if ((e = mp_sub_d(&T1z,4,&T1z)) != MP_OKAY) {
+      if ((e = mp_sub_d(&T1z, 4uL, &T1z)) != MP_OKAY) {
          goto LBL_FU_ERR;
       }
 
@@ -96,12 +96,12 @@ int mp_prime_frobenius_underwood(const mp_int *N, int *result)
    }
 
    ap2 = a + 2;
-   if ((e = mp_add_d(N,1u,&Np1z)) != MP_OKAY) {
+   if ((e = mp_add_d(N, 1uL, &Np1z)) != MP_OKAY) {
       goto LBL_FU_ERR;
    }
 
-   mp_set(&sz,1u);
-   mp_set(&tz,2u);
+   mp_set(&sz, 1uL);
+   mp_set(&tz, 2uL);
    length = mp_count_bits(&Np1z);
 
    for (i = length - 2; i >= 0; i--) {

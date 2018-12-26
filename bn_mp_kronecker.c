@@ -37,7 +37,7 @@ int mp_kronecker(const mp_int *a, const mp_int *p, int *c)
    static const int table[8] = {0, 1, 0, -1, 0, -1, 0, 1};
 
    if (mp_iszero(p)) {
-      if (a->used == 1 && a->dp[0] == 1) {
+      if (a->used == 1 && a->dp[0] == 1u) {
          *c = 1;
          return e;
       } else {
@@ -66,7 +66,7 @@ int mp_kronecker(const mp_int *a, const mp_int *p, int *c)
    if ((v & 0x1) == 0) {
       k = 1;
    } else {
-      k = table[a->dp[0] & 7];
+      k = table[a->dp[0] & 7u];
    }
 
    if (p1.sign == MP_NEG) {
@@ -82,7 +82,7 @@ int mp_kronecker(const mp_int *a, const mp_int *p, int *c)
 
    for (;;) {
       if (mp_iszero(&a1)) {
-         if (mp_cmp_d(&p1, 1) == MP_EQ) {
+         if (mp_cmp_d(&p1, 1uL) == MP_EQ) {
             *c = k;
             goto LBL_KRON;
          } else {
@@ -97,7 +97,7 @@ int mp_kronecker(const mp_int *a, const mp_int *p, int *c)
       }
 
       if ((v & 0x1) == 1) {
-         k = k * table[p1.dp[0] & 7];
+         k = k * table[p1.dp[0] & 7u];
       }
 
       if (a1.sign == MP_NEG) {
@@ -106,7 +106,7 @@ int mp_kronecker(const mp_int *a, const mp_int *p, int *c)
           * a1.dp[0] + 1 cannot overflow because the MSB
           * of the type mp_digit is not set by definition
           */
-         if ((a1.dp[0] + 1) & p1.dp[0] & 2u) {
+         if ((a1.dp[0] + 1u) & p1.dp[0] & 2u) {
             k = -k;
          }
       } else {
