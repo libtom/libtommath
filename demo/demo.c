@@ -745,12 +745,12 @@ int main(void)
 
             if (mp_cmp(&c, &d) != MP_EQ) {
 /* *INDENT-OFF* */
-printf("d = e mod a, c = e MOD a\n");
-mp_todecimal(&a, buf); printf("a = %s\n", buf);
-mp_todecimal(&e, buf); printf("e = %s\n", buf);
-mp_todecimal(&d, buf); printf("d = %s\n", buf);
-mp_todecimal(&c, buf); printf("c = %s\n", buf);
-printf("compare no compare!\n"); return EXIT_FAILURE;
+               printf("d = e mod a, c = e MOD a\n");
+               mp_todecimal(&a, buf); printf("a = %s\n", buf);
+               mp_todecimal(&e, buf); printf("e = %s\n", buf);
+               mp_todecimal(&d, buf); printf("d = %s\n", buf);
+               mp_todecimal(&c, buf); printf("c = %s\n", buf);
+               printf("compare no compare!\n"); return EXIT_FAILURE;
 /* *INDENT-ON* */
             }
             /* only one big montgomery reduction */
