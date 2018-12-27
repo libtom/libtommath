@@ -144,7 +144,7 @@ static void gen_prime(void)
          } while (x == 0uL);
          if (r > 31uL) {
             fwrite(&r, 1uL, sizeof(mp_digit), out);
-            printf("%9u\r", r);
+            printf("%9lu\r", r);
             fflush(stdout);
          }
          if (r < 31uL) break;
@@ -336,7 +336,7 @@ top:
          mp_toradix(&a, buf, 10);
          printf("A == \n%s\n\n", buf);
          mp_toradix(&b, buf, 10);
-         printf("B == \n%s\n\nG == %d\n", buf, bases[ii]);
+         printf("B == \n%s\n\nG == %lu\n", buf, bases[ii]);
          printf("----------------------------------------------------------------\n");
       }
 
