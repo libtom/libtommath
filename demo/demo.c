@@ -36,7 +36,7 @@ static void ndraw(mp_int *a, const char *name)
    printf("0x%s\n", buf);
 }
 
-#if LTM_DEMO_TEST_VS_MTEST
+#if LTM_DEMO_TEST_VS_MTEST != 0
 static void draw(mp_int *a)
 {
    ndraw(a, "");
@@ -77,13 +77,13 @@ static void _panic(int l)
    fprintf(stderr, "\n%d: fgets failed\n", l);
    exit(EXIT_FAILURE);
 }
-#endif
 
 #define FGETS(str, size, stream) \
    { \
       char *ret = fgets(str, size, stream); \
       if (!ret) { _panic(__LINE__); } \
    }
+#endif
 
 static mp_int a, b, c, d, e, f;
 
@@ -156,8 +156,8 @@ static char buf[4096];
 int main(void)
 {
    unsigned rr;
-   int cnt, ix;
-#if LTM_DEMO_TEST_VS_MTEST
+   int ix;
+#if LTM_DEMO_TEST_VS_MTEST != 0
    unsigned long expt_n, add_n, sub_n, mul_n, div_n, sqr_n, mul2d_n, div2d_n,
             gcd_n, lcm_n, inv_n, div2_n, mul2_n, add_d_n, sub_d_n;
 #else
@@ -165,7 +165,7 @@ int main(void)
    long k, m;
    unsigned long long q, r;
    mp_digit mp;
-   int i, n, err, should;
+   int i, n, err, should, cnt;
 #endif
 
    if (mp_init_multi(&a, &b, &c, &d, &e, &f, NULL)!= MP_OKAY)
@@ -284,7 +284,7 @@ int main(void)
             printf("Failed executing mp_jacobi(%d | %lu) %s.\n", n, jacobi[cnt].n, mp_error_to_string(err));
             return EXIT_FAILURE;
          }
-         if (err == MP_OKAY && i != jacobi[cnt].c[n + 5]) {
+         if ((err == MP_OKAY) && (i != jacobi[cnt].c[n + 5])) {
             printf("Failed trivial mp_jacobi(%d | %lu) %d != %d\n", n, jacobi[cnt].n, i, jacobi[cnt].c[n + 5]);
             return EXIT_FAILURE;
          }
@@ -322,7 +322,7 @@ int main(void)
             printf("Failed executing mp_kronecker(%ld | %ld) %s.\n", kronecker[cnt].n, m, mp_error_to_string(err));
             return EXIT_FAILURE;
          }
-         if (err == MP_OKAY && i != kronecker[cnt].c[m + 10]) {
+         if ((err == MP_OKAY) && (i != kronecker[cnt].c[m + 10])) {
             printf("Failed trivial mp_kronecker(%ld | %ld) %d != %d\n", kronecker[cnt].n, m, i, kronecker[cnt].c[m + 10]);
             return EXIT_FAILURE;
          }
@@ -544,7 +544,7 @@ int main(void)
    }
 
    printf("\n\nTesting: mp_get_long\n");
-   for (i = 0; i < (int)(sizeof(unsigned long)*CHAR_BIT) - 1; ++i) {
+   for (i = 0; i < ((int)(sizeof(unsigned long)*CHAR_BIT) - 1); ++i) {
       t = (1ULL << (i+1)) - 1;
       if (!t)
          t = -1;
@@ -560,11 +560,11 @@ int main(void)
             return EXIT_FAILURE;
          }
          t <<= 1;
-      } while (t);
+      } while (t != 0uL);
    }
 
    printf("\n\nTesting: mp_get_long_long\n");
-   for (i = 0; i < (int)(sizeof(unsigned long long)*CHAR_BIT) - 1; ++i) {
+   for (i = 0; i < ((int)(sizeof(unsigned long long)*CHAR_BIT) - 1); ++i) {
       r = (1ULL << (i+1)) - 1;
       if (!r)
          r = -1;
@@ -580,7 +580,7 @@ int main(void)
             return EXIT_FAILURE;
          }
          r <<= 1;
-      } while (r);
+      } while (r != 0uLL);
    }
 
    /* test mp_sqrt */
@@ -745,12 +745,12 @@ int main(void)
 
             if (mp_cmp(&c, &d) != MP_EQ) {
 /* *INDENT-OFF* */
-printf("d = e mod a, c = e MOD a\n");
-mp_todecimal(&a, buf); printf("a = %s\n", buf);
-mp_todecimal(&e, buf); printf("e = %s\n", buf);
-mp_todecimal(&d, buf); printf("d = %s\n", buf);
-mp_todecimal(&c, buf); printf("c = %s\n", buf);
-printf("compare no compare!\n"); return EXIT_FAILURE;
+               printf("d = e mod a, c = e MOD a\n");
+               mp_todecimal(&a, buf); printf("a = %s\n", buf);
+               mp_todecimal(&e, buf); printf("e = %s\n", buf);
+               mp_todecimal(&d, buf); printf("d = %s\n", buf);
+               mp_todecimal(&c, buf); printf("c = %s\n", buf);
+               printf("compare no compare!\n"); return EXIT_FAILURE;
 /* *INDENT-ON* */
             }
             /* only one big montgomery reduction */
@@ -815,7 +815,7 @@ printf("compare no compare!\n"); return EXIT_FAILURE;
          mp_copy(&c, &b);
          mp_mod(&c, &a, &c);
          mp_reduce_2k(&b, &a, 2uL);
-         if (mp_cmp(&c, &b)) {
+         if (mp_cmp(&c, &b) != MP_EQ) {
             printf("FAILED\n");
             return EXIT_FAILURE;
          }
@@ -868,8 +868,8 @@ printf("compare no compare!\n"); return EXIT_FAILURE;
          mp_copy(&b, &c);
 
          mp_mod(&b, &a, &b);
-         mp_dr_setup(&a, &mp),
-                     mp_dr_reduce(&c, &a, mp);
+         mp_dr_setup(&a, &mp);
+         mp_dr_reduce(&c, &a, mp);
 
          if (mp_cmp(&b, &c) != MP_EQ) {
             printf("Failed on trial %u\n", rr);
@@ -933,7 +933,7 @@ printf("compare no compare!\n"); return EXIT_FAILURE;
 
 #else
    div2_n = mul2_n = inv_n = expt_n = lcm_n = gcd_n = add_n =
-                                         sub_n = mul_n = div_n = sqr_n = mul2d_n = div2d_n = cnt = add_d_n = sub_d_n = 0;
+                                         sub_n = mul_n = div_n = sqr_n = mul2d_n = div2d_n = add_d_n = sub_d_n = 0;
 
    /* force KARA and TOOM to enable despite cutoffs */
    KARATSUBA_SQR_CUTOFF = KARATSUBA_MUL_CUTOFF = 8;
