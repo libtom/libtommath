@@ -36,7 +36,7 @@ static void ndraw(mp_int *a, const char *name)
    printf("0x%s\n", buf);
 }
 
-#if LTM_DEMO_TEST_VS_MTEST
+#if LTM_DEMO_TEST_VS_MTEST != 0
 static void draw(mp_int *a)
 {
    ndraw(a, "");
@@ -157,7 +157,7 @@ int main(void)
 {
    unsigned rr;
    int ix;
-#if LTM_DEMO_TEST_VS_MTEST
+#if LTM_DEMO_TEST_VS_MTEST != 0
    unsigned long expt_n, add_n, sub_n, mul_n, div_n, sqr_n, mul2d_n, div2d_n,
             gcd_n, lcm_n, inv_n, div2_n, mul2_n, add_d_n, sub_d_n;
 #else
