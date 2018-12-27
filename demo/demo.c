@@ -933,7 +933,7 @@ printf("compare no compare!\n"); return EXIT_FAILURE;
 
 #else
    div2_n = mul2_n = inv_n = expt_n = lcm_n = gcd_n = add_n =
-                                         sub_n = mul_n = div_n = sqr_n = mul2d_n = div2d_n = cnt = add_d_n = sub_d_n = 0;
+                                         sub_n = mul_n = div_n = sqr_n = mul2d_n = div2d_n = add_d_n = sub_d_n = 0;
 
    /* force KARA and TOOM to enable despite cutoffs */
    KARATSUBA_SQR_CUTOFF = KARATSUBA_MUL_CUTOFF = 8;
