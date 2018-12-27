@@ -77,13 +77,13 @@ static void _panic(int l)
    fprintf(stderr, "\n%d: fgets failed\n", l);
    exit(EXIT_FAILURE);
 }
-#endif
 
 #define FGETS(str, size, stream) \
    { \
       char *ret = fgets(str, size, stream); \
       if (!ret) { _panic(__LINE__); } \
    }
+#endif
 
 static mp_int a, b, c, d, e, f;
 
