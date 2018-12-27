@@ -560,7 +560,7 @@ int main(void)
             return EXIT_FAILURE;
          }
          t <<= 1;
-      } while (t);
+      } while (t != 0uL);
    }
 
    printf("\n\nTesting: mp_get_long_long\n");
@@ -580,7 +580,7 @@ int main(void)
             return EXIT_FAILURE;
          }
          r <<= 1;
-      } while (r);
+      } while (r != 0uLL);
    }
 
    /* test mp_sqrt */
@@ -815,7 +815,7 @@ int main(void)
          mp_copy(&c, &b);
          mp_mod(&c, &a, &c);
          mp_reduce_2k(&b, &a, 2uL);
-         if (mp_cmp(&c, &b)) {
+         if (mp_cmp(&c, &b) != MP_EQ) {
             printf("FAILED\n");
             return EXIT_FAILURE;
          }
