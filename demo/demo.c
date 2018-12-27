@@ -868,8 +868,8 @@ int main(void)
          mp_copy(&b, &c);
 
          mp_mod(&b, &a, &b);
-         mp_dr_setup(&a, &mp),
-                     mp_dr_reduce(&c, &a, mp);
+         mp_dr_setup(&a, &mp);
+         mp_dr_reduce(&c, &a, mp);
 
          if (mp_cmp(&b, &c) != MP_EQ) {
             printf("Failed on trial %u\n", rr);
