@@ -156,7 +156,7 @@ static char buf[4096];
 int main(void)
 {
    unsigned rr;
-   int cnt, ix;
+   int ix;
 #if LTM_DEMO_TEST_VS_MTEST
    unsigned long expt_n, add_n, sub_n, mul_n, div_n, sqr_n, mul2d_n, div2d_n,
             gcd_n, lcm_n, inv_n, div2_n, mul2_n, add_d_n, sub_d_n;
@@ -165,7 +165,7 @@ int main(void)
    long k, m;
    unsigned long long q, r;
    mp_digit mp;
-   int i, n, err, should;
+   int i, n, err, should, cnt;
 #endif
 
    if (mp_init_multi(&a, &b, &c, &d, &e, &f, NULL)!= MP_OKAY)
