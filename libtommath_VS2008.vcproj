@@ -537,6 +537,14 @@
 			>
 		</File>
 		<File
+			RelativePath="bn_mp_iseven.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_mp_isodd.c"
+			>
+		</File>
+		<File
 			RelativePath="bn_mp_jacobi.c"
 			>
 		</File>

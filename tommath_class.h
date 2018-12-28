@@ -74,6 +74,8 @@
 #   define BN_MP_INVMOD_C
 #   define BN_MP_INVMOD_SLOW_C
 #   define BN_MP_IS_SQUARE_C
+#   define BN_MP_ISEVEN_C
+#   define BN_MP_ISODD_C
 #   define BN_MP_JACOBI_C
 #   define BN_MP_KARATSUBA_MUL_C
 #   define BN_MP_KARATSUBA_SQR_C
@@ -515,6 +517,12 @@
 #   define BN_MP_SQR_C
 #   define BN_MP_CMP_MAG_C
 #   define BN_MP_CLEAR_C
+#endif
+
+#if defined(BN_MP_ISEVEN_C)
+#endif
+
+#if defined(BN_MP_ISODD_C)
 #endif
 
 #if defined(BN_MP_JACOBI_C)
