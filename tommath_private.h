@@ -51,6 +51,11 @@ extern void *XCALLOC(size_t n, size_t s);
 extern void XFREE(void *p);
 #endif
 
+/* ---> Basic Manipulations <--- */
+#define IS_ZERO(a) ((a)->used == 0)
+#define IS_EVEN(a) (((a)->used == 0) || (((a)->dp[0] & 1u) == 0u))
+#define IS_ODD(a)  (((a)->used > 0) && (((a)->dp[0] & 1u) == 1u))
+
 /* lowlevel functions, do not call! */
 int s_mp_add(const mp_int *a, const mp_int *b, mp_int *c);
 int s_mp_sub(const mp_int *a, const mp_int *b, mp_int *c);
