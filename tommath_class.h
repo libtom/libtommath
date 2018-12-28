@@ -446,7 +446,6 @@
 #endif
 
 #if defined(BN_MP_GET_DOUBLE_C)
-#   define BN_MP_ISNEG_C
 #endif
 
 #if defined(BN_MP_GET_INT_C)
@@ -534,7 +533,6 @@
 
 #if defined(BN_MP_JACOBI_C)
 #   define BN_MP_KRONECKER_C
-#   define BN_MP_ISNEG_C
 #   define BN_MP_CMP_D_C
 #endif
 
@@ -1022,7 +1020,6 @@
 #endif
 
 #if defined(BN_MP_TC_AND_C)
-#   define BN_MP_ISNEG_C
 #   define BN_MP_COUNT_BITS_C
 #   define BN_MP_INIT_SET_INT_C
 #   define BN_MP_MUL_2D_C
@@ -1034,14 +1031,12 @@
 #endif
 
 #if defined(BN_MP_TC_DIV_2D_C)
-#   define BN_MP_ISNEG_C
 #   define BN_MP_DIV_2D_C
 #   define BN_MP_ADD_D_C
 #   define BN_MP_SUB_D_C
 #endif
 
 #if defined(BN_MP_TC_OR_C)
-#   define BN_MP_ISNEG_C
 #   define BN_MP_COUNT_BITS_C
 #   define BN_MP_INIT_SET_INT_C
 #   define BN_MP_MUL_2D_C
@@ -1053,7 +1048,6 @@
 #endif
 
 #if defined(BN_MP_TC_XOR_C)
-#   define BN_MP_ISNEG_C
 #   define BN_MP_COUNT_BITS_C
 #   define BN_MP_INIT_SET_INT_C
 #   define BN_MP_MUL_2D_C

@@ -18,7 +18,7 @@
 int mp_jacobi(const mp_int *a, const mp_int *n, int *c)
 {
    /* if a < 0 return MP_VAL */
-   if (mp_isneg(a) == MP_YES) {
+   if (a->sign == MP_NEG) {
       return MP_VAL;
    }
 
