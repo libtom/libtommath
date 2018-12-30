@@ -58,15 +58,6 @@ LBL_MPMULSI_ERR:
    mp_clear(&t);
    return err;
 }
-#include <unistd.h>
-/*
-static void ltm_print(const char *s, mp_int *a){
-  printf("%s",s);
-  mp_fwrite(a,10,stdout);  fflush(stdout);
-  puts("\n");
-  fflush(stdout);
-}
-*/
 /*
     Strong Lucas-Selfridge test.
     returns MP_YES if it is a strong L-S prime, MP_NO if it is composite
