@@ -58,9 +58,15 @@ LBL_MPMULSI_ERR:
    mp_clear(&t);
    return err;
 }
-
-
-
+#include <unistd.h>
+/*
+static void ltm_print(const char *s, mp_int *a){
+  printf("%s",s);
+  mp_fwrite(a,10,stdout);  fflush(stdout);
+  puts("\n");
+  fflush(stdout);
+}
+*/
 /*
     Strong Lucas-Selfridge test.
     returns MP_YES if it is a strong L-S prime, MP_NO if it is composite
@@ -85,10 +91,9 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
    /* CZ TODO: Some of them need the full 32 bit, hence the (temporary) exclusion of MP_8BIT */
    int32_t D, Ds, J, sign, P, Q, r, s, u, Nbits;
    int e;
-   int isset;
+   int isset, oddness;
 
    *result = MP_NO;
-
    /*
    Find the first element D in the sequence {5, -7, 9, -11, 13, ...}
    such that Jacobi(D,N) = -1 (Selfridge's algorithm). Theory
@@ -137,6 +142,8 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
          goto LBL_LS_ERR;
       }
    }
+
+
 
    P = 1;              /* Selfridge's choice */
    Q = (1 - Ds) / 4;   /* Required so D = P*P - 4*Q */
@@ -232,6 +239,7 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
    }
 
    Nbits = mp_count_bits(&Dz);
+
    for (u = 1; u < Nbits; u++) { /* zero bit off, already accounted for */
       /* Formulas for doubling of indices (carried out mod N). Note that
        * the indices denoted as "2m" are actually powers of 2, specifically
@@ -272,7 +280,8 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
          e = isset;
          goto LBL_LS_ERR;
       }
-      if (isset == MP_YES) {
+
+      if (isset == MP_YES) { puts("HERE");
          /* Formulas for addition of indices (carried out mod N);
           *
           * U_(m+n) = (U_m*V_n + U_n*V_m)/2
@@ -280,7 +289,6 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
           *
           * Be careful with division by 2 (mod N)!
           */
-
          if ((e = mp_mul(&U2mz, &Vz, &T1z)) != MP_OKAY) {
             goto LBL_LS_ERR;
          }
@@ -309,10 +317,11 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
           * Thomas R. Nicely used GMP's mpz_fdiv_q_2exp().
           * But mp_div_2() does not do so, it is truncating instead.
           */
+         oddness = mp_isodd(&Uz);
          if ((e = mp_div_2(&Uz, &Uz)) != MP_OKAY) {
             goto LBL_LS_ERR;
          }
-         if ((Uz.sign == MP_NEG) && (mp_isodd(&Uz) != MP_NO)) {
+         if ((Uz.sign == MP_NEG) && (oddness != MP_NO)) {
             if ((e = mp_sub_d(&Uz, 1uL, &Uz)) != MP_OKAY) {
                goto LBL_LS_ERR;
             }
@@ -325,10 +334,11 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
                goto LBL_LS_ERR;
             }
          }
+         oddness = mp_isodd(&Vz);
          if ((e = mp_div_2(&Vz, &Vz)) != MP_OKAY) {
             goto LBL_LS_ERR;
          }
-         if ((Vz.sign == MP_NEG) && (mp_isodd(&Vz) != MP_NO)) {
+         if ((Vz.sign == MP_NEG) && (oddness != MP_NO)) {
             if ((e = mp_sub_d(&Vz, 1uL, &Vz)) != MP_OKAY) {
                goto LBL_LS_ERR;
             }
