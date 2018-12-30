@@ -266,13 +266,11 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
       if ((e = mp_mul_2(&Qmz, &Q2mz)) != MP_OKAY) {
          goto LBL_LS_ERR;
       }
-
       if ((isset = mp_get_bit(&Dz, u)) == MP_VAL) {
          e = isset;
          goto LBL_LS_ERR;
       }
-
-      if (isset == MP_YES) { puts("HERE");
+      if (isset == MP_YES) {
          /* Formulas for addition of indices (carried out mod N);
           *
           * U_(m+n) = (U_m*V_n + U_n*V_m)/2
