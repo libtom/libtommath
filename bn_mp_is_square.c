@@ -49,8 +49,7 @@ int mp_is_square(const mp_int *arg, int *ret)
       return MP_VAL;
    }
 
-   /* digits used?  (TSD) */
-   if (arg->used == 0) {
+   if (IS_ZERO(arg)) {
       return MP_OKAY;
    }
 

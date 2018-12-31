@@ -19,7 +19,7 @@ int mp_count_bits(const mp_int *a)
    mp_digit q;
 
    /* shortcut */
-   if (a->used == 0) {
+   if (IS_ZERO(a)) {
       return 0;
    }
 

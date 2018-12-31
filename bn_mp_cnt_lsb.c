@@ -23,7 +23,7 @@ int mp_cnt_lsb(const mp_int *a)
    mp_digit q, qq;
 
    /* easy out */
-   if (mp_iszero(a) == MP_YES) {
+   if (IS_ZERO(a)) {
       return 0;
    }
 

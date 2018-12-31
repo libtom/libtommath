@@ -24,7 +24,7 @@ int fast_mp_invmod(const mp_int *a, const mp_int *b, mp_int *c)
    int     res, neg;
 
    /* 2. [modified] b must be odd   */
-   if (mp_iseven(b) == MP_YES) {
+   if (IS_EVEN(b)) {
       return MP_VAL;
    }
 
@@ -44,7 +44,7 @@ int fast_mp_invmod(const mp_int *a, const mp_int *b, mp_int *c)
    }
 
    /* if one of x,y is zero return an error! */
-   if ((mp_iszero(&x) == MP_YES) || (mp_iszero(&y) == MP_YES)) {
+   if (IS_ZERO(&x) || IS_ZERO(&y)) {
       res = MP_VAL;
       goto LBL_ERR;
    }
@@ -60,13 +60,13 @@ int fast_mp_invmod(const mp_int *a, const mp_int *b, mp_int *c)
 
 top:
    /* 4.  while u is even do */
-   while (mp_iseven(&u) == MP_YES) {
+   while (IS_EVEN(&u)) {
       /* 4.1 u = u/2 */
       if ((res = mp_div_2(&u, &u)) != MP_OKAY) {
          goto LBL_ERR;
       }
       /* 4.2 if B is odd then */
-      if (mp_isodd(&B) == MP_YES) {
+      if (IS_ODD(&B)) {
          if ((res = mp_sub(&B, &x, &B)) != MP_OKAY) {
             goto LBL_ERR;
          }
@@ -78,13 +78,13 @@ top:
    }
 
    /* 5.  while v is even do */
-   while (mp_iseven(&v) == MP_YES) {
+   while (IS_EVEN(&v)) {
       /* 5.1 v = v/2 */
       if ((res = mp_div_2(&v, &v)) != MP_OKAY) {
          goto LBL_ERR;
       }
       /* 5.2 if D is odd then */
-      if (mp_isodd(&D) == MP_YES) {
+      if (IS_ODD(&D)) {
          /* D = (D-x)/2 */
          if ((res = mp_sub(&D, &x, &D)) != MP_OKAY) {
             goto LBL_ERR;
@@ -118,7 +118,7 @@ top:
    }
 
    /* if not zero goto step 4 */
-   if (mp_iszero(&u) == MP_NO) {
+   if (!IS_ZERO(&u)) {
       goto top;
    }
 

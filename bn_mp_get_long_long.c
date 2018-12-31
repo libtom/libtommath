@@ -18,7 +18,7 @@ unsigned long long mp_get_long_long(const mp_int *a)
    int i;
    unsigned long long res;
 
-   if (a->used == 0) {
+   if (IS_ZERO(a)) {
       return 0;
    }
 

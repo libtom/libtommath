@@ -163,14 +163,11 @@
 #endif
 
 #if defined(BN_FAST_MP_INVMOD_C)
-#   define BN_MP_ISEVEN_C
 #   define BN_MP_INIT_MULTI_C
 #   define BN_MP_COPY_C
 #   define BN_MP_MOD_C
-#   define BN_MP_ISZERO_C
 #   define BN_MP_SET_C
 #   define BN_MP_DIV_2_C
-#   define BN_MP_ISODD_C
 #   define BN_MP_SUB_C
 #   define BN_MP_CMP_C
 #   define BN_MP_CMP_D_C
@@ -259,7 +256,6 @@
 #endif
 
 #if defined(BN_MP_CNT_LSB_C)
-#   define BN_MP_ISZERO_C
 #endif
 
 #if defined(BN_MP_COMPLEMENT_C)
@@ -275,7 +271,6 @@
 #endif
 
 #if defined(BN_MP_DIV_C)
-#   define BN_MP_ISZERO_C
 #   define BN_MP_CMP_MAG_C
 #   define BN_MP_COPY_C
 #   define BN_MP_ZERO_C
@@ -321,7 +316,6 @@
 #endif
 
 #if defined(BN_MP_DIV_D_C)
-#   define BN_MP_ISZERO_C
 #   define BN_MP_COPY_C
 #   define BN_MP_DIV_2D_C
 #   define BN_MP_DIV_3_C
@@ -376,7 +370,6 @@
 #   define BN_S_MP_EXPTMOD_C
 #   define BN_MP_DR_IS_MODULUS_C
 #   define BN_MP_REDUCE_IS_2K_C
-#   define BN_MP_ISODD_C
 #   define BN_MP_EXPTMOD_FAST_C
 #endif
 
@@ -405,7 +398,6 @@
 #   define BN_MP_INIT_MULTI_C
 #   define BN_MP_SET_C
 #   define BN_MP_COPY_C
-#   define BN_MP_ISZERO_C
 #   define BN_MP_DIV_C
 #   define BN_MP_MUL_C
 #   define BN_MP_SUB_C
@@ -429,7 +421,6 @@
 #endif
 
 #if defined(BN_MP_GCD_C)
-#   define BN_MP_ISZERO_C
 #   define BN_MP_ABS_C
 #   define BN_MP_INIT_COPY_C
 #   define BN_MP_CNT_LSB_C
@@ -442,7 +433,6 @@
 #endif
 
 #if defined(BN_MP_GET_BIT_C)
-#   define BN_MP_ISZERO_C
 #endif
 
 #if defined(BN_MP_GET_DOUBLE_C)
@@ -497,20 +487,16 @@
 
 #if defined(BN_MP_INVMOD_C)
 #   define BN_MP_CMP_D_C
-#   define BN_MP_ISODD_C
 #   define BN_FAST_MP_INVMOD_C
 #   define BN_MP_INVMOD_SLOW_C
 #endif
 
 #if defined(BN_MP_INVMOD_SLOW_C)
-#   define BN_MP_ISZERO_C
 #   define BN_MP_INIT_MULTI_C
 #   define BN_MP_MOD_C
 #   define BN_MP_COPY_C
-#   define BN_MP_ISEVEN_C
 #   define BN_MP_SET_C
 #   define BN_MP_DIV_2_C
-#   define BN_MP_ISODD_C
 #   define BN_MP_ADD_C
 #   define BN_MP_SUB_C
 #   define BN_MP_CMP_C
@@ -559,8 +545,6 @@
 #endif
 
 #if defined(BN_MP_KRONECKER_C)
-#   define BN_MP_ISZERO_C
-#   define BN_MP_ISEVEN_C
 #   define BN_MP_INIT_COPY_C
 #   define BN_MP_CNT_LSB_C
 #   define BN_MP_DIV_2D_C
@@ -580,7 +564,6 @@
 #endif
 
 #if defined(BN_MP_LSHD_C)
-#   define BN_MP_ISZERO_C
 #   define BN_MP_GROW_C
 #   define BN_MP_RSHD_C
 #endif
@@ -589,7 +572,6 @@
 #   define BN_MP_INIT_SIZE_C
 #   define BN_MP_DIV_C
 #   define BN_MP_CLEAR_C
-#   define BN_MP_ISZERO_C
 #   define BN_MP_EXCH_C
 #   define BN_MP_ADD_C
 #endif
@@ -677,7 +659,6 @@
 
 #if defined(BN_MP_NEG_C)
 #   define BN_MP_COPY_C
-#   define BN_MP_ISZERO_C
 #endif
 
 #if defined(BN_MP_OR_C)
@@ -714,7 +695,6 @@
 #   define BN_MP_MOD_C
 #   define BN_MP_GET_BIT_C
 #   define BN_MP_EXCH_C
-#   define BN_MP_ISZERO_C
 #   define BN_MP_CMP_C
 #   define BN_MP_CLEAR_MULTI_C
 #endif
@@ -724,7 +704,6 @@
 #endif
 
 #if defined(BN_MP_PRIME_IS_PRIME_C)
-#   define BN_MP_ISEVEN_C
 #   define BN_MP_IS_SQUARE_C
 #   define BN_MP_CMP_D_C
 #   define BN_MP_PRIME_IS_DIVISIBLE_C
@@ -757,7 +736,6 @@
 #   define BN_MP_CMP_D_C
 #   define BN_MP_SET_C
 #   define BN_MP_SUB_D_C
-#   define BN_MP_ISEVEN_C
 #   define BN_MP_MOD_D_C
 #   define BN_MP_INIT_C
 #   define BN_MP_ADD_D_C
@@ -801,15 +779,12 @@
 #   define BN_MP_SUB_C
 #   define BN_MP_GET_BIT_C
 #   define BN_MP_ADD_C
-#   define BN_MP_ISODD_C
 #   define BN_MP_DIV_2_C
 #   define BN_MP_SUB_D_C
-#   define BN_MP_ISZERO_C
 #   define BN_MP_CLEAR_MULTI_C
 #endif
 
 #if defined(BN_MP_RADIX_SIZE_C)
-#   define BN_MP_ISZERO_C
 #   define BN_MP_COUNT_BITS_C
 #   define BN_MP_INIT_COPY_C
 #   define BN_MP_DIV_D_C
@@ -835,7 +810,6 @@
 #   define BN_MP_S_RMAP_REVERSE_C
 #   define BN_MP_MUL_D_C
 #   define BN_MP_ADD_D_C
-#   define BN_MP_ISZERO_C
 #endif
 
 #if defined(BN_MP_READ_SIGNED_BIN_C)
@@ -931,7 +905,6 @@
 #   define BN_MP_SET_LONG_LONG_C
 #   define BN_MP_DIV_2D_C
 #   define BN_MP_MUL_2D_C
-#   define BN_MP_ISZERO_C
 #endif
 
 #if defined(BN_MP_SET_INT_C)
@@ -969,7 +942,6 @@
 
 #if defined(BN_MP_SQRT_C)
 #   define BN_MP_N_ROOT_C
-#   define BN_MP_ISZERO_C
 #   define BN_MP_ZERO_C
 #   define BN_MP_INIT_COPY_C
 #   define BN_MP_RSHD_C
@@ -992,7 +964,6 @@
 #   define BN_MP_EXPTMOD_C
 #   define BN_MP_COPY_C
 #   define BN_MP_SUB_D_C
-#   define BN_MP_ISEVEN_C
 #   define BN_MP_SET_INT_C
 #   define BN_MP_SQRMOD_C
 #   define BN_MP_MULMOD_C
@@ -1069,7 +1040,6 @@
 
 #if defined(BN_MP_TO_UNSIGNED_BIN_C)
 #   define BN_MP_INIT_COPY_C
-#   define BN_MP_ISZERO_C
 #   define BN_MP_DIV_2D_C
 #   define BN_MP_CLEAR_C
 #endif
@@ -1114,7 +1084,6 @@
 #endif
 
 #if defined(BN_MP_TORADIX_C)
-#   define BN_MP_ISZERO_C
 #   define BN_MP_INIT_COPY_C
 #   define BN_MP_DIV_D_C
 #   define BN_MP_CLEAR_C
@@ -1122,7 +1091,6 @@
 #endif
 
 #if defined(BN_MP_TORADIX_N_C)
-#   define BN_MP_ISZERO_C
 #   define BN_MP_INIT_COPY_C
 #   define BN_MP_DIV_D_C
 #   define BN_MP_CLEAR_C

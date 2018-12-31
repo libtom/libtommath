@@ -296,7 +296,7 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
          if ((e = mp_add(&T1z, &T2z, &Uz)) != MP_OKAY) {
             goto LBL_LS_ERR;
          }
-         if (mp_isodd(&Uz) != MP_NO) {
+         if (IS_ODD(&Uz)) {
             if ((e = mp_add(&Uz, a, &Uz)) != MP_OKAY) {
                goto LBL_LS_ERR;
             }
@@ -306,7 +306,7 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
           * Thomas R. Nicely used GMP's mpz_fdiv_q_2exp().
           * But mp_div_2() does not do so, it is truncating instead.
           */
-         oddness = mp_isodd(&Uz);
+         oddness = IS_ODD(&Uz) ? MP_YES : MP_NO;
          if ((e = mp_div_2(&Uz, &Uz)) != MP_OKAY) {
             goto LBL_LS_ERR;
          }
@@ -318,12 +318,12 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
          if ((e = mp_add(&T3z, &T4z, &Vz)) != MP_OKAY) {
             goto LBL_LS_ERR;
          }
-         if (mp_isodd(&Vz) != MP_NO) {
+         if (IS_ODD(&Vz)) {
             if ((e = mp_add(&Vz, a, &Vz)) != MP_OKAY) {
                goto LBL_LS_ERR;
             }
          }
-         oddness = mp_isodd(&Vz);
+         oddness = IS_ODD(&Vz) ? MP_YES : MP_NO;
          if ((e = mp_div_2(&Vz, &Vz)) != MP_OKAY) {
             goto LBL_LS_ERR;
          }
@@ -350,7 +350,7 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
 
    /* If U_d or V_d is congruent to 0 mod N, then N is a prime or a
       strong Lucas pseudoprime. */
-   if ((mp_iszero(&Uz) != MP_NO) || (mp_iszero(&Vz) != MP_NO)) {
+   if (IS_ZERO(&Uz) || IS_ZERO(&Vz)) {
       *result = MP_YES;
       goto LBL_LS_ERR;
    }
@@ -381,7 +381,7 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
       if ((e = mp_mod(&Vz, a, &Vz)) != MP_OKAY) {
          goto LBL_LS_ERR;
       }
-      if (mp_iszero(&Vz) != MP_NO) {
+      if (IS_ZERO(&Vz)) {
          *result = MP_YES;
          goto LBL_LS_ERR;
       }
