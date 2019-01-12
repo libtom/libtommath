@@ -179,6 +179,16 @@ static int s_gen_random(mp_digit *r)
    return ret;
 }
 
+/* 
+   Public for legacy reasons only, do not use elsewhere!
+   There is a good reason it is not officially documented!
+ */
+mp_digit gen_random_mp_digit(void) {
+   mp_digit p;
+   MP_UNUSED_VARIABLE s_gen_random(&p);
+   return p;
+}
+
 int mp_rand(mp_int *a, int digits)
 {
    int     res;

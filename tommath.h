@@ -600,6 +600,19 @@ int mp_fwrite(const mp_int *a, int radix, FILE *stream);
 #define mp_todecimal(M, S) mp_toradix((M), (S), 10)
 #define mp_tohex(M, S)     mp_toradix((M), (S), 16)
 
+#if ( (defined __GCC__) || (defined __clang__) )
+#   define MP_UNUSED_VARIABLE __attribute__((unused))
+#else
+#   define MP_UNUSED_VARIABLE (void) 
+#endif
+/* 
+   Public for legacy reasons only, do not use elsewhere!
+   There is a good reason it is not officially documented!
+ */
+mp_digit gen_random_mp_digit(void);
+#define MP_GEN_RANDOM_MAX MP_MASK
+#define MP_GEN_RANDOM()   gen_random_mp_digit(void)
+
 #ifdef __cplusplus
 }
 #endif
