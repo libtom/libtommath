@@ -185,7 +185,7 @@ static int s_gen_random(mp_digit *r)
  */
 mp_digit gen_random_mp_digit(void) {
    mp_digit p;
-   MP_UNUSED_VARIABLE s_gen_random(&p);
+   (void) s_gen_random(&p);
    return p;
 }
 
