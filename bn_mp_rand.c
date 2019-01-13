@@ -172,21 +172,11 @@ static int s_rand_digit(mp_digit *p)
 }
 
 /* makes a pseudo-random int of a given size */
-static int s_gen_random(mp_digit *r)
+int mp_rand_digit(mp_digit *r)
 {
    int ret = s_rand_digit(r);
    *r &= MP_MASK;
    return ret;
-}
-
-/* 
-   Public for legacy reasons only, do not use elsewhere!
-   There is a good reason it is not officially documented!
- */
-mp_digit gen_random_mp_digit(void) {
-   mp_digit p;
-   (void) s_gen_random(&p);
-   return p;
 }
 
 int mp_rand(mp_int *a, int digits)
@@ -201,7 +191,7 @@ int mp_rand(mp_int *a, int digits)
 
    /* first place a random non-zero digit */
    do {
-      if (s_gen_random(&d) != MP_OKAY) {
+      if (mp_rand_digit(&d) != MP_OKAY) {
          return MP_VAL;
       }
    } while (d == 0u);
@@ -215,7 +205,7 @@ int mp_rand(mp_int *a, int digits)
          return res;
       }
 
-      if (s_gen_random(&d) != MP_OKAY) {
+      if (mp_rand_digit(&d) != MP_OKAY) {
          return MP_VAL;
       }
       if ((res = mp_add_d(a, d, a)) != MP_OKAY) {
