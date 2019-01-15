@@ -10,6 +10,17 @@ my %deplist;
 #open class file and write preamble
 open(my $class, '>', 'tommath_class.h') or die "Couldn't open tommath_class.h for writing\n";
 print {$class} << 'EOS';
+/* LibTomMath, multiple-precision integer library -- Tom St Denis
+ *
+ * LibTomMath is a library that provides multiple-precision
+ * integer arithmetic as well as number theoretic functionality.
+ *
+ * The library was designed directly after the MPI library by
+ * Michael Fromberger but has been written from scratch with
+ * additional optimizations in place.
+ *
+ * SPDX-License-Identifier: Unlicense
+ */
 #if !(defined(LTM1) && defined(LTM2) && defined(LTM3))
 #if defined(LTM2)
 #   define LTM3
@@ -18,7 +29,6 @@ print {$class} << 'EOS';
 #   define LTM2
 #endif
 #define LTM1
-
 #if defined(LTM_ALL)
 EOS
 
@@ -47,6 +57,17 @@ EOS
       print {$out} << "EOS";
 #include "tommath_private.h"
 #ifdef $define
+/* LibTomMath, multiple-precision integer library -- Tom St Denis
+ *
+ * LibTomMath is a library that provides multiple-precision
+ * integer arithmetic as well as number theoretic functionality.
+ *
+ * The library was designed directly after the MPI library by
+ * Michael Fromberger but has been written from scratch with
+ * additional optimizations in place.
+ *
+ * SPDX-License-Identifier: Unlicense
+ */
 $line
 EOS
       $apply = 1;
@@ -59,6 +80,9 @@ EOS
    if ($apply == 1) {
       print {$out} << 'EOS';
 #endif
+/* ref:         \$Format:\%D$ */
+/* git commit:  \$Format:\%H$ */
+/* commit time: \$Format:\%ai$ */
 EOS
    }
    close $src;
@@ -69,7 +93,6 @@ EOS
 }
 print {$class} << 'EOS';
 #endif
-
 EOS
 
 # now do classes
@@ -125,6 +148,10 @@ print {$class} << 'EOS';
 #else
 #   define LTM_LAST
 #endif
+
+/* ref:         $Format:%D$ */
+/* git commit:  $Format:%H$ */
+/* commit time: $Format:%ai$ */
 EOS
 close $class;
 
