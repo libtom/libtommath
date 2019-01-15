@@ -2003,14 +2003,19 @@ mp\_prime\_random().
 
 \chapter{Random Number Generation}
 \section{PRNG}
+\index{mp\_rand\_digit}
+\begin{alltt}
+int mp_rand_digit(mp_digit *r)
+\end{alltt}
+This function generates a random number in \texttt{r} of the size given in \texttt{r} (that is, the variable is used for in- and output) but not more than \texttt{MP_MASK} bits.
+
 \index{mp\_rand}
 \begin{alltt}
 int mp_rand(mp_int *a, int digits)
 \end{alltt}
-The function generates a random number of \texttt{digits} bits.
+This function generates a random number of \texttt{digits} bits.
 
-This random number is cryptographically secure if the source of random numbers the operating systems offers is cryptographically secure.
-It will use \texttt{arc4random()} if the OS is a BSD flavor, Wincrypt on Windows, and \texttt{\\dev\\urandom} on all operating systems that have it.
+The random number generated with these two functions is cryptographically secure if the source of random numbers the operating systems offers is cryptographically secure. It will use \texttt{arc4random()} if the OS is a BSD flavor, Wincrypt on Windows, or \texttt{\dev\urandom} on all operating systems that have it.
 
 
 \chapter{Input and Output}
