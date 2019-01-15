@@ -277,8 +277,10 @@ int mp_cnt_lsb(const mp_int *a);
 
 /* I Love Earth! */
 
-/* makes a pseudo-random int of a given size */
+/* makes a pseudo-random mp_int of a given size */
 int mp_rand(mp_int *a, int digits);
+/* makes a pseudo-random small int of a given size */
+int mp_rand_digit(mp_digit *r);
 
 #ifdef MP_PRNG_ENABLE_LTM_RNG
 /* as last resort we will fall back to libtomcrypt's rng_get_bytes()
