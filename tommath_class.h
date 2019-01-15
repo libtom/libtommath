@@ -1,3 +1,14 @@
+/* LibTomMath, multiple-precision integer library -- Tom St Denis
+ *
+ * LibTomMath is a library that provides multiple-precision
+ * integer arithmetic as well as number theoretic functionality.
+ *
+ * The library was designed directly after the MPI library by
+ * Michael Fromberger but has been written from scratch with
+ * additional optimizations in place.
+ *
+ * SPDX-License-Identifier: Unlicense
+ */
 #if !(defined(LTM1) && defined(LTM2) && defined(LTM3))
 #if defined(LTM2)
 #   define LTM3
@@ -6,7 +17,6 @@
 #   define LTM2
 #endif
 #define LTM1
-
 #if defined(LTM_ALL)
 #   define BN_ERROR_C
 #   define BN_FAST_MP_INVMOD_C
@@ -148,7 +158,6 @@
 #   define BN_S_MP_SUB_C
 #   define BNCORE_C
 #endif
-
 #if defined(BN_ERROR_C)
 #   define BN_MP_ERROR_TO_STRING_C
 #endif
@@ -1207,3 +1216,7 @@
 #else
 #   define LTM_LAST
 #endif
+
+/* ref:         $Format:%D$ */
+/* git commit:  $Format:%H$ */
+/* commit time: $Format:%ai$ */
