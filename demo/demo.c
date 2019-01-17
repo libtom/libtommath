@@ -691,14 +691,12 @@ int main(void)
    /* small problem */
    if (err != MP_OKAY) {
       printf("\nfailed with error: %s\n", mp_error_to_string(err));
-      printf("prime tested was: ");
-      mp_fwrite(&a,16,stdout);
-      putchar('\n');
-      return EXIT_FAILURE;
    }
    /* large problem */
    if (cnt == MP_NO) {
       printf("A certified prime is a prime but mp_prime_is_prime says it is not.\n");
+   }
+   if ((err != MP_OKAY) || (cnt == MP_NO)) {
       printf("prime tested was: ");
       mp_fwrite(&a,16,stdout);
       putchar('\n');
@@ -727,10 +725,10 @@ int main(void)
          printf("\nfailed with error: %s\n", mp_error_to_string(err));
       }
       /* large problem */
-      if (cnt != MP_YES) {
+      if (cnt == MP_NO) {
          printf("\nsub is not prime!\n");
       }
-      if ((err != MP_OKAY) || (cnt != MP_YES)) {
+      if ((err != MP_OKAY) || (cnt == MP_NO)) {
          printf("prime tested was: ");
          mp_fwrite(&a,16,stdout);
          putchar('\n');
@@ -746,15 +744,15 @@ int main(void)
    mp_read_radix(&a,    "FFFFFFFFFFFFFFFFC90FDAA22168C234C4C6628B80DC1CD129024E088A67CC74020BBEA63B139B22514A08798E3404DDEF9519B3CD3A431B302B0A6DF25F14374FE1356D6D51C245E485B576625E7EC6F44C42E9A63A3620FFFFFFFFFFFFFFFF",
                  16);
    err = mp_prime_strong_lucas_selfridge(&a, &cnt);
+   /* small problem */
    if (err != MP_OKAY) {
       printf("\nmp_prime_strong_lucas_selfridge failed with error: %s\n", mp_error_to_string(err));
-      printf("prime tested was: ");
-      mp_fwrite(&a,16,stdout);
-      putchar('\n');
-      return EXIT_FAILURE;
    }
-   if (cnt != MP_YES) {
+   /* large problem */
+   if (cnt == MP_NO) {
       printf("\n\nissue #143 - mp_prime_strong_lucas_selfridge FAILED!\n");
+   }
+   if ((err != MP_OKAY) || (cnt == MP_NO)) {
       printf("prime tested was: ");
       mp_fwrite(&a,16,stdout);
       putchar('\n');
