@@ -719,22 +719,23 @@ int main(void)
          return EXIT_FAILURE;
       }
       /* let's see if it's really a safe prime */
-      mp_sub_d(&a, 1uL, &a);
-      mp_div_2(&a, &a);
-      err = mp_prime_is_prime(&a, 8, &cnt);
+      mp_sub_d(&a, 1uL, &b);
+      mp_div_2(&b, &b);
+      err = mp_prime_is_prime(&b, 8, &cnt);
       /* small problem */
       if (err != MP_OKAY) {
-         printf("failed with err code %d\n", err);
-         printf("prime tested was: ");
-         mp_fwrite(&a,16,stdout);
-         putchar('\n');
-         return EXIT_FAILURE;
+         printf("\nfailed with err code %d\n", err);
       }
       /* large problem */
       if (cnt != MP_YES) {
-         printf("sub is not prime!\n");
-         printf("prime failed was: ");
+         printf("\nsub is not prime!\n");
+      }
+      if ((err != MP_OKAY) || (cnt != MP_YES)) {
+         printf("prime tested was: ");
          mp_fwrite(&a,16,stdout);
+         putchar('\n');
+         printf("(prime-1)/2 tested was: ");
+         mp_fwrite(&b,16,stdout);
          putchar('\n');
          return EXIT_FAILURE;
       }
