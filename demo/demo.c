@@ -661,7 +661,7 @@ int main(void)
                                (rand() & 1) ? 0 : LTM_PRIME_2MSB_ON, myrng,
                                NULL);
       if (err != MP_OKAY) {
-         printf("failed with err code %d\n", err);
+         printf("\nfailed with error: %s\n", mp_error_to_string(err));
          return EXIT_FAILURE;
       }
       if (mp_count_bits(&a) != ix) {
@@ -690,7 +690,7 @@ int main(void)
    err = mp_prime_is_prime(&a, 8, &cnt);
    /* small problem */
    if (err != MP_OKAY) {
-      printf("failed with err code %d\n", err);
+      printf("\nfailed with error: %s\n", mp_error_to_string(err));
       printf("prime tested was: ");
       mp_fwrite(&a,16,stdout);
       putchar('\n');
@@ -711,7 +711,7 @@ int main(void)
                &a, 8, ix, ((rand() & 1) ? 0 : LTM_PRIME_2MSB_ON) | LTM_PRIME_SAFE,
                myrng, NULL);
       if (err != MP_OKAY) {
-         printf("failed with err code %d\n", err);
+         printf("\nfailed with error: %s\n", mp_error_to_string(err));
          return EXIT_FAILURE;
       }
       if (mp_count_bits(&a) != ix) {
@@ -724,7 +724,7 @@ int main(void)
       err = mp_prime_is_prime(&b, 8, &cnt);
       /* small problem */
       if (err != MP_OKAY) {
-         printf("\nfailed with err code %d\n", err);
+         printf("\nfailed with error: %s\n", mp_error_to_string(err));
       }
       /* large problem */
       if (cnt != MP_YES) {
@@ -734,7 +734,7 @@ int main(void)
          printf("prime tested was: ");
          mp_fwrite(&a,16,stdout);
          putchar('\n');
-         printf("(prime-1)/2 tested was: ");
+         printf("sub tested was: ");
          mp_fwrite(&b,16,stdout);
          putchar('\n');
          return EXIT_FAILURE;
@@ -747,7 +747,7 @@ int main(void)
                  16);
    err = mp_prime_strong_lucas_selfridge(&a, &cnt);
    if (err != MP_OKAY) {
-      printf("mp_prime_strong_lucas_selfridge failed with err code %d\n", err);
+      printf("\nmp_prime_strong_lucas_selfridge failed with error: %s\n", mp_error_to_string(err));
       printf("prime tested was: ");
       mp_fwrite(&a,16,stdout);
       putchar('\n');
