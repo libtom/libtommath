@@ -305,7 +305,7 @@ int mp_prime_is_prime(const mp_int *a, int t, int *result)
             fips_rand &= mask;
          }
 #endif
-         if (fips_rand > ((unsigned int) INT_MAX - DIGIT_BIT)) {
+         if (fips_rand > (unsigned int)(INT_MAX - DIGIT_BIT)) {
             len = INT_MAX / DIGIT_BIT;
          } else {
             len = (((int)fips_rand + DIGIT_BIT) / DIGIT_BIT);
