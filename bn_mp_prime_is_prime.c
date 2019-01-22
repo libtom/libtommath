@@ -307,8 +307,7 @@ int mp_prime_is_prime(const mp_int *a, int t, int *result)
 #endif
          if (fips_rand > ((unsigned int) INT_MAX - DIGIT_BIT)) {
             len = INT_MAX / DIGIT_BIT;
-         }
-         else {
+         } else {
             len = (((int)fips_rand + DIGIT_BIT) / DIGIT_BIT);
          }
          /*  Unlikely. */
