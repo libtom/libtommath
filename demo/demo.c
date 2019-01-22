@@ -661,7 +661,7 @@ int main(void)
                                (rand() & 1) ? 0 : LTM_PRIME_2MSB_ON, myrng,
                                NULL);
       if (err != MP_OKAY) {
-         printf("failed with err code %d\n", err);
+         printf("\nfailed with error: %s\n", mp_error_to_string(err));
          return EXIT_FAILURE;
       }
       if (mp_count_bits(&a) != ix) {
@@ -687,9 +687,19 @@ int main(void)
    mp_set(&a,1u);
    mp_mul_2d(&a,1119,&a);
    mp_add_d(&a,53,&a);
-   mp_prime_is_prime(&a, 8, &cnt);
+   err = mp_prime_is_prime(&a, 8, &cnt);
+   /* small problem */
+   if (err != MP_OKAY) {
+      printf("\nfailed with error: %s\n", mp_error_to_string(err));
+   }
+   /* large problem */
    if (cnt == MP_NO) {
-      printf("A certified prime is a prime but mp_prime_is_prime says it not.\n");
+      printf("A certified prime is a prime but mp_prime_is_prime says it is not.\n");
+   }
+   if ((err != MP_OKAY) || (cnt == MP_NO)) {
+      printf("prime tested was: ");
+      mp_fwrite(&a,16,stdout);
+      putchar('\n');
       return EXIT_FAILURE;
    }
    for (ix = 16; ix < 128; ix++) {
@@ -699,7 +709,7 @@ int main(void)
                &a, 8, ix, ((rand() & 1) ? 0 : LTM_PRIME_2MSB_ON) | LTM_PRIME_SAFE,
                myrng, NULL);
       if (err != MP_OKAY) {
-         printf("failed with err code %d\n", err);
+         printf("\nfailed with error: %s\n", mp_error_to_string(err));
          return EXIT_FAILURE;
       }
       if (mp_count_bits(&a) != ix) {
@@ -707,22 +717,46 @@ int main(void)
          return EXIT_FAILURE;
       }
       /* let's see if it's really a safe prime */
-      mp_sub_d(&a, 1uL, &a);
-      mp_div_2(&a, &a);
-      mp_prime_is_prime(&a, 8, &cnt);
-      if (cnt != MP_YES) {
-         printf("sub is not prime!\n");
+      mp_sub_d(&a, 1uL, &b);
+      mp_div_2(&b, &b);
+      err = mp_prime_is_prime(&b, 8, &cnt);
+      /* small problem */
+      if (err != MP_OKAY) {
+         printf("\nfailed with error: %s\n", mp_error_to_string(err));
+      }
+      /* large problem */
+      if (cnt == MP_NO) {
+         printf("\nsub is not prime!\n");
+      }
+      if ((err != MP_OKAY) || (cnt == MP_NO)) {
+         printf("prime tested was: ");
+         mp_fwrite(&a,16,stdout);
+         putchar('\n');
+         printf("sub tested was: ");
+         mp_fwrite(&b,16,stdout);
+         putchar('\n');
          return EXIT_FAILURE;
       }
+
    }
    /* Check regarding problem #143 */
 #ifndef MP_8BIT
    mp_read_radix(&a,
                  "FFFFFFFFFFFFFFFFC90FDAA22168C234C4C6628B80DC1CD129024E088A67CC74020BBEA63B139B22514A08798E3404DDEF9519B3CD3A431B302B0A6DF25F14374FE1356D6D51C245E485B576625E7EC6F44C42E9A63A3620FFFFFFFFFFFFFFFF",
                  16);
-   mp_prime_strong_lucas_selfridge(&a, &cnt);
-   if (cnt != MP_YES) {
+   err = mp_prime_strong_lucas_selfridge(&a, &cnt);
+   /* small problem */
+   if (err != MP_OKAY) {
+      printf("\nmp_prime_strong_lucas_selfridge failed with error: %s\n", mp_error_to_string(err));
+   }
+   /* large problem */
+   if (cnt == MP_NO) {
       printf("\n\nissue #143 - mp_prime_strong_lucas_selfridge FAILED!\n");
+   }
+   if ((err != MP_OKAY) || (cnt == MP_NO)) {
+      printf("prime tested was: ");
+      mp_fwrite(&a,16,stdout);
+      putchar('\n');
       return EXIT_FAILURE;
    }
 #endif
