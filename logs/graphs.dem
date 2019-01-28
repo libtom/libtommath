@@ -1,5 +1,4 @@
 set terminal png
-set size 1.75
 set ylabel "Cycles per Operation"
 set xlabel "Operand size (bits)"
 

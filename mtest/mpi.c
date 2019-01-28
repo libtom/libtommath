@@ -2,9 +2,11 @@
     mpi.c
 
     by Michael J. Fromberger <sting@linguist.dartmouth.edu>
-    Copyright (C) 1998 Michael J. Fromberger, All Rights Reserved
+    Copyright (C) 1998 Michael J. Fromberger
 
     Arbitrary precision integer arithmetic library
+
+    SPDX-License-Identifier: Unlicense
 
     $Id$
  */
@@ -176,7 +178,7 @@ mp_err   s_mp_add_d(mp_int *mp, mp_digit d);   /* unsigned digit addition */
 mp_err   s_mp_sub_d(mp_int *mp, mp_digit d);   /* unsigned digit subtract */
 mp_err   s_mp_mul_d(mp_int *mp, mp_digit d);   /* unsigned digit multiply */
 mp_err   s_mp_div_d(mp_int *mp, mp_digit d, mp_digit *r);
-		                               /* unsigned digit divide   */
+                                               /* unsigned digit divide   */
 mp_err   s_mp_reduce(mp_int *x, mp_int *m, mp_int *mu);
                                                /* Barrett reduction       */
 mp_err   s_mp_add(mp_int *a, mp_int *b);       /* magnitude addition      */
@@ -358,15 +360,15 @@ mp_err mp_copy(mp_int *from, mp_int *to)
 
     } else {
       if((tmp = s_mp_alloc(USED(from), sizeof(mp_digit))) == NULL)
-	return MP_MEM;
+        return MP_MEM;
 
       s_mp_copy(DIGITS(from), tmp, USED(from));
 
       if(DIGITS(to) != NULL) {
 #if MP_CRYPTO
-	s_mp_setz(DIGITS(to), ALLOC(to));
+        s_mp_setz(DIGITS(to), ALLOC(to));
 #endif
-	s_mp_free(DIGITS(to));
+        s_mp_free(DIGITS(to));
       }
 
       DIGITS(to) = tmp;
@@ -507,7 +509,7 @@ mp_err mp_set_int(mp_int *mp, long z)
       return res;
 
     res = s_mp_add_d(mp,
-		     (mp_digit)((v >> (ix * CHAR_BIT)) & UCHAR_MAX));
+                     (mp_digit)((v >> (ix * CHAR_BIT)) & UCHAR_MAX));
     if(res != MP_OKAY)
       return res;
 
@@ -772,7 +774,7 @@ mp_err mp_expt_d(mp_int *a, mp_digit d, mp_int *c)
   while(d != 0) {
     if(d & 1) {
       if((res = s_mp_mul(&s, &x)) != MP_OKAY)
-	goto CLEANUP;
+        goto CLEANUP;
     }
 
     d >>= 1;
@@ -875,13 +877,13 @@ mp_err mp_add(mp_int *a, mp_int *b, mp_int *c)
      */
     if(c == b) {
       if((res = s_mp_add(c, a)) != MP_OKAY)
-	return res;
+        return res;
     } else {
       if(c != a && (res = mp_copy(a, c)) != MP_OKAY)
-	return res;
+        return res;
 
       if((res = s_mp_add(c, b)) != MP_OKAY)
-	return res;
+        return res;
     }
 
   } else if((cmp = s_mp_cmp(a, b)) > 0) {  /* different sign: a > b   */
@@ -894,10 +896,10 @@ mp_err mp_add(mp_int *a, mp_int *b, mp_int *c)
       mp_int  tmp;
 
       if((res = mp_init_copy(&tmp, a)) != MP_OKAY)
-	return res;
+        return res;
       if((res = s_mp_sub(&tmp, b)) != MP_OKAY) {
-	mp_clear(&tmp);
-	return res;
+        mp_clear(&tmp);
+        return res;
       }
 
       s_mp_exch(&tmp, c);
@@ -906,9 +908,9 @@ mp_err mp_add(mp_int *a, mp_int *b, mp_int *c)
     } else {
 
       if(c != a && (res = mp_copy(a, c)) != MP_OKAY)
-	return res;
+        return res;
       if((res = s_mp_sub(c, b)) != MP_OKAY)
-	return res;
+        return res;
 
     }
 
@@ -924,10 +926,10 @@ mp_err mp_add(mp_int *a, mp_int *b, mp_int *c)
       mp_int  tmp;
 
       if((res = mp_init_copy(&tmp, b)) != MP_OKAY)
-	return res;
+        return res;
       if((res = s_mp_sub(&tmp, a)) != MP_OKAY) {
-	mp_clear(&tmp);
-	return res;
+        mp_clear(&tmp);
+        return res;
       }
 
       s_mp_exch(&tmp, c);
@@ -936,9 +938,9 @@ mp_err mp_add(mp_int *a, mp_int *b, mp_int *c)
     } else {
 
       if(c != b && (res = mp_copy(b, c)) != MP_OKAY)
-	return res;
+        return res;
       if((res = s_mp_sub(c, a)) != MP_OKAY)
-	return res;
+        return res;
 
     }
   }
@@ -970,12 +972,12 @@ mp_err mp_sub(mp_int *a, mp_int *b, mp_int *c)
   if(SIGN(a) != SIGN(b)) {
     if(c == a) {
       if((res = s_mp_add(c, b)) != MP_OKAY)
-	return res;
+        return res;
     } else {
       if(c != b && ((res = mp_copy(b, c)) != MP_OKAY))
-	return res;
+        return res;
       if((res = s_mp_add(c, a)) != MP_OKAY)
-	return res;
+        return res;
       SIGN(c) = SIGN(a);
     }
 
@@ -984,20 +986,20 @@ mp_err mp_sub(mp_int *a, mp_int *b, mp_int *c)
       mp_int  tmp;
 
       if((res = mp_init_copy(&tmp, a)) != MP_OKAY)
-	return res;
+        return res;
       if((res = s_mp_sub(&tmp, b)) != MP_OKAY) {
-	mp_clear(&tmp);
-	return res;
+        mp_clear(&tmp);
+        return res;
       }
       s_mp_exch(&tmp, c);
       mp_clear(&tmp);
 
     } else {
       if(c != a && ((res = mp_copy(a, c)) != MP_OKAY))
-	return res;
+        return res;
 
       if((res = s_mp_sub(c, b)) != MP_OKAY)
-	return res;
+        return res;
     }
 
   } else if(cmp == 0) {  /* Same sign, equal magnitude */
@@ -1009,21 +1011,21 @@ mp_err mp_sub(mp_int *a, mp_int *b, mp_int *c)
       mp_int  tmp;
 
       if((res = mp_init_copy(&tmp, b)) != MP_OKAY)
-	return res;
+        return res;
 
       if((res = s_mp_sub(&tmp, a)) != MP_OKAY) {
-	mp_clear(&tmp);
-	return res;
+        mp_clear(&tmp);
+        return res;
       }
       s_mp_exch(&tmp, c);
       mp_clear(&tmp);
 
     } else {
       if(c != b && ((res = mp_copy(b, c)) != MP_OKAY))
-	return res;
+        return res;
 
       if((res = s_mp_sub(c, a)) != MP_OKAY)
-	return res;
+        return res;
     }
 
     SIGN(c) = !SIGN(b);
@@ -1157,7 +1159,7 @@ mp_err mp_div(mp_int *a, mp_int *b, mp_int *q, mp_int *r)
   if((cmp = s_mp_cmp(a, b)) < 0) {
     if(r) {
       if((res = mp_copy(a, r)) != MP_OKAY)
-	return res;
+        return res;
     }
 
     if(q)
@@ -1173,7 +1175,7 @@ mp_err mp_div(mp_int *a, mp_int *b, mp_int *q, mp_int *r)
 
       mp_set(q, 1);
       if(qneg)
-	SIGN(q) = MP_NEG;
+        SIGN(q) = MP_NEG;
     }
 
     if(r)
@@ -1286,14 +1288,14 @@ mp_err mp_expt(mp_int *a, mp_int *b, mp_int *c)
     /* Loop over bits of each non-maximal digit */
     for(bit = 0; bit < DIGIT_BIT; bit++) {
       if(d & 1) {
-	if((res = s_mp_mul(&s, &x)) != MP_OKAY)
-	  goto CLEANUP;
+        if((res = s_mp_mul(&s, &x)) != MP_OKAY)
+          goto CLEANUP;
       }
 
       d >>= 1;
 
       if((res = s_mp_sqr(&x)) != MP_OKAY)
-	goto CLEANUP;
+        goto CLEANUP;
     }
   }
 
@@ -1303,7 +1305,7 @@ mp_err mp_expt(mp_int *a, mp_int *b, mp_int *c)
   while(d) {
     if(d & 1) {
       if((res = s_mp_mul(&s, &x)) != MP_OKAY)
-	goto CLEANUP;
+        goto CLEANUP;
     }
 
     d >>= 1;
@@ -1379,7 +1381,7 @@ mp_err mp_mod(mp_int *a, mp_int *m, mp_int *c)
 
     if(SIGN(c) == MP_NEG) {
       if((res = mp_add(c, m, c)) != MP_OKAY)
-	return res;
+        return res;
     }
 
   } else if(mag < 0) {
@@ -1388,7 +1390,7 @@ mp_err mp_mod(mp_int *a, mp_int *m, mp_int *c)
 
     if(mp_cmp_z(a) < 0) {
       if((res = mp_add(c, m, c)) != MP_OKAY)
-	return res;
+        return res;
 
     }
 
@@ -1667,18 +1669,18 @@ mp_err mp_exptmod(mp_int *a, mp_int *b, mp_int *m, mp_int *c)
     /* Loop over the bits of the lower-order digits */
     for(bit = 0; bit < DIGIT_BIT; bit++) {
       if(d & 1) {
-	if((res = s_mp_mul(&s, &x)) != MP_OKAY)
-	  goto CLEANUP;
-	if((res = s_mp_reduce(&s, m, &mu)) != MP_OKAY)
-	  goto CLEANUP;
+        if((res = s_mp_mul(&s, &x)) != MP_OKAY)
+          goto CLEANUP;
+        if((res = s_mp_reduce(&s, m, &mu)) != MP_OKAY)
+          goto CLEANUP;
       }
 
       d >>= 1;
 
       if((res = s_mp_sqr(&x)) != MP_OKAY)
-	goto CLEANUP;
+        goto CLEANUP;
       if((res = s_mp_reduce(&x, m, &mu)) != MP_OKAY)
-	goto CLEANUP;
+        goto CLEANUP;
     }
   }
 
@@ -1688,9 +1690,9 @@ mp_err mp_exptmod(mp_int *a, mp_int *b, mp_int *m, mp_int *c)
   while(d) {
     if(d & 1) {
       if((res = s_mp_mul(&s, &x)) != MP_OKAY)
-	goto CLEANUP;
+        goto CLEANUP;
       if((res = s_mp_reduce(&s, m, &mu)) != MP_OKAY)
-	goto CLEANUP;
+        goto CLEANUP;
     }
 
     d >>= 1;
@@ -1735,8 +1737,8 @@ mp_err mp_exptmod_d(mp_int *a, mp_digit d, mp_int *m, mp_int *c)
   while(d != 0) {
     if(d & 1) {
       if((res = s_mp_mul(&s, &x)) != MP_OKAY ||
-	 (res = mp_mod(&s, m, &s)) != MP_OKAY)
-	goto CLEANUP;
+         (res = mp_mod(&s, m, &s)) != MP_OKAY)
+        goto CLEANUP;
     }
 
     d /= 2;
@@ -1973,17 +1975,17 @@ mp_err mp_gcd(mp_int *a, mp_int *b, mp_int *c)
 
     if(mp_cmp_z(&t) == MP_GT) {
       if((res = mp_copy(&t, &u)) != MP_OKAY)
-	goto CLEANUP;
+        goto CLEANUP;
 
     } else {
       if((res = mp_copy(&t, &v)) != MP_OKAY)
-	goto CLEANUP;
+        goto CLEANUP;
 
       /* v = -t */
       if(SIGN(&t) == MP_ZPOS)
-	SIGN(&v) = MP_NEG;
+        SIGN(&v) = MP_NEG;
       else
-	SIGN(&v) = MP_ZPOS;
+        SIGN(&v) = MP_ZPOS;
     }
 
     if((res = mp_sub(&u, &v, &t)) != MP_OKAY)
@@ -2111,12 +2113,12 @@ mp_err mp_xgcd(mp_int *a, mp_int *b, mp_int *g, mp_int *x, mp_int *y)
       s_mp_div_2(&u);
 
       if(mp_iseven(&A) && mp_iseven(&B)) {
-	s_mp_div_2(&A); s_mp_div_2(&B);
+        s_mp_div_2(&A); s_mp_div_2(&B);
       } else {
-	if((res = mp_add(&A, &yc, &A)) != MP_OKAY) goto CLEANUP;
-	s_mp_div_2(&A);
-	if((res = mp_sub(&B, &xc, &B)) != MP_OKAY) goto CLEANUP;
-	s_mp_div_2(&B);
+        if((res = mp_add(&A, &yc, &A)) != MP_OKAY) goto CLEANUP;
+        s_mp_div_2(&A);
+        if((res = mp_sub(&B, &xc, &B)) != MP_OKAY) goto CLEANUP;
+        s_mp_div_2(&B);
       }
     }
 
@@ -2124,12 +2126,12 @@ mp_err mp_xgcd(mp_int *a, mp_int *b, mp_int *g, mp_int *x, mp_int *y)
       s_mp_div_2(&v);
 
       if(mp_iseven(&C) && mp_iseven(&D)) {
-	s_mp_div_2(&C); s_mp_div_2(&D);
+        s_mp_div_2(&C); s_mp_div_2(&D);
       } else {
-	if((res = mp_add(&C, &yc, &C)) != MP_OKAY) goto CLEANUP;
-	s_mp_div_2(&C);
-	if((res = mp_sub(&D, &xc, &D)) != MP_OKAY) goto CLEANUP;
-	s_mp_div_2(&D);
+        if((res = mp_add(&C, &yc, &C)) != MP_OKAY) goto CLEANUP;
+        s_mp_div_2(&C);
+        if((res = mp_sub(&D, &xc, &D)) != MP_OKAY) goto CLEANUP;
+        s_mp_div_2(&D);
       }
     }
 
@@ -2148,13 +2150,13 @@ mp_err mp_xgcd(mp_int *a, mp_int *b, mp_int *g, mp_int *x, mp_int *y)
     /* If we're done, copy results to output */
     if(mp_cmp_z(&u) == 0) {
       if(x)
-	if((res = mp_copy(&C, x)) != MP_OKAY) goto CLEANUP;
+        if((res = mp_copy(&C, x)) != MP_OKAY) goto CLEANUP;
 
       if(y)
-	if((res = mp_copy(&D, y)) != MP_OKAY) goto CLEANUP;
+        if((res = mp_copy(&D, y)) != MP_OKAY) goto CLEANUP;
 
       if(g)
-	if((res = mp_mul(&gx, &v, g)) != MP_OKAY) goto CLEANUP;
+        if((res = mp_mul(&gx, &v, g)) != MP_OKAY) goto CLEANUP;
 
       break;
     }
@@ -2463,15 +2465,15 @@ mp_err  mp_read_radix(mp_int *mp, unsigned char *str, int radix)
   mp_sign sig = MP_ZPOS;
 
   ARGCHK(mp != NULL && str != NULL && radix >= 2 && radix <= MAX_RADIX,
-	 MP_BADARG);
+         MP_BADARG);
 
   mp_zero(mp);
 
   /* Skip leading non-digit characters until a digit or '-' or '+' */
   while(str[ix] &&
-	(s_mp_tovalue(str[ix], radix) < 0) &&
-	str[ix] != '-' &&
-	str[ix] != '+') {
+        (s_mp_tovalue(str[ix], radix) < 0) &&
+        str[ix] != '-' &&
+        str[ix] != '+') {
     ++ix;
   }
 
@@ -2567,8 +2569,8 @@ mp_err mp_toradix(mp_int *mp, char *str, int radix)
     /* Generate output digits in reverse order      */
     while(mp_cmp_z(&tmp) != 0) {
       if((res = s_mp_div_d(&tmp, rdx, &rem)) != MP_OKAY) {
-	mp_clear(&tmp);
-	return res;
+        mp_clear(&tmp);
+        return res;
       }
 
       /* Generate digits, use capital letters */
@@ -2914,7 +2916,7 @@ mp_err s_mp_mul_2(mp_int *mp)
   if(kin) {
     if(ix >= ALLOC(mp)) {
       if((res = s_mp_grow(mp, ALLOC(mp) + 1)) != MP_OKAY)
-	return res;
+        return res;
       dp = DIGITS(mp);
     }
 
@@ -3555,12 +3557,12 @@ mp_err   s_mp_sqr(mp_int *a)
       w = *pa1 * *pa2;
 
       /* If w is more than half MP_WORD_MAX, the doubling will
-	 overflow, and we need to record a carry out into the next
-	 word */
+         overflow, and we need to record a carry out into the next
+         word */
       u = (w >> (MP_WORD_BIT - 1)) & 1;
 
       /* Double what we've got, overflow will be ignored as defined
-	 for C arithmetic (we've already noted if it is to occur)
+         for C arithmetic (we've already noted if it is to occur)
        */
       w *= 2;
 
@@ -3568,7 +3570,7 @@ mp_err   s_mp_sqr(mp_int *a)
       v = *pt + k;
 
       /* If we do not already have an overflow carry, check to see
-	 if the addition will cause one, and set the carry out if so
+         if the addition will cause one, and set the carry out if so
        */
       u |= ((MP_WORD_MAX - v) < w);
 
@@ -3579,7 +3581,7 @@ mp_err   s_mp_sqr(mp_int *a)
       *pt = ACCUM(w);
 
       /* Save carry information for the next iteration of the loop.
-	 This is why k must be an mp_word, instead of an mp_digit */
+         This is why k must be an mp_word, instead of an mp_digit */
       k = CARRYOUT(w) | (u << DIGIT_BIT);
 
     } /* for(jx ...) */
@@ -3665,10 +3667,10 @@ mp_err   s_mp_div(mp_int *a, mp_int *b)
     /* Find a partial substring of a which is at least b */
     while(s_mp_cmp(&rem, b) < 0 && ix >= 0) {
       if((res = s_mp_lshd(&rem, 1)) != MP_OKAY)
-	goto CLEANUP;
+        goto CLEANUP;
 
       if((res = s_mp_lshd(&quot, 1)) != MP_OKAY)
-	goto CLEANUP;
+        goto CLEANUP;
 
       DIGIT(&rem, 0) = DIGIT(a, ix);
       s_mp_clamp(&rem);
@@ -3790,9 +3792,9 @@ int      s_mp_cmp(mp_int *a, mp_int *b)
 
     while(ix >= 0) {
       if(*ap > *bp)
-	return MP_GT;
+        return MP_GT;
       else if(*ap < *bp)
-	return MP_LT;
+        return MP_LT;
 
       --ap; --bp; --ix;
     }
@@ -3851,7 +3853,7 @@ int      s_mp_ispow2(mp_int *v)
 
     while(ix >= 0) {
       if(*dp)
-	return -1; /* not a power of two */
+        return -1; /* not a power of two */
 
       --dp; --ix;
     }

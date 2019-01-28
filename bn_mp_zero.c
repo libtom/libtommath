@@ -1,4 +1,4 @@
-#include <tommath_private.h>
+#include "tommath_private.h"
 #ifdef BN_MP_ZERO_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
@@ -9,25 +9,22 @@
  * Michael Fromberger but has been written from scratch with
  * additional optimizations in place.
  *
- * The library is free for all purposes without any express
- * guarantee it works.
- *
- * Tom St Denis, tstdenis82@gmail.com, http://libtom.org
+ * SPDX-License-Identifier: Unlicense
  */
 
 /* set to zero */
-void mp_zero (mp_int * a)
+void mp_zero(mp_int *a)
 {
-  int       n;
-  mp_digit *tmp;
+   int       n;
+   mp_digit *tmp;
 
-  a->sign = MP_ZPOS;
-  a->used = 0;
+   a->sign = MP_ZPOS;
+   a->used = 0;
 
-  tmp = a->dp;
-  for (n = 0; n < a->alloc; n++) {
-     *tmp++ = 0;
-  }
+   tmp = a->dp;
+   for (n = 0; n < a->alloc; n++) {
+      *tmp++ = 0;
+   }
 }
 #endif
 
