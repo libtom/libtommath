@@ -1,4 +1,4 @@
-FIXME
+Jan 28th, 2019
 v1.1.0
        -- Christoph Zurnieden contributed FIPS 186.4 compliant
           prime-checking (PR #113), several other fixes and a load of documentation
