@@ -72,9 +72,9 @@ int mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y
 int s_mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y, int redmode);
 void bn_reverse(unsigned char *s, int len);
 
-extern const char *const mp_s_rmap;
-extern const uint8_t mp_s_rmap_reverse[];
-extern const size_t mp_s_rmap_reverse_sz;
+extern const char LTM_VISIBILITY_HIDDEN *const mp_s_rmap;
+extern const uint8_t LTM_VISIBILITY_HIDDEN mp_s_rmap_reverse[];
+extern const size_t LTM_VISIBILITY_HIDDEN mp_s_rmap_reverse_sz;
 
 /* Fancy macro to set an MPI from another type.
  * There are several things assumed:

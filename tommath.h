@@ -19,6 +19,20 @@
 
 #include "tommath_class.h"
 
+/* __attribute__((visibility ("hidden"))) is in GCC since 3.3.x but the exact patchlevel
+   is unknown to the author */
+/* TODO: __attribute__((visibility ("hidden"))) is also supported by the Intel compiler */
+#if ((defined __GNUC__) && (__GNUC__ >= 3) && (__GNUC__MINOR__ >= 4))
+/* Workaround for x32 relocation problems */
+#   if ((defined __x86_64__ ) && (defined __ILP32__))
+#      define LTM_VISIBILITY_HIDDEN __attribute__((visibility ("hidden")))
+#   else
+#      define LTM_VISIBILITY_HIDDEN
+#   endif
+#else
+#   define LTM_VISIBILITY_HIDDEN
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -127,10 +141,10 @@ typedef mp_digit mp_min_u32;
 typedef int           mp_err;
 
 /* you'll have to tune these... */
-extern int KARATSUBA_MUL_CUTOFF,
-       KARATSUBA_SQR_CUTOFF,
-       TOOM_MUL_CUTOFF,
-       TOOM_SQR_CUTOFF;
+extern int LTM_VISIBILITY_HIDDEN KARATSUBA_MUL_CUTOFF;
+extern int LTM_VISIBILITY_HIDDEN KARATSUBA_SQR_CUTOFF;
+extern int LTM_VISIBILITY_HIDDEN TOOM_MUL_CUTOFF;
+extern int LTM_VISIBILITY_HIDDEN TOOM_SQR_CUTOFF;
 
 /* define this to use lower memory usage routines (exptmods mostly) */
 /* #define MP_LOW_MEM */
@@ -489,7 +503,7 @@ int mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y);
 #endif
 
 /* table of first PRIME_SIZE primes */
-extern const mp_digit ltm_prime_tab[PRIME_SIZE];
+extern const mp_digit LTM_VISIBILITY_HIDDEN ltm_prime_tab[PRIME_SIZE];
 
 /* result=1 if a is divisible by one of the first PRIME_SIZE primes */
 int mp_prime_is_divisible(const mp_int *a, int *result);
