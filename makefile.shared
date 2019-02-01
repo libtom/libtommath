@@ -18,6 +18,7 @@ ifndef LIBTOOL
   endif
 endif
 LTCOMPILE = $(LIBTOOL) --mode=compile --tag=CC $(CC)
+LTLINK = $(LIBTOOL) --mode=link --tag=CC $(CC)
 
 LCOV_ARGS=--directory .libs --directory .
 
@@ -59,7 +60,7 @@ objs: $(OBJECTS)
 LOBJECTS = $(OBJECTS:.o=.lo)
 
 $(LIBNAME):  $(OBJECTS)
-	$(LIBTOOL) --mode=link --tag=CC $(CC) $(LDFLAGS) $(LOBJECTS) -o $(LIBNAME) -rpath $(LIBPATH) -version-info $(VERSION_SO) $(LIBTOOLFLAGS)
+	$(LTLINK) $(LDFLAGS) $(LOBJECTS) -o $(LIBNAME) -rpath $(LIBPATH) -version-info $(VERSION_SO) $(LIBTOOLFLAGS)
 
 install: $(LIBNAME)
 	install -d $(DESTDIR)$(LIBPATH)
@@ -76,16 +77,16 @@ uninstall:
 	rm $(DESTDIR)$(LIBPATH)/pkgconfig/libtommath.pc
 
 test: $(LIBNAME) demo/demo.o
-	$(CC) $(CFLAGS) -c demo/demo.c -o demo/demo.o
-	$(LIBTOOL) --mode=link $(CC) $(LDFLAGS) -o test demo/demo.o $(LIBNAME)
+	$(LTCOMPILE) $(CFLAGS) -c demo/demo.c -o demo/demo.o
+	$(LTLINK) $(LDFLAGS) -o test demo/demo.o $(LIBNAME)
 
 test_standalone: $(LIBNAME) demo/demo.o
-	$(CC) $(CFLAGS) -c demo/demo.c -o demo/demo.o
-	$(LIBTOOL) --mode=link $(CC) $(LDFLAGS) -o test demo/demo.o $(LIBNAME)
+	$(LTCOMPILE) $(CFLAGS) -c demo/demo.c -o demo/demo.o
+	$(LTLINK) $(LDFLAGS) -o test demo/demo.o $(LIBNAME)
 
 .PHONY: mtest
 mtest:
-	cd mtest ; $(CC) $(CFLAGS) $(LDFLAGS) mtest.c -o mtest
+	cd mtest ; $(CC) $(CFLAGS) -O0 mtest.c $(LDFLAGS) -o mtest
 
 timing: $(LIBNAME) demo/timing.c
-	$(LIBTOOL) --mode=link $(CC) $(CFLAGS) $(LDFLAGS) -DTIMER demo/timing.c $(LIBNAME) -o timing
+	$(LTLINK) $(CFLAGS) $(LDFLAGS) -DTIMER demo/timing.c $(LIBNAME) -o timing
