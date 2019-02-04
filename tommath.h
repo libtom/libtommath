@@ -26,8 +26,11 @@
                                  + __GNUC_PATCHLEVEL__)
 #endif
 
-/* __attribute__((visibility ("hidden"))) is in GCC since 3.3.x but the exact patchlevel
-   is unknown to the author */
+/* 
+   __attribute__((visibility ("hidden"))) is in GCC since 3.3.x but the exact patchlevel
+   is unknown to the author. The recommended minimum GCC version is 4.8.0 according to
+   https://sites.google.com/site/x32abi/ .
+ */
 /* TODO: __attribute__((visibility ("hidden"))) is also supported by the Intel compiler */
 #if (LTM_GNU_VERSION >= 40800)
 /* Workaround for x32 relocation problems */
