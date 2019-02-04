@@ -19,10 +19,17 @@
 
 #include "tommath_class.h"
 
+
+#ifdef __GNUC__
+#define LTM_GNU_VERSION (__GNUC__ * 10000 \
+                              + __GNUC_MINOR__ * 100 \
+                                 + __GNUC_PATCHLEVEL__)
+#endif
+
 /* __attribute__((visibility ("hidden"))) is in GCC since 3.3.x but the exact patchlevel
    is unknown to the author */
 /* TODO: __attribute__((visibility ("hidden"))) is also supported by the Intel compiler */
-#if ((defined __GNUC__) && (__GNUC__ >= 3) && (__GNUC_MINOR__ >= 4))
+#if (LTM_GNU_VERSION >= 40800)
 /* Workaround for x32 relocation problems */
 #   if ((defined __x86_64__ ) && (defined __ILP32__))
 #      define LTM_VISIBILITY_HIDDEN __attribute__((visibility ("hidden")))
