@@ -127,6 +127,19 @@ you use libtool to link your application against the shared object.
 There is limited support for making a ``DLL'' in windows via the ``makefile.cygwin\_dll'' makefile.  It requires
 Cygwin to work with since it requires the auto-export/import functionality.  The resulting DLL and import library
 ``libtommath.dll.a'' can be used to link LibTomMath dynamically to any Windows program using Cygwin.
+\subsubsection{Shared Library for X32}
+It is possible to build a shared library for the x32 architecture with some restrictions. It needs GCC 4.8.0 or later and restricts the availibility of some symbols. Those symbols are:
+\begin{itemize}
+\item[] \texttt{KARATSUBA\_MUL\_CUTOFF}
+\item[] \texttt{KARATSUBA\_SQR\_CUTOFF}
+\item[] \texttt{TOOM\_MUL\_CUTOFF}
+\item[] \texttt{TOOM\_SQR\_CUTOFF}
+\item[] \texttt{ltm\_prime\_tab}
+\item[] \texttt{mp\_s\_rmap}
+\item[] \texttt{mp\_s\_rmap\_reverse}
+\item[] \texttt{mp\_s\_rmap\_reverse\_sz}
+\end{itemize}
+There are getters and setters implemented for the four Toom-Cook cut-offs if the macro \texttt{LTM\_EXPORT\_CUTOFFS} is defined. See section \ref{benchmark} for some details.
 
 \subsection{Testing}
 To build the library and the test harness type
@@ -242,6 +255,25 @@ only if LTM\_LAST has been defined.
 \end{tabular}
 \end{center}
 \end{small}
+
+\subsection{Automatic Evaluation of the Cut-Off Points}\label{benchmark}
+There is a small program in \texttt{demo/timing.c} to find the ideal cut-off points for the Toom-Cook algorithms. You can build it with
+\begin{alltt}
+make timing
+\end{alltt}
+and run it with
+\begin{alltt}
+./timing
+\end{alltt}
+
+The results will show up in the directory \texttt{log}. There is a small bump for the x32 architecture if you want to benchmark a shared library because of the peculiarites of the x32 architectures. The small makefile \texttt{makefile.shared.timing} is included for that purpose. It will build a slightly modified version of the shared library that includes getters and setters for the otherwise hidden variables for the Toom-Cook algorithms which is meant for the evaulation of the cut-offs only, Build it with
+\begin{alltt}
+make -f makefile.shared.timing timing
+\end{alltt}
+and run it with
+\begin{alltt}
+./timing
+\end{alltt}
 
 
 \section{Purpose of LibTomMath}

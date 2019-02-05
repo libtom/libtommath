@@ -36,6 +36,11 @@
 /* Workaround for x32 relocation problems */
 #   if ((defined __x86_64__ ) && (defined __ILP32__))
 #      define LTM_VISIBILITY_HIDDEN __attribute__((visibility ("hidden")))
+/* 
+   Optimizing the cut-off for e.g.: the Toom-Cook algorithms need to change otherwise hidden variables
+   Define LTM_EXPORT_CUTOFFS to get the workarounds instead.
+ */
+#      define LTM_NEED_EXPLICIT_EXPORT
 #   else
 #      define LTM_VISIBILITY_HIDDEN
 #   endif
@@ -151,10 +156,21 @@ typedef mp_digit mp_min_u32;
 typedef int           mp_err;
 
 /* you'll have to tune these... */
+#if ((defined LTM_NEED_EXPLICIT_EXPORT) && (defined LTM_EXPORT_CUTOFFS))
+int mp_get_KARATSUBA_MUL_CUTOFF(void);
+void mp_set_KARATSUBA_MUL_CUTOFF(int cutoff);
+int mp_get_KARATSUBA_SQR_CUTOFF(void);
+void mp_set_KARATSUBA_SQR_CUTOFF(int cutoff);
+int mp_get_TOOM_MUL_CUTOFF(void);
+void mp_set_TOOM_MUL_CUTOFF(int cutoff);
+int mp_get_TOOM_SQR_CUTOFF(void);
+void mp_set_TOOM_SQR_CUTOFF(int cutoff);
+#endif
 extern int LTM_VISIBILITY_HIDDEN KARATSUBA_MUL_CUTOFF;
 extern int LTM_VISIBILITY_HIDDEN KARATSUBA_SQR_CUTOFF;
 extern int LTM_VISIBILITY_HIDDEN TOOM_MUL_CUTOFF;
 extern int LTM_VISIBILITY_HIDDEN TOOM_SQR_CUTOFF;
+
 
 /* define this to use lower memory usage routines (exptmods mostly) */
 /* #define MP_LOW_MEM */

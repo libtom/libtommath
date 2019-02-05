@@ -205,19 +205,29 @@ int main(void)
    FCLOSE(log);
 
    /* do mult/square twice, first without karatsuba and second with */
+#if ((defined LTM_NEED_EXPLICIT_EXPORT) && (defined LTM_EXPORT_CUTOFFS))
+   old_kara_m = mp_get_KARATSUBA_MUL_CUTOFF();
+   old_kara_s = mp_get_KARATSUBA_SQR_CUTOFF();
+#else
    old_kara_m = KARATSUBA_MUL_CUTOFF;
    old_kara_s = KARATSUBA_SQR_CUTOFF;
+#endif
    /* currently toom-cook cut-off is too high to kick in, so we just use the karatsuba values */
    old_toom_m = old_kara_m;
    old_toom_s = old_kara_m;
    for (ix = 0; ix < 3; ix++) {
       printf("With%s Karatsuba, With%s Toom\n", (ix == 0) ? "out" : "", (ix == 1) ? "out" : "");
-
+#if ((defined LTM_NEED_EXPLICIT_EXPORT) && (defined LTM_EXPORT_CUTOFFS))
+      mp_set_KARATSUBA_MUL_CUTOFF((ix == 1) ? old_kara_m : 9999);
+      mp_set_KARATSUBA_SQR_CUTOFF((ix == 1) ? old_kara_s : 9999);
+      mp_set_TOOM_MUL_CUTOFF((ix == 2) ? old_toom_m : 9999);
+      mp_set_TOOM_SQR_CUTOFF((ix == 2) ? old_toom_s : 9999);
+#else
       KARATSUBA_MUL_CUTOFF = (ix == 1) ? old_kara_m : 9999;
       KARATSUBA_SQR_CUTOFF = (ix == 1) ? old_kara_s : 9999;
       TOOM_MUL_CUTOFF = (ix == 2) ? old_toom_m : 9999;
       TOOM_SQR_CUTOFF = (ix == 2) ? old_toom_s : 9999;
-
+#endif
       log = FOPEN((ix == 0) ? "logs/mult.log" : (ix == 1) ? "logs/mult_kara.log" : "logs/mult_toom.log", "w");
       for (cnt = 4; cnt <= (10240 / DIGIT_BIT); cnt += 2) {
          SLEEP;
