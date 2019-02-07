@@ -13,6 +13,96 @@
  */
 
 #if defined(__STDC_IEC_559__) || defined(__GCC_IEC_559)
+/* defined by GNU C, SAS/C, and Stratus VOS C -- in that order */
+#if ((defined __m68k__) || (defined __MC68K__) || (defined M68000))
+static double s_math_h_less_frexp(double x, int *exp)
+{
+  int exponent = 0;
+  while (x >= 1.0) {
+    exponent++;
+    /* exp > DBL_MAX_EXP, it is inf */
+    if (exponent == 1025) {
+      *exp = exponent;
+      return x;
+    }
+    x /= 2.0;
+  }
+
+  *exp = exponent;
+  return x;
+}
+
+static double s_pow(double d, int e){
+   double t;
+
+   if (e == 0) {
+      return d;
+   }
+   t = 1.0;
+   while (e > 1) {
+      if (e % 2 == 0) {
+         d *= d;
+         e /= 2;
+      } else {
+         t *= d;
+         d *= d;
+         e = (e - 1)/2;
+      }
+   }
+   return d * t;
+
+}
+
+int mp_set_double(mp_int *a, double b)
+{
+   uint64_t frac;
+   int exp = 0, res, sign = 1;
+
+   /* Check for NaN */
+   if (b != b) {
+      return MP_VAL;
+   }
+
+   if (b < 0) {
+      b = b * (-1.0);
+      sign = -1;
+   }
+   /* Numbers smaller than 1 truncate to zero */
+   if (b < 1.0) {
+      mp_zero(a);
+      return MP_OKAY;
+   }
+
+   b = s_math_h_less_frexp(b, &exp);
+   /* +/-inf if exp > DBL_MAX_EXP */
+   if (exp == 1025) {
+      return MP_VAL;
+   }
+
+   /* 52 bit mantissa plus the one implicit bit */
+   b = b * s_pow(2.0,53);
+   /* TODO: use proper rounding instead of truncating? */
+   frac = (uint64_t) b;
+   exp -= 53;
+
+   res = mp_set_long_long(a, frac);
+   if (res != MP_OKAY) {
+      return res;
+   }
+
+   res = (exp < 0) ? mp_div_2d(a, -exp, a, NULL) : mp_mul_2d(a, exp, a);
+   if (res != MP_OKAY) {
+      return res;
+   }
+
+   if ( (sign < 0) && (mp_iszero(a) == MP_NO)) {
+      SIGN(a) = MP_NEG;
+   }
+
+   return MP_OKAY;
+}
+#else
+
 int mp_set_double(mp_int *a, double b)
 {
    uint64_t frac;
@@ -47,6 +137,7 @@ int mp_set_double(mp_int *a, double b)
 
    return MP_OKAY;
 }
+#endif
 #else
 /* pragma message() not supported by several compilers (in mostly older but still used versions) */
 #  ifdef _MSC_VER

@@ -483,6 +483,9 @@ int main(void)
    /* test mp_get_double/mp_set_double */
 #if defined(__STDC_IEC_559__) || defined(__GCC_IEC_559)
    printf("\n\nTesting: mp_get_double");
+#if ((defined __m68k__) || (defined __MC68K__) || (defined M68000))
+   printf(" with a m86k cpu ");
+#endif
    if (mp_set_double(&a, +1.0/0.0) != MP_VAL) {
       printf("\nmp_set_double should return MP_VAL for +inf");
       return EXIT_FAILURE;
@@ -500,6 +503,24 @@ int main(void)
       return EXIT_FAILURE;
    }
 
+#include <float.h>
+   if (mp_set_double(&a, DBL_MAX) != MP_OKAY) {
+      printf("\nmp_set_double(DBL_MAX) failed");
+      return EXIT_FAILURE;
+   }
+   if (DBL_MAX != mp_get_double(&a)) {
+      printf("\nmp_get_double(DBL_MAX) bad result! %20.2f != %20.2f \n", DBL_MAX, mp_get_double(&a));
+      return EXIT_FAILURE;
+   }
+   if (mp_set_double(&a, DBL_MIN) != MP_OKAY) {
+      printf("\nmp_set_double(DBL_MIN) failed");
+      return EXIT_FAILURE;
+   }
+   if (0.0 != mp_get_double(&a)) {
+      printf("\nmp_get_double(DBL_MIN) bad result! %20.2f != %20.2f \n", DBL_MAX, mp_get_double(&a));
+      return EXIT_FAILURE;
+   }
+
    for (i = 0; i < 1000; ++i) {
       int tmp = rand();
       double dbl = (double)tmp * rand() + 1;
@@ -508,7 +529,7 @@ int main(void)
          return EXIT_FAILURE;
       }
       if (dbl != mp_get_double(&a)) {
-         printf("\nmp_get_double() bad result!");
+         printf("\nmp_get_double() bad result! %20.2f != %20.2f \n", dbl, mp_get_double(&a));
          return EXIT_FAILURE;
       }
       if (mp_set_double(&a, -dbl) != MP_OKAY) {
@@ -516,7 +537,7 @@ int main(void)
          return EXIT_FAILURE;
       }
       if (-dbl != mp_get_double(&a)) {
-         printf("\nmp_get_double() bad result!");
+         printf("\nmp_get_double() bad result! %20.2f != %20.2f \n", dbl, mp_get_double(&a));
          return EXIT_FAILURE;
       }
    }
