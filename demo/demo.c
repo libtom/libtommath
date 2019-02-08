@@ -483,7 +483,7 @@ int main(void)
    /* test mp_get_double/mp_set_double */
 #if defined(__STDC_IEC_559__) || defined(__GCC_IEC_559)
    printf("\n\nTesting: mp_get_double");
-#if ((defined __m68k__) || (defined __MC68K__) || (defined M68000))
+#if ((defined __m68k__) || (defined __MC68K__) || (defined M68000) || (defined TEST_M68K) )
    printf(" with a m86k cpu ");
 #endif
    if (mp_set_double(&a, +1.0/0.0) != MP_VAL) {

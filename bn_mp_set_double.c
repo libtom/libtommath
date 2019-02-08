@@ -14,7 +14,7 @@
 
 #if defined(__STDC_IEC_559__) || defined(__GCC_IEC_559)
 /* defined by GNU C, SAS/C, and Stratus VOS C -- in that order */
-#if ((defined __m68k__) || (defined __MC68K__) || (defined M68000))
+#if ((defined __m68k__) || (defined __MC68K__) || (defined M68000) )
 static double s_math_h_less_frexp(double x, int *exp)
 {
   int exponent = 0;
@@ -32,26 +32,6 @@ static double s_math_h_less_frexp(double x, int *exp)
   return x;
 }
 
-static double s_pow(double d, int e){
-   double t;
-
-   if (e == 0) {
-      return d;
-   }
-   t = 1.0;
-   while (e > 1) {
-      if (e % 2 == 0) {
-         d *= d;
-         e /= 2;
-      } else {
-         t *= d;
-         d *= d;
-         e = (e - 1)/2;
-      }
-   }
-   return d * t;
-
-}
 
 int mp_set_double(mp_int *a, double b)
 {
@@ -79,8 +59,8 @@ int mp_set_double(mp_int *a, double b)
       return MP_VAL;
    }
 
-   /* 52 bit mantissa plus the one implicit bit */
-   b = b * s_pow(2.0,53);
+   /* 0x1p+53 =  52 bit mantissa plus the one implicit bit */
+   b = b * 9007199254740992.0;
    /* TODO: use proper rounding instead of truncating? */
    frac = (uint64_t) b;
    exp -= 53;
