@@ -166,6 +166,9 @@ int main(void)
    unsigned long long q, r;
    mp_digit mp;
    int i, n, err, should, cnt;
+#if !((defined __m68k__) || (defined __MC68K__) || (defined M68000) )
+   double dbl_count;
+#endif
 #endif
 
    if (mp_init_multi(&a, &b, &c, &d, &e, &f, NULL)!= MP_OKAY)
@@ -482,10 +485,12 @@ int main(void)
 
    /* test mp_get_double/mp_set_double */
 #if defined(__STDC_IEC_559__) || defined(__GCC_IEC_559)
+/* Does not work in a QEMU (patched) emulated environment, temporarily switched off*/
+#if !((defined __m68k__) || (defined __MC68K__) || (defined M68000) )
    printf("\n\nTesting: mp_get_double");
-#if ((defined __m68k__) || (defined __MC68K__) || (defined M68000) || (defined TEST_M68K) )
-   printf(" with a m86k cpu ");
-#endif
+
+   /*printf(" with a m86k cpu ");*/
+
    if (mp_set_double(&a, +1.0/0.0) != MP_VAL) {
       printf("\nmp_set_double should return MP_VAL for +inf");
       return EXIT_FAILURE;
@@ -521,9 +526,37 @@ int main(void)
       return EXIT_FAILURE;
    }
 
+   dbl_count = 2.0;
+   for (i = 0; i < 301; ++i) {
+      if (mp_set_double(&a, -dbl_count) != MP_OKAY) {
+         printf("\nmp_set_double(dbl_count) failed");
+         return EXIT_FAILURE;
+      }
+      if (-dbl_count != mp_get_double(&a)) {
+         printf("\nmp_get_double(+dbl_count) at i = %d bad result! %20.20f != %20.20f\n",
+                   i, -dbl_count, mp_get_double(&a) );
+         return EXIT_FAILURE;
+      }
+      dbl_count = (dbl_count * 2.0);
+   }
+   /* Fails for M68K in QEMU (the patched version) for i in {53..63}*/
+   dbl_count = 2.0;
+   for (i = 0; i < 301; ++i) {
+      if (mp_set_double(&a, -dbl_count) != MP_OKAY) {
+         printf("\nmp_set_double(dbl_count) failed");
+         return EXIT_FAILURE;
+      }
+      if (-dbl_count != mp_get_double(&a)) {
+         printf("\nmp_get_double(+dbl_count) at i = %d bad result! %20.20f != %20.20f\n",
+                   i, -dbl_count, mp_get_double(&a) );
+         return EXIT_FAILURE;
+      }
+      dbl_count = (dbl_count * 2.0) -1;
+   }
+
    for (i = 0; i < 1000; ++i) {
       int tmp = rand();
-      double dbl = (double)tmp * rand() + 1;
+      double dbl = (double) tmp * rand() + 1.0;
       if (mp_set_double(&a, dbl) != MP_OKAY) {
          printf("\nmp_set_double() failed");
          return EXIT_FAILURE;
@@ -542,7 +575,7 @@ int main(void)
       }
    }
 #endif
-
+#endif
    /* test mp_get_int */
    printf("\n\nTesting: mp_get_int");
    for (i = 0; i < 1000; ++i) {

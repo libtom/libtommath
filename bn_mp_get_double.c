@@ -11,7 +11,7 @@
  *
  * SPDX-License-Identifier: Unlicense
  */
-
+#if !((defined __m68k__) || (defined __MC68K__) || (defined M68000) )
 double mp_get_double(const mp_int *a)
 {
    int i;
@@ -24,6 +24,7 @@ double mp_get_double(const mp_int *a)
    }
    return (mp_isneg(a) != MP_NO) ? -d : d;
 }
+#endif
 #endif
 
 /* ref:         $Format:%D$ */
