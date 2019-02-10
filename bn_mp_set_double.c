@@ -14,7 +14,6 @@
 
 #if defined(__STDC_IEC_559__) || defined(__GCC_IEC_559)
 /* defined by GNU C, SAS/C, and Stratus VOS C -- in that order */
-#if !((defined __m68k__) || (defined __MC68K__) || (defined M68000) )
 int mp_set_double(mp_int *a, double b)
 {
    uint64_t frac;
@@ -49,7 +48,6 @@ int mp_set_double(mp_int *a, double b)
 
    return MP_OKAY;
 }
-#endif
 #else
 /* pragma message() not supported by several compilers (in mostly older but still used versions) */
 #  ifdef _MSC_VER

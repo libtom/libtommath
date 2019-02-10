@@ -166,9 +166,8 @@ int main(void)
    unsigned long long q, r;
    mp_digit mp;
    int i, n, err, should, cnt;
-#if !((defined __m68k__) || (defined __MC68K__) || (defined M68000) )
    double dbl_count;
-#endif
+
 #endif
 
    if (mp_init_multi(&a, &b, &c, &d, &e, &f, NULL)!= MP_OKAY)
@@ -485,8 +484,6 @@ int main(void)
 
    /* test mp_get_double/mp_set_double */
 #if defined(__STDC_IEC_559__) || defined(__GCC_IEC_559)
-/* Does not work in a QEMU (patched) emulated environment, temporarily switched off*/
-#if !((defined __m68k__) || (defined __MC68K__) || (defined M68000) )
    printf("\n\nTesting: mp_get_double");
 
    /*printf(" with a m86k cpu ");*/
@@ -539,7 +536,6 @@ int main(void)
       }
       dbl_count = (dbl_count * 2.0);
    }
-   /* Fails for M68K in QEMU (the patched version) for i in {53..63}*/
    dbl_count = 2.0;
    for (i = 0; i < 301; ++i) {
       if (mp_set_double(&a, -dbl_count) != MP_OKAY) {
@@ -574,7 +570,6 @@ int main(void)
          return EXIT_FAILURE;
       }
    }
-#endif
 #endif
    /* test mp_get_int */
    printf("\n\nTesting: mp_get_int");
