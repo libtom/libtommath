@@ -19,10 +19,10 @@ int mp_gcd(const mp_int *a, const mp_int *b, mp_int *c)
    int     k, u_lsb, v_lsb, res;
 
    /* either zero than gcd is the largest */
-   if (mp_iszero(a) == MP_YES) {
+   if (IS_ZERO(a)) {
       return mp_abs(b, c);
    }
-   if (mp_iszero(b) == MP_YES) {
+   if (IS_ZERO(b)) {
       return mp_abs(a, c);
    }
 
@@ -67,7 +67,7 @@ int mp_gcd(const mp_int *a, const mp_int *b, mp_int *c)
       }
    }
 
-   while (mp_iszero(&v) == MP_NO) {
+   while (!IS_ZERO(&v)) {
       /* make sure v is the largest */
       if (mp_cmp_mag(&u, &v) == MP_GT) {
          /* swap u and v to make sure v is >= u */

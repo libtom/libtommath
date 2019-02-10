@@ -29,7 +29,7 @@ int mp_toradix_n(const mp_int *a, char *str, int radix, int maxlen)
    }
 
    /* quick out if its zero */
-   if (mp_iszero(a) == MP_YES) {
+   if (IS_ZERO(a)) {
       *str++ = '0';
       *str = '\0';
       return MP_OKAY;
@@ -53,7 +53,7 @@ int mp_toradix_n(const mp_int *a, char *str, int radix, int maxlen)
    }
 
    digs = 0;
-   while (mp_iszero(&t) == MP_NO) {
+   while (!IS_ZERO(&t)) {
       if (--maxlen < 1) {
          /* no more room */
          break;

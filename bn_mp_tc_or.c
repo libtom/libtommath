@@ -16,10 +16,10 @@
 int mp_tc_or(const mp_int *a, const mp_int *b, mp_int *c)
 {
    int res = MP_OKAY, bits, abits, bbits;
-   int as = mp_isneg(a), bs = mp_isneg(b);
+   int sa = a->sign, sb = b->sign;
    mp_int *mx = NULL, _mx, acpy, bcpy;
 
-   if ((as != MP_NO) || (bs != MP_NO)) {
+   if ((sa == MP_NEG) || (sb == MP_NEG)) {
       abits = mp_count_bits(a);
       bbits = mp_count_bits(b);
       bits = MAX(abits, bbits);
@@ -34,7 +34,7 @@ int mp_tc_or(const mp_int *a, const mp_int *b, mp_int *c)
          goto end;
       }
 
-      if (as != MP_NO) {
+      if (sa == MP_NEG) {
          res = mp_init(&acpy);
          if (res != MP_OKAY) {
             goto end;
@@ -47,7 +47,7 @@ int mp_tc_or(const mp_int *a, const mp_int *b, mp_int *c)
          }
          a = &acpy;
       }
-      if (bs != MP_NO) {
+      if (sb == MP_NEG) {
          res = mp_init(&bcpy);
          if (res != MP_OKAY) {
             goto end;
@@ -64,7 +64,7 @@ int mp_tc_or(const mp_int *a, const mp_int *b, mp_int *c)
 
    res = mp_or(a, b, c);
 
-   if (((as != MP_NO) || (bs != MP_NO)) && (res == MP_OKAY)) {
+   if (((sa == MP_NEG) || (sb == MP_NEG)) && (res == MP_OKAY)) {
       res = mp_sub(c, mx, c);
    }
 

@@ -16,7 +16,7 @@
 int mp_tc_div_2d(const mp_int *a, int b, mp_int *c)
 {
    int res;
-   if (mp_isneg(a) == MP_NO) {
+   if (a->sign == MP_ZPOS) {
       return mp_div_2d(a, b, c, NULL);
    }
 

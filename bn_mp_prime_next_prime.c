@@ -78,7 +78,7 @@ int mp_prime_next_prime(mp_int *a, int t, int bbs_style)
          };
       }
    } else {
-      if (mp_iseven(a) == MP_YES) {
+      if (IS_EVEN(a)) {
          /* force odd */
          if ((err = mp_sub_d(a, 1uL, a)) != MP_OKAY) {
             return err;

@@ -24,7 +24,7 @@ int mp_sqrt(const mp_int *arg, mp_int *ret)
    }
 
    /* easy out */
-   if (mp_iszero(arg) == MP_YES) {
+   if (IS_ZERO(arg)) {
       mp_zero(ret);
       return MP_OKAY;
    }

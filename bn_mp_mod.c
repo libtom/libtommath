@@ -27,7 +27,7 @@ int mp_mod(const mp_int *a, const mp_int *b, mp_int *c)
       return res;
    }
 
-   if ((mp_iszero(&t) != MP_NO) || (t.sign == b->sign)) {
+   if (IS_ZERO(&t) || (t.sign == b->sign)) {
       res = MP_OKAY;
       mp_exch(&t, c);
    } else {
