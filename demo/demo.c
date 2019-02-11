@@ -25,32 +25,6 @@
 
 #include "tommath.h"
 
-/* VERY simpel comparing function, for use in this case and this case only! */
-
-/* MIN() macro is in tommath_private.h */
-#ifndef MIN
-#define MIN(x, y) (((x) < (y)) ? (x) : (y))
-#endif
-/* avoid libmath */
-static double s_abs(double d){
-   return (d < 0.0)?-d:d;
-}
-#include <float.h>
-/* check relative error against DBL_EPSILON. Input numbers are big enough to do so */
-static int s_compare_doubles(double a, double b){
-   double abs_a, abs_b, delta;
-
-   /* NaN, inf's, small numbers, and subnormals ignored, not needed in this case */
-   if (a == b) {
-      return 1;
-   }
-   abs_a = s_abs(a);
-   abs_b = s_abs(b);
-   delta = s_abs(a - b);
-
-   return ( (delta/MIN(abs_a, abs_b)) <  DBL_EPSILON );
-}
-
 static void ndraw(mp_int *a, const char *name)
 {
    char buf[16000];
@@ -124,6 +98,33 @@ static void _cleanup(void)
 #endif
 }
 #if LTM_DEMO_TEST_VS_MTEST == 0
+
+/* VERY simpel comparing function, for use in this case and this case only! */
+
+/* MIN() macro is in tommath_private.h */
+#ifndef MIN
+#define MIN(x, y) (((x) < (y)) ? (x) : (y))
+#endif
+/* avoid libmath */
+static double s_abs(double s_d){
+   return (s_d < 0.0)?-s_d:s_d;
+}
+#include <float.h>
+/* check relative error against DBL_EPSILON. Input numbers are big enough to do so */
+static int s_compare_doubles(double s_a, double s_b){
+   double abs_a, abs_b, delta;
+
+   /* NaN, inf's, small numbers, and subnormals ignored, not needed in this case */
+   if (s_a == s_b) {
+      return 1;
+   }
+   abs_a = s_abs(s_a);
+   abs_b = s_abs(s_b);
+   delta = s_abs(s_a - s_b);
+
+   return ( (delta/MIN(abs_a, abs_b)) <  DBL_EPSILON );
+}
+
 struct mp_sqrtmod_prime_st {
    unsigned long p;
    unsigned long n;
