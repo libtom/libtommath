@@ -22,7 +22,7 @@ int mp_neg(const mp_int *a, mp_int *b)
       }
    }
 
-   if (mp_iszero(b) != MP_YES) {
+   if (!IS_ZERO(b)) {
       b->sign = (a->sign == MP_ZPOS) ? MP_NEG : MP_ZPOS;
    } else {
       b->sign = MP_ZPOS;

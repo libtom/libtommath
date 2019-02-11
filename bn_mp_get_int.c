@@ -18,7 +18,7 @@ unsigned long mp_get_int(const mp_int *a)
    int i;
    mp_min_u32 res;
 
-   if (a->used == 0) {
+   if (IS_ZERO(a)) {
       return 0;
    }
 

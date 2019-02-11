@@ -22,7 +22,7 @@ int mp_invmod(const mp_int *a, const mp_int *b, mp_int *c)
 
 #ifdef BN_FAST_MP_INVMOD_C
    /* if the modulus is odd we can use a faster routine instead */
-   if ((mp_isodd(b) == MP_YES)) {
+   if (IS_ODD(b)) {
       return fast_mp_invmod(a, b, c);
    }
 #endif

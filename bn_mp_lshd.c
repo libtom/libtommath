@@ -22,7 +22,7 @@ int mp_lshd(mp_int *a, int b)
       return MP_OKAY;
    }
    /* no need to shift 0 around */
-   if (mp_iszero(a) == MP_YES) {
+   if (IS_ZERO(a)) {
       return MP_OKAY;
    }
 
