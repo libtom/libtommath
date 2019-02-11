@@ -481,7 +481,7 @@ int main(void)
    }
 
    /* test mp_get_double/mp_set_double */
-#if defined(__STDC_IEC_559__) || defined(__GCC_IEC_559)
+#if (defined(__STDC_IEC_559__) || defined(__GCC_IEC_559)) && !(defined(__m68k__) || defined(__MC68K__) || defined(M68000))
    printf("\n\nTesting: mp_get_double");
    if (mp_set_double(&a, +1.0/0.0) != MP_VAL) {
       printf("\nmp_set_double should return MP_VAL for +inf");
