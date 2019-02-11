@@ -99,8 +99,8 @@ static void _cleanup(void)
 }
 #if LTM_DEMO_TEST_VS_MTEST == 0
 
+#if ((defined __m68k__) || (defined __MC68K__) || (defined M68000))
 /* VERY simpel comparing function, for use in this case and this case only! */
-
 /* MIN() macro is in tommath_private.h */
 #ifndef MIN
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
@@ -124,7 +124,10 @@ static int s_compare_doubles(double s_a, double s_b){
 
    return ( (delta/MIN(abs_a, abs_b)) <  DBL_EPSILON );
 }
-
+#define S_COMPARE_DOUBLES(x,y) s_compare_doubles( (x), (y))
+#else
+#define S_COMPARE_DOUBLES(x,y) ( (x) == (y))
+#endif
 struct mp_sqrtmod_prime_st {
    unsigned long p;
    unsigned long n;
@@ -570,7 +573,7 @@ int main(void)
          printf("\nmp_set_double(+dbl_count - 1) failed");
          return EXIT_FAILURE;
       }
-      if ( !s_compare_doubles(dbl_count, mp_get_double(&a)) ) {
+      if ( !S_COMPARE_DOUBLES(dbl_count, mp_get_double(&a)) ) {
          printf("\nmp_get_double(+dbl_count - 1) at i = %d bad result! %20.20f != %20.20f\n",
                    i, dbl_count, mp_get_double(&a) );
          return EXIT_FAILURE;
@@ -583,7 +586,7 @@ int main(void)
          printf("\nmp_set_double((-dbl_count) - 1) failed");
          return EXIT_FAILURE;
       }
-      if ( !s_compare_doubles(-dbl_count, mp_get_double(&a)) ) {
+      if ( !S_COMPARE_DOUBLES(-dbl_count, mp_get_double(&a)) ) {
          printf("\nmp_get_double((-dbl_count) - 1) at i = %d bad result! %20.20f != %20.20f\n",
                    i, -dbl_count, mp_get_double(&a) );
          return EXIT_FAILURE;
@@ -598,7 +601,7 @@ int main(void)
          printf("\nmp_set_double() failed");
          return EXIT_FAILURE;
       }
-      if ( !s_compare_doubles(dbl, mp_get_double(&a))) {
+      if ( !S_COMPARE_DOUBLES(dbl, mp_get_double(&a))) {
          printf("\nmp_get_double() bad result! %20.2f != %20.2f \n", dbl, mp_get_double(&a));
          return EXIT_FAILURE;
       }
@@ -606,7 +609,7 @@ int main(void)
          printf("\nmp_set_double() failed");
          return EXIT_FAILURE;
       }
-      if ( !s_compare_doubles(-dbl, mp_get_double(&a))) {
+      if ( !S_COMPARE_DOUBLES(-dbl, mp_get_double(&a))) {
          printf("\nmp_get_double() bad result! %20.2f != %20.2f \n", dbl, mp_get_double(&a));
          return EXIT_FAILURE;
       }
