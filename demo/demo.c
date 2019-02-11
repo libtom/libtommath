@@ -25,6 +25,32 @@
 
 #include "tommath.h"
 
+/* VERY simpel comparing function, for use in this case and this case only! */
+
+/* MIN() macro is in tommath_private.h */
+#ifndef MIN
+#define MIN(x, y) (((x) < (y)) ? (x) : (y))
+#endif
+/* avoid libmath */
+static double s_abs(double d){
+   return (d < 0.0)?-d:d;
+}
+#include <float.h>
+/* check relative error against DBL_EPSILON. Input numbers are big enough to do so */
+static int s_compare_doubles(double a, double b){
+   double abs_a, abs_b, delta;
+
+   /* NaN, inf's, small numbers, and subnormals ignored, not needed in this case */
+   if (a == b) {
+      return 1;
+   }
+   abs_a = s_abs(a);
+   abs_b = s_abs(b);
+   delta = s_abs(a - b);
+
+   return ( (delta/MIN(abs_a, abs_b)) <  DBL_EPSILON );
+}
+
 static void ndraw(mp_int *a, const char *name)
 {
    char buf[16000];
@@ -536,14 +562,28 @@ int main(void)
       }
       dbl_count = (dbl_count * 2.0);
    }
+
+   dbl_count = 2.0;
+   for (i = 0; i < 301; ++i) {
+      if (mp_set_double(&a, dbl_count) != MP_OKAY) {
+         printf("\nmp_set_double(+dbl_count - 1) failed");
+         return EXIT_FAILURE;
+      }
+      if ( !s_compare_doubles(dbl_count, mp_get_double(&a)) ) {
+         printf("\nmp_get_double(+dbl_count - 1) at i = %d bad result! %20.20f != %20.20f\n",
+                   i, dbl_count, mp_get_double(&a) );
+         return EXIT_FAILURE;
+      }
+      dbl_count = (dbl_count * 2.0) -1;
+   }
    dbl_count = 2.0;
    for (i = 0; i < 301; ++i) {
       if (mp_set_double(&a, -dbl_count) != MP_OKAY) {
-         printf("\nmp_set_double(dbl_count) failed");
+         printf("\nmp_set_double((-dbl_count) - 1) failed");
          return EXIT_FAILURE;
       }
-      if (-dbl_count != mp_get_double(&a)) {
-         printf("\nmp_get_double(+dbl_count) at i = %d bad result! %20.20f != %20.20f\n",
+      if ( !s_compare_doubles(-dbl_count, mp_get_double(&a)) ) {
+         printf("\nmp_get_double((-dbl_count) - 1) at i = %d bad result! %20.20f != %20.20f\n",
                    i, -dbl_count, mp_get_double(&a) );
          return EXIT_FAILURE;
       }
@@ -557,7 +597,7 @@ int main(void)
          printf("\nmp_set_double() failed");
          return EXIT_FAILURE;
       }
-      if (dbl != mp_get_double(&a)) {
+      if ( !s_compare_doubles(dbl, mp_get_double(&a))) {
          printf("\nmp_get_double() bad result! %20.2f != %20.2f \n", dbl, mp_get_double(&a));
          return EXIT_FAILURE;
       }
@@ -565,7 +605,7 @@ int main(void)
          printf("\nmp_set_double() failed");
          return EXIT_FAILURE;
       }
-      if (-dbl != mp_get_double(&a)) {
+      if ( !s_compare_doubles(-dbl, mp_get_double(&a))) {
          printf("\nmp_get_double() bad result! %20.2f != %20.2f \n", dbl, mp_get_double(&a));
          return EXIT_FAILURE;
       }

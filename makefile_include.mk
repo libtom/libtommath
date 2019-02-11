@@ -95,14 +95,6 @@ else
   _ARCH := $(shell arch)
 endif
 
-#TODO: check for more compilers that support both m68k and something
-#      like "-ffloat-store"
-ifeq ($(_ARCH),m68k)
-  ifneq ($(findstring gcc,$(CC)),)
-CFLAGS += -ffloat-store
-  endif
-endif
-
 # adjust coverage set
 ifneq ($(filter $(_ARCH), i386 i686 x86_64 amd64 ia64),)
    COVERAGE = test_standalone timing
