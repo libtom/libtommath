@@ -17,6 +17,9 @@ ifndef LIBTOOL
     LIBTOOL:=libtool
   endif
 endif
+
+# PIE and PIC do not play well together in a shared library
+ADDITIONAL_LDFLAGS= -Wl,--warn-shared-textrel -Wl,--fatal-warnings -fno-PIE -no-pie
 LTCOMPILE = $(LIBTOOL) --mode=compile --tag=CC $(CC)
 LTLINK = $(LIBTOOL) --mode=link --tag=CC $(CC)
 
@@ -56,12 +59,12 @@ bn_s_mp_mul_high_digs.o bn_s_mp_sqr.o bn_s_mp_sub.o bncore.o
 objs: $(OBJECTS)
 
 .c.o:
-	$(LTCOMPILE) $(CFLAGS) $(LDFLAGS) -o $@ -c $<
+	$(LTCOMPILE) $(CFLAGS) $(LDFLAGS) $(ADDITIONAL_LDFLAGS) -o $@ -c $<
 
 LOBJECTS = $(OBJECTS:.o=.lo)
 
 $(LIBNAME):  $(OBJECTS)
-	$(LTLINK) $(LDFLAGS) $(LOBJECTS) -o $(LIBNAME) -rpath $(LIBPATH) -version-info $(VERSION_SO) $(LIBTOOLFLAGS)
+	$(LTLINK) $(LDFLAGS) $(ADDITIONAL_LDFLAGS) $(LOBJECTS) -o $(LIBNAME) -rpath $(LIBPATH) -version-info $(VERSION_SO) $(LIBTOOLFLAGS)
 
 install: $(LIBNAME)
 	install -d $(DESTDIR)$(LIBPATH)
