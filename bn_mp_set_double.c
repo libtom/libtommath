@@ -12,47 +12,83 @@
  * SPDX-License-Identifier: Unlicense
  */
 
-#if defined(__STDC_IEC_559__) || defined(__GCC_IEC_559)
-int mp_set_double(mp_int *a, double b)
+#include <float.h>
+#if ((defined DBL_MAX_EXP) && (FLT_RADIX == 2))
+static double s_math_h_less_frexp(double x, int *exp)
 {
-   uint64_t frac;
-   int exp, res;
-   union {
-      double   dbl;
-      uint64_t bits;
-   } cast;
-   cast.dbl = b;
+  int exponent = 0;
+  while (x >= 1.0) {
+    exponent++;
+    /* exp > DBL_MAX_EXP + 1, it is inf */
+    if (exponent == (DBL_MAX_EXP + 1)) {
+      *exp = exponent;
+      return x;
+    }
+    x /= 2.0;
+  }
 
-   exp = (int)((unsigned)(cast.bits >> 52) & 0x7FFU);
-   frac = (cast.bits & ((1ULL << 52) - 1ULL)) | (1ULL << 52);
+  *exp = exponent;
+  return x;
+}
 
-   if (exp == 0x7FF) { /* +-inf, NaN */
+
+int mp_set_double(mp_int *c, double d)
+{
+   int expnt, res, sign = MP_ZPOS;
+   double frac;
+
+
+   if (d != d) {
       return MP_VAL;
    }
-   exp -= 1023 + 52;
-
-   res = mp_set_long_long(a, frac);
-   if (res != MP_OKAY) {
-      return res;
+   if (d < 0) {
+      d = d * (-1.0);
+      sign = MP_NEG;
+   }
+   /* We do not work on copy, hence clear output memory */
+   mp_zero(c);
+   /* Integers only */
+   if (d < 1.0) {
+      c->sign = sign;
+      return MP_OKAY;
    }
 
-   res = (exp < 0) ? mp_div_2d(a, -exp, a, NULL) : mp_mul_2d(a, exp, a);
-   if (res != MP_OKAY) {
-      return res;
+   frac = s_math_h_less_frexp(d, &expnt);
+   /* +/-inf if exp > DBL_MAX_EXP */
+   if (expnt == (DBL_MAX_EXP + 1)) {
+      return MP_VAL;
    }
 
-   if (((cast.bits >> 63) != 0ULL) && !IS_ZERO(a)) {
-      a->sign = MP_NEG;
+   if (frac == 0.0) {
+      c->sign = sign;
+      return MP_OKAY;
    }
 
+   while (expnt-- >= 0) {
+      frac *= 2.0;
+      if (frac >= 1.0) {
+         if ((res = mp_add_d(c, 1, c)) != MP_OKAY) {
+            return res;
+         }
+         frac -= 1.0;
+      }
+      if (expnt > 0) {
+         if ((res = mp_mul_2d(c, 1, c)) != MP_OKAY) {
+            return res;
+         }
+      }
+   }
+   c->sign = sign;
    return MP_OKAY;
 }
 #else
 /* pragma message() not supported by several compilers (in mostly older but still used versions) */
 #  ifdef _MSC_VER
-#    pragma message("mp_set_double implementation is only available on platforms with IEEE754 floating point format")
+#    pragma message("mp_set_double implementation is only available on platforms with IEEE754 floating point format.")
+#    pragma message("At least DBL_MAX_EXP must be defined and set and, for now, FLT_RADIX must be 2.")
 #  else
 #    warning "mp_set_double implementation is only available on platforms with IEEE754 floating point format"
+#    warning "At least DBL_MAX_EXP must be defined and set and, for now, FLT_RADIX must be 2."
 #  endif
 #endif
 #endif
