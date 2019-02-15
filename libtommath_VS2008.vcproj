@@ -481,11 +481,19 @@
 			>
 		</File>
 		<File
+			RelativePath="bn_mp_get_float.c"
+			>
+		</File>
+		<File
 			RelativePath="bn_mp_get_int.c"
 			>
 		</File>
 		<File
 			RelativePath="bn_mp_get_long.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_mp_get_long_double.c"
 			>
 		</File>
 		<File
@@ -733,11 +741,19 @@
 			>
 		</File>
 		<File
+			RelativePath="bn_mp_set_float.c"
+			>
+		</File>
+		<File
 			RelativePath="bn_mp_set_int.c"
 			>
 		</File>
 		<File
 			RelativePath="bn_mp_set_long.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_mp_set_long_double.c"
 			>
 		</File>
 		<File

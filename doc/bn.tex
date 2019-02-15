@@ -900,6 +900,57 @@ unsigned long long mp_get_long_long (mp_int * a);
 
 This will return the 64 least significant bits of the mp\_int $a$.
 
+\subsection{Floating Point Constants}
+
+\index{mp\_set\_double}
+\begin{alltt}
+int mp_set_double (mp_int * a, double b);
+\end{alltt}
+
+This will assign the value of the \texttt{double} variable $b$ to the mp\_int $a$. Only the integer part of $b$ is read, the fraction part is truncated to $-\infty$. This may lead to irritations if the number $x.99999999999999782$ gets printed as $x + 1$ because of some too optimistic rounding in the printing function but the function \texttt{mp\_get\_double()} reads this number as $x$.
+
+It returns \texttt{MP\_VAL} in case of $b \in {\textrm{qNaN}, \textrm{sNaN}, -\infty, +\infty}$.
+
+\index{mp\_get\_double}
+\begin{alltt}
+double mp_get_double (mp_int * a);
+\end{alltt}
+
+It returns the content of the mp\_int $a$ as a \texttt{double}. As noted above for \texttt{mp\_get\_double}, the final comparison in the following sketch will return $b \not= b_{bis}$ for almost all values of $b$
+
+\begin{small} \begin{alltt}
+int main(int argc, char **argv)
+\{
+   mp_int a;
+   double b, b_bis;
+
+   /* all checks and balances omitted! */
+   mp_init(&a);
+   b = strtod(argv[1], NULL);
+   mp_set_double (&a, b);
+   b_bis = mp_get_double (&a);
+   printf("b     = \%16.20f\textbackslash n b_bis = \%16.20f\textbackslash n",b,b_bis);
+   printf("b \%s b_bis\textbackslash n",(b == b_bis)?"=":"!=");
+   mp_clear(&a);
+   return EXIT_SUCCESS;
+\}
+\end{alltt} \end{small}
+
+All problematic numbers are larger than or equal to $1$; checking the relative error against a limit $\epsilon$ with $\abs\left(a - b\right)/\min\left(a,b\right) < \epsilon$ is sufficient\footnote{The constant \texttt{DBL\_EPSILON} from \texttt{float.h} would be a good candidate for $\epsilon$}.
+
+\index{mp\_set\_float} \index{mp\_set\_long\_double}
+\begin{alltt}
+int mp_set_float (mp_int * a, float b);
+float mp_get_float (mp_int * a);
+int mp_get_long_double (mp_int * a, long double b);
+long double mp_get_long_double (mp_int * a);
+\end{alltt}
+
+All functions listed above work like the versions for \texttt{double} with the same caveats and tips adjusted to the respective types.
+
+The type \texttt{long double} might not be supported for your architecture/compiler which will cause a warning at compile time. It also might be of a different size from \texttt{double} but that does not get tested.
+
+
 \subsection{Initialize and Setting Constants}
 To both initialize and set small constants the following two functions are available.
 \index{mp\_init\_set} \index{mp\_init\_set\_int}
@@ -1233,7 +1284,7 @@ operation of $a$ by $b$ bits.
 \begin{alltt}
 int mp_tc_div_2d (mp_int * a, int b, mp_int * c, mp_int * d);
 \end{alltt}
-The two-co,mplement version of the function above. This can be used to implement arbitrary-precision two-complement integers together with the two-complement bit-wise operations at page \ref{tcbitwiseops}.
+The two-complement version of the function above. This can be used to implement arbitrary-precision two-complement integers together with the two-complement bit-wise operations at page \ref{tcbitwiseops}.
 
 
 It is also not very uncommon to need just the power of two $2^b$;  for example the startvalue for the Newton method.

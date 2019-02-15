@@ -9,6 +9,7 @@
  *
  * SPDX-License-Identifier: Unlicense
  */
+
 #if !(defined(LTM1) && defined(LTM2) && defined(LTM3))
 #if defined(LTM2)
 #   define LTM3
@@ -60,8 +61,10 @@
 #   define BN_MP_GCD_C
 #   define BN_MP_GET_BIT_C
 #   define BN_MP_GET_DOUBLE_C
+#   define BN_MP_GET_FLOAT_C
 #   define BN_MP_GET_INT_C
 #   define BN_MP_GET_LONG_C
+#   define BN_MP_GET_LONG_DOUBLE_C
 #   define BN_MP_GET_LONG_LONG_C
 #   define BN_MP_GROW_C
 #   define BN_MP_IMPORT_C
@@ -123,8 +126,10 @@
 #   define BN_MP_RSHD_C
 #   define BN_MP_SET_C
 #   define BN_MP_SET_DOUBLE_C
+#   define BN_MP_SET_FLOAT_C
 #   define BN_MP_SET_INT_C
 #   define BN_MP_SET_LONG_C
+#   define BN_MP_SET_LONG_DOUBLE_C
 #   define BN_MP_SET_LONG_LONG_C
 #   define BN_MP_SHRINK_C
 #   define BN_MP_SIGNED_BIN_SIZE_C
@@ -440,10 +445,16 @@
 #if defined(BN_MP_GET_DOUBLE_C)
 #endif
 
+#if defined(BN_MP_GET_FLOAT_C)
+#endif
+
 #if defined(BN_MP_GET_INT_C)
 #endif
 
 #if defined(BN_MP_GET_LONG_C)
+#endif
+
+#if defined(BN_MP_GET_LONG_DOUBLE_C)
 #endif
 
 #if defined(BN_MP_GET_LONG_LONG_C)
@@ -910,9 +921,16 @@
 #endif
 
 #if defined(BN_MP_SET_DOUBLE_C)
-#   define BN_MP_SET_LONG_LONG_C
-#   define BN_MP_DIV_2D_C
+#   define BN_MP_ZERO_C
+#   define BN_MP_ADD_D_C
 #   define BN_MP_MUL_2D_C
+#endif
+
+#if defined(BN_MP_SET_FLOAT_C)
+#   define BN_MP_ZERO_C
+#   define BN_MP_ADD_D_C
+#   define BN_MP_MUL_2D_C
+#   define BN_MP_DIV_2D_C
 #endif
 
 #if defined(BN_MP_SET_INT_C)
@@ -922,6 +940,13 @@
 #endif
 
 #if defined(BN_MP_SET_LONG_C)
+#endif
+
+#if defined(BN_MP_SET_LONG_DOUBLE_C)
+#   define BN_MP_ZERO_C
+#   define BN_MP_ADD_D_C
+#   define BN_MP_MUL_2D_C
+#   define BN_MP_DIV_2D_C
 #endif
 
 #if defined(BN_MP_SET_LONG_LONG_C)

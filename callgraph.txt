@@ -2332,10 +2332,16 @@ BN_MP_GET_BIT_C
 BN_MP_GET_DOUBLE_C
 
 
+BN_MP_GET_FLOAT_C
+
+
 BN_MP_GET_INT_C
 
 
 BN_MP_GET_LONG_C
+
+
+BN_MP_GET_LONG_DOUBLE_C
 
 
 BN_MP_GET_LONG_LONG_C
@@ -18626,14 +18632,11 @@ BN_MP_SET_C
 
 
 BN_MP_SET_DOUBLE_C
-+--->BN_MP_SET_LONG_LONG_C
-+--->BN_MP_DIV_2D_C
-|   +--->BN_MP_COPY_C
-|   |   +--->BN_MP_GROW_C
-|   +--->BN_MP_ZERO_C
-|   +--->BN_MP_MOD_2D_C
++--->BN_MP_ZERO_C
++--->BN_MP_ADD_D_C
+|   +--->BN_MP_GROW_C
+|   +--->BN_MP_SUB_D_C
 |   |   +--->BN_MP_CLAMP_C
-|   +--->BN_MP_RSHD_C
 |   +--->BN_MP_CLAMP_C
 +--->BN_MP_MUL_2D_C
 |   +--->BN_MP_COPY_C
@@ -18641,7 +18644,29 @@ BN_MP_SET_DOUBLE_C
 |   +--->BN_MP_GROW_C
 |   +--->BN_MP_LSHD_C
 |   |   +--->BN_MP_RSHD_C
-|   |   |   +--->BN_MP_ZERO_C
+|   +--->BN_MP_CLAMP_C
+
+
+BN_MP_SET_FLOAT_C
++--->BN_MP_ZERO_C
++--->BN_MP_ADD_D_C
+|   +--->BN_MP_GROW_C
+|   +--->BN_MP_SUB_D_C
+|   |   +--->BN_MP_CLAMP_C
+|   +--->BN_MP_CLAMP_C
++--->BN_MP_MUL_2D_C
+|   +--->BN_MP_COPY_C
+|   |   +--->BN_MP_GROW_C
+|   +--->BN_MP_GROW_C
+|   +--->BN_MP_LSHD_C
+|   |   +--->BN_MP_RSHD_C
+|   +--->BN_MP_CLAMP_C
++--->BN_MP_DIV_2D_C
+|   +--->BN_MP_COPY_C
+|   |   +--->BN_MP_GROW_C
+|   +--->BN_MP_MOD_2D_C
+|   |   +--->BN_MP_CLAMP_C
+|   +--->BN_MP_RSHD_C
 |   +--->BN_MP_CLAMP_C
 
 
@@ -18658,6 +18683,29 @@ BN_MP_SET_INT_C
 
 
 BN_MP_SET_LONG_C
+
+
+BN_MP_SET_LONG_DOUBLE_C
++--->BN_MP_ZERO_C
++--->BN_MP_ADD_D_C
+|   +--->BN_MP_GROW_C
+|   +--->BN_MP_SUB_D_C
+|   |   +--->BN_MP_CLAMP_C
+|   +--->BN_MP_CLAMP_C
++--->BN_MP_MUL_2D_C
+|   +--->BN_MP_COPY_C
+|   |   +--->BN_MP_GROW_C
+|   +--->BN_MP_GROW_C
+|   +--->BN_MP_LSHD_C
+|   |   +--->BN_MP_RSHD_C
+|   +--->BN_MP_CLAMP_C
++--->BN_MP_DIV_2D_C
+|   +--->BN_MP_COPY_C
+|   |   +--->BN_MP_GROW_C
+|   +--->BN_MP_MOD_2D_C
+|   |   +--->BN_MP_CLAMP_C
+|   +--->BN_MP_RSHD_C
+|   +--->BN_MP_CLAMP_C
 
 
 BN_MP_SET_LONG_LONG_C
