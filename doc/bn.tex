@@ -1198,28 +1198,28 @@ in place and no new digits are required to complete it.
 \subsection{AND, OR, XOR and COMPLEMENT Operations}
 
 While AND, OR and XOR operations are not typical ``bignum functions'' they can be useful in several instances.  The
-four functions are prototyped as follows.
+three functions are prototyped as follows.
 
-\index{mp\_or} \index{mp\_and} \index{mp\_xor} \index {mp\_complement}
+\index{mp\_or} \index{mp\_and} \index{mp\_xor}
 \begin{alltt}
 int mp_or  (mp_int * a, mp_int * b, mp_int * c);
 int mp_and (mp_int * a, mp_int * b, mp_int * c);
 int mp_xor (mp_int * a, mp_int * b, mp_int * c);
-int mp_complement(const mp_int *a, mp_int *b);
 \end{alltt}
 
-Which compute $c = a \odot b$ where $\odot$ is one of OR, AND or XOR and $ b = \sim a $.
+Which compute $c = a \odot b$ where $\odot$ is one of OR, AND or XOR.
 
-There are also three functions that act as if the ``bignum'' would be a two-complement number.
+The following four functions allow implementing arbitrary-precision two-complement numbers.
 
-\index{mp\_tc\_or} \index{mp\_tc\_and} \index{mp\_tc\_xor}\label{tcbitwiseops}
+\index{mp\_tc\_or} \index{mp\_tc\_and} \index{mp\_tc\_xor} \index{mp\_complement} \label{tcbitwiseops}
 \begin{alltt}
 int mp_tc_or  (mp_int * a, mp_int * b, mp_int * c);
 int mp_tc_and (mp_int * a, mp_int * b, mp_int * c);
 int mp_tc_xor (mp_int * a, mp_int * b, mp_int * c);
+int mp_complement(const mp_int *a, mp_int *b);
 \end{alltt}
 
-The compute $c = a \odot b$ as above if both $a$ and $b$ are positive, negative values are converted into their two-complement representation first. This can be used to implement arbitrary-precision two-complement integers together with the arithmetic right-shift at page \ref{arithrightshift}.
+They compute $c = a \odot b$ as above if both $a$ and $b$ are positive. Negative values are converted into their two-complement representations first. The function \texttt{mp\_complement} computes a two-complement $b = \sim a$.
 
 
 \subsection{Bit Picking}
