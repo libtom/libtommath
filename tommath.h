@@ -19,10 +19,14 @@
 
 #include "tommath_class.h"
 
-#include <float.h>
-
 #ifdef __cplusplus
 extern "C" {
+#endif
+
+/* Check for a modern-ish MacOS that supports IEEE-754 floating point numbers */
+#if    ( (defined __APPLE__) && (defined __MACH__) \
+    && ( (defined __DBL_HAS_DENORM__) && ( defined __DBL_HAS_INFINITY__) ) )
+#   define __STDC_IEC_559__ 1
 #endif
 
 /* MS Visual C++ doesn't have a 128bit type for words, so fall back to 32bit MPI's (where words are 64bit) */
@@ -203,18 +207,15 @@ void mp_zero(mp_int *a);
 /* set to a digit */
 void mp_set(mp_int *a, mp_digit b);
 
-#ifdef FLT_MAX
 /* set a float */
 int mp_set_float(mp_int *a, float b);
-#endif
-#if (defined DBL_MAX)
+
 /* set a double */
 int mp_set_double(mp_int *a, double b);
-#endif
-#if (defined LDBL_MAX)
+
 /* set a double */
 int mp_set_long_double(mp_int *a, long double b);
-#endif
+
 /* set a 32-bit const */
 int mp_set_int(mp_int *a, unsigned long b);
 
@@ -223,18 +224,16 @@ int mp_set_long(mp_int *a, unsigned long b);
 
 /* set a platform dependent unsigned long long value */
 int mp_set_long_long(mp_int *a, unsigned long long b);
-#ifdef FLT_MAX
+
 /* get a float */
 float mp_get_float(const mp_int *a);
-#endif
-#if (defined DBL_MAX)
+
 /* get a double */
 double mp_get_double(const mp_int *a);
-#endif
-#if (defined LDBL_MAX)
+
 /* get a long double */
 long double mp_get_long_double(const mp_int *a);
-#endif
+
 /* get a 32-bit value */
 unsigned long mp_get_int(const mp_int *a);
 

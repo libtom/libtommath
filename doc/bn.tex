@@ -936,9 +936,7 @@ int main(int argc, char **argv)
 \}
 \end{alltt} \end{small}
 
-All problematic numbers are larger than or equal to $1$; checking the relative error against a limit $\epsilon$ with $\abs\left(a - b\right)/\min\left(a,b\right) < \epsilon$ is sufficient\footnote{The constant \texttt{DBL\_EPSILON} from \texttt{float.h} would be a good candidate for $\epsilon$}.
-
-\index{mp\_set\_float} \index{mp\_set\_long\_double}
+\index{mp\_set\_float} \index{mp\_set\_long\_double} \index{mp\_get\_float} \index{mp\_get\_long\_double}
 \begin{alltt}
 int mp_set_float (mp_int * a, float b);
 float mp_get_float (mp_int * a);
@@ -946,9 +944,9 @@ int mp_get_long_double (mp_int * a, long double b);
 long double mp_get_long_double (mp_int * a);
 \end{alltt}
 
-All functions listed above work like the versions for \texttt{double} with the same caveats and tips adjusted to the respective types.
+All functions listed above work like the versions for teh type \texttt{double} with the same caveats and tips adjusted to the respective types.
 
-The type \texttt{long double} might not be supported for your architecture/compiler which will cause a warning at compile time. It also might be of a different size from \texttt{double} but that does not get tested.
+The type \texttt{long double} might not be supported for your architecture/compiler which will cause a warning at compile time.
 
 
 \subsection{Initialize and Setting Constants}
@@ -1284,7 +1282,7 @@ operation of $a$ by $b$ bits.
 \begin{alltt}
 int mp_tc_div_2d (mp_int * a, int b, mp_int * c, mp_int * d);
 \end{alltt}
-The two-complement version of the function above. This can be used to implement arbitrary-precision two-complement integers together with the two-complement bit-wise operations at page \ref{tcbitwiseops}.
+The two-co,mplement version of the function above. This can be used to implement arbitrary-precision two-complement integers together with the two-complement bit-wise operations at page \ref{tcbitwiseops}.
 
 
 It is also not very uncommon to need just the power of two $2^b$;  for example the startvalue for the Newton method.

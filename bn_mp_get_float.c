@@ -11,6 +11,7 @@
  *
  * SPDX-License-Identifier: Unlicense
  */
+#include <float.h>
 #ifdef FLT_MAX
 /* This function is independent of the implementation of the floating point type */
 float mp_get_float(const mp_int *a)

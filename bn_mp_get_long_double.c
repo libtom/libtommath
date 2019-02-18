@@ -11,7 +11,7 @@
  *
  * SPDX-License-Identifier: Unlicense
  */
-
+#include <float.h>
 #ifdef LDBL_MAX
 /* This function is independent of the implementation of the floating point type */
 long double mp_get_long_double(const mp_int *a)
