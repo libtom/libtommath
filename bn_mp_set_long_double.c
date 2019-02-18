@@ -41,7 +41,7 @@
 #if (     (LDBL_MANT_DIG == 64) && (LDBL_MAX_EXP == 16384) && (defined UINT64_MAX) \
       &&  ((defined __STDC_IEC_559__) || (defined __GCC_IEC_559)) \
       && !( (defined __m68k__) || (defined __MC68K__) || (defined M68000)) \
-      &&  ( (defined __GNUCC__) || (defined __clang__) )
+      &&  ( (defined __GNUCC__) || (defined __clang__) ) \
     )
 
 /* To avoid "magic numbers". Some people don't like them, even if their meaning is obvious */
