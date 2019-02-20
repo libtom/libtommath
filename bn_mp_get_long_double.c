@@ -36,8 +36,8 @@ long double mp_get_long_double(const mp_int *a)
 #    warning "If that is wrong please contact the team at https://github.com/libtommath/"
 #  endif
 #endif
-
 #endif
-/* ref:         \$Format:\%D$ */
-/* git commit:  \$Format:\%H$ */
-/* commit time: \$Format:\%ai$ */
+
+/* ref:         $Format:%D$ */
+/* git commit:  $Format:%H$ */
+/* commit time: $Format:%ai$ */

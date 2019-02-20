@@ -16,16 +16,7 @@
 #if ( (defined DBL_MAX) && (FLT_RADIX == 2) )
 
 /* We can use a faster method if we have an IEEE compliant machine and a working stdint.h */
-#if (((defined __STDC_IEC_559__) || (defined __GCC_IEC_559)) && (defined UINT64_MAX))
-
-/* To avoid "magic numbers". Some people don't like them, even if their meaning is obvious */
-/* Bits in mantissa without the implied bit  */
-#define SIGNIFICANT (DBL_MANT_DIG - 1)
-#define BIAS (DBL_MAX_EXP - 1)
-/* Maximal unbiased exponent */
-#define MAX_UNBIASED_EXPONENT ((2*DBL_MAX_EXP) - 1)
-/* Length of a binary64 without sign bit */
-#define PAYLOAD 63
+#if ( (defined __STDC_IEC_559__) && (defined UINT64_MAX) )
 int mp_set_double(mp_int *a, double b)
 {
    uint64_t frac;
@@ -36,13 +27,13 @@ int mp_set_double(mp_int *a, double b)
    } cast;
    cast.dbl = b;
 
-   exp = (int)((unsigned)(cast.bits >> SIGNIFICANT) & (unsigned)MAX_UNBIASED_EXPONENT);
-   frac = (cast.bits & ((1ULL << SIGNIFICANT) - 1ULL)) | (1ULL << SIGNIFICANT);
+   exp = (int)((unsigned)(cast.bits >> (DBL_MANT_DIG - 1)) & (unsigned)((2*DBL_MAX_EXP) - 1));
+   frac = (cast.bits & ((1ULL << (DBL_MANT_DIG - 1)) - 1ULL)) | (1ULL << (DBL_MANT_DIG - 1));
 
-   if (exp == MAX_UNBIASED_EXPONENT) { /* +-inf, NaN */
+   if (exp == ((2*DBL_MAX_EXP) - 1)) { /* +-inf, NaN */
       return MP_VAL;
    }
-   exp -= BIAS + SIGNIFICANT;
+   exp -= (DBL_MAX_EXP - 1) + (DBL_MANT_DIG - 1);
 
    res = mp_set_long_long(a, frac);
    if (res != MP_OKAY) {
@@ -53,9 +44,9 @@ int mp_set_double(mp_int *a, double b)
    if (res != MP_OKAY) {
       return res;
    }
-
-   if (((cast.bits >> PAYLOAD) != 0ULL) && (mp_iszero(a) == MP_NO)) {
-      SIGN(a) = MP_NEG;
+   /* 63 = number of bits without sign-bit in binary64 */
+   if (((cast.bits >> 63) != 0ULL) && (!IS_ZERO(a))) {
+      a->sign = MP_NEG;
    }
 
    return MP_OKAY;
@@ -76,12 +67,11 @@ static double s_math_h_less_frexp(double x, int *exp)
          high *= high;
       }
       if (x < 0.5) {
-        while (x < 0.5) {
-          x *= 2.0;
-          exponent--;
-        }
-      }
-      else {
+         while (x < 0.5) {
+            x *= 2.0;
+            exponent--;
+         }
+      } else {
          while (x >= 1.0) {
             x /= 2.0;
             exponent++;
@@ -108,13 +98,13 @@ int mp_set_double(mp_int *a, double b)
    }
 
    /* Check for infinity */
-   if ( b > DBL_MAX) {
+   if (b > DBL_MAX) {
       return MP_VAL;
    }
 
    mp_zero(a);
    /* Numbers smaller than 1 truncate to zero */
-   if (b < 1.0) {puts("b < 1.0");
+   if (b < 1.0) {
       a->sign = sign;
       return MP_OKAY;
    }
@@ -145,7 +135,7 @@ int mp_set_double(mp_int *a, double b)
    if (res != MP_OKAY) {
       return res;
    }
-   SIGN(a) = sign;
+   a-> = sign;
    return res;
 }
 #endif

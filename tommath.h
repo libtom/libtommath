@@ -23,10 +23,23 @@
 extern "C" {
 #endif
 
-/* Check for a modern-ish MacOS that supports IEEE-754 floating point numbers */
-#if    ( (defined __APPLE__) && (defined __MACH__) \
-    && ( (defined __DBL_HAS_DENORM__) && ( defined __DBL_HAS_INFINITY__) ) )
-#   define __STDC_IEC_559__ 1
+/*
+   Even with the standard macro __STDC_IEC_559__ not defined the
+   implementation can come close enough to IEEE_754 compliance
+   for our purpose.
+ */
+#if !(defined __STDC_IEC_559__)
+    /*
+       A modern MacOS supports IEEE-754 floating point numbers but it needs a bit
+       of persuasion to come across with that information.
+       GCC has a finer grained macro but the limitations of IEEE-754 it can describe
+       are of no interest here.
+     */
+#   if    ( (defined __APPLE__) && (defined __MACH__) \
+       && ( (defined __DBL_HAS_DENORM__) && ( defined __DBL_HAS_INFINITY__) ) ) \
+       || (defined __GCC_IEC_559)
+#      define __STDC_IEC_559__ 1
+#   endif
 #endif
 
 /* MS Visual C++ doesn't have a 128bit type for words, so fall back to 32bit MPI's (where words are 64bit) */

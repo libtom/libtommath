@@ -13,17 +13,9 @@
  */
 #include <float.h>
 #if ( (defined FLT_MAX_EXP) && (FLT_RADIX == 2) )
-/* We can use a faster method if we have an IEEE compliant machine and a working stdint.h */
-#if (((defined __STDC_IEC_559__) || (defined __GCC_IEC_559)) && (defined UINT32_MAX))
 
-/* To avoid "magic numbers". Some people don't like them, even if their meaning is obvious */
-/* Bits in mantissa without the implied bit  */
-#define SIGNIFICANT (FLT_MANT_DIG - 1)
-#define BIAS (FLT_MAX_EXP - 1)
-/* Maximal unbiased exponent */
-#define MAX_UNBIASED_EXPONENT ((2*FLT_MAX_EXP) - 1)
-/* Length of a binary32 without sign bit */
-#define PAYLOAD 31
+/* We can use a faster method if we have an IEEE compliant machine and a working stdint.h */
+#if ( (defined __STDC_IEC_559__) && (defined UINT32_MAX) )
 int mp_set_float(mp_int *a, float b)
 {
    uint64_t frac;
@@ -34,13 +26,13 @@ int mp_set_float(mp_int *a, float b)
    } cast;
    cast.dbl = b;
 
-   exp = (int)((unsigned)(cast.bits >> SIGNIFICANT) & (unsigned)MAX_UNBIASED_EXPONENT);
-   frac = (cast.bits & ((1UL << SIGNIFICANT) - 1UL)) | (1UL << SIGNIFICANT);
+   exp = (int)((unsigned)(cast.bits >> (FLT_MANT_DIG - 1)) & (unsigned)((2*FLT_MAX_EXP) - 1));
+   frac = (cast.bits & ((1UL << (FLT_MANT_DIG - 1)) - 1UL)) | (1UL << (FLT_MANT_DIG - 1));
 
-   if (exp == MAX_UNBIASED_EXPONENT) { /* +-inf, NaN */
+   if (exp == ((2*FLT_MAX_EXP) - 1)) { /* +-inf, NaN */
       return MP_VAL;
    }
-   exp -= BIAS + SIGNIFICANT;
+   exp -= (FLT_MAX_EXP - 1) + (FLT_MANT_DIG - 1);
 
    res = mp_set_long(a, frac);
    if (res != MP_OKAY) {
@@ -51,9 +43,9 @@ int mp_set_float(mp_int *a, float b)
    if (res != MP_OKAY) {
       return res;
    }
-
-   if (((cast.bits >> PAYLOAD) != 0ULL) && (mp_iszero(a) == MP_NO)) {
-      SIGN(a) = MP_NEG;
+   /* 31 = number of bits without sign-bit in binary32 */
+   if (((cast.bits >> 31) != 0ULL) && (!IS_ZERO(a))) {
+      a->sign = MP_NEG;
    }
 
    return MP_OKAY;
@@ -73,12 +65,11 @@ static float s_math_h_less_frexp(float x, int *exp)
          high *= high;
       }
       if (x < 0.5f) {
-        while (x < 0.5f) {
-          x *= 2.0f;
-          exponent--;
-        }
-      }
-      else {
+         while (x < 0.5f) {
+            x *= 2.0f;
+            exponent--;
+         }
+      } else {
          while (x >= 1.0f) {
             x /= 2.0f;
             exponent++;
@@ -103,7 +94,7 @@ int mp_set_float(mp_int *a, float b)
    }
 
    /* Check for infinity */
-   if ( b > FLT_MAX) {
+   if (b > FLT_MAX) {
       return MP_VAL;
    }
 
@@ -145,7 +136,7 @@ int mp_set_float(mp_int *a, float b)
       return res;
    }
 
-   SIGN(a) = sign;
+   a->sign = sign;
 
    return MP_OKAY;
 }
@@ -170,11 +161,9 @@ int mp_set_float(mp_int *a, float b)
 #    warning "with the compiler option FLOAT(IEEE)"
 #  endif
 #endif
-
-
 #endif
 #endif
 
-/* ref:         \$Format:\%D$ */
-/* git commit:  \$Format:\%H$ */
-/* commit time: \$Format:\%ai$ */
+/* ref:         $Format:%D$ */
+/* git commit:  $Format:%H$ */
+/* commit time: $Format:%ai$ */
