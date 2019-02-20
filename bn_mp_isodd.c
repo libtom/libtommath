@@ -9,10 +9,8 @@
  * Michael Fromberger but has been written from scratch with
  * additional optimizations in place.
  *
- * The library is free for all purposes without any express
- * guarantee it works.
+ * SPDX-License-Identifier: Unlicense
  */
-
 int mp_isodd(const mp_int *a)
 {
    return IS_ODD(a) ? MP_YES : MP_NO;
