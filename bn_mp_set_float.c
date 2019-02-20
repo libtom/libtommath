@@ -15,7 +15,7 @@
 #if ( (defined FLT_MAX_EXP) && (FLT_RADIX == 2) )
 
 /* We can use a faster method if we have an IEEE compliant machine and a working stdint.h */
-#if ( (defined __STDC_IEC_559__) && (defined UINT32_MAX) )
+#if ( (defined LTM_NEARLY_IEC_559 ) && (defined UINT32_MAX) )
 int mp_set_float(mp_int *a, float b)
 {
    uint64_t frac;

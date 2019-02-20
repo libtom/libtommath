@@ -49,7 +49,7 @@ int mp_set_long_double(mp_int *a, long double b)
    return mp_set_double(a, _b);
 }
 #elif (    (LDBL_MANT_DIG == 64) && (LDBL_MAX_EXP == 16384) && (defined UINT64_MAX) \
-        && (defined __STDC_IEC_559__) \
+        && (defined LTM_NEARLY_IEC_559 ) \
         && !( (defined __m68k__) || (defined __MC68K__) || (defined M68000)) \
         && ( (defined __GNUC__) || (defined __clang__) ) \
       )

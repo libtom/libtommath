@@ -38,7 +38,7 @@ extern "C" {
 #   if    ( (defined __APPLE__) && (defined __MACH__) \
        && ( (defined __DBL_HAS_DENORM__) && ( defined __DBL_HAS_INFINITY__) ) ) \
        || (defined __GCC_IEC_559)
-#      define __STDC_IEC_559__ 1
+#      define LTM_NEARLY_IEC_559 1
 #   endif
 #endif
 

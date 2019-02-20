@@ -16,7 +16,7 @@
 #if ( (defined DBL_MAX) && (FLT_RADIX == 2) )
 
 /* We can use a faster method if we have an IEEE compliant machine and a working stdint.h */
-#if ( (defined __STDC_IEC_559__) && (defined UINT64_MAX) )
+#if ( (defined LTM_NEARLY_IEC_559 ) && (defined UINT64_MAX) )
 int mp_set_double(mp_int *a, double b)
 {
    uint64_t frac;
@@ -135,7 +135,7 @@ int mp_set_double(mp_int *a, double b)
    if (res != MP_OKAY) {
       return res;
    }
-   a-> = sign;
+   a->sign = sign;
    return res;
 }
 #endif
