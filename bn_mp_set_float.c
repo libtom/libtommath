@@ -19,7 +19,7 @@
 int mp_set_float(mp_int *a, float b)
 {
    uint64_t frac;
-   int exp, res;
+   int exp, res = MP_OKAY;
    union {
       float   dbl;
       uint32_t bits;

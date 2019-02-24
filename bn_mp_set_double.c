@@ -20,7 +20,7 @@
 int mp_set_double(mp_int *a, double b)
 {
    uint64_t frac;
-   int exp, res;
+   int exp, res = MP_OKAY;
    union {
       double   dbl;
       uint64_t bits;

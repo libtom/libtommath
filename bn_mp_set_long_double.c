@@ -56,7 +56,7 @@ int mp_set_long_double(mp_int *a, long double b)
 int mp_set_long_double(mp_int *a, long double b)
 {
    uint64_t frac;
-   int exp, res;
+   int exp, res = MP_OKAY;
 
    /*
         padding + 10-byte double (80 bits):
