@@ -13,7 +13,6 @@
  */
 #include <float.h>
 #if ( (defined LDBL_MAX_EXP) && (FLT_RADIX == 2) )
-
 /*
     We can work bare-metal with x86's 80 bit doubles because we can test for it
     and that architecture (used by Intel and AMD) is the only one using that
@@ -48,9 +47,12 @@ int mp_set_long_double(mp_int *a, long double b)
    double _b = (double) b;
    return mp_set_double(a, _b);
 }
+/* 
+    The "long double" on a Sparc64 is either a quad-precision float with LDBL_MANT_DIG = 113
+    and LDBL_MAX_EXP = 16384, although in software only.
+*/
 #elif (    (LDBL_MANT_DIG == 64) && (LDBL_MAX_EXP == 16384) && (defined UINT64_MAX) \
         && (defined LTM_NEARLY_IEC_559 ) \
-        && !( (defined __m68k__) || (defined __MC68K__) || (defined M68000)) \
         && ( (defined __GNUC__) || (defined __clang__) ) \
       )
 int mp_set_long_double(mp_int *a, long double b)
@@ -58,15 +60,6 @@ int mp_set_long_double(mp_int *a, long double b)
    uint64_t frac;
    int exp, res = MP_OKAY;
 
-   /*
-        padding + 10-byte double (80 bits):
-        unused 2 byte on i386, 6 byte on x86_84/ia64
-        sign    1 bit  79
-        exp    15 bits 78-64     bias 16383
-        intbit  1 bit  63        set if normalized
-        man    63 bits 62-0
-
-    */
    /*
       TODO:
       This is not standard C, support of the types
@@ -77,13 +70,34 @@ int mp_set_long_double(mp_int *a, long double b)
     */
    union {
       long double ldbl;
-      struct {
-         uint64_t fraction;
+      /*
+         To cite a comment from libquadmath:
+         "On mingw targets the ms-bitfields option is active by default.
+          Therefore enforce gnu-bitfield style."
+         And who are we to ignore the advice of experts?
+      */
+      struct
+#ifdef __MINGW32__
+      __attribute__((gcc_struct))
+#endif
+      {
+         /* Set by GCC and Clang which are the only compilers allowed in here. */
+#if (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
+         /* The m68k has some padding in the middle */
+#if ( (defined __m68k__) || (defined __MC68K__) || (defined M68000))
+         uint16_t sign:1;
          uint16_t exponent:15;
-         /* A bit large, admitted */
+         uint16_t pad1:16;
+         uint64_t fraction:64;
+         uint16_t padrest;
+#endif
+#else /* __ORDER_LITTLE_ENDIAN__ */
+         uint64_t fraction:64;
+         uint16_t exponent:15;
          uint16_t sign:1;
          /* fill up (i368: to 12 bytes, x86_64: to 16 bytes */
          uint16_t padding;
+#endif
       } ldbl_guts;
    } cast;
 
