@@ -92,7 +92,7 @@ endif
 ifeq ($(PLATFORM),FreeBSD)
   _ARCH := $(shell sysctl -b hw.machine_arch)
 else
-  _ARCH := $(shell sh -c "if command -v arch 1> /dev/null;then arch;else uname -m;fi")
+  _ARCH := $(shell uname -m)
 endif
 
 # adjust coverage set
