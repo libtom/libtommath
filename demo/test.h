@@ -214,7 +214,6 @@ static int test_mp_complement(void) {
       return EXIT_FAILURE;
    }
 
-   printf("\n\nTesting: mp_complement");
    for (i = 0; i < 1000; ++i) {
       int l = (rand() * rand() + 1) * (rand() % 1 ? -1 : 1);
       mp_set_int(&a, labs(l));
@@ -248,7 +247,6 @@ static int test_mp_tc_div_2d(void) {
       return EXIT_FAILURE;
    }
 
-   printf("\n\nTesting: mp_tc_div_2d");
    for (i = 0; i < 1000; ++i) {
       int l, em;
 
@@ -286,7 +284,6 @@ static int test_mp_tc_xor(void) {
       return EXIT_FAILURE;
    }
 
-   printf("\n\nTesting: mp_tc_xor");
    for (i = 0; i < 1000; ++i) {
       int l, em;
 
@@ -327,7 +324,6 @@ static int test_mp_tc_or(void) {
       return EXIT_FAILURE;
    }
 
-   printf("\n\nTesting: mp_tc_or");
    for (i = 0; i < 1000; ++i) {
       int l, em;
 
@@ -367,7 +363,6 @@ static int test_mp_tc_and(void) {
       return EXIT_FAILURE;
    }
 
-   printf("\n\nTesting: mp_tc_and");
    for (i = 0; i < 1000; ++i) {
       int l, em;
 
@@ -406,7 +401,6 @@ static int test_mp_invmod(void) {
    }
 
    /* mp_invmod corner-case of https://github.com/libtom/libtommath/issues/118 */
-   printf("\n\nTesting: mp_invmod");
    {
       const char *a_ = "47182BB8DF0FFE9F61B1F269BACC066B48BA145D35137D426328DC3F88A5EA44";
       const char *b_ = "FFFFFFFEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00000000FFFFFFFFFFFFFFFF";
@@ -454,7 +448,6 @@ static int test_mp_set_double(void) {
 
    /* test mp_get_double/mp_set_double */
 #if defined(__STDC_IEC_559__) || defined(__GCC_IEC_559)
-   printf("\n\nTesting: mp_get_double");
    if (mp_set_double(&a, +1.0/0.0) != MP_VAL) {
       printf("\nmp_set_double should return MP_VAL for +inf");
       goto LBL_ERR;
@@ -511,7 +504,6 @@ static int test_mp_get_int(void) {
       return EXIT_FAILURE;
    }
 
-   printf("\n\nTesting: mp_get_int");
    for (i = 0; i < 1000; ++i) {
       t = (unsigned long)(rand() * rand() + 1) & 0xFFFFFFFFuL;
       mp_set_int(&a, t);
@@ -547,7 +539,6 @@ static int test_mp_get_long(void) {
       return EXIT_FAILURE;
    }
 
-   printf("\n\nTesting: mp_get_long\n");
    for (i = 0; i < ((int)(sizeof(unsigned long)*CHAR_BIT) - 1); ++i) {
       t = (1ULL << (i+1)) - 1;
       if (!t)
@@ -583,7 +574,6 @@ static int test_mp_get_long_long(void) {
       return EXIT_FAILURE;
    }
 
-   printf("\n\nTesting: mp_get_long_long\n");
    for (i = 0; i < ((int)(sizeof(unsigned long long)*CHAR_BIT) - 1); ++i) {
       r = (1ULL << (i+1)) - 1;
       if (!r)
@@ -619,7 +609,6 @@ static int test_mp_sqrt(void) {
       return EXIT_FAILURE;
    }
 
-   printf("\n\nTesting: mp_sqrt\n");
    for (i = 0; i < 1000; ++i) {
       printf("%6d\r", i);
       fflush(stdout);
@@ -656,7 +645,6 @@ static int test_mp_is_square(void) {
       return EXIT_FAILURE;
    }
 
-   printf("\n\nTesting: mp_is_square\n");
    for (i = 0; i < 1000; ++i) {
       printf("%6d\r", i);
       fflush(stdout);
@@ -914,7 +902,6 @@ static int test_mp_montgomery_reduce(void) {
    }
 
    /* test montgomery */
-   printf("Testing: montgomery...\n");
    for (i = 1; i <= 10; i++) {
       if (i == 10)
          i = 1000;
@@ -1005,7 +992,6 @@ static int test_mp_cnt_lsb(void) {
       return EXIT_FAILURE;
    }
 
-   printf("\n\nTesting: mp_cnt_lsb");
    mp_set(&a, 1uL);
    for (ix = 0; ix < 1024; ix++) {
       if (mp_cnt_lsb(&a) != ix) {
@@ -1032,7 +1018,6 @@ static int test_mp_reduce_2k(void) {
    }
 
    /* test mp_reduce_2k */
-   printf("\n\nTesting: mp_reduce_2k\n");
    for (cnt = 3; cnt <= 128; ++cnt) {
       mp_digit tmp;
 
@@ -1075,7 +1060,6 @@ static int test_mp_div_3(void) {
    }
 
    /* test mp_div_3  */
-   printf("\n\nTesting: mp_div_3...\n");
    mp_set(&d, 3uL);
    for (cnt = 0; cnt < 10000;) {
       mp_digit r2;
@@ -1114,7 +1098,6 @@ static int test_mp_dr_reduce(void) {
    }
 
    /* test the DR reduction */
-   printf("\n\nTesting: mp_dr_reduce...\n");
    for (cnt = 2; cnt < 32; cnt++) {
       printf("\r%d digit modulus", cnt);
       mp_grow(&a, cnt);
@@ -1211,7 +1194,7 @@ static int test_mp_reduce_2k_l(void) {
          goto LBL_ERR;
       }
    }
-   printf("...Passed\n");
+
    mp_clear_multi(&a, &b, NULL);
    return EXIT_SUCCESS;
  LBL_ERR:
@@ -1259,10 +1242,12 @@ static int all_tests(void) {
    unsigned long i;
 
    for (i = 0; i < sizeof (test) / sizeof (test[0]); ++i) {
-      printf("TEST %s.\n", test[i].name);
+      printf("TEST %s\n\n", test[i].name);
       if (test[i].fn() != EXIT_SUCCESS) {
+         printf("\n\nFAIL %s\n\n", test[i].name);
          return EXIT_FAILURE;
       }
+      printf("\n\n");
    }
 
    return EXIT_SUCCESS;
