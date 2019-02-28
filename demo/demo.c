@@ -36,18 +36,13 @@ static void ndraw(mp_int *a, const char *name)
    printf("0x%s\n", buf);
 }
 
-#if LTM_DEMO_TEST_VS_MTEST == 0
-#include "test.h"
-#endif
-
-#if LTM_DEMO_TEST_VS_MTEST != 0
 static void draw(mp_int *a)
 {
    ndraw(a, "");
 }
-#endif
 
-#if LTM_DEMO_TEST_VS_MTEST != 0
+#include "test.h"
+
 static void _panic(int l)
 {
    fprintf(stderr, "\n%d: fgets failed\n", l);
@@ -59,7 +54,6 @@ static void _panic(int l)
       char *ret = fgets(str, size, stream); \
       if (!ret) { _panic(__LINE__); } \
    }
-#endif
 
 static mp_int a, b, c, d, e, f;
 
@@ -74,57 +68,20 @@ static void _cleanup(void)
 #endif
 }
 
-#if LTM_DEMO_TEST_VS_MTEST != 0
-static char cmd[4096];
-#endif
-int main(void)
+static int test_vs_mtest(void)
 {
-#if LTM_DEMO_TEST_VS_MTEST != 0
+   char cmd[4096];
    char buf[4096];
    int ix;
    unsigned rr;
    unsigned long expt_n, add_n, sub_n, mul_n, div_n, sqr_n, mul2d_n, div2d_n,
             gcd_n, lcm_n, inv_n, div2_n, mul2_n, add_d_n, sub_d_n;
-#endif
 
    if (mp_init_multi(&a, &b, &c, &d, &e, &f, NULL)!= MP_OKAY)
       return EXIT_FAILURE;
 
    atexit(_cleanup);
 
-#if defined(LTM_DEMO_REAL_RAND)
-   if (!fd_urandom) {
-      fd_urandom = fopen("/dev/urandom", "r");
-      if (!fd_urandom) {
-#   if !defined(_WIN32)
-         fprintf(stderr, "\ncould not open /dev/urandom\n");
-#   endif
-      }
-   }
-#endif
-   srand(LTM_DEMO_RAND_SEED);
-
-#ifdef MP_8BIT
-   printf("Digit size 8 Bit \n");
-#endif
-#ifdef MP_16BIT
-   printf("Digit size 16 Bit \n");
-#endif
-#ifdef MP_32BIT
-   printf("Digit size 32 Bit \n");
-#endif
-#ifdef MP_64BIT
-   printf("Digit size 64 Bit \n");
-#endif
-   printf("Size of mp_digit: %u\n", (unsigned int)sizeof(mp_digit));
-   printf("Size of mp_word: %u\n", (unsigned int)sizeof(mp_word));
-   printf("DIGIT_BIT: %d\n", DIGIT_BIT);
-   printf("MP_PREC: %d\n", MP_PREC);
-
-#if LTM_DEMO_TEST_VS_MTEST == 0
-   if (all_tests() != EXIT_SUCCESS)
-      return EXIT_FAILURE;
-#else
    div2_n = mul2_n = inv_n = expt_n = lcm_n = gcd_n = add_n =
                                          sub_n = mul_n = div_n = sqr_n = mul2d_n = div2d_n = add_d_n = sub_d_n = 0;
 
@@ -475,8 +432,45 @@ int main(void)
          break;
       }
    }
-#endif
+
    return 0;
+}
+
+int main(void)
+{
+#if defined(LTM_DEMO_REAL_RAND)
+   if (!fd_urandom) {
+      fd_urandom = fopen("/dev/urandom", "r");
+      if (!fd_urandom) {
+#   if !defined(_WIN32)
+         fprintf(stderr, "\ncould not open /dev/urandom\n");
+#   endif
+      }
+   }
+#endif
+   srand(LTM_DEMO_RAND_SEED);
+
+#ifdef MP_8BIT
+   printf("Digit size 8 Bit \n");
+#endif
+#ifdef MP_16BIT
+   printf("Digit size 16 Bit \n");
+#endif
+#ifdef MP_32BIT
+   printf("Digit size 32 Bit \n");
+#endif
+#ifdef MP_64BIT
+   printf("Digit size 64 Bit \n");
+#endif
+   printf("Size of mp_digit: %u\n", (unsigned int)sizeof(mp_digit));
+   printf("Size of mp_word: %u\n", (unsigned int)sizeof(mp_word));
+   printf("DIGIT_BIT: %d\n", DIGIT_BIT);
+   printf("MP_PREC: %d\n", MP_PREC);
+
+   if (LTM_DEMO_TEST_VS_MTEST) {
+      return test_vs_mtest();
+   }
+   return all_tests();
 }
 
 /* ref:         $Format:%D$ */
