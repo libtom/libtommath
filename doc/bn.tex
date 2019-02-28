@@ -97,7 +97,8 @@ public domain everyone is entitled to do with them as they see fit.
 
 LibTomMath is meant to be very ``GCC friendly'' as it comes with a makefile well suited for GCC.  However, the library will
 also build in MSVC, Borland C out of the box.  For any other ISO C compiler a makefile will have to be made by the end
-developer.
+developer. Please consider to commit such a makefile to the LibTomMath developers, currently residing at
+\url{http://github.com/libtom/libtommath}, if successfully done so.
 
 \subsection{Static Libraries}
 To build as a static library for GCC issue the following
@@ -115,6 +116,7 @@ This will build the library and archive the object files in ``tommath.lib''.  Th
 version 6.00 with service pack 5.
 
 \subsection{Shared Libraries}
+\subsubsection{GNU based Operating Systems}
 To build as a shared library for GCC issue the following
 \begin{alltt}
 make -f makefile.shared
@@ -123,10 +125,60 @@ This requires the ``libtool'' package (common on most Linux/BSD systems).  It wi
 and static then install (by default) into /usr/lib as well as install the header files in /usr/include.  The shared
 library (resource) will be called ``libtommath.la'' while the static library called ``libtommath.a''.  Generally
 you use libtool to link your application against the shared object.
-
+\subsubsection{Microsoft Windows based Operating Systems}
 There is limited support for making a ``DLL'' in windows via the ``makefile.cygwin\_dll'' makefile.  It requires
 Cygwin to work with since it requires the auto-export/import functionality.  The resulting DLL and import library
 ``libtommath.dll.a'' can be used to link LibTomMath dynamically to any Windows program using Cygwin.
+\subsubsection{OpenBSD}
+OpenBSD replaced some of their GNU-tools, especially \texttt{libtool} with their own, slightly different versions. To ease the workload of LibTomMath's developer team, only a static library can be build with the included \texttt{makefile.unix}.
+
+The wrong \texttt{make} will result in errors like:
+\begin{alltt}
+*** Parse error in /home/user/GITHUB/libtommath: Need an operator in 'LIBNAME' )
+*** Parse error: Need an operator in 'endif' (makefile.shared:8)
+*** Parse error: Need an operator in 'CROSS_COMPILE' (makefile_include.mk:16)
+*** Parse error: Need an operator in 'endif' (makefile_include.mk:18)
+*** Parse error: Missing dependency operator (makefile_include.mk:22)
+*** Parse error: Missing dependency operator (makefile_include.mk:23)
+...
+\end{alltt}
+The wrong \texttt{libtool} will build it all fine but when it comes to the final linking fails with
+\begin{alltt}
+...
+cc -I./ -Wall -Wsign-compare -Wextra -Wshadow -Wsystem-headers -Wdeclaration-afo...
+cc -I./ -Wall -Wsign-compare -Wextra -Wshadow -Wsystem-headers -Wdeclaration-afo...
+cc -I./ -Wall -Wsign-compare -Wextra -Wshadow -Wsystem-headers -Wdeclaration-afo...
+libtool --mode=link --tag=CC cc  bn_error.lo bn_fast_mp_invmod.lo bn_fast_mp_mo 
+libtool: link: cc bn_error.lo bn_fast_mp_invmod.lo bn_fast_mp_montgomery_reduce0
+bn_error.lo: file not recognized: File format not recognized
+cc: error: linker command failed with exit code 1 (use -v to see invocation)
+Error while executing cc bn_error.lo bn_fast_mp_invmod.lo bn_fast_mp_montgomery0
+gmake: *** [makefile.shared:64: libtommath.la] Error 1
+\end{alltt}
+
+To build a shared library with OpenBSD\footnote{Tested with OpenBSD version 6.4} the GNU versions of \texttt{make} and \texttt{libtool} are needed.
+\begin{alltt}
+$ sudo pkg_add gmake libtool
+\end{alltt}
+At this time two versions of \texttt{libtool} are installed and both are named \texttt{libtool}, unfortunately but GNU \texttt{libtool} has been placed in \texttt{/usr/local/bin/} and the native version in \texttt{/usr/bin/}. The path might be different in other versions of OpenBSD but both programms differ in the output of \texttt{libtool --version}
+\begin{alltt}
+$ /usr/local/bin/libtool --version                              
+libtool (GNU libtool) 2.4.2
+Written by Gordon Matzigkeit <gord@gnu.ai.mit.edu>, 1996
+
+Copyright (C) 2011 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+$ libtool --version
+libtool (not (GNU libtool)) 1.5.26
+\end{alltt}
+
+The shared library should build now with
+\begin{alltt}
+LIBTOOL="/usr/local/bin/libtool" gmake -f makefile.shared
+\end{alltt}
+You might need to run a \texttt{gmake -f makefile.shared clean} first.
+
 
 \subsection{Testing}
 To build the library and the test harness type
