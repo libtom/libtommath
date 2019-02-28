@@ -1,7 +1,8 @@
 static int test_trivial_stuff(void) {
    mp_int a, b, c, d;
-   if (mp_init_multi(&a, &b, &c, &d, NULL)!= MP_OKAY)
+   if (mp_init_multi(&a, &b, &c, &d, NULL)!= MP_OKAY) {
       return EXIT_FAILURE;
+   }
 
    /* a: 0->5 */
    mp_set_int(&a, 5);
@@ -64,24 +65,25 @@ static int test_trivial_stuff(void) {
    return EXIT_FAILURE;
 }
 
-struct mp_jacobi_st {
-   unsigned long n;
-   int c[16];
-};
-
-static struct mp_jacobi_st jacobi[] = {
-   { 3, {  1, -1,  0,  1, -1,  0,  1, -1,  0,  1, -1,  0,  1, -1,  0,  1 } },
-   { 5, {  0,  1, -1, -1,  1,  0,  1, -1, -1,  1,  0,  1, -1, -1,  1,  0 } },
-   { 7, {  1, -1,  1, -1, -1,  0,  1,  1, -1,  1, -1, -1,  0,  1,  1, -1 } },
-   { 9, { -1,  1,  0,  1,  1,  0,  1,  1,  0,  1,  1,  0,  1,  1,  0,  1 } },
-};
-
 static int test_mp_jacobi(void) {
+   struct mp_jacobi_st {
+      unsigned long n;
+      int c[16];
+   };
+
+   static struct mp_jacobi_st jacobi[] = {
+      { 3, {  1, -1,  0,  1, -1,  0,  1, -1,  0,  1, -1,  0,  1, -1,  0,  1 } },
+      { 5, {  0,  1, -1, -1,  1,  0,  1, -1, -1,  1,  0,  1, -1, -1,  1,  0 } },
+      { 7, {  1, -1,  1, -1, -1,  0,  1,  1, -1,  1, -1, -1,  0,  1,  1, -1 } },
+      { 9, { -1,  1,  0,  1,  1,  0,  1,  1,  0,  1,  1,  0,  1,  1,  0,  1 } },
+   };
+
    int i, n, err, should, cnt;
 
    mp_int a, b;
-   if (mp_init_multi(&a, &b, NULL)!= MP_OKAY)
+   if (mp_init_multi(&a, &b, NULL)!= MP_OKAY) {
       return EXIT_FAILURE;
+   }
 
    mp_set_int(&a, 0);
    mp_set_int(&b, 1);
@@ -122,42 +124,43 @@ static int test_mp_jacobi(void) {
    return EXIT_FAILURE;
 }
 
-struct mp_kronecker_st {
-   long n;
-   int c[21];
-};
-static struct mp_kronecker_st kronecker[] = {
-   /*-10, -9, -8, -7,-6, -5, -4, -3, -2, -1, 0, 1,  2,  3, 4,  5,  6,  7,  8, 9, 10*/
-   { -10, {  0, -1,  0, -1, 0,  0,  0,  1,  0, -1, 0, 1,  0, -1, 0,  0,  0,  1,  0, 1,  0  } },
-   {  -9, { -1,  0, -1,  1, 0, -1, -1,  0, -1, -1, 0, 1,  1,  0, 1,  1,  0, -1,  1, 0,  1  } },
-   {  -8, {  0, -1,  0,  1, 0,  1,  0, -1,  0, -1, 0, 1,  0,  1, 0, -1,  0, -1,  0, 1,  0  } },
-   {  -7, {  1, -1, -1,  0, 1,  1, -1,  1, -1, -1, 0, 1,  1, -1, 1, -1, -1,  0,  1, 1, -1  } },
-   {  -6, {  0,  0,  0, -1, 0, -1,  0,  0,  0, -1, 0, 1,  0,  0, 0,  1,  0,  1,  0, 0,  0  } },
-   {  -5, {  0, -1,  1, -1, 1,  0, -1, -1,  1, -1, 0, 1, -1,  1, 1,  0, -1,  1, -1, 1,  0  } },
-   {  -4, {  0, -1,  0,  1, 0, -1,  0,  1,  0, -1, 0, 1,  0, -1, 0,  1,  0, -1,  0, 1,  0  } },
-   {  -3, { -1,  0,  1, -1, 0,  1, -1,  0,  1, -1, 0, 1, -1,  0, 1, -1,  0,  1, -1, 0,  1  } },
-   {  -2, {  0, -1,  0,  1, 0,  1,  0, -1,  0, -1, 0, 1,  0,  1, 0, -1,  0, -1,  0, 1,  0  } },
-   {  -1, { -1, -1, -1,  1, 1, -1, -1,  1, -1, -1, 1, 1,  1, -1, 1,  1, -1, -1,  1, 1,  1  } },
-   {   0, {  0,  0,  0,  0, 0,  0,  0,  0,  0,  1, 0, 1,  0,  0, 0,  0,  0,  0,  0, 0,  0  } },
-   {   1, {  1,  1,  1,  1, 1,  1,  1,  1,  1,  1, 1, 1,  1,  1, 1,  1,  1,  1,  1, 1,  1  } },
-   {   2, {  0,  1,  0,  1, 0, -1,  0, -1,  0,  1, 0, 1,  0, -1, 0, -1,  0,  1,  0, 1,  0  } },
-   {   3, {  1,  0, -1, -1, 0, -1,  1,  0, -1,  1, 0, 1, -1,  0, 1, -1,  0, -1, -1, 0,  1  } },
-   {   4, {  0,  1,  0,  1, 0,  1,  0,  1,  0,  1, 0, 1,  0,  1, 0,  1,  0,  1,  0, 1,  0  } },
-   {   5, {  0,  1, -1, -1, 1,  0,  1, -1, -1,  1, 0, 1, -1, -1, 1,  0,  1, -1, -1, 1,  0  } },
-   {   6, {  0,  0,  0, -1, 0,  1,  0,  0,  0,  1, 0, 1,  0,  0, 0,  1,  0, -1,  0, 0,  0  } },
-   {   7, { -1,  1,  1,  0, 1, -1,  1,  1,  1,  1, 0, 1,  1,  1, 1, -1,  1,  0,  1, 1, -1  } },
-   {   8, {  0,  1,  0,  1, 0, -1,  0, -1,  0,  1, 0, 1,  0, -1, 0, -1,  0,  1,  0, 1,  0  } },
-   {   9, {  1,  0,  1,  1, 0,  1,  1,  0,  1,  1, 0, 1,  1,  0, 1,  1,  0,  1,  1, 0,  1  } },
-   {  10, {  0,  1,  0, -1, 0,  0,  0,  1,  0,  1, 0, 1,  0,  1, 0,  0,  0, -1,  0, 1,  0  } }
-};
-
 static int test_mp_kronecker(void) {
+   struct mp_kronecker_st {
+      long n;
+      int c[21];
+   };
+   static struct mp_kronecker_st kronecker[] = {
+      /*-10, -9, -8, -7,-6, -5, -4, -3, -2, -1, 0, 1,  2,  3, 4,  5,  6,  7,  8, 9, 10*/
+      { -10, {  0, -1,  0, -1, 0,  0,  0,  1,  0, -1, 0, 1,  0, -1, 0,  0,  0,  1,  0, 1,  0  } },
+      {  -9, { -1,  0, -1,  1, 0, -1, -1,  0, -1, -1, 0, 1,  1,  0, 1,  1,  0, -1,  1, 0,  1  } },
+      {  -8, {  0, -1,  0,  1, 0,  1,  0, -1,  0, -1, 0, 1,  0,  1, 0, -1,  0, -1,  0, 1,  0  } },
+      {  -7, {  1, -1, -1,  0, 1,  1, -1,  1, -1, -1, 0, 1,  1, -1, 1, -1, -1,  0,  1, 1, -1  } },
+      {  -6, {  0,  0,  0, -1, 0, -1,  0,  0,  0, -1, 0, 1,  0,  0, 0,  1,  0,  1,  0, 0,  0  } },
+      {  -5, {  0, -1,  1, -1, 1,  0, -1, -1,  1, -1, 0, 1, -1,  1, 1,  0, -1,  1, -1, 1,  0  } },
+      {  -4, {  0, -1,  0,  1, 0, -1,  0,  1,  0, -1, 0, 1,  0, -1, 0,  1,  0, -1,  0, 1,  0  } },
+      {  -3, { -1,  0,  1, -1, 0,  1, -1,  0,  1, -1, 0, 1, -1,  0, 1, -1,  0,  1, -1, 0,  1  } },
+      {  -2, {  0, -1,  0,  1, 0,  1,  0, -1,  0, -1, 0, 1,  0,  1, 0, -1,  0, -1,  0, 1,  0  } },
+      {  -1, { -1, -1, -1,  1, 1, -1, -1,  1, -1, -1, 1, 1,  1, -1, 1,  1, -1, -1,  1, 1,  1  } },
+      {   0, {  0,  0,  0,  0, 0,  0,  0,  0,  0,  1, 0, 1,  0,  0, 0,  0,  0,  0,  0, 0,  0  } },
+      {   1, {  1,  1,  1,  1, 1,  1,  1,  1,  1,  1, 1, 1,  1,  1, 1,  1,  1,  1,  1, 1,  1  } },
+      {   2, {  0,  1,  0,  1, 0, -1,  0, -1,  0,  1, 0, 1,  0, -1, 0, -1,  0,  1,  0, 1,  0  } },
+      {   3, {  1,  0, -1, -1, 0, -1,  1,  0, -1,  1, 0, 1, -1,  0, 1, -1,  0, -1, -1, 0,  1  } },
+      {   4, {  0,  1,  0,  1, 0,  1,  0,  1,  0,  1, 0, 1,  0,  1, 0,  1,  0,  1,  0, 1,  0  } },
+      {   5, {  0,  1, -1, -1, 1,  0,  1, -1, -1,  1, 0, 1, -1, -1, 1,  0,  1, -1, -1, 1,  0  } },
+      {   6, {  0,  0,  0, -1, 0,  1,  0,  0,  0,  1, 0, 1,  0,  0, 0,  1,  0, -1,  0, 0,  0  } },
+      {   7, { -1,  1,  1,  0, 1, -1,  1,  1,  1,  1, 0, 1,  1,  1, 1, -1,  1,  0,  1, 1, -1  } },
+      {   8, {  0,  1,  0,  1, 0, -1,  0, -1,  0,  1, 0, 1,  0, -1, 0, -1,  0,  1,  0, 1,  0  } },
+      {   9, {  1,  0,  1,  1, 0,  1,  1,  0,  1,  1, 0, 1,  1,  0, 1,  1,  0,  1,  1, 0,  1  } },
+      {  10, {  0,  1,  0, -1, 0,  0,  0,  1,  0,  1, 0, 1,  0,  1, 0,  0,  0, -1,  0, 1,  0  } }
+   };
+
    long k, m;
    int i, err, cnt;
 
    mp_int a, b;
-   if (mp_init_multi(&a, &b, NULL)!= MP_OKAY)
+   if (mp_init_multi(&a, &b, NULL)!= MP_OKAY) {
       return EXIT_FAILURE;
+   }
 
    mp_set_int(&a, 0);
    mp_set_int(&b, 1u);
@@ -207,8 +210,9 @@ static int test_mp_complement(void) {
    int i;
 
    mp_int a, b, c;
-   if (mp_init_multi(&a, &b, &c, NULL)!= MP_OKAY)
+   if (mp_init_multi(&a, &b, &c, NULL)!= MP_OKAY) {
       return EXIT_FAILURE;
+   }
 
    printf("\n\nTesting: mp_complement");
    for (i = 0; i < 1000; ++i) {
@@ -240,8 +244,9 @@ static int test_mp_tc_div_2d(void) {
    int i;
 
    mp_int a, b, d;
-   if (mp_init_multi(&a, &b, &d, NULL)!= MP_OKAY)
+   if (mp_init_multi(&a, &b, &d, NULL)!= MP_OKAY) {
       return EXIT_FAILURE;
+   }
 
    printf("\n\nTesting: mp_tc_div_2d");
    for (i = 0; i < 1000; ++i) {
@@ -277,8 +282,9 @@ static int test_mp_tc_xor(void) {
    int i;
 
    mp_int a, b, c, d;
-   if (mp_init_multi(&a, &b, &c, &d, NULL)!= MP_OKAY)
+   if (mp_init_multi(&a, &b, &c, &d, NULL)!= MP_OKAY) {
       return EXIT_FAILURE;
+   }
 
    printf("\n\nTesting: mp_tc_xor");
    for (i = 0; i < 1000; ++i) {
@@ -317,8 +323,9 @@ static int test_mp_tc_or(void) {
    int i;
 
    mp_int a, b, c, d;
-   if (mp_init_multi(&a, &b, &c, &d, NULL)!= MP_OKAY)
+   if (mp_init_multi(&a, &b, &c, &d, NULL)!= MP_OKAY) {
       return EXIT_FAILURE;
+   }
 
    printf("\n\nTesting: mp_tc_or");
    for (i = 0; i < 1000; ++i) {
@@ -356,8 +363,9 @@ static int test_mp_tc_and(void) {
    int i;
 
    mp_int a, b, c, d;
-   if (mp_init_multi(&a, &b, &c, &d, NULL)!= MP_OKAY)
+   if (mp_init_multi(&a, &b, &c, &d, NULL)!= MP_OKAY) {
       return EXIT_FAILURE;
+   }
 
    printf("\n\nTesting: mp_tc_and");
    for (i = 0; i < 1000; ++i) {
@@ -393,8 +401,9 @@ static int test_mp_tc_and(void) {
 
 static int test_mp_invmod(void) {
    mp_int a, b, c, d;
-   if (mp_init_multi(&a, &b, &c, &d, NULL)!= MP_OKAY)
+   if (mp_init_multi(&a, &b, &c, &d, NULL)!= MP_OKAY) {
       return EXIT_FAILURE;
+   }
 
    /* mp_invmod corner-case of https://github.com/libtom/libtommath/issues/118 */
    printf("\n\nTesting: mp_invmod");
@@ -439,8 +448,9 @@ static int test_mp_set_double(void) {
    int i;
 
    mp_int a, b;
-   if (mp_init_multi(&a, &b, NULL)!= MP_OKAY)
+   if (mp_init_multi(&a, &b, NULL)!= MP_OKAY) {
       return EXIT_FAILURE;
+   }
 
    /* test mp_get_double/mp_set_double */
 #if defined(__STDC_IEC_559__) || defined(__GCC_IEC_559)
@@ -497,8 +507,9 @@ static int test_mp_get_int(void) {
    int i;
 
    mp_int a, b;
-   if (mp_init_multi(&a, &b, NULL)!= MP_OKAY)
+   if (mp_init_multi(&a, &b, NULL)!= MP_OKAY) {
       return EXIT_FAILURE;
+   }
 
    printf("\n\nTesting: mp_get_int");
    for (i = 0; i < 1000; ++i) {
@@ -532,8 +543,9 @@ static int test_mp_get_long(void) {
    int i;
 
    mp_int a, b;
-   if (mp_init_multi(&a, &b, NULL)!= MP_OKAY)
+   if (mp_init_multi(&a, &b, NULL)!= MP_OKAY) {
       return EXIT_FAILURE;
+   }
 
    printf("\n\nTesting: mp_get_long\n");
    for (i = 0; i < ((int)(sizeof(unsigned long)*CHAR_BIT) - 1); ++i) {
@@ -567,8 +579,9 @@ static int test_mp_get_long_long(void) {
    int i;
 
    mp_int a, b;
-   if (mp_init_multi(&a, &b, NULL)!= MP_OKAY)
+   if (mp_init_multi(&a, &b, NULL)!= MP_OKAY) {
       return EXIT_FAILURE;
+   }
 
    printf("\n\nTesting: mp_get_long_long\n");
    for (i = 0; i < ((int)(sizeof(unsigned long long)*CHAR_BIT) - 1); ++i) {
@@ -602,8 +615,9 @@ static int test_mp_sqrt(void) {
    int i, n;
 
    mp_int a, b, c, d;
-   if (mp_init_multi(&a, &b, &c, &d, NULL)!= MP_OKAY)
+   if (mp_init_multi(&a, &b, &c, &d, NULL)!= MP_OKAY) {
       return EXIT_FAILURE;
+   }
 
    printf("\n\nTesting: mp_sqrt\n");
    for (i = 0; i < 1000; ++i) {
@@ -638,8 +652,9 @@ static int test_mp_is_square(void) {
    int i, n;
 
    mp_int a, b;
-   if (mp_init_multi(&a, &b, NULL)!= MP_OKAY)
+   if (mp_init_multi(&a, &b, NULL)!= MP_OKAY) {
       return EXIT_FAILURE;
+   }
 
    printf("\n\nTesting: mp_is_square\n");
    for (i = 0; i < 1000; ++i) {
@@ -680,24 +695,24 @@ static int test_mp_is_square(void) {
    return EXIT_FAILURE;
 }
 
-struct mp_sqrtmod_prime_st {
-   unsigned long p;
-   unsigned long n;
-   mp_digit r;
-};
-
-static struct mp_sqrtmod_prime_st sqrtmod_prime[] = {
-   { 5, 14, 3 },
-   { 7, 9, 4 },
-   { 113, 2, 62 }
-};
-
 static int test_mp_sqrtmod_prime(void) {
+   struct mp_sqrtmod_prime_st {
+      unsigned long p;
+      unsigned long n;
+      mp_digit r;
+   };
+
+   static struct mp_sqrtmod_prime_st sqrtmod_prime[] = {
+      { 5, 14, 3 },
+      { 7, 9, 4 },
+      { 113, 2, 62 }
+   };
    int i;
 
    mp_int a, b, c;
-   if (mp_init_multi(&a, &b, &c, NULL)!= MP_OKAY)
+   if (mp_init_multi(&a, &b, &c, NULL)!= MP_OKAY) {
       return EXIT_FAILURE;
+   }
 
    /* r^2 = n (mod p) */
    for (i = 0; i < (int)(sizeof(sqrtmod_prime)/sizeof(sqrtmod_prime[0])); ++i) {
@@ -752,8 +767,9 @@ static int test_mp_prime_random_ex(void) {
    int ix, err;
 
    mp_int a, b;
-   if (mp_init_multi(&a, &b, NULL)!= MP_OKAY)
+   if (mp_init_multi(&a, &b, NULL)!= MP_OKAY) {
       return EXIT_FAILURE;
+   }
 
    /* test for size */
    for (ix = 10; ix < 128; ix++) {
@@ -784,8 +800,9 @@ static int test_mp_prime_is_prime(void) {
    int ix, err, cnt;
 
    mp_int a, b;
-   if (mp_init_multi(&a, &b, NULL)!= MP_OKAY)
+   if (mp_init_multi(&a, &b, NULL)!= MP_OKAY) {
       return EXIT_FAILURE;
+   }
 
    /* strong Miller-Rabin pseudoprime to the first 200 primes (F. Arnault) */
    puts("Testing mp_prime_is_prime() with Arnault's pseudoprime  803...901 \n");
@@ -892,8 +909,9 @@ static int test_mp_montgomery_reduce(void) {
    char buf[4096];
 
    mp_int a, b, c, d, e;
-   if (mp_init_multi(&a, &b, &c, &d, &e, NULL)!= MP_OKAY)
+   if (mp_init_multi(&a, &b, &c, &d, &e, NULL)!= MP_OKAY) {
       return EXIT_FAILURE;
+   }
 
    /* test montgomery */
    printf("Testing: montgomery...\n");
@@ -953,8 +971,9 @@ static int test_mp_read_radix(void) {
    char buf[4096];
 
    mp_int a;
-   if (mp_init_multi(&a, NULL)!= MP_OKAY)
+   if (mp_init_multi(&a, NULL)!= MP_OKAY) {
       return EXIT_FAILURE;
+   }
 
    mp_read_radix(&a, "123456", 10);
    mp_toradix_n(&a, buf, 10, 3);
@@ -982,8 +1001,9 @@ static int test_mp_cnt_lsb(void) {
    int ix;
 
    mp_int a, b;
-   if (mp_init_multi(&a, &b, NULL)!= MP_OKAY)
+   if (mp_init_multi(&a, &b, NULL)!= MP_OKAY) {
       return EXIT_FAILURE;
+   }
 
    printf("\n\nTesting: mp_cnt_lsb");
    mp_set(&a, 1uL);
@@ -1007,8 +1027,9 @@ static int test_mp_reduce_2k(void) {
    int ix, cnt;
 
    mp_int a, b, c, d;
-   if (mp_init_multi(&a, &b, &c, &d, NULL)!= MP_OKAY)
+   if (mp_init_multi(&a, &b, &c, &d, NULL)!= MP_OKAY) {
       return EXIT_FAILURE;
+   }
 
    /* test mp_reduce_2k */
    printf("\n\nTesting: mp_reduce_2k\n");
@@ -1049,8 +1070,9 @@ static int test_mp_div_3(void) {
    int cnt;
 
    mp_int a, b, c, d, e;
-   if (mp_init_multi(&a, &b, &c, &d, &e, NULL)!= MP_OKAY)
+   if (mp_init_multi(&a, &b, &c, &d, &e, NULL)!= MP_OKAY) {
       return EXIT_FAILURE;
+   }
 
    /* test mp_div_3  */
    printf("\n\nTesting: mp_div_3...\n");
@@ -1087,8 +1109,9 @@ static int test_mp_dr_reduce(void) {
    int ix;
 
    mp_int a, b, c;
-   if (mp_init_multi(&a, &b, &c, NULL)!= MP_OKAY)
+   if (mp_init_multi(&a, &b, &c, NULL)!= MP_OKAY) {
       return EXIT_FAILURE;
+   }
 
    /* test the DR reduction */
    printf("\n\nTesting: mp_dr_reduce...\n");
@@ -1138,8 +1161,9 @@ static int test_mp_dr_reduce(void) {
 static int test_mp_reduce_2k_l(void) {
 #   if LTM_DEMO_TEST_REDUCE_2K_L
    mp_int a, b;
-   if (mp_init_multi(&a, &b, NULL)!= MP_OKAY)
+   if (mp_init_multi(&a, &b, NULL)!= MP_OKAY) {
       return EXIT_FAILURE;
+   }
    /* test the mp_reduce_2k_l code */
 #      if LTM_DEMO_TEST_REDUCE_2K_L == 1
    /* first load P with 2^1024 - 0x2A434 B9FDEC95 D8F9D550 FFFFFFFF FFFFFFFF */
@@ -1199,83 +1223,109 @@ static int test_mp_reduce_2k_l(void) {
 }
 
 static int all_tests(void) {
-   if (test_trivial_stuff() != EXIT_SUCCESS)
+   if (test_trivial_stuff() != EXIT_SUCCESS) {
       return EXIT_FAILURE;
+   }
 
-   if (test_mp_jacobi() != EXIT_SUCCESS)
+   if (test_mp_jacobi() != EXIT_SUCCESS) {
       return EXIT_FAILURE;
+   }
 
-   if (test_mp_kronecker() != EXIT_SUCCESS)
+   if (test_mp_kronecker() != EXIT_SUCCESS) {
       return EXIT_FAILURE;
+   }
 
-   if (test_mp_complement() != EXIT_SUCCESS)
+   if (test_mp_complement() != EXIT_SUCCESS) {
       return EXIT_FAILURE;
+   }
 
-   if (test_mp_tc_xor() != EXIT_SUCCESS)
+   if (test_mp_tc_xor() != EXIT_SUCCESS) {
       return EXIT_FAILURE;
+   }
 
-   if (test_mp_tc_and() != EXIT_SUCCESS)
+   if (test_mp_tc_and() != EXIT_SUCCESS) {
       return EXIT_FAILURE;
+   }
 
-   if (test_mp_tc_or() != EXIT_SUCCESS)
+   if (test_mp_tc_or() != EXIT_SUCCESS) {
       return EXIT_FAILURE;
+   }
 
-   if (test_mp_tc_div_2d() != EXIT_SUCCESS)
+   if (test_mp_tc_div_2d() != EXIT_SUCCESS) {
       return EXIT_FAILURE;
+   }
 
-   if (test_mp_tc_div_2d() != EXIT_SUCCESS)
+   if (test_mp_tc_div_2d() != EXIT_SUCCESS) {
       return EXIT_FAILURE;
+   }
 
-   if (test_mp_sqrt() != EXIT_SUCCESS)
+   if (test_mp_sqrt() != EXIT_SUCCESS) {
       return EXIT_FAILURE;
+   }
 
-   if (test_mp_is_square() != EXIT_SUCCESS)
+   if (test_mp_is_square() != EXIT_SUCCESS) {
       return EXIT_FAILURE;
+   }
 
-   if (test_mp_sqrtmod_prime() != EXIT_SUCCESS)
+   if (test_mp_sqrtmod_prime() != EXIT_SUCCESS) {
       return EXIT_FAILURE;
+   }
 
-   if (test_mp_prime_is_prime() != EXIT_SUCCESS)
+   if (test_mp_prime_is_prime() != EXIT_SUCCESS) {
       return EXIT_FAILURE;
+   }
 
-   if (test_mp_get_int() != EXIT_SUCCESS)
+   if (test_mp_get_int() != EXIT_SUCCESS) {
       return EXIT_FAILURE;
+   }
 
-   if (test_mp_get_long() != EXIT_SUCCESS)
+   if (test_mp_get_long() != EXIT_SUCCESS) {
       return EXIT_FAILURE;
+   }
 
-   if (test_mp_get_long_long() != EXIT_SUCCESS)
+   if (test_mp_get_long_long() != EXIT_SUCCESS) {
       return EXIT_FAILURE;
+   }
 
-   if (test_mp_invmod() != EXIT_SUCCESS)
+   if (test_mp_invmod() != EXIT_SUCCESS) {
       return EXIT_FAILURE;
+   }
 
-   if (test_mp_set_double() != EXIT_SUCCESS)
+   if (test_mp_set_double() != EXIT_SUCCESS) {
       return EXIT_FAILURE;
+   }
 
-   if (test_mp_reduce_2k_l() != EXIT_SUCCESS)
+   if (test_mp_reduce_2k_l() != EXIT_SUCCESS) {
       return EXIT_FAILURE;
+   }
 
-   if (test_mp_dr_reduce() != EXIT_SUCCESS)
+   if (test_mp_dr_reduce() != EXIT_SUCCESS) {
       return EXIT_FAILURE;
+   }
 
-   if (test_mp_div_3() != EXIT_SUCCESS)
+   if (test_mp_div_3() != EXIT_SUCCESS) {
       return EXIT_FAILURE;
+   }
 
-   if (test_mp_reduce_2k() != EXIT_SUCCESS)
+   if (test_mp_reduce_2k() != EXIT_SUCCESS) {
       return EXIT_FAILURE;
+   }
 
-   if (test_mp_cnt_lsb() != EXIT_SUCCESS)
+   if (test_mp_cnt_lsb() != EXIT_SUCCESS) {
       return EXIT_FAILURE;
+   }
 
-   if (test_mp_read_radix() != EXIT_SUCCESS)
+   if (test_mp_read_radix() != EXIT_SUCCESS) {
       return EXIT_FAILURE;
+   }
 
-   if (test_mp_montgomery_reduce() != EXIT_SUCCESS)
+   if (test_mp_montgomery_reduce() != EXIT_SUCCESS) {
       return EXIT_FAILURE;
+   }
 
-   if (test_mp_prime_random_ex() != EXIT_SUCCESS)
+   if (test_mp_prime_random_ex() != EXIT_SUCCESS) {
       return EXIT_FAILURE;
+   }
 
    return EXIT_SUCCESS;
 }
