@@ -1223,108 +1223,46 @@ static int test_mp_reduce_2k_l(void) {
 }
 
 static int all_tests(void) {
-   if (test_trivial_stuff() != EXIT_SUCCESS) {
-      return EXIT_FAILURE;
-   }
+   static const struct {
+      const char* name;
+      int (*fn)(void);
+   } test[] = {
+#define T(n) { #n, test_##n }
+      T(trivial_stuff),
+      T(mp_jacobi),
+      T(mp_kronecker),
+      T(mp_complement),
+      T(mp_tc_xor),
+      T(mp_tc_and),
+      T(mp_tc_or),
+      T(mp_tc_div_2d),
+      T(mp_tc_div_2d),
+      T(mp_sqrt),
+      T(mp_is_square),
+      T(mp_sqrtmod_prime),
+      T(mp_prime_is_prime),
+      T(mp_get_int),
+      T(mp_get_long),
+      T(mp_get_long_long),
+      T(mp_invmod),
+      T(mp_set_double),
+      T(mp_reduce_2k_l),
+      T(mp_dr_reduce),
+      T(mp_div_3),
+      T(mp_reduce_2k),
+      T(mp_cnt_lsb),
+      T(mp_read_radix),
+      T(mp_montgomery_reduce),
+      T(mp_prime_random_ex),
+#undef T
+   };
+   unsigned long i;
 
-   if (test_mp_jacobi() != EXIT_SUCCESS) {
-      return EXIT_FAILURE;
-   }
-
-   if (test_mp_kronecker() != EXIT_SUCCESS) {
-      return EXIT_FAILURE;
-   }
-
-   if (test_mp_complement() != EXIT_SUCCESS) {
-      return EXIT_FAILURE;
-   }
-
-   if (test_mp_tc_xor() != EXIT_SUCCESS) {
-      return EXIT_FAILURE;
-   }
-
-   if (test_mp_tc_and() != EXIT_SUCCESS) {
-      return EXIT_FAILURE;
-   }
-
-   if (test_mp_tc_or() != EXIT_SUCCESS) {
-      return EXIT_FAILURE;
-   }
-
-   if (test_mp_tc_div_2d() != EXIT_SUCCESS) {
-      return EXIT_FAILURE;
-   }
-
-   if (test_mp_tc_div_2d() != EXIT_SUCCESS) {
-      return EXIT_FAILURE;
-   }
-
-   if (test_mp_sqrt() != EXIT_SUCCESS) {
-      return EXIT_FAILURE;
-   }
-
-   if (test_mp_is_square() != EXIT_SUCCESS) {
-      return EXIT_FAILURE;
-   }
-
-   if (test_mp_sqrtmod_prime() != EXIT_SUCCESS) {
-      return EXIT_FAILURE;
-   }
-
-   if (test_mp_prime_is_prime() != EXIT_SUCCESS) {
-      return EXIT_FAILURE;
-   }
-
-   if (test_mp_get_int() != EXIT_SUCCESS) {
-      return EXIT_FAILURE;
-   }
-
-   if (test_mp_get_long() != EXIT_SUCCESS) {
-      return EXIT_FAILURE;
-   }
-
-   if (test_mp_get_long_long() != EXIT_SUCCESS) {
-      return EXIT_FAILURE;
-   }
-
-   if (test_mp_invmod() != EXIT_SUCCESS) {
-      return EXIT_FAILURE;
-   }
-
-   if (test_mp_set_double() != EXIT_SUCCESS) {
-      return EXIT_FAILURE;
-   }
-
-   if (test_mp_reduce_2k_l() != EXIT_SUCCESS) {
-      return EXIT_FAILURE;
-   }
-
-   if (test_mp_dr_reduce() != EXIT_SUCCESS) {
-      return EXIT_FAILURE;
-   }
-
-   if (test_mp_div_3() != EXIT_SUCCESS) {
-      return EXIT_FAILURE;
-   }
-
-   if (test_mp_reduce_2k() != EXIT_SUCCESS) {
-      return EXIT_FAILURE;
-   }
-
-   if (test_mp_cnt_lsb() != EXIT_SUCCESS) {
-      return EXIT_FAILURE;
-   }
-
-   if (test_mp_read_radix() != EXIT_SUCCESS) {
-      return EXIT_FAILURE;
-   }
-
-   if (test_mp_montgomery_reduce() != EXIT_SUCCESS) {
-      return EXIT_FAILURE;
-   }
-
-   if (test_mp_prime_random_ex() != EXIT_SUCCESS) {
-      return EXIT_FAILURE;
+   for (i = 0; i < sizeof (test) / sizeof (test[0]); ++i) {
+      printf("TEST %s.\n", test[i].name);
+      if (test[i].fn() != EXIT_SUCCESS) {
+         return EXIT_FAILURE;
+      }
    }
 
    return EXIT_SUCCESS;
