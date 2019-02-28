@@ -64,7 +64,7 @@ int mp_tc_xor(const mp_int *a, const mp_int *b, mp_int *c)
 
    res = mp_xor(a, b, c);
 
-   if ((sa != sb) && (res == MP_OKAY)) {
+   if ((((sa == MP_NEG) && (sb != MP_NEG)) || ((sa != MP_NEG) && (sb == MP_NEG))) && (res == MP_OKAY)) {
       res = mp_sub(c, mx, c);
    }
 
