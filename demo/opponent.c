@@ -1,3 +1,16 @@
+#include "shared.h"
+
+static void ndraw(mp_int *a, const char *name)
+{
+   char buf[16000];
+
+   printf("%s: ", name);
+   mp_toradix(a, buf, 10);
+   printf("%s\n", buf);
+   mp_toradix(a, buf, 16);
+   printf("0x%s\n", buf);
+}
+
 static void draw(mp_int *a)
 {
    ndraw(a, "");
@@ -28,7 +41,7 @@ static void _cleanup(void)
 #endif
 }
 
-static int mtest_opponent(void)
+int mtest_opponent(void)
 {
    char cmd[4096];
    char buf[4096];

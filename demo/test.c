@@ -1,3 +1,16 @@
+#include "shared.h"
+
+static void ndraw(mp_int *a, const char *name)
+{
+   char buf[16000];
+
+   printf("%s: ", name);
+   mp_toradix(a, buf, 10);
+   printf("%s\n", buf);
+   mp_toradix(a, buf, 16);
+   printf("0x%s\n", buf);
+}
+
 static int test_trivial_stuff(void) {
    mp_int a, b, c, d;
    if (mp_init_multi(&a, &b, &c, &d, NULL)!= MP_OKAY) {
@@ -1205,7 +1218,7 @@ static int test_mp_reduce_2k_l(void) {
 #   endif /* LTM_DEMO_TEST_REDUCE_2K_L */
 }
 
-static int all_tests(void) {
+int unit_tests(void) {
    static const struct {
       const char* name;
       int (*fn)(void);

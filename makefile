@@ -95,11 +95,11 @@ uninstall:
 	rm $(DESTDIR)$(LIBPATH)/$(LIBNAME)
 	rm $(HEADERS_PUB:%=$(DESTDIR)$(INCPATH)/%)
 
-test: $(LIBNAME) demo/demo.o
-	$(CC) $(CFLAGS) demo/demo.o $(LIBNAME) $(LFLAGS) -o test
+test: demo/main.o demo/opponent.o demo/test.o $(LIBNAME)
+	$(CC) $(CFLAGS) $^ $(LFLAGS) -o test
 
-test_standalone: $(LIBNAME) demo/demo.o
-	$(CC) $(CFLAGS) demo/demo.o $(LIBNAME) $(LFLAGS) -o test
+test_standalone: demo/main.o demo/opponent.o demo/test.o $(LIBNAME)
+	$(CC) $(CFLAGS) $^ $(LFLAGS) -o test
 
 .PHONY: mtest
 mtest:
