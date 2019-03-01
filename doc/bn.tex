@@ -179,6 +179,16 @@ LIBTOOL="/usr/local/bin/libtool" gmake -f makefile.shared
 \end{alltt}
 You might need to run a \texttt{gmake -f makefile.shared clean} first.
 
+\subsubsection{NetBSD}
+NetBSD is not as strict as OpenBSD but still needs \texttt{gmake} to build the shared library. \texttt{libtool} may also not exist in a fresh install.
+\begin{alltt}
+pkg_add gmake libtool
+\end{alltt}
+Please check with \texttt{libtool --version} that installed libtool is indeed a GNU libtool.
+Build the shared library with:
+\begin{alltt}
+gmake -f makefile.shared
+\end{alltt}
 
 \subsection{Testing}
 To build the library and the test harness type
