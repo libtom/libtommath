@@ -100,6 +100,18 @@ also build in MSVC, Borland C out of the box.  For any other ISO C compiler a ma
 developer. Please consider to commit such a makefile to the LibTomMath developers, currently residing at
 \url{http://github.com/libtom/libtommath}, if successfully done so.
 
+Intel's C-compiler (ICC) is sufficiently compatible with GCC, at least the newer versions, to replace GCC for building the static and the shared library. Editing the makfiles is not needed, just set the shell variable \texttt{CC} as shown below.
+\begin{alltt}
+CC=/home/czurnieden/intel/bin/icc make
+\end{alltt}
+
+ICC does not know all options available for GCC and LibTomMath uses two diagnostics \texttt{-Wbad-function-cast} and \texttt{-Wcast-align} that are not supported by ICC resulting in the warnings:
+\begin{alltt}
+icc: command line warning #10148: option '-Wbad-function-cast' not supported
+icc: command line warning #10148: option '-Wcast-align' not supported
+\end{alltt}
+It is possible to mute this ICC warning with the compiler flag \texttt{-diag-disable=10006}\footnote{It is not recommended to suppress warnings without a very good reason but there is no harm in doing so in this very special case.}.
+
 \subsection{Static Libraries}
 To build as a static library for GCC issue the following
 \begin{alltt}
