@@ -1245,7 +1245,6 @@ int unit_tests(void) {
       T(mp_sqrtmod_prime),
       T(mp_tc_and),
       T(mp_tc_div_2d),
-      T(mp_tc_div_2d),
       T(mp_tc_or),
       T(mp_tc_xor),
 #undef T
