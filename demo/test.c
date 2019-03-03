@@ -738,18 +738,16 @@ static int test_mp_sqrtmod_prime(void) {
 }
 
 #if defined(LTM_DEMO_REAL_RAND) && !defined(_WIN32)
-static FILE *fd_urandom;
+static FILE *fd_urandom = 0;
 #endif
 
 static int myrng(unsigned char *dst, int len, void *dat)
 {
    int x;
    (void)dat;
-#if defined(LTM_DEMO_REAL_RAND)
+#if defined(LTM_DEMO_REAL_RAND) && !defined(_WIN32)
    if (!fd_urandom) {
-#   if !defined(_WIN32)
       fprintf(stderr, "\nno /dev/urandom\n");
-#   endif
    } else {
       return fread(dst, 1uL, len, fd_urandom);
    }
@@ -1253,15 +1251,29 @@ int unit_tests(void) {
 #undef T
    };
    unsigned long i;
+   int res = EXIT_SUCCESS;
+
+#if defined(LTM_DEMO_REAL_RAND) && !defined(_WIN32)
+   fd_urandom = fopen("/dev/urandom", "r");
+   if (!fd_urandom) {
+      fprintf(stderr, "\ncould not open /dev/urandom\n");
+   }
+#endif
 
    for (i = 0; i < sizeof (test) / sizeof (test[0]); ++i) {
       printf("TEST %s\n\n", test[i].name);
       if (test[i].fn() != EXIT_SUCCESS) {
          printf("\n\nFAIL %s\n\n", test[i].name);
-         return EXIT_FAILURE;
+         res = EXIT_FAILURE;
+         break;
       }
       printf("\n\n");
    }
 
-   return EXIT_SUCCESS;
+#if defined(LTM_DEMO_REAL_RAND) && !defined(_WIN32)
+   if (fd_urandom) {
+      fclose(fd_urandom);
+   }
+#endif
+   return res;
 }

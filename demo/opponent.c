@@ -34,11 +34,6 @@ static void _cleanup(void)
 {
    mp_clear_multi(&a, &b, &c, &d, &e, &f, NULL);
    printf("\n");
-
-#ifdef LTM_DEMO_REAL_RAND
-   if (fd_urandom)
-      fclose(fd_urandom);
-#endif
 }
 
 int mtest_opponent(void)

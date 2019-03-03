@@ -5,16 +5,6 @@ int unit_tests(void);
 
 int main(void)
 {
-#if defined(LTM_DEMO_REAL_RAND)
-   if (!fd_urandom) {
-      fd_urandom = fopen("/dev/urandom", "r");
-      if (!fd_urandom) {
-#   if !defined(_WIN32)
-         fprintf(stderr, "\ncould not open /dev/urandom\n");
-#   endif
-      }
-   }
-#endif
    srand(LTM_DEMO_RAND_SEED);
 
 #ifdef MP_8BIT
