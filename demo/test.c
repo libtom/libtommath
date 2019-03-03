@@ -1,9 +1,8 @@
 #include "shared.h"
 
-/* TODO: Duplicate ndraw in opponent.c */
 static void ndraw(mp_int *a, const char *name)
 {
-   char buf[16000]; /* TODO: buffer might overflow! */
+   char buf[16000];
 
    printf("%s: ", name);
    mp_toradix(a, buf, 10);
@@ -1245,6 +1244,7 @@ int unit_tests(void) {
       T(mp_sqrt),
       T(mp_sqrtmod_prime),
       T(mp_tc_and),
+      T(mp_tc_div_2d),
       T(mp_tc_div_2d),
       T(mp_tc_or),
       T(mp_tc_xor),
