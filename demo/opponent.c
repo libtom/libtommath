@@ -17,25 +17,11 @@ static void draw(mp_int *a)
    ndraw(a, "");
 }
 
-static void _panic(int l)
-{
-   fprintf(stderr, "\n%d: fgets failed\n", l);
-   exit(EXIT_FAILURE);
-}
-
 #define FGETS(str, size, stream) \
    { \
       char *ret = fgets(str, size, stream); \
-      if (!ret) { _panic(__LINE__); } \
+      if (!ret) { fprintf(stderr, "\n%d: fgets failed\n", __LINE__); goto LBL_ERR; } \
    }
-
-static mp_int a, b, c, d, e, f;
-
-static void _cleanup(void)
-{
-   mp_clear_multi(&a, &b, &c, &d, &e, &f, NULL);
-   printf("\n");
-}
 
 int mtest_opponent(void)
 {
@@ -43,13 +29,12 @@ int mtest_opponent(void)
    char buf[4096];
    int ix;
    unsigned rr;
+   mp_int a, b, c, d, e, f;
    unsigned long expt_n, add_n, sub_n, mul_n, div_n, sqr_n, mul2d_n, div2d_n,
             gcd_n, lcm_n, inv_n, div2_n, mul2_n, add_d_n, sub_d_n;
 
    if (mp_init_multi(&a, &b, &c, &d, &e, &f, NULL)!= MP_OKAY)
       return EXIT_FAILURE;
-
-   atexit(_cleanup);
 
    div2_n = mul2_n = inv_n = expt_n = lcm_n = gcd_n = add_n =
                                          sub_n = mul_n = div_n = sqr_n = mul2d_n = div2d_n = add_d_n = sub_d_n = 0;
@@ -112,7 +97,7 @@ int mtest_opponent(void)
             printf("mul2d failed, rr == %u\n", rr);
             draw(&a);
             draw(&b);
-            return EXIT_FAILURE;
+            goto LBL_ERR;
          }
       } else if (strcmp(cmd, "div2d") == 0) {
          ++div2d_n;
@@ -132,7 +117,7 @@ int mtest_opponent(void)
             printf("div2d failed, rr == %u\n", rr);
             draw(&a);
             draw(&b);
-            return EXIT_FAILURE;
+            goto LBL_ERR;
          }
       } else if (strcmp(cmd, "add") == 0) {
          ++add_n;
@@ -150,7 +135,7 @@ int mtest_opponent(void)
             draw(&b);
             draw(&c);
             draw(&d);
-            return EXIT_FAILURE;
+            goto LBL_ERR;
          }
 
          /* test the sign/unsigned storage functions */
@@ -163,7 +148,7 @@ int mtest_opponent(void)
             printf("mp_signed_bin failure!\n");
             draw(&c);
             draw(&d);
-            return EXIT_FAILURE;
+            goto LBL_ERR;
          }
 
 
@@ -175,7 +160,7 @@ int mtest_opponent(void)
             printf("mp_unsigned_bin failure!\n");
             draw(&c);
             draw(&d);
-            return EXIT_FAILURE;
+            goto LBL_ERR;
          }
 
       } else if (strcmp(cmd, "sub") == 0) {
@@ -194,7 +179,7 @@ int mtest_opponent(void)
             draw(&b);
             draw(&c);
             draw(&d);
-            return EXIT_FAILURE;
+            goto LBL_ERR;
          }
       } else if (strcmp(cmd, "mul") == 0) {
          ++mul_n;
@@ -212,7 +197,7 @@ int mtest_opponent(void)
             draw(&b);
             draw(&c);
             draw(&d);
-            return EXIT_FAILURE;
+            goto LBL_ERR;
          }
       } else if (strcmp(cmd, "div") == 0) {
          ++div_n;
@@ -235,7 +220,7 @@ int mtest_opponent(void)
             draw(&d);
             draw(&e);
             draw(&f);
-            return EXIT_FAILURE;
+            goto LBL_ERR;
          }
 
       } else if (strcmp(cmd, "sqr") == 0) {
@@ -251,7 +236,7 @@ int mtest_opponent(void)
             draw(&a);
             draw(&b);
             draw(&c);
-            return EXIT_FAILURE;
+            goto LBL_ERR;
          }
       } else if (strcmp(cmd, "gcd") == 0) {
          ++gcd_n;
@@ -270,7 +255,7 @@ int mtest_opponent(void)
             draw(&b);
             draw(&c);
             draw(&d);
-            return EXIT_FAILURE;
+            goto LBL_ERR;
          }
       } else if (strcmp(cmd, "lcm") == 0) {
          ++lcm_n;
@@ -289,7 +274,7 @@ int mtest_opponent(void)
             draw(&b);
             draw(&c);
             draw(&d);
-            return EXIT_FAILURE;
+            goto LBL_ERR;
          }
       } else if (strcmp(cmd, "expt") == 0) {
          ++expt_n;
@@ -310,7 +295,7 @@ int mtest_opponent(void)
             draw(&c);
             draw(&d);
             draw(&e);
-            return EXIT_FAILURE;
+            goto LBL_ERR;
          }
       } else if (strcmp(cmd, "invmod") == 0) {
          ++inv_n;
@@ -331,7 +316,7 @@ int mtest_opponent(void)
             draw(&e);
             mp_gcd(&a, &b, &e);
             draw(&e);
-            return EXIT_FAILURE;
+            goto LBL_ERR;
          }
 
       } else if (strcmp(cmd, "div2") == 0) {
@@ -346,7 +331,7 @@ int mtest_opponent(void)
             draw(&a);
             draw(&b);
             draw(&c);
-            return EXIT_FAILURE;
+            goto LBL_ERR;
          }
       } else if (strcmp(cmd, "mul2") == 0) {
          ++mul2_n;
@@ -360,7 +345,7 @@ int mtest_opponent(void)
             draw(&a);
             draw(&b);
             draw(&c);
-            return EXIT_FAILURE;
+            goto LBL_ERR;
          }
       } else if (strcmp(cmd, "add_d") == 0) {
          ++add_d_n;
@@ -377,7 +362,7 @@ int mtest_opponent(void)
             draw(&b);
             draw(&c);
             printf("d == %d\n", ix);
-            return EXIT_FAILURE;
+            goto LBL_ERR;
          }
       } else if (strcmp(cmd, "sub_d") == 0) {
          ++sub_d_n;
@@ -394,7 +379,7 @@ int mtest_opponent(void)
             draw(&b);
             draw(&c);
             printf("d == %d\n", ix);
-            return EXIT_FAILURE;
+            goto LBL_ERR;
          }
       } else if (strcmp(cmd, "exit") == 0) {
          printf("\nokay, exiting now\n");
@@ -402,5 +387,10 @@ int mtest_opponent(void)
       }
    }
 
+   mp_clear_multi(&a, &b, &c, &d, &e, &f, NULL);
    return 0;
+
+ LBL_ERR:
+   mp_clear_multi(&a, &b, &c, &d, &e, &f, NULL);
+   return EXIT_FAILURE;
 }
