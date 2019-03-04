@@ -585,9 +585,7 @@ int mp_read_radix(mp_int *a, const char *str, int radix);
 int mp_toradix(const mp_int *a, char *str, int radix);
 int mp_toradix_n(const mp_int *a, char *str, int radix, int maxlen);
 int mp_radix_size(const mp_int *a, int radix, int *size);
-int mp_radix_size_slow(const mp_int *a, int radix, int *size);
-int mp_radix_size_bits(const int bits, const int radix, int *size);
-int mp_radix_size_ex(const mp_int *a, const int bits, const int base, int *size);
+
 
 #ifndef LTM_NO_FILE
 int mp_fread(mp_int *a, int radix, FILE *stream);

@@ -669,18 +669,6 @@
 			>
 		</File>
 		<File
-			RelativePath="bn_mp_radix_size_bits.c"
-			>
-		</File>
-		<File
-			RelativePath="bn_mp_radix_size_ex.c"
-			>
-		</File>
-		<File
-			RelativePath="bn_mp_radix_size_slow.c"
-			>
-		</File>
-		<File
 			RelativePath="bn_mp_radix_smap.c"
 			>
 		</File>
