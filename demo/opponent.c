@@ -388,9 +388,11 @@ int mtest_opponent(void)
    }
 
    mp_clear_multi(&a, &b, &c, &d, &e, &f, NULL);
+   printf("\n");
    return 0;
 
  LBL_ERR:
    mp_clear_multi(&a, &b, &c, &d, &e, &f, NULL);
+   printf("\n");
    return EXIT_FAILURE;
 }
