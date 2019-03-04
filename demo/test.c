@@ -1,4 +1,85 @@
 #include "shared.h"
+#if ((defined __m68k__) || (defined __MC68K__) || (defined M68000))
+/* VERY simpel comparing function, for use in this case and this case only! */
+/* There is such a macro in tommath_private.h which is not include'd in this listing */
+#ifndef MIN
+#define MIN(x, y) (((x) < (y)) ? (x) : (y))
+#endif
+static double s_abs(double s_d){
+   return (s_d < 0.0)?-s_d:s_d;
+}
+static float s_absf(float s_d){
+   return (s_d < 0.0f)?-s_d:s_d;
+}
+#include <float.h>
+static int s_compare_doubles(double s_a, double s_b){
+   double abs_a, abs_b, delta;
+
+   /* NaN, inf's and subnormals ignored, not needed in this case*/
+
+   if (s_a == s_b) {
+      return 1;
+   }
+#ifdef LTM_WARN_X87_EXT_PREC
+   fprintf(stderr, "Warning: extended precision detected for 'double# test %g != %g, using fallback test\n", s_a, s_b);
+#endif
+   abs_a = s_abs(s_a);
+   abs_b = s_abs(s_b);
+   delta = s_abs(s_a - s_b);
+
+   return ( (delta/MIN(abs_a, abs_b)) <  DBL_EPSILON);
+}
+
+static int s_compare_floats(float s_a, float s_b){
+   double abs_a, abs_b, delta;
+
+   /* NaN, inf's and subnormals ignored, not needed in this case*/
+
+   if (s_a == s_b) {
+      return 1;
+   }
+#ifdef LTM_WARN_X87_EXT_PREC
+   fprintf(stderr, "Warning: extended precision detected for 'float' test %g != %g, using fallback test\n", s_a, s_b);
+#endif
+   abs_a = s_absf(s_a);
+   abs_b = s_absf(s_b);
+   delta = s_absf(s_a - s_b);
+
+   return ( (delta/MIN(abs_a, abs_b)) <  FLT_EPSILON);
+}
+
+static int s_compare_long_double(long double s_a, long double s_b){
+   double abs_a, abs_b, delta;
+
+   /* NaN, inf's and subnormals ignored, not needed in this case*/
+
+   if (s_a == s_b) {
+      return 1;
+   }
+#ifdef LTM_WARN_X87_EXT_PREC
+   fprintf(stderr, "Warning: extended precision detected for 'long double' test  %Lg != %Lg, using fallback test \n", s_a, s_b);
+#endif
+   abs_a = s_absf(s_a);
+   abs_b = s_absf(s_b);
+   delta = s_absf(s_a - s_b);
+
+   return ( (delta/MIN(abs_a, abs_b)) <  LDBL_EPSILON);
+}
+#define S_COMPARE_DOUBLE(x,y) s_compare_doubles((x),(y))
+#define S_COMPARE_FLOAT(x,y) s_compare_floats((x),(y))
+#define S_COMPARE_LONG_DOUBLE(x,y) s_compare_long_double((x),(y))
+#else
+#define S_COMPARE_FLOAT(x,y) ( (x) == (y) )
+#define S_COMPARE_DOUBLE(x,y) ( (x) == (y) )
+#define S_COMPARE_LONG_DOUBLE(x,y) ( (x) == (y) )
+#endif
+
+   float flt_count;
+   double dbl_count;
+#include <float.h>
+#if ( !(defined LTM_MEMCHECK_VALGRIND) && (defined LDBL_MAX))
+   long double ldbl_count;
+#endif
 
 static int test_trivial_stuff(void) {
    mp_int a, b, c, d;
@@ -448,8 +529,10 @@ static int test_mp_set_double(void) {
       return EXIT_FAILURE;
    }
 
-   /* test mp_get_double/mp_set_double */
-#if defined(__STDC_IEC_559__) || defined(__GCC_IEC_559)
+   /* test floating point functions */
+#ifdef DBL_MAX
+
+
    if (mp_set_double(&a, +1.0/0.0) != MP_VAL) {
       printf("\nmp_set_double should return MP_VAL for +inf");
       goto LBL_ERR;
@@ -467,27 +550,347 @@ static int test_mp_set_double(void) {
       goto LBL_ERR;
    }
 
+   if (mp_set_double(&a, DBL_MAX) != MP_OKAY) {
+      printf("\nmp_set_double(DBL_MAX) failed");
+      goto LBL_ERR;
+   }
+
+   if (DBL_MAX != mp_get_double(&a)) {
+      printf("\nmp_get_double(DBL_MAX) bad result! %20.20f != %20.20f \n", DBL_MAX, mp_get_double(&a));
+      goto LBL_ERR;
+   }
+   if (mp_set_double(&a, DBL_MIN) != MP_OKAY) {
+      printf("\nmp_set_double(DBL_MIN) failed");
+      goto LBL_ERR;
+   }
+   if (0.0 != mp_get_double(&a)) {
+      printf("\nmp_get_double(DBL_MIN) bad result! %20.20f != %20.20f \n", DBL_MAX, mp_get_double(&a));
+      goto LBL_ERR;
+   }
+
+   dbl_count = 1.0;
+   if (mp_set_double(&a, dbl_count) != MP_OKAY) {
+      printf("\nmp_set_double(dbl_count) failed");
+      goto LBL_ERR;
+   }
+   if (dbl_count != mp_get_double(&a)) {
+      printf("\nmp_get_double(+dbl_count) bad result! %20.20f != %20.20f\n",
+                dbl_count, mp_get_double(&a));
+      goto LBL_ERR;
+   }
+
+   /*
+       Test some edge cases to check for rounding errors.
+       These tests may fail on e.g.: the M68K FPU architecture which
+       uses more precision for computation than it says it does. That
+       does cause some curious behaviour.
+    */
+   dbl_count = 2.0;
+   for (i = 0; i < DBL_MAX_10_EXP; ++i) {
+      if (mp_set_double(&a, dbl_count) != MP_OKAY) {
+         printf("\nmp_set_double(dbl_count) failed");
+         goto LBL_ERR;
+      }
+      if (dbl_count != mp_get_double(&a)) {
+         printf("\nmp_get_double(+dbl_count) at i = %d bad result! %20.20f != %20.20f\n",
+                   i, dbl_count, mp_get_double(&a));
+         goto LBL_ERR;
+      }
+      dbl_count = (dbl_count * 2.0);
+   }
+   dbl_count = 2.0;
+   for (i = 0; i < DBL_MAX_10_EXP; ++i) {
+      if (mp_set_double(&a, dbl_count) != MP_OKAY) {
+         printf("\nmp_set_double(+dbl_count -1) failed");
+         goto LBL_ERR;
+      }
+      if (!S_COMPARE_DOUBLE(dbl_count, mp_get_double(&a))) {
+         printf("\nmp_get_double(+dbl_count - 1) at i = %d bad result! %20.20f != %20.20f\n",
+                   i, dbl_count, mp_get_double(&a));
+         goto LBL_ERR;
+      }
+      dbl_count = (dbl_count * 2.0)-1;
+   }
+   dbl_count = 2.0;
+
+   for (i = 0; i < DBL_MAX_10_EXP; ++i) {
+      if (mp_set_double(&a, -dbl_count) != MP_OKAY) {
+         printf("\nmp_set_double((-dbl_count) -1) failed");
+         goto LBL_ERR;
+      }
+      if (!S_COMPARE_DOUBLE(-dbl_count, mp_get_double(&a))) {
+         printf("\nmp_get_double((-dbl_count) - 1) at i = %d bad result! %20.20f != %20.20f\n",
+                     i, dbl_count, mp_get_double(&a));
+         goto LBL_ERR;
+      }
+      dbl_count = (dbl_count * 2.0)-1;
+   }
+
+   /* Take care that everyone gets the same input */
+   srand(0xdeadbeefl);
    for (i = 0; i < 1000; ++i) {
       int tmp = rand();
-      double dbl = (double)tmp * rand() + 1;
+      double dbl = (double) tmp * rand() + 1.0;
       if (mp_set_double(&a, dbl) != MP_OKAY) {
          printf("\nmp_set_double() failed");
          goto LBL_ERR;
       }
-      if (dbl != mp_get_double(&a)) {
-         printf("\nmp_get_double() bad result!");
+      if (!S_COMPARE_DOUBLE(dbl, mp_get_double(&a))) {
+         printf("\nmp_get_double(+dbl) at i = %d bad result! %20.20f != %20.20f ",i, -dbl, mp_get_double(&a));
          goto LBL_ERR;
       }
       if (mp_set_double(&a, -dbl) != MP_OKAY) {
          printf("\nmp_set_double() failed");
          goto LBL_ERR;
       }
-      if (-dbl != mp_get_double(&a)) {
-         printf("\nmp_get_double() bad result!");
+      if (!S_COMPARE_DOUBLE(-dbl,mp_get_double(&a))) {
+         printf("\nmp_get_double(-dbl) at i = %d bad result! %20.20f != %20.20f ",i, -dbl, mp_get_double(&a));
+         goto LBL_ERR;
+      }
+   }
+
+   printf("\n\nTesting: mp_get_float");
+   if (mp_set_float(&a, +1.0f/0.0f) != MP_VAL) {
+      printf("\nmp_set_float should return MP_VAL for +inf");
+      goto LBL_ERR;
+   }
+   if (mp_set_float(&a, -1.0f/0.0f) != MP_VAL) {
+      printf("\nmp_set_float should return MP_VAL for -inf");
+      goto LBL_ERR;
+   }
+   if (mp_set_float(&a, +0.0f/0.0f) != MP_VAL) {
+      printf("\nmp_set_float should return MP_VAL for NaN");
+      goto LBL_ERR;
+   }
+   if (mp_set_float(&a, -0.0f/0.0f) != MP_VAL) {
+      printf("\nmp_set_float should return MP_VAL for NaN");
+      goto LBL_ERR;
+   }
+
+   if (mp_set_float(&a, FLT_MAX) != MP_OKAY) {
+      printf("\nmp_set_float(FLT_MAX) failed");
+      goto LBL_ERR;
+   }
+
+   if (!S_COMPARE_FLOAT(FLT_MAX, mp_get_float(&a))) {
+      printf("\nmp_get_float(FLT_MAX) bad result! %20.20f != %20.20f \n", FLT_MAX, mp_get_float(&a));
+      goto LBL_ERR;
+   }
+   if (mp_set_float(&a, FLT_MIN) != MP_OKAY) {
+      printf("\nmp_set_float(FLT_MIN) failed");
+      goto LBL_ERR;
+   }
+   if (!S_COMPARE_FLOAT(0.0f, mp_get_float(&a))) {
+      printf("\nmp_get_float(FLT_MIN) bad result! %20.20f != %20.20f \n", FLT_MIN, mp_get_float(&a));
+      goto LBL_ERR;
+   }
+
+   flt_count = 1.0f;
+   if (mp_set_float(&a, flt_count) != MP_OKAY) {
+      printf("\nmp_set_float(flt_count) failed 1");
+      goto LBL_ERR;
+   }
+   if (!S_COMPARE_FLOAT(flt_count,mp_get_float(&a))) {
+      printf("\nmp_get_float(+flt_count) at i = %d bad result! %20.20f != %20.20f\n",
+             i, flt_count, mp_get_float(&a));
+      goto LBL_ERR;
+   }
+   flt_count = 2.0f;
+   for (i = 0; i < FLT_MAX_10_EXP; ++i) {
+      if (mp_set_float(&a, flt_count) != MP_OKAY) {
+         printf("\nmp_set_float(+flt_count) at i = %d bad result! %20.20f != %20.20f\n",
+                i, flt_count, mp_get_float(&a));
+         goto LBL_ERR;
+      }
+      if (!S_COMPARE_FLOAT(flt_count, mp_get_float(&a))) {
+         printf("\nmp_get_float(+flt_count) at i = %d bad result! %20.20f != %20.20f\n",
+                i, flt_count, mp_get_float(&a));
+         goto LBL_ERR;
+      }
+      flt_count = (flt_count * 2.0f);
+   }
+
+   flt_count = 2.0f;
+   for (i = 0; i < FLT_MAX_10_EXP; ++i) {
+      if (mp_set_float(&a, flt_count) != MP_OKAY) {
+         printf("\nmp_set_float(+flt_count -1) failed");
+         goto LBL_ERR;
+      }
+      if (!S_COMPARE_FLOAT(flt_count, mp_get_float(&a))) {
+         printf("\nmp_get_float(+flt_count - 1) at i = %d bad result! %20.20f != %20.20f\n",
+                i, flt_count, mp_get_float(&a));
+         goto LBL_ERR;
+      }
+      flt_count = (flt_count * 2.0f) - 1.0f;
+   }
+
+   flt_count = 2.0f;
+   for (i = 0; i < FLT_MAX_10_EXP; ++i) {
+      if (mp_set_float(&a, -flt_count) != MP_OKAY) {
+         printf("\nmp_set_float((-flt_count) -1) failed");
+         goto LBL_ERR;
+      }
+      if (!S_COMPARE_FLOAT(-flt_count, mp_get_float(&a))) {
+         printf("\nmp_get_float((-flt_count) - 1) at i = %d bad result! %20.20f != %20.20f\n",
+                i, flt_count, mp_get_float(&a));
+         goto LBL_ERR;
+      }
+      flt_count = (flt_count * 2.0f) - 1.0f;
+   }
+
+   srand(0xdeadbeefl);
+   for (i = 0; i < 1000; ++i) {
+      /* Sorry for the implicit but an explicit conversion results in an error with -Wbad-function-cast */
+      float dbl = rand() + 1.0f;
+      if (mp_set_float(&a, dbl) != MP_OKAY) {
+         printf("\nmp_set_float() failed");
+         goto LBL_ERR;
+      }
+      if (!S_COMPARE_FLOAT(dbl, mp_get_float(&a))) {
+         printf("\nmp_get_float(+dbl) at i = %d bad result! %a != %a ",i, -dbl, mp_get_float(&a));
+         goto LBL_ERR;
+      }
+      if (mp_set_float(&a, -dbl) != MP_OKAY) {
+         printf("\nmp_set_float() failed");
+         goto LBL_ERR;
+      }
+      if (!S_COMPARE_FLOAT(-dbl,mp_get_float(&a))) {
+         printf("\nmp_get_float(-dbl) at i = %d bad result! %a != %a ",i, -dbl, mp_get_float(&a));
+         goto LBL_ERR;
+      }
+   }
+
+/*  Valgrind does not support "long double" sufficiently */
+#ifdef LTM_MEMCHECK_VALGRIND
+#  ifdef _MSC_VER
+#    pragma message("The type 'long double' is not sufficiently supported by Valgrind. Tests skipped!.")
+#    pragma message("Please run tests outside of valgrind, too!")
+#  else
+#    warning "The type 'long double' is not sufficiently supported by Valgrind. Tests skipped!."
+#    warning "Please run tests outside of valgrind, too!"
+#  endif
+#endif
+#if ( !(defined LTM_MEMCHECK_VALGRIND) && (defined LDBL_MAX))
+   printf("\n\nTesting: mp_get_long_double");
+   if (mp_set_long_double(&a, +1.0L/0.0L) != MP_VAL) {
+      printf("\nmp_set_long_double should return MP_VAL for +inf");
+      goto LBL_ERR;
+   }
+   if (mp_set_long_double(&a, -1.0L/0.0L) != MP_VAL) {
+      printf("\nmp_set_long_double should return MP_VAL for -inf");
+      goto LBL_ERR;
+   }
+   if (mp_set_long_double(&a, +0.0L/0.0L) != MP_VAL) {
+      printf("\nmp_set_long_double should return MP_VAL for NaN");
+      goto LBL_ERR;
+   }
+   if (mp_set_long_double(&a, -0.0L/0.0L) != MP_VAL) {
+      printf("\nmp_set_long_double should return MP_VAL for NaN");
+      goto LBL_ERR;
+   }
+   if (mp_set_long_double(&a, LDBL_MAX) != MP_OKAY) {
+      printf("\nmp_set_long_double(LDBL_MAX) failed");
+      goto LBL_ERR;
+   }
+
+   if (!S_COMPARE_LONG_DOUBLE(LDBL_MAX, mp_get_long_double(&a))) {
+      printf("\nmp_get_long_double(LDBL_MAX) bad result! %20.20Lf != %20.20Lf \n",
+             LDBL_MAX, mp_get_long_double(&a));
+      goto LBL_ERR;
+   }
+   if (mp_set_long_double(&a, LDBL_MIN) != MP_OKAY) {
+      printf("\nmp_set_long_double(LDBL_MIN) failed");
+      goto LBL_ERR;
+   }
+   if (!S_COMPARE_LONG_DOUBLE(0.0L, mp_get_long_double(&a))) {
+      printf("\nmp_get_long_double(LDBL_MIN) bad result! %20.20Lf != %20.20Lf \n",
+             LDBL_MIN, mp_get_long_double(&a));
+      goto LBL_ERR;
+   }
+
+   ldbl_count = 1.0L;
+   if (mp_set_long_double(&a, ldbl_count) != MP_OKAY) {
+      printf("\nmp_set_long_double(ldbl_count) failed");
+      goto LBL_ERR;
+   }
+   if (!S_COMPARE_LONG_DOUBLE(ldbl_count, mp_get_long_double(&a))) {
+      printf("\nmp_get_long_double(+ldbl_count) at i = %d bad result! %20.20Lf != %20.20Lf\n",
+             i, ldbl_count, mp_get_long_double(&a));
+      goto LBL_ERR;
+   }
+
+   ldbl_count = 2.0L;
+   /*
+      We need to use  LDBL_MAX_10_EXP because some compilers accept "long double"
+      but use "double" instead.
+    */
+   for (i = 0; i < LDBL_MAX_10_EXP; ++i) {
+      if (mp_set_long_double(&a, ldbl_count) != MP_OKAY) {
+         printf("\nmp_set_long_double(ldbl_count) failed");
+         goto LBL_ERR;
+      }
+      if (!S_COMPARE_LONG_DOUBLE(ldbl_count, mp_get_long_double(&a))) {
+         printf("\nmp_get_long_double(+ldbl_count) at i = %d bad result! %20.20Lf != %20.20Lf\n",
+                i, ldbl_count, mp_get_long_double(&a));
+         goto LBL_ERR;
+      }
+      ldbl_count = (ldbl_count * 2.0L);
+   }
+   ldbl_count = 2.0L;
+   for (i = 0; i < LDBL_MAX_10_EXP; ++i) {
+      if (mp_set_long_double(&a, ldbl_count) != MP_OKAY) {
+         printf("\nmp_set_long_double(+ldbl_count -1) failed");
+         goto LBL_ERR;
+      }
+      if (!S_COMPARE_LONG_DOUBLE(ldbl_count, mp_get_long_double(&a))) {
+         printf("\nmp_get_long_double(+ldbl_count - 1) at i = %d bad result! %20.20Lf != %20.20Lf\n",
+                i, ldbl_count, mp_get_long_double(&a));
+         goto LBL_ERR;
+      }
+      ldbl_count = (ldbl_count * 2.0L) - 1.0L;
+   }
+   ldbl_count = 2.0L;
+
+   for (i = 0; i < LDBL_MAX_10_EXP; ++i) {
+      if (mp_set_long_double(&a, -ldbl_count) != MP_OKAY) {
+         printf("\nmp_set_long_double((-ldbl_count) -1) failed");
+         goto LBL_ERR;
+      }
+      if (!S_COMPARE_LONG_DOUBLE(-ldbl_count, mp_get_long_double(&a))) {
+         printf("\nmp_get_long_double((-ldbl_count) - 1) at i = %d bad result! %20.20Lf != %20.20Lf\n",
+                i, ldbl_count, mp_get_long_double(&a));
+         goto LBL_ERR;
+      }
+      ldbl_count = (ldbl_count * 2.0L) - 1.0L;
+   }
+
+
+   srand(0xdeadbeefl);
+   for (i = 0; i < 1000; ++i) {
+      int tmp = rand();
+      long double dbl = (long double) tmp * rand() + 1.0L;
+      if (mp_set_long_double(&a, dbl) != MP_OKAY) {
+         printf("\nmp_set_long_double() failed");
+         goto LBL_ERR;
+      }
+      if (!S_COMPARE_LONG_DOUBLE(dbl, mp_get_long_double(&a))) {
+         printf("\nmp_get_long_double(+dbl) at i = %d bad result! %20.20Lf != %20.20Lf ",
+                i, -dbl, mp_get_long_double(&a));
+         goto LBL_ERR;
+      }
+      if (mp_set_long_double(&a, -dbl) != MP_OKAY) {
+         printf("\nmp_set_long_double() failed");
+         goto LBL_ERR;
+      }
+      if (!S_COMPARE_LONG_DOUBLE(-dbl,mp_get_long_double(&a))) {
+         printf("\nmp_get_long_double(-dbl) at i = %d bad result!  %20.20Lf != %20.20Lf ",
+                i, -dbl, mp_get_long_double(&a));
          goto LBL_ERR;
       }
    }
 #endif
+#endif
+
 
    mp_clear_multi(&a, &b, NULL);
    return EXIT_SUCCESS;
