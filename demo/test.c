@@ -1,29 +1,4 @@
-#include <string.h>
-#include <time.h>
-
-/*
- * Configuration
- */
-#ifndef LTM_DEMO_TEST_VS_MTEST
-#define LTM_DEMO_TEST_VS_MTEST 1
-#endif
-
-#ifndef LTM_DEMO_TEST_REDUCE_2K_L
-/* This test takes a moment so we disable it by default, but it can be:
- * 0 to disable testing
- * 1 to make the test with P = 2^1024 - 0x2A434 B9FDEC95 D8F9D550 FFFFFFFF FFFFFFFF
- * 2 to make the test with P = 2^2048 - 0x1 00000000 00000000 00000000 00000000 4945DDBF 8EA2A91D 5776399B B83E188F
- */
-#define LTM_DEMO_TEST_REDUCE_2K_L 0
-#endif
-
-#ifdef LTM_DEMO_REAL_RAND
-#define LTM_DEMO_RAND_SEED  time(NULL)
-#else
-#define LTM_DEMO_RAND_SEED  23
-#endif
-
-#include "tommath.h"
+#include "shared.h"
 
 static void ndraw(mp_int *a, const char *name)
 {
@@ -36,217 +11,55 @@ static void ndraw(mp_int *a, const char *name)
    printf("0x%s\n", buf);
 }
 
-#if LTM_DEMO_TEST_VS_MTEST != 0
-static void draw(mp_int *a)
-{
-   ndraw(a, "");
-}
-#endif
-
-#if defined(LTM_DEMO_REAL_RAND) && !defined(_WIN32)
-static FILE *fd_urandom;
-#endif
-#if LTM_DEMO_TEST_VS_MTEST == 0
-static int myrng(unsigned char *dst, int len, void *dat)
-{
-   int x;
-   (void)dat;
-#if defined(LTM_DEMO_REAL_RAND)
-   if (!fd_urandom) {
-#   if !defined(_WIN32)
-      fprintf(stderr, "\nno /dev/urandom\n");
-#   endif
-   } else {
-      return fread(dst, 1uL, len, fd_urandom);
-   }
-#endif
-   for (x = 0; x < len;) {
-      unsigned int r = (unsigned int)rand();
-      do {
-         dst[x++] = r & 0xFFu;
-         r >>= 8;
-      } while ((r != 0u) && (x < len));
-   }
-   return len;
-}
-#endif
-
-#if LTM_DEMO_TEST_VS_MTEST != 0
-static void _panic(int l)
-{
-   fprintf(stderr, "\n%d: fgets failed\n", l);
-   exit(EXIT_FAILURE);
-}
-
-#define FGETS(str, size, stream) \
-   { \
-      char *ret = fgets(str, size, stream); \
-      if (!ret) { _panic(__LINE__); } \
-   }
-#endif
-
-static mp_int a, b, c, d, e, f;
-
-static void _cleanup(void)
-{
-   mp_clear_multi(&a, &b, &c, &d, &e, &f, NULL);
-   printf("\n");
-
-#ifdef LTM_DEMO_REAL_RAND
-   if (fd_urandom)
-      fclose(fd_urandom);
-#endif
-}
-#if LTM_DEMO_TEST_VS_MTEST == 0
-struct mp_sqrtmod_prime_st {
-   unsigned long p;
-   unsigned long n;
-   mp_digit r;
-};
-static struct mp_sqrtmod_prime_st sqrtmod_prime[] = {
-   { 5, 14, 3 },
-   { 7, 9, 4 },
-   { 113, 2, 62 }
-};
-struct mp_jacobi_st {
-   unsigned long n;
-   int c[16];
-};
-static struct mp_jacobi_st jacobi[] = {
-   { 3, {  1, -1,  0,  1, -1,  0,  1, -1,  0,  1, -1,  0,  1, -1,  0,  1 } },
-   { 5, {  0,  1, -1, -1,  1,  0,  1, -1, -1,  1,  0,  1, -1, -1,  1,  0 } },
-   { 7, {  1, -1,  1, -1, -1,  0,  1,  1, -1,  1, -1, -1,  0,  1,  1, -1 } },
-   { 9, { -1,  1,  0,  1,  1,  0,  1,  1,  0,  1,  1,  0,  1,  1,  0,  1 } },
-};
-
-struct mp_kronecker_st {
-   long n;
-   int c[21];
-};
-static struct mp_kronecker_st kronecker[] = {
-   /*-10, -9, -8, -7,-6, -5, -4, -3, -2, -1, 0, 1,  2,  3, 4,  5,  6,  7,  8, 9, 10*/
-   { -10, {  0, -1,  0, -1, 0,  0,  0,  1,  0, -1, 0, 1,  0, -1, 0,  0,  0,  1,  0, 1,  0  } },
-   {  -9, { -1,  0, -1,  1, 0, -1, -1,  0, -1, -1, 0, 1,  1,  0, 1,  1,  0, -1,  1, 0,  1  } },
-   {  -8, {  0, -1,  0,  1, 0,  1,  0, -1,  0, -1, 0, 1,  0,  1, 0, -1,  0, -1,  0, 1,  0  } },
-   {  -7, {  1, -1, -1,  0, 1,  1, -1,  1, -1, -1, 0, 1,  1, -1, 1, -1, -1,  0,  1, 1, -1  } },
-   {  -6, {  0,  0,  0, -1, 0, -1,  0,  0,  0, -1, 0, 1,  0,  0, 0,  1,  0,  1,  0, 0,  0  } },
-   {  -5, {  0, -1,  1, -1, 1,  0, -1, -1,  1, -1, 0, 1, -1,  1, 1,  0, -1,  1, -1, 1,  0  } },
-   {  -4, {  0, -1,  0,  1, 0, -1,  0,  1,  0, -1, 0, 1,  0, -1, 0,  1,  0, -1,  0, 1,  0  } },
-   {  -3, { -1,  0,  1, -1, 0,  1, -1,  0,  1, -1, 0, 1, -1,  0, 1, -1,  0,  1, -1, 0,  1  } },
-   {  -2, {  0, -1,  0,  1, 0,  1,  0, -1,  0, -1, 0, 1,  0,  1, 0, -1,  0, -1,  0, 1,  0  } },
-   {  -1, { -1, -1, -1,  1, 1, -1, -1,  1, -1, -1, 1, 1,  1, -1, 1,  1, -1, -1,  1, 1,  1  } },
-   {   0, {  0,  0,  0,  0, 0,  0,  0,  0,  0,  1, 0, 1,  0,  0, 0,  0,  0,  0,  0, 0,  0  } },
-   {   1, {  1,  1,  1,  1, 1,  1,  1,  1,  1,  1, 1, 1,  1,  1, 1,  1,  1,  1,  1, 1,  1  } },
-   {   2, {  0,  1,  0,  1, 0, -1,  0, -1,  0,  1, 0, 1,  0, -1, 0, -1,  0,  1,  0, 1,  0  } },
-   {   3, {  1,  0, -1, -1, 0, -1,  1,  0, -1,  1, 0, 1, -1,  0, 1, -1,  0, -1, -1, 0,  1  } },
-   {   4, {  0,  1,  0,  1, 0,  1,  0,  1,  0,  1, 0, 1,  0,  1, 0,  1,  0,  1,  0, 1,  0  } },
-   {   5, {  0,  1, -1, -1, 1,  0,  1, -1, -1,  1, 0, 1, -1, -1, 1,  0,  1, -1, -1, 1,  0  } },
-   {   6, {  0,  0,  0, -1, 0,  1,  0,  0,  0,  1, 0, 1,  0,  0, 0,  1,  0, -1,  0, 0,  0  } },
-   {   7, { -1,  1,  1,  0, 1, -1,  1,  1,  1,  1, 0, 1,  1,  1, 1, -1,  1,  0,  1, 1, -1  } },
-   {   8, {  0,  1,  0,  1, 0, -1,  0, -1,  0,  1, 0, 1,  0, -1, 0, -1,  0,  1,  0, 1,  0  } },
-   {   9, {  1,  0,  1,  1, 0,  1,  1,  0,  1,  1, 0, 1,  1,  0, 1,  1,  0,  1,  1, 0,  1  } },
-   {  10, {  0,  1,  0, -1, 0,  0,  0,  1,  0,  1, 0, 1,  0,  1, 0,  0,  0, -1,  0, 1,  0  } }
-};
-#endif
-
-#if LTM_DEMO_TEST_VS_MTEST != 0
-static char cmd[4096];
-#endif
-static char buf[4096];
-int main(void)
-{
-   unsigned rr;
-   int ix;
-#if LTM_DEMO_TEST_VS_MTEST != 0
-   unsigned long expt_n, add_n, sub_n, mul_n, div_n, sqr_n, mul2d_n, div2d_n,
-            gcd_n, lcm_n, inv_n, div2_n, mul2_n, add_d_n, sub_d_n;
-#else
-   unsigned long s, t;
-   long k, m;
-   unsigned long long q, r;
-   mp_digit mp;
-   int i, n, err, should, cnt;
-#endif
-
-   if (mp_init_multi(&a, &b, &c, &d, &e, &f, NULL)!= MP_OKAY)
+static int test_trivial_stuff(void) {
+   mp_int a, b, c, d;
+   if (mp_init_multi(&a, &b, &c, &d, NULL)!= MP_OKAY) {
       return EXIT_FAILURE;
-
-   atexit(_cleanup);
-
-#if defined(LTM_DEMO_REAL_RAND)
-   if (!fd_urandom) {
-      fd_urandom = fopen("/dev/urandom", "r");
-      if (!fd_urandom) {
-#   if !defined(_WIN32)
-         fprintf(stderr, "\ncould not open /dev/urandom\n");
-#   endif
-      }
    }
-#endif
-   srand(LTM_DEMO_RAND_SEED);
 
-#ifdef MP_8BIT
-   printf("Digit size 8 Bit \n");
-#endif
-#ifdef MP_16BIT
-   printf("Digit size 16 Bit \n");
-#endif
-#ifdef MP_32BIT
-   printf("Digit size 32 Bit \n");
-#endif
-#ifdef MP_64BIT
-   printf("Digit size 64 Bit \n");
-#endif
-   printf("Size of mp_digit: %u\n", (unsigned int)sizeof(mp_digit));
-   printf("Size of mp_word: %u\n", (unsigned int)sizeof(mp_word));
-   printf("DIGIT_BIT: %d\n", DIGIT_BIT);
-   printf("MP_PREC: %d\n", MP_PREC);
-
-#if LTM_DEMO_TEST_VS_MTEST == 0
-   /* trivial stuff */
    /* a: 0->5 */
    mp_set_int(&a, 5);
    /* a: 5-> b: -5 */
    mp_neg(&a, &b);
    if (mp_cmp(&a, &b) != MP_GT) {
-      return EXIT_FAILURE;
+       goto LBL_ERR;
    }
    if (mp_cmp(&b, &a) != MP_LT) {
-      return EXIT_FAILURE;
+      goto LBL_ERR;
    }
    /* a: 5-> a: -5 */
    mp_neg(&a, &a);
    if (mp_cmp(&b, &a) != MP_EQ) {
-      return EXIT_FAILURE;
+      goto LBL_ERR;
    }
    /* a: -5-> b: 5 */
    mp_abs(&a, &b);
    if (mp_isneg(&b) != MP_NO) {
-      return EXIT_FAILURE;
+      goto LBL_ERR;
    }
    /* a: -5-> b: -4 */
    mp_add_d(&a, 1uL, &b);
    if (mp_isneg(&b) != MP_YES) {
-      return EXIT_FAILURE;
+      goto LBL_ERR;
    }
    if (mp_get_int(&b) != 4) {
-      return EXIT_FAILURE;
+      goto LBL_ERR;
    }
    /* a: -5-> b: 1 */
    mp_add_d(&a, 6uL, &b);
    if (mp_get_int(&b) != 1) {
-      return EXIT_FAILURE;
+      goto LBL_ERR;
    }
    /* a: -5-> a: 1 */
    mp_add_d(&a, 6uL, &a);
    if (mp_get_int(&a) != 1) {
-      return EXIT_FAILURE;
+      goto LBL_ERR;
    }
    mp_zero(&a);
    /* a: 0-> a: 6 */
    mp_add_d(&a, 6uL, &a);
    if (mp_get_int(&a) != 6) {
-      return EXIT_FAILURE;
+      goto LBL_ERR;
    }
 
    mp_set_int(&a, 42);
@@ -258,16 +71,42 @@ int main(void)
    mp_set_int(&c, 7);
    mp_exptmod(&a, &b, &c, &d);
 
+   mp_clear_multi(&a, &b, &c, &d, NULL);
+   return EXIT_SUCCESS;
+ LBL_ERR:
+   mp_clear_multi(&a, &b, &c, &d, NULL);
+   return EXIT_FAILURE;
+}
+
+static int test_mp_jacobi(void) {
+   struct mp_jacobi_st {
+      unsigned long n;
+      int c[16];
+   };
+
+   static struct mp_jacobi_st jacobi[] = {
+      { 3, {  1, -1,  0,  1, -1,  0,  1, -1,  0,  1, -1,  0,  1, -1,  0,  1 } },
+      { 5, {  0,  1, -1, -1,  1,  0,  1, -1, -1,  1,  0,  1, -1, -1,  1,  0 } },
+      { 7, {  1, -1,  1, -1, -1,  0,  1,  1, -1,  1, -1, -1,  0,  1,  1, -1 } },
+      { 9, { -1,  1,  0,  1,  1,  0,  1,  1,  0,  1,  1,  0,  1,  1,  0,  1 } },
+   };
+
+   int i, n, err, should, cnt;
+
+   mp_int a, b;
+   if (mp_init_multi(&a, &b, NULL)!= MP_OKAY) {
+      return EXIT_FAILURE;
+   }
 
    mp_set_int(&a, 0);
    mp_set_int(&b, 1);
    if ((err = mp_jacobi(&a, &b, &i)) != MP_OKAY) {
       printf("Failed executing mp_jacobi(0 | 1) %s.\n", mp_error_to_string(err));
-      return EXIT_FAILURE;
+      goto LBL_ERR;
    }
    if (i != 1) {
       printf("Failed trivial mp_jacobi(0 | 1) %d != 1\n", i);
-      return EXIT_FAILURE;
+      goto LBL_ERR;
    }
    for (cnt = 0; cnt < (int)(sizeof(jacobi)/sizeof(jacobi[0])); ++cnt) {
       mp_set_int(&b, jacobi[cnt].n);
@@ -282,25 +121,69 @@ int main(void)
          }
          if ((err = mp_jacobi(&a, &b, &i)) != should) {
             printf("Failed executing mp_jacobi(%d | %lu) %s.\n", n, jacobi[cnt].n, mp_error_to_string(err));
-            return EXIT_FAILURE;
+            goto LBL_ERR;
          }
          if ((err == MP_OKAY) && (i != jacobi[cnt].c[n + 5])) {
             printf("Failed trivial mp_jacobi(%d | %lu) %d != %d\n", n, jacobi[cnt].n, i, jacobi[cnt].c[n + 5]);
-            return EXIT_FAILURE;
+            goto LBL_ERR;
          }
       }
    }
 
+   mp_clear_multi(&a, &b, NULL);
+   return EXIT_SUCCESS;
+ LBL_ERR:
+   mp_clear_multi(&a, &b, NULL);
+   return EXIT_FAILURE;
+}
+
+static int test_mp_kronecker(void) {
+   struct mp_kronecker_st {
+      long n;
+      int c[21];
+   };
+   static struct mp_kronecker_st kronecker[] = {
+      /*-10, -9, -8, -7,-6, -5, -4, -3, -2, -1, 0, 1,  2,  3, 4,  5,  6,  7,  8, 9, 10*/
+      { -10, {  0, -1,  0, -1, 0,  0,  0,  1,  0, -1, 0, 1,  0, -1, 0,  0,  0,  1,  0, 1,  0  } },
+      {  -9, { -1,  0, -1,  1, 0, -1, -1,  0, -1, -1, 0, 1,  1,  0, 1,  1,  0, -1,  1, 0,  1  } },
+      {  -8, {  0, -1,  0,  1, 0,  1,  0, -1,  0, -1, 0, 1,  0,  1, 0, -1,  0, -1,  0, 1,  0  } },
+      {  -7, {  1, -1, -1,  0, 1,  1, -1,  1, -1, -1, 0, 1,  1, -1, 1, -1, -1,  0,  1, 1, -1  } },
+      {  -6, {  0,  0,  0, -1, 0, -1,  0,  0,  0, -1, 0, 1,  0,  0, 0,  1,  0,  1,  0, 0,  0  } },
+      {  -5, {  0, -1,  1, -1, 1,  0, -1, -1,  1, -1, 0, 1, -1,  1, 1,  0, -1,  1, -1, 1,  0  } },
+      {  -4, {  0, -1,  0,  1, 0, -1,  0,  1,  0, -1, 0, 1,  0, -1, 0,  1,  0, -1,  0, 1,  0  } },
+      {  -3, { -1,  0,  1, -1, 0,  1, -1,  0,  1, -1, 0, 1, -1,  0, 1, -1,  0,  1, -1, 0,  1  } },
+      {  -2, {  0, -1,  0,  1, 0,  1,  0, -1,  0, -1, 0, 1,  0,  1, 0, -1,  0, -1,  0, 1,  0  } },
+      {  -1, { -1, -1, -1,  1, 1, -1, -1,  1, -1, -1, 1, 1,  1, -1, 1,  1, -1, -1,  1, 1,  1  } },
+      {   0, {  0,  0,  0,  0, 0,  0,  0,  0,  0,  1, 0, 1,  0,  0, 0,  0,  0,  0,  0, 0,  0  } },
+      {   1, {  1,  1,  1,  1, 1,  1,  1,  1,  1,  1, 1, 1,  1,  1, 1,  1,  1,  1,  1, 1,  1  } },
+      {   2, {  0,  1,  0,  1, 0, -1,  0, -1,  0,  1, 0, 1,  0, -1, 0, -1,  0,  1,  0, 1,  0  } },
+      {   3, {  1,  0, -1, -1, 0, -1,  1,  0, -1,  1, 0, 1, -1,  0, 1, -1,  0, -1, -1, 0,  1  } },
+      {   4, {  0,  1,  0,  1, 0,  1,  0,  1,  0,  1, 0, 1,  0,  1, 0,  1,  0,  1,  0, 1,  0  } },
+      {   5, {  0,  1, -1, -1, 1,  0,  1, -1, -1,  1, 0, 1, -1, -1, 1,  0,  1, -1, -1, 1,  0  } },
+      {   6, {  0,  0,  0, -1, 0,  1,  0,  0,  0,  1, 0, 1,  0,  0, 0,  1,  0, -1,  0, 0,  0  } },
+      {   7, { -1,  1,  1,  0, 1, -1,  1,  1,  1,  1, 0, 1,  1,  1, 1, -1,  1,  0,  1, 1, -1  } },
+      {   8, {  0,  1,  0,  1, 0, -1,  0, -1,  0,  1, 0, 1,  0, -1, 0, -1,  0,  1,  0, 1,  0  } },
+      {   9, {  1,  0,  1,  1, 0,  1,  1,  0,  1,  1, 0, 1,  1,  0, 1,  1,  0,  1,  1, 0,  1  } },
+      {  10, {  0,  1,  0, -1, 0,  0,  0,  1,  0,  1, 0, 1,  0,  1, 0,  0,  0, -1,  0, 1,  0  } }
+   };
+
+   long k, m;
+   int i, err, cnt;
+
+   mp_int a, b;
+   if (mp_init_multi(&a, &b, NULL)!= MP_OKAY) {
+      return EXIT_FAILURE;
+   }
 
    mp_set_int(&a, 0);
    mp_set_int(&b, 1u);
    if ((err = mp_kronecker(&a, &b, &i)) != MP_OKAY) {
       printf("Failed executing mp_kronecker(0 | 1) %s.\n", mp_error_to_string(err));
-      return EXIT_FAILURE;
+      goto LBL_ERR;
    }
    if (i != 1) {
       printf("Failed trivial mp_kronecker(0 | 1) %d != 1\n", i);
-      return EXIT_FAILURE;
+      goto LBL_ERR;
    }
    for (cnt = 0; cnt < (int)(sizeof(kronecker)/sizeof(kronecker[0])); ++cnt) {
       k = kronecker[cnt].n;
@@ -320,16 +203,30 @@ int main(void)
          }
          if ((err = mp_kronecker(&a, &b, &i)) != MP_OKAY) {
             printf("Failed executing mp_kronecker(%ld | %ld) %s.\n", kronecker[cnt].n, m, mp_error_to_string(err));
-            return EXIT_FAILURE;
+            goto LBL_ERR;
          }
          if ((err == MP_OKAY) && (i != kronecker[cnt].c[m + 10])) {
             printf("Failed trivial mp_kronecker(%ld | %ld) %d != %d\n", kronecker[cnt].n, m, i, kronecker[cnt].c[m + 10]);
-            return EXIT_FAILURE;
+            goto LBL_ERR;
          }
       }
    }
-   /* test mp_complement */
-   printf("\n\nTesting: mp_complement");
+
+   mp_clear_multi(&a, &b, NULL);
+   return EXIT_SUCCESS;
+ LBL_ERR:
+   mp_clear_multi(&a, &b, NULL);
+   return EXIT_FAILURE;
+}
+
+static int test_mp_complement(void) {
+   int i;
+
+   mp_int a, b, c;
+   if (mp_init_multi(&a, &b, &c, NULL)!= MP_OKAY) {
+      return EXIT_FAILURE;
+   }
+
    for (i = 0; i < 1000; ++i) {
       int l = (rand() * rand() + 1) * (rand() % 1 ? -1 : 1);
       mp_set_int(&a, labs(l));
@@ -344,12 +241,25 @@ int main(void)
 
       if (mp_cmp(&b, &c) != MP_EQ) {
          printf("\nmp_complement() bad result!");
-         return EXIT_FAILURE;
+         goto LBL_ERR;
       }
    }
 
-   /* test mp_tc_div_2d */
-   printf("\n\nTesting: mp_tc_div_2d");
+   mp_clear_multi(&a, &b, &c, NULL);
+   return EXIT_SUCCESS;
+ LBL_ERR:
+   mp_clear_multi(&a, &b, &c, NULL);
+   return EXIT_FAILURE;
+}
+
+static int test_mp_tc_div_2d(void) {
+   int i;
+
+   mp_int a, b, d;
+   if (mp_init_multi(&a, &b, &d, NULL)!= MP_OKAY) {
+      return EXIT_FAILURE;
+   }
+
    for (i = 0; i < 1000; ++i) {
       int l, em;
 
@@ -367,12 +277,26 @@ int main(void)
       mp_tc_div_2d(&a, em, &b);
       if (mp_cmp(&b, &d) != MP_EQ) {
          printf("\nmp_tc_div_2d() bad result!");
-         return EXIT_FAILURE;
+         goto LBL_ERR;
       }
    }
 
-   /* test mp_tc_xor */
-   printf("\n\nTesting: mp_tc_xor");
+   mp_clear_multi(&a, &b, &d, NULL);
+   return EXIT_SUCCESS;
+ LBL_ERR:
+   mp_clear_multi(&a, &b, &d, NULL);
+   return EXIT_FAILURE;
+
+}
+
+static int test_mp_tc_xor(void) {
+   int i;
+
+   mp_int a, b, c, d;
+   if (mp_init_multi(&a, &b, &c, &d, NULL)!= MP_OKAY) {
+      return EXIT_FAILURE;
+   }
+
    for (i = 0; i < 1000; ++i) {
       int l, em;
 
@@ -393,12 +317,26 @@ int main(void)
       mp_tc_xor(&a, &b, &c);
       if (mp_cmp(&c, &d) != MP_EQ) {
          printf("\nmp_tc_xor() bad result!");
-         return EXIT_FAILURE;
+         goto LBL_ERR;
       }
    }
 
-   /* test mp_tc_or */
-   printf("\n\nTesting: mp_tc_or");
+   mp_clear_multi(&a, &b, &c, &d, NULL);
+   return EXIT_SUCCESS;
+ LBL_ERR:
+   mp_clear_multi(&a, &b, &c, &d, NULL);
+   return EXIT_FAILURE;
+
+}
+
+static int test_mp_tc_or(void) {
+   int i;
+
+   mp_int a, b, c, d;
+   if (mp_init_multi(&a, &b, &c, &d, NULL)!= MP_OKAY) {
+      return EXIT_FAILURE;
+   }
+
    for (i = 0; i < 1000; ++i) {
       int l, em;
 
@@ -419,12 +357,25 @@ int main(void)
       mp_tc_or(&a, &b, &c);
       if (mp_cmp(&c, &d) != MP_EQ) {
          printf("\nmp_tc_or() bad result!");
-         return EXIT_FAILURE;
+         goto LBL_ERR;
       }
    }
 
-   /* test mp_tc_and */
-   printf("\n\nTesting: mp_tc_and");
+   mp_clear_multi(&a, &b, &c, &d, NULL);
+   return EXIT_SUCCESS;
+ LBL_ERR:
+   mp_clear_multi(&a, &b, &c, &d, NULL);
+   return EXIT_FAILURE;
+}
+
+static int test_mp_tc_and(void) {
+   int i;
+
+   mp_int a, b, c, d;
+   if (mp_init_multi(&a, &b, &c, &d, NULL)!= MP_OKAY) {
+      return EXIT_FAILURE;
+   }
+
    for (i = 0; i < 1000; ++i) {
       int l, em;
 
@@ -445,12 +396,24 @@ int main(void)
       mp_tc_and(&a, &b, &c);
       if (mp_cmp(&c, &d) != MP_EQ) {
          printf("\nmp_tc_and() bad result!");
-         return EXIT_FAILURE;
+         goto LBL_ERR;
       }
    }
 
+   mp_clear_multi(&a, &b, &c, &d, NULL);
+   return EXIT_SUCCESS;
+ LBL_ERR:
+   mp_clear_multi(&a, &b, &c, &d, NULL);
+   return EXIT_FAILURE;
+}
+
+static int test_mp_invmod(void) {
+   mp_int a, b, c, d;
+   if (mp_init_multi(&a, &b, &c, &d, NULL)!= MP_OKAY) {
+      return EXIT_FAILURE;
+   }
+
    /* mp_invmod corner-case of https://github.com/libtom/libtommath/issues/118 */
-   printf("\n\nTesting: mp_invmod");
    {
       const char *a_ = "47182BB8DF0FFE9F61B1F269BACC066B48BA145D35137D426328DC3F88A5EA44";
       const char *b_ = "FFFFFFFEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00000000FFFFFFFFFFFFFFFF";
@@ -458,46 +421,61 @@ int main(void)
 
       if (mp_read_radix(&a, a_, 16) != MP_OKAY) {
          printf("\nmp_read_radix(a) failed!");
-         return EXIT_FAILURE;
+         goto LBL_ERR;
       }
       if (mp_read_radix(&b, b_, 16) != MP_OKAY) {
          printf("\nmp_read_radix(b) failed!");
-         return EXIT_FAILURE;
+         goto LBL_ERR;
       }
       if (mp_read_radix(&c, should_, 16) != MP_OKAY) {
          printf("\nmp_read_radix(should) failed!");
-         return EXIT_FAILURE;
+         goto LBL_ERR;
       }
 
       if (mp_invmod(&a, &b, &d) != MP_OKAY) {
          printf("\nmp_invmod() failed!");
-         return EXIT_FAILURE;
+         goto LBL_ERR;
       }
 
       if (mp_cmp(&c, &d) != MP_EQ) {
          printf("\nmp_invmod() bad result!");
-         return EXIT_FAILURE;
+         goto LBL_ERR;
       }
+   }
+
+   mp_clear_multi(&a, &b, &c, &d, NULL);
+   return EXIT_SUCCESS;
+ LBL_ERR:
+   mp_clear_multi(&a, &b, &c, &d, NULL);
+   return EXIT_FAILURE;
+
+}
+
+static int test_mp_set_double(void) {
+   int i;
+
+   mp_int a, b;
+   if (mp_init_multi(&a, &b, NULL)!= MP_OKAY) {
+      return EXIT_FAILURE;
    }
 
    /* test mp_get_double/mp_set_double */
 #if defined(__STDC_IEC_559__) || defined(__GCC_IEC_559)
-   printf("\n\nTesting: mp_get_double");
    if (mp_set_double(&a, +1.0/0.0) != MP_VAL) {
       printf("\nmp_set_double should return MP_VAL for +inf");
-      return EXIT_FAILURE;
+      goto LBL_ERR;
    }
    if (mp_set_double(&a, -1.0/0.0) != MP_VAL) {
       printf("\nmp_set_double should return MP_VAL for -inf");
-      return EXIT_FAILURE;
+      goto LBL_ERR;
    }
    if (mp_set_double(&a, +0.0/0.0) != MP_VAL) {
       printf("\nmp_set_double should return MP_VAL for NaN");
-      return EXIT_FAILURE;
+      goto LBL_ERR;
    }
    if (mp_set_double(&a, -0.0/0.0) != MP_VAL) {
       printf("\nmp_set_double should return MP_VAL for NaN");
-      return EXIT_FAILURE;
+      goto LBL_ERR;
    }
 
    for (i = 0; i < 1000; ++i) {
@@ -505,45 +483,75 @@ int main(void)
       double dbl = (double)tmp * rand() + 1;
       if (mp_set_double(&a, dbl) != MP_OKAY) {
          printf("\nmp_set_double() failed");
-         return EXIT_FAILURE;
+         goto LBL_ERR;
       }
       if (dbl != mp_get_double(&a)) {
          printf("\nmp_get_double() bad result!");
-         return EXIT_FAILURE;
+         goto LBL_ERR;
       }
       if (mp_set_double(&a, -dbl) != MP_OKAY) {
          printf("\nmp_set_double() failed");
-         return EXIT_FAILURE;
+         goto LBL_ERR;
       }
       if (-dbl != mp_get_double(&a)) {
          printf("\nmp_get_double() bad result!");
-         return EXIT_FAILURE;
+         goto LBL_ERR;
       }
    }
 #endif
 
-   /* test mp_get_int */
-   printf("\n\nTesting: mp_get_int");
+   mp_clear_multi(&a, &b, NULL);
+   return EXIT_SUCCESS;
+ LBL_ERR:
+   mp_clear_multi(&a, &b, NULL);
+   return EXIT_FAILURE;
+
+}
+
+static int test_mp_get_int(void) {
+   unsigned long t;
+   int i;
+
+   mp_int a, b;
+   if (mp_init_multi(&a, &b, NULL)!= MP_OKAY) {
+      return EXIT_FAILURE;
+   }
+
    for (i = 0; i < 1000; ++i) {
       t = (unsigned long)(rand() * rand() + 1) & 0xFFFFFFFFuL;
       mp_set_int(&a, t);
       if (t != mp_get_int(&a)) {
          printf("\nmp_get_int() bad result!");
-         return EXIT_FAILURE;
+         goto LBL_ERR;
       }
    }
    mp_set_int(&a, 0);
    if (mp_get_int(&a) != 0) {
       printf("\nmp_get_int() bad result!");
-      return EXIT_FAILURE;
+      goto LBL_ERR;
    }
    mp_set_int(&a, 0xFFFFFFFFuL);
    if (mp_get_int(&a) != 0xFFFFFFFFuL) {
       printf("\nmp_get_int() bad result!");
+      goto LBL_ERR;
+   }
+
+   mp_clear_multi(&a, &b, NULL);
+   return EXIT_SUCCESS;
+ LBL_ERR:
+   mp_clear_multi(&a, &b, NULL);
+   return EXIT_FAILURE;
+}
+
+static int test_mp_get_long(void) {
+   unsigned long s, t;
+   int i;
+
+   mp_int a, b;
+   if (mp_init_multi(&a, &b, NULL)!= MP_OKAY) {
       return EXIT_FAILURE;
    }
 
-   printf("\n\nTesting: mp_get_long\n");
    for (i = 0; i < ((int)(sizeof(unsigned long)*CHAR_BIT) - 1); ++i) {
       t = (1ULL << (i+1)) - 1;
       if (!t)
@@ -552,18 +560,33 @@ int main(void)
       do {
          if (mp_set_long(&a, t) != MP_OKAY) {
             printf("\nmp_set_long() error!");
-            return EXIT_FAILURE;
+            goto LBL_ERR;
          }
          s = mp_get_long(&a);
          if (s != t) {
             printf("\nmp_get_long() bad result! 0x%lx != 0x%lx", s, t);
-            return EXIT_FAILURE;
+            goto LBL_ERR;
          }
          t <<= 1;
       } while (t != 0uL);
    }
 
-   printf("\n\nTesting: mp_get_long_long\n");
+   mp_clear_multi(&a, &b, NULL);
+   return EXIT_SUCCESS;
+ LBL_ERR:
+   mp_clear_multi(&a, &b, NULL);
+   return EXIT_FAILURE;
+}
+
+static int test_mp_get_long_long(void) {
+   unsigned long long q, r;
+   int i;
+
+   mp_int a, b;
+   if (mp_init_multi(&a, &b, NULL)!= MP_OKAY) {
+      return EXIT_FAILURE;
+   }
+
    for (i = 0; i < ((int)(sizeof(unsigned long long)*CHAR_BIT) - 1); ++i) {
       r = (1ULL << (i+1)) - 1;
       if (!r)
@@ -572,19 +595,33 @@ int main(void)
       do {
          if (mp_set_long_long(&a, r) != MP_OKAY) {
             printf("\nmp_set_long_long() error!");
-            return EXIT_FAILURE;
+            goto LBL_ERR;
          }
          q = mp_get_long_long(&a);
          if (q != r) {
             printf("\nmp_get_long_long() bad result! 0x%llx != 0x%llx", q, r);
-            return EXIT_FAILURE;
+            goto LBL_ERR;
          }
          r <<= 1;
       } while (r != 0uLL);
    }
 
-   /* test mp_sqrt */
-   printf("\n\nTesting: mp_sqrt\n");
+   mp_clear_multi(&a, &b, NULL);
+   return EXIT_SUCCESS;
+ LBL_ERR:
+   mp_clear_multi(&a, &b, NULL);
+   return EXIT_FAILURE;
+
+}
+
+static int test_mp_sqrt(void) {
+   int i, n;
+
+   mp_int a, b, c, d;
+   if (mp_init_multi(&a, &b, &c, &d, NULL)!= MP_OKAY) {
+      return EXIT_FAILURE;
+   }
+
    for (i = 0; i < 1000; ++i) {
       printf("%6d\r", i);
       fflush(stdout);
@@ -592,21 +629,35 @@ int main(void)
       mp_rand(&a, n);
       if (mp_sqrt(&a, &b) != MP_OKAY) {
          printf("\nmp_sqrt() error!");
-         return EXIT_FAILURE;
+         goto LBL_ERR;
       }
       mp_n_root_ex(&a, 2, &c, 0);
       mp_n_root_ex(&a, 2, &d, 1);
       if (mp_cmp_mag(&c, &d) != MP_EQ) {
          printf("\nmp_n_root_ex() bad result!");
-         return EXIT_FAILURE;
+         goto LBL_ERR;
       }
       if (mp_cmp_mag(&b, &c) != MP_EQ) {
          printf("mp_sqrt() bad result!\n");
-         return EXIT_FAILURE;
+         goto LBL_ERR;
       }
    }
 
-   printf("\n\nTesting: mp_is_square\n");
+   mp_clear_multi(&a, &b, &c, &d, NULL);
+   return EXIT_SUCCESS;
+ LBL_ERR:
+   mp_clear_multi(&a, &b, &c, &d, NULL);
+   return EXIT_FAILURE;
+}
+
+static int test_mp_is_square(void) {
+   int i, n;
+
+   mp_int a, b;
+   if (mp_init_multi(&a, &b, NULL)!= MP_OKAY) {
+      return EXIT_FAILURE;
+   }
+
    for (i = 0; i < 1000; ++i) {
       printf("%6d\r", i);
       fflush(stdout);
@@ -617,26 +668,52 @@ int main(void)
       mp_sqr(&a, &a);
       if (mp_is_square(&a, &n) != MP_OKAY) {
          printf("\nfn:mp_is_square() error!");
-         return EXIT_FAILURE;
+         goto LBL_ERR;
       }
       if (n == 0) {
          printf("\nfn:mp_is_square() bad result!");
-         return EXIT_FAILURE;
+         goto LBL_ERR;
       }
 
       /* test for false positives */
       mp_add_d(&a, 1uL, &a);
       if (mp_is_square(&a, &n) != MP_OKAY) {
          printf("\nfp:mp_is_square() error!");
-         return EXIT_FAILURE;
+         goto LBL_ERR;
       }
       if (n == 1) {
          printf("\nfp:mp_is_square() bad result!");
-         return EXIT_FAILURE;
+         goto LBL_ERR;
       }
 
    }
    printf("\n\n");
+
+   mp_clear_multi(&a, &b, NULL);
+   return EXIT_SUCCESS;
+ LBL_ERR:
+   mp_clear_multi(&a, &b, NULL);
+   return EXIT_FAILURE;
+}
+
+static int test_mp_sqrtmod_prime(void) {
+   struct mp_sqrtmod_prime_st {
+      unsigned long p;
+      unsigned long n;
+      mp_digit r;
+   };
+
+   static struct mp_sqrtmod_prime_st sqrtmod_prime[] = {
+      { 5, 14, 3 },
+      { 7, 9, 4 },
+      { 113, 2, 62 }
+   };
+   int i;
+
+   mp_int a, b, c;
+   if (mp_init_multi(&a, &b, &c, NULL)!= MP_OKAY) {
+      return EXIT_FAILURE;
+   }
 
    /* r^2 = n (mod p) */
    for (i = 0; i < (int)(sizeof(sqrtmod_prime)/sizeof(sqrtmod_prime[0])); ++i) {
@@ -644,13 +721,53 @@ int main(void)
       mp_set_int(&b, sqrtmod_prime[i].n);
       if (mp_sqrtmod_prime(&b, &a, &c) != MP_OKAY) {
          printf("Failed executing %d. mp_sqrtmod_prime\n", (i+1));
-         return EXIT_FAILURE;
+         goto LBL_ERR;
       }
       if (mp_cmp_d(&c, sqrtmod_prime[i].r) != MP_EQ) {
          printf("Failed %d. trivial mp_sqrtmod_prime\n", (i+1));
          ndraw(&c, "r");
-         return EXIT_FAILURE;
+         goto LBL_ERR;
       }
+   }
+
+   mp_clear_multi(&a, &b, &c, NULL);
+   return EXIT_SUCCESS;
+ LBL_ERR:
+   mp_clear_multi(&a, &b, &c, NULL);
+   return EXIT_FAILURE;
+}
+
+#if defined(LTM_DEMO_REAL_RAND) && !defined(_WIN32)
+static FILE *fd_urandom = 0;
+#endif
+
+static int myrng(unsigned char *dst, int len, void *dat)
+{
+   int x;
+   (void)dat;
+#if defined(LTM_DEMO_REAL_RAND) && !defined(_WIN32)
+   if (!fd_urandom) {
+      fprintf(stderr, "\nno /dev/urandom\n");
+   } else {
+      return fread(dst, 1uL, len, fd_urandom);
+   }
+#endif
+   for (x = 0; x < len;) {
+      unsigned int r = (unsigned int)rand();
+      do {
+         dst[x++] = r & 0xFFu;
+         r >>= 8;
+      } while ((r != 0u) && (x < len));
+   }
+   return len;
+}
+
+static int test_mp_prime_random_ex(void) {
+   int ix, err;
+
+   mp_int a, b;
+   if (mp_init_multi(&a, &b, NULL)!= MP_OKAY) {
+      return EXIT_FAILURE;
    }
 
    /* test for size */
@@ -662,15 +779,29 @@ int main(void)
                                NULL);
       if (err != MP_OKAY) {
          printf("\nfailed with error: %s\n", mp_error_to_string(err));
-         return EXIT_FAILURE;
+         goto LBL_ERR;
       }
       if (mp_count_bits(&a) != ix) {
          printf("Prime is %d not %d bits!!!\n", mp_count_bits(&a), ix);
-         return EXIT_FAILURE;
+         goto LBL_ERR;
       }
    }
    printf("\n");
 
+   mp_clear_multi(&a, &b, NULL);
+   return EXIT_SUCCESS;
+ LBL_ERR:
+   mp_clear_multi(&a, &b, NULL);
+   return EXIT_FAILURE;
+}
+
+static int test_mp_prime_is_prime(void) {
+   int ix, err, cnt;
+
+   mp_int a, b;
+   if (mp_init_multi(&a, &b, NULL)!= MP_OKAY) {
+      return EXIT_FAILURE;
+   }
 
    /* strong Miller-Rabin pseudoprime to the first 200 primes (F. Arnault) */
    puts("Testing mp_prime_is_prime() with Arnault's pseudoprime  803...901 \n");
@@ -680,7 +811,7 @@ int main(void)
    mp_prime_is_prime(&a, 8, &cnt);
    if (cnt == MP_YES) {
       printf("Arnault's pseudoprime is not prime but mp_prime_is_prime says it is.\n");
-      return EXIT_FAILURE;
+      goto LBL_ERR;
    }
    /* About the same size as Arnault's pseudoprime */
    puts("Testing mp_prime_is_prime() with certified prime 2^1119 + 53\n");
@@ -700,7 +831,7 @@ int main(void)
       printf("prime tested was: ");
       mp_fwrite(&a,16,stdout);
       putchar('\n');
-      return EXIT_FAILURE;
+      goto LBL_ERR;
    }
    for (ix = 16; ix < 128; ix++) {
       printf("Testing (    safe-prime): %9d bits    \r", ix);
@@ -710,11 +841,11 @@ int main(void)
                myrng, NULL);
       if (err != MP_OKAY) {
          printf("\nfailed with error: %s\n", mp_error_to_string(err));
-         return EXIT_FAILURE;
+         goto LBL_ERR;
       }
       if (mp_count_bits(&a) != ix) {
          printf("Prime is %d not %d bits!!!\n", mp_count_bits(&a), ix);
-         return EXIT_FAILURE;
+         goto LBL_ERR;
       }
       /* let's see if it's really a safe prime */
       mp_sub_d(&a, 1uL, &b);
@@ -735,7 +866,7 @@ int main(void)
          printf("sub tested was: ");
          mp_fwrite(&b,16,stdout);
          putchar('\n');
-         return EXIT_FAILURE;
+         goto LBL_ERR;
       }
 
    }
@@ -757,14 +888,31 @@ int main(void)
       printf("prime tested was: ");
       mp_fwrite(&a,16,stdout);
       putchar('\n');
-      return EXIT_FAILURE;
+      goto LBL_ERR;
    }
 #endif
 
    printf("\n\n");
 
+   mp_clear_multi(&a, &b, NULL);
+   return EXIT_SUCCESS;
+ LBL_ERR:
+   mp_clear_multi(&a, &b, NULL);
+   return EXIT_FAILURE;
+
+}
+
+static int test_mp_montgomery_reduce(void) {
+   mp_digit mp;
+   int ix, i, n;
+   char buf[4096];
+
+   mp_int a, b, c, d, e;
+   if (mp_init_multi(&a, &b, &c, &d, &e, NULL)!= MP_OKAY) {
+      return EXIT_FAILURE;
+   }
+
    /* test montgomery */
-   printf("Testing: montgomery...\n");
    for (i = 1; i <= 10; i++) {
       if (i == 10)
          i = 1000;
@@ -795,7 +943,7 @@ int main(void)
                mp_todecimal(&e, buf); printf("e = %s\n", buf);
                mp_todecimal(&d, buf); printf("d = %s\n", buf);
                mp_todecimal(&c, buf); printf("c = %s\n", buf);
-               printf("compare no compare!\n"); return EXIT_FAILURE;
+               printf("compare no compare!\n"); goto LBL_ERR;
 /* *INDENT-ON* */
             }
             /* only one big montgomery reduction */
@@ -809,6 +957,22 @@ int main(void)
 
    printf("\n\n");
 
+   mp_clear_multi(&a, &b, &c, &d, &e, NULL);
+   return EXIT_SUCCESS;
+ LBL_ERR:
+   mp_clear_multi(&a, &b, &c, &d, &e, NULL);
+   return EXIT_FAILURE;
+
+}
+
+static int test_mp_read_radix(void) {
+   char buf[4096];
+
+   mp_int a;
+   if (mp_init_multi(&a, NULL)!= MP_OKAY) {
+      return EXIT_FAILURE;
+   }
+
    mp_read_radix(&a, "123456", 10);
    mp_toradix_n(&a, buf, 10, 3);
    printf("a == %s\n", buf);
@@ -816,7 +980,6 @@ int main(void)
    printf("a == %s\n", buf);
    mp_toradix_n(&a, buf, 10, 30);
    printf("a == %s\n", buf);
-
 
 #if 0
    for (;;) {
@@ -828,19 +991,44 @@ int main(void)
    }
 #endif
 
-   /* test mp_cnt_lsb */
-   printf("\n\nTesting: mp_cnt_lsb");
+   mp_clear_multi(&a, NULL);
+   return EXIT_SUCCESS;
+}
+
+static int test_mp_cnt_lsb(void) {
+   int ix;
+
+   mp_int a, b;
+   if (mp_init_multi(&a, &b, NULL)!= MP_OKAY) {
+      return EXIT_FAILURE;
+   }
+
    mp_set(&a, 1uL);
    for (ix = 0; ix < 1024; ix++) {
       if (mp_cnt_lsb(&a) != ix) {
          printf("Failed at %d, %d\n", ix, mp_cnt_lsb(&a));
-         return EXIT_FAILURE;
+         goto LBL_ERR;
       }
       mp_mul_2(&a, &a);
    }
 
+   mp_clear_multi(&a, &b, NULL);
+   return EXIT_SUCCESS;
+ LBL_ERR:
+   mp_clear_multi(&a, &b, NULL);
+   return EXIT_FAILURE;
+
+}
+
+static int test_mp_reduce_2k(void) {
+   int ix, cnt;
+
+   mp_int a, b, c, d;
+   if (mp_init_multi(&a, &b, &c, &d, NULL)!= MP_OKAY) {
+      return EXIT_FAILURE;
+   }
+
    /* test mp_reduce_2k */
-   printf("\n\nTesting: mp_reduce_2k\n");
    for (cnt = 3; cnt <= 128; ++cnt) {
       mp_digit tmp;
 
@@ -862,13 +1050,27 @@ int main(void)
          mp_reduce_2k(&b, &a, 2uL);
          if (mp_cmp(&c, &b) != MP_EQ) {
             printf("FAILED\n");
-            return EXIT_FAILURE;
+            goto LBL_ERR;
          }
       }
    }
 
+   mp_clear_multi(&a, &b, &c, &d, NULL);
+   return EXIT_SUCCESS;
+ LBL_ERR:
+   mp_clear_multi(&a, &b, &c, &d, NULL);
+   return EXIT_FAILURE;
+}
+
+static int test_mp_div_3(void) {
+   int cnt;
+
+   mp_int a, b, c, d, e;
+   if (mp_init_multi(&a, &b, &c, &d, &e, NULL)!= MP_OKAY) {
+      return EXIT_FAILURE;
+   }
+
    /* test mp_div_3  */
-   printf("\n\nTesting: mp_div_3...\n");
    mp_set(&d, 3uL);
    for (cnt = 0; cnt < 10000;) {
       mp_digit r2;
@@ -883,12 +1085,30 @@ int main(void)
 
       if (mp_cmp(&b, &c) || mp_cmp_d(&e, r2)) {
          printf("\nmp_div_3 => Failure\n");
+         goto LBL_ERR;
       }
    }
    printf("\nPassed div_3 testing");
 
+   mp_clear_multi(&a, &b, &c, &d, &e, NULL);
+   return EXIT_SUCCESS;
+ LBL_ERR:
+   mp_clear_multi(&a, &b, &c, &d, &e, NULL);
+   return EXIT_FAILURE;
+}
+
+static int test_mp_dr_reduce(void) {
+   mp_digit mp;
+   int cnt;
+   unsigned rr;
+   int ix;
+
+   mp_int a, b, c;
+   if (mp_init_multi(&a, &b, &c, NULL)!= MP_OKAY) {
+      return EXIT_FAILURE;
+   }
+
    /* test the DR reduction */
-   printf("\n\nTesting: mp_dr_reduce...\n");
    for (cnt = 2; cnt < 32; cnt++) {
       printf("\r%d digit modulus", cnt);
       mp_grow(&a, cnt);
@@ -918,14 +1138,26 @@ int main(void)
 
          if (mp_cmp(&b, &c) != MP_EQ) {
             printf("Failed on trial %u\n", rr);
-            return EXIT_FAILURE;
+            goto LBL_ERR;
          }
       } while (++rr < 500);
       printf(" passed");
       fflush(stdout);
    }
 
+   mp_clear_multi(&a, &b, &c, NULL);
+   return EXIT_SUCCESS;
+ LBL_ERR:
+   mp_clear_multi(&a, &b, &c, NULL);
+   return EXIT_FAILURE;
+}
+
+static int test_mp_reduce_2k_l(void) {
 #   if LTM_DEMO_TEST_REDUCE_2K_L
+   mp_int a, b;
+   if (mp_init_multi(&a, &b, NULL)!= MP_OKAY) {
+      return EXIT_FAILURE;
+   }
    /* test the mp_reduce_2k_l code */
 #      if LTM_DEMO_TEST_REDUCE_2K_L == 1
    /* first load P with 2^1024 - 0x2A434 B9FDEC95 D8F9D550 FFFFFFFF FFFFFFFF */
@@ -948,7 +1180,7 @@ int main(void)
    /* now mp_reduce_is_2k_l() should return */
    if (mp_reduce_is_2k_l(&a) != 1) {
       printf("mp_reduce_is_2k_l() return 0, should be 1\n");
-      return EXIT_FAILURE;
+      goto LBL_ERR;
    }
    mp_reduce_2k_setup_l(&a, &d);
    /* now do a million square+1 to see if it varies */
@@ -970,367 +1202,78 @@ int main(void)
          printf("b == %s\n", buf);
          mp_tohex(&c, buf);
          printf("c == %s\n", buf);
-         return EXIT_FAILURE;
+         goto LBL_ERR;
       }
    }
-   printf("...Passed\n");
-#   endif /* LTM_DEMO_TEST_REDUCE_2K_L */
 
+   mp_clear_multi(&a, &b, NULL);
+   return EXIT_SUCCESS;
+ LBL_ERR:
+   mp_clear_multi(&a, &b, NULL);
+   return EXIT_FAILURE;
 #else
-   div2_n = mul2_n = inv_n = expt_n = lcm_n = gcd_n = add_n =
-                                         sub_n = mul_n = div_n = sqr_n = mul2d_n = div2d_n = add_d_n = sub_d_n = 0;
-
-   /* force KARA and TOOM to enable despite cutoffs */
-   KARATSUBA_SQR_CUTOFF = KARATSUBA_MUL_CUTOFF = 8;
-   TOOM_SQR_CUTOFF = TOOM_MUL_CUTOFF = 16;
-
-   for (;;) {
-      /* randomly clear and re-init one variable, this has the affect of triming the alloc space */
-      switch (abs(rand()) % 7) {
-      case 0:
-         mp_clear(&a);
-         mp_init(&a);
-         break;
-      case 1:
-         mp_clear(&b);
-         mp_init(&b);
-         break;
-      case 2:
-         mp_clear(&c);
-         mp_init(&c);
-         break;
-      case 3:
-         mp_clear(&d);
-         mp_init(&d);
-         break;
-      case 4:
-         mp_clear(&e);
-         mp_init(&e);
-         break;
-      case 5:
-         mp_clear(&f);
-         mp_init(&f);
-         break;
-      case 6:
-         break;        /* don't clear any */
-      }
-
-
-      printf("%4lu/%4lu/%4lu/%4lu/%4lu/%4lu/%4lu/%4lu/%4lu/%4lu/%4lu/%4lu/%4lu/%4lu/%4lu ",
-             add_n, sub_n, mul_n, div_n, sqr_n, mul2d_n, div2d_n, gcd_n, lcm_n,
-             expt_n, inv_n, div2_n, mul2_n, add_d_n, sub_d_n);
-      FGETS(cmd, 4095, stdin);
-      cmd[strlen(cmd) - 1u] = '\0';
-      printf("%-6s ]\r", cmd);
-      fflush(stdout);
-      if (strcmp(cmd, "mul2d") == 0) {
-         ++mul2d_n;
-         FGETS(buf, 4095, stdin);
-         mp_read_radix(&a, buf, 64);
-         FGETS(buf, 4095, stdin);
-         sscanf(buf, "%u", &rr);
-         FGETS(buf, 4095, stdin);
-         mp_read_radix(&b, buf, 64);
-
-         mp_mul_2d(&a, rr, &a);
-         a.sign = b.sign;
-         if (mp_cmp(&a, &b) != MP_EQ) {
-            printf("mul2d failed, rr == %u\n", rr);
-            draw(&a);
-            draw(&b);
-            return EXIT_FAILURE;
-         }
-      } else if (strcmp(cmd, "div2d") == 0) {
-         ++div2d_n;
-         FGETS(buf, 4095, stdin);
-         mp_read_radix(&a, buf, 64);
-         FGETS(buf, 4095, stdin);
-         sscanf(buf, "%u", &rr);
-         FGETS(buf, 4095, stdin);
-         mp_read_radix(&b, buf, 64);
-
-         mp_div_2d(&a, rr, &a, &e);
-         a.sign = b.sign;
-         if ((a.used == b.used) && (a.used == 0)) {
-            a.sign = b.sign = MP_ZPOS;
-         }
-         if (mp_cmp(&a, &b) != MP_EQ) {
-            printf("div2d failed, rr == %u\n", rr);
-            draw(&a);
-            draw(&b);
-            return EXIT_FAILURE;
-         }
-      } else if (strcmp(cmd, "add") == 0) {
-         ++add_n;
-         FGETS(buf, 4095, stdin);
-         mp_read_radix(&a, buf, 64);
-         FGETS(buf, 4095, stdin);
-         mp_read_radix(&b, buf, 64);
-         FGETS(buf, 4095, stdin);
-         mp_read_radix(&c, buf, 64);
-         mp_copy(&a, &d);
-         mp_add(&d, &b, &d);
-         if (mp_cmp(&c, &d) != MP_EQ) {
-            printf("add %lu failure!\n", add_n);
-            draw(&a);
-            draw(&b);
-            draw(&c);
-            draw(&d);
-            return EXIT_FAILURE;
-         }
-
-         /* test the sign/unsigned storage functions */
-
-         rr = mp_signed_bin_size(&c);
-         mp_to_signed_bin(&c, (unsigned char *) cmd);
-         memset(cmd + rr, rand() & 0xFFu, sizeof(cmd) - rr);
-         mp_read_signed_bin(&d, (unsigned char *) cmd, rr);
-         if (mp_cmp(&c, &d) != MP_EQ) {
-            printf("mp_signed_bin failure!\n");
-            draw(&c);
-            draw(&d);
-            return EXIT_FAILURE;
-         }
-
-
-         rr = mp_unsigned_bin_size(&c);
-         mp_to_unsigned_bin(&c, (unsigned char *) cmd);
-         memset(cmd + rr, rand() & 0xFFu, sizeof(cmd) - rr);
-         mp_read_unsigned_bin(&d, (unsigned char *) cmd, rr);
-         if (mp_cmp_mag(&c, &d) != MP_EQ) {
-            printf("mp_unsigned_bin failure!\n");
-            draw(&c);
-            draw(&d);
-            return EXIT_FAILURE;
-         }
-
-      } else if (strcmp(cmd, "sub") == 0) {
-         ++sub_n;
-         FGETS(buf, 4095, stdin);
-         mp_read_radix(&a, buf, 64);
-         FGETS(buf, 4095, stdin);
-         mp_read_radix(&b, buf, 64);
-         FGETS(buf, 4095, stdin);
-         mp_read_radix(&c, buf, 64);
-         mp_copy(&a, &d);
-         mp_sub(&d, &b, &d);
-         if (mp_cmp(&c, &d) != MP_EQ) {
-            printf("sub %lu failure!\n", sub_n);
-            draw(&a);
-            draw(&b);
-            draw(&c);
-            draw(&d);
-            return EXIT_FAILURE;
-         }
-      } else if (strcmp(cmd, "mul") == 0) {
-         ++mul_n;
-         FGETS(buf, 4095, stdin);
-         mp_read_radix(&a, buf, 64);
-         FGETS(buf, 4095, stdin);
-         mp_read_radix(&b, buf, 64);
-         FGETS(buf, 4095, stdin);
-         mp_read_radix(&c, buf, 64);
-         mp_copy(&a, &d);
-         mp_mul(&d, &b, &d);
-         if (mp_cmp(&c, &d) != MP_EQ) {
-            printf("mul %lu failure!\n", mul_n);
-            draw(&a);
-            draw(&b);
-            draw(&c);
-            draw(&d);
-            return EXIT_FAILURE;
-         }
-      } else if (strcmp(cmd, "div") == 0) {
-         ++div_n;
-         FGETS(buf, 4095, stdin);
-         mp_read_radix(&a, buf, 64);
-         FGETS(buf, 4095, stdin);
-         mp_read_radix(&b, buf, 64);
-         FGETS(buf, 4095, stdin);
-         mp_read_radix(&c, buf, 64);
-         FGETS(buf, 4095, stdin);
-         mp_read_radix(&d, buf, 64);
-
-         mp_div(&a, &b, &e, &f);
-         if ((mp_cmp(&c, &e) != MP_EQ) || (mp_cmp(&d, &f) != MP_EQ)) {
-            printf("div %lu %d, %d, failure!\n", div_n, mp_cmp(&c, &e),
-                   mp_cmp(&d, &f));
-            draw(&a);
-            draw(&b);
-            draw(&c);
-            draw(&d);
-            draw(&e);
-            draw(&f);
-            return EXIT_FAILURE;
-         }
-
-      } else if (strcmp(cmd, "sqr") == 0) {
-         ++sqr_n;
-         FGETS(buf, 4095, stdin);
-         mp_read_radix(&a, buf, 64);
-         FGETS(buf, 4095, stdin);
-         mp_read_radix(&b, buf, 64);
-         mp_copy(&a, &c);
-         mp_sqr(&c, &c);
-         if (mp_cmp(&b, &c) != MP_EQ) {
-            printf("sqr %lu failure!\n", sqr_n);
-            draw(&a);
-            draw(&b);
-            draw(&c);
-            return EXIT_FAILURE;
-         }
-      } else if (strcmp(cmd, "gcd") == 0) {
-         ++gcd_n;
-         FGETS(buf, 4095, stdin);
-         mp_read_radix(&a, buf, 64);
-         FGETS(buf, 4095, stdin);
-         mp_read_radix(&b, buf, 64);
-         FGETS(buf, 4095, stdin);
-         mp_read_radix(&c, buf, 64);
-         mp_copy(&a, &d);
-         mp_gcd(&d, &b, &d);
-         d.sign = c.sign;
-         if (mp_cmp(&c, &d) != MP_EQ) {
-            printf("gcd %lu failure!\n", gcd_n);
-            draw(&a);
-            draw(&b);
-            draw(&c);
-            draw(&d);
-            return EXIT_FAILURE;
-         }
-      } else if (strcmp(cmd, "lcm") == 0) {
-         ++lcm_n;
-         FGETS(buf, 4095, stdin);
-         mp_read_radix(&a, buf, 64);
-         FGETS(buf, 4095, stdin);
-         mp_read_radix(&b, buf, 64);
-         FGETS(buf, 4095, stdin);
-         mp_read_radix(&c, buf, 64);
-         mp_copy(&a, &d);
-         mp_lcm(&d, &b, &d);
-         d.sign = c.sign;
-         if (mp_cmp(&c, &d) != MP_EQ) {
-            printf("lcm %lu failure!\n", lcm_n);
-            draw(&a);
-            draw(&b);
-            draw(&c);
-            draw(&d);
-            return EXIT_FAILURE;
-         }
-      } else if (strcmp(cmd, "expt") == 0) {
-         ++expt_n;
-         FGETS(buf, 4095, stdin);
-         mp_read_radix(&a, buf, 64);
-         FGETS(buf, 4095, stdin);
-         mp_read_radix(&b, buf, 64);
-         FGETS(buf, 4095, stdin);
-         mp_read_radix(&c, buf, 64);
-         FGETS(buf, 4095, stdin);
-         mp_read_radix(&d, buf, 64);
-         mp_copy(&a, &e);
-         mp_exptmod(&e, &b, &c, &e);
-         if (mp_cmp(&d, &e) != MP_EQ) {
-            printf("expt %lu failure!\n", expt_n);
-            draw(&a);
-            draw(&b);
-            draw(&c);
-            draw(&d);
-            draw(&e);
-            return EXIT_FAILURE;
-         }
-      } else if (strcmp(cmd, "invmod") == 0) {
-         ++inv_n;
-         FGETS(buf, 4095, stdin);
-         mp_read_radix(&a, buf, 64);
-         FGETS(buf, 4095, stdin);
-         mp_read_radix(&b, buf, 64);
-         FGETS(buf, 4095, stdin);
-         mp_read_radix(&c, buf, 64);
-         mp_invmod(&a, &b, &d);
-         mp_mulmod(&d, &a, &b, &e);
-         if (mp_cmp_d(&e, 1uL) != MP_EQ) {
-            printf("inv [wrong value from MPI?!] failure\n");
-            draw(&a);
-            draw(&b);
-            draw(&c);
-            draw(&d);
-            draw(&e);
-            mp_gcd(&a, &b, &e);
-            draw(&e);
-            return EXIT_FAILURE;
-         }
-
-      } else if (strcmp(cmd, "div2") == 0) {
-         ++div2_n;
-         FGETS(buf, 4095, stdin);
-         mp_read_radix(&a, buf, 64);
-         FGETS(buf, 4095, stdin);
-         mp_read_radix(&b, buf, 64);
-         mp_div_2(&a, &c);
-         if (mp_cmp(&c, &b) != MP_EQ) {
-            printf("div_2 %lu failure\n", div2_n);
-            draw(&a);
-            draw(&b);
-            draw(&c);
-            return EXIT_FAILURE;
-         }
-      } else if (strcmp(cmd, "mul2") == 0) {
-         ++mul2_n;
-         FGETS(buf, 4095, stdin);
-         mp_read_radix(&a, buf, 64);
-         FGETS(buf, 4095, stdin);
-         mp_read_radix(&b, buf, 64);
-         mp_mul_2(&a, &c);
-         if (mp_cmp(&c, &b) != MP_EQ) {
-            printf("mul_2 %lu failure\n", mul2_n);
-            draw(&a);
-            draw(&b);
-            draw(&c);
-            return EXIT_FAILURE;
-         }
-      } else if (strcmp(cmd, "add_d") == 0) {
-         ++add_d_n;
-         FGETS(buf, 4095, stdin);
-         mp_read_radix(&a, buf, 64);
-         FGETS(buf, 4095, stdin);
-         sscanf(buf, "%d", &ix);
-         FGETS(buf, 4095, stdin);
-         mp_read_radix(&b, buf, 64);
-         mp_add_d(&a, ix, &c);
-         if (mp_cmp(&b, &c) != MP_EQ) {
-            printf("add_d %lu failure\n", add_d_n);
-            draw(&a);
-            draw(&b);
-            draw(&c);
-            printf("d == %d\n", ix);
-            return EXIT_FAILURE;
-         }
-      } else if (strcmp(cmd, "sub_d") == 0) {
-         ++sub_d_n;
-         FGETS(buf, 4095, stdin);
-         mp_read_radix(&a, buf, 64);
-         FGETS(buf, 4095, stdin);
-         sscanf(buf, "%d", &ix);
-         FGETS(buf, 4095, stdin);
-         mp_read_radix(&b, buf, 64);
-         mp_sub_d(&a, ix, &c);
-         if (mp_cmp(&b, &c) != MP_EQ) {
-            printf("sub_d %lu failure\n", sub_d_n);
-            draw(&a);
-            draw(&b);
-            draw(&c);
-            printf("d == %d\n", ix);
-            return EXIT_FAILURE;
-         }
-      } else if (strcmp(cmd, "exit") == 0) {
-         printf("\nokay, exiting now\n");
-         break;
-      }
-   }
-#endif
-   return 0;
+   return EXIT_SUCCESS;
+#   endif /* LTM_DEMO_TEST_REDUCE_2K_L */
 }
 
-/* ref:         $Format:%D$ */
-/* git commit:  $Format:%H$ */
-/* commit time: $Format:%ai$ */
+int unit_tests(void) {
+   static const struct {
+      const char* name;
+      int (*fn)(void);
+   } test[] = {
+#define T(n) { #n, test_##n }
+      T(trivial_stuff),
+      T(mp_cnt_lsb),
+      T(mp_complement),
+      T(mp_div_3),
+      T(mp_dr_reduce),
+      T(mp_get_int),
+      T(mp_get_long),
+      T(mp_get_long_long),
+      T(mp_invmod),
+      T(mp_is_square),
+      T(mp_jacobi),
+      T(mp_kronecker),
+      T(mp_montgomery_reduce),
+      T(mp_prime_is_prime),
+      T(mp_prime_random_ex),
+      T(mp_read_radix),
+      T(mp_reduce_2k),
+      T(mp_reduce_2k_l),
+      T(mp_set_double),
+      T(mp_sqrt),
+      T(mp_sqrtmod_prime),
+      T(mp_tc_and),
+      T(mp_tc_div_2d),
+      T(mp_tc_div_2d),
+      T(mp_tc_or),
+      T(mp_tc_xor),
+#undef T
+   };
+   unsigned long i;
+   int res = EXIT_SUCCESS;
+
+#if defined(LTM_DEMO_REAL_RAND) && !defined(_WIN32)
+   fd_urandom = fopen("/dev/urandom", "r");
+   if (!fd_urandom) {
+      fprintf(stderr, "\ncould not open /dev/urandom\n");
+   }
+#endif
+
+   for (i = 0; i < sizeof (test) / sizeof (test[0]); ++i) {
+      printf("TEST %s\n\n", test[i].name);
+      if (test[i].fn() != EXIT_SUCCESS) {
+         printf("\n\nFAIL %s\n\n", test[i].name);
+         res = EXIT_FAILURE;
+         break;
+      }
+      printf("\n\n");
+   }
+
+#if defined(LTM_DEMO_REAL_RAND) && !defined(_WIN32)
+   if (fd_urandom) {
+      fclose(fd_urandom);
+   }
+#endif
+   return res;
+}
