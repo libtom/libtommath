@@ -81,8 +81,8 @@ $(LIBMAIN_D) $(LIBMAIN_I): $(OBJECTS)
 	$(STRIP) -S $(LIBMAIN_D)
 
 #Build test_standalone suite
-test.exe: $(LIBMAIN_S) demo/demo.c
-	$(CC) $(LTM_CFLAGS) $(LTM_LDFLAGS) demo/demo.c $(LIBMAIN_S) -DLTM_DEMO_TEST_VS_MTEST=0 -o $@
+test.exe: demo/main.c demo/opponent.c demo/test.c $(LIBMAIN_S)
+	$(CC) $(LTM_CFLAGS) $(LTM_LDFLAGS) $^ -DLTM_DEMO_TEST_VS_MTEST=0 -o $@
 	@echo NOTICE: start the tests by launching test.exe
 
 test_standalone: test.exe
