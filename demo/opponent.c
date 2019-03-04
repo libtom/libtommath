@@ -1,17 +1,5 @@
 #include "shared.h"
 
-/* TODO: Duplicate ndraw in test.c */
-static void ndraw(mp_int *a, const char *name)
-{
-   char buf[16000]; /* TODO: buffer might overflow! */
-
-   printf("%s: ", name);
-   mp_toradix(a, buf, 10);
-   printf("%s\n", buf);
-   mp_toradix(a, buf, 16);
-   printf("0x%s\n", buf);
-}
-
 static void draw(mp_int *a)
 {
    ndraw(a, "");

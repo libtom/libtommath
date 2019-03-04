@@ -24,3 +24,5 @@
 #endif
 
 #include "tommath.h"
+
+void ndraw(mp_int*, const char*);
