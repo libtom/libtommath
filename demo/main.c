@@ -3,15 +3,25 @@
 int mtest_opponent(void);
 int unit_tests(void);
 
-void ndraw(mp_int *a, const char *name)
+void ndraw(mp_int* a, const char* name)
 {
-   char buf[16000]; /* TODO: buffer might overflow! */
+   char *buf;
+   int size;
+
+   mp_radix_size(a, 10, &size);
+   buf = malloc((size_t) size);
+   if (buf == NULL) {
+      fprintf(stderr, "\nndraw: malloc(%d) failed\n", size);
+      exit(EXIT_FAILURE);
+   }
 
    printf("%s: ", name);
    mp_toradix(a, buf, 10);
    printf("%s\n", buf);
    mp_toradix(a, buf, 16);
    printf("0x%s\n", buf);
+
+   free(buf);
 }
 
 int main(void)
