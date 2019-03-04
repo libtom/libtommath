@@ -1,5 +1,7 @@
 #include "tommath_private.h"
-#ifdef BN_MP_RADIX_SIZE_C
+#ifdef BN_MP_RADIX_SIZE_BITS_C
+
+
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is a library that provides multiple-precision
@@ -12,14 +14,14 @@
  * SPDX-License-Identifier: Unlicense
  */
 
-/* returns size of ASCII reprensentation */
-int mp_radix_size(const mp_int *a, int radix, int *size)
+/* returns size of ASCII representation of the number of size "bits" */
+int mp_radix_size_bits(const int bits, const int radix, int *size)
 {
-   return mp_radix_size_ex(a, 0, radix, size);
+   return mp_radix_size_ex(NULL, bits, radix, size);
 }
-
 #endif
 
 /* ref:         $Format:%D$ */
 /* git commit:  $Format:%H$ */
 /* commit time: $Format:%ai$ */
+
