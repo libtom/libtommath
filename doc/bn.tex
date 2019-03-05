@@ -268,7 +268,7 @@ They can be enabled at any pass of the configuration phase.
 \hline & \\[-1.5ex]
 \textbf{Define} & \textbf{Purpose} \\[1ex]
 \hline BN\_MP\_DIV\_SMALL 
-      & Enables a slower, smaller and equally functional mp\_div() function \\[1ex]
+      & Enables a slower, smaller and equally functional mp\_div() function\protect\footnotemark \\[1ex]
 LTM\_USE\_FASTER\_RADIX\_SIZE
      & Uses table lookups ($O(1)$) instead of the na\"ive approach ($O(n^2)$) to evaluate the memory needed 
        for number conversion. Will use about twice the program-memory\protect\footnotemark.\\[1ex]
@@ -282,6 +282,8 @@ LTM\_USE\_FASTER\_VERSIONS
 % no footnotes in tables. Solution by Caroline Fontaine in
 % https://tex.stackexchange.com/questions/1583/footnotes-in-tables
 % simple and elegant, but has problems with the packet hyperref.
+\footnotetext{3384 bytes instead of 4328 bytes with GCC 4.8 on a 64-bit AMD A8-6600K}
+\addtocounter{footnote}{1}
 \footnotetext{3680 bytes instead of 1912 bytes with GCC 4.8 on a 64-bit AMD A8-6600K}
 
 
