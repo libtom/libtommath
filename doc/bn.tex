@@ -45,6 +45,11 @@
 \newcommand{\emailaddr}[1]{\mbox{$<${#1}$>$}}
 \def\twiddle{\raisebox{0.3ex}{\mbox{\tiny $\sim$}}}
 \def\gap{\vspace{0.5ex}}
+% Define "struts" as suggested by Claudio Beccari in
+% a piece in TeX and TUG News, Vol. 2, 1993.
+\newcommand\Tstrut{\rule{0pt}{2.6ex}}       % "top" strut
+\newcommand\Bstrut{\rule[-0.9ex]{0pt}{0pt}} % "bottom" strut
+\newcommand{\TBstrut}{\Tstrut\Bstrut} % top&bottom strut
 \makeindex
 \begin{document}
 \frontmatter
@@ -259,14 +264,26 @@ They can be enabled at any pass of the configuration phase.
 
 \begin{small}
 \begin{center}
-\begin{tabular}{|l|l|}
-\hline \textbf{Define} & \textbf{Purpose} \\
-\hline BN\_MP\_DIV\_SMALL & Enables a slower, smaller and equally \\
-                          & functional mp\_div() function \\
+\begin{tabular}{|p{0.4\linewidth}|p{0.51\linewidth}|}
+\hline & \\[-1.5ex]
+\textbf{Define} & \textbf{Purpose} \\[1ex]
+\hline BN\_MP\_DIV\_SMALL 
+      & Enables a slower, smaller and equally functional mp\_div() function \\[1ex]
+LTM\_USE\_FASTER\_RADIX\_SIZE
+     & Uses table lookups ($O(1)$) instead of the na\"ive approach ($O(n^2)$) to evaluate the memory needed 
+       for number conversion. Will use about twice the program-memory\protect\footnotemark.\\[1ex]
+LTM\_USE\_FASTER\_VERSIONS
+     & generic macro to set all LTM\_USE\_FASTER* macros. The makefile rule \texttt{faster} is also implemented
+       but for GNU make only.\\
 \hline
 \end{tabular}
 \end{center}
 \end{small}
+% no footnotes in tables. Solution by Caroline Fontaine in
+% https://tex.stackexchange.com/questions/1583/footnotes-in-tables
+% simple and elegant, but has problems with the packet hyperref.
+\footnotetext{3680 bytes instead of 1912 bytes with GCC 4.8 on a 64-bit AMD A8-6600K}
+
 
 \subsection{Build Trims}
 A trim is a manner of removing functionality from a function that is not required.  For instance, to perform
