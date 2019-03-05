@@ -1205,6 +1205,53 @@ static int test_mp_reduce_2k_l(void) {
 #   endif /* LTM_DEMO_TEST_REDUCE_2K_L */
 }
 
+static int test_mp_radix_size(void) {
+   mp_int a;
+   int i, len;
+   /* Just a random number */
+   const char *rand_a = "5LakA2KmzhcVEwtcZlbVAAfalr3WdcMFaW7i+awtyny8iWD/6Di8+cBSSlGvWY6slk4wkuqU+xXLcsPzLeZy/wsuc+DOvI+BVZgkbq76SEwiG1799c541U9FvMn2/GRBBNnjSyQ6wVARnDze9XCoGeJygsSnRmoZPmq9bgk/Zw+LXwxJ1nwtQk/93Ik82ysUyjjsBEev6zvGcwcVZBM9eSdz6ANTSROFsaPL4o";
+   int length_rand[] = {
+      0, 0, 1378, 870, 690, 594, 534, 492, 460, 436, 416,
+      399, 385, 373, 363, 354, 346, 338, 332, 326, 320, 315,
+      310, 306, 302, 298, 294, 291, 288, 285, 282, 279, 277,
+      274, 272, 270, 268, 266, 264, 262, 260, 258, 257, 255,
+      254, 252, 251, 249, 248, 247, 245, 244, 243, 242, 241,
+      240, 239, 237, 236, 235, 235, 234, 233, 232, 231
+   };
+   int length_1p1234[] = {
+      0, 0, 1236, 780, 619, 533, 479, 441, 413, 391, 373,
+      358, 346, 335, 326, 317, 310, 303, 297, 292, 287, 282,
+      278, 274, 271, 267, 264, 261, 258, 256, 253, 251, 248,
+      246, 244, 242, 240, 238, 237, 235, 233, 232, 230, 229,
+      228, 226, 225, 224, 222, 221, 220, 219, 218, 217, 216,
+      215, 214, 213, 212, 211, 210, 210, 209, 208, 207
+   };
+
+   mp_init(&a);
+
+   mp_read_radix(&a, rand_a,64);
+
+   for (i = 2; i < 65; i++) {
+      mp_radix_size(&a,i,&len);
+      if (len < length_rand[i]) {
+         goto LBL_ERR;
+      }
+   }
+   mp_2expt(&a, 1234);
+   for (i = 2; i < 65; i++) {
+      mp_radix_size(&a,i,&len);
+      if (len < length_1p1234[i]) {
+         goto LBL_ERR;
+      }
+   } 
+
+   mp_clear(&a);
+   return EXIT_SUCCESS;
+LBL_ERR:
+   mp_clear(&a);
+   return EXIT_FAILURE;
+}
+
 int unit_tests(void) {
    static const struct {
       const char* name;
@@ -1236,6 +1283,7 @@ int unit_tests(void) {
       T(mp_tc_div_2d),
       T(mp_tc_or),
       T(mp_tc_xor),
+      T(mp_radix_size)
 #undef T
    };
    unsigned long i;

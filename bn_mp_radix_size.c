@@ -270,7 +270,7 @@ static const mp_digit logbases_high[65] = {
 #endif
 /* *INDENT-ON* */
 
-int mp_radix_size_ex(const mp_int *a, const int bits, const int base, int *size)
+int mp_radix_size(const mp_int *a, const int base, int *size)
 {
    mp_int bi_bit_count, bi_k;
 #if ( (defined MP_8BIT) || (defined MP_16BIT) )
@@ -284,18 +284,9 @@ int mp_radix_size_ex(const mp_int *a, const int bits, const int base, int *size)
       return MP_VAL;
    }
 
-   if ( ((a == NULL) && (bits == 0)) || ((a != NULL) && (bits != 0)) ) {
-      *size = 0;
-      return MP_VAL;
-   }
+   /* floor( log_2(a) ) + 1 */
+   bit_count = mp_count_bits(a) + 1;
 
-   if (a == NULL) {
-      bit_count = bits;
-   }
-   else {
-      /* floor( log_2(a) ) + 1 */
-      bit_count = mp_count_bits(a) + 1;
-   }
    if (bit_count == 0) {
       *size = 2;
       return MP_OKAY;
