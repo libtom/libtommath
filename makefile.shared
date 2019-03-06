@@ -64,7 +64,7 @@ $(LIBNAME):  $(OBJECTS)
 	$(LTLINK) $(LDFLAGS) $(LOBJECTS) -o $(LIBNAME) -rpath $(LIBPATH) -version-info $(VERSION_SO) $(LIBTOOLFLAGS)
 
 faster: CFLAGS+=-DLTM_USE_FASTER_VERSIONS
-faster: $(OBJECTS)
+faster: $(LIBNAME)
 
 install: $(LIBNAME)
 	install -d $(DESTDIR)$(LIBPATH)
@@ -79,6 +79,13 @@ uninstall:
 	$(LIBTOOL) --mode=uninstall rm $(DESTDIR)$(LIBPATH)/$(LIBNAME)
 	rm $(HEADERS_PUB:%=$(DESTDIR)$(INCPATH)/%)
 	rm $(DESTDIR)$(LIBPATH)/pkgconfig/libtommath.pc
+
+faster_test:  CFLAGS+=-DLTM_USE_FASTER_VERSIONS -DLTM_DEMO_TEST_VS_MTEST=0 
+faster_test: $(LIBNAME)
+	$(LTCOMPILE) $(CFLAGS) -c demo/main.c -o demo/main.o
+	$(LTCOMPILE) $(CFLAGS) -c demo/opponent.c -o demo/opponent.o
+	$(LTCOMPILE) $(CFLAGS) -c demo/test.c -o demo/test.o
+	$(LTLINK) $(LDFLAGS) -o test demo/main.o demo/opponent.o demo/test.o $(LIBNAME)
 
 test: $(LIBNAME)
 	$(LTCOMPILE) $(CFLAGS) -c demo/main.c -o demo/main.o

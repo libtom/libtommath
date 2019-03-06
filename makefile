@@ -54,7 +54,10 @@ bn_mp_toom_mul.o bn_mp_toom_sqr.o bn_mp_toradix.o bn_mp_toradix_n.o bn_mp_unsign
 bn_mp_zero.o bn_prime_tab.o bn_reverse.o bn_s_mp_add.o bn_s_mp_exptmod.o bn_s_mp_mul_digs.o \
 bn_s_mp_mul_high_digs.o bn_s_mp_sqr.o bn_s_mp_sub.o bncore.o
 
+TEST_OBJECTS=demo/main.o demo/opponent.o demo/test.o
+
 #END_INS
+
 
 $(OBJECTS): $(HEADERS)
 
@@ -63,7 +66,7 @@ $(LIBNAME):  $(OBJECTS)
 	$(RANLIB) $@
 
 faster: CFLAGS+=-DLTM_USE_FASTER_VERSIONS
-faster: $(OBJECTS)
+faster: $(LIBNAME)
 
 #make a profiled library (takes a while!!!)
 #
@@ -97,6 +100,13 @@ install: $(LIBNAME)
 uninstall:
 	rm $(DESTDIR)$(LIBPATH)/$(LIBNAME)
 	rm $(HEADERS_PUB:%=$(DESTDIR)$(INCPATH)/%)
+
+faster_test:  CFLAGS+=-DLTM_USE_FASTER_VERSIONS -DLTM_DEMO_TEST_VS_MTEST=0 
+faster_test: $(LIBNAME)
+	$(CC) $(CFLAGS) -c demo/main.c -o demo/main.o
+	$(CC) $(CFLAGS) -c demo/opponent.c -o demo/opponent.o
+	$(CC) $(CFLAGS) -c demo/test.c -o demo/test.o
+	$(CC) $(LDFLAGS) -o test demo/main.o demo/opponent.o demo/test.o $(LIBNAME)
 
 test: demo/main.o demo/opponent.o demo/test.o $(LIBNAME)
 	$(CC) $(CFLAGS) $^ $(LFLAGS) -o test

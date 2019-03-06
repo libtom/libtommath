@@ -1252,6 +1252,85 @@ LBL_ERR:
    return EXIT_FAILURE;
 }
 
+#if ( (defined LTM_USE_FASTER_VERSIONS) || (defined LTM_USE_FASTER_NTH_ROOT))
+static int test_mp_n_root(void) {
+   mp_int a, tmp, root;
+   mp_digit b;
+
+   mp_init_multi(&a, &tmp, &root, NULL);
+   /* a = 12345^{255} + 12345^{222} + 12345^{123} + 1 */
+   mp_set_int(&a, 12345ul);
+   mp_expt_d(&a, (mp_digit)255u, &tmp);
+   mp_expt_d(&a, (mp_digit)222u, &root);
+   mp_add(&tmp, &root, &tmp);
+   mp_expt_d(&a, (mp_digit)123u, &root);
+   mp_add(&tmp, &root, &a);
+   mp_add_d(&a, 1u, &a);
+
+#if (defined MP_8BIT)
+   for (b = 2u; b < 255u, b++) {
+#else
+   for (b = 2u; b < 3466u; b++) {
+      printf("Testing nth-root, large input with index %5u \r",(unsigned)b);
+      fflush(stdout);
+      mp_n_root(&a, b, &root);
+      mp_expt_d(&root, b, &tmp);
+      /* integer-root cannot be bigger */
+      if (mp_cmp(&tmp, &a) == MP_GT ) {
+         goto LBL_ERR;
+      }
+      mp_add_d(&root, 1u, &root);
+      mp_expt_d(&root, b, &tmp);
+      /* integer-root + 1 cannot be smaller */
+      if (mp_cmp(&tmp, &a) == MP_LT ) {
+         goto LBL_ERR;
+      }
+   }
+#endif
+
+   mp_clear_multi(&a, &tmp, &root, NULL);
+   return EXIT_SUCCESS;
+LBL_ERR:
+   mp_clear_multi(&a, &tmp, &root, NULL);
+   return EXIT_FAILURE;
+}
+#else
+static int test_mp_n_root(void) {
+   mp_int a, tmp, root;
+   mp_digit b;
+
+   mp_init_multi(&a, &tmp, &root, NULL);
+   /* a = 123^{123}} + 1 */
+   mp_set_int(&a, 123ul);
+   mp_expt_d(&a, (mp_digit)123u, &a);
+   mp_add_d(&a, 1u, &a);
+
+   /* even 21 is much! */
+   for (b = 2u; b < 21u; b++) {
+      printf("Testing nth-root, small input with index %2u \r",(unsigned)b);
+      fflush(stdout);
+      mp_n_root(&a, b, &root);
+      mp_expt_d(&root, b, &tmp);
+      /* integer root cannot be bigger */
+      if (mp_cmp(&tmp, &a) == MP_GT ) {
+         goto LBL_ERR;
+      }
+      mp_add_d(&root, 1u, &root);
+      mp_expt_d(&root, b, &tmp);
+      /* integer root+1 cannot be smaller */
+      if (mp_cmp(&tmp, &a) == MP_LT ) {
+         goto LBL_ERR;
+      }
+   }
+
+   mp_clear_multi(&a, &tmp, &root, NULL);
+   return EXIT_SUCCESS;
+LBL_ERR:
+   mp_clear_multi(&a, &tmp, &root, NULL);
+   return EXIT_FAILURE;
+}
+#endif
+
 int unit_tests(void) {
    static const struct {
       const char* name;
@@ -1283,7 +1362,8 @@ int unit_tests(void) {
       T(mp_tc_div_2d),
       T(mp_tc_or),
       T(mp_tc_xor),
-      T(mp_radix_size)
+      T(mp_radix_size),
+      T(mp_n_root),
 #undef T
    };
    unsigned long i;
@@ -1305,7 +1385,7 @@ int unit_tests(void) {
       }
       printf("\n\n");
    }
-
+   puts("All tests PASSED");
 #if defined(LTM_DEMO_REAL_RAND) && !defined(_WIN32)
    if (fd_urandom) {
       fclose(fd_urandom);

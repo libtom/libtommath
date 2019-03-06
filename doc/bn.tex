@@ -233,6 +233,24 @@ This will output a row of numbers that are increasing.  Each column is a differe
 that is being performed.  The numbers represent how many times the test was invoked.  If an error is detected the program
 will exit with a dump of the relevant numbers it was working with.
 
+\subsubsection{Standalone Testing}
+To build the library and the standalone test harness, that is tests that are independent of ``mtest/mtest'' type
+
+\begin{alltt}
+make test_standalone
+\end{alltt}
+
+This will build the library and a program ``test'' ready to run on itself.
+
+If some or all of the faster versions have been build as described in section \ref{ssec:buildtweaks} a different test-programm needs to be build, too.
+
+\begin{alltt}
+make faster_test
+\end{alltt}
+
+This will build the library and a program ``test'' ready to run on itself. 
+
+
 \section{Build Configuration}
 LibTomMath can configured at build time in three phases we shall call ``depends'', ``tweaks'' and ``trims''.
 Each phase changes how the library is built and they are applied one after another respectively.
@@ -258,7 +276,7 @@ You will also note that the header tommath\_class.h is actually recursively incl
 This is to help resolve as many dependencies as possible.  In the last pass the symbol LTM\_LAST will be defined.
 This is useful for ``trims''.
 
-\subsection{Build Tweaks}
+\subsection{Build Tweaks}\label{ssec:buildtweaks}
 A tweak is an algorithm ``alternative''.  For example, to provide tradeoffs (usually between size and space).
 They can be enabled at any pass of the configuration phase.
 
@@ -268,10 +286,15 @@ They can be enabled at any pass of the configuration phase.
 \hline & \\[-1.5ex]
 \textbf{Define} & \textbf{Purpose} \\[1ex]
 \hline BN\_MP\_DIV\_SMALL 
-      & Enables a slower, smaller and equally functional mp\_div() function\protect\footnotemark \\[1ex]
+      & Enables a slower, smaller\protect\footnotemark and equally functional mp\_div() function \\[1ex]
 LTM\_USE\_FASTER\_RADIX\_SIZE
      & Uses table lookups ($O(1)$) instead of the na\"ive approach ($O(n^2)$) to evaluate the memory needed 
        for number conversion. Will use about twice the program-memory\protect\footnotemark.\\[1ex]
+LTM\_USE\_FASTER\_NTH\_ROOT 
+     & Much faster algorithm: uses a partial bisection to find a good startvalue for either the Newton or the
+       Halley recurrence depending on the size of the input. Uses full bisection for small roots/large indices
+       (e.g.: the integer 234th root of $12345^{256} + 12345^{222} + 12345^{123} + 1$). It needs a bit more
+       than twice the program memory\protect\footnotemark.\\[1ex]
 LTM\_USE\_FASTER\_VERSIONS
      & generic macro to set all LTM\_USE\_FASTER* macros. The makefile rule \texttt{faster} is also implemented
        but for GNU make only.\\
@@ -285,6 +308,8 @@ LTM\_USE\_FASTER\_VERSIONS
 \footnotetext{3384 bytes instead of 4328 bytes with GCC 4.8 on a 64-bit AMD A8-6600K}
 \addtocounter{footnote}{1}
 \footnotetext{3680 bytes instead of 1912 bytes with GCC 4.8 on a 64-bit AMD A8-6600K}
+\addtocounter{footnote}{1}
+\footnotetext{6248 bytes instead of 2736 bytes with GCC 4.8 on a 64-bit AMD A8-6600K}
 
 
 \subsection{Build Trims}
