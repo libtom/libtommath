@@ -25,4 +25,4 @@
 
 #include "tommath.h"
 
-void ndraw(mp_int*, const char*);
+extern void ndraw(mp_int* a, const char* name);
