@@ -7,7 +7,7 @@ static int test_trivial_stuff(void) {
    }
 
    /* a: 0->5 */
-   mp_set_int(&a, 5);
+   mp_set_int(&a, 5uL);
    /* a: 5-> b: -5 */
    mp_neg(&a, &b);
    if (mp_cmp(&a, &b) != MP_GT) {
@@ -51,13 +51,13 @@ static int test_trivial_stuff(void) {
       goto LBL_ERR;
    }
 
-   mp_set_int(&a, 42);
-   mp_set_int(&b, 1);
+   mp_set_int(&a, 42uL);
+   mp_set_int(&b, 1uL);
    mp_neg(&b, &b);
-   mp_set_int(&c, 1);
+   mp_set_int(&c, 1uL);
    mp_exptmod(&a, &b, &c, &d);
 
-   mp_set_int(&c, 7);
+   mp_set_int(&c, 7uL);
    mp_exptmod(&a, &b, &c, &d);
 
    mp_clear_multi(&a, &b, &c, &d, NULL);
@@ -87,8 +87,8 @@ static int test_mp_jacobi(void) {
       return EXIT_FAILURE;
    }
 
-   mp_set_int(&a, 0);
-   mp_set_int(&b, 1);
+   mp_set_int(&a, 0uL);
+   mp_set_int(&b, 1uL);
    if ((err = mp_jacobi(&a, &b, &i)) != MP_OKAY) {
       printf("Failed executing mp_jacobi(0 | 1) %s.\n", mp_error_to_string(err));
       goto LBL_ERR;
@@ -164,8 +164,8 @@ static int test_mp_kronecker(void) {
       return EXIT_FAILURE;
    }
 
-   mp_set_int(&a, 0);
-   mp_set_int(&b, 1u);
+   mp_set_int(&a, 0uL);
+   mp_set_int(&b, 1uL);
    if ((err = mp_kronecker(&a, &b, &i)) != MP_OKAY) {
       printf("Failed executing mp_kronecker(0 | 1) %s.\n", mp_error_to_string(err));
       goto LBL_ERR;
@@ -514,7 +514,7 @@ static int test_mp_get_int(void) {
          goto LBL_ERR;
       }
    }
-   mp_set_int(&a, 0);
+   mp_set_int(&a, 0uL);
    if (mp_get_int(&a) != 0) {
       printf("\nmp_get_int() bad result!");
       goto LBL_ERR;
@@ -620,8 +620,8 @@ static int test_mp_sqrt(void) {
          printf("\nmp_sqrt() error!");
          goto LBL_ERR;
       }
-      mp_n_root_ex(&a, 2, &c, 0);
-      mp_n_root_ex(&a, 2, &d, 1);
+      mp_n_root_ex(&a, 2uL, &c, 0);
+      mp_n_root_ex(&a, 2uL, &d, 1);
       if (mp_cmp_mag(&c, &d) != MP_EQ) {
          printf("\nmp_n_root_ex() bad result!");
          goto LBL_ERR;
@@ -804,9 +804,9 @@ static int test_mp_prime_is_prime(void) {
    }
    /* About the same size as Arnault's pseudoprime */
    puts("Testing mp_prime_is_prime() with certified prime 2^1119 + 53\n");
-   mp_set(&a,1u);
+   mp_set(&a, 1uL);
    mp_mul_2d(&a,1119,&a);
-   mp_add_d(&a,53,&a);
+   mp_add_d(&a, 53uL, &a);
    err = mp_prime_is_prime(&a, 8, &cnt);
    /* small problem */
    if (err != MP_OKAY) {
