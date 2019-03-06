@@ -1230,7 +1230,6 @@ static int test_mp_radix_size(void) {
    mp_init(&a);
 
    mp_read_radix(&a, rand_a,64);
-
    for (i = 2; i < 65; i++) {
       mp_radix_size(&a,i,&len);
       if (len < length_rand[i]) {
@@ -1252,13 +1251,25 @@ LBL_ERR:
    return EXIT_FAILURE;
 }
 
-#if ( (defined LTM_USE_FASTER_VERSIONS) || (defined LTM_USE_FASTER_NTH_ROOT))
+#if ( (defined LTM_USE_FASTER_VERSIONS) || (defined LTM_USE_FASTER_NTH_ROOT) ) 
 static int test_mp_n_root(void) {
    mp_int a, tmp, root;
    mp_digit b;
 
    mp_init_multi(&a, &tmp, &root, NULL);
-   /* a = 12345^{255} + 12345^{222} + 12345^{123} + 1 */
+
+#ifdef MP_8BIT
+   /* a bit smaller, MP_MASK = 127 for MP_8BIT */
+   mp_set_int(&a, 12345ul);
+   mp_expt_d(&a, 126u, &tmp);
+   mp_expt_d(&a, 126u, &root);
+   mp_mul(&tmp, &root, &tmp);
+   mp_mul(&a, &tmp, &tmp);
+   mp_expt_d(&a, (mp_digit)123u, &root);
+   mp_add(&tmp, &root, &a);
+   mp_add_d(&a, 1u, &a);
+#else
+   /* a = 12345^{255} + 12345^{222} + 12345^{123} + 1, 3465 bits */
    mp_set_int(&a, 12345ul);
    mp_expt_d(&a, (mp_digit)255u, &tmp);
    mp_expt_d(&a, (mp_digit)222u, &root);
@@ -1266,11 +1277,13 @@ static int test_mp_n_root(void) {
    mp_expt_d(&a, (mp_digit)123u, &root);
    mp_add(&tmp, &root, &a);
    mp_add_d(&a, 1u, &a);
+#endif
 
-#if (defined MP_8BIT)
-   for (b = 2u; b < 255u, b++) {
+#ifdef MP_8BIT
+   for (b = 2u; b < MP_MASK; b++) {
 #else
    for (b = 2u; b < 3466u; b++) {
+#endif
       printf("Testing nth-root, large input with index %5u \r",(unsigned)b);
       fflush(stdout);
       mp_n_root(&a, b, &root);
@@ -1286,8 +1299,6 @@ static int test_mp_n_root(void) {
          goto LBL_ERR;
       }
    }
-#endif
-
    mp_clear_multi(&a, &tmp, &root, NULL);
    return EXIT_SUCCESS;
 LBL_ERR:
@@ -1300,13 +1311,16 @@ static int test_mp_n_root(void) {
    mp_digit b;
 
    mp_init_multi(&a, &tmp, &root, NULL);
-   /* a = 123^{123}} + 1 */
+   /* a = 123^{123}} + 1, 853 bits */
    mp_set_int(&a, 123ul);
    mp_expt_d(&a, (mp_digit)123u, &a);
    mp_add_d(&a, 1u, &a);
-
-   /* even 21 is much! */
-   for (b = 2u; b < 21u; b++) {
+   /* MP_8BIT is really slow here! */
+#ifdef MP_8BIT
+   for (b = 2u; b < 10u; b++) {
+#else
+   for (b = 2u; b < 834u; b++) {
+#endif
       printf("Testing nth-root, small input with index %2u \r",(unsigned)b);
       fflush(stdout);
       mp_n_root(&a, b, &root);
@@ -1363,7 +1377,7 @@ int unit_tests(void) {
       T(mp_tc_or),
       T(mp_tc_xor),
       T(mp_radix_size),
-      T(mp_n_root),
+      T(mp_n_root)
 #undef T
    };
    unsigned long i;

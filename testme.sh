@@ -90,10 +90,16 @@ _make()
 _runtest()
 {
   make clean > /dev/null
-  _make "$1" "$2" "test_standalone"
+  if (echo $CFLAGS | grep -q FASTER ); then
+     echo -e "\rRun test $1 $2 faster_test"
+    _make "$1" "$2" "faster_test"
+  else
+    echo -e "\rRun test $1 $2 test_standalone"
+    _make "$1" "$2" "test_standalone"
+  fi
   local _timeout=""
   which timeout >/dev/null && _timeout="timeout --foreground 90"
-  echo -e "\rRun test $1 $2"
+
   $_timeout ./test > test_${suffix}.log || _die "running tests" $?
 }
 
@@ -107,9 +113,9 @@ _exit()
 {
   if [ "$ret" == "0" ]
   then
-    echo "Tests successful"
+    echo -e "\nTests successful"
   else
-    echo "$ret tests timed out"
+    echo -e "\n$ret tests timed out"
   fi
 
   exit $ret
@@ -173,7 +179,7 @@ then
 elif [[ "$COMPILERS" == "" ]]
 then
   _banner gcc
-  _runtest "gcc" ""
+  _runtest "gcc" "$CFLAGS"
   _exit
 fi
 

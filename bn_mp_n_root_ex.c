@@ -18,7 +18,7 @@
  * Result found such that (c)**b <= a and (c+1)**b > a
  *
  */
-#if ( (defined LTM_USE_FASTER_VERSIONS) || (defined LTM_USE_FASTER_NTH_ROOT))
+#if (( (defined LTM_USE_FASTER_VERSIONS) || (defined LTM_USE_FASTER_NTH_ROOT))  )
 /* TODO: needs a benchmark script and be put in bncore.c */
 static const int NTHROOT_NEWTON_HALLEY_CUTOFF = 100000;
 
@@ -421,7 +421,7 @@ int mp_n_root_ex(const mp_int *a, mp_digit b, mp_int *c, int fast)
    ilog2 = mp_count_bits(a);
 
    if (ilog2 < (int)(b)) {
-      mp_set(c, 1);
+      mp_set(c, 1uL);
       c->sign = neg;
       return MP_OKAY;
    }
@@ -462,7 +462,7 @@ int mp_n_root_ex(const mp_int *a, mp_digit b, mp_int *c, int fast)
    }
    cmp = mp_cmp(c, &A);
    if (cmp == MP_GT) {
-      if ((e = mp_sub_d(c, 1, c)) != MP_OKAY) {
+      if ((e = mp_sub_d(c, 1u, c)) != MP_OKAY) {
          goto LTM_ERR;
       }
       for (;;) {
@@ -473,12 +473,12 @@ int mp_n_root_ex(const mp_int *a, mp_digit b, mp_int *c, int fast)
          if (cmp != MP_GT) {
             break;
          }
-         if ((e = mp_sub_d(c, 1, c)) != MP_OKAY) {
+         if ((e = mp_sub_d(c, 1u, c)) != MP_OKAY) {
             goto LTM_ERR;
          }
       }
    } else if (cmp == MP_LT) {
-      if ((e = mp_add_d(c, 1, c)) != MP_OKAY) {
+      if ((e = mp_add_d(c, 1u, c)) != MP_OKAY) {
          goto LTM_ERR;
       }
       for (;;) {
@@ -489,13 +489,13 @@ int mp_n_root_ex(const mp_int *a, mp_digit b, mp_int *c, int fast)
          if (cmp != MP_LT) {
             break;
          }
-         if ((e = mp_add_d(c, 1, c)) != MP_OKAY) {
+         if ((e = mp_add_d(c, 1u, c)) != MP_OKAY) {
             goto LTM_ERR;
          }
       }
       /* Does overshoot in contrast to the other branch above */
       if (cmp != MP_EQ) {
-         if ((e = mp_sub_d(c, 1, c)) != MP_OKAY) {
+         if ((e = mp_sub_d(c, 1u, c)) != MP_OKAY) {
             goto LTM_ERR;
          }
       }
@@ -512,6 +512,7 @@ int mp_n_root_ex(const mp_int *a, mp_digit b, mp_int *c, int fast)
 {
    mp_int  t1, t2, t3, a_;
    int     res;
+   int ilog2;
 
    /* input must be positive if b is even */
    if (((b & 1u) == 0u) && (a->sign == MP_NEG)) {
@@ -534,8 +535,29 @@ int mp_n_root_ex(const mp_int *a, mp_digit b, mp_int *c, int fast)
    a_ = *a;
    a_.sign = MP_ZPOS;
 
+#if 0
    /* t2 = 2 */
    mp_set(&t2, 2uL);
+#endif
+   ilog2 = mp_count_bits(a);
+   if (ilog2 < (int)b) {
+      mp_set(c, 1uL);
+      c->sign = a->sign;
+      res = MP_OKAY;
+      goto LBL_T3;
+   }
+
+   ilog2 = (int)( ( (mp_digit) ilog2 ) / b );
+   if (ilog2 == 0) {
+      mp_set(c, 1uL);
+      c->sign = a->sign;
+      res = MP_OKAY;
+      goto LBL_T3;
+   }
+   /* Start value must be larger than root */
+   if ((  res = mp_2expt(&t2,ilog2 + 2)) != MP_OKAY) {
+      goto LBL_T3;
+   }
 
    do {
       /* t1 = t2 */

@@ -25,7 +25,11 @@ env:
   - |
     BUILDOPTIONS="--with-low-mp"
   - |
+    BUILDOPTIONS="--with-low-mp --cflags=-DLTM_USE_FASTER_VERSIONS"
+  - |
     BUILDOPTIONS="--with-m64 --with-m32 --with-mx32"
+  - |
+    BUILDOPTIONS="--with-m64 --with-m32 --with-mx32 --cflags=-DLTM_USE_FASTER_VERSIONS"
 
 after_failure:
   - cat test_*.log
