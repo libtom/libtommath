@@ -511,7 +511,7 @@ LTM_ERR:
 int mp_n_root_ex(const mp_int *a, mp_digit b, mp_int *c, int fast)
 {
    mp_int  t1, t2, t3, a_;
-   int     res;
+   int   res, cmp;
    int ilog2;
 
    /* input must be positive if b is even */
@@ -600,11 +600,29 @@ int mp_n_root_ex(const mp_int *a, mp_digit b, mp_int *c, int fast)
    }  while (mp_cmp(&t1, &t2) != MP_EQ);
 
    /* result can be off by a few so check */
+   /* Overshoot by one if root is smaller */
    for (;;) {
       if ((res = mp_expt_d_ex(&t1, b, &t2, fast)) != MP_OKAY) {
          goto LBL_T3;
       }
-
+      cmp = mp_cmp(&t2, &a_);
+      if (cmp == MP_EQ) {
+         res = MP_OKAY;
+         goto LBL_T3;
+      }
+      if (cmp == MP_LT) {
+         if ((res = mp_add_d(&t1, 1uL, &t1)) != MP_OKAY) {
+            goto LBL_T3;
+         }
+      } else {
+         break;
+      }
+   }
+   /* correct overshoot from above or from recurrence */
+   for (;;) {
+      if ((res = mp_expt_d_ex(&t1, b, &t2, fast)) != MP_OKAY) {
+         goto LBL_T3;
+      }
       if (mp_cmp(&t2, &a_) == MP_GT) {
          if ((res = mp_sub_d(&t1, 1uL, &t1)) != MP_OKAY) {
             goto LBL_T3;
