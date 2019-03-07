@@ -90,6 +90,8 @@ int func_name (mp_int * a, type b)                       \
    return res;                                           \
 }
 
+/* deprecated functions */
+
 #ifdef __cplusplus
 }
 #endif
