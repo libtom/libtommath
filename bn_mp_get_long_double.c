@@ -30,10 +30,10 @@ long double mp_get_long_double(const mp_int *a)
 /* pragma message() not supported by several compilers (in mostly older but still used versions) */
 #  ifdef _MSC_VER
 #    pragma message("The type 'long double' does not seem to be supported on your system.")
-#    pragma message("If that is wrong please contact the team at https://github.com/libtommath/")
+#    pragma message("If that is wrong please contact the team at https://github.com/libtom/libtommath")
 #  else
 #    warning "The type 'long double' does not seem to be supported on your system."
-#    warning "If that is wrong please contact the team at https://github.com/libtommath/"
+#    warning "If that is wrong please contact the team at https://github.com/libtom/libtommath"
 #  endif
 #endif
 #endif
