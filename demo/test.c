@@ -1,91 +1,4 @@
 #include "shared.h"
-#if ((defined __m68k__) || (defined __MC68K__) || (defined M68000))
-/* VERY simpel comparing function, for use in this case and this case only! */
-/* There is such a macro in tommath_private.h which is not include'd in this listing */
-#ifndef MIN
-#define MIN(x, y) (((x) < (y)) ? (x) : (y))
-#endif
-static double s_abs(double s_d)
-{
-   return (s_d < 0.0)?-s_d:s_d;
-}
-static float s_absf(float s_d)
-{
-   return (s_d < 0.0f)?-s_d:s_d;
-}
-#include <float.h>
-static int s_compare_doubles(double s_a, double s_b)
-{
-   double abs_a, abs_b, delta;
-
-   /* NaN, inf's and subnormals ignored, not needed in this case*/
-
-   if (s_a == s_b) {
-      return 1;
-   }
-#ifdef LTM_WARN_X87_EXT_PREC
-   fprintf(stderr, "Warning: extended precision detected for 'double# test %g != %g, using fallback test\n", s_a, s_b);
-#endif
-   abs_a = s_abs(s_a);
-   abs_b = s_abs(s_b);
-   delta = s_abs(s_a - s_b);
-
-   return ((delta/MIN(abs_a, abs_b)) <  DBL_EPSILON);
-}
-
-static int s_compare_floats(float s_a, float s_b)
-{
-   double abs_a, abs_b, delta;
-
-   /* NaN, inf's and subnormals ignored, not needed in this case*/
-
-   if (s_a == s_b) {
-      return 1;
-   }
-#ifdef LTM_WARN_X87_EXT_PREC
-   fprintf(stderr, "Warning: extended precision detected for 'float' test %g != %g, using fallback test\n", s_a, s_b);
-#endif
-   abs_a = s_absf(s_a);
-   abs_b = s_absf(s_b);
-   delta = s_absf(s_a - s_b);
-
-   return ((delta/MIN(abs_a, abs_b)) <  FLT_EPSILON);
-}
-
-static int s_compare_long_double(long double s_a, long double s_b)
-{
-   double abs_a, abs_b, delta;
-
-   /* NaN, inf's and subnormals ignored, not needed in this case*/
-
-   if (s_a == s_b) {
-      return 1;
-   }
-#ifdef LTM_WARN_X87_EXT_PREC
-   fprintf(stderr, "Warning: extended precision detected for 'long double' test  %Lg != %Lg, using fallback test \n", s_a,
-           s_b);
-#endif
-   abs_a = s_absf(s_a);
-   abs_b = s_absf(s_b);
-   delta = s_absf(s_a - s_b);
-
-   return ((delta/MIN(abs_a, abs_b)) <  LDBL_EPSILON);
-}
-#define S_COMPARE_DOUBLE(x,y) s_compare_doubles((x),(y))
-#define S_COMPARE_FLOAT(x,y) s_compare_floats((x),(y))
-#define S_COMPARE_LONG_DOUBLE(x,y) s_compare_long_double((x),(y))
-#else
-#define S_COMPARE_FLOAT(x,y) ( (x) == (y) )
-#define S_COMPARE_DOUBLE(x,y) ( (x) == (y) )
-#define S_COMPARE_LONG_DOUBLE(x,y) ( (x) == (y) )
-#endif
-
-float flt_count;
-double dbl_count;
-#include <float.h>
-#if ( !(defined LTM_MEMCHECK_VALGRIND) && (defined LDBL_MAX))
-long double ldbl_count;
-#endif
 
 static int test_trivial_stuff(void)
 {
@@ -536,8 +449,95 @@ LBL_ERR:
 
 }
 
+#include <float.h>
+
+#if ((defined __m68k__) || (defined __MC68K__) || (defined M68000))
+/* VERY simple comparing function, for use in this case and this case only! */
+/* There is such a macro in tommath_private.h which is not include'd in this listing */
+#ifndef MIN
+#define MIN(x, y) (((x) < (y)) ? (x) : (y))
+#endif
+static double s_abs(double s_d)
+{
+   return (s_d < 0.0)?-s_d:s_d;
+}
+static float s_absf(float s_d)
+{
+   return (s_d < 0.0f)?-s_d:s_d;
+}
+static int s_compare_doubles(double s_a, double s_b)
+{
+   double abs_a, abs_b, delta;
+
+   /* NaN, inf's and subnormals ignored, not needed in this case*/
+
+   if (s_a == s_b) {
+      return 1;
+   }
+#ifdef LTM_WARN_X87_EXT_PREC
+   fprintf(stderr, "Warning: extended precision detected for 'double# test %g != %g, using fallback test\n", s_a, s_b);
+#endif
+   abs_a = s_abs(s_a);
+   abs_b = s_abs(s_b);
+   delta = s_abs(s_a - s_b);
+
+   return ((delta/MIN(abs_a, abs_b)) <  DBL_EPSILON);
+}
+
+static int s_compare_floats(float s_a, float s_b)
+{
+   double abs_a, abs_b, delta;
+
+   /* NaN, inf's and subnormals ignored, not needed in this case*/
+
+   if (s_a == s_b) {
+      return 1;
+   }
+#ifdef LTM_WARN_X87_EXT_PREC
+   fprintf(stderr, "Warning: extended precision detected for 'float' test %g != %g, using fallback test\n", s_a, s_b);
+#endif
+   abs_a = s_absf(s_a);
+   abs_b = s_absf(s_b);
+   delta = s_absf(s_a - s_b);
+
+   return ((delta/MIN(abs_a, abs_b)) <  FLT_EPSILON);
+}
+
+static int s_compare_long_double(long double s_a, long double s_b)
+{
+   double abs_a, abs_b, delta;
+
+   /* NaN, inf's and subnormals ignored, not needed in this case*/
+
+   if (s_a == s_b) {
+      return 1;
+   }
+#ifdef LTM_WARN_X87_EXT_PREC
+   fprintf(stderr, "Warning: extended precision detected for 'long double' test  %Lg != %Lg, using fallback test \n", s_a,
+           s_b);
+#endif
+   abs_a = s_absf(s_a);
+   abs_b = s_absf(s_b);
+   delta = s_absf(s_a - s_b);
+
+   return ((delta/MIN(abs_a, abs_b)) <  LDBL_EPSILON);
+}
+#define S_COMPARE_DOUBLE(x,y) s_compare_doubles((x),(y))
+#define S_COMPARE_FLOAT(x,y) s_compare_floats((x),(y))
+#define S_COMPARE_LONG_DOUBLE(x,y) s_compare_long_double((x),(y))
+#else
+#define S_COMPARE_FLOAT(x,y) ( (x) == (y) )
+#define S_COMPARE_DOUBLE(x,y) ( (x) == (y) )
+#define S_COMPARE_LONG_DOUBLE(x,y) ( (x) == (y) )
+#endif
+
 static int test_mp_set_double(void)
 {
+   float flt_count;
+   double dbl_count;
+#if (defined LDBL_MAX)
+   long double ldbl_count;
+#endif
    int i;
 
    mp_int a, b;
@@ -547,7 +547,6 @@ static int test_mp_set_double(void)
 
    /* test floating point functions */
 #ifdef DBL_MAX
-
 
    if (mp_set_double(&a, +1.0/0.0) != MP_VAL) {
       printf("\nmp_set_double should return MP_VAL for +inf");
