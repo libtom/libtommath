@@ -47,7 +47,7 @@ int mp_set_long_double(mp_int *a, long double b)
    double _b = (double) b;
    return mp_set_double(a, _b);
 }
-/* 
+/*
     The "long double" on a Sparc64 is either a quad-precision float with LDBL_MANT_DIG = 113
     and LDBL_MAX_EXP = 16384, although in software only.
 */

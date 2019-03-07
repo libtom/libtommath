@@ -23,12 +23,12 @@
 extern "C" {
 #endif
 
-    /*
-       A modern MacOS supports IEEE-754 floating point numbers but it needs a bit
-       of persuasion to come across with that information.
-       GCC has a finer grained macro but the limitations of IEEE-754 it can describe
-       are of no interest here.
-     */
+/*
+   A modern MacOS supports IEEE-754 floating point numbers but it needs a bit
+   of persuasion to come across with that information.
+   GCC has a finer grained macro but the limitations of IEEE-754 it can describe
+   are of no interest here.
+ */
 #if    ( (defined __APPLE__) && (defined __MACH__) \
     && ( (defined __DBL_HAS_DENORM__) && ( defined __DBL_HAS_INFINITY__) ) ) \
     || (defined __GCC_IEC_559) \
