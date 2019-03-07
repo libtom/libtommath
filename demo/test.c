@@ -1639,7 +1639,7 @@ LBL_ERR:
 #   endif /* LTM_DEMO_TEST_REDUCE_2K_L */
 }
 
-int unit_tests(void)
+int unit_tests(int argc, char **argv)
 {
    static const struct {
       const char *name;
@@ -1674,7 +1674,7 @@ int unit_tests(void)
 #undef T
    };
    unsigned long i;
-   int res = EXIT_SUCCESS;
+   int res = EXIT_SUCCESS, j;
 
 #if defined(LTM_DEMO_REAL_RAND) && !defined(_WIN32)
    fd_urandom = fopen("/dev/urandom", "r");
@@ -1684,6 +1684,14 @@ int unit_tests(void)
 #endif
 
    for (i = 0; i < sizeof(test) / sizeof(test[0]); ++i) {
+      if (argc > 1) {
+         for (j = 1; j < argc; ++j) {
+            if (strstr(test[i].name, argv[j]) != NULL) {
+               break;
+            }
+         }
+         if (j == argc) continue;
+      }
       printf("TEST %s\n\n", test[i].name);
       if (test[i].fn() != EXIT_SUCCESS) {
          printf("\n\nFAIL %s\n\n", test[i].name);

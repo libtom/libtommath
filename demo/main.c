@@ -1,7 +1,7 @@
 #include "shared.h"
 
 int mtest_opponent(void);
-int unit_tests(void);
+int unit_tests(int argc, char **argv);
 
 void ndraw(mp_int *a, const char *name)
 {
@@ -24,7 +24,7 @@ void ndraw(mp_int *a, const char *name)
    free(buf);
 }
 
-int main(void)
+int main(int argc, char **argv)
 {
    srand(LTM_DEMO_RAND_SEED);
 
@@ -48,7 +48,7 @@ int main(void)
    if (LTM_DEMO_TEST_VS_MTEST) {
       return mtest_opponent();
    }
-   return unit_tests();
+   return unit_tests(argc, argv);
 }
 
 /* ref:         $Format:%D$ */
