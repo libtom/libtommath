@@ -24,11 +24,21 @@ Tests are located in `demo/` and can be built in two flavors.
 * `make test` creates a test binary that is intended to be run against `mtest`. `mtest` can be built with `make mtest` and test execution is done like `./mtest/mtest | ./test`. `mtest` is creating test vectors using an alternative MPI library and `test` is consuming these vectors to verify correct behavior of ltm
 * `make test_standalone` creates a stand-alone test binary that executes several test routines.
 
-[Valgrind](http://valgrind.org/) does not support `long double` but does not reset the limits in `float.h` accordingly. Please build `demo.c` with the additional compiler flag `-DLTM_MEMCHECK_VALGRIND`, e.g.:
+[Valgrind](http://valgrind.org/) does not support `long double` but does not reset the limits in `float.h` accordingly.
+Please build `test.c` with the additional compiler flag `-DLTM_MEMCHECK_VALGRIND`, e.g.:
 
-`CFLAGS=" -DLTM_MEMCHECK_VALGRIND "  make test_standalone`
+```
+CFLAGS=" -DLTM_MEMCHECK_VALGRIND " make test_standalone
+````
 
 It will skip the tests for `long double` and prints a reminder to compile and run the tests without that flag to assure numerical correctness.
+
+In case your platform doesn't provide Valgrind at all and the auto-detection fails, please build `test.c` with the additional compiler flag `-DLTM_NO_VALGRIND`, e.g.:
+
+```
+CFLAGS=" -DLTM_NO_VALGRIND " make test_standalone
+````
+
 
 ## Building and Installing
 
