@@ -228,6 +228,19 @@ This will output a row of numbers that are increasing.  Each column is a differe
 that is being performed.  The numbers represent how many times the test was invoked.  If an error is detected the program
 will exit with a dump of the relevant numbers it was working with.
 
+\subsubsection{Testing the Floating-Point Functions}
+
+If the functions using floating-point are included the tests check for exact equality. The domains and ranges of LibTomMath's floating-point functions are carefully choosen in a way such that an exact check for equality is possible. There are some exemptions for some hardware based on the x87 FPU that work with extended precision. Not in the IEEE meaning (e.g.: a \texttt{long double}) but hidden from the user. In this case the exact equality fails because it is not equal anymore, the hidden extra precision bits differ. The floating-point test-functions in \texttt{demo/test.c} do have a fallback in that case, comparing against \texttt{*\_EPSILON} in the usual manner. The numbers triggering the fallback can be printed to \texttt{stderr}by setting the macro \texttt{LTM\_WARN\_X87\_EXT\_PREC} but be aware that it is either no output at all or a lot of lines.
+
+The format of the output is (it is one line, broken up for typographical reasons only):
+\begin{alltt}
+Warning: extended precision detected for \textbackslash
+      '\$TYPE' test \$NUMBER != \$NUMBER,\textbackslash
+       using fallback test
+\end{alltt}
+where \texttt{\$TYPE} is the type of the floating-point number and \texttt{\$NUMBER} the actual value.
+
+
 \section{Build Configuration}
 LibTomMath can configured at build time in three phases we shall call ``depends'', ``tweaks'' and ``trims''.
 Each phase changes how the library is built and they are applied one after another respectively.
