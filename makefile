@@ -156,4 +156,4 @@ perlcritic:
 	perlcritic *.pl doc/*.pl
 
 astyle:
-	astyle --options=astylerc $(OBJECTS:.o=.c) tommath*.h demo/*.c etc/*.c mtest/mtest.c
+	@astyle --options=astylerc --formatted $(OBJECTS:.o=.c) tommath*.h demo/*.c etc/*.c mtest/mtest.c

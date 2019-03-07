@@ -146,3 +146,6 @@ clean:
 	rm -rf .libs/
 	${MAKE} -C etc/ clean MAKE=${MAKE}
 	${MAKE} -C doc/ clean MAKE=${MAKE}
+
+install_hooks:
+	for s in `ls hooks/`; do ln -s ../../hooks/$$s .git/hooks/$$s; done
