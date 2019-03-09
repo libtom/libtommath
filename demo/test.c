@@ -1,6 +1,6 @@
 #include "shared.h"
-
-static int test_trivial_stuff(void) {
+static int test_trivial_stuff(void)
+{
    mp_int a, b, c, d;
    if (mp_init_multi(&a, &b, &c, &d, NULL)!= MP_OKAY) {
       return EXIT_FAILURE;
@@ -11,7 +11,7 @@ static int test_trivial_stuff(void) {
    /* a: 5-> b: -5 */
    mp_neg(&a, &b);
    if (mp_cmp(&a, &b) != MP_GT) {
-       goto LBL_ERR;
+      goto LBL_ERR;
    }
    if (mp_cmp(&b, &a) != MP_LT) {
       goto LBL_ERR;
@@ -62,12 +62,13 @@ static int test_trivial_stuff(void) {
 
    mp_clear_multi(&a, &b, &c, &d, NULL);
    return EXIT_SUCCESS;
- LBL_ERR:
+LBL_ERR:
    mp_clear_multi(&a, &b, &c, &d, NULL);
    return EXIT_FAILURE;
 }
 
-static int test_mp_jacobi(void) {
+static int test_mp_jacobi(void)
+{
    struct mp_jacobi_st {
       unsigned long n;
       int c[16];
@@ -121,12 +122,13 @@ static int test_mp_jacobi(void) {
 
    mp_clear_multi(&a, &b, NULL);
    return EXIT_SUCCESS;
- LBL_ERR:
+LBL_ERR:
    mp_clear_multi(&a, &b, NULL);
    return EXIT_FAILURE;
 }
 
-static int test_mp_kronecker(void) {
+static int test_mp_kronecker(void)
+{
    struct mp_kronecker_st {
       long n;
       int c[21];
@@ -203,12 +205,13 @@ static int test_mp_kronecker(void) {
 
    mp_clear_multi(&a, &b, NULL);
    return EXIT_SUCCESS;
- LBL_ERR:
+LBL_ERR:
    mp_clear_multi(&a, &b, NULL);
    return EXIT_FAILURE;
 }
 
-static int test_mp_complement(void) {
+static int test_mp_complement(void)
+{
    int i;
 
    mp_int a, b, c;
@@ -236,12 +239,13 @@ static int test_mp_complement(void) {
 
    mp_clear_multi(&a, &b, &c, NULL);
    return EXIT_SUCCESS;
- LBL_ERR:
+LBL_ERR:
    mp_clear_multi(&a, &b, &c, NULL);
    return EXIT_FAILURE;
 }
 
-static int test_mp_tc_div_2d(void) {
+static int test_mp_tc_div_2d(void)
+{
    int i;
 
    mp_int a, b, d;
@@ -272,13 +276,14 @@ static int test_mp_tc_div_2d(void) {
 
    mp_clear_multi(&a, &b, &d, NULL);
    return EXIT_SUCCESS;
- LBL_ERR:
+LBL_ERR:
    mp_clear_multi(&a, &b, &d, NULL);
    return EXIT_FAILURE;
 
 }
 
-static int test_mp_tc_xor(void) {
+static int test_mp_tc_xor(void)
+{
    int i;
 
    mp_int a, b, c, d;
@@ -312,13 +317,14 @@ static int test_mp_tc_xor(void) {
 
    mp_clear_multi(&a, &b, &c, &d, NULL);
    return EXIT_SUCCESS;
- LBL_ERR:
+LBL_ERR:
    mp_clear_multi(&a, &b, &c, &d, NULL);
    return EXIT_FAILURE;
 
 }
 
-static int test_mp_tc_or(void) {
+static int test_mp_tc_or(void)
+{
    int i;
 
    mp_int a, b, c, d;
@@ -352,12 +358,13 @@ static int test_mp_tc_or(void) {
 
    mp_clear_multi(&a, &b, &c, &d, NULL);
    return EXIT_SUCCESS;
- LBL_ERR:
+LBL_ERR:
    mp_clear_multi(&a, &b, &c, &d, NULL);
    return EXIT_FAILURE;
 }
 
-static int test_mp_tc_and(void) {
+static int test_mp_tc_and(void)
+{
    int i;
 
    mp_int a, b, c, d;
@@ -391,12 +398,13 @@ static int test_mp_tc_and(void) {
 
    mp_clear_multi(&a, &b, &c, &d, NULL);
    return EXIT_SUCCESS;
- LBL_ERR:
+LBL_ERR:
    mp_clear_multi(&a, &b, &c, &d, NULL);
    return EXIT_FAILURE;
 }
 
-static int test_mp_invmod(void) {
+static int test_mp_invmod(void)
+{
    mp_int a, b, c, d;
    if (mp_init_multi(&a, &b, &c, &d, NULL)!= MP_OKAY) {
       return EXIT_FAILURE;
@@ -434,13 +442,14 @@ static int test_mp_invmod(void) {
 
    mp_clear_multi(&a, &b, &c, &d, NULL);
    return EXIT_SUCCESS;
- LBL_ERR:
+LBL_ERR:
    mp_clear_multi(&a, &b, &c, &d, NULL);
    return EXIT_FAILURE;
 
 }
 
-static int test_mp_set_double(void) {
+static int test_mp_set_double(void)
+{
    int i;
 
    mp_int a, b;
@@ -491,13 +500,14 @@ static int test_mp_set_double(void) {
 
    mp_clear_multi(&a, &b, NULL);
    return EXIT_SUCCESS;
- LBL_ERR:
+LBL_ERR:
    mp_clear_multi(&a, &b, NULL);
    return EXIT_FAILURE;
 
 }
 
-static int test_mp_get_int(void) {
+static int test_mp_get_int(void)
+{
    unsigned long t;
    int i;
 
@@ -527,12 +537,13 @@ static int test_mp_get_int(void) {
 
    mp_clear_multi(&a, &b, NULL);
    return EXIT_SUCCESS;
- LBL_ERR:
+LBL_ERR:
    mp_clear_multi(&a, &b, NULL);
    return EXIT_FAILURE;
 }
 
-static int test_mp_get_long(void) {
+static int test_mp_get_long(void)
+{
    unsigned long s, t;
    int i;
 
@@ -562,12 +573,13 @@ static int test_mp_get_long(void) {
 
    mp_clear_multi(&a, &b, NULL);
    return EXIT_SUCCESS;
- LBL_ERR:
+LBL_ERR:
    mp_clear_multi(&a, &b, NULL);
    return EXIT_FAILURE;
 }
 
-static int test_mp_get_long_long(void) {
+static int test_mp_get_long_long(void)
+{
    unsigned long long q, r;
    int i;
 
@@ -597,13 +609,14 @@ static int test_mp_get_long_long(void) {
 
    mp_clear_multi(&a, &b, NULL);
    return EXIT_SUCCESS;
- LBL_ERR:
+LBL_ERR:
    mp_clear_multi(&a, &b, NULL);
    return EXIT_FAILURE;
 
 }
 
-static int test_mp_sqrt(void) {
+static int test_mp_sqrt(void)
+{
    int i, n;
 
    mp_int a, b, c, d;
@@ -634,12 +647,13 @@ static int test_mp_sqrt(void) {
 
    mp_clear_multi(&a, &b, &c, &d, NULL);
    return EXIT_SUCCESS;
- LBL_ERR:
+LBL_ERR:
    mp_clear_multi(&a, &b, &c, &d, NULL);
    return EXIT_FAILURE;
 }
 
-static int test_mp_is_square(void) {
+static int test_mp_is_square(void)
+{
    int i, n;
 
    mp_int a, b;
@@ -680,12 +694,13 @@ static int test_mp_is_square(void) {
 
    mp_clear_multi(&a, &b, NULL);
    return EXIT_SUCCESS;
- LBL_ERR:
+LBL_ERR:
    mp_clear_multi(&a, &b, NULL);
    return EXIT_FAILURE;
 }
 
-static int test_mp_sqrtmod_prime(void) {
+static int test_mp_sqrtmod_prime(void)
+{
    struct mp_sqrtmod_prime_st {
       unsigned long p;
       unsigned long n;
@@ -721,7 +736,7 @@ static int test_mp_sqrtmod_prime(void) {
 
    mp_clear_multi(&a, &b, &c, NULL);
    return EXIT_SUCCESS;
- LBL_ERR:
+LBL_ERR:
    mp_clear_multi(&a, &b, &c, NULL);
    return EXIT_FAILURE;
 }
@@ -751,7 +766,8 @@ static int myrng(unsigned char *dst, int len, void *dat)
    return len;
 }
 
-static int test_mp_prime_random_ex(void) {
+static int test_mp_prime_random_ex(void)
+{
    int ix, err;
 
    mp_int a, b;
@@ -779,12 +795,13 @@ static int test_mp_prime_random_ex(void) {
 
    mp_clear_multi(&a, &b, NULL);
    return EXIT_SUCCESS;
- LBL_ERR:
+LBL_ERR:
    mp_clear_multi(&a, &b, NULL);
    return EXIT_FAILURE;
 }
 
-static int test_mp_prime_is_prime(void) {
+static int test_mp_prime_is_prime(void)
+{
    int ix, err, cnt;
 
    mp_int a, b;
@@ -885,13 +902,14 @@ static int test_mp_prime_is_prime(void) {
 
    mp_clear_multi(&a, &b, NULL);
    return EXIT_SUCCESS;
- LBL_ERR:
+LBL_ERR:
    mp_clear_multi(&a, &b, NULL);
    return EXIT_FAILURE;
 
 }
 
-static int test_mp_montgomery_reduce(void) {
+static int test_mp_montgomery_reduce(void)
+{
    mp_digit mp;
    int ix, i, n;
    char buf[4096];
@@ -948,13 +966,14 @@ static int test_mp_montgomery_reduce(void) {
 
    mp_clear_multi(&a, &b, &c, &d, &e, NULL);
    return EXIT_SUCCESS;
- LBL_ERR:
+LBL_ERR:
    mp_clear_multi(&a, &b, &c, &d, &e, NULL);
    return EXIT_FAILURE;
 
 }
 
-static int test_mp_read_radix(void) {
+static int test_mp_read_radix(void)
+{
    char buf[4096];
 
    mp_int a;
@@ -984,7 +1003,8 @@ static int test_mp_read_radix(void) {
    return EXIT_SUCCESS;
 }
 
-static int test_mp_cnt_lsb(void) {
+static int test_mp_cnt_lsb(void)
+{
    int ix;
 
    mp_int a, b;
@@ -1003,13 +1023,14 @@ static int test_mp_cnt_lsb(void) {
 
    mp_clear_multi(&a, &b, NULL);
    return EXIT_SUCCESS;
- LBL_ERR:
+LBL_ERR:
    mp_clear_multi(&a, &b, NULL);
    return EXIT_FAILURE;
 
 }
 
-static int test_mp_reduce_2k(void) {
+static int test_mp_reduce_2k(void)
+{
    int ix, cnt;
 
    mp_int a, b, c, d;
@@ -1046,12 +1067,13 @@ static int test_mp_reduce_2k(void) {
 
    mp_clear_multi(&a, &b, &c, &d, NULL);
    return EXIT_SUCCESS;
- LBL_ERR:
+LBL_ERR:
    mp_clear_multi(&a, &b, &c, &d, NULL);
    return EXIT_FAILURE;
 }
 
-static int test_mp_div_3(void) {
+static int test_mp_div_3(void)
+{
    int cnt;
 
    mp_int a, b, c, d, e;
@@ -1081,12 +1103,13 @@ static int test_mp_div_3(void) {
 
    mp_clear_multi(&a, &b, &c, &d, &e, NULL);
    return EXIT_SUCCESS;
- LBL_ERR:
+LBL_ERR:
    mp_clear_multi(&a, &b, &c, &d, &e, NULL);
    return EXIT_FAILURE;
 }
 
-static int test_mp_dr_reduce(void) {
+static int test_mp_dr_reduce(void)
+{
    mp_digit mp;
    int cnt;
    unsigned rr;
@@ -1136,12 +1159,13 @@ static int test_mp_dr_reduce(void) {
 
    mp_clear_multi(&a, &b, &c, NULL);
    return EXIT_SUCCESS;
- LBL_ERR:
+LBL_ERR:
    mp_clear_multi(&a, &b, &c, NULL);
    return EXIT_FAILURE;
 }
 
-static int test_mp_reduce_2k_l(void) {
+static int test_mp_reduce_2k_l(void)
+{
 #   if LTM_DEMO_TEST_REDUCE_2K_L
    mp_int a, b;
    if (mp_init_multi(&a, &b, NULL)!= MP_OKAY) {
@@ -1197,7 +1221,7 @@ static int test_mp_reduce_2k_l(void) {
 
    mp_clear_multi(&a, &b, NULL);
    return EXIT_SUCCESS;
- LBL_ERR:
+LBL_ERR:
    mp_clear_multi(&a, &b, NULL);
    return EXIT_FAILURE;
 #else
@@ -1205,11 +1229,13 @@ static int test_mp_reduce_2k_l(void) {
 #   endif /* LTM_DEMO_TEST_REDUCE_2K_L */
 }
 
-static int test_mp_radix_size(void) {
+static int test_mp_radix_size(void)
+{
    mp_int a;
    int i, len;
    /* Just a random number */
-   const char *rand_a = "5LakA2KmzhcVEwtcZlbVAAfalr3WdcMFaW7i+awtyny8iWD/6Di8+cBSSlGvWY6slk4wkuqU+xXLcsPzLeZy/wsuc+DOvI+BVZgkbq76SEwiG1799c541U9FvMn2/GRBBNnjSyQ6wVARnDze9XCoGeJygsSnRmoZPmq9bgk/Zw+LXwxJ1nwtQk/93Ik82ysUyjjsBEev6zvGcwcVZBM9eSdz6ANTSROFsaPL4o";
+   const char *rand_a =
+      "5LakA2KmzhcVEwtcZlbVAAfalr3WdcMFaW7i+awtyny8iWD/6Di8+cBSSlGvWY6slk4wkuqU+xXLcsPzLeZy/wsuc+DOvI+BVZgkbq76SEwiG1799c541U9FvMn2/GRBBNnjSyQ6wVARnDze9XCoGeJygsSnRmoZPmq9bgk/Zw+LXwxJ1nwtQk/93Ik82ysUyjjsBEev6zvGcwcVZBM9eSdz6ANTSROFsaPL4o";
    int length_rand[] = {
       0, 0, 1378, 870, 690, 594, 534, 492, 460, 436, 416,
       399, 385, 373, 363, 354, 346, 338, 332, 326, 320, 315,
@@ -1242,7 +1268,7 @@ static int test_mp_radix_size(void) {
       if (len < length_1p1234[i]) {
          goto LBL_ERR;
       }
-   } 
+   }
 
    mp_clear(&a);
    return EXIT_SUCCESS;
@@ -1251,8 +1277,9 @@ LBL_ERR:
    return EXIT_FAILURE;
 }
 
-#if ( (defined LTM_USE_FASTER_VERSIONS) || (defined LTM_USE_FASTER_NTH_ROOT) ) 
-static int test_mp_n_root(void) {
+#if ( (defined LTM_USE_FASTER_VERSIONS) || (defined LTM_USE_FASTER_NTH_ROOT) )
+static int test_mp_n_root(void)
+{
    mp_int a, tmp, root;
    mp_digit b;
 
@@ -1289,13 +1316,13 @@ static int test_mp_n_root(void) {
       mp_n_root(&a, b, &root);
       mp_expt_d(&root, b, &tmp);
       /* integer-root cannot be bigger */
-      if (mp_cmp(&tmp, &a) == MP_GT ) {
+      if (mp_cmp(&tmp, &a) == MP_GT) {
          goto LBL_ERR;
       }
       mp_add_d(&root, 1u, &root);
       mp_expt_d(&root, b, &tmp);
       /* integer-root + 1 cannot be smaller */
-      if (mp_cmp(&tmp, &a) == MP_LT ) {
+      if (mp_cmp(&tmp, &a) == MP_LT) {
          goto LBL_ERR;
       }
    }
@@ -1306,7 +1333,8 @@ LBL_ERR:
    return EXIT_FAILURE;
 }
 #else
-static int test_mp_n_root(void) {
+static int test_mp_n_root(void)
+{
    mp_int a, tmp, root;
    mp_digit b;
 
@@ -1326,13 +1354,13 @@ static int test_mp_n_root(void) {
       mp_n_root(&a, b, &root);
       mp_expt_d(&root, b, &tmp);
       /* integer root cannot be bigger */
-      if (mp_cmp(&tmp, &a) == MP_GT ) {
+      if (mp_cmp(&tmp, &a) == MP_GT) {
          goto LBL_ERR;
       }
       mp_add_d(&root, 1u, &root);
       mp_expt_d(&root, b, &tmp);
       /* integer root+1 cannot be smaller */
-      if (mp_cmp(&tmp, &a) == MP_LT ) {
+      if (mp_cmp(&tmp, &a) == MP_LT) {
          goto LBL_ERR;
       }
    }
@@ -1345,9 +1373,97 @@ LBL_ERR:
 }
 #endif
 
-int unit_tests(void) {
+
+#if ( ((defined LTM_USE_FASTER_VERSIONS) && (defined BN_MP_BALANCE_MUL_C)) && (defined BN_MP_KARATSUBA_MUL_C) )
+
+#include <sys/time.h>
+#include <sys/resource.h>
+static double get_time(void)
+{
+   struct timeval t;
+   struct timezone tzp;
+   gettimeofday(&t, &tzp);
+   return t.tv_sec + t.tv_usec*1e-6;
+}
+#include "../tommath.h"
+#include "../tommath_private.h"
+static int mp_mul_straight(const mp_int *a, const mp_int *b, mp_int *c)
+{
+   int     res, neg;
+   neg = (a->sign == b->sign) ? MP_ZPOS : MP_NEG;
+
+   /* use Toom-Cook? */
+#ifdef BN_MP_TOOM_MUL_C
+   if (MIN(a->used, b->used) >= TOOM_MUL_CUTOFF) {
+      res = mp_toom_mul(a, b, c);
+   } else
+#endif
+#ifdef BN_MP_KARATSUBA_MUL_C
+      /* use Karatsuba? */
+      if (MIN(a->used, b->used) >= KARATSUBA_MUL_CUTOFF) {
+         res = mp_karatsuba_mul(a, b, c);
+      } else
+#endif
+      {
+         int     digs = a->used + b->used + 1;
+#ifdef BN_FAST_S_MP_MUL_DIGS_C
+         if ((digs < (int)MP_WARRAY) &&
+             (MIN(a->used, b->used) <=
+              (int)(1u << (((size_t)CHAR_BIT * sizeof(mp_word)) - (2u * (size_t)DIGIT_BIT))))) {
+            res = fast_s_mp_mul_digs(a, b, c, digs);
+         } else
+#endif
+         {
+#ifdef BN_S_MP_MUL_DIGS_C
+            res = s_mp_mul(a, b, c);
+#else
+            res = MP_VAL;
+#endif
+         }
+      }
+   c->sign = (c->used > 0) ? neg : MP_ZPOS;
+   return res;
+}
+
+static int test_mp_balance_mul(void)
+{
+   mp_int a, b, c, tmp;
+   double start, stop, resb, resm;
+
+   if (mp_init_multi(&a, &b, &c, &tmp, NULL)  != MP_OKAY) {
+      return  EXIT_FAILURE;
+   }
+
+   mp_rand(&a, 31 * KARATSUBA_MUL_CUTOFF);
+   mp_rand(&b, (30 * KARATSUBA_MUL_CUTOFF)/2);
+   start = get_time();
+   if (mp_mul(&a, &b, &c)  != MP_OKAY) {
+      goto LBL_ERR;
+   }
+   stop = get_time();
+   resb = stop - start;
+   start = get_time();
+   if (mp_mul_straight(&a, &b, &tmp) != MP_OKAY) {
+      goto LBL_ERR;
+   }
+   stop = get_time();
+   resm = stop - start;
+   if (mp_cmp(&c, &tmp) != MP_EQ) {
+      goto LBL_ERR;
+   }
+   printf("TIMER FOR MP_BALANCE_MUL: bal: %g mul: %g\n", resb, resm);
+   mp_clear_multi(&a, &b, &c, &tmp, NULL);
+   return EXIT_SUCCESS;
+LBL_ERR:
+   mp_clear_multi(&a, &b, &c, &tmp, NULL);
+   return EXIT_FAILURE;
+}
+#endif
+
+int unit_tests(void)
+{
    static const struct {
-      const char* name;
+      const char *name;
       int (*fn)(void);
    } test[] = {
 #define T(n) { #n, test_##n }
@@ -1378,6 +1494,9 @@ int unit_tests(void) {
       T(mp_tc_xor),
       T(mp_radix_size),
       T(mp_n_root)
+#if ( ((defined LTM_USE_FASTER_VERSIONS) && (defined BN_MP_BALANCE_MUL_C)) && (defined BN_MP_KARATSUBA_MUL_C) )
+      , T(mp_balance_mul)
+#endif
 #undef T
    };
    unsigned long i;
@@ -1390,7 +1509,7 @@ int unit_tests(void) {
    }
 #endif
 
-   for (i = 0; i < sizeof (test) / sizeof (test[0]); ++i) {
+   for (i = 0; i < sizeof(test) / sizeof(test[0]); ++i) {
       printf("TEST %s\n\n", test[i].name);
       if (test[i].fn() != EXIT_SUCCESS) {
          printf("\n\nFAIL %s\n\n", test[i].name);

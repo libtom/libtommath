@@ -64,6 +64,7 @@ int fast_s_mp_mul_digs(const mp_int *a, const mp_int *b, mp_int *c, int digs);
 int s_mp_mul_digs(const mp_int *a, const mp_int *b, mp_int *c, int digs);
 int fast_s_mp_mul_high_digs(const mp_int *a, const mp_int *b, mp_int *c, int digs);
 int s_mp_mul_high_digs(const mp_int *a, const mp_int *b, mp_int *c, int digs);
+int mp_balance_mul(const mp_int *a, const mp_int *b, mp_int *c);
 int fast_s_mp_sqr(const mp_int *a, mp_int *b);
 int s_mp_sqr(const mp_int *a, mp_int *b);
 int mp_karatsuba_mul(const mp_int *a, const mp_int *b, mp_int *c);

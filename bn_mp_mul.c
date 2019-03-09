@@ -16,7 +16,42 @@
 int mp_mul(const mp_int *a, const mp_int *b, mp_int *c)
 {
    int     res, neg;
+#if ( ((defined LTM_USE_FASTER_VERSIONS) && (defined BN_MP_BALANCE_MUL_C)) && (defined BN_MP_KARATSUBA_MUL_C) )
+   int len_b, len_a;
+#endif
    neg = (a->sign == b->sign) ? MP_ZPOS : MP_NEG;
+   /*
+      TODO: Assumes that nobody uses Toom-Cook-3 without Toom-Cook-2 (Karatsuba)
+   */
+#if ( ((defined LTM_USE_FASTER_VERSIONS) && (defined BN_MP_BALANCE_MUL_C)) && (defined BN_MP_KARATSUBA_MUL_C) )
+   len_a = a->used;
+   len_b = b->used;
+
+   if (len_a == len_b) {
+      goto LBL_GO_ON;
+   }
+
+   /*
+    * Check sizes. The smaller one needs to be larger than the Karatsuba cut-off.
+    * The bigger one needs to be at least about one KARATSUBA_MUL_CUTOFF bigger to make some
+    * sense, but it depends on architecture, OS and position of the planets, so YMMV.
+    */
+   if (MIN(len_a, len_b) < KARATSUBA_MUL_CUTOFF
+       || ((MAX(len_a, len_b)) / 2) < KARATSUBA_MUL_CUTOFF) {
+      goto LBL_GO_ON;
+   }
+   /*
+    * Not much effect was observed below a ratio of 1:2, but YMMV.
+    */
+   if (MAX(len_a, len_b) /  MIN(len_a, len_b) < 2) {
+      goto LBL_GO_ON;
+   }
+
+   res = mp_balance_mul(a,b,c);
+   goto LBL_END;
+
+LBL_GO_ON:
+#endif
 
    /* use Toom-Cook? */
 #ifdef BN_MP_TOOM_MUL_C
@@ -54,6 +89,9 @@ int mp_mul(const mp_int *a, const mp_int *b, mp_int *c)
 #endif
          }
       }
+#if ( ((defined LTM_USE_FASTER_VERSIONS) && (defined BN_MP_BALANCE_MUL_C)) && (defined BN_MP_KARATSUBA_MUL_C) )
+LBL_END:
+#endif
    c->sign = (c->used > 0) ? neg : MP_ZPOS;
    return res;
 }
