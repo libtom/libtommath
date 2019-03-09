@@ -29,9 +29,8 @@ static mp_word s_pow(mp_word base, mp_word exponent)
 
 static mp_digit digit_ilogb(mp_digit base, mp_digit n)
 {
-   mp_word low = 0uLL, bracket_low = 1uLL, high = 1uLL, mid, bracket_mid;
-   mp_word bracket_high, N;
-   mp_digit ret;
+   mp_word bracket_low = 1uLL, bracket_mid, bracket_high, N;
+   mp_digit ret, high = 1uL, low = 0uL, mid;
 
    if (n < base) {
       return (mp_digit)0uL;
@@ -50,7 +49,7 @@ static mp_digit digit_ilogb(mp_digit base, mp_digit n)
       bracket_high *= bracket_high;
    }
 
-   while ((high - low) > 1uLL) {
+   while (((mp_digit)(high - low)) > 1uL) {
       mid = (low + high) >> 1;
       bracket_mid = bracket_low * s_pow(base, mid - low) ;
 
