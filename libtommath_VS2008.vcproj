@@ -497,6 +497,10 @@
 			>
 		</File>
 		<File
+			RelativePath="bn_mp_ilogb.c"
+			>
+		</File>
+		<File
 			RelativePath="bn_mp_import.c"
 			>
 		</File>

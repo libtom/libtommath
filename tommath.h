@@ -586,6 +586,11 @@ int mp_toradix(const mp_int *a, char *str, int radix);
 int mp_toradix_n(const mp_int *a, char *str, int radix, int maxlen);
 int mp_radix_size(const mp_int *a, int radix, int *size);
 
+#ifdef LTM_USE_EXTRA_FUNCTIONS
+int mp_ilogb(mp_int *a, mp_digit base, mp_int *c);
+
+#endif
+
 #ifndef LTM_NO_FILE
 int mp_fread(mp_int *a, int radix, FILE *stream);
 int mp_fwrite(const mp_int *a, int radix, FILE *stream);

@@ -33,11 +33,11 @@ bn_mp_cmp_mag.o bn_mp_cnt_lsb.o bn_mp_complement.o bn_mp_copy.o bn_mp_count_bits
 bn_mp_div_2.o bn_mp_div_2d.o bn_mp_div_3.o bn_mp_div_d.o bn_mp_dr_is_modulus.o bn_mp_dr_reduce.o \
 bn_mp_dr_setup.o bn_mp_exch.o bn_mp_export.o bn_mp_expt_d.o bn_mp_expt_d_ex.o bn_mp_exptmod.o \
 bn_mp_exptmod_fast.o bn_mp_exteuclid.o bn_mp_fread.o bn_mp_fwrite.o bn_mp_gcd.o bn_mp_get_bit.o \
-bn_mp_get_double.o bn_mp_get_int.o bn_mp_get_long.o bn_mp_get_long_long.o bn_mp_grow.o bn_mp_import.o \
-bn_mp_init.o bn_mp_init_copy.o bn_mp_init_multi.o bn_mp_init_set.o bn_mp_init_set_int.o bn_mp_init_size.o \
-bn_mp_invmod.o bn_mp_invmod_slow.o bn_mp_is_square.o bn_mp_iseven.o bn_mp_isodd.o bn_mp_jacobi.o \
-bn_mp_karatsuba_mul.o bn_mp_karatsuba_sqr.o bn_mp_kronecker.o bn_mp_lcm.o bn_mp_lshd.o bn_mp_mod.o \
-bn_mp_mod_2d.o bn_mp_mod_d.o bn_mp_montgomery_calc_normalization.o bn_mp_montgomery_reduce.o \
+bn_mp_get_double.o bn_mp_get_int.o bn_mp_get_long.o bn_mp_get_long_long.o bn_mp_grow.o bn_mp_ilogb.o \
+bn_mp_import.o bn_mp_init.o bn_mp_init_copy.o bn_mp_init_multi.o bn_mp_init_set.o bn_mp_init_set_int.o \
+bn_mp_init_size.o bn_mp_invmod.o bn_mp_invmod_slow.o bn_mp_is_square.o bn_mp_iseven.o bn_mp_isodd.o \
+bn_mp_jacobi.o bn_mp_karatsuba_mul.o bn_mp_karatsuba_sqr.o bn_mp_kronecker.o bn_mp_lcm.o bn_mp_lshd.o \
+bn_mp_mod.o bn_mp_mod_2d.o bn_mp_mod_d.o bn_mp_montgomery_calc_normalization.o bn_mp_montgomery_reduce.o \
 bn_mp_montgomery_setup.o bn_mp_mul.o bn_mp_mul_2.o bn_mp_mul_2d.o bn_mp_mul_d.o bn_mp_mulmod.o \
 bn_mp_n_root.o bn_mp_n_root_ex.o bn_mp_neg.o bn_mp_or.o bn_mp_prime_fermat.o \
 bn_mp_prime_frobenius_underwood.o bn_mp_prime_is_divisible.o bn_mp_prime_is_prime.o \
@@ -61,6 +61,9 @@ $(OBJECTS): $(HEADERS)
 $(LIBNAME):  $(OBJECTS)
 	$(AR) $(ARFLAGS) $@ $(OBJECTS)
 	$(RANLIB) $@
+
+extra: CFLAGS+=-DLTM_USE_EXTRA_FUNCTIONS
+extra: $(LIBNAME)
 
 #make a profiled library (takes a while!!!)
 #
@@ -94,6 +97,15 @@ install: $(LIBNAME)
 uninstall:
 	rm $(DESTDIR)$(LIBPATH)/$(LIBNAME)
 	rm $(HEADERS_PUB:%=$(DESTDIR)$(INCPATH)/%)
+
+extra_test:  CFLAGS+=-DLTM_USE_EXTRA_FUNCTIONS -DLTM_DEMO_TEST_VS_MTEST=0 
+extra_test: $(LIBNAME)
+	$(CC) $(CFLAGS) -c demo/main.c -o demo/main.o
+	$(CC) $(CFLAGS) -c demo/opponent.c -o demo/opponent.o
+	$(CC) $(CFLAGS) -c demo/test.c -o demo/test.o
+	$(CC) $(LDFLAGS) -o test demo/main.o demo/opponent.o demo/test.o $(LIBNAME)
+
+
 
 test: demo/main.o demo/opponent.o demo/test.o $(LIBNAME)
 	$(CC) $(CFLAGS) $^ $(LFLAGS) -o test
