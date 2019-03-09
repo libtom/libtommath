@@ -2,6 +2,7 @@ language: c
 
 install:
     - sudo apt-get update -qq
+    - sudo apt-get install -qq valgrind
     - sudo apt-get install gcc-multilib
 
 matrix:
@@ -19,13 +20,15 @@ script:
   - ./testme.sh --with-cc=$CC ${BUILDOPTIONS}
 env:
   - |
-    BUILDOPTIONS="--test-vs-mtest=333333 --cflags=-DLTM_NO_VALGRIND"
+    BUILDOPTIONS="--test-vs-mtest=333333"
   - |
-    BUILDOPTIONS="--test-vs-mtest=333333 --mtest-real-rand --cflags=-DLTM_NO_VALGRIND"
+    BUILDOPTIONS="--test-vs-mtest=333333 --mtest-real-rand"
   - |
-    BUILDOPTIONS="--with-low-mp --cflags=-DLTM_NO_VALGRIND"
+    BUILDOPTIONS="--with-low-mp"
   - |
-    BUILDOPTIONS="--with-m64 --with-m32 --with-mx32 --cflags=-DLTM_NO_VALGRIND"
+    BUILDOPTIONS="--with-m64 --with-m32 --with-mx32"
+  - |
+    BUILDOPTIONS="--with-valgrind"
 
 after_failure:
   - cat test_*.log

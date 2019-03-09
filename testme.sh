@@ -17,6 +17,9 @@ fi
 ret=0
 TEST_CFLAGS=""
 
+VAGRIND_BIN=""
+VALGRIND_OPT=" --track-origins=yes --leak-check=full --show-leak-kinds=all --error-exitcode=1 "
+
 _help()
 {
   echo "Usage options for $(basename $0) [--with-cc=arg [other options]]"
@@ -49,6 +52,15 @@ _help()
   echo "    --with-low-mp           Also build&run tests with -DMP_{8,16,32}BIT."
   echo
   echo "    --mtest-real-rand       Use real random data when running mtest."
+  echo
+  echo "    --with-valgrind          Run in valgrind (slow!)."
+  echo "                             Default options are:"
+  echo "                                --track-origins=yes"
+  echo "                                --leak-check=full"
+  echo "                                --show-leak-kinds=all"
+  echo "                                --error-exitcode=1"
+  echo
+  echo "    --valgrind-options       Additional Valgrind options"
   echo
   echo "Godmode:"
   echo
@@ -97,6 +109,17 @@ _runtest()
   $_timeout ./test > test_${suffix}.log || _die "running tests" $?
 }
 
+_runvalgrind()
+{
+  make clean > /dev/null
+  _make "$1" "$2" "test_standalone"
+  local _timeout=""
+  which timeout >/dev/null && _timeout="timeout --foreground 600"
+  echo -e "\rRun test $1 $2"
+  $_timeout $VALGRIND_BIN $VALGRIND_OPTS ./test > test_${suffix}.log || _die "running tests" $?
+}
+
+
 _banner()
 {
   echo "uname="$(uname -a)
@@ -134,6 +157,12 @@ do
     --cflags=*)
       CFLAGS="$CFLAGS ${1#*=}"
     ;;
+    --valgrind-options=*)
+      VALGRIND_OPTS="${1#*=} $VALGRIND_OPTS"
+    ;;
+    --with-valgrind)
+      VALGRIND_BIN="valgrind"
+    ;;
     --make-option=*)
       MAKE_OPTIONS="$MAKE_OPTIONS ${1#*=}"
     ;;
@@ -170,10 +199,15 @@ if [[ "$COMPILERS" == "" ]] && [[ "$ARCHFLAGS$MAKE_OPTIONS$CFLAGS" != "" ]]
 then
    COMPILERS="gcc"
 # default to gcc and run only default config if no option is given
-elif [[ "$COMPILERS" == "" ]]
+elif [[ "$COMPILERS" == "" ]] && [[ "$VALGRIND_BIN" == "" ]]
 then
   _banner gcc
   _runtest "gcc" ""
+  _exit
+elif [[ "$VALGRIND_BIN" != "" ]]
+then
+  _banner "$COMPILERS"
+  _runvalgrind "$COMPILERS" "$CFLAGS"
   _exit
 fi
 
