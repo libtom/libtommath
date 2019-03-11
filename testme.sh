@@ -21,40 +21,63 @@ _help()
 {
   echo "Usage options for $(basename $0) [--with-cc=arg [other options]]"
   echo
-  echo "Executing this script without any parameter will only run the default configuration"
-  echo "that has automatically been determined for the architecture you're running."
+  echo "Executing this script without any parameter will only run the default"
+  echo "configuration that has automatically been determined for the"
+  echo "architecture you're running."
   echo
   echo "    --with-cc=*             The compiler(s) to use for the tests"
-  echo "        This is an option that will be iterated."
+  echo "                            This is an option that will be iterated."
   echo
   echo "    --test-vs-mtest=*       Run test vs. mtest for '*' operations."
-  echo "        Only the first of each options will be taken into account."
+  echo "                            Only the first of each options will be"
+  echo "                            taken into account."
   echo
-  echo "To be able to specify options a compiler has to be given."
-  echo "All options will be tested with all MP_xBIT configurations."
+  echo "To be able to specify options a compiler has to be given with"
+  echo "the option --with-cc=compilername"
+  echo "All other options will be tested with all MP_xBIT configurations."
   echo
-  echo "    --with-{m64,m32,mx32}   The architecture(s) to build and test for,"
-  echo "                            e.g. --with-mx32."
-  echo "        This is an option that will be iterated, multiple selections are possible."
-  echo "        The mx32 architecture is not supported by clang and will not be executed."
+  echo "    --with-{m64,m32,mx32}   The architecture(s) to build and test"
+  echo "                            for, e.g. --with-mx32."
+  echo "                            This is an option that will be iterated,"
+  echo "                            multiple selections are possible."
+  echo "                            The mx32 architecture is not supported"
+  echo "                            by clang and will not be executed."
   echo
   echo "    --cflags=*              Give an option to the compiler,"
   echo "                            e.g. --cflags=-g"
-  echo "        This is an option that will always be passed as parameter to CC."
+  echo "                            This is an option that will always be"
+  echo "                            passed as parameter to CC."
   echo
   echo "    --make-option=*         Give an option to make,"
   echo "                            e.g. --make-option=\"-f makefile.shared\""
-  echo "        This is an option that will always be passed as parameter to make."
+  echo "                            This is an option that will always be"
+  echo "                            passed as parameter to make."
   echo
   echo "    --with-low-mp           Also build&run tests with -DMP_{8,16,32}BIT."
   echo
   echo "    --mtest-real-rand       Use real random data when running mtest."
   echo
+  echo "    --with-valgrind"
+  echo "    --with-valgrind=*       Run in valgrind (slow!)."
+  echo
+  echo "    --valgrind-options       Additional Valgrind options"
+  echo "                             Some of the options like e.g.:"
+  echo "                             --track-origins=yes add a lot of extra"
+  echo "                             runtime and may trigger the 30 minutes"
+  echo "                             timeout."
+  echo
   echo "Godmode:"
   echo
-  echo "    --all                   Choose all architectures and gcc and clang as compilers"
+  echo "    --all                   Choose all architectures and gcc and clang"
+  echo "                            as compilers but does not run valgrind."
   echo
+  echo "    -h"
   echo "    --help                  This message"
+  echo
+  echo "    -v"
+  echo "    --version               Prints the version. It is just the number"
+  echo "                            of git commits to this file, no deeper"
+  echo "                            meaning attached"
   exit 0
 }
 
@@ -97,6 +120,22 @@ _runtest()
   $_timeout ./test > test_${suffix}.log || _die "running tests" $?
 }
 
+# This is not much more of a C&P of _runtest with a different timeout
+# and the additional valgrind call.
+# TODO: merge
+_runvalgrind()
+{
+  make clean > /dev/null
+  _make "$1" "$2" "test_standalone"
+  local _timeout=""
+  # 30 minutes? Yes. Had it at 20 minutes and the Valgrind run needed over 25 minutes.
+  # A bit too close for comfort.
+  which timeout >/dev/null && _timeout="timeout --foreground 1800"
+  echo -e "\rRun test $1 $2 inside valgrind"
+  $_timeout $VALGRIND_BIN $VALGRIND_OPTS ./test > test_${suffix}.log || _die "running tests" $?
+}
+
+
 _banner()
 {
   echo "uname="$(uname -a)
@@ -121,6 +160,13 @@ CFLAGS=""
 WITH_LOW_MP=""
 TEST_VS_MTEST=""
 MTEST_RAND=""
+# timed with an AMD A8-6600K
+# 25 minutes
+#VALGRIND_OPTS=" --track-origins=yes --leak-check=full --show-leak-kinds=all --error-exitcode=1 "
+# 9 minutes (14 minutes with --test-vs-mtest=333333 --mtest-real-rand)
+VALGRIND_OPTS=" --leak-check=full --show-leak-kinds=all --error-exitcode=1 "
+#VALGRIND_OPTS=""
+VALGRIND_BIN=""
 
 while [ $# -gt 0 ];
 do
@@ -133,6 +179,17 @@ do
     ;;
     --cflags=*)
       CFLAGS="$CFLAGS ${1#*=}"
+    ;;
+    --valgrind-options=*)
+      VALGRIND_OPTS="$VALGRIND_OPTS ${1#*=}"
+    ;;
+    --with-valgrind*)
+      if [[ ${1#*d} != "" ]]
+      then
+        VALGRIND_BIN="${1#*=}"
+      else
+        VALGRIND_BIN="valgrind"
+      fi
     ;;
     --make-option=*)
       MAKE_OPTIONS="$MAKE_OPTIONS ${1#*=}"
@@ -158,6 +215,10 @@ do
     --help | -h)
       _help
     ;;
+    --version | -v)
+      echo $(git rev-list HEAD --count -- testme.sh) || echo "Unknown. Please run in original libtommath git repository."
+      exit 0
+    ;;
     *)
       echo "Ignoring option ${1}"
     ;;
@@ -173,9 +234,15 @@ then
 elif [[ "$COMPILERS" == "" ]]
 then
   _banner gcc
-  _runtest "gcc" ""
+  if [[ "$VALGRIND_BIN" != "" ]]
+  then
+    _runvalgrind "gcc" ""
+  else
+    _runtest "gcc" ""
+  fi
   _exit
 fi
+
 
 archflags=( $ARCHFLAGS )
 compilers=( $COMPILERS )
@@ -200,7 +267,7 @@ then
    alive_pid=$!
    _timeout=""
    which timeout >/dev/null && _timeout="timeout --foreground 900"
-   $_TIMEOUT ./mtest/mtest $TEST_VS_MTEST | ./test > test.log
+   $_TIMEOUT./mtest/mtest $TEST_VS_MTEST |  $VALGRIND_BIN $VALGRIND_OPTS  ./test > test.log
    disown $alive_pid
    kill $alive_pid 2>/dev/null
    head -n 5 test.log
@@ -232,12 +299,20 @@ do
       echo "clang -mx32 tests skipped"
       continue
     fi
-
-    _runtest "$i $a" "$CFLAGS"
-    [ "$WITH_LOW_MP" != "1" ] && continue
-    _runtest "$i $a" "-DMP_8BIT $CFLAGS"
-    _runtest "$i $a" "-DMP_16BIT $CFLAGS"
-    _runtest "$i $a" "-DMP_32BIT $CFLAGS"
+    if [[ "$VALGRIND_BIN" != "" ]]
+    then
+      _runvalgrind "$i $a" "$CFLAGS"
+      [ "$WITH_LOW_MP" != "1" ] && continue
+      _runvalgrind "$i $a" "-DMP_8BIT $CFLAGS"
+      _runvalgrind "$i $a" "-DMP_16BIT $CFLAGS"
+      _runvalgrind "$i $a" "-DMP_32BIT $CFLAGS"
+    else
+      _runtest "$i $a" "$CFLAGS"
+      [ "$WITH_LOW_MP" != "1" ] && continue
+      _runtest "$i $a" "-DMP_8BIT $CFLAGS"
+      _runtest "$i $a" "-DMP_16BIT $CFLAGS"
+      _runtest "$i $a" "-DMP_32BIT $CFLAGS"
+    fi
   done
 done
 
