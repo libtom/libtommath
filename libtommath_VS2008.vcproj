@@ -753,6 +753,10 @@
 			>
 		</File>
 		<File
+			RelativePath="bn_mp_sieve.c"
+			>
+		</File>
+		<File
 			RelativePath="bn_mp_signed_bin_size.c"
 			>
 		</File>

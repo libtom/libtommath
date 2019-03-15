@@ -129,6 +129,7 @@
 #   define BN_MP_SET_LONG_C
 #   define BN_MP_SET_LONG_LONG_C
 #   define BN_MP_SHRINK_C
+#   define BN_MP_SIEVE_C
 #   define BN_MP_SIGNED_BIN_SIZE_C
 #   define BN_MP_SQR_C
 #   define BN_MP_SQRMOD_C
@@ -455,21 +456,19 @@
 #endif
 
 #if defined(BN_MP_ILOGB_C)
+#   define BN_MP_RADIX_SIZE_C
+#   define BN_MP_BITCOUNT_C
 #   define BN_MP_COUNT_BITS_C
 #   define BN_MP_SET_C
-#   define BN_MP_CMP_C
+#   define BN_MP_CMP_D_C
 #   define BN_MP_ZERO_C
 #   define BN_MP_INIT_MULTI_C
+#   define BN_MP_CMP_C
 #   define BN_MP_COPY_C
-#   define BN_MP_MUL_2_C
 #   define BN_MP_SQR_C
-#   define BN_MP_EXCH_C
-#   define BN_MP_SUB_C
-#   define BN_MP_CMP_D_C
-#   define BN_MP_ADD_C
-#   define BN_MP_DIV_2_C
-#   define BN_MP_EXPT_C
+#   define BN_MP_EXPT_D_C
 #   define BN_MP_MUL_C
+#   define BN_MP_EXCH_C
 #   define BN_MP_CLEAR_MULTI_C
 #endif
 
@@ -949,6 +948,25 @@
 #endif
 
 #if defined(BN_MP_SHRINK_C)
+#endif
+
+#if defined(BN_MP_SIEVE_C)
+#   define BN_S_MP_SIEVE_SETALL_C
+#   define BN_S_MP_SIEVE_CLEAR_C
+#   define BN_S_MP_SIEVE_GET_C
+#   define BN_S_MP_SIEVE_NEXTSET_C
+#   define BN_S_MP_ERATOSTHENES_C
+#   define BN_S_MP_ERATOSTHENES_INIT_C
+#   define BN_S_MP_ERATOSTHENES_SEGMENT_C
+#   define BN_S_MP_ERATOSTHENES_SEGMENT_INIT_C
+#   define BN_S_MP_ERATOSTHENES_SEGMENT_CLEAR_C
+#   define BN_MP_IS_SMALL_PRIME_C
+#   define BN_MP_NEXT_SMALL_PRIME_C
+#   define BN_MP_PREC_SMALL_PRIME_C
+#   define BN_MP_SIEVE_INIT_C
+#   define BN_MP_SIEVE_CLEAR_C
+#   define BN_MP_SMALL_PRIME_ARRAY_C
+#   define BN_MP_PRIME_ARRAY_C
 #endif
 
 #if defined(BN_MP_SIGNED_BIN_SIZE_C)

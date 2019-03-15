@@ -46,7 +46,7 @@ bn_mp_prime_random_ex.o bn_mp_prime_strong_lucas_selfridge.o bn_mp_radix_size.o 
 bn_mp_rand.o bn_mp_read_radix.o bn_mp_read_signed_bin.o bn_mp_read_unsigned_bin.o bn_mp_reduce.o \
 bn_mp_reduce_2k.o bn_mp_reduce_2k_l.o bn_mp_reduce_2k_setup.o bn_mp_reduce_2k_setup_l.o \
 bn_mp_reduce_is_2k.o bn_mp_reduce_is_2k_l.o bn_mp_reduce_setup.o bn_mp_rshd.o bn_mp_set.o \
-bn_mp_set_double.o bn_mp_set_int.o bn_mp_set_long.o bn_mp_set_long_long.o bn_mp_shrink.o \
+bn_mp_set_double.o bn_mp_set_int.o bn_mp_set_long.o bn_mp_set_long_long.o bn_mp_shrink.o bn_mp_sieve.o \
 bn_mp_signed_bin_size.o bn_mp_sqr.o bn_mp_sqrmod.o bn_mp_sqrt.o bn_mp_sqrtmod_prime.o bn_mp_sub.o \
 bn_mp_sub_d.o bn_mp_submod.o bn_mp_tc_and.o bn_mp_tc_div_2d.o bn_mp_tc_or.o bn_mp_tc_xor.o \
 bn_mp_to_signed_bin.o bn_mp_to_signed_bin_n.o bn_mp_to_unsigned_bin.o bn_mp_to_unsigned_bin_n.o \

@@ -110,11 +110,11 @@ typedef uint64_t             mp_word;
 #define MP_ZPOS       0   /* positive integer */
 #define MP_NEG        1   /* negative */
 
-#define MP_OKAY       0   /* ok result */
-#define MP_MEM        -2  /* out of mem */
-#define MP_VAL        -3  /* invalid input */
-#define MP_RANGE      MP_VAL
-#define MP_ITER       -4  /* Max. iterations reached */
+#define MP_OKAY                 0   /* ok result */
+#define MP_MEM                 -2  /* out of mem */
+#define MP_VAL                 -3  /* invalid input */
+#define MP_RANGE               MP_VAL
+#define MP_ITER                -4  /* Max. iterations reached */
 
 #define MP_YES        1   /* yes response */
 #define MP_NO         0   /* no response */
@@ -567,6 +567,71 @@ int mp_prime_next_prime(mp_int *a, int t, int bbs_style);
  *
  */
 int mp_prime_random_ex(mp_int *a, int t, int size, int flags, ltm_prime_callback cb, void *dat);
+
+#ifdef LTM_USE_EXTRA_FUNCTIONS
+/*
+ * All MP_xBIT sizes need one data type that has twice the size of "x",
+ * that means that the type uint16_t must be available, even for MP_8BIT.
+ */
+#ifdef MP_8BIT
+#   define LTM_SIEVE_BIGGEST_PRIME      65521lu
+#   define LTM_SIEVE_UINT               uint16_t
+#   define LTM_SIEVE_PR_UINT            PRIu16
+#   define LTM_SIEVE_UINT_MAX           0xFFFFlu
+#   define LTM_SIEVE_UINT_MAX_SQRT      0xFFlu
+#elif ( (defined MP_64BIT) && (defined LTM_SIEVE_USE_LARGE_SIEVE) )
+#   define LTM_SIEVE_BIGGEST_PRIME      18446744073709551557llu
+#   define LTM_SIEVE_UINT               uint64_t
+#   define LTM_SIEVE_PR_UINT            PRIu64
+#   define LTM_SIEVE_UINT_MAX           0xFFFFFFFFFFFFFFFFllu
+#   define LTM_SIEVE_UINT_MAX_SQRT      0xFFFFFFFFllu
+#else
+#   define LTM_SIEVE_BIGGEST_PRIME      4294967291lu
+#   define LTM_SIEVE_UINT               uint32_t
+#   define LTM_SIEVE_PR_UINT            PRIu32
+#   define LTM_SIEVE_UINT_MAX           0xFFFFFFFFlu
+#   define LTM_SIEVE_UINT_MAX_SQRT      0xFFFFlu
+#endif
+typedef struct mp_sieve_t {
+   LTM_SIEVE_UINT *content;   /* bitset holding the sieve */
+   LTM_SIEVE_UINT size;       /* number of entries (which is a slightly misleading description) */
+   LTM_SIEVE_UINT alloc;      /* size in bytes */
+} mp_sieve;
+/* Init a sieve. Allocates memory for the struct */
+int mp_sieve_init(mp_sieve *sieve);
+/* Clear a sieve. Frees the memory for the content and the struct*/
+void mp_sieve_clear(mp_sieve *sieve);
+
+/*
+   Deterministicaly checks if a small prime (< LTM_SIEVE_UINT_MAX) is prime.
+   Uses the sieve so is not the fastest for random checks
+ */
+int mp_is_small_prime(LTM_SIEVE_UINT n, LTM_SIEVE_UINT *result, mp_sieve **base_sieve,
+                      mp_sieve **single_segment, LTM_SIEVE_UINT *single_segment_a);
+
+#define LTM_SIEVE_MAX_REACHED (-91) /* Ret. for. max. poss. prime found in mp_next_small_prime */
+/*
+   Puts the next prime >= n in "result". May return LTM_SIEVE_MAX_REACHED to flag the content
+   of "result" as the last valid one.
+*/
+int mp_next_small_prime(LTM_SIEVE_UINT n, LTM_SIEVE_UINT *result, mp_sieve **base_sieve,
+                        mp_sieve **single_segment, LTM_SIEVE_UINT *single_segment_a);
+/*
+   Puts the prime preceeding n in "result"
+*/
+int mp_prec_small_prime(LTM_SIEVE_UINT n, LTM_SIEVE_UINT *result, mp_sieve **base_sieve,
+                        mp_sieve **single_segment, LTM_SIEVE_UINT *single_segment_a);
+
+/*
+   Puts the range of primes between start and end inclusive in "prime_array".
+   Please do not forget to free the memory after use.
+*/
+int mp_small_prime_array(LTM_SIEVE_UINT start, LTM_SIEVE_UINT end,
+                         LTM_SIEVE_UINT **prime_array, LTM_SIEVE_UINT *array_length,
+                         mp_sieve **base_sieve, mp_sieve **single_segment,
+                         LTM_SIEVE_UINT *single_segment_a);
+
+#endif /* LTM_USE_EXTRA_FUNCTIONS */
 
 /* ---> radix conversion <--- */
 int mp_count_bits(const mp_int *a);

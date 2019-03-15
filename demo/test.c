@@ -1336,9 +1336,7 @@ static int test_mp_ilogb(void)
      radix_size.
    */
    mp_rand(&a, 10);
-   /* mp_fwrite(&a, 10, stdout);puts(""); */
    for (base = 2uL; base < 65uL; base++) {
-      /* printf("base = %lu ",(unsigned long)base); */
       if (mp_ilogb(&a, base, &lb) != MP_OKAY) {
          goto LBL_ERR;
       }
@@ -1353,7 +1351,6 @@ static int test_mp_ilogb(void)
 #endif
       /* radix_size includes the memory needed for '\0', too*/
       size -= 2;
-      /* printf("lb = %lu  size = %d\n",(unsigned long)lb.dp[0], size); */
       if (mp_cmp_d(&lb, size) != MP_EQ) {
          goto LBL_ERR;
       }
@@ -1380,6 +1377,307 @@ LBL_ERR:
    mp_clear_multi(&a, &lb, NULL);
    return EXIT_FAILURE;
 }
+static int test_mp_is_small_prime(void)
+{
+   mp_sieve *base = NULL;
+   mp_sieve *segment = NULL;
+   LTM_SIEVE_UINT single_segment_a = 0;
+   int e;
+   int i, test_size;
+
+   LTM_SIEVE_UINT to_test[] = {
+      52, 137, 153, 179, 6, 153, 53, 132, 150, 65,
+      27414, 36339, 36155, 11067, 52060, 5741,
+      29755, 2698, 52572, 13053, 9375, 47241
+#ifndef MP_8BIT
+      ,39626, 207423, 128857, 37419, 141696, 189465,
+      41503, 127370, 91673, 8473, 479142414, 465566339,
+      961126169, 1057886067, 1222702060, 1017450741,
+      1019879755, 72282698, 2048787577, 2058368053
+#endif
+   };
+   LTM_SIEVE_UINT tested[] = {
+      0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0
+#ifndef MP_8BIT
+      ,0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0
+#endif
+   };
+   LTM_SIEVE_UINT result;
+
+   if ((e = mp_sieve_init(base)) != MP_OKAY) {
+      fprintf(stderr,"mp_sieve_init(base) failed: \"%s\"\n",mp_error_to_string(e));
+      exit(EXIT_FAILURE);
+   }
+   if ((e = mp_sieve_init(segment)) != MP_OKAY) {
+      fprintf(stderr,"mp_sieve_init(segment) failed: \"%s\"\n",mp_error_to_string(e));
+      goto LTM_ERR;
+   }
+
+   test_size = (int)(sizeof(to_test)/sizeof(LTM_SIEVE_UINT));
+
+   for (i = 0; i < test_size; i++) {
+      if ((e = mp_is_small_prime(to_test[i], &result, &base, &segment, &single_segment_a)) != MP_OKAY) {
+         fprintf(stderr,"mp_is_small_prime failed: \"%s\"\n",mp_error_to_string(e));
+         goto LTM_ERR;
+      }
+      if (result != tested[i]) {
+         fprintf(stderr,"mp_is_small_prime failed for %u. Said %u but is %u \n",
+                 (unsigned int)to_test[i], (unsigned int)result, (unsigned int)tested[i]);
+         goto LTM_ERR;
+      }
+   }
+
+   mp_sieve_clear(base);
+   mp_sieve_clear(segment);
+   return EXIT_SUCCESS;
+LTM_ERR:
+   mp_sieve_clear(base);
+   mp_sieve_clear(segment);
+   return EXIT_FAILURE;
+}
+static int test_mp_next_small_prime(void)
+{
+   mp_sieve *base = NULL;
+   mp_sieve *segment = NULL;
+   LTM_SIEVE_UINT single_segment_a = 0;
+   LTM_SIEVE_UINT ret;
+   int e;
+   int i, test_size;
+
+   LTM_SIEVE_UINT to_test[] = {
+      52, 137, 153, 179, 6, 153, 53, 132, 150, 65,
+      27414, 36339, 36155, 11067, 52060, 5741,
+      29755, 2698, 52572, 13053, 9375, 47241
+#ifndef MP_8BIT
+      ,39626, 207423, 128857, 37419, 141696, 189465,
+      41503, 127370, 91673, 8473, 479142414, 465566339,
+      961126169, 1057886067, 1222702060, 1017450741,
+      1019879755, 72282698, 2048787577, 2058368053
+#endif
+   };
+   LTM_SIEVE_UINT tested[] = {
+      53, 137, 157, 179, 7, 157, 53, 137, 151, 67,
+      27427, 36341, 36161, 11069, 52067, 5741,
+      29759, 2699, 52579, 13063, 9377, 47251
+#ifndef MP_8BIT
+      ,39631, 207433, 128857, 37423, 141697, 189467,
+      41507, 127373, 91673, 8501, 479142427, 465566393,
+      961126169, 1057886083, 1222702081, 1017450823,
+      1019879761, 72282701, 2048787577, 2058368113
+#endif
+   };
+
+   if ((e = mp_sieve_init(base)) != MP_OKAY) {
+      fprintf(stderr,"mp_sieve_init(base) failed: \"%s\"\n",mp_error_to_string(e));
+      return EXIT_FAILURE;
+   }
+   if ((e = mp_sieve_init(segment)) != MP_OKAY) {
+      fprintf(stderr,"mp_sieve_init(segment) failed: \"%s\"\n",mp_error_to_string(e));
+      goto LTM_ERR_1;
+   }
+
+   test_size = (int)(sizeof(to_test)/sizeof(LTM_SIEVE_UINT));
+
+   for (i = 0; i < test_size; i++) {
+      if ((e = mp_next_small_prime(to_test[i], &ret, &base,
+                                   &segment, &single_segment_a)) != MP_OKAY) {
+         fprintf(stderr,"mp_next_small_prime failed with \"%s\" at index %d\n",
+                 mp_error_to_string(e), i);
+         goto LTM_ERR;
+      }
+      if (ret != tested[i]) {
+         fprintf(stderr,"mp_next_small_prime failed for %u. Said %u but is %u \n",
+                 (unsigned int)to_test[i], (unsigned int)ret, (unsigned int)tested[i]);
+         goto LTM_ERR;
+      }
+   }
+
+   mp_sieve_clear(base);
+   mp_sieve_clear(segment);
+   return EXIT_SUCCESS;
+LTM_ERR:
+   mp_sieve_clear(segment);
+LTM_ERR_1:
+   mp_sieve_clear(base);
+   return EXIT_FAILURE;
+}
+
+static int test_mp_prec_small_prime(void)
+{
+   mp_sieve *base = NULL;
+   mp_sieve *segment = NULL;
+   LTM_SIEVE_UINT single_segment_a = 0;
+   LTM_SIEVE_UINT ret;
+   int e;
+   int i, test_size;
+
+   LTM_SIEVE_UINT to_test[] = {
+      52, 137, 153, 179, 6, 153, 53, 132, 150, 65,
+      27414, 36339, 36155, 11067, 52060, 5741,
+      29755, 2698, 52572, 13053, 9375, 47241
+#ifndef MP_8BIT
+      ,39626, 207423, 128857, 37419, 141696, 189465,
+      41503, 127370, 91673, 8473, 479142414, 465566339,
+      961126169, 1057886067, 1222702060, 1017450741,
+      1019879755, 72282698, 2048787577, 2058368053
+#endif
+   };
+   LTM_SIEVE_UINT tested[] = {
+      47, 137, 151, 179, 5, 151, 53, 131, 149, 61,
+      27409, 36319, 36151, 11059, 52057, 5741,
+      29753, 2693, 52571, 13049, 9371, 47237
+#ifndef MP_8BIT
+      ,39623, 207409, 128857, 37409, 141689, 189463,
+      41491, 127363, 91673, 8467, 479142413, 465566323,
+      961126169, 1057886029, 1222702051, 1017450739,
+      1019879717, 72282697, 2048787577, 2058368051
+#endif
+   };
+
+   if ((e = mp_sieve_init(base)) != MP_OKAY) {
+      fprintf(stderr,"mp_sieve_init(base) failed: \"%s\"\n",mp_error_to_string(e));
+      return EXIT_FAILURE;
+   }
+   if ((e = mp_sieve_init(segment)) != MP_OKAY) {
+      fprintf(stderr,"mp_sieve_init(segment) failed: \"%s\"\n",mp_error_to_string(e));
+      goto LTM_ERR_1;
+   }
+
+   test_size = (int)(sizeof(to_test)/sizeof(LTM_SIEVE_UINT));
+
+   for (i = 0; i < test_size; i++) {
+      if ((e = mp_prec_small_prime(to_test[i], &ret, &base,
+                                   &segment, &single_segment_a)) != MP_OKAY) {
+         fprintf(stderr,"mp_prec_small_prime failed with \"%s\" at index %d\n",
+                 mp_error_to_string(e), i);
+         goto LTM_ERR;
+      }
+      if (ret != tested[i]) {
+         fprintf(stderr,"mp_prec_small_prime failed for %u. Said %u but is %u \n",
+                 (unsigned int)to_test[i], (unsigned int)ret, (unsigned int)tested[i]);
+         goto LTM_ERR;
+      }
+   }
+
+   mp_sieve_clear(base);
+   mp_sieve_clear(segment);
+   return EXIT_SUCCESS;
+LTM_ERR:
+   mp_sieve_clear(segment);
+LTM_ERR_1:
+   mp_sieve_clear(base);
+   return EXIT_FAILURE;
+}
+
+static int test_mp_small_prime_array(void)
+{
+   mp_sieve *base = NULL;
+   mp_sieve *segment = NULL;
+   LTM_SIEVE_UINT single_segment_a = 0;
+   LTM_SIEVE_UINT *prime_array, array_size, j;
+   int e;
+   int i, test_size;
+   mp_int total, t;
+
+   /* For simplicity: just check the primesums */
+   LTM_SIEVE_UINT to_test_start[] = {
+      124, 147, 185, 291, 311, 329
+#ifndef MP_8BIT
+      , 7901, 19489, 20524, 47371, 50741, 59233
+#endif
+   };
+   LTM_SIEVE_UINT to_test_end[] = {
+      479, 488, 661, 671, 703, 833
+#ifndef MP_8BIT
+      , 66339, 68053, 72241, 81055, 82698, 86067
+#endif
+   };
+   LTM_SIEVE_UINT tested[] = {
+      18466, 18419, 33441, 28906, 31731, 45475
+#ifndef MP_8BIT
+      , 203371931, 197821202, 221915352, 195494605, 192053247, 172585395
+#endif
+   };
+   /* TODO: add a pair or two that overlap segments */
+
+   if ((e = mp_sieve_init(base)) != MP_OKAY) {
+      fprintf(stderr, "mp_sieve_init(base) failed: \"%s\"\n", mp_error_to_string(e));
+      return EXIT_FAILURE;
+   }
+   if ((e = mp_sieve_init(segment)) != MP_OKAY) {
+      fprintf(stderr, "mp_sieve_init(segment) failed: \"%s\"\n", mp_error_to_string(e));
+      goto LTM_ERR_2;
+   }
+
+   if ((e = mp_init_multi(&total, &t, NULL)) != MP_OKAY) {
+      fprintf(stderr, "mp_init_multi(segment): \"%s\"\n", mp_error_to_string(e));
+      goto LTM_ERR_1;
+   }
+
+   test_size = (int)(sizeof(to_test_start) / sizeof(LTM_SIEVE_UINT));
+
+   for (i = 0; i < test_size; i++) {
+      mp_zero(&total);
+      if ((e = mp_small_prime_array(to_test_start[i], to_test_end[i], &prime_array,
+                                    &array_size, &base,
+                                    &segment, &single_segment_a)) != MP_OKAY) {
+         fprintf(stderr, "mp_small_prime_array failed with \"%s\" for %u %u\n",
+                 mp_error_to_string(e), to_test_start[i], to_test_end[i]);
+         goto LTM_ERR;
+      }
+      for (j = 0; j < array_size; j++) {
+#ifdef MP_64BIT
+         if ((e = mp_add_d(&total, (mp_digit)prime_array[j], &total)) != MP_OKAY) {
+            fprintf(stderr,"mp_add_d failed: \"%s\"\n",mp_error_to_string(e));
+            goto LTM_ERR;
+         }
+#else
+         if ((e = mp_set_long(&t,(mp_word)prime_array[j])) != MP_OKAY) {
+            fprintf(stderr,"mp_set_long (1) failed: \"%s\"\n",mp_error_to_string(e));
+            goto LTM_ERR;
+         }
+         if ((e = mp_add(&total, &t, &total)) != MP_OKAY) {
+            fprintf(stderr,"mp_add failed: \"%s\"\n",mp_error_to_string(e));
+            goto LTM_ERR;
+         }
+#endif
+      }
+#ifdef MP_64BIT
+      if (mp_cmp_d(&total, (mp_digit)tested[i]) != MP_EQ) {
+         fprintf(stderr,
+                 "mp_small_prime_array primesum failed for %u %u == %u not ",
+                 to_test_start[i], to_test_end[i], tested[i]);
+         goto LTM_ERR;
+      }
+#else
+      if ((e = mp_set_long(&t,(mp_word)tested[i])) != MP_OKAY) {
+          fprintf(stderr,"mp_set_long (1) failed: \"%s\"\n",mp_error_to_string(e));
+          goto LTM_ERR;
+       }
+      if (mp_cmp(&total, &t) != MP_EQ) {
+         fprintf(stderr,
+                 "mp_small_prime_array (8-bit) primesum failed for %u %u == %u not ",
+                 to_test_start[i], to_test_end[i], tested[i]);
+         mp_fwrite(&total, 10,stdout);
+         putchar('\n');
+         goto LTM_ERR;
+      }
+#endif
+   }
+
+   mp_clear_multi(&total, &t, NULL);
+   mp_sieve_clear(base);
+   mp_sieve_clear(segment);
+   return EXIT_SUCCESS;
+LTM_ERR:
+   mp_clear_multi(&total, &t, NULL);
+LTM_ERR_1:
+   mp_sieve_clear(segment);
+LTM_ERR_2:
+   mp_sieve_clear(base);
+   return EXIT_FAILURE;
+}
+
 #endif
 
 int unit_tests(void)
@@ -1389,33 +1687,37 @@ int unit_tests(void)
       int (*fn)(void);
    } test[] = {
 #define T(n) { #n, test_##n }
-      T(trivial_stuff),
-      T(mp_cnt_lsb),
-      T(mp_complement),
-      T(mp_div_3),
-      T(mp_dr_reduce),
-      T(mp_get_int),
-      T(mp_get_long),
-      T(mp_get_long_long),
-      T(mp_invmod),
-      T(mp_is_square),
-      T(mp_jacobi),
-      T(mp_kronecker),
-      T(mp_montgomery_reduce),
-      T(mp_prime_is_prime),
-      T(mp_prime_random_ex),
-      T(mp_read_radix),
-      T(mp_reduce_2k),
-      T(mp_reduce_2k_l),
-      T(mp_set_double),
-      T(mp_sqrt),
-      T(mp_sqrtmod_prime),
-      T(mp_tc_and),
-      T(mp_tc_div_2d),
-      T(mp_tc_or),
-      T(mp_tc_xor)
+            T(trivial_stuff),
+            T(mp_cnt_lsb),
+            T(mp_complement),
+            T(mp_div_3),
+            T(mp_dr_reduce),
+            T(mp_get_int),
+            T(mp_get_long),
+            T(mp_get_long_long),
+            T(mp_invmod),
+            T(mp_is_square),
+            T(mp_jacobi),
+            T(mp_kronecker),
+            T(mp_montgomery_reduce),
+            T(mp_prime_is_prime),
+            T(mp_prime_random_ex),
+            T(mp_read_radix),
+            T(mp_reduce_2k),
+            T(mp_reduce_2k_l),
+            T(mp_set_double),
+            T(mp_sqrt),
+            T(mp_sqrtmod_prime),
+            T(mp_tc_and),
+            T(mp_tc_div_2d),
+            T(mp_tc_or),
+            T(mp_tc_xor)
 #ifdef LTM_USE_EXTRA_FUNCTIONS
-      , T(mp_ilogb)
+     ,T(mp_ilogb),
+      T(mp_is_small_prime),
+      T(mp_next_small_prime),
+      T(mp_prec_small_prime),
+      T(mp_small_prime_array)
 #endif
 #undef T
    };
@@ -1446,3 +1748,4 @@ int unit_tests(void)
 #endif
    return res;
 }
+
