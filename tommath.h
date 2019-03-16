@@ -598,7 +598,7 @@ typedef struct mp_sieve_t {
    LTM_SIEVE_UINT alloc;      /* size in bytes */
 } mp_sieve;
 /* Init a sieve. Allocates memory for the struct */
-int mp_sieve_init(mp_sieve *sieve);
+/* int mp_sieve_init(mp_sieve *sieve); */
 /* Clear a sieve. Frees the memory for the content and the struct*/
 void mp_sieve_clear(mp_sieve *sieve);
 
@@ -631,6 +631,12 @@ int mp_small_prime_array(LTM_SIEVE_UINT start, LTM_SIEVE_UINT end,
                          mp_sieve **base_sieve, mp_sieve **single_segment,
                          LTM_SIEVE_UINT *single_segment_a);
 
+/* Integer logarithm to integer base */
+int mp_ilogb(mp_int *a, mp_digit base, mp_int *c);
+
+/* exponentiate a^b = c with a, b, c big integers (useful for low MP_xBIT) */
+int mp_expt(const mp_int *a, const mp_int *b, mp_int *c);
+
 #endif /* LTM_USE_EXTRA_FUNCTIONS */
 
 /* ---> radix conversion <--- */
@@ -650,11 +656,6 @@ int mp_read_radix(mp_int *a, const char *str, int radix);
 int mp_toradix(const mp_int *a, char *str, int radix);
 int mp_toradix_n(const mp_int *a, char *str, int radix, int maxlen);
 int mp_radix_size(const mp_int *a, int radix, int *size);
-
-#ifdef LTM_USE_EXTRA_FUNCTIONS
-int mp_ilogb(mp_int *a, mp_digit base, mp_int *c);
-
-#endif
 
 #ifndef LTM_NO_FILE
 int mp_fread(mp_int *a, int radix, FILE *stream);

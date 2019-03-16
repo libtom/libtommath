@@ -2158,13 +2158,7 @@ Small prime numbers are those primes that fit in a limb of LibTomMath, that is t
 \section{Prime Sieve}
 A prime sieve is implemented as a simple segmented Sieve of Eratosthenes. It is only moderately optimized for space and runtime but should be small enough and also fast enough for almost all use-cases; quite quick for sequential access but relatively slow for random access the way it is implemented. The prime sieve and its functions are part of the ``extra'' package and can be compiled in with \texttt{make extra}. The macro \texttt{LTM\_USE\_EXTRA\_FUNCTIONS} has to be set before \texttt{tommath.h} is included. Printing the small primes needs \texttt{inttypes.h} which must be included before \texttt{tommath.h}.
 \subsection{Initialization and Clearing}
-Not much work is needed but both sieves, the base sieve and the segment need to be initialized and cleared, too, even if the segment is not used.
-Initialize the sieves with
-\index{mp\_sieve\_init}
-\begin{alltt}
-int mp_sieve_init(mp_sieve *sieve);
-\end{alltt}
-and clear it with
+Not much work is needed but both sieves, the base sieve and the segment need to be cleared at the end.
 \index{mp\_sieve\_clear}
 \begin{alltt}
 void mp_sieve_clear(mp_sieve *sieve);
@@ -2197,7 +2191,7 @@ int mp_prec_small_prime(LTM_SIEVE_UINT n, LTM_SIEVE_UINT *result,
 \end{alltt}
 \subsection{Prime Sequence}
 The most common use of the small primes is in the form of a continuous sequence. To produce this sequence utilize
-\index{mp\_small\_prime\_array}
+\index{mp\_small\_prime\_array}. The array \texttt{prime\_array} is allocated with \texttt{malloc} internally and needs to be free'd after use.
 \begin{alltt}
 int mp_small_prime_array(LTM_SIEVE_UINT start, LTM_SIEVE_UINT end,
                          LTM_SIEVE_UINT **prime_array,
@@ -2244,27 +2238,14 @@ Every prime-producing function listed in this chapter needs a short prologue and
 mp_sieve *base = NULL;
 mp_sieve *segment = NULL;
 LTM_SIEVE_UINT single_segment_a = 0;
-/* 
-   The variable holding the error from the initialization process.
-   Can only be MP_OKAY or MP_MEM.
-*/
-int e;
 
-if ((e = mp_sieve_init(base) ) != MP_OKAY) {
-   goto LTM_ERR;
-}
-if ((e = mp_sieve_init(segment) ) != MP_OKAY) {
-   goto LTM_ERR;
-}
 
 /* use the sieve(s) */
 
 
 /* Clean up */
-LTM_ERR:
    mp_sieve_clear(base);
    mp_sieve_clear(segment);
-   return e;
 \end{alltt}
 \subsubsection{Primality Test}
 A small program to test the input of a small number for primality.
@@ -2291,17 +2272,6 @@ int main(int argc, char **argv)
    if (argc != 2) {
       fprintf(stderr,"Usage %s number\textbackslash{}n", argv[0]);
       exit(EXIT_FAILURE);
-   }
-
-   if ((e = mp_sieve_init(base)) != MP_OKAY) {
-      fprintf(stderr,"mp_sieve_init(base) failed: \textbackslash{}"%s\textbackslash{}"\textbackslash{}n",
-              mp_error_to_string(e));
-      exit(EXIT_FAILURE);
-   }
-   if ((e = mp_sieve_init(segment)) != MP_OKAY) {
-      fprintf(stderr,"mp_sieve_init(segment) failed: \textbackslash{}"%s\textbackslash{}"\textbackslash{}n",
-              mp_error_to_string(e));
-      goto LTM_ERR;
    }
 
    number = (LTM_SIEVE_UINT) strtoul(argv[1],NULL, 10);
@@ -2354,16 +2324,6 @@ int main(int argc, char **argv)
       fprintf(stderr,"Usage %s integer\textbackslash{}n", argv[0]);
       exit(EXIT_FAILURE);
    }
-   if ((e = mp_sieve_init(base)) != MP_OKAY) {
-      fprintf(stderr,"mp_sieve_init(base) failed: \textbackslash{}"%s\textbackslash{}"\textbackslash{}n",
-              mp_error_to_string(e));
-      exit(EXIT_FAILURE);
-   }
-   if ((e = mp_sieve_init(segment)) != MP_OKAY) {
-      fprintf(stderr,"mp_sieve_init(segment) failed: \textbackslash{}"%s\textbackslash{}"\textbackslash{}n",
-              mp_error_to_string(e));
-      goto LTM_ERR_2;
-   }
 
    if ((e = mp_init_multi(&total, &t, NULL)) != MP_OKAY) {
       fprintf(stderr,"mp_init_multi(segment): \textbackslash{}"%s\textbackslash{}"\textbackslash{}n",
@@ -2378,7 +2338,7 @@ int main(int argc, char **argv)
 #endif
    if (errno == ERANGE) {
       fprintf(stderr,"strtoul(l) failed: input out of range\textbackslash{}n");
-      goto LTM_ERR;
+      return EXIT_FAILURE
    }
 
    for (k = 0, ret = 0; ret < number; k = ret) {
@@ -2445,9 +2405,7 @@ int main(int argc, char **argv)
    exit(EXIT_SUCCESS);
 LTM_ERR:
    mp_clear_multi(&total, &t, NULL);
-LTM_ERR_1:
    mp_sieve_clear(segment);
-LTM_ERR_2:
    mp_sieve_clear(base);
    exit(EXIT_FAILURE);
 }
@@ -2479,18 +2437,6 @@ int main(int argc, char **argv)
       exit(EXIT_FAILURE);
    }
 
-   if ((e =  mp_sieve_init(base)) != MP_OKAY) {
-      fprintf(stderr,"mp_sieve_init(base) failed: \textbackslash{}"%s\textbackslash{}"\textbackslash{}n",
-              mp_error_to_string(e));
-      exit(EXIT_FAILURE);
-
-   }
-   if ((e =  mp_sieve_init(segment)) != MP_OKAY) {
-      fprintf(stderr,"mp_sieve_init(segment) failed: \textbackslash{}"%s\textbackslash{}"\textbackslash{}n",
-              mp_error_to_string(e));
-      goto LTM_ERR_1;
-
-   }
    errno = 0;
 #if ( (defined MP_64BIT) && (defined LTM_SIEVE_USE_LARGE_SIEVE) )
    a = (LTM_SIEVE_UINT) strtoull(argv[1], NULL, 10);
@@ -2532,11 +2478,12 @@ int main(int argc, char **argv)
 
    mp_sieve_clear(base);
    mp_sieve_clear(segment);
+   free(prime_array);
    exit(EXIT_SUCCESS);
 LTM_ERR:
    mp_sieve_clear(segment);
-LTM_ERR_1:
    mp_sieve_clear(base);
+   free(prime_array);
    exit(EXIT_FAILURE);
 }
 \end{alltt}

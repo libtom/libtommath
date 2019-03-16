@@ -380,7 +380,7 @@ int mp_is_small_prime(LTM_SIEVE_UINT n, LTM_SIEVE_UINT *result, mp_sieve **base_
       }
       /* get a clean slate */
       else {
-         s_mp_eratosthenes_segment_clear(*single_segment, single_segment_a);
+       s_mp_eratosthenes_segment_clear(*single_segment, single_segment_a);
       }
    }
 
@@ -475,7 +475,7 @@ int mp_prec_small_prime(LTM_SIEVE_UINT n, LTM_SIEVE_UINT *result, mp_sieve **bas
 
    return e;
 }
-
+/*
 int mp_sieve_init(mp_sieve *sieve)
 {
    sieve = malloc(sizeof(mp_sieve));
@@ -487,6 +487,7 @@ int mp_sieve_init(mp_sieve *sieve)
    sieve->size = 0;
    return MP_OKAY;
 }
+*/
 void mp_sieve_clear(mp_sieve *sieve)
 {
    if (sieve != NULL) {
