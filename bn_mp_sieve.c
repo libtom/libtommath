@@ -17,10 +17,6 @@
 #ifdef LTM_USE_EXTRA_FUNCTIONS
 
 #define LTM_SIEVE_UINT_NUM_BITS (sizeof(LTM_SIEVE_UINT)*CHAR_BIT)
-#define LTM_SIEVE_GET_BIT(s,n)  ((*(s+(n/LTM_SIEVE_UINT_NUM_BITS)) &   ( 1lu<<( n % LTM_SIEVE_UINT_NUM_BITS ))) != 0)
-#define LTM_SIEVE_CLEAR_BIT(s,n) (*(s+(n/LTM_SIEVE_UINT_NUM_BITS)) &= ~( 1lu<<( n % LTM_SIEVE_UINT_NUM_BITS )))
-
-#define LTM_SIEVE_SIZE(bst)  ((bst)->size)
 
 static void s_mp_sieve_setall(mp_sieve *bst);
 static void s_mp_sieve_clear(mp_sieve *bst, LTM_SIEVE_UINT n);
@@ -57,17 +53,19 @@ static void s_mp_sieve_setall(mp_sieve *bst)
 
 static void s_mp_sieve_clear(mp_sieve *bst, LTM_SIEVE_UINT n)
 {
-   LTM_SIEVE_CLEAR_BIT((bst)->content, n);
+  ((*((bst)->content+(n/LTM_SIEVE_UINT_NUM_BITS)) 
+           &= ~( 1lu<<( n % LTM_SIEVE_UINT_NUM_BITS ))));
 }
 
 static LTM_SIEVE_UINT s_mp_sieve_get(mp_sieve *bst, LTM_SIEVE_UINT n)
 {
-   return LTM_SIEVE_GET_BIT((bst)->content, n);
+   return (((*((bst)->content+(n/LTM_SIEVE_UINT_NUM_BITS)) 
+           & ( 1lu<<( n % LTM_SIEVE_UINT_NUM_BITS ))) != 0));
 }
 
 static LTM_SIEVE_UINT s_mp_sieve_nextset(mp_sieve *bst, LTM_SIEVE_UINT n)
 {
-   while ((n < LTM_SIEVE_SIZE(bst)) && (!s_mp_sieve_get(bst, n))) {
+   while ((n < ((bst)->size)) && (!s_mp_sieve_get(bst, n))) {
       n++;
    }
    return n;
@@ -163,7 +161,7 @@ static void s_mp_eratosthenes(mp_sieve * bst)
 {
   LTM_SIEVE_UINT n, k, r, j;
 
-  n = LTM_SIEVE_SIZE(bst);
+  n = (bst)->size;
   r = isqrt(n);
   s_mp_sieve_setall(bst);
   for (k = 1; k < ((r - 1) / 2); k += 1) {
@@ -350,7 +348,7 @@ int mp_is_small_prime(LTM_SIEVE_UINT n, LTM_SIEVE_UINT *result, mp_sieve **base_
    /* No need to generate a segment if n is in the base sieve */
    if (n < LTM_SIEVE_BASE_SIEVE_SIZE) {
       /* might have been a small sieve, so check size of sieve first */
-      if (n < LTM_SIEVE_SIZE(*base_sieve)) {
+      if (n < ((*base_sieve)->size)) {
          *result = s_mp_sieve_get(*base_sieve, (n - 1) / 2);
          return e;
       }
