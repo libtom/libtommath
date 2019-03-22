@@ -24,15 +24,6 @@
 
 #ifdef __cplusplus
 extern "C" {
-
-/* C++ compilers don't like assigning void * to mp_digit * */
-#define OPT_CAST(x) (x *)
-
-#else
-
-/* C on the other hand doesn't care */
-#define OPT_CAST(x)
-
 #endif
 
 /* define heap macros */
