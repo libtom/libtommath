@@ -335,7 +335,11 @@ int mp_prime_is_prime(const mp_int *a, int t, int *result)
           * smaller than or equal to "a"
           */
          len = mp_count_bits(&b);
-         if (len > size_a) {
+         if (len >= size_a) {
+            /* Witness and test subject must not be equal */
+            if( (len == size_a) && (mp_cmp(a, &b) == MP_EQ) ) {
+               len++;
+            }
             len = len - size_a;
             if ((err = mp_div_2d(&b, len, &b, NULL)) != MP_OKAY) {
                goto LBL_B;
