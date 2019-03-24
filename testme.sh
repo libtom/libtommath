@@ -226,19 +226,19 @@ do
   shift
 done
 
-# default to gcc if no compiler is defined but some other options
+# default to CC environment variable if no compiler is defined but some other options
 if [[ "$COMPILERS" == "" ]] && [[ "$ARCHFLAGS$MAKE_OPTIONS$CFLAGS" != "" ]]
 then
-   COMPILERS="gcc"
-# default to gcc and run only default config if no option is given
+   COMPILERS="$CC"
+# default to CC environment variable and run only default config if no option is given
 elif [[ "$COMPILERS" == "" ]]
 then
-  _banner gcc
+  _banner "$CC"
   if [[ "$VALGRIND_BIN" != "" ]]
   then
-    _runvalgrind "gcc" ""
+    _runvalgrind "$CC" ""
   else
-    _runtest "gcc" ""
+    _runtest "$CC" ""
   fi
   _exit
 fi
