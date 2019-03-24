@@ -4,6 +4,7 @@
 #   0  success
 # 128  a test failed
 #  >0  the number of timed-out tests
+# 255  parsing of parameters failed
 
 set -e
 
@@ -202,7 +203,7 @@ do
       if ! [ "$TEST_VS_MTEST" -eq "$TEST_VS_MTEST" ] 2> /dev/null
       then
          echo "--test-vs-mtest Parameter has to be int"
-         exit -1
+         exit 255
       fi
     ;;
     --mtest-real-rand)
