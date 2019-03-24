@@ -226,6 +226,8 @@ do
   shift
 done
 
+[[ "$VALGRIND_BIN" == "" ]] && VALGRIND_OPTS=""
+
 # default to CC environment variable if no compiler is defined but some other options
 if [[ "$COMPILERS" == "" ]] && [[ "$ARCHFLAGS$MAKE_OPTIONS$CFLAGS" != "" ]]
 then
@@ -267,7 +269,7 @@ then
    alive_pid=$!
    _timeout=""
    which timeout >/dev/null && _timeout="timeout --foreground 900"
-   $_TIMEOUT./mtest/mtest $TEST_VS_MTEST |  $VALGRIND_BIN $VALGRIND_OPTS  ./test > test.log
+   $_timeout ./mtest/mtest $TEST_VS_MTEST | $VALGRIND_BIN $VALGRIND_OPTS  ./test > test.log
    disown $alive_pid
    kill $alive_pid 2>/dev/null
    head -n 5 test.log
