@@ -23,7 +23,7 @@ int mp_set_long(mp_int *a, unsigned long b)
    if (res == MP_OKAY) {
      mp_zero(a);
      if (b) {
-        a->dp[x++] = ((mp_digit)b & MP_MASK);
+        a->dp[x++] = (mp_digit)b;
      }
      a->used = x;
    }
