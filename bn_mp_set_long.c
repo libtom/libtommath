@@ -13,7 +13,24 @@
  */
 
 /* set a platform dependent unsigned long int */
+#if (DIGIT_BIT < 32) || (ULONG_MAX > 0xFFFFFFFFU)
 MP_SET_XLONG(mp_set_long, unsigned long)
+#else
+int func_name (mp_int * a, unsigned long b)
+{
+   int x = 0;
+   int res = mp_grow(a, (CHAR_BIT * sizeof(type) + DIGIT_BIT - 1) / DIGIT_BIT);
+   if (res == MP_OKAY) {
+     mp_zero(a);
+     if (b) {
+        a->dp[x++] = ((mp_digit)b & MP_MASK);
+     }
+     a->used = x;
+   }
+   return res;
+}
+
+#endif
 #endif
 
 /* ref:         $Format:%D$ */

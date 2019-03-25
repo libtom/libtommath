@@ -87,7 +87,6 @@ extern const size_t mp_s_rmap_reverse_sz;
  *  a is the pointer to the MPI
  *  b is the original value that should be set in the MPI.
  */
-#if DIGIT_BIT < 32
 #define MP_SET_XLONG(func_name, type)                    \
 int func_name (mp_int * a, type b)                       \
 {                                                        \
@@ -103,24 +102,6 @@ int func_name (mp_int * a, type b)                       \
    }                                                     \
    return res;                                           \
 }
-#else
-#define MP_SET_XLONG(func_name, type)                    \
-int func_name (mp_int * a, type b)                       \
-{                                                        \
-   int x = 0;                                            \
-   mp_digit c = b;                                       \
-   int res = mp_grow(a, (CHAR_BIT * sizeof(type) + DIGIT_BIT - 1) / DIGIT_BIT); \
-   if (res == MP_OKAY) {                                 \
-     mp_zero(a);                                         \
-     while (c) {                                         \
-        a->dp[x++] = (c & MP_MASK);                      \
-        c >>= DIGIT_BIT;                                 \
-     }                                                   \
-     a->used = x;                                        \
-   }                                                     \
-   return res;                                           \
-}
-#endif
 
 #ifdef __cplusplus
 }
