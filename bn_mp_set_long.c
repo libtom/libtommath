@@ -13,7 +13,7 @@
  */
 
 /* set a platform dependent unsigned long int */
-#if (DIGIT_BIT < 32) || (ULONG_MAX > 0xFFFFFFFFU)
+#if (ULONG_MAX != 0xFFFFFFFFUL) || (DIGIT_BIT < 32)
 MP_SET_XLONG(mp_set_long, unsigned long)
 #else
 int func_name (mp_int * a, unsigned long b)
