@@ -19,7 +19,7 @@ MP_SET_XLONG(mp_set_long, unsigned long)
 int func_name (mp_int * a, unsigned long b)
 {
    int x = 0;
-   int res = mp_grow(a, (CHAR_BIT * sizeof(type) + DIGIT_BIT - 1) / DIGIT_BIT);
+   int res = mp_grow(a, (CHAR_BIT * sizeof(long) + DIGIT_BIT - 1) / DIGIT_BIT);
    if (res == MP_OKAY) {
      mp_zero(a);
      if (b) {
