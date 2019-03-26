@@ -94,7 +94,7 @@ int func_name (mp_int * a, type b)                       \
    int res = mp_grow(a, new_size);                       \
    if (res == MP_OKAY) {                                 \
      mp_zero(a);                                         \
-     while (b) {                                         \
+     while (b != 0u) {                                   \
         a->dp[x++] = ((mp_digit)b & MP_MASK);            \
         b >>= DIGIT_BIT;                                 \
      }                                                   \
