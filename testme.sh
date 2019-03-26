@@ -269,7 +269,7 @@ then
    for i in `seq 1 10` ; do sleep 500 && echo alive; done &
    alive_pid=$!
    _timeout=""
-   which timeout >/dev/null && _timeout="timeout --foreground 900"
+   which timeout >/dev/null && _timeout="timeout --foreground 1800"
    $_timeout ./mtest/mtest $TEST_VS_MTEST | $VALGRIND_BIN $VALGRIND_OPTS  ./test > test.log
    disown $alive_pid
    kill $alive_pid 2>/dev/null
