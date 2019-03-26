@@ -12,10 +12,13 @@
 #ifndef BN_H_
 #define BN_H_
 
-#include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <limits.h>
+
+#ifndef LTM_NO_FILE
+#  include <stdio.h>
+#endif
 
 #include "tommath_class.h"
 
