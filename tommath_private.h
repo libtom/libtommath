@@ -90,7 +90,8 @@ extern const size_t mp_s_rmap_reverse_sz;
 int func_name (mp_int * a, type b)                       \
 {                                                        \
    int x = 0;                                            \
-   int res = mp_grow(a, (CHAR_BIT * sizeof(type) + DIGIT_BIT - 1) / DIGIT_BIT); \
+   int new_size = (((CHAR_BIT * sizeof(type)) + DIGIT_BIT) - 1) / DIGIT_BIT; \
+   int res = mp_grow(a, new_size);                       \
    if (res == MP_OKAY) {                                 \
      mp_zero(a);                                         \
      while (b) {                                         \
