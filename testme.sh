@@ -169,6 +169,20 @@ VALGRIND_OPTS=" --leak-check=full --show-leak-kinds=all --error-exitcode=1 "
 #VALGRIND_OPTS=""
 VALGRIND_BIN=""
 
+alive_pid=0
+
+function kill_alive() {
+  disown $alive_pid || true
+  kill $alive_pid 2>/dev/null
+}
+
+function start_alive_printing() {
+  [ "$alive_pid" == "0" ] || return 0;
+  for i in `seq 1 10` ; do sleep 300 && echo "Tests still in Progress..."; done &
+  alive_pid=$!
+  trap kill_alive EXIT
+}
+
 while [ $# -gt 0 ];
 do
   case $1 in
@@ -191,6 +205,7 @@ do
       else
         VALGRIND_BIN="valgrind"
       fi
+      start_alive_printing
     ;;
     --make-option=*)
       MAKE_OPTIONS="$MAKE_OPTIONS ${1#*=}"
@@ -205,6 +220,7 @@ do
          echo "--test-vs-mtest Parameter has to be int"
          exit 255
       fi
+      start_alive_printing
     ;;
     --mtest-real-rand)
       MTEST_RAND="-DLTM_MTEST_REAL_RAND"
@@ -266,16 +282,13 @@ then
    _make "gcc" "$MTEST_RAND" "mtest"
    echo
    echo "Run test vs. mtest for $TEST_VS_MTEST iterations"
-   for i in `seq 1 10` ; do sleep 500 && echo alive; done &
-   alive_pid=$!
    _timeout=""
    which timeout >/dev/null && _timeout="timeout --foreground 1800"
-   $_timeout ./mtest/mtest $TEST_VS_MTEST | $VALGRIND_BIN $VALGRIND_OPTS  ./test > test.log
-   disown $alive_pid
-   kill $alive_pid 2>/dev/null
-   head -n 5 test.log
-   tail -n 2 test.log
-   exit 0
+   $_timeout ./mtest/mtest $TEST_VS_MTEST | $VALGRIND_BIN $VALGRIND_OPTS  ./test > valgrind_test.log 2> test_vs_mtest_err.log
+   retval=$?
+   head -n 5 valgrind_test.log
+   tail -n 2 valgrind_test.log
+   exit $retval
 fi
 
 for i in "${compilers[@]}"

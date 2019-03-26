@@ -129,5 +129,5 @@ notifications:
 # seem to be the max and 20 the default if travis_wait is called without
 # any options.
 script:
-  - travis_wait 40 sh -c "./testme.sh  ${BUILDOPTIONS}"
+  - ./testme.sh  ${BUILDOPTIONS}
 
