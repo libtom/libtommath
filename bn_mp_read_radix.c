@@ -12,7 +12,7 @@
  * SPDX-License-Identifier: Unlicense
  */
 
-#define MP_TOUPPER(c) ((c) >= 'a' && (c) <= 'z' ? (c) + 'A' - 'a' : (c))
+#define MP_TOUPPER(c) ((((c) >= 'a') && ((c) <= 'z')) ? (((c) + 'A') - 'a') : (c))
 
 /* read a string [ASCII] in a given radix */
 int mp_read_radix(mp_int *a, const char *str, int radix)
