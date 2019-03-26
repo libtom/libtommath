@@ -13,7 +13,6 @@
 #define TOMMATH_PRIV_H_
 
 #include "tommath.h"
-#include <ctype.h>
 
 #ifndef MIN
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
