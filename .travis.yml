@@ -65,8 +65,24 @@ matrix:
             - libc6-dev-i386
       sudo: required
 
+    # GCC for the 32-bit architecture (no valgrind yet)
+    - env: BUILDOPTIONS='--with-cc=gcc --with-m32 --cflags=-DLTM_USE_EXTRA_FUNCTIONS'
+      addons:
+        apt:
+          packages:
+            - libc6-dev-i386
+      sudo: required
+
     # clang for the 32-bit architecture (no valgrind yet)
     - env: BUILDOPTIONS='--with-cc=clang --with-m32'
+      addons:
+        apt:
+          packages:
+            - libc6-dev-i386
+      sudo: required
+
+    # clang for the 32-bit architecture (no valgrind yet)
+    - env: BUILDOPTIONS='--with-cc=clang --with-m32  --cflags=-DLTM_USE_EXTRA_FUNCTIONS'
       addons:
         apt:
           packages:
@@ -83,6 +99,14 @@ matrix:
             - libc6-dev-x32
       sudo: required
 
+    - env: BUILDOPTIONS='--with-cc=gcc --with-mx32 --cflags=-DLTM_USE_EXTRA_FUNCTIONS'
+      addons:
+        apt:
+          packages:
+            - libc6-dev-x32
+      sudo: required
+
+
     # clang for the x64_32 architecture
     - env:  BUILDOPTIONS='--with-cc=clang --with-mx32'
       addons:
@@ -91,22 +115,38 @@ matrix:
             - libc6-dev-x32
       sudo: required
 
+    - env:  BUILDOPTIONS='--with-cc=clang --with-mx32 --cflags=-DLTM_USE_EXTRA_FUNCTIONS'
+      addons:
+        apt:
+          packages:
+            - libc6-dev-x32
+      sudo: required
+
     # GCC for the x86-64 architecture (64-bit longs and 64-bit pointers)
     - env:  BUILDOPTIONS='--with-cc=gcc --with-m64 --with-valgrind'
+    - env:  BUILDOPTIONS='--with-cc=gcc --with-m64 --with-valgrind --cflags=-DLTM_USE_EXTRA_FUNCTIONS'
     # clang for x86-64 architecture (64-bit longs and 64-bit pointers)
     - env:  BUILDOPTIONS='--with-cc=clang --with-m64 --with-valgrind'
+    - env:  BUILDOPTIONS='--with-cc=clang --with-m64 --with-valgrind --cflags=-DLTM_USE_EXTRA_FUNCTIONS'
 
     # GCC for the x86-64 architecture with restricted limb sizes
     # formerly started with the option "--with-low-mp" to testme.sh
     # but testing all three in one run took to long and timed out.
     - env:  BUILDOPTIONS='--with-cc=gcc --cflags=-DMP_8BIT  --with-valgrind'
+    - env:  BUILDOPTIONS='--with-cc=gcc --cflags=-DMP_8BIT  --with-valgrind --cflags=-DLTM_USE_EXTRA_FUNCTIONS'
     - env:  BUILDOPTIONS='--with-cc=gcc --cflags=-DMP_16BIT --with-valgrind'
+    - env:  BUILDOPTIONS='--with-cc=gcc --cflags=-DMP_16BIT --with-valgrind --cflags=-DLTM_USE_EXTRA_FUNCTIONS'
     - env:  BUILDOPTIONS='--with-cc=gcc --cflags=-DMP_32BIT --with-valgrind'
+    - env:  BUILDOPTIONS='--with-cc=gcc --cflags=-DMP_32BIT --with-valgrind --cflags=-DLTM_USE_EXTRA_FUNCTIONS'
+
 
     # clang for the x86-64 architecture with restricted limb sizes
     - env:  BUILDOPTIONS='--with-cc=clang --cflags=-DMP_8BIT  --with-valgrind'
+    - env:  BUILDOPTIONS='--with-cc=clang --cflags=-DMP_8BIT  --with-valgrind --cflags=-DLTM_USE_EXTRA_FUNCTIONS'
     - env:  BUILDOPTIONS='--with-cc=clang --cflags=-DMP_16BIT --with-valgrind'
+    - env:  BUILDOPTIONS='--with-cc=clang --cflags=-DMP_16BIT --with-valgrind --cflags=-DLTM_USE_EXTRA_FUNCTIONS'
     - env:  BUILDOPTIONS='--with-cc=clang --cflags=-DMP_32BIT --with-valgrind'
+    - env:  BUILDOPTIONS='--with-cc=clang --cflags=-DMP_32BIT --with-valgrind --cflags=-DLTM_USE_EXTRA_FUNCTIONS'
 
     # GCC for the x86-64 architecture testing against a different Bigint-implementation
     # with 333333 different inputs.
@@ -124,10 +164,6 @@ notifications:
   irc: "chat.freenode.net#libtom-notifications"
 
 # The actual script the jobs run.
-# Because of a default timeout of 10 minutes it was necessary to use
-# a Travis tool to extend that timeout to 40 minutes. 50 minutes
-# seem to be the max and 20 the default if travis_wait is called without
-# any options.
 script:
   - ./testme.sh  ${BUILDOPTIONS}
 
