@@ -41,6 +41,7 @@
 #   define BN_MP_COMPLEMENT_C
 #   define BN_MP_COPY_C
 #   define BN_MP_COUNT_BITS_C
+#   define BN_MP_DECR_C
 #   define BN_MP_DIV_C
 #   define BN_MP_DIV_2_C
 #   define BN_MP_DIV_2D_C
@@ -57,6 +58,14 @@
 #   define BN_MP_EXPTMOD_C
 #   define BN_MP_EXPTMOD_FAST_C
 #   define BN_MP_EXTEUCLID_C
+#   define BN_MP_FACTOR_C
+#   define BN_MP_FACTORS_ADD_C
+#   define BN_MP_FACTORS_CLEAR_C
+#   define BN_MP_FACTORS_INIT_C
+#   define BN_MP_FACTORS_PRINT_C
+#   define BN_MP_FACTORS_PRODUCT_C
+#   define BN_MP_FACTORS_SORT_C
+#   define BN_MP_FACTORS_ZERO_C
 #   define BN_MP_FREAD_C
 #   define BN_MP_FWRITE_C
 #   define BN_MP_GCD_C
@@ -68,6 +77,7 @@
 #   define BN_MP_GROW_C
 #   define BN_MP_ILOGB_C
 #   define BN_MP_IMPORT_C
+#   define BN_MP_INCR_C
 #   define BN_MP_INIT_C
 #   define BN_MP_INIT_COPY_C
 #   define BN_MP_INIT_MULTI_C
@@ -79,6 +89,8 @@
 #   define BN_MP_IS_SQUARE_C
 #   define BN_MP_ISEVEN_C
 #   define BN_MP_ISODD_C
+#   define BN_MP_ISPERFPOWER_C
+#   define BN_MP_ISPOWER_C
 #   define BN_MP_JACOBI_C
 #   define BN_MP_KARATSUBA_MUL_C
 #   define BN_MP_KARATSUBA_SQR_C
@@ -100,6 +112,7 @@
 #   define BN_MP_N_ROOT_EX_C
 #   define BN_MP_NEG_C
 #   define BN_MP_OR_C
+#   define BN_MP_POLLARD_RHO_C
 #   define BN_MP_PRIME_FERMAT_C
 #   define BN_MP_PRIME_FROBENIUS_UNDERWOOD_C
 #   define BN_MP_PRIME_IS_DIVISIBLE_C
@@ -109,6 +122,7 @@
 #   define BN_MP_PRIME_RABIN_MILLER_TRIALS_C
 #   define BN_MP_PRIME_RANDOM_EX_C
 #   define BN_MP_PRIME_STRONG_LUCAS_SELFRIDGE_C
+#   define BN_MP_PRIMORIAL_C
 #   define BN_MP_RADIX_SIZE_C
 #   define BN_MP_RADIX_SMAP_C
 #   define BN_MP_RAND_C
@@ -151,6 +165,7 @@
 #   define BN_MP_TOOM_SQR_C
 #   define BN_MP_TORADIX_C
 #   define BN_MP_TORADIX_N_C
+#   define BN_MP_TRIAL_C
 #   define BN_MP_UNSIGNED_BIN_SIZE_C
 #   define BN_MP_XOR_C
 #   define BN_MP_ZERO_C
@@ -274,6 +289,13 @@
 #endif
 
 #if defined(BN_MP_COUNT_BITS_C)
+#endif
+
+#if defined(BN_MP_DECR_C)
+#   define BN_MP_SET_C
+#   define BN_MP_INCR_C
+#   define BN_MP_ZERO_C
+#   define BN_MP_SUB_D_C
 #endif
 
 #if defined(BN_MP_DIV_C)
@@ -424,6 +446,70 @@
 #   define BN_MP_CLEAR_MULTI_C
 #endif
 
+#if defined(BN_MP_FACTOR_C)
+#   define BN_MP_FACTOR_INTERN_C
+#   define BN_MP_FACTORS_C
+#   define BN_MP_COUNT_BITS_C
+#   define BN_MP_INIT_MULTI_C
+#   define BN_MP_TRIAL_C
+#   define BN_MP_CMP_D_C
+#   define BN_MP_PRIME_IS_PRIME_C
+#   define BN_MP_ISPERFPOWER_C
+#   define BN_MP_FACTORS_ADD_C
+#   define BN_MP_DECR_C
+#   define BN_MP_POLLARD_RHO_C
+#   define BN_MP_DIV_C
+#   define BN_MP_EXCH_C
+#   define BN_MP_CLEAR_MULTI_C
+#   define BN_MP_COPY_C
+#   define BN_MP_FWRITE_C
+#   define BN_MP_FACTORS_PRINT_C
+#   define BN_MP_FACTORS_PRODUCT_C
+#   define BN_MP_CMP_C
+#endif
+
+#if defined(BN_MP_FACTORS_ADD_C)
+#   define BN_MP_FACTORS_C
+#   define BN_MP_INIT_C
+#   define BN_MP_COPY_C
+#endif
+
+#if defined(BN_MP_FACTORS_CLEAR_C)
+#   define BN_MP_CLEAR_C
+#endif
+
+#if defined(BN_MP_FACTORS_INIT_C)
+#   define BN_MP_FACTORS_C
+#endif
+
+#if defined(BN_MP_FACTORS_PRINT_C)
+#   define BN_MP_FACTORS_C
+#   define BN_MP_FWRITE_C
+#endif
+
+#if defined(BN_MP_FACTORS_PRODUCT_C)
+#   define BN_MP_FACTORS_C
+#   define BN_MP_SET_C
+#   define BN_MP_SET_LONG_C
+#   define BN_MP_MUL_C
+#   define BN_MP_INIT_C
+#   define BN_MP_CLEAR_C
+#endif
+
+#if defined(BN_MP_FACTORS_SORT_C)
+#   define BN_MP_FACTORS_C
+#   define BN_MP_INIT_C
+#   define BN_MP_CMP_C
+#   define BN_MP_COPY_C
+#   define BN_MP_CLEAR_C
+#endif
+
+#if defined(BN_MP_FACTORS_ZERO_C)
+#   define BN_MP_FACTORS_C
+#   define BN_MP_ZERO_C
+#   define BN_MP_CLEAR_C
+#endif
+
 #if defined(BN_MP_FREAD_C)
 #   define BN_MP_ZERO_C
 #   define BN_MP_S_RMAP_REVERSE_SZ_C
@@ -491,6 +577,12 @@
 #   define BN_MP_CLAMP_C
 #endif
 
+#if defined(BN_MP_INCR_C)
+#   define BN_MP_SET_C
+#   define BN_MP_DECR_C
+#   define BN_MP_ADD_D_C
+#endif
+
 #if defined(BN_MP_INIT_C)
 #endif
 
@@ -556,6 +648,35 @@
 #endif
 
 #if defined(BN_MP_ISODD_C)
+#endif
+
+#if defined(BN_MP_ISPERFPOWER_C)
+#   define BN_MP_ISPOWER_C
+#   define BN_MP_PRIME_IS_PRIME_C
+#   define BN_MP_INIT_MULTI_C
+#   define BN_MP_SET_C
+#   define BN_MP_MUL_C
+#   define BN_MP_COPY_C
+#   define BN_MP_EXCH_C
+#   define BN_MP_CLEAR_MULTI_C
+#endif
+
+#if defined(BN_MP_ISPOWER_C)
+#   define BN_MP_COUNT_BITS_C
+#   define BN_MP_CNT_LSB_C
+#   define BN_MP_SIEVE_C
+#   define BN_MP_SET_INT_C
+#   define BN_MP_SET_C
+#   define BN_MP_IS_SQUARE_C
+#   define BN_MP_SQRT_C
+#   define BN_MP_INIT_MULTI_C
+#   define BN_MP_NEXT_SMALL_PRIME_C
+#   define BN_MP_N_ROOT_C
+#   define BN_MP_EXPT_D_C
+#   define BN_MP_CMP_C
+#   define BN_MP_EXCH_C
+#   define BN_MP_CLEAR_MULTI_C
+#   define BN_MP_SIEVE_CLEAR_C
 #endif
 
 #if defined(BN_MP_JACOBI_C)
@@ -685,7 +806,9 @@
 
 #if defined(BN_MP_N_ROOT_EX_C)
 #   define BN_MP_INIT_C
+#   define BN_MP_COUNT_BITS_C
 #   define BN_MP_SET_C
+#   define BN_MP_2EXPT_C
 #   define BN_MP_COPY_C
 #   define BN_MP_EXPT_D_EX_C
 #   define BN_MP_MUL_C
@@ -693,6 +816,7 @@
 #   define BN_MP_MUL_D_C
 #   define BN_MP_DIV_C
 #   define BN_MP_CMP_C
+#   define BN_MP_ADD_D_C
 #   define BN_MP_SUB_D_C
 #   define BN_MP_EXCH_C
 #   define BN_MP_CLEAR_C
@@ -707,6 +831,27 @@
 #   define BN_MP_CLAMP_C
 #   define BN_MP_EXCH_C
 #   define BN_MP_CLEAR_C
+#endif
+
+#if defined(BN_MP_POLLARD_RHO_C)
+#   define BN_MP_SQRMOD_C
+#   define BN_MP_ADD_C
+#   define BN_MP_MOD_C
+#   define BN_MP_NEXT_SMALL_PRIME_C
+#   define BN_MP_COPY_C
+#   define BN_MP_SET_C
+#   define BN_MP_INIT_MULTI_C
+#   define BN_MP_COUNT_BITS_C
+#   define BN_MP_RAND_C
+#   define BN_MP_DIV_2D_C
+#   define BN_MP_CMP_D_C
+#   define BN_MP_SUB_D_C
+#   define BN_MP_SUB_C
+#   define BN_MP_MULMOD_C
+#   define BN_MP_GCD_C
+#   define BN_MP_CMP_C
+#   define BN_MP_EXCH_C
+#   define BN_MP_CLEAR_MULTI_C
 #endif
 
 #if defined(BN_MP_PRIME_FERMAT_C)
@@ -823,6 +968,17 @@
 #   define BN_MP_DIV_2_C
 #   define BN_MP_SUB_D_C
 #   define BN_MP_CLEAR_MULTI_C
+#endif
+
+#if defined(BN_MP_PRIMORIAL_C)
+#   define BN_MP_SIEVE_C
+#   define BN_MP_FACTORS_C
+#   define BN_MP_FACTORS_INIT_C
+#   define BN_MP_NEXT_SMALL_PRIME_C
+#   define BN_MP_SET_LONG_C
+#   define BN_MP_FACTORS_ADD_C
+#   define BN_MP_FACTORS_PRODUCT_C
+#   define BN_MP_FACTORS_CLEAR_C
 #endif
 
 #if defined(BN_MP_RADIX_SIZE_C)
@@ -1155,6 +1311,20 @@
 #   define BN_MP_DIV_D_C
 #   define BN_MP_CLEAR_C
 #   define BN_MP_S_RMAP_C
+#endif
+
+#if defined(BN_MP_TRIAL_C)
+#   define BN_MP_FACTORS_C
+#   define BN_MP_SIEVE_C
+#   define BN_MP_INIT_MULTI_C
+#   define BN_MP_COPY_C
+#   define BN_MP_NEXT_SMALL_PRIME_C
+#   define BN_MP_SET_LONG_C
+#   define BN_MP_DIV_C
+#   define BN_MP_FACTORS_ADD_C
+#   define BN_MP_EXCH_C
+#   define BN_MP_CLEAR_MULTI_C
+#   define BN_MP_SIEVE_CLEAR_C
 #endif
 
 #if defined(BN_MP_UNSIGNED_BIN_SIZE_C)

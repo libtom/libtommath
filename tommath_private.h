@@ -69,6 +69,11 @@ extern const char *const mp_s_rmap;
 extern const uint8_t mp_s_rmap_reverse[];
 extern const size_t mp_s_rmap_reverse_sz;
 
+#ifdef LTM_USE_EXTRA_FUNCTIONS
+/* Check for unity used more than three times, hence ... */
+#define LTM_IS_UNITY(a) ( ((a)->used == 1uL) && ((a)->dp[0] == 1uL) )
+#endif
+
 /* Fancy macro to set an MPI from another type.
  * There are several things assumed:
  *  x is the counter

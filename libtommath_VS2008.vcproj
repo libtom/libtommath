@@ -401,6 +401,10 @@
 			>
 		</File>
 		<File
+			RelativePath="bn_mp_decr.c"
+			>
+		</File>
+		<File
 			RelativePath="bn_mp_div.c"
 			>
 		</File>
@@ -465,6 +469,38 @@
 			>
 		</File>
 		<File
+			RelativePath="bn_mp_factor.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_mp_factors_add.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_mp_factors_clear.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_mp_factors_init.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_mp_factors_print.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_mp_factors_product.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_mp_factors_sort.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_mp_factors_zero.c"
+			>
+		</File>
+		<File
 			RelativePath="bn_mp_fread.c"
 			>
 		</File>
@@ -509,6 +545,10 @@
 			>
 		</File>
 		<File
+			RelativePath="bn_mp_incr.c"
+			>
+		</File>
+		<File
 			RelativePath="bn_mp_init.c"
 			>
 		</File>
@@ -550,6 +590,14 @@
 		</File>
 		<File
 			RelativePath="bn_mp_isodd.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_mp_isperfpower.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_mp_ispower.c"
 			>
 		</File>
 		<File
@@ -637,6 +685,10 @@
 			>
 		</File>
 		<File
+			RelativePath="bn_mp_pollard_rho.c"
+			>
+		</File>
+		<File
 			RelativePath="bn_mp_prime_fermat.c"
 			>
 		</File>
@@ -670,6 +722,10 @@
 		</File>
 		<File
 			RelativePath="bn_mp_prime_strong_lucas_selfridge.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_mp_primorial.c"
 			>
 		</File>
 		<File
@@ -838,6 +894,10 @@
 		</File>
 		<File
 			RelativePath="bn_mp_toradix_n.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_mp_trial.c"
 			>
 		</File>
 		<File

@@ -1804,6 +1804,12 @@ int mp_expt_d (mp_int * a, mp_digit b, mp_int * c)
 \end{alltt}
 mp\_expt\_d(a, b, c) is a wrapper function to mp\_expt\_d\_ex(a, b, c, 0).
 
+\index{mp\_expt}
+\begin{alltt}
+int mp_expt (mp_int * a, const mp_int *b, mp_int * c)
+\end{alltt}
+Same as \texttt{mp\_expt\_d(a, b, c)} except that \texttt{b} is a \texttt{mp\_int}, Useful for small \texttt{MP\_xBIT}.
+
 \section{Modular Exponentiation}
 \index{mp\_exptmod}
 \begin{alltt}
@@ -1851,6 +1857,7 @@ The square root  $c = a^{1/2}$ (with the same conditions $c^2 \le a$ and $(c+1)^
 int mp_sqrt (mp_int * a, mp_digit b, mp_int * c)
 \end{alltt}
 
+
 \chapter{Logarithm}
 \section{Integer Logarithm}
 A logarithm function for positive integer input \texttt{a, base} computing  $\floor{\log_bx}$ such that $(\ilog_bx)^b \le x$.
@@ -1874,11 +1881,12 @@ int main(int argc, char **argv)
    int e;
 
    if (argc != 3) {
-      fprintf(stderr,"Usage %s base x\\n", argv[0]);
+      fprintf(stderr,"Usage %s base x\textbackslash{}n", argv[0]);
       exit(EXIT_FAILURE);
    }
    if ((e = mp_init_multi(&x, &output, NULL)) != MP_OKAY) {
-      fprintf(stderr,"mp_init failed: \\"%s\\"\\n",mp_error_to_string(e));
+      fprintf(stderr,"mp_init failed: \textbackslash{}"%s\textbackslash{}"\textbackslash{}n",
+                     mp_error_to_string(e));
               exit(EXIT_FAILURE);
    }
    errno = 0;
@@ -1888,24 +1896,27 @@ int main(int argc, char **argv)
    base = (mp_digit)strtoul(argv[1], NULL, 10);
 #endif
    if ((errno == ERANGE) || (base > (base & MP_MASK))) {
-      fprintf(stderr,"strtoul(l) failed: input out of range\\n");
+      fprintf(stderr,"strtoul(l) failed: input out of range\textbackslash{}n");
       exit(EXIT_FAILURE);
    }
    if ((e = mp_read_radix(&x, argv[2], 10)) != MP_OKAY) {
-      fprintf(stderr,"mp_read_radix failed: \\"%s\\"\\n",mp_error_to_string(e));
+      fprintf(stderr,"mp_read_radix failed: \textbackslash{}"%s\textbackslash{}"\textbackslash{}n",
+                      mp_error_to_string(e));
       exit(EXIT_FAILURE);
    }
 
    if ((e = mp_ilogb(&x, base, &output)) != MP_OKAY) {
-      fprintf(stderr,"mp_ilogb failed: \\"%s\\"\\n",mp_error_to_string(e));
+      fprintf(stderr,"mp_ilogb failed: \textbackslash{}"%s\textbackslash{}"\textbackslash{}n",
+                      mp_error_to_string(e));
       exit(EXIT_FAILURE);
    }
 
    if ((e = mp_fwrite(&output, 10, stdout)) != MP_OKAY) {
-      fprintf(stderr,"mp_fwrite failed: \\"%s\\"\\n",mp_error_to_string(e));
+      fprintf(stderr,"mp_fwrite failed: \textbackslash{}"%s\textbackslash{}"\textbackslash{}n",
+                      mp_error_to_string(e));
       exit(EXIT_FAILURE);
    }
-   putchar('\\n');
+   putchar('\textbackslash{}n');
 
    mp_clear_multi(&x, &output, NULL);
    exit(EXIT_SUCCESS);
@@ -2154,7 +2165,7 @@ The random number generated with these two functions is cryptographically secure
 
 \chapter{Small Prime Numbers}
 
-Small prime numbers are those primes that fit in a limb of LibTomMath, that is they are smaller than or equal to the size of the type behind \texttt{mp\_digit}. Examples at the end of this chapter at page \ref{sec:spnexamples},
+Small prime numbers are those primes that fit in a word of LibTomMath, that is they are smaller than or equal to the size of the type behind \texttt{mp\_word}. Examples at the end of this chapter at page \ref{sec:spnexamples},
 \section{Prime Sieve}
 A prime sieve is implemented as a simple segmented Sieve of Eratosthenes. It is only moderately optimized for space and runtime but should be small enough and also fast enough for almost all use-cases; quite quick for sequential access but relatively slow for random access the way it is implemented. The prime sieve and its functions are part of the ``extra'' package and can be compiled in with \texttt{make extra}. The macro \texttt{LTM\_USE\_EXTRA\_FUNCTIONS} has to be set before \texttt{tommath.h} is included. Printing the small primes needs \texttt{inttypes.h} which must be included before \texttt{tommath.h}.
 \subsection{Initialization and Clearing}
@@ -2491,6 +2502,91 @@ The array \texttt{prime\_array} will be of size $\pi(b) - \pi(a)$ times \verb!si
 
 %\subsubsection{Using the Useful Constants}
 
+\section{Factorizing}
+All of the functions described in this section are in the packet ``extra''. Add it to the library by typing \texttt{make extra}.
+
+The decomposition of numbers into their prime-factors is covered by the function
+\index{mp\_factor}
+\begin{alltt}
+int mp_factor(const mp_int *z, mp_factors *factors);
+\end{alltt}
+It will decompose the factors of the integer $z > 0$ into its prime factors\footnote{The methods used in this algorithm are reasonably fast but definitely not the fastest. A practical limit is at about 30-35 bit large factors, 40 bit with some patience.}, checks the result by multiplying the found factors and comparing them with the input, and sample them as numbers of the type \texttt{mp\_int} in the list \texttt{factors}. The structure of this list is described by
+\index{mp\_factors}
+\begin{alltt}
+typedef struct {
+   int length, alloc;
+   mp_int *factors;
+} mp_factors;
+\end{alltt}
+There are a handful of functions to help with the management of that list.
+
+\begin{description}
+\item
+\index{mp\_factors\_init}
+\verb!int mp_factors_init(mp_factors *f);!\\
+Initialize the factor list by allocating a certain amount of memory and setting \texttt{length = 0} and \texttt{alloc} to the amount of memory pre-allocated. The exact amount is defined at compile time by the macro \texttt{LTM\_TRIAL\_GROWTH} in \texttt{tommath.h}.
+\item
+\index{mp\_factors\_clear}
+\verb!void mp_factors_clear(mp_factors *f);!\\
+This function free's all memory used. It does not zero out the used memory before free'ing it, use \texttt{mp\_factors\_zero} to clean the memory before free'ing it.
+\item
+\index{mp\_factors\_zero}
+\verb!int mp_factors_zero(mp_factors *f);!\\
+Zero the elements of the factor list and allocate (fresh) memory of default size in that order.
+\item
+\index{mp\_factors\_add}
+\verb!int mp_factors_add(const mp_int *a, mp_factors *f);!\\
+Add a factor of type \texttt{mp\_int} to the list.
+\item
+\index{mp\_factors\_sort}
+\verb!int mp_factors_sort(mp_factors *f);!\\
+The factors in the list are not necessarily in increasing order. This functions changes that. It does it with the insert-sort algorithm, a good choice for the task it has been written for (the list is most likely already ordered) but not for many other tasks involving large lists in random order.
+\item
+\index{mp\_factors\_print}
+\texttt{int mp\_factors\_print(mp\_factors *f, int base, char delimiter,\\
+\hphantom{int mp\_factors\_print(} FILE *stream);}\\
+Prints the element of the list in base \texttt{base} to \texttt{stream} with the delimiter \texttt{delimiter}. The default delimiter is a comma (ASCII \texttt{0x2c}).
+\item
+\index{mp\_factors\_product}
+\verb!int mp_factors_product(mp_factors *factors, mp_int *p);!\\
+Multiplies all elements of the list. It does not recognize sparse lists, every zero in the list gets multiplied, too. It does multiply the list with a binary-splitting algorithm which assumes a highly or better fully sorted list to work properly.
+\end{description}
+
+The function \texttt{mp\_factor} uses two different factorization algorithms. The first one does just trial division with the small primes generated by a sieve and is
+\index{mp\_trial}
+\begin{alltt}
+int mp_trial(const mp_int *a, int limit, mp_factors *factors, mp_int *r);
+\end{alltt}
+It tries all small primes up to the limit \texttt{limit}, puts all factors it finds in the list \texttt{factors} and the remainder in \texttt{r},
+
+The other function is the Pollard-Rho algorithm.
+\index{mp\_pollard\_rho}
+\begin{alltt}
+int mp_pollard_rho(const mp_int *n, mp_int *factor);
+\end{alltt}
+It is used to compute all factors left over by the function \texttt{mp\_factor}. Both functions \texttt{mp\_trial} and \texttt{mp\_pollard\_rho} are not meant to be used as a standalone function, please consult the source of the respective functions for the necessary information.
+
+
+The function \texttt{mp\_factors\_product} does already most of the work so it was not much work to implement a function to compute a primorial.
+\index{mp\_primorial}
+\begin{alltt}
+int mp_primorial(const LTM_SIEVE_UINT n, mp_int *p);
+\end{alltt}
+
+\subsection{Test for (perfect) Powers}
+\index{mp\_ispower}
+\begin{alltt}
+int mp_ispower(const mp_int *z, int *result, mp_int *rootout,
+                 mp_int *exponent);
+\end{alltt}
+Tests if $z$ is a power, that is $z = a^b$ with $b$ prime but $a$ might be composite. Computes the actual roots to do so and in case of success sets \texttt{result} to \texttt{MP\_YES}, puts $a$ in \texttt{rootout} and the exponent $b$ in \texttt{exponent} or $0$ (zero) in both and \texttt{result} to \texttt{MP\_NO} if case of a failure to find one.
+
+\index{mp\_isperfpower}
+\begin{alltt}
+int mp_isperfpower(const mp_int *z, int *result, mp_int *rootout,
+                   mp_int *exponent)
+\end{alltt}
+Same as \texttt{mp\_ispower} but searches for perfect or prime powers, that is $z = a^b$ such that $a, b$ are prime. Uses \texttt{mp\_prime\_is\_prime} which is a probabilistic prime tester and only roots below $2^{64}$ are save.
 \chapter{Input and Output}
 \section{ASCII Conversions}
 \subsection{To ASCII}

@@ -1283,7 +1283,7 @@ LBL_ERR:
    for i in {1..10}
    do
      seed=$(head -c 10000 /dev/urandom | tr -dc '[:digit:]' | head -c 120);
-     echo $seed;  
+     echo $seed;
      convertbase $seed 10  64;
    done
 
@@ -1777,17 +1777,17 @@ static int test_mp_is_small_prime(void)
 #endif
    };
    LTM_SIEVE_UINT result;
-/*
-   if ((e = mp_sieve_init(base)) != MP_OKAY) {
-      fprintf(stderr,"mp_sieve_init(base) failed: \"%s\"\n",mp_error_to_string(e));
-      exit(EXIT_FAILURE);
-   }
+   /*
+      if ((e = mp_sieve_init(base)) != MP_OKAY) {
+         fprintf(stderr,"mp_sieve_init(base) failed: \"%s\"\n",mp_error_to_string(e));
+         exit(EXIT_FAILURE);
+      }
 
-   if ((e = mp_sieve_init(segment)) != MP_OKAY) {
-      fprintf(stderr,"mp_sieve_init(segment) failed: \"%s\"\n",mp_error_to_string(e));
-      goto LTM_ERR;
-   }
-*/
+      if ((e = mp_sieve_init(segment)) != MP_OKAY) {
+         fprintf(stderr,"mp_sieve_init(segment) failed: \"%s\"\n",mp_error_to_string(e));
+         goto LTM_ERR;
+      }
+   */
    test_size = (int)(sizeof(to_test)/sizeof(LTM_SIEVE_UINT));
 
    for (i = 0; i < test_size; i++) {
@@ -2025,9 +2025,113 @@ LTM_ERR_1:
    return EXIT_FAILURE;
 }
 
+static int test_mp_factor(void)
+{
+   mp_int z;
+   int e, i, bsize;
+   unsigned char *tmp, maskAND;
+   mp_factors factors;
+   const char *nonprimes[] = {
+      /* two errors, three shortcuts and a square */
+      "0", "-1", "1", "2", "3", "4",
+      /* semiprimes */
+      "312157", "648195487", "598356255307", "991871964663707",
+      /* with small and big factors */
+      "991871964663708", "78039283755043329410", "325871418105900",
+      /* with a lot of small primes */
+      "14729944978144", "8080702298549993133544921875",
+      /* 131101^11 , 131101 = 2^17 + 29, normal base sieve size is 2^16 */
+      "196637365999125071351142476168035772619202756451412992101",
+      /* with several medium primes */
+      "133084923282398316896573492566258463894017",
+      "4976502333248527146593643321629612436176722881994033642561942342220395609264488653641519",
+      /* perfect powers */
+      "116666335940207089610013731646382987819638245180475051703891993791182706173489874198001",
+      "3235788747338312671076928222346879975613932865492908135711553936877133193671329830278801"
+   };
 
+   mp_init(&z);
+   mp_factors_init(&factors);
+   mp_zero(&z);
 
-#endif
+  puts("");
+
+   for (i = 0; i < 2; i++) {
+      if ((e = mp_factor(&z,&factors)) != MP_VAL) {
+         goto LTM_ERR;
+      }
+   }
+
+   for (i = 2; i < (int)(sizeof(nonprimes)/sizeof(nonprimes[0])); i++) {
+
+      if ((e = mp_read_radix(&z, nonprimes[i], 10)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+
+      if ((e = mp_factor(&z,&factors)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+   }
+   /* Random numbers of sizes up to and including 70 bits */
+   for (i = 10; i <= 70; i+=5) {
+      /* If that code looks familiar to you it is a c&p from mp_prime_random_ex */
+      bsize = (i>>3) + ((i&7)?1:0);
+      tmp = malloc((size_t)bsize);
+      if (tmp == NULL) {
+         fprintf(stderr,"malloc failed: \n");
+         goto LTM_ERR;
+      }
+
+      if ((e = myrng(tmp, bsize, NULL)) != bsize) {
+         fprintf(stderr,"mrng failed: %d\n",e);
+         goto LTM_ERR;
+      }
+
+      maskAND = ((i&7) == 0) ? 0xFF : (0xFF >> (8 - (i & 7)));
+      tmp[0] &= maskAND;
+      tmp[0] |= 1 << ((i - 1) & 7);
+
+      if ((e = mp_read_unsigned_bin(&z, tmp, bsize)) != MP_OKAY) {
+         fprintf(stderr,"mp_read_unsigned_bin failed: \"%s\"\n",mp_error_to_string(e));
+         goto LTM_ERR;
+      }
+      if ((e = mp_factor(&z,&factors)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      mp_fwrite(&z, 10, stdout);printf(" -> ");
+      mp_factors_print(&factors, 10, 0, stdout); puts("");
+      free(tmp);
+   }
+   /* The tests for perfect power had been switched off in mp_factor for now. */
+   /*
+       Stresstest for the trial division mp_trial.
+
+       ~6.6429 E28304  A bit brutal, admitted.
+       Too brutal for this algorithm. The perfect-power is the culprit.
+       Useful for random numbers but definitely not for large primorials.
+       About 48 seconds with the perfect-power tests and about 14 seconds without.
+       And that with the optimized nth-root. With a normal nth-root it is
+       already at ... uhm ... gave up waiting after 18 minutes.
+       TODO: add a switch to mp_factor?
+    */
+    /*
+   if ((e = mp_primorial((LTM_SIEVE_UINT)65535, &z)) != MP_OKAY) {
+      goto LTM_ERR;
+   }
+   if ((e = mp_factor(&z,&factors)) != MP_OKAY) {
+      goto LTM_ERR;
+   }
+   */
+   mp_clear(&z);
+   mp_factors_clear(&factors);
+   return EXIT_SUCCESS;
+LTM_ERR:
+   mp_clear(&z);
+   mp_factors_clear(&factors);
+   return EXIT_FAILURE;
+}
+
+#endif /* LTM_USE_EXTRA_FUNCTIONS */
 
 int unit_tests(void)
 {
@@ -2036,40 +2140,41 @@ int unit_tests(void)
       int (*fn)(void);
    } test[] = {
 #define T(n) { #n, test_##n }
-               T(trivial_stuff),
-               T(mp_cnt_lsb),
-               T(mp_complement),
-               T(mp_div_3),
-               T(mp_dr_reduce),
-               T(mp_n_root),
-               T(mp_get_int),
-               T(mp_get_long),
-               T(mp_get_long_long),
-               T(mp_invmod),
-               T(mp_is_square),
-               T(mp_jacobi),
-               T(mp_kronecker),
-               T(mp_montgomery_reduce),
-               T(mp_prime_is_prime),
-               T(mp_prime_random_ex),
-               T(mp_read_radix),
-               T(mp_reduce_2k),
-               T(mp_reduce_2k_l),
-               T(mp_set_double),
-               T(mp_sqrt),
-               T(mp_sqrtmod_prime),
-               T(mp_expt_d),
-               T(mp_tc_and),
-               T(mp_tc_div_2d),
-               T(mp_tc_or),
-               T(mp_tc_xor)
+          T(trivial_stuff),
+          T(mp_cnt_lsb),
+          T(mp_complement),
+          T(mp_div_3),
+          T(mp_dr_reduce),
+          T(mp_n_root),
+          T(mp_get_int),
+          T(mp_get_long),
+          T(mp_get_long_long),
+          T(mp_invmod),
+          T(mp_is_square),
+          T(mp_jacobi),
+          T(mp_kronecker),
+          T(mp_montgomery_reduce),
+          T(mp_prime_is_prime),
+          T(mp_prime_random_ex),
+          T(mp_read_radix),
+          T(mp_reduce_2k),
+          T(mp_reduce_2k_l),
+          T(mp_set_double),
+          T(mp_sqrt),
+          T(mp_sqrtmod_prime),
+          T(mp_expt_d),
+          T(mp_tc_and),
+          T(mp_tc_div_2d),
+          T(mp_tc_or),
+          T(mp_tc_xor)
 #ifdef LTM_USE_EXTRA_FUNCTIONS
-      ,T(mp_expt),
-      T(mp_ilogb),
-      T(mp_is_small_prime),
-      T(mp_next_small_prime),
-      T(mp_prec_small_prime),
-      T(mp_small_prime_array)
+         ,T(mp_expt),
+          T(mp_ilogb),
+          T(mp_is_small_prime),
+          T(mp_next_small_prime),
+          T(mp_prec_small_prime),
+          T(mp_small_prime_array),
+          T(mp_factor)
 #endif
 #undef T
    };

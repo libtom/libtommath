@@ -637,6 +637,66 @@ int mp_ilogb(mp_int *a, mp_digit base, mp_int *c);
 /* exponentiate a^b = c with a, b, c big integers (useful for low MP_xBIT) */
 int mp_expt(const mp_int *a, const mp_int *b, mp_int *c);
 
+/* Test if "z" is a power, that is z = a^b with "b" prime but "a" might be composite */
+int mp_ispower(const mp_int *z, int *result, mp_int *rootout, mp_int *exponent);
+
+/* Test "z" if it is a prime power, that is both "p" and "b" are prime in z = p^b  */
+int mp_isperfpower(const mp_int *z, int *result, mp_int *rootout, mp_int *exponent);
+
+#ifndef LTM_TRIAL_GROWTH 
+#define LTM_TRIAL_GROWTH 64
+#endif
+
+/* 
+   Simple data structure to hold some of mp_int's.
+   Used to hold the factors from factoring, about
+   100 or so max, always with linear r/w access.
+ */
+
+typedef struct  {
+   int length, alloc;
+   mp_int *factors;
+} mp_factors;
+
+/* Trial division with primes up to limit "limit", remainder in "r" */
+int mp_trial(const mp_int *a, int limit, mp_factors *factors, mp_int *r);
+
+/* Find one factor of a positive integer using the Pollard-Rho algorithm */
+int mp_pollard_rho(const mp_int *n, mp_int *factor);
+
+/* Increment "a" by one like "a++". Changes input! */
+int mp_incr(mp_int *a);
+
+/* Decrement "a" by one like "a--". Changes input! */
+int mp_decr(mp_int *a);
+
+/* Init factor-array (an array of mp_int's) */
+int mp_factors_init(mp_factors *f);
+
+/* Clear and free factor-array (an array of mp_int's) */
+void mp_factors_clear(mp_factors *f);
+
+/* Zero the elements of a factor-array (an array of mp_int's) and realloc to default
+   size in that order */
+int mp_factors_zero(mp_factors *f);
+
+/* Add one element (mp_int) to a factor-array (an array of mp_int's) */
+int mp_factors_add(const mp_int *a, mp_factors *f);
+
+/* Sort factor-array (an array of mp_int's) */
+int mp_factors_sort(mp_factors *f);
+
+/* Print the elememts of a factor-array (an array of mp_int's) */
+int mp_factors_print(mp_factors *f, int base, char delimiter, FILE *stream);
+
+/* Factor integer. Good for up to about 35-40 bit large factors */
+int mp_factor(const mp_int *z, mp_factors *factors);
+
+/* Compute a primorial, the product of the first "n" primes */
+int mp_primorial(const LTM_SIEVE_UINT n, mp_int *p);
+
+/* Compute the product of the elements of "factors" */
+int mp_factors_product(mp_factors *factors, mp_int *p);
 #endif /* LTM_USE_EXTRA_FUNCTIONS */
 
 /* ---> radix conversion <--- */

@@ -35,7 +35,7 @@ int mp_expt(const mp_int *a, const mp_int *b, mp_int *c)
    if ((err = mp_set_int(c,1)) != MP_OKAY) {
       return err;
    }
-   while (!mp_iszero(&e)) {
+   while (!IS_ZERO(&e)) {
       if (mp_isodd(&e)) {
          if ((err = mp_mul(c,&tmp,c)) != MP_OKAY) {
             return err;
@@ -44,7 +44,7 @@ int mp_expt(const mp_int *a, const mp_int *b, mp_int *c)
       if ((err = mp_div_2(&e, &e)) != MP_OKAY) {
          return err;
       }
-      if (!mp_iszero(&e)) {
+      if (!IS_ZERO(&e)) {
          if ((err = mp_sqr(&tmp,&tmp)) != MP_OKAY) {
             return err;
          }
