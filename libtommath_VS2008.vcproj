@@ -625,6 +625,10 @@
 			>
 		</File>
 		<File
+			RelativePath="bn_mp_miller_bach.c"
+			>
+		</File>
+		<File
 			RelativePath="bn_mp_mod.c"
 			>
 		</File>
@@ -702,6 +706,10 @@
 		</File>
 		<File
 			RelativePath="bn_mp_prime_is_prime.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_mp_prime_is_prime_deterministic.c"
 			>
 		</File>
 		<File

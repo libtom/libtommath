@@ -697,6 +697,13 @@ int mp_primorial(const LTM_SIEVE_UINT n, mp_int *p);
 
 /* Compute the product of the elements of "factors" */
 int mp_factors_product(mp_factors *factors, mp_int *p);
+
+/* Run Miller-Rabin tests with all primes up to "limit" as witnesses against "z" */
+int mp_miller_bach(const mp_int *z, LTM_SIEVE_UINT limit, int *result);
+
+/* Deterministic primality test. Assumes the generalized Riemann hypothesis
+   and is slow, very slow for large primes.  */
+int mp_prime_is_prime_deterministic(const mp_int *z, int *result);
 #endif /* LTM_USE_EXTRA_FUNCTIONS */
 
 /* ---> radix conversion <--- */

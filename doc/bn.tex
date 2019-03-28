@@ -2084,6 +2084,35 @@ of primes in the prime number table (by default this is $256$) and the first 13 
 
 If $a$ passes all of the tests $result$ is set to one, otherwise it is set to zero.
 
+\subsection{Deterministic Prime Test}
+The test above is a probabilistic test and can fail by calling a composite a prime. It is extremely rare, so rare that it is of almost no practical relevance. For those users who get nervous about the word ``almost'' a deterministic primes test has been put in the packet ``extra''. Add it to the library by typing \texttt{make extra}.
+\index{mp\_prime\_is\_prime\_deterministic}
+\begin{alltt}
+int mp_prime_is_prime_deterministic(const mp_int *z, int *result);
+\end{alltt}
+It has two disadvantages: the theory behind assumes the general Riemann hypothesis to be true and, much more significant, is very slow for large primes.
+
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{c c c}
+ $\mathbf{2^n}$ & \textbf{Testing Time} &  \textbf{Generating Time}\\
+    128 &   0m00.061s  &  0m00.176s \\
+    256 &   0m00.490s  &  0m00.788s \\
+    512 &   0m06.233s  &  0m05.257s \\
+    768 &   0m34.974s  &  0m02.916s \\
+   1024 &   2m12.393s  &  0m45.018s \\
+   1536 &  11m39.058s  &  2m25.890s \\
+   2048 &  45m13.408s  &  2m57.433s
+\end{tabular}
+\caption{Benchmarking \texttt{mp\_prime\_is\_prime\_deterministic}} \label{table:benchmarkprimetestdet}
+\end{center}
+\end{table}
+
+The machine for that benchmark was an AMD A8-6600K and the prime generator was LibTomMaths own
+ \texttt{mp\_prime\_random\_ex(\&z, 8, size, LTM\_PRIME\_SAFE, myrng, NULL)}.
+
+Despite its large runtime it was the only way to include a deterministic primality test with a small memory footprint, no need for floating point functions and one that works with low MP_xBIT, too.
+
 \section{Next Prime}
 \index{mp\_prime\_next\_prime}
 \begin{alltt}

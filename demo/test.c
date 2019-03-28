@@ -2131,6 +2131,73 @@ LTM_ERR:
    return EXIT_FAILURE;
 }
 
+static int test_mp_prime_is_prime_deterministic(void){
+   mp_int z;
+   int e, i, result;
+   LTM_SIEVE_UINT limit;
+   const char *input_error[] = {
+      "0", "-1"
+   };
+   const char *input_primes[] = {
+      "839", "563", "887", "719", "587",
+      "28607", "30467", "32507", "23627", "26927",
+      "787187", "701783", "822167", "649787", "907967",
+      "739824114959", "583566319823", "900970083227",
+      "855726000172944154021782813479", "852922373435970513728235103247",
+   };
+   const char *input_composites[] = {
+      /* https://oeis.org/A014233 */
+      "2047", "1373653", "25326001", "3215031751", "2152302898747",
+      "3474749660383", "341550071728321", "341550071728321",
+      "3825123056546413051", "3825123056546413051", "3825123056546413051",
+      "318665857834031151167461", "3317044064679887385961981"
+   };
+
+   mp_init(&z);
+
+   /* Checking erroneous input, must fail */
+   for(i = 0; i < 2; i++){
+      if ((e = mp_read_radix(&z, input_error[i], 10)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if( (e = mp_prime_is_prime_deterministic(&z, &result) ) == MP_OKAY){
+         goto LTM_ERR;
+      }
+   }
+
+   /* Checking primes, must answer with MP_YES */
+   for(i = 0; i < (sizeof(input_primes)/sizeof(input_primes[0])); i++){
+      if ((e = mp_read_radix(&z, input_primes[i], 10)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if( (e = mp_prime_is_prime_deterministic(&z, &result) ) != MP_OKAY){
+         goto LTM_ERR;
+      }
+      if(result != MP_YES) {
+         goto LTM_ERR;
+      }
+   }
+
+   /* Checking composites, must answer with MP_NO */
+   for(i = 0; i < (sizeof(input_composites)/sizeof(input_composites[0])); i++){
+      if ((e = mp_read_radix(&z, input_composites[i], 10)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if( (e = mp_prime_is_prime_deterministic(&z, &result) ) != MP_OKAY){
+         goto LTM_ERR;
+      }
+      if(result != MP_NO) {
+         goto LTM_ERR;
+      }
+   }
+
+   mp_clear(&z);
+   return EXIT_SUCCESS;
+LTM_ERR:
+   mp_clear(&z);
+   return EXIT_FAILURE;
+}
+
 #endif /* LTM_USE_EXTRA_FUNCTIONS */
 
 int unit_tests(void)
@@ -2140,7 +2207,7 @@ int unit_tests(void)
       int (*fn)(void);
    } test[] = {
 #define T(n) { #n, test_##n }
-          T(trivial_stuff),
+     /*   T(trivial_stuff),
           T(mp_cnt_lsb),
           T(mp_complement),
           T(mp_div_3),
@@ -2166,15 +2233,16 @@ int unit_tests(void)
           T(mp_tc_and),
           T(mp_tc_div_2d),
           T(mp_tc_or),
-          T(mp_tc_xor)
+          T(mp_tc_xor)*/
 #ifdef LTM_USE_EXTRA_FUNCTIONS
-         ,T(mp_expt),
+         /*,T(mp_expt),
           T(mp_ilogb),
           T(mp_is_small_prime),
           T(mp_next_small_prime),
           T(mp_prec_small_prime),
           T(mp_small_prime_array),
-          T(mp_factor)
+          T(mp_factor),*/
+          T(mp_prime_is_prime_deterministic)
 #endif
 #undef T
    };
