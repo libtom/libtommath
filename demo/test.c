@@ -2207,7 +2207,7 @@ int unit_tests(void)
       int (*fn)(void);
    } test[] = {
 #define T(n) { #n, test_##n }
-     /*   T(trivial_stuff),
+          T(trivial_stuff),
           T(mp_cnt_lsb),
           T(mp_complement),
           T(mp_div_3),
@@ -2233,15 +2233,15 @@ int unit_tests(void)
           T(mp_tc_and),
           T(mp_tc_div_2d),
           T(mp_tc_or),
-          T(mp_tc_xor)*/
+          T(mp_tc_xor)
 #ifdef LTM_USE_EXTRA_FUNCTIONS
-         /*,T(mp_expt),
+         ,T(mp_expt),
           T(mp_ilogb),
           T(mp_is_small_prime),
           T(mp_next_small_prime),
           T(mp_prec_small_prime),
           T(mp_small_prime_array),
-          T(mp_factor),*/
+          T(mp_factor),
           T(mp_prime_is_prime_deterministic)
 #endif
 #undef T
