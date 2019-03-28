@@ -17,7 +17,7 @@
    and is slow, very slow for large primes.  */
 int mp_prime_is_prime_deterministic(const mp_int *z, int *result)
 {
-   int ilog2, i, r;
+   int ilog2, i;
    mp_int b;
    LTM_SIEVE_UINT limit;
    int e = MP_OKAY;
@@ -31,16 +31,18 @@ int mp_prime_is_prime_deterministic(const mp_int *z, int *result)
       0xb2, 0x24, 0x10, 0xa5, 0xfd
    };
 
+   
+   *result = MP_NO;
+
    if (IS_ZERO(z) || (z->sign == MP_NEG)) {
       return MP_VAL;
    }
 
-   if ((e = mp_prime_is_prime(z, 8, &r)) != MP_OKAY) {
+   if ((e = mp_prime_is_prime(z, 8, result)) != MP_OKAY) {
       *result = MP_NO;
       return e;
    }
-   if (r == MP_NO) {
-      *result = r;
+   if (*result == MP_NO) {
       return e;
    }
 
@@ -57,7 +59,7 @@ int mp_prime_is_prime_deterministic(const mp_int *z, int *result)
     */
    if (ilog2 < 83) {
       if ((e = mp_init(&b)) != MP_OKAY) {
-         goto LTM_ERR;
+         goto LTM_ERR_2;
       }
       if ((e = mp_read_unsigned_bin(&b, first_odd, 82)) != MP_OKAY) {
          goto LTM_ERR;
@@ -66,10 +68,10 @@ int mp_prime_is_prime_deterministic(const mp_int *z, int *result)
          for (i= 0; i < (int)(sizeof(small_bases)/sizeof(small_bases[0])); i++) {
             mp_set(&b, small_bases[i]);
             if (mp_cmp_d(z, small_bases[i]+2) == MP_GT) {
-               if ((e = mp_prime_miller_rabin(z, &b, &r)) != MP_OKAY) {
+               if ((e = mp_prime_miller_rabin(z, &b, result)) != MP_OKAY) {
                   goto LTM_ERR;
                }
-               if (r == MP_NO) {
+               if (*result == MP_NO) {
                   goto LTM_END;
                }
             } else {
@@ -82,16 +84,18 @@ int mp_prime_is_prime_deterministic(const mp_int *z, int *result)
    limit = (LTM_SIEVE_UINT)(((ilog2 * 70) / 100) + 1);
    limit *= limit;
    limit *= 2;
-   if ((e = mp_miller_bach(z, limit, &r)) != MP_OKAY) {
+   if ((e = mp_miller_bach(z, limit, result)) != MP_OKAY) {
       *result = MP_NO;
-      goto LTM_ERR;
+      goto LTM_ERR_2;
    }
 
-LTM_ERR:
-   *result = MP_NO;
+   return e;
 LTM_END:
-   *result = r;
    mp_clear(&b);
+   return e;
+LTM_ERR:
+   mp_clear(&b);
+LTM_ERR_2:
    return e;
 }
 #endif

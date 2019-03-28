@@ -2134,7 +2134,6 @@ LTM_ERR:
 static int test_mp_prime_is_prime_deterministic(void){
    mp_int z;
    int e, i, result;
-
    const char *input_error[] = {
       "0", "-1"
    };
