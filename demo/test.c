@@ -2134,7 +2134,7 @@ LTM_ERR:
 static int test_mp_prime_is_prime_deterministic(void){
    mp_int z;
    int e, i, result;
-   LTM_SIEVE_UINT limit;
+
    const char *input_error[] = {
       "0", "-1"
    };
@@ -2166,7 +2166,7 @@ static int test_mp_prime_is_prime_deterministic(void){
    }
 
    /* Checking primes, must answer with MP_YES */
-   for(i = 0; i < (sizeof(input_primes)/sizeof(input_primes[0])); i++){
+   for(i = 0; i < (int)(sizeof(input_primes)/sizeof(input_primes[0])); i++){
       if ((e = mp_read_radix(&z, input_primes[i], 10)) != MP_OKAY) {
          goto LTM_ERR;
       }
@@ -2179,7 +2179,7 @@ static int test_mp_prime_is_prime_deterministic(void){
    }
 
    /* Checking composites, must answer with MP_NO */
-   for(i = 0; i < (sizeof(input_composites)/sizeof(input_composites[0])); i++){
+   for(i = 0; i < (int)(sizeof(input_composites)/sizeof(input_composites[0])); i++){
       if ((e = mp_read_radix(&z, input_composites[i], 10)) != MP_OKAY) {
          goto LTM_ERR;
       }
