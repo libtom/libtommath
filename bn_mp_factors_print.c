@@ -30,8 +30,10 @@ int mp_factors_print(mp_factors *f, int base, char delimiter, FILE *stream)
          if ((e = mp_fwrite(&(f->factors[i]),base, stream)) != MP_OKAY) {
             return e;
          }
-         if (fputc(d, stream) == EOF) {
-            return MP_VAL;
+         if (i < ((f->length)-1)) {
+            if (fputc(d, stream) == EOF) {
+               return MP_VAL;
+            }
          }
       }
    }
