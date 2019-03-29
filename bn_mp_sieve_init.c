@@ -12,12 +12,14 @@
  * SPDX-License-Identifier: Unlicense
  */
 
+#ifdef LTM_USE_EXTRA_FUNCTIONS
 void mp_sieve_init(mp_sieve *sieve)
 {
    sieve->base.content = NULL;
    sieve->segment.content = NULL;
    sieve->single_segment_a = 0;
 }
+#endif
 #endif
 /* ref:         \$Format:\%D$ */
 /* git commit:  \$Format:\%H$ */
