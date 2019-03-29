@@ -1591,7 +1591,7 @@ static int s_rs(const mp_int *a, int radix, int *size)
    *size = digs + 1;
    return MP_OKAY;
 }
-
+#endif
 static int test_mp_expt(void)
 {
    mp_int a, b, c;
@@ -1752,7 +1752,7 @@ LBL_ERR:
    return EXIT_FAILURE;
 }
 
-#endif
+
 static int test_mp_is_small_prime(void)
 {
    mp_sieve sieve;
