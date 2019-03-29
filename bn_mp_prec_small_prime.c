@@ -1,5 +1,5 @@
 #include "tommath_private.h"
-#ifdef BN_MP_FACTORS_ZERO_C
+#ifdef BN_MP_PREC_SMALL_PRIME_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is a library that provides multiple-precision
@@ -12,32 +12,40 @@
  * SPDX-License-Identifier: Unlicense
  */
 
-/* Zero the elements of a factor-array (an array of mp_int's) and realloc to default
-   size in that order */
+/*
+ * Mimics behaviour of Pari/GP's precprime(n)
+ * If n is prime set *result to n else set *result to first prime < n
+ * and 0 in case of error
+ */
 #ifdef LTM_USE_EXTRA_FUNCTIONS
-int mp_factors_zero(mp_factors *f)
+int mp_prec_small_prime(LTM_SIEVE_UINT n, LTM_SIEVE_UINT *result, mp_sieve *sieve)
 {
-   int i, e = MP_OKAY;
-   mp_int *tmp;
+   LTM_SIEVE_UINT ret = 0;
+   int e = MP_OKAY;
 
-   if (f->factors != NULL) {
-      for (i = 0; i < f->length; i++) {
-         mp_clear(&(f->factors[i]));
+   if (n == 2) {
+      *result = 2;
+      return e;
+   }
+
+   if (n < 2) {
+      *result = 0;
+      return e;
+   }
+
+   for (; ret == 0; n--) {
+      if ((e = mp_is_small_prime(n, &ret, sieve)) != MP_OKAY) {
+         *result = 0;
+         return e;
       }
    }
-
-   tmp = (mp_int *) XREALLOC(f->factors, sizeof(*tmp) * LTM_TRIAL_GROWTH);
-   if (tmp == NULL) {
-      return MP_MEM;
-   }
-
-   f->factors = tmp;
-   f->alloc = LTM_TRIAL_GROWTH;
-   f->length = 0;
+   *result = n + 1;
 
    return e;
 }
 #endif
+
+
 #endif
 /* ref:         \$Format:\%D$ */
 /* git commit:  \$Format:\%H$ */

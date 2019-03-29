@@ -685,11 +685,19 @@
 			>
 		</File>
 		<File
+			RelativePath="bn_mp_next_small_prime.c"
+			>
+		</File>
+		<File
 			RelativePath="bn_mp_or.c"
 			>
 		</File>
 		<File
 			RelativePath="bn_mp_pollard_rho.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_mp_prec_small_prime.c"
 			>
 		</File>
 		<File
@@ -825,7 +833,19 @@
 			>
 		</File>
 		<File
+			RelativePath="bn_mp_sieve_clear.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_mp_sieve_init.c"
+			>
+		</File>
+		<File
 			RelativePath="bn_mp_signed_bin_size.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_mp_small_prime_array.c"
 			>
 		</File>
 		<File

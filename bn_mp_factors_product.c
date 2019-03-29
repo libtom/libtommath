@@ -64,7 +64,7 @@ int mp_factors_product(mp_factors *factors, mp_int *p)
       return MP_VAL;
    }
    if(r == 1){
-      return mp_copy(&factors->factors[0], p);
+      return mp_copy(&(factors->factors[0]), p);
    }
    if ((e = product_lowlevel(factors,0, r, p)) != MP_OKAY) {
       return e;

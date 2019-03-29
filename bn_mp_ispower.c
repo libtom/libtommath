@@ -20,9 +20,7 @@
 
 int mp_ispower(const mp_int *z, int *result, mp_int *rootout, mp_int *exponent)
 {
-   mp_sieve *base = NULL;
-   mp_sieve *segment = NULL;
-   LTM_SIEVE_UINT single_segment_a = 0;
+   mp_sieve sieve;
 
    LTM_SIEVE_UINT k, r;
 
@@ -30,6 +28,8 @@ int mp_ispower(const mp_int *z, int *result, mp_int *rootout, mp_int *exponent)
 
    unsigned long max, highbit, lowbit;
    int ret, e = MP_OKAY;
+
+   mp_sieve_init(&sieve);
 
    /* No negative input (for now) */
    if (IS_ZERO(z) || (z->sign == MP_NEG)) {
@@ -87,8 +87,7 @@ int mp_ispower(const mp_int *z, int *result, mp_int *rootout, mp_int *exponent)
    }
 
    for (k = 0, r = 0; r < (LTM_SIEVE_UINT)highbit; k = r) {
-      if ((e = mp_next_small_prime(k + 1, &r, &base,
-                                   &segment, &single_segment_a)) != MP_OKAY) {
+      if ((e = mp_next_small_prime(k + 1, &r, &sieve)) != MP_OKAY) {
          if (e == LTM_SIEVE_MAX_REACHED) {
             if ((e = mp_n_root(z, (mp_digit)(k), &root)) != MP_OKAY) {
                return e;
@@ -143,8 +142,7 @@ int mp_ispower(const mp_int *z, int *result, mp_int *rootout, mp_int *exponent)
 
 LTM_END:
    mp_clear_multi(&root, &power,NULL);
-   mp_sieve_clear(base);
-   mp_sieve_clear(segment);
+   mp_sieve_clear(&sieve);
    return e;
 }
 #endif

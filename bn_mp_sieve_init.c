@@ -1,5 +1,5 @@
 #include "tommath_private.h"
-#ifdef BN_MP_FACTORS_INIT_C
+#ifdef BN_MP_SIEVE_INIT_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is a library that provides multiple-precision
@@ -12,19 +12,12 @@
  * SPDX-License-Identifier: Unlicense
  */
 
-/* Init factor-array (an array of mp_int's) */
-#ifdef LTM_USE_EXTRA_FUNCTIONS
-int mp_factors_init(mp_factors *f)
+void mp_sieve_init(mp_sieve *sieve)
 {
-   f->factors = (mp_int *) calloc((size_t)(LTM_TRIAL_GROWTH), sizeof(mp_int));
-   if ((f->factors) == NULL) {
-      return MP_MEM;
-   }
-   f->alloc = LTM_TRIAL_GROWTH;
-   f->length = 0;
-   return MP_OKAY;
+   sieve->base.content = NULL;
+   sieve->segment.content = NULL;
+   sieve->single_segment_a = 0;
 }
-#endif
 #endif
 /* ref:         \$Format:\%D$ */
 /* git commit:  \$Format:\%H$ */

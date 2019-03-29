@@ -34,9 +34,7 @@
 /* Run Miller-Rabin tests with all primes up to "limit" as witnesses against "z" */
 int mp_miller_bach(const mp_int *z, LTM_SIEVE_UINT limit, int *result)
 {
-   mp_sieve *base = NULL;
-   mp_sieve *segment = NULL;
-   LTM_SIEVE_UINT single_segment_a = 0;
+   mp_sieve sieve;
    LTM_SIEVE_UINT k, ret;
    mp_int b;
    int r;
@@ -50,9 +48,11 @@ int mp_miller_bach(const mp_int *z, LTM_SIEVE_UINT limit, int *result)
       *result = MP_NO;
       return e;
    }
+
+   mp_sieve_init(&sieve);
+
    for (k = 0, ret = 0; ret < (LTM_SIEVE_UINT)limit; k = ret) {
-      if ((e = mp_next_small_prime(k + 1, &ret, &base,
-                                   &segment, &single_segment_a)) != MP_OKAY) {
+      if ((e = mp_next_small_prime(k + 1, &ret, &sieve)) != MP_OKAY) {
          if (e == LTM_SIEVE_MAX_REACHED) {
             if ((e = mp_set_long(&b, (unsigned long)ret)) != MP_OKAY) {
                goto LTM_ERR;
@@ -81,12 +81,10 @@ int mp_miller_bach(const mp_int *z, LTM_SIEVE_UINT limit, int *result)
 LTM_END:
    *result = r;
    mp_clear(&b);
-   mp_sieve_clear(base);
-   mp_sieve_clear(segment);
+   mp_sieve_clear(&sieve);
    return e;
 LTM_ERR:
-   mp_sieve_clear(base);
-   mp_sieve_clear(segment);
+   mp_sieve_clear(&sieve);
    mp_clear(&b);
    return e;
 }

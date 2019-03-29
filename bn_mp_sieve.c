@@ -18,31 +18,31 @@
 
 #define LTM_SIEVE_UINT_NUM_BITS (sizeof(LTM_SIEVE_UINT)*CHAR_BIT)
 
-static void s_mp_sieve_setall(mp_sieve *bst);
-static void s_mp_sieve_clear(mp_sieve *bst, LTM_SIEVE_UINT n);
-static LTM_SIEVE_UINT s_mp_sieve_get(mp_sieve *bst, LTM_SIEVE_UINT n);
-static LTM_SIEVE_UINT s_mp_sieve_nextset(mp_sieve *bst, LTM_SIEVE_UINT n);
+static void s_mp_sieve_setall(mp_single_sieve *bst);
+static void s_mp_sieve_clear(mp_single_sieve *bst, LTM_SIEVE_UINT n);
+static LTM_SIEVE_UINT s_mp_sieve_get(mp_single_sieve *bst, LTM_SIEVE_UINT n);
+static LTM_SIEVE_UINT s_mp_sieve_nextset(mp_single_sieve *bst, LTM_SIEVE_UINT n);
 
 static LTM_SIEVE_UINT isqrt(LTM_SIEVE_UINT n);
 
-static void s_mp_eratosthenes(mp_sieve *bst);
-static int  s_mp_eratosthenes_init(LTM_SIEVE_UINT n, mp_sieve **bst);
+static void s_mp_eratosthenes(mp_single_sieve *bst);
+static int  s_mp_eratosthenes_init(LTM_SIEVE_UINT n, mp_single_sieve *bst);
 
-static void s_mp_eratosthenes_segment(LTM_SIEVE_UINT a, LTM_SIEVE_UINT b, mp_sieve *base,
-                                      mp_sieve *segment);
-static int s_mp_eratosthenes_segment_init(LTM_SIEVE_UINT a, LTM_SIEVE_UINT b, mp_sieve **base,
-      mp_sieve **segment);
-static void s_mp_eratosthenes_segment_clear(mp_sieve *segment, LTM_SIEVE_UINT *single_segment_a);
+static void s_mp_eratosthenes_segment(LTM_SIEVE_UINT a, LTM_SIEVE_UINT b, mp_single_sieve *base,
+                                      mp_single_sieve *segment);
+static int s_mp_eratosthenes_segment_init(LTM_SIEVE_UINT a, LTM_SIEVE_UINT b, mp_single_sieve *base,
+      mp_single_sieve *segment);
+static void s_mp_eratosthenes_segment_clear(mp_single_sieve *segment, LTM_SIEVE_UINT *single_segment_a);
 
-static int s_init_base_sieve(mp_sieve **base_sieve);
-static int s_init_single_segment_with_start(LTM_SIEVE_UINT a, mp_sieve **base_sieve,
-      mp_sieve **single_segment, LTM_SIEVE_UINT *single_segment_a);
+static int s_init_base_sieve(mp_single_sieve *base_sieve);
+static int s_init_single_segment_with_start(LTM_SIEVE_UINT a, mp_single_sieve *base_sieve,
+      mp_single_sieve *single_segment, LTM_SIEVE_UINT *single_segment_a);
 
-static LTM_SIEVE_UINT s_nextprime(LTM_SIEVE_UINT p, mp_sieve *bst);
+static LTM_SIEVE_UINT s_nextprime(LTM_SIEVE_UINT p, mp_single_sieve *bst);
 
 
 /* Manual memset() to avoid the inclusion of string.h */
-static void s_mp_sieve_setall(mp_sieve *bst)
+static void s_mp_sieve_setall(mp_single_sieve *bst)
 {
    LTM_SIEVE_UINT i, bs_size;
    bs_size = bst->alloc / sizeof(LTM_SIEVE_UINT);
@@ -51,19 +51,19 @@ static void s_mp_sieve_setall(mp_sieve *bst)
    }
 }
 
-static void s_mp_sieve_clear(mp_sieve *bst, LTM_SIEVE_UINT n)
+static void s_mp_sieve_clear(mp_single_sieve *bst, LTM_SIEVE_UINT n)
 {
   ((*((bst)->content+(n/LTM_SIEVE_UINT_NUM_BITS)) 
            &= ~( 1lu<<( n % LTM_SIEVE_UINT_NUM_BITS ))));
 }
 
-static LTM_SIEVE_UINT s_mp_sieve_get(mp_sieve *bst, LTM_SIEVE_UINT n)
+static LTM_SIEVE_UINT s_mp_sieve_get(mp_single_sieve *bst, LTM_SIEVE_UINT n)
 {
    return (((*((bst)->content+(n/LTM_SIEVE_UINT_NUM_BITS)) 
            & ( 1lu<<( n % LTM_SIEVE_UINT_NUM_BITS ))) != 0));
 }
 
-static LTM_SIEVE_UINT s_mp_sieve_nextset(mp_sieve *bst, LTM_SIEVE_UINT n)
+static LTM_SIEVE_UINT s_mp_sieve_nextset(mp_single_sieve *bst, LTM_SIEVE_UINT n)
 {
    while ((n < ((bst)->size)) && (!s_mp_sieve_get(bst, n))) {
       n++;
@@ -132,24 +132,20 @@ static LTM_SIEVE_UINT isqrt(LTM_SIEVE_UINT n)
  * Initiate a sieve that stores the odd numbers only:
  * allocate memory, set actual size and allocated size and fill it
  */
-static int s_mp_eratosthenes_init(LTM_SIEVE_UINT n, mp_sieve **bst)
+static int s_mp_eratosthenes_init(LTM_SIEVE_UINT n, mp_single_sieve *bst)
 {
    n = (n - 1) / 2;
-   *bst = malloc(sizeof(mp_sieve));
-   if (bst == NULL) {
-      return MP_MEM;
-   }
-   (*bst)->content =
+   bst->content =
       malloc((n + sizeof(LTM_SIEVE_UINT)) / sizeof(LTM_SIEVE_UINT) + sizeof(LTM_SIEVE_UINT));
-   if ((*bst)->content == NULL) {
+   if (bst->content == NULL) {
       return MP_MEM;
    }
 
-   (*bst)->alloc =
+   bst->alloc =
       (n + sizeof(LTM_SIEVE_UINT)) / sizeof(LTM_SIEVE_UINT) + sizeof(LTM_SIEVE_UINT);
-   (*bst)->size = 2 * n + 1;
+   bst->size = 2 * n + 1;
 
-   s_mp_eratosthenes(*bst);
+   s_mp_eratosthenes(bst);
    return MP_OKAY;
 }
 
@@ -157,11 +153,11 @@ static int s_mp_eratosthenes_init(LTM_SIEVE_UINT n, mp_sieve **bst)
  * Simple Eratosthenes' sieve, starting at zero
  * Keeping odd primes only as the single optimization
  */
-static void s_mp_eratosthenes(mp_sieve * bst)
+static void s_mp_eratosthenes(mp_single_sieve *bst)
 {
   LTM_SIEVE_UINT n, k, r, j;
 
-  n = (bst)->size;
+  n = bst->size;
   r = isqrt(n);
   s_mp_sieve_setall(bst);
   for (k = 1; k < ((r - 1) / 2); k += 1) {
@@ -180,7 +176,7 @@ static void s_mp_eratosthenes(mp_sieve * bst)
  * Used internally for the segment to get the primes from
  * the base sieve.
  */
-static LTM_SIEVE_UINT s_nextprime(LTM_SIEVE_UINT p, mp_sieve * bst)
+static LTM_SIEVE_UINT s_nextprime(LTM_SIEVE_UINT p, mp_single_sieve * bst)
 {
   LTM_SIEVE_UINT ret;
   if (p <= 1)
@@ -195,28 +191,24 @@ static LTM_SIEVE_UINT s_nextprime(LTM_SIEVE_UINT p, mp_sieve * bst)
  * TODO: merge with s_mp_eratosthenes_init()
  */
 static int s_mp_eratosthenes_segment_init(LTM_SIEVE_UINT a, LTM_SIEVE_UINT b,
-                                          mp_sieve ** segment, mp_sieve ** base)
+                                          mp_single_sieve *segment, mp_single_sieve *base)
 {
   LTM_SIEVE_UINT n;
 
   n = b - a;
 
-  *segment = malloc(sizeof(mp_sieve));
-  if (segment == NULL) {
-    return MP_MEM;
-  }
-  (*segment)->content =
+  segment->content =
       malloc((n + sizeof(LTM_SIEVE_UINT)) / sizeof(LTM_SIEVE_UINT) +
              sizeof(LTM_SIEVE_UINT));
-  if ((*segment)->content == NULL) {
+  if (segment->content == NULL) {
     return MP_MEM;
   }
-  (*segment)->alloc =
+  segment->alloc =
       (n + sizeof(LTM_SIEVE_UINT)) / sizeof(LTM_SIEVE_UINT) +
       sizeof(LTM_SIEVE_UINT);
-  (*segment)->size = n;
+  segment->size = n;
 
-  s_mp_eratosthenes_segment(a, b, *base, *segment);
+  s_mp_eratosthenes_segment(a, b, base, segment);
   return MP_OKAY;
 }
 
@@ -224,16 +216,14 @@ static int s_mp_eratosthenes_segment_init(LTM_SIEVE_UINT a, LTM_SIEVE_UINT b,
  * Clear sieve "segment"
  * free memory and reset "single_segment_a"
  */
-static void s_mp_eratosthenes_segment_clear(mp_sieve * segment,
-                                            LTM_SIEVE_UINT * single_segment_a)
+static void s_mp_eratosthenes_segment_clear(mp_single_sieve *segment,
+                                            LTM_SIEVE_UINT *single_segment_a)
 {
-  if (segment != NULL) {
-    if (segment->content != NULL) {
+   if (segment->content != NULL) {
       free(segment->content);
-    }
-    free(segment);
-    *single_segment_a = 0;
-  }
+   }
+   *single_segment_a = 0;
+
 }
 
 
@@ -245,7 +235,7 @@ static void s_mp_eratosthenes_segment_clear(mp_sieve * segment,
  * Fill sieve "segment" of the range [a,b] from the basic sieve "base"
  */
 static void s_mp_eratosthenes_segment(LTM_SIEVE_UINT a, LTM_SIEVE_UINT b,
-                                      mp_sieve * base, mp_sieve * segment)
+                                      mp_single_sieve * base, mp_single_sieve * segment)
 {
   LTM_SIEVE_UINT r, j, i;
   LTM_SIEVE_UINT p;
@@ -271,7 +261,7 @@ static void s_mp_eratosthenes_segment(LTM_SIEVE_UINT a, LTM_SIEVE_UINT b,
 
 
 /* Build a basic sieve with the largest reasonable size */
-static int s_init_base_sieve(mp_sieve ** base_sieve)
+static int s_init_base_sieve(mp_single_sieve *base_sieve)
 {
   LTM_SIEVE_UINT n;
   /* 
@@ -288,9 +278,9 @@ static int s_init_base_sieve(mp_sieve ** base_sieve)
  * the sieve Size is MIN(range_a_b,LTM_SIEVE_UINT_MAX-a)
  */
 static int s_init_single_segment_with_start(LTM_SIEVE_UINT a,
-                                            mp_sieve ** base_sieve,
-                                            mp_sieve ** single_segment,
-                                            LTM_SIEVE_UINT * single_segment_a)
+                                            mp_single_sieve *base_sieve,
+                                            mp_single_sieve *single_segment,
+                                            LTM_SIEVE_UINT *single_segment_a)
 {
   LTM_SIEVE_UINT b;
   int e = MP_OKAY;
@@ -309,15 +299,26 @@ static int s_init_single_segment_with_start(LTM_SIEVE_UINT a,
   *single_segment_a = a;
   return e;
 }
+/*
+typedef struct mp_single_sieve_t {
+   LTM_SIEVE_UINT *content;
+   LTM_SIEVE_UINT size;
+   LTM_SIEVE_UINT alloc;
+} mp_single_sieve;
 
+typedef struct mp_sieve_t {
+   mp_single_sieve *base;
+   mp_single_sieve segment;
+   LTM_SIEVE_UINT single_segment_a = 0;
+} mp_sieve;
+*/
 /*
  * Sets "result" to one if n is prime or zero respectively.
  * Also sets "result" to zero in case of error.
  * Worst case runtime is: building a base sieve and a segment and
  * search the segment
  */
-int mp_is_small_prime(LTM_SIEVE_UINT n, LTM_SIEVE_UINT *result, mp_sieve **base_sieve,
-                      mp_sieve **single_segment, LTM_SIEVE_UINT *single_segment_a)
+int mp_is_small_prime(LTM_SIEVE_UINT n, LTM_SIEVE_UINT *result, mp_sieve *sieve)
 {
    int e = MP_OKAY;
    LTM_SIEVE_UINT a = 0, b = 0;
@@ -338,8 +339,8 @@ int mp_is_small_prime(LTM_SIEVE_UINT n, LTM_SIEVE_UINT *result, mp_sieve **base_
       return e;
    }
 
-   if ((*base_sieve) == NULL) {
-      if ((e = s_init_base_sieve(base_sieve)) != MP_OKAY) {
+   if (sieve->base.content == NULL) {
+      if ( (e = s_init_base_sieve( &(sieve->base) ) ) != MP_OKAY) {
          *result = 0;
          return e;
       }
@@ -348,8 +349,8 @@ int mp_is_small_prime(LTM_SIEVE_UINT n, LTM_SIEVE_UINT *result, mp_sieve **base_
    /* No need to generate a segment if n is in the base sieve */
    if (n < LTM_SIEVE_BASE_SIEVE_SIZE) {
       /* might have been a small sieve, so check size of sieve first */
-      if (n < ((*base_sieve)->size)) {
-         *result = s_mp_sieve_get(*base_sieve, (n - 1) / 2);
+      if (n < sieve->base.size) {
+         *result = s_mp_sieve_get(&(sieve->base), (n - 1) / 2);
          return e;
       }
    }
@@ -365,8 +366,8 @@ int mp_is_small_prime(LTM_SIEVE_UINT n, LTM_SIEVE_UINT *result, mp_sieve **base_
     * c. give up and return MP_VAL
     */
    /* we have a segment and may be able to use it */
-   if ((*single_segment) != NULL) {
-      a = *single_segment_a;
+   if ( sieve->segment.content != NULL) {
+      a = sieve->single_segment_a;
       /* last segment may not fit into range_a_b */
       if (a > (LTM_SIEVE_UINT_MAX - LTM_SIEVE_RANGE_A_B)) {
          b = LTM_SIEVE_UINT_MAX - 1;
@@ -375,12 +376,12 @@ int mp_is_small_prime(LTM_SIEVE_UINT n, LTM_SIEVE_UINT *result, mp_sieve **base_
       }
       /* check if n is inside the bounds of the segment */
       if (n >= a && n <= b) {
-         *result = s_mp_sieve_get(*single_segment, n - a);
+         *result = s_mp_sieve_get(&(sieve->segment), n - a);
          return e;
       }
       /* get a clean slate */
       else {
-       s_mp_eratosthenes_segment_clear(*single_segment, single_segment_a);
+       s_mp_eratosthenes_segment_clear(&(sieve->segment), &(sieve->single_segment_a));
       }
    }
 
@@ -405,159 +406,16 @@ int mp_is_small_prime(LTM_SIEVE_UINT n, LTM_SIEVE_UINT *result, mp_sieve **base_
          a = n - (LTM_SIEVE_RANGE_A_B - 2);
       }
    }
-   if ((e = s_init_single_segment_with_start(a, base_sieve, single_segment,single_segment_a)) != MP_OKAY) {
+   if ((e = s_init_single_segment_with_start(a,
+                &(sieve->base), &(sieve->segment), &(sieve->single_segment_a))) != MP_OKAY) {
       *result = 0;
       return e;
    }
    /* finally, check for primality */
-   *result = s_mp_sieve_get(*single_segment, n - a);
+   *result = s_mp_sieve_get(&(sieve->segment), n - a);
    return e;
 }
 
-/*
- * Mimics behaviour of Pari/GP's nextprime(n)
- * If n is prime set *result to n else set *result to first prime > n
- * and 0 in case of error
- */
-int mp_next_small_prime(LTM_SIEVE_UINT n, LTM_SIEVE_UINT *result, mp_sieve **base_sieve,
-                        mp_sieve **single_segment, LTM_SIEVE_UINT *single_segment_a)
-{
-   LTM_SIEVE_UINT ret = 0;
-   int e = MP_OKAY;
-
-   if (n < 2) {
-      *result = 2;
-      return e;
-   }
-
-   for (; ret == 0 && n != 0; n++) {
-      if (n > LTM_SIEVE_BIGGEST_PRIME) {
-         return LTM_SIEVE_MAX_REACHED;
-      }
-      /* just call mp_is_small_prime(), it does all of the heavy work */
-      if ((e = mp_is_small_prime(n, &ret, base_sieve, single_segment, single_segment_a)) != MP_OKAY) {
-         *result = 0;
-         return e;
-      }
-   }
-   *result = n - 1;
-   return e;
-}
-
-/*
- * Mimics behaviour of Pari/GP's precprime(n)
- * If n is prime set *result to n else set *result to first prime < n
- * and 0 in case of error
- */
-int mp_prec_small_prime(LTM_SIEVE_UINT n, LTM_SIEVE_UINT *result, mp_sieve **base_sieve,
-                        mp_sieve **single_segment, LTM_SIEVE_UINT *single_segment_a)
-{
-   LTM_SIEVE_UINT ret = 0;
-   int e = MP_OKAY;
-
-   if (n == 2) {
-      *result = 2;
-      return e;
-   }
-
-   if (n < 2) {
-      *result = 0;
-      return e;
-   }
-
-   for (; ret == 0; n--) {
-      if ((e = mp_is_small_prime(n, &ret, base_sieve, single_segment,single_segment_a)) != MP_OKAY) {
-         *result = 0;
-         return e;
-      }
-   }
-   *result = n + 1;
-
-   return e;
-}
-/*
-int mp_sieve_init(mp_sieve *sieve)
-{
-   sieve = malloc(sizeof(mp_sieve));
-   if (sieve == NULL) {
-      return MP_MEM;
-   }
-   sieve->content = NULL;
-   sieve->alloc = 0;
-   sieve->size = 0;
-   return MP_OKAY;
-}
-*/
-void mp_sieve_clear(mp_sieve *sieve)
-{
-   if (sieve != NULL) {
-      free(sieve->content);
-      free(sieve);
-   }
-}
-
-
-int mp_small_prime_array(LTM_SIEVE_UINT start, LTM_SIEVE_UINT end, mp_factors *factors)
-{
-   mp_sieve *base = NULL;
-   mp_sieve *segment = NULL;
-
-   LTM_SIEVE_UINT single_segment_a = 0;
-   LTM_SIEVE_UINT k, ret;
-
-   mp_int p;
-
-   int e = MP_OKAY;
-
-   if (start > end) {
-      return MP_VAL;
-   }
-   if (start > LTM_SIEVE_BIGGEST_PRIME) {
-      return MP_VAL;
-   }
-   /* TODO: return MP_VAL better? */
-   if (end > LTM_SIEVE_BIGGEST_PRIME) {
-      end = LTM_SIEVE_BIGGEST_PRIME;
-   }
-
-   if ((e = mp_init(&p)) != MP_OKAY) {
-      return e;
-   }
-
-   if (start > 0) {
-      start--;
-   }
-   for (k = start, ret = 0; ret < end; k = ret) {
-      if ((e = mp_next_small_prime(k + 1, &ret, &base, &segment, &single_segment_a)) != MP_OKAY) {
-         if (e == LTM_SIEVE_MAX_REACHED) {
-            if ((e = mp_set_long(&p,(unsigned long)ret)) != MP_OKAY) {
-               goto LTM_ERR;
-            }
-            if ((e = mp_factors_add(&p, factors)) != MP_OKAY) {
-               goto LTM_ERR;
-            }
-            break;
-         }
-         goto LTM_END;
-      }
-      if (ret <= end) {
-         if ((e = mp_set_long(&p,(unsigned long)ret)) != MP_OKAY) {
-            goto LTM_ERR;
-         }
-         if ((e = mp_factors_add(&p, factors)) != MP_OKAY) {
-            goto LTM_ERR;
-         }
-
-      }
-   }
-
-LTM_ERR:
-LTM_END:
-   mp_sieve_clear(base);
-   mp_sieve_clear(segment);
-   mp_clear(&p);
-   return e;
-}
 #endif /* LTM_USE_EXTRA_FUNCTIONS */
 #endif
 /* ref:         \$Format:\%D$ */

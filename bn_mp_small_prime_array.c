@@ -1,5 +1,5 @@
 #include "tommath_private.h"
-#ifdef BN_MP_PRIMORIAL_C
+#ifdef BN_MP_SMALL_PRIME_ARRAY_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is a library that provides multiple-precision
@@ -12,58 +12,68 @@
  * SPDX-License-Identifier: Unlicense
  */
 
-
-
-/* Compute a primorial, the product of the first "n" primes */
+/* Fill a factor-array with small primes between "start" to "end" */
 #ifdef LTM_USE_EXTRA_FUNCTIONS
-int mp_primorial(const LTM_SIEVE_UINT n, mp_int *p)
+int mp_small_prime_array(LTM_SIEVE_UINT start, LTM_SIEVE_UINT end, mp_factors *factors)
 {
    mp_sieve sieve;
-
-   mp_factors factors;
    LTM_SIEVE_UINT k, ret;
+   mp_int p;
 
    int e = MP_OKAY;
 
-   if ((e = mp_factors_init(&factors)) != MP_OKAY) {
+   if (start > end) {
+      return MP_VAL;
+   }
+   if (start > LTM_SIEVE_BIGGEST_PRIME) {
+      return MP_VAL;
+   }
+   /* TODO: return MP_VAL better? */
+   if (end > LTM_SIEVE_BIGGEST_PRIME) {
+      end = LTM_SIEVE_BIGGEST_PRIME;
+   }
+
+   if ((e = mp_init(&p)) != MP_OKAY) {
       return e;
    }
 
    mp_sieve_init(&sieve);
 
-   for (k = 0, ret = 0; ret < (LTM_SIEVE_UINT)n; k = ret) {
+   if (start > 0) {
+      start--;
+   }
+   for (k = start, ret = 0; ret < end; k = ret) {
       if ((e = mp_next_small_prime(k + 1, &ret, &sieve)) != MP_OKAY) {
          if (e == LTM_SIEVE_MAX_REACHED) {
-            if ((e = mp_set_long(p,(unsigned long)ret)) != MP_OKAY) {
+            if ((e = mp_set_long(&p,(unsigned long)ret)) != MP_OKAY) {
                goto LTM_ERR;
             }
-            if ((e = mp_factors_add(p, &factors)) != MP_OKAY) {
+            if ((e = mp_factors_add(&p, factors)) != MP_OKAY) {
                goto LTM_ERR;
             }
             break;
          }
-         goto LTM_ERR;
+         goto LTM_END;
       }
-      if (ret <= (LTM_SIEVE_UINT)n) {
-         if ((e = mp_set_long(p,(unsigned long)ret)) != MP_OKAY) {
+      if (ret <= end) {
+         if ((e = mp_set_long(&p,(unsigned long)ret)) != MP_OKAY) {
             goto LTM_ERR;
          }
-         if ((e = mp_factors_add(p, &factors)) != MP_OKAY) {
+         if ((e = mp_factors_add(&p, factors)) != MP_OKAY) {
             goto LTM_ERR;
          }
-      }
-   }
 
-   if ((e = mp_factors_product(&factors, p)) != MP_OKAY) {
-      goto LTM_ERR;
+      }
    }
 
 LTM_ERR:
+LTM_END:
    mp_sieve_clear(&sieve);
-   mp_factors_clear(&factors);
+   mp_clear(&p);
    return e;
 }
 #endif
+
 #endif
 /* ref:         \$Format:\%D$ */
 /* git commit:  \$Format:\%H$ */

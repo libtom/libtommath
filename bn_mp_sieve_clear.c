@@ -1,5 +1,5 @@
 #include "tommath_private.h"
-#ifdef BN_MP_FACTORS_ADD_C
+#ifdef BN_MP_SIEVE_CLEAR_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
  * LibTomMath is a library that provides multiple-precision
@@ -12,27 +12,20 @@
  * SPDX-License-Identifier: Unlicense
  */
 
-/* Add one element (mp_int) to a factor-array (an array of mp_int's) */
+
+
+/* Free memory of one sieve */
 #ifdef LTM_USE_EXTRA_FUNCTIONS
-int mp_factors_add(const mp_int *a, mp_factors *f)
-{
-   int new_size = f->alloc;
-   mp_int *tmp;
-   mp_int t;
-   if (f->alloc <= f->length) {
-      new_size += LTM_TRIAL_GROWTH;
-      tmp = (mp_int *) XREALLOC(f->factors, sizeof(*tmp) * (size_t)(new_size));
-      if (tmp == NULL) {
-         return MP_MEM;
-      }
-      f->factors = tmp;
-      f->alloc = new_size;
+static void clear_one(mp_single_sieve *sieve){
+   if (sieve->content != NULL) {
+      free(sieve->content);
    }
-   mp_init(&t);
-   mp_copy(a,&t);
-   f->factors[f->length] = t;
-   f->length++;
-   return MP_OKAY;
+}
+
+void mp_sieve_clear(mp_sieve *sieve)
+{
+   clear_one(&(sieve->base));
+   clear_one(&(sieve->segment));
 }
 #endif
 #endif

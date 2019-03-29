@@ -593,33 +593,25 @@ int mp_prime_random_ex(mp_int *a, int t, int size, int flags, ltm_prime_callback
 #   define LTM_SIEVE_UINT_MAX_SQRT      0xFFFFlu
 #endif
 
-/*
-
 typedef struct mp_single_sieve_t {
-      LTM_SIEVE_UINT *content;
-      LTM_SIEVE_UINT size;
-      LTM_SIEVE_UINT alloc;
-} mp_single_sieve;
-
-typedef struct mp_sieve_t {
-   mp_single_sieve base,
-   mp_single_sieve segment,
-   LTM_SIEVE_UINT single_segment_a = 0;
-} mp_sieve;
-
-*/
-
-
-typedef struct mp_sieve_t {
    LTM_SIEVE_UINT *content;   /* bitset holding the sieve */
    LTM_SIEVE_UINT size;       /* number of entries (which is a slightly misleading description) */
    LTM_SIEVE_UINT alloc;      /* size in bytes */
+} mp_single_sieve;
+
+typedef struct mp_sieve_t {
+   mp_single_sieve base;            /* base sieve (0 > LTM_SIEVE_UINT_MAX_SQRT) */
+   mp_single_sieve segment;         /* segment (range_a_b) */
+   LTM_SIEVE_UINT single_segment_a; /* startpoint of segment */
 } mp_sieve;
+
+
 
 /* 
    Simple data structure to hold some mp_int's.
-   Used to hold the factors from factoring, about
-   100 or so max, always with linear r/w access.
+   Is used in LTM to hold the factors from factoring, about
+   100 or so max (large primorials of powers notwithstanding),
+   always with linear r/w access.
  */
 typedef struct  {
    int length, alloc;
@@ -627,30 +619,30 @@ typedef struct  {
 } mp_factors;
 
 
-/* Init a sieve. Allocates memory for the struct */
+/* Init a sieve. Sets the necessary defaults */
+void mp_sieve_init(mp_sieve * sieve);
+
 /* int mp_sieve_init(mp_sieve *sieve); */
-/* Clear a sieve. Frees the memory for the content and the struct*/
+/* Clear a sieve. Frees the memory for the contents of base and segment */
 void mp_sieve_clear(mp_sieve *sieve);
 
 /*
    Deterministicaly checks if a small prime (< LTM_SIEVE_UINT_MAX) is prime.
-   Uses the sieve so is not the fastest for random checks
+   Uses the sieve so is not the fastest for random checks but quick with
+   linear access.
  */
-int mp_is_small_prime(LTM_SIEVE_UINT n, LTM_SIEVE_UINT *result, mp_sieve **base_sieve,
-                      mp_sieve **single_segment, LTM_SIEVE_UINT *single_segment_a);
+int mp_is_small_prime(LTM_SIEVE_UINT n, LTM_SIEVE_UINT *result, mp_sieve *sieve);
 
 #define LTM_SIEVE_MAX_REACHED (-91) /* Ret. for. max. poss. prime found in mp_next_small_prime */
 /*
    Puts the next prime >= n in "result". May return LTM_SIEVE_MAX_REACHED to flag the content
    of "result" as the last valid one.
 */
-int mp_next_small_prime(LTM_SIEVE_UINT n, LTM_SIEVE_UINT *result, mp_sieve **base_sieve,
-                        mp_sieve **single_segment, LTM_SIEVE_UINT *single_segment_a);
+int mp_next_small_prime(LTM_SIEVE_UINT n, LTM_SIEVE_UINT *result, mp_sieve *sieve);
 /*
    Puts the prime preceeding n in "result"
 */
-int mp_prec_small_prime(LTM_SIEVE_UINT n, LTM_SIEVE_UINT *result, mp_sieve **base_sieve,
-                        mp_sieve **single_segment, LTM_SIEVE_UINT *single_segment_a);
+int mp_prec_small_prime(LTM_SIEVE_UINT n, LTM_SIEVE_UINT *result, mp_sieve *sieve);
 
 /*
    Puts the range of primes between start and end inclusive in "factors".

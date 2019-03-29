@@ -787,7 +787,6 @@ LTM_ERR:
 }
 
 
-
 #if defined(LTM_DEMO_REAL_RAND) && !defined(_WIN32)
 static FILE *fd_urandom = 0;
 #endif
@@ -1562,7 +1561,6 @@ LTM_ERR:
 #ifdef LTM_USE_EXTRA_FUNCTIONS
 #if ( (defined LTM_USE_FASTER_VERSIONS) || (defined LTM_USE_FASTER_RADIX_SIZE) )
 
-
 /* stripped down version of mp_radix_size. The faster version can be off by up to +3  */
 static int s_rs(const mp_int *a, int radix, int *size)
 {
@@ -1593,7 +1591,7 @@ static int s_rs(const mp_int *a, int radix, int *size)
    *size = digs + 1;
    return MP_OKAY;
 }
-#endif
+
 static int test_mp_expt(void)
 {
    mp_int a, b, c;
@@ -1754,11 +1752,10 @@ LBL_ERR:
    return EXIT_FAILURE;
 }
 
+#endif
 static int test_mp_is_small_prime(void)
 {
-   mp_sieve *base = NULL;
-   mp_sieve *segment = NULL;
-   LTM_SIEVE_UINT single_segment_a = 0;
+   mp_sieve sieve;
    int e;
    int i, test_size;
 
@@ -1780,21 +1777,13 @@ static int test_mp_is_small_prime(void)
 #endif
    };
    LTM_SIEVE_UINT result;
-   /*
-      if ((e = mp_sieve_init(base)) != MP_OKAY) {
-         fprintf(stderr,"mp_sieve_init(base) failed: \"%s\"\n",mp_error_to_string(e));
-         exit(EXIT_FAILURE);
-      }
 
-      if ((e = mp_sieve_init(segment)) != MP_OKAY) {
-         fprintf(stderr,"mp_sieve_init(segment) failed: \"%s\"\n",mp_error_to_string(e));
-         goto LTM_ERR;
-      }
-   */
+   mp_sieve_init(&sieve);
+
    test_size = (int)(sizeof(to_test)/sizeof(LTM_SIEVE_UINT));
 
    for (i = 0; i < test_size; i++) {
-      if ((e = mp_is_small_prime(to_test[i], &result, &base, &segment, &single_segment_a)) != MP_OKAY) {
+      if ((e = mp_is_small_prime(to_test[i], &result, &sieve)) != MP_OKAY) {
          fprintf(stderr,"mp_is_small_prime failed: \"%s\"\n",mp_error_to_string(e));
          goto LTM_ERR;
       }
@@ -1805,19 +1794,15 @@ static int test_mp_is_small_prime(void)
       }
    }
 
-   mp_sieve_clear(base);
-   mp_sieve_clear(segment);
+   mp_sieve_clear(&sieve);
    return EXIT_SUCCESS;
 LTM_ERR:
-   mp_sieve_clear(base);
-   mp_sieve_clear(segment);
+   mp_sieve_clear(&sieve);
    return EXIT_FAILURE;
 }
 static int test_mp_next_small_prime(void)
 {
-   mp_sieve *base = NULL;
-   mp_sieve *segment = NULL;
-   LTM_SIEVE_UINT single_segment_a = 0;
+   mp_sieve sieve;
    LTM_SIEVE_UINT ret;
    int e;
    int i, test_size;
@@ -1845,11 +1830,12 @@ static int test_mp_next_small_prime(void)
 #endif
    };
 
+   mp_sieve_init(&sieve);
+
    test_size = (int)(sizeof(to_test)/sizeof(LTM_SIEVE_UINT));
 
    for (i = 0; i < test_size; i++) {
-      if ((e = mp_next_small_prime(to_test[i], &ret, &base,
-                                   &segment, &single_segment_a)) != MP_OKAY) {
+      if ((e = mp_next_small_prime(to_test[i], &ret, &sieve)) != MP_OKAY) {
          fprintf(stderr,"mp_next_small_prime failed with \"%s\" at index %d\n",
                  mp_error_to_string(e), i);
          goto LTM_ERR;
@@ -1861,20 +1847,16 @@ static int test_mp_next_small_prime(void)
       }
    }
 
-   mp_sieve_clear(base);
-   mp_sieve_clear(segment);
+   mp_sieve_clear(&sieve);
    return EXIT_SUCCESS;
 LTM_ERR:
-   mp_sieve_clear(segment);
-   mp_sieve_clear(base);
+   mp_sieve_clear(&sieve);
    return EXIT_FAILURE;
 }
 
 static int test_mp_prec_small_prime(void)
 {
-   mp_sieve *base = NULL;
-   mp_sieve *segment = NULL;
-   LTM_SIEVE_UINT single_segment_a = 0;
+   mp_sieve sieve;
    LTM_SIEVE_UINT ret;
    int e;
    int i, test_size;
@@ -1901,11 +1883,13 @@ static int test_mp_prec_small_prime(void)
       1019879717, 72282697, 2048787577, 2058368051
 #endif
    };
+
+   mp_sieve_init(&sieve);
+
    test_size = (int)(sizeof(to_test)/sizeof(LTM_SIEVE_UINT));
 
    for (i = 0; i < test_size; i++) {
-      if ((e = mp_prec_small_prime(to_test[i], &ret, &base,
-                                   &segment, &single_segment_a)) != MP_OKAY) {
+      if ((e = mp_prec_small_prime(to_test[i], &ret, &sieve)) != MP_OKAY) {
          fprintf(stderr,"mp_prec_small_prime failed with \"%s\" at index %d\n",
                  mp_error_to_string(e), i);
          goto LTM_ERR;
@@ -1917,12 +1901,10 @@ static int test_mp_prec_small_prime(void)
       }
    }
 
-   mp_sieve_clear(base);
-   mp_sieve_clear(segment);
+   mp_sieve_clear(&sieve);
    return EXIT_SUCCESS;
 LTM_ERR:
-   mp_sieve_clear(segment);
-   mp_sieve_clear(base);
+   mp_sieve_clear(&sieve);
    return EXIT_FAILURE;
 }
 
