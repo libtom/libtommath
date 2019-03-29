@@ -43,7 +43,7 @@ int mp_import(mp_int *rop, size_t count, int order, size_t size,
 
    for (i = 0; i < count; ++i) {
       for (j = 0; j < (size - nail_bytes); ++j) {
-         unsigned char byte = *((unsigned char *)op +
+         unsigned char byte = *((const unsigned char *)op +
                                 (((order == 1) ? i : ((count - 1u) - i)) * size) +
                                 ((endian == 1) ? (j + nail_bytes) : (((size - 1u) - j) - nail_bytes)));
 
