@@ -22,7 +22,6 @@ int mp_factors_zero(mp_factors *f)
 
    if (f->factors != NULL) {
       for (i = 0; i < f->length; i++) {
-         mp_zero(&(f->factors[i]));
          mp_clear(&(f->factors[i]));
       }
    }

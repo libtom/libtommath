@@ -170,29 +170,6 @@ int mp_factor(const mp_int *z, mp_factors *factors)
       goto LTM_CHECK;
    }
 
-   /* Switched off temporarily */
-#if 0
-   if ((e = mp_isperfpower(&z_, &is_perfect_power, &rootout, &exponent)) != MP_OKAY) {
-      goto LTM_ERR;
-   }
-
-   /* It is a prime power */
-   if (is_perfect_power == MP_YES) {
-      for (;;) {
-         if ((e = mp_factors_add(&rootout, factors)) != MP_OKAY) {
-            goto LTM_ERR;
-         }
-         if ((e = mp_decr(&exponent)) != MP_OKAY) {
-            goto LTM_ERR;
-         }
-         /* the root is prime, hence work is done here */
-         if (IS_ZERO(&exponent)) {
-            goto LTM_CHECK;
-         }
-      }
-   }
-#endif
-
    if ((e = mp_factor_intern(&z_, factors)) != MP_OKAY) {
       goto LTM_ERR;
    }

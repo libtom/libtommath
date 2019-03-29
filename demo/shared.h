@@ -23,6 +23,6 @@
 #define LTM_DEMO_RAND_SEED  23
 #endif
 
-#include "tommath.h"
+#include "tommath_private.h"
 
 extern void ndraw(mp_int* a, const char* name);

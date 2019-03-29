@@ -16,14 +16,10 @@
 /* Sort factor-array (an array of mp_int's) */
 #ifdef LTM_USE_EXTRA_FUNCTIONS
 /* TODO: Sorts inline. Work on copy instead? */
-int mp_factors_sort(mp_factors *f)
+void mp_factors_sort(mp_factors *f)
 {
-   int i, idx, e = MP_OKAY;
+   int i, idx;
    mp_int tmp;
-
-   if ((e = mp_init(&tmp)) != MP_OKAY) {
-      return e;
-   }
 
    /*
       It will be almost always be already sorted and even if it is unsorted
@@ -32,21 +28,12 @@ int mp_factors_sort(mp_factors *f)
    for (i = 1 ; i < f->length; i++) {
       idx = i;
       while ((idx > 0) && (mp_cmp(&(f->factors[idx-1]),&(f->factors[idx])) == MP_GT)) {
-         if ((e = mp_copy(&(f->factors[idx]), &tmp)) != MP_OKAY) {
-            goto LTM_ERR;
-         }
-         if ((e = mp_copy(&(f->factors[idx-1]), &(f->factors[idx]))) != MP_OKAY) {
-            goto LTM_ERR;
-         }
-         if ((e = mp_copy(&tmp, &(f->factors[idx-1]))) != MP_OKAY) {
-            goto LTM_ERR;
-         }
+         mp_exch(&(f->factors[idx]), &tmp);
+         mp_exch(&(f->factors[idx-1]), &(f->factors[idx]));
+         mp_exch(&tmp, &(f->factors[idx-1]));
          idx--;
       }
    }
-LTM_ERR:
-   mp_clear(&tmp);
-   return e;
 }
 
 #endif

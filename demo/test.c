@@ -786,6 +786,8 @@ LTM_ERR:
    return EXIT_FAILURE;
 }
 
+
+
 #if defined(LTM_DEMO_REAL_RAND) && !defined(_WIN32)
 static FILE *fd_urandom = 0;
 #endif
@@ -1556,6 +1558,7 @@ LTM_ERR:
 }
 
 
+
 #ifdef LTM_USE_EXTRA_FUNCTIONS
 #if ( (defined LTM_USE_FASTER_VERSIONS) || (defined LTM_USE_FASTER_RADIX_SIZE) )
 
@@ -1923,14 +1926,163 @@ LTM_ERR:
    return EXIT_FAILURE;
 }
 
+
+static int test_mp_factors_sort(void)
+{
+   int e, i, j, k;
+   mp_factors factors;
+   mp_int t, primorial;
+   const char *p_29 = "6469693230";
+   const mp_digit tests[9][10] = {
+      {2, 3, 5, 7, 11, 13, 17, 19, 23, 29},
+      {29, 23, 19, 17, 13, 11, 7, 5, 3, 2},
+      {19, 2, 29, 3, 23, 17, 5, 11, 13, 7},
+      {23, 2, 11, 5, 7, 19, 17, 3, 13, 29},
+      {3, 2, 5, 7, 11, 13, 17, 19, 23, 29},
+      {2, 3, 5, 7, 11, 13, 17, 19, 29, 23},
+      {2, 2, 2, 2,  2,  2,  2,  2,  2, 23},
+      {23, 2, 2, 2,  2,  2,  2,  2,  2, 2},
+      {2, 2, 2, 2,  2,  23,  2,  2,  2, 2},
+   };
+   unsigned long p_2_23 = 11776uL;
+
+   if ((e = mp_factors_init(&factors)) != MP_OKAY) {
+      goto LTM_ERR;
+   }
+   if ((e = mp_init_multi(&t, &primorial, NULL)) != MP_OKAY) {
+      goto LTM_ERR;
+   }
+   if ((e = mp_read_radix(&primorial, p_29, 10)) != MP_OKAY) {
+      goto LTM_ERR;
+   }
+
+   for (i = 0; i < 6; i++) {
+      mp_factors_zero(&factors);
+      for (j = 0; j < 10; j++) {
+         mp_set(&t,tests[i][j]);
+         if ((e = mp_factors_add(&t, &factors)) != MP_OKAY) {
+            goto LTM_ERR;
+         }
+      }
+      mp_factors_sort(&factors);
+      if ((e = mp_factors_product(&factors, &t)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if (mp_cmp(&t, &primorial) != MP_EQ) {
+         goto LTM_ERR;
+      }
+      for (k = 0; k < (factors.length - 1); k++) {
+         if (mp_cmp(&(factors.factors[k]), &(factors.factors[k+1])) == MP_GT) {
+            goto LTM_ERR;
+         }
+      }
+   }
+
+   if ((e = mp_set_long(&primorial, p_2_23)) != MP_OKAY) {
+      goto LTM_ERR;
+   }
+
+   for (i = 6; i < 9; i++) {
+      mp_factors_zero(&factors);
+      for (j = 0; j < 10; j++) {
+         mp_set(&t,tests[i][j]);
+         if ((e = mp_factors_add(&t, &factors)) != MP_OKAY) {
+            goto LTM_ERR;
+         }
+      }
+      mp_factors_sort(&factors);
+      if ((e = mp_factors_product(&factors, &t)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if (mp_cmp(&t, &primorial) != MP_EQ) {
+         goto LTM_ERR;
+      }
+      for (k = 0; k < (factors.length - 1); k++) {
+         if (mp_cmp(&(factors.factors[k]), &(factors.factors[k+1])) == MP_GT) {
+            goto LTM_ERR;
+         }
+      }
+   }
+
+
+   mp_clear_multi(&t, &primorial, NULL);
+   mp_factors_clear(&factors);
+   return EXIT_SUCCESS;
+LTM_ERR:
+   mp_clear_multi(&t, &primorial, NULL);
+   mp_factors_clear(&factors);
+   return EXIT_FAILURE;
+}
+static int test_mp_factors_product(void)
+{
+   int e;
+   int i, j;
+   mp_factors factors;
+   mp_int t, primorial;
+   const char *p_29 = "6469693230";
+   const char *p_1000 =
+      "lWyCCT0aF3uOiLv+kFrAb/EkIbfXTJx+MMPOxI1Dl8aLBCvFRKN/CUTUHwyDdk1sdC8rdjKRFGTd3wE46/iQibo1eoA6l7QW3H2PpQPNb46iK1m2/2Rmhr+Cmxu8eB+KHZoXa7H8pEXdIfufN0hWvfw7o2Sph35IoxakyRoz0nCZiPXLlt4tVsMNHljt+hK67sycluoiFhWR+iCJhtFqX1I21PJok/eNSkr2QM";
+   const mp_digit tests_a[3][10] = {
+      {2, 3, 5, 7, 11, 13, 17, 19, 23, 29},
+      {29, 23, 19, 17, 13, 11, 7, 5, 3, 2},
+      {29, 23, 19, 17,  0, 11, 7, 5, 3, 2}
+   };
+
+   mp_factors_init(&factors);
+   mp_init_multi(&t, &primorial, NULL);
+
+   /* zero length */
+   if ((e = mp_factors_product(&factors, &t)) == MP_OKAY) {
+      goto LTM_ERR;
+   }
+   /* zero in array */
+   mp_factors_zero(&factors);
+   for (j = 0; j < 10; j++) {
+      mp_set(&t,tests_a[2][j]);
+      mp_factors_add(&t, &factors);
+   }
+   mp_factors_product(&factors, &t);
+   if (!IS_ZERO(&t)) {
+      goto LTM_ERR;
+   }
+
+   mp_read_radix(&primorial, p_29, 10);
+
+   for (i = 0; i < 2; i++) {
+      mp_factors_zero(&factors);
+      for (j = 0; j < 10; j++) {
+         mp_set(&t,tests_a[i][j]);
+         mp_factors_add(&t, &factors);
+      }
+      mp_factors_product(&factors, &t);
+      if (mp_cmp(&t, &primorial) != MP_EQ) {puts("AAA");
+         goto LTM_ERR;
+      }
+   }
+   mp_factors_zero(&factors);
+   /* A slightly larger one to trigger the binary splitting algorithm */
+   mp_small_prime_array(0,1000,&factors);
+   mp_factors_product(&factors, &t);
+   mp_read_radix(&primorial, p_1000, 64);
+   if (mp_cmp(&t, &primorial) != MP_EQ) {
+      goto LTM_ERR;
+   }
+
+   mp_clear_multi(&t, &primorial, NULL);
+   mp_factors_clear(&factors);
+   return EXIT_SUCCESS;
+LTM_ERR:
+   mp_clear_multi(&t, &primorial, NULL);
+   mp_factors_clear(&factors);
+   return EXIT_FAILURE;
+}
+
+
 static int test_mp_small_prime_array(void)
 {
-   mp_sieve *base = NULL;
-   mp_sieve *segment = NULL;
-   LTM_SIEVE_UINT single_segment_a = 0;
-   LTM_SIEVE_UINT *prime_array = NULL, array_size, j;
    int e;
-   int i, test_size;
+   int i, test_size, j;
+   mp_factors factors;
    mp_int total, t;
 
    /* For simplicity: just check the primesums */
@@ -1958,35 +2110,24 @@ static int test_mp_small_prime_array(void)
       goto LTM_ERR_1;
    }
 
+   mp_factors_init(&factors);
+
    test_size = (int)(sizeof(to_test_start) / sizeof(LTM_SIEVE_UINT));
 
    for (i = 0; i < test_size; i++) {
       mp_zero(&total);
       /* It is always a different piece of memory */
-      free(prime_array);
-      if ((e = mp_small_prime_array(to_test_start[i], to_test_end[i], &prime_array,
-                                    &array_size, &base,
-                                    &segment, &single_segment_a)) != MP_OKAY) {
+      mp_factors_zero(&factors);
+      if ((e = mp_small_prime_array(to_test_start[i], to_test_end[i], &factors)) != MP_OKAY) {
          fprintf(stderr, "mp_small_prime_array failed with \"%s\" for %u %u\n",
                  mp_error_to_string(e), to_test_start[i], to_test_end[i]);
          goto LTM_ERR;
       }
-      for (j = 0; j < array_size; j++) {
-#ifdef MP_64BIT
-         if ((e = mp_add_d(&total, (mp_digit)prime_array[j], &total)) != MP_OKAY) {
+      for (j = 0; j < factors.length; j++) {
+         if ((e = mp_add(&total, &(factors.factors[j]), &total)) != MP_OKAY) {
             fprintf(stderr,"mp_add_d failed: \"%s\"\n",mp_error_to_string(e));
             goto LTM_ERR;
          }
-#else
-         if ((e = mp_set_long(&t,(mp_word)prime_array[j])) != MP_OKAY) {
-            fprintf(stderr,"mp_set_long (1) failed: \"%s\"\n",mp_error_to_string(e));
-            goto LTM_ERR;
-         }
-         if ((e = mp_add(&total, &t, &total)) != MP_OKAY) {
-            fprintf(stderr,"mp_add failed: \"%s\"\n",mp_error_to_string(e));
-            goto LTM_ERR;
-         }
-#endif
       }
 #ifdef MP_64BIT
       if (mp_cmp_d(&total, (mp_digit)tested[i]) != MP_EQ) {
@@ -2012,16 +2153,12 @@ static int test_mp_small_prime_array(void)
    }
 
    mp_clear_multi(&total, &t, NULL);
-   mp_sieve_clear(base);
-   mp_sieve_clear(segment);
-   free(prime_array);
+   mp_factors_clear(&factors);
    return EXIT_SUCCESS;
 LTM_ERR:
    mp_clear_multi(&total, &t, NULL);
 LTM_ERR_1:
-   mp_sieve_clear(segment);
-   mp_sieve_clear(base);
-   free(prime_array);
+   mp_factors_clear(&factors);
    return EXIT_FAILURE;
 }
 
@@ -2054,7 +2191,7 @@ static int test_mp_factor(void)
    mp_factors_init(&factors);
    mp_zero(&z);
 
-  puts("");
+   puts("");
 
    for (i = 0; i < 2; i++) {
       if ((e = mp_factor(&z,&factors)) != MP_VAL) {
@@ -2098,8 +2235,10 @@ static int test_mp_factor(void)
       if ((e = mp_factor(&z,&factors)) != MP_OKAY) {
          goto LTM_ERR;
       }
-      mp_fwrite(&z, 10, stdout);printf(" -> ");
-      mp_factors_print(&factors, 10, 0, stdout); puts("");
+      mp_fwrite(&z, 10, stdout);
+      printf(" -> ");
+      mp_factors_print(&factors, 10, 0, stdout);
+      puts("");
       free(tmp);
    }
    /* The tests for perfect power had been switched off in mp_factor for now. */
@@ -2114,12 +2253,12 @@ static int test_mp_factor(void)
        already at ... uhm ... gave up waiting after 18 minutes.
        TODO: add a switch to mp_factor?
     */
-    /*
+   /*
    if ((e = mp_primorial((LTM_SIEVE_UINT)65535, &z)) != MP_OKAY) {
-      goto LTM_ERR;
+     goto LTM_ERR;
    }
    if ((e = mp_factor(&z,&factors)) != MP_OKAY) {
-      goto LTM_ERR;
+     goto LTM_ERR;
    }
    */
    mp_clear(&z);
@@ -2131,7 +2270,8 @@ LTM_ERR:
    return EXIT_FAILURE;
 }
 
-static int test_mp_prime_is_prime_deterministic(void){
+static int test_mp_prime_is_prime_deterministic(void)
+{
    mp_int z;
    int e, i, result;
    const char *input_error[] = {
@@ -2155,37 +2295,37 @@ static int test_mp_prime_is_prime_deterministic(void){
    mp_init(&z);
 
    /* Checking erroneous input, must fail */
-   for(i = 0; i < 2; i++){
+   for (i = 0; i < 2; i++) {
       if ((e = mp_read_radix(&z, input_error[i], 10)) != MP_OKAY) {
          goto LTM_ERR;
       }
-      if( (e = mp_prime_is_prime_deterministic(&z, &result) ) == MP_OKAY){
+      if ((e = mp_prime_is_prime_deterministic(&z, &result)) == MP_OKAY) {
          goto LTM_ERR;
       }
    }
 
    /* Checking primes, must answer with MP_YES */
-   for(i = 0; i < (int)(sizeof(input_primes)/sizeof(input_primes[0])); i++){
+   for (i = 0; i < (int)(sizeof(input_primes)/sizeof(input_primes[0])); i++) {
       if ((e = mp_read_radix(&z, input_primes[i], 10)) != MP_OKAY) {
          goto LTM_ERR;
       }
-      if( (e = mp_prime_is_prime_deterministic(&z, &result) ) != MP_OKAY){
+      if ((e = mp_prime_is_prime_deterministic(&z, &result)) != MP_OKAY) {
          goto LTM_ERR;
       }
-      if(result != MP_YES) {
+      if (result != MP_YES) {
          goto LTM_ERR;
       }
    }
 
    /* Checking composites, must answer with MP_NO */
-   for(i = 0; i < (int)(sizeof(input_composites)/sizeof(input_composites[0])); i++){
+   for (i = 0; i < (int)(sizeof(input_composites)/sizeof(input_composites[0])); i++) {
       if ((e = mp_read_radix(&z, input_composites[i], 10)) != MP_OKAY) {
          goto LTM_ERR;
       }
-      if( (e = mp_prime_is_prime_deterministic(&z, &result) ) != MP_OKAY){
+      if ((e = mp_prime_is_prime_deterministic(&z, &result)) != MP_OKAY) {
          goto LTM_ERR;
       }
-      if(result != MP_NO) {
+      if (result != MP_NO) {
          goto LTM_ERR;
       }
    }
@@ -2234,14 +2374,16 @@ int unit_tests(void)
           T(mp_tc_or),
           T(mp_tc_xor)
 #ifdef LTM_USE_EXTRA_FUNCTIONS
-         ,T(mp_expt),
-          T(mp_ilogb),
-          T(mp_is_small_prime),
-          T(mp_next_small_prime),
-          T(mp_prec_small_prime),
-          T(mp_small_prime_array),
-          T(mp_factor),
-          T(mp_prime_is_prime_deterministic)
+     ,T(mp_expt),
+      T(mp_ilogb),
+      T(mp_is_small_prime),
+      T(mp_next_small_prime),
+      T(mp_prec_small_prime),
+      T(mp_small_prime_array),
+      T(mp_factor),
+      T(mp_prime_is_prime_deterministic),
+      T(mp_factors_sort),
+      T(mp_factors_product)
 #endif
 #undef T
    };

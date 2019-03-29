@@ -592,11 +592,41 @@ int mp_prime_random_ex(mp_int *a, int t, int size, int flags, ltm_prime_callback
 #   define LTM_SIEVE_UINT_MAX           0xFFFFFFFFlu
 #   define LTM_SIEVE_UINT_MAX_SQRT      0xFFFFlu
 #endif
+
+/*
+
+typedef struct mp_single_sieve_t {
+      LTM_SIEVE_UINT *content;
+      LTM_SIEVE_UINT size;
+      LTM_SIEVE_UINT alloc;
+} mp_single_sieve;
+
+typedef struct mp_sieve_t {
+   mp_single_sieve base,
+   mp_single_sieve segment,
+   LTM_SIEVE_UINT single_segment_a = 0;
+} mp_sieve;
+
+*/
+
+
 typedef struct mp_sieve_t {
    LTM_SIEVE_UINT *content;   /* bitset holding the sieve */
    LTM_SIEVE_UINT size;       /* number of entries (which is a slightly misleading description) */
    LTM_SIEVE_UINT alloc;      /* size in bytes */
 } mp_sieve;
+
+/* 
+   Simple data structure to hold some mp_int's.
+   Used to hold the factors from factoring, about
+   100 or so max, always with linear r/w access.
+ */
+typedef struct  {
+   int length, alloc;
+   mp_int *factors;
+} mp_factors;
+
+
 /* Init a sieve. Allocates memory for the struct */
 /* int mp_sieve_init(mp_sieve *sieve); */
 /* Clear a sieve. Frees the memory for the content and the struct*/
@@ -623,13 +653,9 @@ int mp_prec_small_prime(LTM_SIEVE_UINT n, LTM_SIEVE_UINT *result, mp_sieve **bas
                         mp_sieve **single_segment, LTM_SIEVE_UINT *single_segment_a);
 
 /*
-   Puts the range of primes between start and end inclusive in "prime_array".
-   Please do not forget to free the memory after use.
+   Puts the range of primes between start and end inclusive in "factors".
 */
-int mp_small_prime_array(LTM_SIEVE_UINT start, LTM_SIEVE_UINT end,
-                         LTM_SIEVE_UINT **prime_array, LTM_SIEVE_UINT *array_length,
-                         mp_sieve **base_sieve, mp_sieve **single_segment,
-                         LTM_SIEVE_UINT *single_segment_a);
+int mp_small_prime_array(LTM_SIEVE_UINT start, LTM_SIEVE_UINT end, mp_factors *factors);
 
 /* Integer logarithm to integer base */
 int mp_ilogb(mp_int *a, mp_digit base, mp_int *c);
@@ -646,17 +672,6 @@ int mp_isperfpower(const mp_int *z, int *result, mp_int *rootout, mp_int *expone
 #ifndef LTM_TRIAL_GROWTH 
 #define LTM_TRIAL_GROWTH 64
 #endif
-
-/* 
-   Simple data structure to hold some of mp_int's.
-   Used to hold the factors from factoring, about
-   100 or so max, always with linear r/w access.
- */
-
-typedef struct  {
-   int length, alloc;
-   mp_int *factors;
-} mp_factors;
 
 /* Trial division with primes up to limit "limit", remainder in "r" */
 int mp_trial(const mp_int *a, int limit, mp_factors *factors, mp_int *r);
@@ -684,7 +699,7 @@ int mp_factors_zero(mp_factors *f);
 int mp_factors_add(const mp_int *a, mp_factors *f);
 
 /* Sort factor-array (an array of mp_int's) */
-int mp_factors_sort(mp_factors *f);
+void mp_factors_sort(mp_factors *f);
 
 /* Print the elememts of a factor-array (an array of mp_int's) */
 int mp_factors_print(mp_factors *f, int base, char delimiter, FILE *stream);

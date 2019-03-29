@@ -497,15 +497,16 @@ void mp_sieve_clear(mp_sieve *sieve)
 }
 
 
-int mp_small_prime_array(LTM_SIEVE_UINT start, LTM_SIEVE_UINT end,
-                         LTM_SIEVE_UINT **prime_array,
-                         LTM_SIEVE_UINT *array_length, mp_sieve **base_sieve,
-                         mp_sieve **single_segment,
-                         LTM_SIEVE_UINT *single_segment_a)
+int mp_small_prime_array(LTM_SIEVE_UINT start, LTM_SIEVE_UINT end, mp_factors *factors)
 {
+   mp_sieve *base = NULL;
+   mp_sieve *segment = NULL;
 
-   LTM_SIEVE_UINT k, ret, approx_pi, allocated = 0;
-   LTM_SIEVE_UINT *tmp_prime_array;
+   LTM_SIEVE_UINT single_segment_a = 0;
+   LTM_SIEVE_UINT k, ret;
+
+   mp_int p;
+
    int e = MP_OKAY;
 
    if (start > end) {
@@ -514,60 +515,47 @@ int mp_small_prime_array(LTM_SIEVE_UINT start, LTM_SIEVE_UINT end,
    if (start > LTM_SIEVE_BIGGEST_PRIME) {
       return MP_VAL;
    }
-
+   /* TODO: return MP_VAL better? */
    if (end > LTM_SIEVE_BIGGEST_PRIME) {
       end = LTM_SIEVE_BIGGEST_PRIME;
    }
 
-#ifndef LTM_SIEVE_GROWTH
-#   define LTM_SIEVE_GROWTH 128
-#endif
-   approx_pi = LTM_SIEVE_GROWTH;
-   allocated = LTM_SIEVE_GROWTH;
-
-   *prime_array = malloc((size_t)(approx_pi) * sizeof(LTM_SIEVE_UINT));
-   if (*prime_array == NULL) {
-      return MP_MEM;
+   if ((e = mp_init(&p)) != MP_OKAY) {
+      return e;
    }
 
    if (start > 0) {
       start--;
    }
-   *array_length = 0u;
    for (k = start, ret = 0; ret < end; k = ret) {
-      if ((e = mp_next_small_prime(k + 1, &ret, base_sieve, single_segment, single_segment_a)) != MP_OKAY) {
+      if ((e = mp_next_small_prime(k + 1, &ret, &base, &segment, &single_segment_a)) != MP_OKAY) {
          if (e == LTM_SIEVE_MAX_REACHED) {
-            (*prime_array)[*array_length] = ret;
+            if ((e = mp_set_long(&p,(unsigned long)ret)) != MP_OKAY) {
+               goto LTM_ERR;
+            }
+            if ((e = mp_factors_add(&p, factors)) != MP_OKAY) {
+               goto LTM_ERR;
+            }
             break;
          }
-         goto LTM_SIEVE_END;
+         goto LTM_END;
       }
-      /* The check if the prime is below the given limit
-       * cannot be done in the for-loop conditions because if 
-       * it could we wouldn't need the sieve in the first place.
-       */
       if (ret <= end) {
-         if ((*array_length) <= allocated) {
-            tmp_prime_array = realloc((*prime_array), ((*array_length) + LTM_SIEVE_GROWTH) * sizeof(LTM_SIEVE_UINT));
-            if (tmp_prime_array == NULL) {
-               return MP_MEM;
-            }
-            *prime_array = tmp_prime_array;
-            allocated = (*array_length) + LTM_SIEVE_GROWTH;
+         if ((e = mp_set_long(&p,(unsigned long)ret)) != MP_OKAY) {
+            goto LTM_ERR;
          }
-         (*prime_array)[(*array_length)++] = ret;
-      }
-      if (ret == LTM_SIEVE_BIGGEST_PRIME) {
-         break;
-      }
-   }
-   tmp_prime_array = realloc((*prime_array), ((*array_length) + 1) * sizeof(LTM_SIEVE_UINT));
-   if (tmp_prime_array == NULL) {
-      return MP_MEM;
-   }
-   *prime_array = tmp_prime_array;
+         if ((e = mp_factors_add(&p, factors)) != MP_OKAY) {
+            goto LTM_ERR;
+         }
 
-LTM_SIEVE_END:
+      }
+   }
+
+LTM_ERR:
+LTM_END:
+   mp_sieve_clear(base);
+   mp_sieve_clear(segment);
+   mp_clear(&p);
    return e;
 }
 #endif /* LTM_USE_EXTRA_FUNCTIONS */

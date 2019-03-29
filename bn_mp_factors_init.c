@@ -16,7 +16,7 @@
 #ifdef LTM_USE_EXTRA_FUNCTIONS
 int mp_factors_init(mp_factors *f)
 {
-   f->factors = OPT_CAST(mp_int) XMALLOC(sizeof(mp_int) * (size_t)(LTM_TRIAL_GROWTH));
+   f->factors = OPT_CAST(mp_int) XCALLOC((size_t)(LTM_TRIAL_GROWTH), sizeof(mp_int));
    if ((f->factors) == NULL) {
       return MP_MEM;
    }
