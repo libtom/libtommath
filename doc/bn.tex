@@ -2111,7 +2111,7 @@ It has two disadvantages: the theory behind assumes the general Riemann hypothes
 The machine for that benchmark was an AMD A8-6600K and the prime generator was LibTomMaths own
  \texttt{mp\_prime\_random\_ex(\&z, 8, size, LTM\_PRIME\_SAFE, myrng, NULL)}.
 
-Despite its large runtime it was the only way to include a deterministic primality test with a small memory footprint, no need for floating point functions and one that works with low MP_xBIT, too.
+Despite its large runtime it was the only way to include a deterministic primality test with a small memory footprint, no need for floating point functions and one that works with low \texttt{MP\_xBIT}, too.
 
 \section{Next Prime}
 \index{mp\_prime\_next\_prime}
@@ -2196,9 +2196,21 @@ The random number generated with these two functions is cryptographically secure
 
 Small prime numbers are those primes that fit in a word of LibTomMath, that is they are smaller than or equal to the size of the type behind \texttt{mp\_word}. Examples at the end of this chapter at page \ref{sec:spnexamples},
 \section{Prime Sieve}
-A prime sieve is implemented as a simple segmented Sieve of Eratosthenes. It is only moderately optimized for space and runtime but should be small enough and also fast enough for almost all use-cases; quite quick for sequential access but relatively slow for random access the way it is implemented. The prime sieve and its functions are part of the ``extra'' package and can be compiled in with \texttt{make extra}. The macro \texttt{LTM\_USE\_EXTRA\_FUNCTIONS} has to be set before \texttt{tommath.h} is included. Printing the small primes needs \texttt{inttypes.h} which must be included before \texttt{tommath.h}.
+A prime sieve is implemented as a simple segmented Sieve of Eratosthenes. It is only moderately optimized for space and runtime but should be small enough and also fast enough for almost all use-cases; quite quick for sequential access but relatively slow for random access.
+
+ The prime sieve and its functions are part of the ``extra'' package and can be compiled in with \texttt{make extra}. The macro \texttt{LTM\_USE\_EXTRA\_FUNCTIONS} has to be set before \texttt{tommath.h} is included. Printing the small primes fneeds \texttt{inttypes.h} which must be included before \texttt{tommath.h}.
 \subsection{Initialization and Clearing}
-Not much work is needed but both sieves, the base sieve and the segment need to be cleared at the end.
+Initializing. It cannot fail because it only sets some default values. Memory is allocated later according to needs.
+\index{mp\_sieve\_init}
+\begin{alltt}
+void mp_sieve_init(mp_sieve *sieve);
+\end{alltt}
+The function \texttt{mp\_sieve\_init} is equivalent to
+\begin{alltt}
+mp_sieve sieve = {NULL, NULL, 0};
+\end{alltt}
+
+Free the memory used by the sieve with
 \index{mp\_sieve\_clear}
 \begin{alltt}
 void mp_sieve_clear(mp_sieve *sieve);
@@ -2208,9 +2220,7 @@ Individual small numbers can be tested for primality with
 \index{mp\_is\_small\_prime}
 \begin{alltt}
 int mp_is_small_prime(LTM_SIEVE_UINT n, LTM_SIEVE_UINT *result,
-                      mp_sieve **base_sieve,
-                      mp_sieve **single_segment,
-                      LTM_SIEVE_UINT *single_segment_a);
+                      mp_sieve *sieve);
 \end{alltt}
 The implementation of this function also does all of the heavy lifting, the building of the base sieve and the segment if one is necessary. The base sieve stays, so this function can be used to ``warm up'' the sieve and, if \texttt{n} is slightly larger than the upper limit of the base sieve, ``warm up'' the first segment, too. It will return \texttt{LTM\_SIEVE\_MAX\_REACHED} to flag the content of \texttt{result} as the last valid one.
 \subsection{Find Adjacent Primes}
@@ -2218,27 +2228,20 @@ To find the prime bigger than a number \texttt{n} use
 \index{mp\_next\_small\_prime}
 \begin{alltt}
 int mp_next_small_prime(LTM_SIEVE_UINT n, LTM_SIEVE_UINT *result,
-                        mp_sieve **base_sieve,
-                        mp_sieve **single_segment,
-                        LTM_SIEVE_UINT *single_segment_a);
+                        mp_sieve *sieve);
 \end{alltt}
 and to find the one smaller than \texttt{n}
 \begin{alltt}
 int mp_prec_small_prime(LTM_SIEVE_UINT n, LTM_SIEVE_UINT *result,
-                        mp_sieve **base_sieve,
-                        mp_sieve **single_segment,
-                        LTM_SIEVE_UINT *single_segment_a);
+                        mp_sieve *sieve);
 \end{alltt}
 \subsection{Prime Sequence}
 The most common use of the small primes is in the form of a continuous sequence. To produce this sequence utilize
 \index{mp\_small\_prime\_array}. The array \texttt{prime\_array} is allocated with \texttt{malloc} internally and needs to be free'd after use.
 \begin{alltt}
 int mp_small_prime_array(LTM_SIEVE_UINT start, LTM_SIEVE_UINT end,
-                         LTM_SIEVE_UINT **prime_array,
-                         LTM_SIEVE_UINT *array_length,
-                         mp_sieve **base_sieve,
-                         mp_sieve **single_segment,
-                         LTM_SIEVE_UINT *single_segment_a);
+                         mp_factors *factors,
+                         mp_sieve *sieve);
 \end{alltt}
 
 \subsection{Useful Constants}
@@ -2272,20 +2275,23 @@ It is a shortcut for \verb!CHAR\_BIT * sizeof(LTM\_SIEVE\_UINT)!.
 
 \subsection{Examples}\label{sec:spnexamples}
 \subsubsection{Initialization and Clearing}
-Every prime-producing function listed in this chapter needs a short prologue and an even shorter epilogue. We need the two sieves, the base sieve and the segment at hand and initialized and a variable to hold the start value of the individual segment in use in the prologue. All three will be needed no matter if a segment is needed or not and both sieves need to be cleared, too
+Using a sieve follows the same procedure as using a bigint:
 \begin{alltt}
-/* Declare the three variables needed and initialize them*/
-mp_sieve *base = NULL;
-mp_sieve *segment = NULL;
-LTM_SIEVE_UINT single_segment_a = 0;
+/* Declaration */
+mp_sieve sieve;
 
+/*
+   Initialization.
+   Cannot fail, only sets a handful of default values.
+   Memory allocation is done in the library itself
+   according to needs.
+ */
+mp_sieve_init(&sieve);
 
-/* use the sieve(s) */
-
+/* use the sieve */
 
 /* Clean up */
-   mp_sieve_clear(base);
-   mp_sieve_clear(segment);
+mp_sieve_clear(&sieve);
 \end{alltt}
 \subsubsection{Primality Test}
 A small program to test the input of a small number for primality.
@@ -2320,9 +2326,9 @@ int main(int argc, char **argv)
       goto LTM_ERR;
    }
 
-   if ((e = mp_is_small_prime(number, &result,
-                              &base, &segment,
-                              &single_segment_a)) != MP_OKAY) {
+   mp_sieve_init(&sieve);
+
+   if ((e = mp_is_small_prime(number, &result, &sieve)) != MP_OKAY) {
       fprintf(stderr,"mp_is_small_number failed: \textbackslash{}"%s\textbackslash{}"\textbackslash{}n",
               mp_error_to_string(e));
       goto LTM_ERR;
@@ -2332,12 +2338,10 @@ int main(int argc, char **argv)
            number,(result)?"":"not");
 
 
-   mp_sieve_clear(base);
-   mp_sieve_clear(segment);
+   mp_sieve_clear(&sieve);
    exit(EXIT_SUCCESS);
 LTM_ERR:
-   mp_sieve_clear(base);
-   mp_sieve_clear(segment);
+   mp_sieve_clear(&sieve);
    exit(EXIT_FAILURE);
 }
 \end{alltt}
@@ -2353,9 +2357,7 @@ To sum up all primes up to and including \texttt{LTM\_SIEVE\_BIGGEST\_PRIME} you
 int main(int argc, char **argv)
 {
    LTM_SIEVE_UINT number;
-   mp_sieve *base = NULL;
-   mp_sieve *segment = NULL;
-   LTM_SIEVE_UINT single_segment_a = 0;
+   mp_sieve sieve;
    LTM_SIEVE_UINT k, ret;
    mp_int total, t;
    int e;
@@ -2381,10 +2383,10 @@ int main(int argc, char **argv)
       return EXIT_FAILURE
    }
 
+   mp_sieve_init(&sieve);
+
    for (k = 0, ret = 0; ret < number; k = ret) {
-      if ((e = mp_next_small_prime(k + 1, &ret,
-                                   &base, &segment,
-                                   &single_segment_a)) != MP_OKAY) {
+      if ((e = mp_next_small_prime(k + 1, &ret, &sieve)) != MP_OKAY) {
          if (e == LTM_SIEVE_MAX_REACHED) {
 #ifdef MP_64BIT
             if ((e = mp_add_d(&total, (mp_digit) k, &total)) != MP_OKAY) {
@@ -2406,7 +2408,7 @@ int main(int argc, char **argv)
 #endif
             break;
          }
-         fprintf(stderr,"mp_next_small_radix failed: \textbackslash{}"%s\textbackslash{}"\textbackslash{}n",
+         fprintf(stderr,"mp_next_small_prime failed: \textbackslash{}"%s\textbackslash{}"\textbackslash{}n",
                  mp_error_to_string(e));
          goto LTM_ERR;
       }
@@ -2440,13 +2442,11 @@ int main(int argc, char **argv)
    putchar('\textbackslash{}n');
 
    mp_clear_multi(&total, &t, NULL);
-   mp_sieve_clear(base);
-   mp_sieve_clear(segment);
+   mp_sieve_clear(&sieve);
    exit(EXIT_SUCCESS);
 LTM_ERR:
    mp_clear_multi(&total, &t, NULL);
-   mp_sieve_clear(segment);
-   mp_sieve_clear(base);
+   mp_sieve_clear(&sieve);
    exit(EXIT_FAILURE);
 }
 \end{alltt}
@@ -2458,18 +2458,13 @@ A short sequence of primes can be produced with:
 #include <stdlib.h>
 #include <stdio.h>
 #include <errno.h>
-/* inttypes.h must be included before tommath.h*/
-#include <inttypes.h>
 /* Must be defined before tommath.h is included */
 #define LTM_USE_EXTRA_FUNCTIONS
 #include <tommath.h>
 int main(int argc, char **argv)
 {
    LTM_SIEVE_UINT a, b;
-   mp_sieve *base = NULL;
-   mp_sieve *segment = NULL;
-   LTM_SIEVE_UINT single_segment_a = 0;
-   LTM_SIEVE_UINT *prime_array, array_size, j;
+   mp_factors factors;
    int e;
 
    if (argc != 3) {
@@ -2504,26 +2499,18 @@ int main(int argc, char **argv)
    }
 #endif
 
-   if ((e = mp_small_prime_array(a, b, &prime_array,
-                                 &array_size, &base, &segment,
-                                 &single_segment_a)) != MP_OKAY) {
+   if ((e = mp_small_prime_array(a, b, &factors)) != MP_OKAY) {
       fprintf(stderr,"mp_small_prime_array failed: \textbackslash{}"%s\textbackslash{}"\textbackslash{}n",
               mp_error_to_string(e));
       goto LTM_ERR;
    }
-   for (j = 0; j < (array_size - 1); j++) {
-      printf("%" LTM_SIEVE_PR_UINT", ",prime_array[j]);
-   }
-   printf("%" LTM_SIEVE_PR_UINT"\textbackslash{}n",prime_array[j]);
+   
+   mp_factors_print(&factors, 10, 0, stdout);
 
-   mp_sieve_clear(base);
-   mp_sieve_clear(segment);
-   free(prime_array);
+   mp_factors_clear(&factors);
    exit(EXIT_SUCCESS);
 LTM_ERR:
-   mp_sieve_clear(segment);
-   mp_sieve_clear(base);
-   free(prime_array);
+   mp_factors_clear(&factors);
    exit(EXIT_FAILURE);
 }
 \end{alltt}
@@ -2557,11 +2544,11 @@ Initialize the factor list by allocating a certain amount of memory and setting 
 \item
 \index{mp\_factors\_clear}
 \verb!void mp_factors_clear(mp_factors *f);!\\
-This function free's all memory used. It does not zero out the used memory before free'ing it, use \texttt{mp\_factors\_zero} to clean the memory before free'ing it.
+This function free's all memory used.
 \item
 \index{mp\_factors\_zero}
 \verb!int mp_factors_zero(mp_factors *f);!\\
-Zero the elements of the factor list and allocate (fresh) memory of default size in that order.
+Remove the elements of the factor list and allocate (fresh) memory of default size in that order.
 \item
 \index{mp\_factors\_add}
 \verb!int mp_factors_add(const mp_int *a, mp_factors *f);!\\
@@ -2578,13 +2565,14 @@ Prints the element of the list in base \texttt{base} to \texttt{stream} with the
 \item
 \index{mp\_factors\_product}
 \verb!int mp_factors_product(mp_factors *factors, mp_int *p);!\\
-Multiplies all elements of the list. It does not recognize sparse lists, every zero in the list gets multiplied, too. It does multiply the list with a binary-splitting algorithm which assumes a highly or better fully sorted list to work properly.
+Multiplies all elements of the list. It does not recognize sparse lists, every zero in the list gets multiplied, too. It does multiply the list with a binary-splitting algorithm which assumes a highly or better fully sorted list to work optimally.
 \end{description}
 
 The function \texttt{mp\_factor} uses two different factorization algorithms. The first one does just trial division with the small primes generated by a sieve and is
 \index{mp\_trial}
 \begin{alltt}
-int mp_trial(const mp_int *a, int limit, mp_factors *factors, mp_int *r);
+int mp_trial(const mp_int *a, int limit, 
+             mp_factors *factors, mp_int *r);
 \end{alltt}
 It tries all small primes up to the limit \texttt{limit}, puts all factors it finds in the list \texttt{factors} and the remainder in \texttt{r},
 
@@ -2596,7 +2584,7 @@ int mp_pollard_rho(const mp_int *n, mp_int *factor);
 It is used to compute all factors left over by the function \texttt{mp\_factor}. Both functions \texttt{mp\_trial} and \texttt{mp\_pollard\_rho} are not meant to be used as a standalone function, please consult the source of the respective functions for the necessary information.
 
 
-The function \texttt{mp\_factors\_product} does already most of the work so it was not much work to implement a function to compute a primorial.
+The function \texttt{mp\_factors\_product} does already most of the work so it was not much left to do to implement a function to compute a primorial.
 \index{mp\_primorial}
 \begin{alltt}
 int mp_primorial(const LTM_SIEVE_UINT n, mp_int *p);
