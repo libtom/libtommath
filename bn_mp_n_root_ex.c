@@ -19,13 +19,13 @@
  * This algorithm uses Newton's approximation
  * x[i+1] = x[i] - f(x[i])/f'(x[i])
  * which will find the root in log(N) time where
- * each step involves a fair bit.  This is not meant to
- * find huge roots [square and cube, etc].
+ * each step involves a fair bit.
  */
 int mp_n_root_ex(const mp_int *a, mp_digit b, mp_int *c, int fast)
 {
    mp_int  t1, t2, t3, a_;
-   int     res;
+   int   res, cmp;
+   int ilog2;
 
    /* input must be positive if b is even */
    if (((b & 1u) == 0u) && (a->sign == MP_NEG)) {
@@ -48,9 +48,49 @@ int mp_n_root_ex(const mp_int *a, mp_digit b, mp_int *c, int fast)
    a_ = *a;
    a_.sign = MP_ZPOS;
 
-   /* t2 = 2 */
-   mp_set(&t2, 2uL);
+   /* Compute seed: 2^(log_2(n)/b + 2)*/
+   ilog2 = mp_count_bits(a);
 
+   /*
+      GCC and clang do not understand the sizeof tests and complain,
+      icc (the Intel compiler) seems to understand, at least it doesn't complain.
+      2 of 3 say these macros are necessary, so there they are.
+   */
+#if ( !(defined MP_8BIT) && !(defined MP_16BIT) )
+   /*
+       The type of mp_digit might be larger than an int.
+       If "b" is larger than INT_MAX it is also larger than
+       log_2(n) because the bit-length of the "n" is measured
+       with an int and hence the root is always < 2 (two).
+    */
+   if (sizeof(mp_digit) >= sizeof(int)) {
+      if (b > (mp_digit)(INT_MAX/2)) {
+         mp_set(c, 1uL);
+         c->sign = a->sign;
+         res = MP_OKAY;
+         goto LBL_T3;
+      }
+   }
+#endif
+   /* "b" is smaller than INT_MAX, we can cast safely */
+   if (ilog2 < (int)b) {
+      mp_set(c, 1uL);
+      c->sign = a->sign;
+      res = MP_OKAY;
+      goto LBL_T3;
+   }
+   ilog2 =  ilog2 / ((int)b);
+   if (ilog2 == 0) {
+      mp_set(c, 1uL);
+      c->sign = a->sign;
+      res = MP_OKAY;
+      goto LBL_T3;
+   }
+   /* Start value must be larger than root */
+   ilog2 += 2;
+   if ((res = mp_2expt(&t2,ilog2)) != MP_OKAY) {
+      goto LBL_T3;
+   }
    do {
       /* t1 = t2 */
       if ((res = mp_copy(&t2, &t1)) != MP_OKAY) {
@@ -63,7 +103,6 @@ int mp_n_root_ex(const mp_int *a, mp_digit b, mp_int *c, int fast)
       if ((res = mp_expt_d_ex(&t1, b - 1u, &t3, fast)) != MP_OKAY) {
          goto LBL_T3;
       }
-
       /* numerator */
       /* t2 = t1**b */
       if ((res = mp_mul(&t3, &t1, &t2)) != MP_OKAY) {
@@ -89,14 +128,39 @@ int mp_n_root_ex(const mp_int *a, mp_digit b, mp_int *c, int fast)
       if ((res = mp_sub(&t1, &t3, &t2)) != MP_OKAY) {
          goto LBL_T3;
       }
+      /*
+          Number of rounds is at most log_2(root). If it is more it
+          got stuck, so break out of the loop and do the rest manually.
+       */
+      if (ilog2-- == 0) {
+         break;
+      }
    }  while (mp_cmp(&t1, &t2) != MP_EQ);
 
    /* result can be off by a few so check */
+   /* Loop beneath can overshoot by one if found root is smaller than actual root */
    for (;;) {
       if ((res = mp_expt_d_ex(&t1, b, &t2, fast)) != MP_OKAY) {
          goto LBL_T3;
       }
-
+      cmp = mp_cmp(&t2, &a_);
+      if (cmp == MP_EQ) {
+         res = MP_OKAY;
+         goto LBL_T3;
+      }
+      if (cmp == MP_LT) {
+         if ((res = mp_add_d(&t1, 1uL, &t1)) != MP_OKAY) {
+            goto LBL_T3;
+         }
+      } else {
+         break;
+      }
+   }
+   /* correct overshoot from above or from recurrence */
+   for (;;) {
+      if ((res = mp_expt_d_ex(&t1, b, &t2, fast)) != MP_OKAY) {
+         goto LBL_T3;
+      }
       if (mp_cmp(&t2, &a_) == MP_GT) {
          if ((res = mp_sub_d(&t1, 1uL, &t1)) != MP_OKAY) {
             goto LBL_T3;
@@ -123,7 +187,6 @@ LBL_T1:
    return res;
 }
 #endif
-
 /* ref:         $Format:%D$ */
 /* git commit:  $Format:%H$ */
 /* commit time: $Format:%ai$ */
