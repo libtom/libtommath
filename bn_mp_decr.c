@@ -16,7 +16,7 @@
 /* Decrement "a" by one like "a--". Changes input! */
 int mp_decr(mp_int *a)
 {
-   int e;
+   int e = MP_OKAY;
    if (IS_ZERO(a)) {
       mp_set(a,1uL);
       a->sign = MP_NEG;
@@ -37,9 +37,8 @@ int mp_decr(mp_int *a)
          mp_zero(a);
       }
       return MP_OKAY;
-   } else  {
-      return mp_sub_d(a, 1uL,a);
    }
+   return mp_sub_d(a, 1uL,a);
 }
 
 

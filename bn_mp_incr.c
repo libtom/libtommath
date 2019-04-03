@@ -15,7 +15,7 @@
 /* Increment "a" by one like "a++". Changes input! */
 int mp_incr(mp_int *a)
 {
-   int e;
+   int e = MP_OKAY;
    if (IS_ZERO(a)) {
       mp_set(a,1uL);
       return MP_OKAY;
@@ -32,9 +32,8 @@ int mp_incr(mp_int *a)
    } else if (a->dp[0] < MP_MASK) {
       a->dp[0]++;
       return MP_OKAY;
-   } else {
-      return mp_add_d(a, 1uL,a);
    }
+   return mp_add_d(a, 1uL,a);
 }
 
 #endif
