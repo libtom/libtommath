@@ -567,6 +567,11 @@ int mp_prime_next_prime(mp_int *a, int t, int bbs_style);
  */
 int mp_prime_random_ex(mp_int *a, int t, int size, int flags, ltm_prime_callback cb, void *dat);
 
+
+/* Integer logarithm to integer base */
+int mp_ilogb(mp_int *a, mp_digit base, mp_int *c);
+
+
 /* ---> radix conversion <--- */
 int mp_count_bits(const mp_int *a);
 
