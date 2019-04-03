@@ -30,7 +30,7 @@ int mp_decr(mp_int *a)
       if (!IS_ZERO(a)) {
          a->sign = MP_NEG;
       }
-      a->sign = MP_NEG;
+      return MP_OKAY;
    } else if (a->dp[0] > 1uL) {
       a->dp[0]--;
       if (a->dp[0] == 0) {
