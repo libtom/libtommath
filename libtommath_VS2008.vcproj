@@ -401,6 +401,10 @@
 			>
 		</File>
 		<File
+			RelativePath="bn_mp_decr.c"
+			>
+		</File>
+		<File
 			RelativePath="bn_mp_div.c"
 			>
 		</File>
@@ -498,6 +502,10 @@
 		</File>
 		<File
 			RelativePath="bn_mp_import.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_mp_incr.c"
 			>
 		</File>
 		<File

@@ -361,8 +361,14 @@ int mp_cmp_d(const mp_int *a, mp_digit b);
 /* c = a + b */
 int mp_add_d(const mp_int *a, mp_digit b, mp_int *c);
 
+/* Increment "a" by one like "a++". Changes input! */
+int mp_incr(mp_int *a);
+
 /* c = a - b */
 int mp_sub_d(const mp_int *a, mp_digit b, mp_int *c);
+
+/* Decrement "a" by one like "a--". Changes input! */
+int mp_decr(mp_int *a);
 
 /* c = a * b */
 int mp_mul_d(const mp_int *a, mp_digit b, mp_int *c);

@@ -256,6 +256,23 @@ BN_MP_COPY_C
 BN_MP_COUNT_BITS_C
 
 
+BN_MP_DECR_C
++--->BN_MP_SET_C
+|   +--->BN_MP_ZERO_C
++--->BN_MP_INCR_C
+|   +--->BN_MP_ADD_D_C
+|   |   +--->BN_MP_GROW_C
+|   |   +--->BN_MP_SUB_D_C
+|   |   |   +--->BN_MP_CLAMP_C
+|   |   +--->BN_MP_CLAMP_C
++--->BN_MP_ZERO_C
++--->BN_MP_SUB_D_C
+|   +--->BN_MP_GROW_C
+|   +--->BN_MP_ADD_D_C
+|   |   +--->BN_MP_CLAMP_C
+|   +--->BN_MP_CLAMP_C
+
+
 BN_MP_DIV_2D_C
 +--->BN_MP_COPY_C
 |   +--->BN_MP_GROW_C
@@ -2355,6 +2372,23 @@ BN_MP_IMPORT_C
 |   |   +--->BN_MP_RSHD_C
 |   +--->BN_MP_CLAMP_C
 +--->BN_MP_CLAMP_C
+
+
+BN_MP_INCR_C
++--->BN_MP_SET_C
+|   +--->BN_MP_ZERO_C
++--->BN_MP_DECR_C
+|   +--->BN_MP_ZERO_C
+|   +--->BN_MP_SUB_D_C
+|   |   +--->BN_MP_GROW_C
+|   |   +--->BN_MP_ADD_D_C
+|   |   |   +--->BN_MP_CLAMP_C
+|   |   +--->BN_MP_CLAMP_C
++--->BN_MP_ADD_D_C
+|   +--->BN_MP_GROW_C
+|   +--->BN_MP_SUB_D_C
+|   |   +--->BN_MP_CLAMP_C
+|   +--->BN_MP_CLAMP_C
 
 
 BN_MP_INIT_C

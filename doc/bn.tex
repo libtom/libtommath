@@ -2284,6 +2284,12 @@ These work like the full mp\_int capable variants except the second parameter $b
 functions fairly handy if you have to work with relatively small numbers since you will not have to allocate
 an entire mp\_int to store a number like $1$ or $2$.
 
+The functions \texttt{mp\_incr} and \texttt{mp\_decr} mimic the postfix operators \texttt{++} and \texttt{--} respectively, to increment the input by one. They call the full single-digit functions if the addition would carry. Both functions need to be included in a minimized library because they call each other in case of a negative input, These functions change the inputs!
+\begin{alltt}
+int mp_incr(mp_int *a);
+int mp_decr(mp_int *a);
+\end{alltt}
+
 
 The division by three can be made faster by replacing the division with a multiplication by the multiplicative inverse of three.
 
