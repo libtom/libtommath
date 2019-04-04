@@ -376,6 +376,9 @@ int mp_div_3(const mp_int *a, mp_int *c, mp_digit *d);
 int mp_expt_d(const mp_int *a, mp_digit b, mp_int *c);
 int mp_expt_d_ex(const mp_int *a, mp_digit b, mp_int *c, int fast);
 
+/* exponentiate a^b = c with a, b, c big integers */
+int mp_expt(const mp_int *a, const mp_int *b, mp_int *c);
+
 /* c = a mod b, 0 <= c < b  */
 int mp_mod_d(const mp_int *a, mp_digit b, mp_digit *c);
 

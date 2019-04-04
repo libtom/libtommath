@@ -1602,6 +1602,50 @@ LTM_ERR:
    return EXIT_FAILURE;
 }
 
+static int test_mp_expt(void)
+{
+   mp_int a, b, c;
+   int e;
+   mp_digit i, j;
+
+   if ((e = mp_init_multi(&a, &b, &c, NULL)) != MP_OKAY) {
+      return EXIT_FAILURE;
+   }
+
+   for (j = 3; j < 33; j+=2) {
+      mp_set(&a, j);
+#if ( (defined MP_8BIT) || (defined MP_16BIT) )
+      for (i = 2; i < MP_MASK; i <<= 1) {
+#else
+      for (i = 2; i < (1lu << 17); i <<= 1) {
+#endif
+         mp_set(&b, i);
+         mp_expt(&a, &b, &c);
+         mp_n_root(&c, b.dp[0], &c);
+         if (mp_cmp(&c, &a) != MP_EQ) {
+            fprintf(stderr,"mp_exp failed for %d^%d\n", (int) j, (int) i);
+            goto LTM_ERR;
+         }
+      }
+
+      mp_rand(&a, 10);
+      for (i = 3; i < 10; i++) {
+         mp_set(&b, i);
+         mp_expt(&a, &b, &c);
+         mp_n_root(&c, b.dp[0], &c);
+         if (mp_cmp(&c, &a) != MP_EQ) {
+            fprintf(stderr,"mp_exp failed for x^%d\n", (int) i);
+            goto LTM_ERR;
+         }
+      }
+   }
+   mp_clear_multi(&a, &b, &c, NULL);
+   return EXIT_SUCCESS;
+LTM_ERR:
+   mp_clear_multi(&a, &b, &c, NULL);
+   return EXIT_FAILURE;
+}
+
 static int test_mp_balance_mul(void)
 {
    mp_int a, b, c;
@@ -1678,7 +1722,8 @@ int unit_tests(void)
       T(mp_tc_xor),
       T(mp_incr),
       T(mp_decr),
-      T(mp_balance_mul)
+      T(mp_balance_mul),
+      T(mp_expt)
 #undef T
    };
    unsigned long i;

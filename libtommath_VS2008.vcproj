@@ -449,6 +449,10 @@
 			>
 		</File>
 		<File
+			RelativePath="bn_mp_expt.c"
+			>
+		</File>
+		<File
 			RelativePath="bn_mp_expt_d.c"
 			>
 		</File>
