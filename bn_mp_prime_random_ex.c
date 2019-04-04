@@ -123,7 +123,7 @@ int mp_prime_random_ex(mp_int *a, int t, int size, int flags, ltm_prime_callback
 
    err = MP_OKAY;
 error:
-   XFREE(tmp);
+   XFREE(tmp, bsize);
    return err;
 }
 
