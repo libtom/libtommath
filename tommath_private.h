@@ -85,8 +85,8 @@ int func_name (mp_int * a, type b)                       \
      mp_zero(a);                                         \
      while (b != 0u) {                                   \
         a->dp[x++] = ((mp_digit)b & MP_MASK);            \
-        if (8 * sizeof (b) <= DIGIT_BIT) { break; }      \
-        b >>= (8 * sizeof (b) <= DIGIT_BIT ? 0 : DIGIT_BIT); \
+        if (CHAR_BIT * sizeof (b) <= DIGIT_BIT) { break; } \
+        b >>= (CHAR_BIT * sizeof (b) <= DIGIT_BIT ? 0 : DIGIT_BIT); \
      }                                                   \
      a->used = x;                                        \
    }                                                     \
