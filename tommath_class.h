@@ -41,6 +41,7 @@
 #   define BN_MP_COMPLEMENT_C
 #   define BN_MP_COPY_C
 #   define BN_MP_COUNT_BITS_C
+#   define BN_MP_DECR_C
 #   define BN_MP_DIV_C
 #   define BN_MP_DIV_2_C
 #   define BN_MP_DIV_2D_C
@@ -66,6 +67,7 @@
 #   define BN_MP_GET_LONG_LONG_C
 #   define BN_MP_GROW_C
 #   define BN_MP_IMPORT_C
+#   define BN_MP_INCR_C
 #   define BN_MP_INIT_C
 #   define BN_MP_INIT_COPY_C
 #   define BN_MP_INIT_MULTI_C
@@ -273,6 +275,13 @@
 #if defined(BN_MP_COUNT_BITS_C)
 #endif
 
+#if defined(BN_MP_DECR_C)
+#   define BN_MP_SET_C
+#   define BN_MP_INCR_C
+#   define BN_MP_ZERO_C
+#   define BN_MP_SUB_D_C
+#endif
+
 #if defined(BN_MP_DIV_C)
 #   define BN_MP_CMP_MAG_C
 #   define BN_MP_COPY_C
@@ -458,6 +467,12 @@
 #   define BN_MP_ZERO_C
 #   define BN_MP_MUL_2D_C
 #   define BN_MP_CLAMP_C
+#endif
+
+#if defined(BN_MP_INCR_C)
+#   define BN_MP_SET_C
+#   define BN_MP_DECR_C
+#   define BN_MP_ADD_D_C
 #endif
 
 #if defined(BN_MP_INIT_C)
