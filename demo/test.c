@@ -811,7 +811,7 @@ static int test_mp_prime_rand(void)
 
    /* test for size */
    for (ix = 10; ix < 128; ix++) {
-      printf("Testing (not safe-prime): %9d bits    \n", ix);
+      printf("\rTesting (not safe-prime): %9d bits    ", ix);
       fflush(stdout);
       DO(mp_prime_rand(&a, 8, ix, (rand_int() & 1) ? 0 : MP_PRIME_2MSB_ON));
       EXPECT(mp_count_bits(&a) == ix);
@@ -1529,6 +1529,177 @@ LBL_ERR:
    return EXIT_FAILURE;
 }
 
+static int test_mp_is_small_prime(void)
+{
+   mp_sieve sieve;
+   mp_err e;
+   int i, test_size;
+
+   const mp_sieve_prime to_test[] = {
+      52, 137, 153, 179, 6, 153, 53, 132, 150, 65,
+      27414, 36339, 36155, 11067, 52060, 5741,
+      29755, 2698, 52572, 13053, 9375, 47241,39626,
+      207423, 128857, 37419, 141696, 189465,
+      41503, 127370, 91673, 8473, 479142414, 465566339,
+      961126169, 1057886067, 1222702060, 1017450741,
+      1019879755, 72282698, 2048787577, 2058368053
+   };
+   const bool tested[] = {
+      false, true, false, true, false, false, true, false, false,
+      false, false, false, false, false, false, true, false, false,
+      false, false, false, false, false, false, true, false, false,
+      false, false, false, true, false, false, false, true, false,
+      false, false, false, false, true, false
+   };
+   bool result;
+
+   mp_sieve_init(&sieve);
+
+   test_size = (int)(sizeof(to_test)/sizeof(mp_sieve_prime));
+
+   for (i = 0; i < test_size; i++) {
+      if ((e = mp_is_small_prime(to_test[i], &result, &sieve)) != MP_OKAY) {
+         fprintf(stderr,"mp_is_small_prime failed: \"%s\"\n",mp_error_to_string(e));
+         goto LTM_ERR;
+      }
+      if (result != tested[i]) {
+         fprintf(stderr,"mp_is_small_prime failed for %lu. Said %lu but is %lu \n",
+                 (unsigned long)to_test[i], (unsigned long)result, (unsigned long)tested[i]);
+         goto LTM_ERR;
+      }
+   }
+   mp_sieve_clear(&sieve);
+   return EXIT_SUCCESS;
+LTM_ERR:
+   mp_sieve_clear(&sieve);
+   return EXIT_FAILURE;
+}
+
+static int test_mp_next_small_prime(void)
+{
+   mp_sieve sieve;
+   mp_sieve_prime ret = 0lu, p;
+   mp_int primesum, t;
+   mp_err e;
+   int i, test_size;
+
+   /* Jumping wildly to and fro */
+   const mp_sieve_prime to_test[] = {
+      52, 137, 153, 179, 6, 153, 53, 132, 150, 65,
+      27414, 36339, 36155, 11067, 52060, 5741,
+      29755, 2698, 52572, 13053, 9375, 47241,
+      39626, 207423, 128857, 37419, 141696, 189465,
+      41503, 127370, 91673, 8473, 479142414, 465566339,
+      961126169, 1057886067, 1222702060, 1017450741,
+      1019879755, 72282698, 2048787577, 2058368053
+   };
+   const mp_sieve_prime tested[] = {
+      53, 137, 157, 179, 7, 157, 53, 137, 151, 67,
+      27427, 36341, 36161, 11069, 52067, 5741,
+      29759, 2699, 52579, 13063, 9377, 47251,
+      39631, 207433, 128857, 37423, 141697, 189467,
+      41507, 127373, 91673, 8501, 479142427, 465566393,
+      961126169, 1057886083, 1222702081, 1017450823,
+      1019879761, 72282701, 2048787577, 2058368113
+   };
+   const char *primesum_32 = "202259606268580";
+
+   mp_sieve_init(&sieve);
+
+   test_size = (int)(sizeof(to_test)/sizeof(mp_sieve_prime));
+
+   for (i = 0; i < test_size; i++) {
+      if ((e = mp_next_small_prime(to_test[i], &ret, &sieve)) != MP_OKAY) {
+         fprintf(stderr,"mp_next_small_prime failed with \"%s\" at index %d\n",
+                 mp_error_to_string(e), i);
+         goto LBL_ERR;
+      }
+      if (ret != tested[i]) {
+         fprintf(stderr,"mp_next_small_prime failed for %lu. Said %lu but is %lu \n",
+                 (unsigned long)to_test[i], (unsigned long)ret, (unsigned long)tested[i]);
+         goto LBL_ERR;
+      }
+   }
+
+   DOR(mp_init_multi(&primesum, &t, NULL));
+
+   for (p = 4293918720lu; ret < (mp_sieve_prime)MP_SIEVE_BIGGEST_PRIME;) {
+      DO(mp_next_small_prime(p, &ret, &sieve));
+      p = ret + 1u;
+#ifdef MP_64BIT
+      mp_set_u64(&t, ret);
+#else
+      mp_set_u32(&t, ret);
+#endif
+      DO(mp_add(&primesum, &t, &primesum));
+   }
+   printf("Primesum computed: ");
+   DO(mp_fwrite(&primesum, 10, stdout));
+   puts("");
+   DO(mp_read_radix(&t, primesum_32, 10));
+   EXPECT(mp_cmp(&primesum, &t) == MP_EQ);
+
+   mp_sieve_clear(&sieve);
+   mp_clear_multi(&primesum, &t, NULL);
+   return EXIT_SUCCESS;
+LBL_ERR:
+   mp_clear_multi(&primesum, &t, NULL);
+   mp_sieve_clear(&sieve);
+   return EXIT_FAILURE;
+}
+
+static int test_mp_prec_small_prime(void)
+{
+   mp_sieve sieve;
+   mp_sieve_prime ret;
+   mp_err e;
+   int i, test_size;
+
+   const mp_sieve_prime to_test[] = {
+      52, 137, 153, 179, 6, 153, 53, 132, 150, 65,
+      27414, 36339, 36155, 11067, 52060, 5741,
+      29755, 2698, 52572, 13053, 9375, 47241,
+      39626, 207423, 128857, 37419, 141696, 189465,
+      41503, 127370, 91673, 8473, 479142414, 465566339,
+      961126169, 1057886067, 1222702060, 1017450741,
+      1019879755, 72282698, 2048787577, 2058368053
+   };
+   const mp_sieve_prime tested[] = {
+      47, 137, 151, 179, 5, 151, 53, 131, 149, 61,
+      27409, 36319, 36151, 11059, 52057, 5741,
+      29753, 2693, 52571, 13049, 9371, 47237,
+      39623, 207409, 128857, 37409, 141689, 189463,
+      41491, 127363, 91673, 8467, 479142413, 465566323,
+      961126169, 1057886029, 1222702051, 1017450739,
+      1019879717, 72282697, 2048787577, 2058368051
+   };
+
+   mp_sieve_init(&sieve);
+
+   test_size = (int)(sizeof(to_test)/sizeof(mp_sieve_prime));
+
+   for (i = 0; i < test_size; i++) {
+      if ((e = mp_prec_small_prime(to_test[i], &ret, &sieve)) != MP_OKAY) {
+         fprintf(stderr,"mp_prec_small_prime failed with \"%s\" at index %d\n",
+                 mp_error_to_string(e), i);
+         goto LTM_ERR;
+      }
+      if (ret != tested[i]) {
+         fprintf(stderr,"mp_prec_small_prime failed for %lu. Said %lu but is %lu \n",
+                 (unsigned long)to_test[i], (unsigned long)ret, (unsigned long)tested[i]);
+         goto LTM_ERR;
+      }
+   }
+
+   mp_sieve_clear(&sieve);
+   return EXIT_SUCCESS;
+LTM_ERR:
+   mp_sieve_clear(&sieve);
+   return EXIT_FAILURE;
+}
+
+
+
 /*
    Cannot test mp_exp(_d) without mp_root_n and vice versa.
    So one of the two has to be tested from scratch.
@@ -2240,6 +2411,11 @@ static int unit_tests(int argc, char **argv)
       T1(mp_prime_next_prime, MP_PRIME_NEXT_PRIME),
       T1(mp_prime_rand, MP_PRIME_RAND),
       T1(mp_rand, MP_RAND),
+
+      T1(mp_is_small_prime, MP_IS_SMALL_PRIME),
+      T1(mp_next_small_prime, MP_NEXT_SMALL_PRIME),
+      T1(mp_prec_small_prime, MP_PREC_SMALL_PRIME),
+
       T1(mp_read_radix, MP_READ_RADIX),
       T1(mp_read_write_ubin, MP_TO_UBIN),
       T1(mp_read_write_sbin, MP_TO_SBIN),

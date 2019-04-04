@@ -533,6 +533,10 @@
 			>
 		</File>
 		<File
+			RelativePath="mp_is_small_prime.c"
+			>
+		</File>
+		<File
 			RelativePath="mp_is_square.c"
 			>
 		</File>
@@ -597,6 +601,10 @@
 			>
 		</File>
 		<File
+			RelativePath="mp_next_small_prime.c"
+			>
+		</File>
+		<File
 			RelativePath="mp_or.c"
 			>
 		</File>
@@ -606,6 +614,10 @@
 		</File>
 		<File
 			RelativePath="mp_pack_count.c"
+			>
+		</File>
+		<File
+			RelativePath="mp_prec_small_prime.c"
 			>
 		</File>
 		<File
@@ -741,6 +753,14 @@
 			>
 		</File>
 		<File
+			RelativePath="mp_sieve_clear.c"
+			>
+		</File>
+		<File
+			RelativePath="mp_sieve_init.c"
+			>
+		</File>
+		<File
 			RelativePath="mp_signed_rsh.c"
 			>
 		</File>
@@ -821,6 +841,22 @@
 			>
 		</File>
 		<File
+			RelativePath="s_mp_eratosthenes.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_eratosthenes_init.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_eratosthenes_segment.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_eratosthenes_segment_init.c"
+			>
+		</File>
+		<File
 			RelativePath="s_mp_exptmod.c"
 			>
 		</File>
@@ -833,11 +869,19 @@
 			>
 		</File>
 		<File
+			RelativePath="s_mp_init_single_segment_with_start.c"
+			>
+		</File>
+		<File
 			RelativePath="s_mp_invmod.c"
 			>
 		</File>
 		<File
 			RelativePath="s_mp_invmod_odd.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_isqrt.c"
 			>
 		</File>
 		<File
@@ -902,6 +946,22 @@
 		</File>
 		<File
 			RelativePath="s_mp_rand_platform.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_sieve_clear.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_sieve_get.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_sieve_nextset.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_sieve_setall.c"
 			>
 		</File>
 		<File

@@ -2347,6 +2347,173 @@ the case of RSA) since there is no skew on the least significant bits.
   \label{fig:primeopts}
 \end{figure}
 
+
+\section{Prime Sieve}
+The prime sieve is implemented as a simple segmented Sieve of Eratosthenes.
+
+This library needs some small sequential amounts for divisibility tests starting at two and
+some random small primes for the Miller--Rabin test. That means we need a small base sieve
+for quick results with a cold start and small segments to get random small primes fast.
+
+The base sieve holds odd values only and even with a size of \texttt{4096} bytes it is
+small enough to get build quickly, in about 50 $\mu$sec on the author's old machine.
+
+The choice of the size for the individual segments varies more in the results. See table
+ \ref{table:sievebenchmarks} for some data. Size must be of the form $-1 + 2^n$.
+Default size is \texttt{0xFFF}. It might be of interest that the biggest prime gap
+below $2^{32}$ is $335$.
+
+\begin{table}[h]
+  \begin{center}
+    \begin{tabular}{r c l}
+      \textbf{Segment Size (bits)} & \textbf{Random Access in $\mu$sec} & \textbf{Full Primesum} \\
+           \texttt{ 0x1F}          &    (60)                                   &        -        \\
+           \texttt{ 0x3F}          &    (75)                                   &        -        \\
+           \texttt{ 0x7F}          &     63                                    &        -        \\
+           \texttt{ 0xFF}          &     70                                    &  26 min         \\
+          \texttt{ 0x1FF}          &     73                                    &  13 min         \\
+          \texttt{ 0x3FF}          &     75                                    &  7 min 17 sec   \\
+          \texttt{ 0x7FF}          &     85                                    &  4 min 10 sec   \\
+          \texttt{ 0xFFF}          &    100                                    &  2 min 52 sec   \\
+         \texttt{ 0x1FFF}          &    120                                    &  1 min 45 sec   \\
+         \texttt{ 0x3FFF}          &    145                                    &  1 min 19 sec   \\
+         \texttt{ 0x7FFF}          &    200                                    &  1 min 04 sec   \\
+         \texttt{ 0xFFFF}          &    350                                    &  0 min 57 sec   \\
+     \texttt{ 0xFFFFFFFF}          &    300                                    &  0 min 35 sec   
+    \end{tabular}
+    \caption{Average access times (warm) with the default base sieve and \texttt{MP-64BIT}} \label{table:sievebenchmarks}
+  \end{center}
+\end{table}
+
+The default sizes are in \texttt{tommath\_private.h}: \texttt{MP\_SIEVE\_PRIME\_MAX\_SQRT} is
+the size of the base sieve and \texttt{MP\_SIEVE\_RANGE\_A\_B} is the size of the segment.
+
+\subsection{Initialization and Clearing}
+Initializing. It cannot fail because it only sets some default values. Memory is allocated later according to needs.
+\index{mp\_sieve\_init}
+\begin{alltt}
+void mp_sieve_init(mp_sieve *sieve);
+\end{alltt}
+The function \texttt{mp\_sieve\_init} is equivalent to
+\begin{alltt}
+mp_sieve sieve = {NULL, NULL, 0};
+\end{alltt}
+
+Free the memory used by the sieve with
+\index{mp\_sieve\_clear}
+\begin{alltt}
+void mp_sieve_clear(mp_sieve *sieve);
+\end{alltt}
+
+\subsection{Primality Test of Small Numbers}
+Individual small numbers can be tested for primality with
+\index{mp\_is\_small\_prime}
+\begin{alltt}
+int mp_is_small_prime(mp_sieve_prime n, bool *result,
+                      mp_sieve *sieve);
+\end{alltt}
+It sets the variable \texttt{result} to \texttt{false} if the given number in \texttt{n} is a composite and
+\texttt{true} if it is a prime.
+
+It will return \texttt{MP\_SIEVE\_MAX\_REACHED} to flag the content of \texttt{result} as the last valid one.
+
+The implementation of this function does all the heavy lifting--the building of the base sieve and the segment
+if one is necessary. The base sieve stays, so this function can be used to ``warm up'' the sieve and, if
+\texttt{n} is slightly larger than the upper limit of the base sieve, ``warm up'' the first segment, too.
+
+\subsection{Find Adjacent Primes}
+To find the prime bigger than a number \texttt{n} use
+\index{mp\_next\_small\_prime}
+\begin{alltt}
+int mp_next_small_prime(mp_sieve_prime n, mp_sieve_prime *result,
+                        mp_sieve *sieve);
+\end{alltt}
+and to find the one smaller than \texttt{n}
+\index{mp\_prec\_small\_prime}
+\begin{alltt}
+int mp_prec_small_prime(mp_sieve_prime n, mp_sieve_prime *result,
+                        mp_sieve *sieve);
+\end{alltt}
+Both functions return \texttt{n} if \texttt{n} is prime. Use \texttt{n + 1} to get
+the prime after \texttt{n} if \texttt{n} is prime and  \texttt{n - 1} to get the
+the prime preceding \texttt{n} if \texttt{n} is prime.
+
+\subsection{Useful Constants}
+\begin{description}
+\item[\texttt{MP\_SIEVE\_BIGGEST\_PRIME}] \texttt{read-only} The biggest prime the sieve can offer.
+It is $4\,294\,967\,291$ for all \texttt{MP\_xBIT}.
+
+\item[\texttt{mp\_sieve\_prime}] \texttt{read-only}  The basic type for the numbers in the sieve. It
+ is \texttt{uint32\_t} for \texttt{MP\_16BIT}, \texttt{MP\_32BIT}; and
+ \texttt{uint64\_t} for \texttt{MP\_64BIT}..
+
+\item[\texttt{MP\_SIEVE\_PR\_UINT}] Choses the correct macro from \texttt{inttypes.h} to print a\\
+ \texttt{mp\_sieve\_prime}. The header \texttt{inttypes.h} must be included before\\
+ \texttt{tommath.h} for it to work.
+\end{description}
+\subsection{Examples}\label{sec:spnexamples}
+\subsubsection{Initialization and Clearing}
+Using a sieve follows the same procedure as using a bigint:
+\begin{alltt}
+/* Declaration */
+mp_sieve sieve;
+
+/*
+   Initialization.
+   Cannot fail, only sets a handful of default values.
+   Memory allocation is done in the library itself
+   according to needs.
+ */
+mp_sieve_init(&sieve);
+
+/* use the sieve */
+
+/* Clean up */
+mp_sieve_clear(&sieve);
+\end{alltt}
+\subsubsection{Primality Test}
+A small program to test the input of a small number for primality.
+\begin{alltt}
+#include <stdlib.h>
+#include <stdio.h>
+#include <errno.h>
+/*inttypes.h is needed for printing and must be included before tommath.h*/
+#include <inttypes.h>
+#include "tommath.h"
+int main(int argc, char **argv)
+{
+   mp_sieve_prime number;
+   mp_sieve sieve;
+   int e;
+   /* variable holding the result of mp_is_small_prime */
+   mp_sieve_prime result;
+
+   if (argc != 2) {
+      fprintf(stderr,"Usage %s number\textbackslash{}n", argv[0]);
+      exit(EXIT_FAILURE);
+   }
+   number = (mp_sieve_prime) strtoul(argv[1],NULL, 10);
+   if (errno == ERANGE) {
+      fprintf(stderr,"strtoul(l) failed: input out of range\textbackslash{}n");
+      goto LTM_ERR;
+   }
+   mp_sieve_init(&sieve);
+   if ((e = mp_is_small_prime(number, &result, &sieve)) != MP_OKAY) {
+      fprintf(stderr,"mp_is_small_prime failed: \textbackslash{}"%s\textbackslash{}"\textbackslash{}n",
+              mp_error_to_string(e));
+      goto LTM_ERR;
+   }
+   printf("The number %" LTM_SIEVE_PR_UINT " is %s prime\textbackslash{}n",
+           number,(result)?"":"not");
+
+   mp_sieve_clear(&sieve);
+   exit(EXIT_SUCCESS);
+LTM_ERR:
+   mp_sieve_clear(&sieve);
+   exit(EXIT_FAILURE);
+}
+\end{alltt}
+
 \chapter{Random Number Generation}
 \section{PRNG}
 \index{mp\_rand}
@@ -2416,6 +2583,9 @@ If \texttt{MP\_NO\_FILE} is not defined a function to write to a file is also av
 \begin{alltt}
 mp_err mp_fwrite(const mp_int *a, int radix, FILE *stream);
 \end{alltt}
+
+
+
 
 \subsection{From ASCII}
 \index{mp\_read\_radix}

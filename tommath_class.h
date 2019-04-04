@@ -66,6 +66,7 @@
 #   define MP_INIT_U64_C
 #   define MP_INIT_UL_C
 #   define MP_INVMOD_C
+#   define MP_IS_SMALL_PRIME_C
 #   define MP_IS_SQUARE_C
 #   define MP_KRONECKER_C
 #   define MP_LCM_C
@@ -82,9 +83,11 @@
 #   define MP_MUL_D_C
 #   define MP_MULMOD_C
 #   define MP_NEG_C
+#   define MP_NEXT_SMALL_PRIME_C
 #   define MP_OR_C
 #   define MP_PACK_C
 #   define MP_PACK_COUNT_C
+#   define MP_PREC_SMALL_PRIME_C
 #   define MP_PRIME_FERMAT_C
 #   define MP_PRIME_FROBENIUS_UNDERWOOD_C
 #   define MP_PRIME_IS_PRIME_C
@@ -118,6 +121,8 @@
 #   define MP_SET_U64_C
 #   define MP_SET_UL_C
 #   define MP_SHRINK_C
+#   define MP_SIEVE_CLEAR_C
+#   define MP_SIEVE_INIT_C
 #   define MP_SIGNED_RSH_C
 #   define MP_SQRMOD_C
 #   define MP_SQRT_C
@@ -138,11 +143,17 @@
 #   define S_MP_DIV_RECURSIVE_C
 #   define S_MP_DIV_SCHOOL_C
 #   define S_MP_DIV_SMALL_C
+#   define S_MP_ERATOSTHENES_C
+#   define S_MP_ERATOSTHENES_INIT_C
+#   define S_MP_ERATOSTHENES_SEGMENT_C
+#   define S_MP_ERATOSTHENES_SEGMENT_INIT_C
 #   define S_MP_EXPTMOD_C
 #   define S_MP_EXPTMOD_FAST_C
 #   define S_MP_GET_BIT_C
+#   define S_MP_INIT_SINGLE_SEGMENT_WITH_START_C
 #   define S_MP_INVMOD_C
 #   define S_MP_INVMOD_ODD_C
+#   define S_MP_ISQRT_C
 #   define S_MP_LOG_C
 #   define S_MP_LOG_2EXPT_C
 #   define S_MP_LOG_D_C
@@ -159,6 +170,10 @@
 #   define S_MP_RADIX_MAP_C
 #   define S_MP_RADIX_SIZE_OVERESTIMATE_C
 #   define S_MP_RAND_PLATFORM_C
+#   define S_MP_SIEVE_CLEAR_C
+#   define S_MP_SIEVE_GET_C
+#   define S_MP_SIEVE_NEXTSET_C
+#   define S_MP_SIEVE_SETALL_C
 #   define S_MP_SQR_C
 #   define S_MP_SQR_COMBA_C
 #   define S_MP_SQR_KARATSUBA_C
@@ -449,6 +464,12 @@
 #   define S_MP_INVMOD_ODD_C
 #endif
 
+#if defined(MP_IS_SMALL_PRIME_C)
+#   define S_MP_ERATOSTHENES_INIT_C
+#   define S_MP_INIT_SINGLE_SEGMENT_WITH_START_C
+#   define S_MP_SIEVE_GET_C
+#endif
+
 #if defined(MP_IS_SQUARE_C)
 #   define MP_CLEAR_C
 #   define MP_CMP_MAG_C
@@ -566,6 +587,10 @@
 #   define MP_COPY_C
 #endif
 
+#if defined(MP_NEXT_SMALL_PRIME_C)
+#   define MP_IS_SMALL_PRIME_C
+#endif
+
 #if defined(MP_OR_C)
 #   define MP_CLAMP_C
 #   define MP_GROW_C
@@ -580,6 +605,10 @@
 
 #if defined(MP_PACK_COUNT_C)
 #   define MP_COUNT_BITS_C
+#endif
+
+#if defined(MP_PREC_SMALL_PRIME_C)
+#   define MP_IS_SMALL_PRIME_C
 #endif
 
 #if defined(MP_PRIME_FERMAT_C)
@@ -848,6 +877,12 @@
 #if defined(MP_SHRINK_C)
 #endif
 
+#if defined(MP_SIEVE_CLEAR_C)
+#endif
+
+#if defined(MP_SIEVE_INIT_C)
+#endif
+
 #if defined(MP_SIGNED_RSH_C)
 #   define MP_ADD_D_C
 #   define MP_DIV_2D_C
@@ -1011,6 +1046,28 @@
 #   define MP_SUB_C
 #endif
 
+#if defined(S_MP_ERATOSTHENES_C)
+#   define S_MP_ISQRT_C
+#   define S_MP_SIEVE_CLEAR_C
+#   define S_MP_SIEVE_GET_C
+#   define S_MP_SIEVE_SETALL_C
+#endif
+
+#if defined(S_MP_ERATOSTHENES_INIT_C)
+#   define S_MP_ERATOSTHENES_C
+#endif
+
+#if defined(S_MP_ERATOSTHENES_SEGMENT_C)
+#   define S_MP_ISQRT_C
+#   define S_MP_SIEVE_CLEAR_C
+#   define S_MP_SIEVE_NEXTSET_C
+#   define S_MP_SIEVE_SETALL_C
+#endif
+
+#if defined(S_MP_ERATOSTHENES_SEGMENT_INIT_C)
+#   define S_MP_ERATOSTHENES_SEGMENT_C
+#endif
+
 #if defined(S_MP_EXPTMOD_C)
 #   define MP_CLEAR_C
 #   define MP_COPY_C
@@ -1049,6 +1106,10 @@
 #if defined(S_MP_GET_BIT_C)
 #endif
 
+#if defined(S_MP_INIT_SINGLE_SEGMENT_WITH_START_C)
+#   define S_MP_ERATOSTHENES_SEGMENT_INIT_C
+#endif
+
 #if defined(S_MP_INVMOD_C)
 #   define MP_ADD_C
 #   define MP_CLEAR_MULTI_C
@@ -1077,6 +1138,9 @@
 #   define MP_MOD_C
 #   define MP_SET_C
 #   define MP_SUB_C
+#endif
+
+#if defined(S_MP_ISQRT_C)
 #endif
 
 #if defined(S_MP_LOG_C)
@@ -1198,6 +1262,19 @@
 #endif
 
 #if defined(S_MP_RAND_PLATFORM_C)
+#endif
+
+#if defined(S_MP_SIEVE_CLEAR_C)
+#endif
+
+#if defined(S_MP_SIEVE_GET_C)
+#endif
+
+#if defined(S_MP_SIEVE_NEXTSET_C)
+#   define S_MP_SIEVE_GET_C
+#endif
+
+#if defined(S_MP_SIEVE_SETALL_C)
 #endif
 
 #if defined(S_MP_SQR_C)

@@ -57,6 +57,7 @@ mp_init_u32.c
 mp_init_u64.c
 mp_init_ul.c
 mp_invmod.c
+mp_is_small_prime.c
 mp_is_square.c
 mp_kronecker.c
 mp_lcm.c
@@ -73,9 +74,11 @@ mp_mul_2d.c
 mp_mul_d.c
 mp_mulmod.c
 mp_neg.c
+mp_next_small_prime.c
 mp_or.c
 mp_pack.c
 mp_pack_count.c
+mp_prec_small_prime.c
 mp_prime_fermat.c
 mp_prime_frobenius_underwood.c
 mp_prime_is_prime.c
@@ -109,6 +112,8 @@ mp_set_u32.c
 mp_set_u64.c
 mp_set_ul.c
 mp_shrink.c
+mp_sieve_clear.c
+mp_sieve_init.c
 mp_signed_rsh.c
 mp_sqrmod.c
 mp_sqrt.c
@@ -129,11 +134,17 @@ s_mp_div_3.c
 s_mp_div_recursive.c
 s_mp_div_school.c
 s_mp_div_small.c
+s_mp_eratosthenes.c
+s_mp_eratosthenes_init.c
+s_mp_eratosthenes_segment.c
+s_mp_eratosthenes_segment_init.c
 s_mp_exptmod.c
 s_mp_exptmod_fast.c
 s_mp_get_bit.c
+s_mp_init_single_segment_with_start.c
 s_mp_invmod.c
 s_mp_invmod_odd.c
+s_mp_isqrt.c
 s_mp_log.c
 s_mp_log_2expt.c
 s_mp_log_d.c
@@ -150,6 +161,10 @@ s_mp_prime_tab.c
 s_mp_radix_map.c
 s_mp_radix_size_overestimate.c
 s_mp_rand_platform.c
+s_mp_sieve_clear.c
+s_mp_sieve_get.c
+s_mp_sieve_nextset.c
+s_mp_sieve_setall.c
 s_mp_sqr.c
 s_mp_sqr_comba.c
 s_mp_sqr_karatsuba.c
