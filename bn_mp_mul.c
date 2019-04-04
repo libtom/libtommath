@@ -42,7 +42,7 @@ int mp_mul(const mp_int *a, const mp_int *b, mp_int *c)
 #ifdef BN_FAST_S_MP_MUL_DIGS_C
          if ((digs < (int)MP_WARRAY) &&
              (MIN(a->used, b->used) <=
-              (int)(1u << (((size_t)CHAR_BIT * sizeof(mp_word)) - (2u * (size_t)DIGIT_BIT))))) {
+              (int)(1u << ((CHAR_BIT * sizeof(mp_word)) - (2u * (size_t)DIGIT_BIT))))) {
             res = fast_s_mp_mul_digs(a, b, c, digs);
          } else
 #endif
