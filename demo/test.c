@@ -1284,7 +1284,7 @@ static int test_mp_incr(void)
       goto LTM_ERR;
    }
    a.sign = MP_ZPOS;
-   if (mp_cmp_d(&a, MP_MASK) != MP_EQ) {puts("DDD");
+   if (mp_cmp_d(&a, MP_MASK) != MP_EQ) {
       goto LTM_ERR;
    }
 
