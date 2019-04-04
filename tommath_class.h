@@ -9,6 +9,7 @@
  *
  * SPDX-License-Identifier: Unlicense
  */
+
 #if !(defined(LTM1) && defined(LTM2) && defined(LTM3))
 #if defined(LTM2)
 #   define LTM3
@@ -441,6 +442,7 @@
 #endif
 
 #if defined(BN_MP_GET_INT_C)
+#   define BN_MP_GET_LONG_C
 #endif
 
 #if defined(BN_MP_GET_LONG_C)
@@ -916,12 +918,12 @@
 #endif
 
 #if defined(BN_MP_SET_INT_C)
-#   define BN_MP_ZERO_C
-#   define BN_MP_MUL_2D_C
-#   define BN_MP_CLAMP_C
+#   define BN_MP_SET_LONG_C
 #endif
 
 #if defined(BN_MP_SET_LONG_C)
+#   define BN_MP_GROW_C
+#   define BN_MP_ZERO_C
 #endif
 
 #if defined(BN_MP_SET_LONG_LONG_C)
