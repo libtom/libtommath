@@ -3,7 +3,7 @@
 int mtest_opponent(void);
 int unit_tests(void);
 
-void ndraw(mp_int* a, const char* name)
+void ndraw(mp_int *a, const char *name)
 {
    char *buf;
    int size;

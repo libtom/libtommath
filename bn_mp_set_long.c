@@ -21,11 +21,11 @@ int mp_set_long(mp_int *a, unsigned long b)
    int x = 0;
    int res = mp_grow(a, (CHAR_BIT * sizeof(unsigned long) + DIGIT_BIT - 1) / DIGIT_BIT);
    if (res == MP_OKAY) {
-     mp_zero(a);
-     if (b) {
-        a->dp[x++] = (mp_digit)b;
-     }
-     a->used = x;
+      mp_zero(a);
+      if (b) {
+         a->dp[x++] = (mp_digit)b;
+      }
+      a->used = x;
    }
    return res;
 }

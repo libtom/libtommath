@@ -379,7 +379,7 @@ int mtest_opponent(void)
    printf("\n");
    return 0;
 
- LBL_ERR:
+LBL_ERR:
    mp_clear_multi(&a, &b, &c, &d, &e, &f, NULL);
    printf("\n");
    return EXIT_FAILURE;

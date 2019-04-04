@@ -22,7 +22,7 @@ int mp_fwrite(const mp_int *a, int radix, FILE *stream)
       return err;
    }
 
-   buf = (char*) XMALLOC((size_t)len);
+   buf = (char *) XMALLOC((size_t)len);
    if (buf == NULL) {
       return MP_MEM;
    }
