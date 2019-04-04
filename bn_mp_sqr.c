@@ -34,7 +34,7 @@ int mp_sqr(const mp_int *a, mp_int *b)
          /* can we use the fast comba multiplier? */
          if ((((a->used * 2) + 1) < (int)MP_WARRAY) &&
              (a->used <
-              (int)(1u << (((sizeof(mp_word) * (size_t)CHAR_BIT) - (2u * (size_t)DIGIT_BIT)) - 1u)))) {
+              (int)(1u << (((CHAR_BIT * sizeof(mp_word)) - (2u * (size_t)DIGIT_BIT)) - 1u)))) {
             res = fast_s_mp_sqr(a, b);
          } else
 #endif

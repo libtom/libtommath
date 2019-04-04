@@ -23,7 +23,7 @@ unsigned long long mp_get_long_long(const mp_int *a)
    }
 
    /* get number of digits of the lsb we have to read */
-   i = MIN(a->used, ((((int)sizeof(unsigned long long) * CHAR_BIT) + DIGIT_BIT - 1) / DIGIT_BIT)) - 1;
+   i = MIN(a->used, (((CHAR_BIT * (int)sizeof(unsigned long long)) + DIGIT_BIT - 1) / DIGIT_BIT)) - 1;
 
    /* get most significant digit of result */
    res = (unsigned long long)a->dp[i];
