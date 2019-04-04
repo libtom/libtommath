@@ -1643,6 +1643,123 @@ LTM_ERR:
    return EXIT_FAILURE;
 }
 
+/* Helper for test_mp_pollard_rho() below */
+static int s_add_factor(mp_int *factor, mp_int *list, int length)
+{
+   mp_int t;
+   int e = MP_OKAY;
+
+   if ((e = mp_init(&t)) != MP_OKAY) {
+      goto LTM_ERR;
+   }
+   if ((e = mp_copy(factor,&t)) != MP_OKAY) {
+      goto LTM_ERR;
+   }
+   list[length] = t;
+LTM_ERR:
+   return e;
+}
+static int test_mp_pollard_rho(void)
+{
+   mp_int a, b, cp, factor, quot, rem;
+   mp_int *factor_list;
+
+   /*
+      This algorithm depends on a bit of foreplay that
+      we cannot use in test.c, we need to do it from
+      scratch.
+      Without checks for squares and no sieve we need to
+      choose the test values carefully.
+   */
+   const char *semiprimes[] = {
+      /* small semiprimes */
+      "732661", "2710801", "15010441", "28429993", "139405249", "855672241",
+      "2117660497", "13044506749", "34525778029", "78237508957", "515768327449",
+      "3031081247497", "6313059718681", "51565459371241", "163867897214509",
+      "818517365999257", "2054062966003597", "8421664104548161",
+      "38756990637162361", "234972991543186153", "792525741101222941",
+      /* multiple medium sized factors */
+      "3200964419568851363645255646421477919", "71214945366060323433712970395489151",
+      "415055863687115202493510817137695259281742138359497",
+      "9823046506109604998928761787014567316865855121093549452812607825656053083307",
+      "572204129470843289241020996689719288214543821774672023",
+      "230071390150242859771918165770757022011782524347144651"
+   };
+
+   int e, i, j, count, result;
+
+   mp_init_multi(&a, &b, &factor, &quot, &rem, &cp, NULL);
+
+   /* Reserve some memory for a list holding the factors */
+   factor_list = malloc(sizeof(mp_int) * 16);
+   if (factor_list == NULL) {
+      goto LTM_ERR;
+   }
+   for (i = 0; i < (int)(sizeof(semiprimes)/sizeof(semiprimes[0])); i++) {
+      mp_read_radix(&a, semiprimes[i], 10);
+      mp_copy(&a, &cp);
+      count = 0;
+      do {
+         if ((e = mp_prime_is_prime(&a, 8, &result)) != MP_OKAY) {
+            goto LTM_ERR;
+         }
+         if (result == MP_NO) {
+            /*
+              Pollard-Rho is good for up to 35 bit large factors, 40 bit if
+              you are not too impatient.
+            */
+            if ((e = mp_pollard_rho(&a, &factor)) != MP_OKAY) {
+               goto LTM_ERR;;
+            }
+            /* Pollard-Rho found a factor but it might not be prime */
+            if ((e = mp_prime_is_prime(&factor, 8, &result)) != MP_OKAY) {
+               goto LTM_ERR;
+            }
+            if (result == MP_YES) {
+               do {
+                  if ((e = mp_div(&a, &factor, &quot, &rem)) != MP_OKAY) {
+                     goto LTM_ERR;
+                  }
+                  if (mp_cmp_d(&rem, 0uL) == MP_EQ) {
+                     if ((e = s_add_factor(&factor, factor_list, count)) != MP_OKAY) {
+                        goto LTM_ERR;
+                     }
+                     count++;
+                     mp_exch(&a, &quot);
+                  }
+               } while (mp_cmp_d(&rem, 0uL) == MP_EQ);
+            }
+         } else {
+            if ((e = s_add_factor(&a, factor_list, count)) != MP_OKAY) {
+               goto LTM_ERR;
+            }
+            count++;
+            break;
+         }
+      } while (mp_cmp_d(&a, 1uL) != MP_EQ);
+      /* Let's see if we got them all. */
+      mp_set(&b, 1uL);
+      for (j = 0; j < count; j++) {
+         mp_mul(&b, &factor_list[j], &b);
+      }
+      if (mp_cmp(&cp, &b) != MP_EQ) {
+         goto LTM_ERR;
+      }
+      for (j = 0; j < count; j++) {
+         mp_clear(&factor_list[j]);
+      }
+   }
+
+
+   mp_clear_multi(&a, &b, &factor, &quot, &rem, &cp, NULL);
+   free(factor_list);
+   return EXIT_SUCCESS;
+LTM_ERR:
+   mp_clear_multi(&a, &b, &factor, &quot, &rem, &cp, NULL);
+   free(factor_list);
+   return EXIT_FAILURE;
+}
+
 int unit_tests(void)
 {
    static const struct {
@@ -1678,7 +1795,8 @@ int unit_tests(void)
       T(mp_tc_xor),
       T(mp_incr),
       T(mp_decr),
-      T(mp_balance_mul)
+      T(mp_balance_mul),
+      T(mp_pollard_rho)
 #undef T
    };
    unsigned long i;

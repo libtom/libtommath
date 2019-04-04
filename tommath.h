@@ -567,6 +567,9 @@ int mp_prime_next_prime(mp_int *a, int t, int bbs_style);
  */
 int mp_prime_random_ex(mp_int *a, int t, int size, int flags, ltm_prime_callback cb, void *dat);
 
+/* Find one factor of a positive integer using the Pollard-Rho algorithm */
+int mp_pollard_rho(const mp_int *n, mp_int *factor);
+
 /* ---> radix conversion <--- */
 int mp_count_bits(const mp_int *a);
 

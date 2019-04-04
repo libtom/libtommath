@@ -2084,6 +2084,16 @@ This function generates a random number of \texttt{digits} bits.
 
 The random number generated with these two functions is cryptographically secure if the source of random numbers the operating systems offers is cryptographically secure. It will use \texttt{arc4random()} if the OS is a BSD flavor, Wincrypt on Windows, or \texttt{/dev/urandom} on all operating systems that have it.
 
+\chapter{Factorizing}
+\subsection{Pollard-Rho-Brent}
+One of the methods to decompose a larger number into its prime factors is the Pollard-Rho algorithm. This implementation uses Richard P. Brent's method for loop detection.
+\index{mp\_pollard\_rho}
+\begin{alltt}
+int mp_pollard_rho(const mp_int *n, mp_int *factor);
+\end{alltt}
+The function \texttt{mp\_pollard\_rho} is not meant to be used as a standalone function, please consult the source of the function and the test for this function \texttt{test\_mp\_pollard\_rho} in \texttt{demp/test.c} for more information.
+
+
 
 \chapter{Input and Output}
 \section{ASCII Conversions}

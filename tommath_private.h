@@ -37,6 +37,7 @@ extern void XFREE(void *mem, size_t size);
 #define IS_ZERO(a) ((a)->used == 0)
 #define IS_EVEN(a) (((a)->used == 0) || (((a)->dp[0] & 1u) == 0u))
 #define IS_ODD(a)  (((a)->used > 0) && (((a)->dp[0] & 1u) == 1u))
+#define IS_UNITY(a) (((a)->used == 1uL) && ((a)->dp[0] == 1uL))
 
 /* lowlevel functions, do not call! */
 int s_mp_add(const mp_int *a, const mp_int *b, mp_int *c);

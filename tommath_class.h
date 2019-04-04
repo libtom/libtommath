@@ -92,6 +92,7 @@
 #   define BN_MP_N_ROOT_EX_C
 #   define BN_MP_NEG_C
 #   define BN_MP_OR_C
+#   define BN_MP_POLLARD_RHO_C
 #   define BN_MP_PRIME_FERMAT_C
 #   define BN_MP_PRIME_FROBENIUS_UNDERWOOD_C
 #   define BN_MP_PRIME_IS_DIVISIBLE_C
@@ -698,6 +699,27 @@
 #   define BN_MP_CLAMP_C
 #   define BN_MP_EXCH_C
 #   define BN_MP_CLEAR_C
+#endif
+
+#if defined(BN_MP_POLLARD_RHO_C)
+#   define BN_MP_SQRMOD_C
+#   define BN_MP_ADD_C
+#   define BN_MP_MOD_C
+#   define BN_MP_NEXT_SMALL_PRIME_C
+#   define BN_MP_COPY_C
+#   define BN_MP_SET_C
+#   define BN_MP_INIT_MULTI_C
+#   define BN_MP_COUNT_BITS_C
+#   define BN_MP_RAND_C
+#   define BN_MP_DIV_2D_C
+#   define BN_MP_CMP_D_C
+#   define BN_MP_SUB_D_C
+#   define BN_MP_SUB_C
+#   define BN_MP_MULMOD_C
+#   define BN_MP_GCD_C
+#   define BN_MP_CMP_C
+#   define BN_MP_EXCH_C
+#   define BN_MP_CLEAR_MULTI_C
 #endif
 
 #if defined(BN_MP_PRIME_FERMAT_C)

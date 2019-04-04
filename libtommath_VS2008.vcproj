@@ -641,6 +641,10 @@
 			>
 		</File>
 		<File
+			RelativePath="bn_mp_pollard_rho.c"
+			>
+		</File>
+		<File
 			RelativePath="bn_mp_prime_fermat.c"
 			>
 		</File>
