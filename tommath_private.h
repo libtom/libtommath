@@ -32,10 +32,12 @@ extern "C" {
 #   define XMALLOC(size)                   malloc(size)
 #   define XFREE(mem, size)                free(mem)
 #   define XREALLOC(mem, oldsize, newsize) realloc(mem, newsize)
+#   define XCALLOC   calloc
 #else
 /* prototypes for our heap functions */
 extern void *XMALLOC(size_t size);
 extern void *XREALLOC(void *mem, size_t oldsize, size_t newsize);
+extern void *XCALLOC(size_t n, size_t s);
 extern void XFREE(void *mem, size_t size);
 #endif
 
