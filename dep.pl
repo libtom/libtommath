@@ -171,6 +171,8 @@ close $out;
 sub draw_func
 {
    my @funcs = split ',', $_[0];
+   # try this if you want to have a look at a minimized version of the callgraph without all the trivial functions
+   #if ($list =~ /$funcs[0]/ || $funcs[0] =~ /BN_MP_(ADD|SUB|CLEAR|CLEAR_\S+|DIV|MUL|COPY|ZERO|GROW|CLAMP|INIT|INIT_\S+|SET|ABS|CMP|CMP_D|EXCH)_C/) {
    if ($list =~ /$funcs[0]/) {
       return;
    } else {
