@@ -27,7 +27,8 @@ int mp_decr(mp_int *a)
          mp_zero(a);
       }
       return MP_OKAY;
+   } else {
+      return mp_sub_d(a, 1uL,a);
    }
-   return mp_sub_d(a, 1uL,a);
 }
 #endif
