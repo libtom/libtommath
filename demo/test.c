@@ -1643,6 +1643,172 @@ LTM_ERR:
    return EXIT_FAILURE;
 }
 
+static int test_mp_factors_sort(void)
+{
+   int e, i, j, k;
+   mp_factors factors;
+   mp_int t, primorial;
+   const char *p_29 = "6469693230";
+   const mp_digit tests[9][10] = {
+      {2, 3, 5, 7, 11, 13, 17, 19, 23, 29},
+      {29, 23, 19, 17, 13, 11, 7, 5, 3, 2},
+      {19, 2, 29, 3, 23, 17, 5, 11, 13, 7},
+      {23, 2, 11, 5, 7, 19, 17, 3, 13, 29},
+      {3, 2, 5, 7, 11, 13, 17, 19, 23, 29},
+      {2, 3, 5, 7, 11, 13, 17, 19, 29, 23},
+      {2, 2, 2, 2,  2,  2,  2,  2,  2, 23},
+      {23, 2, 2, 2,  2,  2,  2,  2,  2, 2},
+      {2, 2, 2, 2,  2,  23,  2,  2,  2, 2},
+   };
+   unsigned long p_2_23 = 11776uL;
+
+   if ((e = mp_factors_init(&factors)) != MP_OKAY) {
+      return e;
+   }
+   if ((e = mp_init_multi(&t, &primorial, NULL)) != MP_OKAY) {
+      mp_factors_clear(&factors);
+      return e;
+   }
+   if ((e = mp_read_radix(&primorial, p_29, 10)) != MP_OKAY) {
+      goto LTM_ERR;
+   }
+
+   for (i = 0; i < 6; i++) {
+      mp_factors_zero(&factors);
+      for (j = 0; j < 10; j++) {
+         mp_set(&t,tests[i][j]);
+         if ((e = mp_factors_add(&t, &factors)) != MP_OKAY) {
+            goto LTM_ERR;
+         }
+      }
+      mp_factors_sort(&factors);
+      if ((e = mp_factors_product(&factors, &t)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if (mp_cmp(&t, &primorial) != MP_EQ) {
+         goto LTM_ERR;
+      }
+      for (k = 0; k < (factors.length - 1); k++) {
+         if (mp_cmp(&(factors.factors[k]), &(factors.factors[k+1])) == MP_GT) {
+            goto LTM_ERR;
+         }
+      }
+   }
+
+   if ((e = mp_set_long(&primorial, p_2_23)) != MP_OKAY) {
+      goto LTM_ERR;
+   }
+
+   for (i = 6; i < 9; i++) {
+      mp_factors_zero(&factors);
+      for (j = 0; j < 10; j++) {
+         mp_set(&t,tests[i][j]);
+         if ((e = mp_factors_add(&t, &factors)) != MP_OKAY) {
+            goto LTM_ERR;
+         }
+      }
+      mp_factors_sort(&factors);
+      if ((e = mp_factors_product(&factors, &t)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if (mp_cmp(&t, &primorial) != MP_EQ) {
+         goto LTM_ERR;
+      }
+      for (k = 0; k < (factors.length - 1); k++) {
+         if (mp_cmp(&(factors.factors[k]), &(factors.factors[k+1])) == MP_GT) {
+            goto LTM_ERR;
+         }
+      }
+   }
+
+   mp_clear_multi(&t, &primorial, NULL);
+   mp_factors_clear(&factors);
+   return EXIT_SUCCESS;
+LTM_ERR:
+   mp_clear_multi(&t, &primorial, NULL);
+   mp_factors_clear(&factors);
+   return EXIT_FAILURE;
+}
+
+static int test_mp_factors_product(void)
+{
+   int e;
+   int i, j;
+   mp_factors factors;
+   mp_int t, primorial;
+   const char *p_29 = "6469693230";
+#ifndef MP_8BIT
+   const char *p_1000 =
+      "lWyCCT0aF3uOiLv+kFrAb/EkIbfXTJx+MMPOxI1Dl8aLBCvFRKN/CUTUHwyDdk1sdC8rdjKRFGTd3wE46/iQibo1eoA6l7QW3H2PpQPNb46iK1m2/2Rmhr+Cmxu8eB+KHZoXa7H8pEXdIfufN0hWvfw7o2Sph35IoxakyRoz0nCZiPXLlt4tVsMNHljt+hK67sycluoiFhWR+iCJhtFqX1I21PJok/eNSkr2QM";
+#endif
+   const mp_digit tests_a[3][10] = {
+      {2, 3, 5, 7, 11, 13, 17, 19, 23, 29},
+      {29, 23, 19, 17, 13, 11, 7, 5, 3, 2},
+      {29, 23, 19, 17,  0, 11, 7, 5, 3, 2}
+   };
+
+   if ((e = mp_factors_init(&factors)) != MP_OKAY) {
+      return e;
+   }
+   if ((e = mp_init_multi(&t, &primorial, NULL)) != MP_OKAY) {
+      mp_factors_clear(&factors);
+      return e;
+   }
+
+   /* zero length */
+   if ((e = mp_factors_product(&factors, &t)) == MP_OKAY) {
+      goto LTM_ERR;
+   }
+   /* zero in array */
+   mp_factors_zero(&factors);
+   for (j = 0; j < 10; j++) {
+      mp_set(&t,tests_a[2][j]);
+      mp_factors_add(&t, &factors);
+   }
+   mp_factors_product(&factors, &t);
+   if (mp_cmp_d(&t, 0uL) != MP_EQ) {
+      goto LTM_ERR;
+   }
+
+   mp_read_radix(&primorial, p_29, 10);
+
+   for (i = 0; i < 2; i++) {
+      mp_factors_zero(&factors);
+      for (j = 0; j < 10; j++) {
+         mp_set(&t,tests_a[i][j]);
+         mp_factors_add(&t, &factors);
+      }
+      mp_factors_product(&factors, &t);
+      if (mp_cmp(&t, &primorial) != MP_EQ) {
+         puts("AAA");
+         goto LTM_ERR;
+      }
+   }
+
+   /* not enough primes < 127 to trigger the binary-splitting */
+#ifndef MP_8BIT
+   mp_factors_zero(&factors);
+   for (i = 0; i < 168; i++) {
+      mp_set(&t, ltm_prime_tab[i]);
+      mp_factors_add(&t, &factors);
+   }
+   mp_factors_product(&factors, &t);
+   mp_read_radix(&primorial, p_1000, 64);
+   if (mp_cmp(&t, &primorial) != MP_EQ) {
+      goto LTM_ERR;
+   }
+#endif
+
+   mp_clear_multi(&t, &primorial, NULL);
+   mp_factors_clear(&factors);
+   return EXIT_SUCCESS;
+LTM_ERR:
+   mp_clear_multi(&t, &primorial, NULL);
+   mp_factors_clear(&factors);
+   return EXIT_FAILURE;
+}
+
+
 int unit_tests(void)
 {
    static const struct {
@@ -1678,7 +1844,9 @@ int unit_tests(void)
       T(mp_tc_xor),
       T(mp_incr),
       T(mp_decr),
-      T(mp_balance_mul)
+      T(mp_balance_mul),
+      T(mp_factors_sort),
+      T(mp_factors_product)
 #undef T
    };
    unsigned long i;

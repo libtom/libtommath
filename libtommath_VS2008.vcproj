@@ -469,6 +469,38 @@
 			>
 		</File>
 		<File
+			RelativePath="bn_mp_factors_add.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_mp_factors_clear.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_mp_factors_compress.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_mp_factors_init.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_mp_factors_print.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_mp_factors_product.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_mp_factors_sort.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_mp_factors_zero.c"
+			>
+		</File>
+		<File
 			RelativePath="bn_mp_fread.c"
 			>
 		</File>

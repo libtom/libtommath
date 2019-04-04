@@ -567,6 +567,51 @@ int mp_prime_next_prime(mp_int *a, int t, int bbs_style);
  */
 int mp_prime_random_ex(mp_int *a, int t, int size, int flags, ltm_prime_callback cb, void *dat);
 
+/* 
+   Simple data structure to hold some mp_int's.
+   Is used in LTM to hold the factors from factoring, about
+   100 or so max (large primorials of powers notwithstanding),
+   always with linear r/w access.
+ */
+typedef struct  {
+   int length, alloc;
+   mp_int *factors;
+} mp_factors;
+
+#ifndef LTM_TRIAL_GROWTH 
+#define LTM_TRIAL_GROWTH 64
+#endif
+
+/* Init factor-array (an array of mp_int's) */
+int mp_factors_init(mp_factors *f);
+
+/* Clear and free factor-array (an array of mp_int's) */
+void mp_factors_clear(mp_factors *f);
+
+/* Zero the elements of a factor-array (an array of mp_int's) and realloc to def
+   size in that order */
+int mp_factors_zero(mp_factors *f);
+
+/* Add one element (mp_int) to a factor-array (an array of mp_int's) */
+int mp_factors_add(const mp_int *a, mp_factors *f);
+
+/* Sort factor-array (an array of mp_int's) */
+void mp_factors_sort(mp_factors *f);
+
+/* Print the elememts of a factor-array (an array of mp_int's) */
+int mp_factors_print(const mp_factors *f, int base, char delimiter, FILE *stream);
+
+/* Factor integer. Good for up to about 35-40 bit large factors */
+int mp_factor(const mp_int *z, mp_factors *factors);
+
+/* Compute the product of the elements of "factors" */
+int mp_factors_product(const mp_factors *factors, mp_int *p);
+
+/* Change (sorted) factors array into format prime,prime-count,...,prime,prime-count */
+int mp_factors_compress(mp_factors *f, int sorted, mp_factors *g);
+
+
+
 /* ---> radix conversion <--- */
 int mp_count_bits(const mp_int *a);
 

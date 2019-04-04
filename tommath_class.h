@@ -49,6 +49,14 @@
 #   define BN_MP_EXPTMOD_C
 #   define BN_MP_EXPTMOD_FAST_C
 #   define BN_MP_EXTEUCLID_C
+#   define BN_MP_FACTORS_ADD_C
+#   define BN_MP_FACTORS_CLEAR_C
+#   define BN_MP_FACTORS_COMPRESS_C
+#   define BN_MP_FACTORS_INIT_C
+#   define BN_MP_FACTORS_PRINT_C
+#   define BN_MP_FACTORS_PRODUCT_C
+#   define BN_MP_FACTORS_SORT_C
+#   define BN_MP_FACTORS_ZERO_C
 #   define BN_MP_FREAD_C
 #   define BN_MP_FWRITE_C
 #   define BN_MP_GCD_C
@@ -419,6 +427,58 @@
 #   define BN_MP_NEG_C
 #   define BN_MP_EXCH_C
 #   define BN_MP_CLEAR_MULTI_C
+#endif
+
+#if defined(BN_MP_FACTORS_ADD_C)
+#   define BN_MP_FACTORS_C
+#   define BN_MP_INIT_C
+#   define BN_MP_COPY_C
+#endif
+
+#if defined(BN_MP_FACTORS_CLEAR_C)
+#   define BN_MP_CLEAR_C
+#endif
+
+#if defined(BN_MP_FACTORS_COMPRESS_C)
+#   define BN_MP_INIT_C
+#   define BN_MP_FACTORS_INIT_C
+#   define BN_MP_FACTORS_ADD_C
+#   define BN_MP_FACTORS_SORT_C
+#   define BN_MP_INCR_C
+#   define BN_MP_CMP_C
+#   define BN_MP_ZERO_C
+#   define BN_MP_FACTORS_CLEAR_C
+#   define BN_MP_CLEAR_C
+#endif
+
+#if defined(BN_MP_FACTORS_INIT_C)
+#   define BN_MP_FACTORS_C
+#endif
+
+#if defined(BN_MP_FACTORS_PRINT_C)
+#   define BN_MP_FACTORS_C
+#   define BN_MP_FWRITE_C
+#endif
+
+#if defined(BN_MP_FACTORS_PRODUCT_C)
+#   define BN_MP_FACTORS_C
+#   define BN_MP_SET_C
+#   define BN_MP_SET_LONG_C
+#   define BN_MP_MUL_C
+#   define BN_MP_INIT_C
+#   define BN_MP_CLEAR_C
+#   define BN_MP_COPY_C
+#endif
+
+#if defined(BN_MP_FACTORS_SORT_C)
+#   define BN_MP_FACTORS_C
+#   define BN_MP_CMP_C
+#   define BN_MP_EXCH_C
+#endif
+
+#if defined(BN_MP_FACTORS_ZERO_C)
+#   define BN_MP_FACTORS_C
+#   define BN_MP_CLEAR_C
 #endif
 
 #if defined(BN_MP_FREAD_C)

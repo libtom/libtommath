@@ -2116,6 +2116,57 @@ If \texttt{LTM\_NO\_FILE} is not defined a function to write to a file is also a
 int mp_fwrite(const mp_int *a, int radix, FILE *stream);
 \end{alltt}
 
+\chapter{Factorizing}
+\subsection{Managing Lists of Factors}
+The data structure used for the list of factors is a simple array, packed into a \texttt{struct} to surround it with some useful information like the number of elements (\texttt{length}) and the amount of memory allocated (\texttt{alloc}), also counted as a number of elements.
+\begin{alltt}
+typedef struct  {
+   int length, alloc;
+   mp_int *factors;
+} mp_factors;
+\end{alltt}
+The macro \texttt{LTM\_TRIAL\_GROWTH} holds the amount of memory, measured in numbers of elements, by which \texttt{realloc} will increase the memory available to the list \texttt{factors}. It is defined in \texttt{tommath.h} and the default value is $64$.
+
+A couple of functions are available to make the use of it a bit more comfortable.
+
+\begin{description}
+\item
+\index{mp\_factors\_init}
+\verb!int mp_factors_init(mp_factors *f);!\\
+Initialize the factor list by allocating a certain amount of memory and setting \texttt{length = 0} and \texttt{alloc} to the amount of memory pre-allocated. The exact amount is defined at compile time by the macro \texttt{LTM\_TRIAL\_GROWTH} in \texttt{tommath.h}.
+\item
+\index{mp\_factors\_clear}
+\verb!void mp_factors_clear(mp_factors *f);!\\
+This function free's all memory used.
+\item
+\index{mp\_factors\_zero}
+\verb!int mp_factors_zero(mp_factors *f);!\\
+Remove the elements of the factor list and allocate (fresh) memory of default size in that order.
+\item
+\index{mp\_factors\_add}
+\verb!int mp_factors_add(const mp_int *a, mp_factors *f);!\\
+Add a factor of type \texttt{mp\_int} to the list.
+\item
+\index{mp\_factors\_sort}
+\verb!int mp_factors_sort(mp_factors *f);!\\
+The factors in the list are not necessarily in increasing order. This functions changes that. It does it with the insert-sort algorithm, a good choice for the task it has been written for (the list is most likely already ordered) but not for many other tasks involving large lists in random order.
+\item
+\index{mp\_factors\_print}
+\texttt{int mp\_factors\_print(mp\_factors *f, int base, char delimiter,\\
+\hphantom{int mp\_factors\_print(} FILE *stream);}\\
+Prints the element of the list in base \texttt{base} to \texttt{stream} with the delimiter \texttt{delimiter}. The default delimiter is a comma (ASCII \texttt{0x2c}).
+\item
+\index{mp\_factors\_product}
+\verb!int mp_factors_product(const mp_factors *factors, mp_int *p);!\\
+Multiplies all elements of the list. It does not recognize sparse lists, every zero in the list gets multiplied, too. It does multiply the list with a binary-splitting algorithm which assumes a highly or better fully sorted list to work optimally.
+\item
+\index{mp\_factors\_compress}
+\verb!int mp_factors_compress(const mp_factors *f, int sorted, mp_factors *g)!\\
+Change (sorted) factors array into format ``prime, prime-count, \textellipsis, prime, prime-count''. The type of prime-count is therefore a bigint, too, which makes it useful for low \texttt{MP\_xBIT}.
+\end{description}
+
+
+
 
 \subsection{From ASCII}
 \index{mp\_read\_radix}
