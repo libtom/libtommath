@@ -21,7 +21,7 @@ int mp_init_size(mp_int *a, int size)
    size += (MP_PREC * 2) - (size % MP_PREC);
 
    /* alloc mem */
-   a->dp = (mp_digit *) XMALLOC(size * sizeof(mp_digit));
+   a->dp = (mp_digit *) XMALLOC((size_t)size * sizeof(mp_digit));
    if (a->dp == NULL) {
       return MP_MEM;
    }
