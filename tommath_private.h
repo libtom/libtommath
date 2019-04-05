@@ -29,14 +29,14 @@ extern "C" {
 /* define heap macros */
 #ifndef XMALLOC
 /* default to libc stuff */
-#   define XMALLOC   malloc
-#   define XFREE     free
-#   define XREALLOC  realloc
+#   define XMALLOC(size)                   malloc(size)
+#   define XFREE(mem, size)                free(mem)
+#   define XREALLOC(mem, oldsize, newsize) realloc(mem, newsize)
 #else
 /* prototypes for our heap functions */
-extern void *XMALLOC(size_t n);
-extern void *XREALLOC(void *p, size_t n);
-extern void XFREE(void *p);
+extern void *XMALLOC(size_t size);
+extern void *XREALLOC(void *mem, size_t oldsize, size_t newsize);
+extern void XFREE(void *mem, size_t size);
 #endif
 
 /* ---> Basic Manipulations <--- */

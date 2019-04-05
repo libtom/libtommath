@@ -28,18 +28,18 @@ int mp_fwrite(const mp_int *a, int radix, FILE *stream)
    }
 
    if ((err = mp_toradix(a, buf, radix)) != MP_OKAY) {
-      XFREE(buf);
+      XFREE(buf, len);
       return err;
    }
 
    for (x = 0; x < len; x++) {
       if (fputc((int)buf[x], stream) == EOF) {
-         XFREE(buf);
+         XFREE(buf, len);
          return MP_VAL;
       }
    }
 
-   XFREE(buf);
+   XFREE(buf, len);
    return MP_OKAY;
 }
 #endif
