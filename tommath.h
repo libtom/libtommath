@@ -504,6 +504,7 @@ mp_err mp_lcm(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
  * returns error if a < 0 and b is even
  */
 mp_err mp_n_root(const mp_int *a, mp_digit b, mp_int *c) MP_WUR;
+
 MP_DEPRECATED(mp_n_root_ex) mp_err mp_n_root_ex(const mp_int *a, mp_digit b, mp_int *c, int fast) MP_WUR;
 
 /* special sqrt algo */

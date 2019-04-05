@@ -1768,11 +1768,12 @@ It calculates $c = a \mod 2^b$.
 \begin{alltt}
 int mp_n_root (mp_int * a, mp_digit b, mp_int * c)
 \end{alltt}
-This computes $c = a^{1/b}$ such that $c^b \le a$ and $(c+1)^b > a$. Will return a positive root only for even roots and return
-a root with the sign of the input for odd roots.  For example, performing $4^{1/2}$ will return $2$ whereas $(-8)^{1/3}$
-will return $-2$.
+This computes $c = a^{1/b}$ such that $c^b \le a$ and $(c+1)^b > a$. Will return a positive root only for even roots and return a root with the sign of the input for odd roots.  For example, performing $4^{1/2}$ will return $2$ whereas $(-8)^{1/3}$ will return $-2$.
 
 This algorithm uses the ``Newton Approximation'' method and will converge on the correct root fairly quickly.
+An alternative algorithm can be chosen by setting the macro \texttt{LTM\_USE\_SMALLER\_NTH\_ROOT}. The smaller version is much slower\footnote{The speed is still usable} but is about 3-4 times smaller compiled.
+
+Neither of those functions runs in constant time, that is neither function should be used for programs that need to be cryptographically secure.
 
 The square root  $c = a^{1/2}$ (with the same conditions $c^2 \le a$ and $(c+1)^2 > a$) is implemented with a faster algorithm.
 

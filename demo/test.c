@@ -803,7 +803,7 @@ static int test_mp_sqrt(void)
       }
       mp_n_root(&a, 2uL, &c);
       if (mp_cmp_mag(&b, &c) != MP_EQ) {
-         printf("mp_sqrt() bad result!\n");
+         printf("mp_sqrt() or mp_n_root() bad result!\n");
          goto LBL_ERR;
       }
    }
@@ -1876,7 +1876,6 @@ static int test_mp_n_root(void)
          "16", "15", "15"
       }
    };
-
    if ((e = mp_init_multi(&a, &c, &r, NULL)) != MP_OKAY) {
       return EXIT_FAILURE;
    }

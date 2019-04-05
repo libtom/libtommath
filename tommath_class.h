@@ -629,6 +629,14 @@
 #   define BN_MP_SUB_D_C
 #   define BN_MP_EXCH_C
 #   define BN_MP_CLEAR_MULTI_C
+#   define BN_MP_ADD_C
+#   define BN_MP_DIV_2_C
+#   define BN_MP_DIV_D_C
+#   define BN_MP_SQRT_C
+#   define BN_MP_ISZERO_C
+#   define BN_MP_ZERO_C
+#   define BN_MP_INIT_C
+#   define BN_MP_CLEAR_C
 #endif
 
 #if defined(BN_MP_NEG_C)
