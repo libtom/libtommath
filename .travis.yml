@@ -83,14 +83,6 @@ matrix:
             - libc6-dev-x32
       sudo: required
 
-    # clang for the x64_32 architecture
-    - env:  BUILDOPTIONS='--with-cc=clang --with-mx32'
-      addons:
-        apt:
-          packages:
-            - libc6-dev-x32
-      sudo: required
-
     # GCC for the x86-64 architecture (64-bit longs and 64-bit pointers)
     - env:  BUILDOPTIONS='--with-cc=gcc --with-m64 --with-valgrind'
     # clang for x86-64 architecture (64-bit longs and 64-bit pointers)
