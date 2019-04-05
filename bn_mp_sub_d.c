@@ -64,13 +64,13 @@ int mp_sub_d(const mp_int *a, mp_digit b, mp_int *c)
 
       /* subtract first digit */
       *tmpc    = *tmpa++ - b;
-      mu       = *tmpc >> ((sizeof(mp_digit) * (size_t)CHAR_BIT) - 1u);
+      mu       = *tmpc >> ((CHAR_BIT * sizeof(mp_digit)) - 1u);
       *tmpc++ &= MP_MASK;
 
       /* handle rest of the digits */
       for (ix = 1; ix < a->used; ix++) {
          *tmpc    = *tmpa++ - mu;
-         mu       = *tmpc >> ((sizeof(mp_digit) * (size_t)CHAR_BIT) - 1u);
+         mu       = *tmpc >> ((CHAR_BIT * sizeof(mp_digit)) - 1u);
          *tmpc++ &= MP_MASK;
       }
    }

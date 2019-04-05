@@ -50,7 +50,7 @@ int s_mp_sub(const mp_int *a, const mp_int *b, mp_int *c)
           * if a carry does occur it will propagate all the way to the
           * MSB.  As a result a single shift is enough to get the carry
           */
-         u = *tmpc >> (((size_t)CHAR_BIT * sizeof(mp_digit)) - 1u);
+         u = *tmpc >> ((CHAR_BIT * sizeof(mp_digit)) - 1u);
 
          /* Clear carry from T[i] */
          *tmpc++ &= MP_MASK;
@@ -62,7 +62,7 @@ int s_mp_sub(const mp_int *a, const mp_int *b, mp_int *c)
          *tmpc = *tmpa++ - u;
 
          /* U = carry bit of T[i] */
-         u = *tmpc >> (((size_t)CHAR_BIT * sizeof(mp_digit)) - 1u);
+         u = *tmpc >> ((CHAR_BIT * sizeof(mp_digit)) - 1u);
 
          /* Clear carry from T[i] */
          *tmpc++ &= MP_MASK;

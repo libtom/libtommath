@@ -86,7 +86,7 @@ static int s_read_win_csp(mp_digit *p)
 
 static int s_read_getrandom(mp_digit *p)
 {
-   int ret;
+   ssize_t ret;
    do {
       ret = getrandom(p, sizeof(*p), 0);
    } while ((ret == -1) && (errno == EINTR));

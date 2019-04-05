@@ -51,8 +51,10 @@ CFLAGS += -I./ -Wall -Wsign-compare -Wextra -Wshadow
 
 ifndef NO_ADDTL_WARNINGS
 # additional warnings
-CFLAGS += -Wsystem-headers -Wdeclaration-after-statement -Wbad-function-cast -Wcast-align
+CFLAGS += -Wsystem-headers
+CFLAGS += -Wdeclaration-after-statement -Wbad-function-cast -Wcast-align
 CFLAGS += -Wstrict-prototypes -Wpointer-arith
+#CFLAGS += -Wconversion -Wsign-conversion
 endif
 
 ifdef COMPILE_DEBUG

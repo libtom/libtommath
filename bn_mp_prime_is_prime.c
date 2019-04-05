@@ -300,7 +300,7 @@ int mp_prime_is_prime(const mp_int *a, int t, int *result)
             if ((err = mp_rand(&b, 1)) != MP_OKAY) {
                goto LBL_B;
             }
-            fips_rand <<= sizeof(mp_digit) * CHAR_BIT;
+            fips_rand <<= CHAR_BIT * sizeof(mp_digit);
             fips_rand |= (unsigned int) b.dp[0];
             fips_rand &= mask;
          }
