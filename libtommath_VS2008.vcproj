@@ -529,6 +529,14 @@
 			>
 		</File>
 		<File
+			RelativePath="bn_mp_init_set_long.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_mp_init_set_long_long.c"
+			>
+		</File>
+		<File
 			RelativePath="bn_mp_init_size.c"
 			>
 		</File>

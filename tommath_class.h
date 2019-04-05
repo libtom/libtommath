@@ -73,6 +73,8 @@
 #   define BN_MP_INIT_MULTI_C
 #   define BN_MP_INIT_SET_C
 #   define BN_MP_INIT_SET_INT_C
+#   define BN_MP_INIT_SET_LONG_C
+#   define BN_MP_INIT_SET_LONG_LONG_C
 #   define BN_MP_INIT_SIZE_C
 #   define BN_MP_INVMOD_C
 #   define BN_MP_INVMOD_SLOW_C
@@ -498,6 +500,16 @@
 #if defined(BN_MP_INIT_SET_INT_C)
 #   define BN_MP_INIT_C
 #   define BN_MP_SET_INT_C
+#endif
+
+#if defined(BN_MP_INIT_SET_LONG_C)
+#   define BN_MP_INIT_C
+#   define BN_MP_SET_LONG_C
+#endif
+
+#if defined(BN_MP_INIT_SET_LONG_LONG_C)
+#   define BN_MP_INIT_C
+#   define BN_MP_SET_LONG_LONG_C
 #endif
 
 #if defined(BN_MP_INIT_SIZE_C)
@@ -937,8 +949,6 @@
 #endif
 
 #if defined(BN_MP_SET_LONG_C)
-#   define BN_MP_GROW_C
-#   define BN_MP_ZERO_C
 #endif
 
 #if defined(BN_MP_SET_LONG_LONG_C)

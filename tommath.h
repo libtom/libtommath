@@ -231,6 +231,12 @@ int mp_init_set(mp_int *a, mp_digit b);
 /* initialize and set 32-bit value */
 int mp_init_set_int(mp_int *a, unsigned long b);
 
+/* initialize and set long value */
+int mp_init_set_long(mp_int *a, unsigned long b);
+
+/* initialize and set long value */
+int mp_init_set_long_long(mp_int *a, unsigned long long b);
+
 /* copy, b = a */
 int mp_copy(const mp_int *a, mp_int *b);
 
