@@ -79,7 +79,7 @@ int mtest_opponent(void)
          FGETS(buf, 4095, stdin);
          mp_read_radix(&b, buf, 64);
 
-         mp_mul_2d(&a, rr, &a);
+         mp_mul_2d(&a, (int)rr, &a);
          a.sign = b.sign;
          if (mp_cmp(&a, &b) != MP_EQ) {
             printf("mul2d failed, rr == %u\n", rr);
@@ -96,7 +96,7 @@ int mtest_opponent(void)
          FGETS(buf, 4095, stdin);
          mp_read_radix(&b, buf, 64);
 
-         mp_div_2d(&a, rr, &a, &e);
+         mp_div_2d(&a, (int)rr, &a, &e);
          a.sign = b.sign;
          if ((a.used == b.used) && (a.used == 0)) {
             a.sign = b.sign = MP_ZPOS;
@@ -128,10 +128,10 @@ int mtest_opponent(void)
 
          /* test the sign/unsigned storage functions */
 
-         rr = mp_signed_bin_size(&c);
+         rr = (unsigned)mp_signed_bin_size(&c);
          mp_to_signed_bin(&c, (unsigned char *) cmd);
-         memset(cmd + rr, rand() & 0xFFu, sizeof(cmd) - rr);
-         mp_read_signed_bin(&d, (unsigned char *) cmd, rr);
+         memset(cmd + rr, rand() & 0xFF, sizeof(cmd) - rr);
+         mp_read_signed_bin(&d, (unsigned char *) cmd, (int)rr);
          if (mp_cmp(&c, &d) != MP_EQ) {
             printf("mp_signed_bin failure!\n");
             draw(&c);
@@ -140,10 +140,10 @@ int mtest_opponent(void)
          }
 
 
-         rr = mp_unsigned_bin_size(&c);
+         rr = (unsigned)mp_unsigned_bin_size(&c);
          mp_to_unsigned_bin(&c, (unsigned char *) cmd);
-         memset(cmd + rr, rand() & 0xFFu, sizeof(cmd) - rr);
-         mp_read_unsigned_bin(&d, (unsigned char *) cmd, rr);
+         memset(cmd + rr, rand() & 0xFF, sizeof(cmd) - rr);
+         mp_read_unsigned_bin(&d, (unsigned char *) cmd, (int)rr);
          if (mp_cmp_mag(&c, &d) != MP_EQ) {
             printf("mp_unsigned_bin failure!\n");
             draw(&c);
@@ -343,7 +343,7 @@ int mtest_opponent(void)
          sscanf(buf, "%d", &ix);
          FGETS(buf, 4095, stdin);
          mp_read_radix(&b, buf, 64);
-         mp_add_d(&a, ix, &c);
+         mp_add_d(&a, (mp_digit)ix, &c);
          if (mp_cmp(&b, &c) != MP_EQ) {
             printf("add_d %lu failure\n", add_d_n);
             draw(&a);
@@ -360,7 +360,7 @@ int mtest_opponent(void)
          sscanf(buf, "%d", &ix);
          FGETS(buf, 4095, stdin);
          mp_read_radix(&b, buf, 64);
-         mp_sub_d(&a, ix, &c);
+         mp_sub_d(&a, (mp_digit)ix, &c);
          if (mp_cmp(&b, &c) != MP_EQ) {
             printf("sub_d %lu failure\n", sub_d_n);
             draw(&a);

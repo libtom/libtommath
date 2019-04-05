@@ -103,7 +103,7 @@ static int test_mp_jacobi(void)
       mp_set_int(&b, jacobi[cnt].n);
       /* only test positive values of a */
       for (n = -5; n <= 10; ++n) {
-         mp_set_int(&a, abs(n));
+         mp_set_int(&a, (unsigned int)abs(n));
          should = MP_OKAY;
          if (n < 0) {
             mp_neg(&a, &a);
@@ -221,14 +221,14 @@ static int test_mp_complement(void)
    }
 
    for (i = 0; i < 1000; ++i) {
-      int l = (rand() * rand() + 1) * (rand() % 1 ? -1 : 1);
-      mp_set_int(&a, labs(l));
+      long l = (rand() * rand() + 1) * (rand() % 1 ? -1 : 1);
+      mp_set_long(&a, (unsigned long)labs(l));
       if (l < 0)
          mp_neg(&a, &a);
       mp_complement(&a, &b);
 
       l = ~l;
-      mp_set_int(&c, labs(l));
+      mp_set_long(&c, (unsigned long)labs(l));
       if (l < 0)
          mp_neg(&c, &c);
 
@@ -255,16 +255,17 @@ static int test_mp_tc_div_2d(void)
    }
 
    for (i = 0; i < 1000; ++i) {
-      int l, em;
+      long l;
+      int em;
 
       l = (rand() * rand() + 1) * (rand() % 1 ? -1 : 1);
-      mp_set_int(&a, labs(l));
+      mp_set_long(&a, (unsigned long)labs(l));
       if (l < 0)
          mp_neg(&a, &a);
 
       em = rand() % 32;
 
-      mp_set_int(&d, labs(l >> em));
+      mp_set_long(&d, (unsigned long)labs(l >> em));
       if ((l >> em) < 0)
          mp_neg(&d, &d);
 
@@ -296,16 +297,16 @@ static int test_mp_tc_xor(void)
       int l, em;
 
       l = (rand() * rand() + 1) * (rand() % 1 ? -1 : 1);
-      mp_set_int(&a, labs(l));
+      mp_set_int(&a, (unsigned long)labs(l));
       if (l < 0)
          mp_neg(&a, &a);
 
       em = (rand() * rand() + 1) * (rand() % 1 ? -1 : 1);
-      mp_set_int(&b, labs(em));
+      mp_set_int(&b, (unsigned long)labs(em));
       if (em < 0)
          mp_neg(&b, &b);
 
-      mp_set_int(&d, labs(l ^ em));
+      mp_set_int(&d, (unsigned long)labs(l ^ em));
       if ((l ^ em) < 0)
          mp_neg(&d, &d);
 
@@ -334,19 +335,19 @@ static int test_mp_tc_or(void)
    }
 
    for (i = 0; i < 1000; ++i) {
-      int l, em;
+      long l, em;
 
       l = (rand() * rand() + 1) * (rand() % 1 ? -1 : 1);
-      mp_set_int(&a, labs(l));
+      mp_set_long(&a, (unsigned long)labs(l));
       if (l < 0)
          mp_neg(&a, &a);
 
       em = (rand() * rand() + 1) * (rand() % 1 ? -1 : 1);
-      mp_set_int(&b, labs(em));
+      mp_set_long(&b, (unsigned long)labs(em));
       if (em < 0)
          mp_neg(&b, &b);
 
-      mp_set_int(&d, labs(l | em));
+      mp_set_long(&d, (unsigned long)labs(l | em));
       if ((l | em) < 0)
          mp_neg(&d, &d);
 
@@ -374,19 +375,19 @@ static int test_mp_tc_and(void)
    }
 
    for (i = 0; i < 1000; ++i) {
-      int l, em;
+      long l, em;
 
       l = (rand() * rand() + 1) * (rand() % 1 ? -1 : 1);
-      mp_set_int(&a, labs(l));
+      mp_set_long(&a, (unsigned long)labs(l));
       if (l < 0)
          mp_neg(&a, &a);
 
       em = (rand() * rand() + 1) * (rand() % 1 ? -1 : 1);
-      mp_set_int(&b, labs(em));
+      mp_set_long(&b, (unsigned long)labs(em));
       if (em < 0)
          mp_neg(&b, &b);
 
-      mp_set_int(&d, labs(l & em));
+      mp_set_long(&d, (unsigned long)labs(l & em));
       if ((l & em) < 0)
          mp_neg(&d, &d);
 
@@ -554,9 +555,9 @@ static int test_mp_get_long(void)
    }
 
    for (i = 0; i < ((int)(sizeof(unsigned long)*CHAR_BIT) - 1); ++i) {
-      t = (1ULL << (i+1)) - 1;
+      t = (1UL << (i+1)) - 1;
       if (!t)
-         t = -1;
+         t = ~0UL;
       printf(" t = 0x%lx i = %d\r", t, i);
       do {
          if (mp_set_long(&a, t) != MP_OKAY) {
@@ -592,7 +593,7 @@ static int test_mp_get_long_long(void)
    for (i = 0; i < ((int)(sizeof(unsigned long long)*CHAR_BIT) - 1); ++i) {
       r = (1ULL << (i+1)) - 1;
       if (!r)
-         r = -1;
+         r = ~0ULL;
       printf(" r = 0x%llx i = %d\r", r, i);
       do {
          if (mp_set_long_long(&a, r) != MP_OKAY) {
@@ -1345,7 +1346,7 @@ static int test_mp_ilogb(void)
       }
       /* radix_size includes the memory needed for '\0', too*/
       size -= 2;
-      if (mp_cmp_d(&lb, size) != MP_EQ) {
+      if (mp_cmp_d(&lb, (mp_digit)size) != MP_EQ) {
          goto LBL_ERR;
       }
    }
@@ -1365,7 +1366,7 @@ static int test_mp_ilogb(void)
          goto LBL_ERR;
       }
       size -= 2;
-      if (mp_cmp_d(&lb, size) != MP_EQ) {
+      if (mp_cmp_d(&lb, (mp_digit)size) != MP_EQ) {
          goto LBL_ERR;
       }
    }
