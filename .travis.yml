@@ -102,14 +102,14 @@ matrix:
     # GCC for the x86-64 architecture with restricted limb sizes
     # formerly started with the option "--with-low-mp" to testme.sh
     # but testing all three in one run took to long and timed out.
-    - env:  BUILDOPTIONS='--with-cc=gcc --cflags=-DMP_8BIT  --with-valgrind'
-    - env:  BUILDOPTIONS='--with-cc=gcc --cflags=-DMP_16BIT --with-valgrind'
-    - env:  BUILDOPTIONS='--with-cc=gcc --cflags=-DMP_32BIT --with-valgrind'
+    - env:  NO_CONV_WARNINGS=1 BUILDOPTIONS='--with-cc=gcc --cflags=-DMP_8BIT  --with-valgrind'
+    - env:  NO_CONV_WARNINGS=1 BUILDOPTIONS='--with-cc=gcc --cflags=-DMP_16BIT --with-valgrind'
+    - env:  NO_CONV_WARNINGS=1 BUILDOPTIONS='--with-cc=gcc --cflags=-DMP_32BIT --with-valgrind'
 
     # clang for the x86-64 architecture with restricted limb sizes
-    - env:  BUILDOPTIONS='--with-cc=clang --cflags=-DMP_8BIT  --with-valgrind'
-    - env:  BUILDOPTIONS='--with-cc=clang --cflags=-DMP_16BIT --with-valgrind'
-    - env:  BUILDOPTIONS='--with-cc=clang --cflags=-DMP_32BIT --with-valgrind'
+    - env:  NO_CONV_WARNINGS=1 BUILDOPTIONS='--with-cc=clang --cflags=-DMP_8BIT  --with-valgrind'
+    - env:  NO_CONV_WARNINGS=1 BUILDOPTIONS='--with-cc=clang --cflags=-DMP_16BIT --with-valgrind'
+    - env:  NO_CONV_WARNINGS=1 BUILDOPTIONS='--with-cc=clang --cflags=-DMP_32BIT --with-valgrind'
 
     # GCC for the x86-64 architecture testing against a different Bigint-implementation
     # with 333333 different inputs.

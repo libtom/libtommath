@@ -1,3 +1,8 @@
+#if defined(__GNUC__) || defined(__clang__)
+#  pragma GCC diagnostic ignored "-Wconversion"
+#  pragma GCC diagnostic ignored "-Wsign-conversion"
+#endif
+
 /* makes a bignum test harness with NUM tests per operation
  *
  * the output is made in the following format [one parameter per line]
