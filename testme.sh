@@ -72,6 +72,10 @@ _help()
   echo "    --all                   Choose all architectures and gcc and clang"
   echo "                            as compilers but does not run valgrind."
   echo
+  echo "    --format                Runs the various source-code formatters"
+  echo "                            and generators and checks if the sources"
+  echo "                            are clean."
+  echo
   echo "    -h"
   echo "    --help                  This message"
   echo
@@ -168,6 +172,7 @@ MTEST_RAND=""
 VALGRIND_OPTS=" --leak-check=full --show-leak-kinds=all --error-exitcode=1 "
 #VALGRIND_OPTS=""
 VALGRIND_BIN=""
+CHECK_FORMAT=""
 
 alive_pid=0
 
@@ -225,6 +230,9 @@ do
     --mtest-real-rand)
       MTEST_RAND="-DLTM_MTEST_REAL_RAND"
     ;;
+    --format)
+      CHECK_FORMAT="1"
+    ;;
     --all)
       COMPILERS="gcc clang"
       ARCHFLAGS="-m64 -m32 -mx32"
@@ -242,6 +250,21 @@ do
   esac
   shift
 done
+
+function _check_git() {
+  git update-index --refresh >/dev/null || true
+  git diff-index --quiet HEAD -- . || ( echo "FAILURE: $*" && exit 1 )
+}
+
+if [[ "$CHECK_FORMAT" == "1" ]]
+then
+  make astyle
+  _check_git "make astyle"
+  make new_file
+  _check_git "make format"
+  perl helper.pl -a
+  exit $?
+fi
 
 [[ "$VALGRIND_BIN" == "" ]] && VALGRIND_OPTS=""
 
