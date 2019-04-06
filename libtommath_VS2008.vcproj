@@ -361,6 +361,10 @@
 			>
 		</File>
 		<File
+			RelativePath="bn_mp_balance_mul.c"
+			>
+		</File>
+		<File
 			RelativePath="bn_mp_clamp.c"
 			>
 		</File>
