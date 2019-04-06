@@ -5,6 +5,9 @@
 #                                                                           #
 #############################################################################
 
+# Run the tests based on Ubuntu 16.04
+dist: xenial
+
 # Compilation failures are in gcc_errors_*.log
 # Failed tests in test_*.log
 # Files do not exist in case of success
