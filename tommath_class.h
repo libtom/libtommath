@@ -937,8 +937,6 @@
 #endif
 
 #if defined(BN_MP_SET_LONG_C)
-#   define BN_MP_GROW_C
-#   define BN_MP_ZERO_C
 #endif
 
 #if defined(BN_MP_SET_LONG_LONG_C)

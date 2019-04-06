@@ -30,7 +30,7 @@ int mp_grow(mp_int *a, int size)
        * to overwrite the dp member of a.
        */
       tmp = (mp_digit *) XREALLOC(a->dp,
-                                  (size_t)a->alloc * sizeof (mp_digit),
+                                  (size_t)a->alloc * sizeof(mp_digit),
                                   (size_t)size * sizeof(mp_digit));
       if (tmp == NULL) {
          /* reallocation failed but "a" is still valid [can be freed] */

@@ -5,6 +5,9 @@
 #                                                                           #
 #############################################################################
 
+# Run the tests based on Ubuntu 16.04
+dist: xenial
+
 # Compilation failures are in gcc_errors_*.log
 # Failed tests in test_*.log
 # Files do not exist in case of success
@@ -56,6 +59,14 @@ matrix:
     # The environment given to the programs in the build
     # We have only one program and the variable $BUILDOPTIONS
     # has only the options to that program: testme.sh
+
+    # Check source code format
+    - env: BUILDOPTIONS='--format'
+      addons:
+        apt:
+          packages:
+            - astyle
+      sudo: required
 
     # GCC for the 32-bit architecture (no valgrind yet)
     - env: BUILDOPTIONS='--with-cc=gcc --with-m32'

@@ -35,8 +35,8 @@ int mp_incr(mp_int *a)
    }
    return mp_add_d(a, 1uL,a);
 }
-
 #endif
-/* ref:         \$Format:\%D$ */
-/* git commit:  \$Format:\%H$ */
-/* commit time: \$Format:\%ai$ */
+
+/* ref:         $Format:%D$ */
+/* git commit:  $Format:%H$ */
+/* commit time: $Format:%ai$ */
