@@ -81,9 +81,9 @@ EOS
    if ($apply == 1) {
       print {$out} << 'EOS';
 #endif
-/* ref:         \$Format:\%D$ */
-/* git commit:  \$Format:\%H$ */
-/* commit time: \$Format:\%ai$ */
+/* ref:         $Format:%D$ */
+/* git commit:  $Format:%H$ */
+/* commit time: $Format:%ai$ */
 EOS
    }
    close $src;
