@@ -35,7 +35,3 @@ int mp_reduce_is_2k_l(const mp_int *a)
 }
 
 #endif
-
-/* ref:         $Format:%D$ */
-/* git commit:  $Format:%H$ */
-/* commit time: $Format:%ai$ */

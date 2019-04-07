@@ -29,7 +29,3 @@ void bn_reverse(unsigned char *s, int len)
    }
 }
 #endif
-
-/* ref:         $Format:%D$ */
-/* git commit:  $Format:%H$ */
-/* commit time: $Format:%ai$ */

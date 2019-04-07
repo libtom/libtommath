@@ -49,7 +49,3 @@ int mp_sub(const mp_int *a, const mp_int *b, mp_int *c)
 }
 
 #endif
-
-/* ref:         $Format:%D$ */
-/* git commit:  $Format:%H$ */
-/* commit time: $Format:%ai$ */

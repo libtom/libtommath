@@ -69,7 +69,3 @@ int mp_div_3(const mp_int *a, mp_int *c, mp_digit *d)
 }
 
 #endif
-
-/* ref:         $Format:%D$ */
-/* git commit:  $Format:%H$ */
-/* commit time: $Format:%ai$ */

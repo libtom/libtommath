@@ -167,7 +167,3 @@ int fast_mp_montgomery_reduce(mp_int *x, const mp_int *n, mp_digit rho)
    return MP_OKAY;
 }
 #endif
-
-/* ref:         $Format:%D$ */
-/* git commit:  $Format:%H$ */
-/* commit time: $Format:%ai$ */

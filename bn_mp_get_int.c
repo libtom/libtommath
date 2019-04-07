@@ -19,7 +19,3 @@ unsigned long mp_get_int(const mp_int *a)
    return mp_get_long(a) & 0xFFFFFFFFUL;
 }
 #endif
-
-/* ref:         $Format:%D$ */
-/* git commit:  $Format:%H$ */
-/* commit time: $Format:%ai$ */

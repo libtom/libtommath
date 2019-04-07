@@ -26,7 +26,3 @@ void mp_clear_multi(mp_int *mp, ...)
    va_end(args);
 }
 #endif
-
-/* ref:         $Format:%D$ */
-/* git commit:  $Format:%H$ */
-/* commit time: $Format:%ai$ */

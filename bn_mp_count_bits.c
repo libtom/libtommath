@@ -35,7 +35,3 @@ int mp_count_bits(const mp_int *a)
    return r;
 }
 #endif
-
-/* ref:         $Format:%D$ */
-/* git commit:  $Format:%H$ */
-/* commit time: $Format:%ai$ */

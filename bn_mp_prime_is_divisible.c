@@ -41,7 +41,3 @@ int mp_prime_is_divisible(const mp_int *a, int *result)
    return MP_OKAY;
 }
 #endif
-
-/* ref:         $Format:%D$ */
-/* git commit:  $Format:%H$ */
-/* commit time: $Format:%ai$ */

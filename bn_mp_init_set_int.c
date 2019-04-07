@@ -22,7 +22,3 @@ int mp_init_set_int(mp_int *a, unsigned long b)
    return mp_set_int(a, b);
 }
 #endif
-
-/* ref:         $Format:%D$ */
-/* git commit:  $Format:%H$ */
-/* commit time: $Format:%ai$ */

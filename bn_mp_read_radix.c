@@ -84,7 +84,3 @@ int mp_read_radix(mp_int *a, const char *str, int radix)
    return MP_OKAY;
 }
 #endif
-
-/* ref:         $Format:%D$ */
-/* git commit:  $Format:%H$ */
-/* commit time: $Format:%ai$ */

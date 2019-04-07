@@ -25,7 +25,3 @@ int mp_reduce_setup(mp_int *a, const mp_int *b)
    return mp_div(a, b, a, NULL);
 }
 #endif
-
-/* ref:         $Format:%D$ */
-/* git commit:  $Format:%H$ */
-/* commit time: $Format:%ai$ */

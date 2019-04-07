@@ -22,7 +22,3 @@ void mp_dr_setup(const mp_int *a, mp_digit *d)
 }
 
 #endif
-
-/* ref:         $Format:%D$ */
-/* git commit:  $Format:%H$ */
-/* commit time: $Format:%ai$ */

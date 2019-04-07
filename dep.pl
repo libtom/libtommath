@@ -81,9 +81,6 @@ EOS
    if ($apply == 1) {
       print {$out} << 'EOS';
 #endif
-/* ref:         \$Format:\%D$ */
-/* git commit:  \$Format:\%H$ */
-/* commit time: \$Format:\%ai$ */
 EOS
    }
    close $src;
@@ -149,10 +146,6 @@ print {$class} << 'EOS';
 #else
 #   define LTM_LAST
 #endif
-
-/* ref:         $Format:%D$ */
-/* git commit:  $Format:%H$ */
-/* commit time: $Format:%ai$ */
 EOS
 close $class;
 

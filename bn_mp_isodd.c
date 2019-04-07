@@ -17,7 +17,3 @@ int mp_isodd(const mp_int *a)
    return IS_ODD(a) ? MP_YES : MP_NO;
 }
 #endif
-
-/* ref:         $Format:%D$ */
-/* git commit:  $Format:%H$ */
-/* commit time: $Format:%ai$ */

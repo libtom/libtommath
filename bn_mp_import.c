@@ -62,7 +62,3 @@ int mp_import(mp_int *rop, size_t count, int order, size_t size,
 }
 
 #endif
-
-/* ref:         $Format:%D$ */
-/* git commit:  $Format:%H$ */
-/* commit time: $Format:%ai$ */

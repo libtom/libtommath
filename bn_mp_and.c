@@ -48,7 +48,3 @@ int mp_and(const mp_int *a, const mp_int *b, mp_int *c)
    return MP_OKAY;
 }
 #endif
-
-/* ref:         $Format:%D$ */
-/* git commit:  $Format:%H$ */
-/* commit time: $Format:%ai$ */

@@ -41,7 +41,3 @@ int mp_decr(mp_int *a)
    return mp_sub_d(a, 1uL,a);
 }
 #endif
-
-/* ref:         $Format:%D$ */
-/* git commit:  $Format:%H$ */
-/* commit time: $Format:%ai$ */

@@ -29,7 +29,3 @@ const uint8_t mp_s_rmap_reverse[] = {
 };
 const size_t mp_s_rmap_reverse_sz = sizeof(mp_s_rmap_reverse);
 #endif
-
-/* ref:         $Format:%D$ */
-/* git commit:  $Format:%H$ */
-/* commit time: $Format:%ai$ */

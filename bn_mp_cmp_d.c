@@ -35,7 +35,3 @@ int mp_cmp_d(const mp_int *a, mp_digit b)
    }
 }
 #endif
-
-/* ref:         $Format:%D$ */
-/* git commit:  $Format:%H$ */
-/* commit time: $Format:%ai$ */

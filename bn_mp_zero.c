@@ -27,7 +27,3 @@ void mp_zero(mp_int *a)
    }
 }
 #endif
-
-/* ref:         $Format:%D$ */
-/* git commit:  $Format:%H$ */
-/* commit time: $Format:%ai$ */

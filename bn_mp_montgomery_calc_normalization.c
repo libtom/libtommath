@@ -50,7 +50,3 @@ int mp_montgomery_calc_normalization(mp_int *a, const mp_int *b)
    return MP_OKAY;
 }
 #endif
-
-/* ref:         $Format:%D$ */
-/* git commit:  $Format:%H$ */
-/* commit time: $Format:%ai$ */

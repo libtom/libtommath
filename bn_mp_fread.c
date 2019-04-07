@@ -62,7 +62,3 @@ int mp_fread(mp_int *a, int radix, FILE *stream)
 #endif
 
 #endif
-
-/* ref:         $Format:%D$ */
-/* git commit:  $Format:%H$ */
-/* commit time: $Format:%ai$ */

@@ -24,7 +24,3 @@ void mp_exch(mp_int *a, mp_int *b)
    *b = t;
 }
 #endif
-
-/* ref:         $Format:%D$ */
-/* git commit:  $Format:%H$ */
-/* commit time: $Format:%ai$ */

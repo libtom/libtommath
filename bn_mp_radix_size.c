@@ -69,7 +69,3 @@ int mp_radix_size(const mp_int *a, int radix, int *size)
 }
 
 #endif
-
-/* ref:         $Format:%D$ */
-/* git commit:  $Format:%H$ */
-/* commit time: $Format:%ai$ */

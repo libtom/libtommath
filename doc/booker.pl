@@ -119,9 +119,6 @@ while (<$in>) {
 
       my $inline = 0;
       while (<$src>) {
-      next if ($_ =~ /ref/);
-      next if ($_ =~ /git commit/);
-      next if ($_ =~ /commit time/);
          $text[$line++] = $_;
          ++$inline;
          chomp($_);

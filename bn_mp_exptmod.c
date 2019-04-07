@@ -103,7 +103,3 @@ int mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y)
 }
 
 #endif
-
-/* ref:         $Format:%D$ */
-/* git commit:  $Format:%H$ */
-/* commit time: $Format:%ai$ */

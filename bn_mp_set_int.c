@@ -18,7 +18,3 @@ int mp_set_int(mp_int *a, unsigned long b)
    return mp_set_long(a, b & 0xFFFFFFFFUL);
 }
 #endif
-
-/* ref:         $Format:%D$ */
-/* git commit:  $Format:%H$ */
-/* commit time: $Format:%ai$ */

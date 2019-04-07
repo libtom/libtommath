@@ -78,7 +78,3 @@ int mp_export(void *rop, size_t *countp, int order, size_t size,
 }
 
 #endif
-
-/* ref:         $Format:%D$ */
-/* git commit:  $Format:%H$ */
-/* commit time: $Format:%ai$ */

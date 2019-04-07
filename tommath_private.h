@@ -100,8 +100,3 @@ int func_name (mp_int * a, type b)                       \
 #endif
 
 #endif
-
-
-/* ref:         $Format:%D$ */
-/* git commit:  $Format:%H$ */
-/* commit time: $Format:%ai$ */

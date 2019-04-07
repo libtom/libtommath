@@ -216,7 +216,3 @@ int mp_rand(mp_int *a, int digits)
    return MP_OKAY;
 }
 #endif
-
-/* ref:         $Format:%D$ */
-/* git commit:  $Format:%H$ */
-/* commit time: $Format:%ai$ */

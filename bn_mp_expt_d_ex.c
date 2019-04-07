@@ -73,7 +73,3 @@ int mp_expt_d_ex(const mp_int *a, mp_digit b, mp_int *c, int fast)
    return MP_OKAY;
 }
 #endif
-
-/* ref:         $Format:%D$ */
-/* git commit:  $Format:%H$ */
-/* commit time: $Format:%ai$ */

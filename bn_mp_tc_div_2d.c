@@ -29,7 +29,3 @@ int mp_tc_div_2d(const mp_int *a, int b, mp_int *c)
    return (res == MP_OKAY) ? mp_sub_d(c, 1uL, c) : res;
 }
 #endif
-
-/* ref:         $Format:%D$ */
-/* git commit:  $Format:%H$ */
-/* commit time: $Format:%ai$ */

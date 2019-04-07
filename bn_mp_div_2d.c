@@ -77,7 +77,3 @@ int mp_div_2d(const mp_int *a, int b, mp_int *c, mp_int *d)
    return MP_OKAY;
 }
 #endif
-
-/* ref:         $Format:%D$ */
-/* git commit:  $Format:%H$ */
-/* commit time: $Format:%ai$ */

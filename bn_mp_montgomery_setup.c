@@ -49,7 +49,3 @@ int mp_montgomery_setup(const mp_int *n, mp_digit *rho)
    return MP_OKAY;
 }
 #endif
-
-/* ref:         $Format:%D$ */
-/* git commit:  $Format:%H$ */
-/* commit time: $Format:%ai$ */

@@ -101,7 +101,3 @@ install: $(LIBMAIN_S) $(LIBMAIN_I) $(LIBMAIN_D)
 	copy /Y $(LIBMAIN_I) "$(PREFIX)\lib"
 	copy /Y $(LIBMAIN_D) "$(PREFIX)\bin"
 	copy /Y tommath*.h "$(PREFIX)\include"
-
-# ref:         $Format:%D$
-# git commit:  $Format:%H$
-# commit time: $Format:%ai$

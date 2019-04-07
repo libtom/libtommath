@@ -20,7 +20,3 @@ void mp_set(mp_int *a, mp_digit b)
    a->used  = (a->dp[0] != 0u) ? 1 : 0;
 }
 #endif
-
-/* ref:         $Format:%D$ */
-/* git commit:  $Format:%H$ */
-/* commit time: $Format:%ai$ */

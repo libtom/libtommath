@@ -93,21 +93,12 @@ sub check_comments {
  * SPDX-License-Identifier: Unlicense
  */
 MARKER
-  my $last_comment = <<'MARKER';
-/* ref:         $Format:%D$ */
-/* git commit:  $Format:%H$ */
-/* commit time: $Format:%ai$ */
-MARKER
   #my @all_files = (bsd_glob("*.{h,c}"), bsd_glob("*/*.{h,c}"));
   my @all_files = (bsd_glob("*.{h,c}"));
   for my $f (@all_files) {
     my $txt = read_file($f);
     if ($txt !~ /\Q$first_comment\E/s) {
       warn "[first_comment] $f\n";
-      $fails++;
-    }
-    if ($txt !~ /\Q$last_comment\E\s*$/s) {
-      warn "[last_comment] $f\n";
       $fails++;
     }
   }
@@ -314,7 +305,3 @@ $failure ||= process_makefiles(1) if $update_makefiles;
 
 die_usage unless defined $failure;
 exit $failure ? 1 : 0;
-
-# ref:         $Format:%D$
-# git commit:  $Format:%H$
-# commit time: $Format:%ai$

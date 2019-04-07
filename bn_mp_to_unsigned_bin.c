@@ -39,7 +39,3 @@ int mp_to_unsigned_bin(const mp_int *a, unsigned char *b)
    return MP_OKAY;
 }
 #endif
-
-/* ref:         $Format:%D$ */
-/* git commit:  $Format:%H$ */
-/* commit time: $Format:%ai$ */

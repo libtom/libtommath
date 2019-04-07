@@ -56,7 +56,3 @@ int mp_set_double(mp_int *a, double b)
 #  endif
 #endif
 #endif
-
-/* ref:         $Format:%D$ */
-/* git commit:  $Format:%H$ */
-/* commit time: $Format:%ai$ */

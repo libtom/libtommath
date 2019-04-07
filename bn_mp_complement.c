@@ -19,7 +19,3 @@ int mp_complement(const mp_int *a, mp_int *b)
    return (res == MP_OKAY) ? mp_sub_d(b, 1uL, b) : res;
 }
 #endif
-
-/* ref:         $Format:%D$ */
-/* git commit:  $Format:%H$ */
-/* commit time: $Format:%ai$ */

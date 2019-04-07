@@ -50,7 +50,3 @@ int mp_grow(mp_int *a, int size)
    return MP_OKAY;
 }
 #endif
-
-/* ref:         $Format:%D$ */
-/* git commit:  $Format:%H$ */
-/* commit time: $Format:%ai$ */

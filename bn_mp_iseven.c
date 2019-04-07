@@ -17,7 +17,3 @@ int mp_iseven(const mp_int *a)
    return IS_EVEN(a) ? MP_YES : MP_NO;
 }
 #endif
-
-/* ref:         $Format:%D$ */
-/* git commit:  $Format:%H$ */
-/* commit time: $Format:%ai$ */

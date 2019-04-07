@@ -63,7 +63,3 @@ void mp_rshd(mp_int *a, int b)
    a->used -= b;
 }
 #endif
-
-/* ref:         $Format:%D$ */
-/* git commit:  $Format:%H$ */
-/* commit time: $Format:%ai$ */

@@ -98,7 +98,3 @@ install: $(LIBMAIN_S)
 	@cp $(LIBMAIN_S) $(DESTDIR)$(LIBPATH)/
 	@cp $(HEADERS_PUB) $(DESTDIR)$(INCPATH)/
 	@sed -e 's,^prefix=.*,prefix=$(PREFIX),' -e 's,^Version:.*,Version: $(VERSION),' libtommath.pc.in > $(DESTDIR)$(LIBPATH)/pkgconfig/libtommath.pc
-
-# ref:         $Format:%D$
-# git commit:  $Format:%H$
-# commit time: $Format:%ai$

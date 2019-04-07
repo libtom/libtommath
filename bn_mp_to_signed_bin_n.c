@@ -22,7 +22,3 @@ int mp_to_signed_bin_n(const mp_int *a, unsigned char *b, unsigned long *outlen)
    return mp_to_signed_bin(a, b);
 }
 #endif
-
-/* ref:         $Format:%D$ */
-/* git commit:  $Format:%H$ */
-/* commit time: $Format:%ai$ */

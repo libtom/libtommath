@@ -38,7 +38,3 @@ const char *mp_error_to_string(int code)
 }
 
 #endif
-
-/* ref:         $Format:%D$ */
-/* git commit:  $Format:%H$ */
-/* commit time: $Format:%ai$ */

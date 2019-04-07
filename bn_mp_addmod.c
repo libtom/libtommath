@@ -31,7 +31,3 @@ int mp_addmod(const mp_int *a, const mp_int *b, const mp_int *c, mp_int *d)
    return res;
 }
 #endif
-
-/* ref:         $Format:%D$ */
-/* git commit:  $Format:%H$ */
-/* commit time: $Format:%ai$ */

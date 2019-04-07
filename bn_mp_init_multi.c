@@ -48,7 +48,3 @@ int mp_init_multi(mp_int *mp, ...)
 }
 
 #endif
-
-/* ref:         $Format:%D$ */
-/* git commit:  $Format:%H$ */
-/* commit time: $Format:%ai$ */

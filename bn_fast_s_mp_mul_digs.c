@@ -98,7 +98,3 @@ int fast_s_mp_mul_digs(const mp_int *a, const mp_int *b, mp_int *c, int digs)
    return MP_OKAY;
 }
 #endif
-
-/* ref:         $Format:%D$ */
-/* git commit:  $Format:%H$ */
-/* commit time: $Format:%ai$ */

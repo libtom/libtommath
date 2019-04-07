@@ -19,7 +19,3 @@ int mp_unsigned_bin_size(const mp_int *a)
    return (size / 8) + ((((unsigned)size & 7u) != 0u) ? 1 : 0);
 }
 #endif
-
-/* ref:         $Format:%D$ */
-/* git commit:  $Format:%H$ */
-/* commit time: $Format:%ai$ */

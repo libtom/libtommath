@@ -30,7 +30,3 @@ int mp_jacobi(const mp_int *a, const mp_int *n, int *c)
    return mp_kronecker(a, n, c);
 }
 #endif
-
-/* ref:         $Format:%D$ */
-/* git commit:  $Format:%H$ */
-/* commit time: $Format:%ai$ */

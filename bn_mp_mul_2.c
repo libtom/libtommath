@@ -73,7 +73,3 @@ int mp_mul_2(const mp_int *a, mp_int *b)
    return MP_OKAY;
 }
 #endif
-
-/* ref:         $Format:%D$ */
-/* git commit:  $Format:%H$ */
-/* commit time: $Format:%ai$ */

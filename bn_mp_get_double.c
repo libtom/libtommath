@@ -25,7 +25,3 @@ double mp_get_double(const mp_int *a)
    return (a->sign == MP_NEG) ? -d : d;
 }
 #endif
-
-/* ref:         $Format:%D$ */
-/* git commit:  $Format:%H$ */
-/* commit time: $Format:%ai$ */
