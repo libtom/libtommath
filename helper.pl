@@ -81,22 +81,8 @@ sub check_source {
 sub check_comments {
   my $fails = 0;
   my $first_comment = <<'MARKER';
-/* LibTomMath, multiple-precision integer library -- Tom St Denis
- *
- * LibTomMath is a library that provides multiple-precision
- * integer arithmetic as well as number theoretic functionality.
- *
- * The library was designed directly after the MPI library by
- * Michael Fromberger but has been written from scratch with
- * additional optimizations in place.
- *
- * SPDX-License-Identifier: Unlicense
- */
-MARKER
-  my $last_comment = <<'MARKER';
-/* ref:         $Format:%D$ */
-/* git commit:  $Format:%H$ */
-/* commit time: $Format:%ai$ */
+/* LibTomMath, multiple-precision integer library -- Tom St Denis */
+/* SPDX-License-Identifier: Unlicense */
 MARKER
   #my @all_files = (bsd_glob("*.{h,c}"), bsd_glob("*/*.{h,c}"));
   my @all_files = (bsd_glob("*.{h,c}"));
@@ -104,10 +90,6 @@ MARKER
     my $txt = read_file($f);
     if ($txt !~ /\Q$first_comment\E/s) {
       warn "[first_comment] $f\n";
-      $fails++;
-    }
-    if ($txt !~ /\Q$last_comment\E\s*$/s) {
-      warn "[last_comment] $f\n";
       $fails++;
     }
   }
@@ -314,7 +296,3 @@ $failure ||= process_makefiles(1) if $update_makefiles;
 
 die_usage unless defined $failure;
 exit $failure ? 1 : 0;
-
-# ref:         $Format:%D$
-# git commit:  $Format:%H$
-# commit time: $Format:%ai$

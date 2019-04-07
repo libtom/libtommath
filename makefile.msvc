@@ -85,7 +85,3 @@ install: $(LIBMAIN_S)
 	cmd /c if not exist "$(PREFIX)\include" mkdir "$(PREFIX)\include"
 	copy /Y $(LIBMAIN_S) "$(PREFIX)\lib"
 	copy /Y tommath*.h "$(PREFIX)\include"
-
-# ref:         $Format:%D$
-# git commit:  $Format:%H$
-# commit time: $Format:%ai$

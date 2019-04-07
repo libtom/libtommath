@@ -1,16 +1,7 @@
 #include "tommath_private.h"
 #ifdef BN_MP_EXPT_D_EX_C
-/* LibTomMath, multiple-precision integer library -- Tom St Denis
- *
- * LibTomMath is a library that provides multiple-precision
- * integer arithmetic as well as number theoretic functionality.
- *
- * The library was designed directly after the MPI library by
- * Michael Fromberger but has been written from scratch with
- * additional optimizations in place.
- *
- * SPDX-License-Identifier: Unlicense
- */
+/* LibTomMath, multiple-precision integer library -- Tom St Denis */
+/* SPDX-License-Identifier: Unlicense */
 
 /* calculate c = a**b  using a square-multiply algorithm */
 int mp_expt_d_ex(const mp_int *a, mp_digit b, mp_int *c, int fast)
@@ -73,7 +64,3 @@ int mp_expt_d_ex(const mp_int *a, mp_digit b, mp_int *c, int fast)
    return MP_OKAY;
 }
 #endif
-
-/* ref:         $Format:%D$ */
-/* git commit:  $Format:%H$ */
-/* commit time: $Format:%ai$ */
