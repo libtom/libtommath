@@ -1,16 +1,7 @@
 #include "tommath_private.h"
 #ifdef BN_S_MP_SUB_C
-/* LibTomMath, multiple-precision integer library -- Tom St Denis
- *
- * LibTomMath is a library that provides multiple-precision
- * integer arithmetic as well as number theoretic functionality.
- *
- * The library was designed directly after the MPI library by
- * Michael Fromberger but has been written from scratch with
- * additional optimizations in place.
- *
- * SPDX-License-Identifier: Unlicense
- */
+/* LibTomMath, multiple-precision integer library -- Tom St Denis */
+/* SPDX-License-Identifier: Unlicense */
 
 /* low level subtraction (assumes |a| > |b|), HAC pp.595 Algorithm 14.9 */
 int s_mp_sub(const mp_int *a, const mp_int *b, mp_int *c)

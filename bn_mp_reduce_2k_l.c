@@ -1,16 +1,7 @@
 #include "tommath_private.h"
 #ifdef BN_MP_REDUCE_2K_L_C
-/* LibTomMath, multiple-precision integer library -- Tom St Denis
- *
- * LibTomMath is a library that provides multiple-precision
- * integer arithmetic as well as number theoretic functionality.
- *
- * The library was designed directly after the MPI library by
- * Michael Fromberger but has been written from scratch with
- * additional optimizations in place.
- *
- * SPDX-License-Identifier: Unlicense
- */
+/* LibTomMath, multiple-precision integer library -- Tom St Denis */
+/* SPDX-License-Identifier: Unlicense */
 
 /* reduces a modulo n where n is of the form 2**p - d
    This differs from reduce_2k since "d" can be larger
