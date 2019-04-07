@@ -36,6 +36,6 @@ void mp_factors_sort(mp_factors *f)
 }
 
 #endif
-/* ref:         \$Format:\%D$ */
-/* git commit:  \$Format:\%H$ */
-/* commit time: \$Format:\%ai$ */
+/* ref:         $Format:%D$ */
+/* git commit:  $Format:%H$ */
+/* commit time: $Format:%ai$ */

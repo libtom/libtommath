@@ -26,7 +26,8 @@ int mp_factors_zero(mp_factors *f)
       }
    }
 
-   tmp = (mp_int *) XREALLOC(f->factors, sizeof(*tmp) * LTM_TRIAL_GROWTH);
+   tmp = (mp_int *) XREALLOC(f->factors, sizeof(*tmp) * f->alloc,
+                             sizeof(*tmp) * LTM_TRIAL_GROWTH);
    if (tmp == NULL) {
       return MP_MEM;
    }
@@ -39,6 +40,6 @@ int mp_factors_zero(mp_factors *f)
 }
 
 #endif
-/* ref:         \$Format:\%D$ */
-/* git commit:  \$Format:\%H$ */
-/* commit time: \$Format:\%ai$ */
+/* ref:         $Format:%D$ */
+/* git commit:  $Format:%H$ */
+/* commit time: $Format:%ai$ */

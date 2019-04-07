@@ -567,7 +567,7 @@ int mp_prime_next_prime(mp_int *a, int t, int bbs_style);
  */
 int mp_prime_random_ex(mp_int *a, int t, int size, int flags, ltm_prime_callback cb, void *dat);
 
-/* 
+/*
    Simple data structure to hold some mp_int's.
    Is used in LTM to hold the factors from factoring, about
    100 or so max (large primorials of powers notwithstanding),
@@ -578,7 +578,7 @@ typedef struct  {
    mp_int *factors;
 } mp_factors;
 
-#ifndef LTM_TRIAL_GROWTH 
+#ifndef LTM_TRIAL_GROWTH
 #define LTM_TRIAL_GROWTH 64
 #endif
 

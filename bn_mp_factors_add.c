@@ -21,7 +21,8 @@ int mp_factors_add(const mp_int *a, mp_factors *f)
    mp_int t;
    if (f->alloc <= f->length) {
       new_size += LTM_TRIAL_GROWTH;
-      tmp = (mp_int *) XREALLOC(f->factors, sizeof(*tmp) * (size_t)(new_size));
+      tmp = (mp_int *) XREALLOC(f->factors, sizeof(*tmp) * f->alloc,
+                                sizeof(*tmp) * (size_t)(new_size));
       if (tmp == NULL) {
          return MP_MEM;
       }
@@ -36,6 +37,6 @@ int mp_factors_add(const mp_int *a, mp_factors *f)
 }
 
 #endif
-/* ref:         \$Format:\%D$ */
-/* git commit:  \$Format:\%H$ */
-/* commit time: \$Format:\%ai$ */
+/* ref:         $Format:%D$ */
+/* git commit:  $Format:%H$ */
+/* commit time: $Format:%ai$ */

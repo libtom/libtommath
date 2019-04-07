@@ -17,12 +17,11 @@
 void mp_factors_clear(mp_factors *f)
 {
    int i;
-   /* free(NULL) should be possible. Says the standard. */
    if (f->factors != NULL) {
-      for (i = 0; i < f->length; i++) { 
-         mp_clear( &f->factors[i] ); 
+      for (i = 0; i < f->length; i++) {
+         mp_clear(&f->factors[i]);
       }
-      free(f->factors);
+      XFREE(f->factors, sizeof(mp_int) * f->alloc);
       f->factors = NULL;
       f->alloc = 0;
       f->length = 0;
@@ -30,6 +29,6 @@ void mp_factors_clear(mp_factors *f)
 }
 
 #endif
-/* ref:         \$Format:\%D$ */
-/* git commit:  \$Format:\%H$ */
-/* commit time: \$Format:\%ai$ */
+/* ref:         $Format:%D$ */
+/* git commit:  $Format:%H$ */
+/* commit time: $Format:%ai$ */

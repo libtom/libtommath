@@ -39,6 +39,6 @@ int mp_factors_print(const mp_factors *f, int base, char delimiter, FILE *stream
 }
 
 #endif
-/* ref:         \$Format:\%D$ */
-/* git commit:  \$Format:\%H$ */
-/* commit time: \$Format:\%ai$ */
+/* ref:         $Format:%D$ */
+/* git commit:  $Format:%H$ */
+/* commit time: $Format:%ai$ */

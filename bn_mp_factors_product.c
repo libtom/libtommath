@@ -14,7 +14,7 @@
 
 
 /* Compute the product of the elements of "factors" */
-static int product_lowlevel(const mp_factors *factors, int start, int n, mp_int *result)
+static int s_product_lowlevel(const mp_factors *factors, int start, int n, mp_int *result)
 {
    int i, first_half, second_half;
    mp_int tmp;
@@ -37,13 +37,13 @@ static int product_lowlevel(const mp_factors *factors, int start, int n, mp_int 
 
    first_half = n / 2;
    second_half = n - first_half;
-   if ((e = product_lowlevel(factors, start, second_half, result)) != MP_OKAY) {
+   if ((e = s_product_lowlevel(factors, start, second_half, result)) != MP_OKAY) {
       return e;
    }
    if ((e = mp_init(&tmp)) != MP_OKAY) {
       return e;
    }
-   if ((e = product_lowlevel(factors, start+second_half, first_half, &tmp)) != MP_OKAY) {
+   if ((e = s_product_lowlevel(factors, start+second_half, first_half, &tmp)) != MP_OKAY) {
       goto LTM_ERR;
    }
    if ((e = mp_mul(result, &tmp, result)) != MP_OKAY) {
@@ -65,13 +65,13 @@ int mp_factors_product(const mp_factors *factors, mp_int *p)
    if (r == 1) {
       return mp_copy(&(factors->factors[0]), p);
    }
-   if ((e = product_lowlevel(factors, 0, r, p)) != MP_OKAY) {
+   if ((e = s_product_lowlevel(factors, 0, r, p)) != MP_OKAY) {
       return e;
    }
    return MP_OKAY;
 }
 
 #endif
-/* ref:         \$Format:\%D$ */
-/* git commit:  \$Format:\%H$ */
-/* commit time: \$Format:\%ai$ */
+/* ref:         $Format:%D$ */
+/* git commit:  $Format:%H$ */
+/* commit time: $Format:%ai$ */
