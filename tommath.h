@@ -598,9 +598,6 @@ int mp_factors_add(const mp_int *a, mp_factors *f);
 /* Sort factor-array (an array of mp_int's) */
 void mp_factors_sort(mp_factors *f);
 
-/* Print the elememts of a factor-array (an array of mp_int's) */
-int mp_factors_print(const mp_factors *f, int base, char delimiter, FILE *stream);
-
 /* Factor integer. Good for up to about 35-40 bit large factors */
 int mp_factor(const mp_int *z, mp_factors *factors);
 
@@ -633,6 +630,8 @@ int mp_radix_size(const mp_int *a, int radix, int *size);
 #ifndef LTM_NO_FILE
 int mp_fread(mp_int *a, int radix, FILE *stream);
 int mp_fwrite(const mp_int *a, int radix, FILE *stream);
+/* Print the elememts of a factor-array (an array of mp_int's) */
+int mp_factors_print(const mp_factors *f, int base, char delimiter, FILE *stream);
 #endif
 
 #define mp_read_raw(mp, str, len) mp_read_signed_bin((mp), (str), (len))
