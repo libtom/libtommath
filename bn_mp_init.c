@@ -15,17 +15,10 @@
 /* init a new mp_int */
 int mp_init(mp_int *a)
 {
-   int i;
-
    /* allocate memory required and clear it */
-   a->dp = (mp_digit *) XMALLOC(MP_PREC * sizeof(mp_digit));
+   a->dp = (mp_digit *) XCALLOC((size_t)MP_PREC, sizeof(mp_digit));
    if (a->dp == NULL) {
       return MP_MEM;
-   }
-
-   /* set the digits to zero */
-   for (i = 0; i < MP_PREC; i++) {
-      a->dp[i] = 0;
    }
 
    /* set the used to zero, allocated digits to the default precision
