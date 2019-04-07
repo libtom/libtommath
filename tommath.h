@@ -335,6 +335,7 @@ int mp_sub(const mp_int *a, const mp_int *b, mp_int *c);
 
 /* c = a * b */
 int mp_mul(const mp_int *a, const mp_int *b, mp_int *c);
+int mp_balance_mul(const mp_int *a, const mp_int *b, mp_int *c);
 
 /* b = a*a  */
 int mp_sqr(const mp_int *a, mp_int *b);

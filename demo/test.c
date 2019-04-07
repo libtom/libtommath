@@ -1602,7 +1602,46 @@ LTM_ERR:
    return EXIT_FAILURE;
 }
 
+static int test_mp_balance_mul(void)
+{
+   mp_int a, b, c;
+   int e = MP_OKAY;
 
+   const char *na =
+      "4b0I5uMTujCysw+1OOuOyH2FX2WymrHUqi8BBDb7XpkV/4i7vXTbEYUy/kdIfCKu5jT5JEqYkdmnn3jAYo8XShPzNLxZx9yoLjxYRyptSuOI2B1DspvbIVYXY12sxPZ4/HCJ4Usm2MU5lO/006KnDMxuxiv1rm6YZJZ0eZU";
+   const char *nb = "3x9vs0yVi4hIq7poAeVcggC3WoRt0zRLKO";
+   const char *nc =
+      "HzrSq9WVt1jDTVlwUxSKqxctu2GVD+N8+SVGaPFRqdxyld6IxDBbj27BPJzYUdR96k3sWpkO8XnDBvupGPnehpQe4KlO/KmN1PjFov/UTZYM+LYzkFcBPyV6hkkL8ePC1rlFLAHzgJMBCXVp4mRqtkQrDsZXXlcqlbTFu69wF6zDEysiX2cAtn/kP9ldblJiwYPCD8hG";
+
+   if ((e = mp_init_multi(&a, &b, &c, NULL)) != MP_OKAY) {
+      goto LTM_ERR;
+   }
+
+   if ((e = mp_read_radix(&a, na, 64)) != MP_OKAY) {
+      goto LTM_ERR;
+   }
+   if ((e = mp_read_radix(&b, nb, 64)) != MP_OKAY) {
+      goto LTM_ERR;
+   }
+
+   if ((e = mp_mul(&a, &b, &c)) != MP_OKAY) {
+      goto LTM_ERR;
+   }
+
+   if ((e = mp_read_radix(&b, nc, 64)) != MP_OKAY) {
+      goto LTM_ERR;
+   }
+
+   if (mp_cmp(&b, &c) != MP_EQ) {
+      goto LTM_ERR;
+   }
+
+   mp_clear_multi(&a, &b, &c, NULL);
+   return EXIT_SUCCESS;
+LTM_ERR:
+   mp_clear_multi(&a, &b, &c, NULL);
+   return EXIT_FAILURE;
+}
 
 int unit_tests(void)
 {
@@ -1638,7 +1677,8 @@ int unit_tests(void)
       T(mp_tc_or),
       T(mp_tc_xor),
       T(mp_incr),
-      T(mp_decr)
+      T(mp_decr),
+      T(mp_balance_mul)
 #undef T
    };
    unsigned long i;
