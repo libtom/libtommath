@@ -18,8 +18,7 @@ int mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y)
    }
 
    /* if exponent X is negative we have to recurse */
-   if (X->sign == MP_NEG) {
-#ifdef BN_MP_INVMOD_C
+   if (MP_ENABLED(MP_INVMOD) && X->sign == MP_NEG) {
       mp_int tmpG, tmpX;
       int err;
 
@@ -46,50 +45,35 @@ int mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y)
       err = mp_exptmod(&tmpG, &tmpX, P, Y);
       mp_clear_multi(&tmpG, &tmpX, NULL);
       return err;
-#else
+   } else {
       /* no invmod */
       return MP_VAL;
-#endif
    }
 
    /* modified diminished radix reduction */
-#if defined(BN_MP_REDUCE_IS_2K_L_C) && defined(BN_MP_REDUCE_2K_L_C) && defined(BN_S_MP_EXPTMOD_C)
-   if (mp_reduce_is_2k_l(P) == MP_YES) {
+   if (MP_ENABLED(MP_REDUCE_IS_2K_L) && MP_ENABLED(MP_REDUCE_2K_L) && MP_ENABLED(S_MP_EXPTMOD) &&
+       mp_reduce_is_2k_l(P) == MP_YES) {
       return s_mp_exptmod(G, X, P, Y, 1);
    }
-#endif
 
-#ifdef BN_MP_DR_IS_MODULUS_C
-   /* is it a DR modulus? */
-   dr = mp_dr_is_modulus(P);
-#else
-   /* default to no */
-   dr = 0;
-#endif
+   /* is it a DR modulus? default to no */
+   dr = MP_ENABLED(MP_DR_IS_MODULUS) ? mp_dr_is_modulus(P) : 0;
 
-#ifdef BN_MP_REDUCE_IS_2K_C
    /* if not, is it a unrestricted DR modulus? */
-   if (dr == 0) {
+   if (MP_ENABLED(MP_REDUCE_IS_2K) && dr == 0) {
       dr = mp_reduce_is_2k(P) << 1;
    }
-#endif
 
    /* if the modulus is odd or dr != 0 use the montgomery method */
-#ifdef BN_MP_EXPTMOD_FAST_C
-   if (IS_ODD(P) || (dr !=  0)) {
+   if (MP_ENABLED(MP_EXPTMOD_FAST) && (IS_ODD(P) || (dr !=  0))) {
       return mp_exptmod_fast(G, X, P, Y, dr);
-   } else {
-#endif
-#ifdef BN_S_MP_EXPTMOD_C
+   } else if (MP_ENABLED(S_MP_EXPTMOD)) {
       /* otherwise use the generic Barrett reduction technique */
       return s_mp_exptmod(G, X, P, Y, 0);
-#else
+   } else {
       /* no exptmod for evens */
       return MP_VAL;
-#endif
-#ifdef BN_MP_EXPTMOD_FAST_C
    }
-#endif
 }
 
 #endif
