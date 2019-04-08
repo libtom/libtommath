@@ -1,5 +1,8 @@
 #include "shared.h"
 
+/* We can also test the private API here */
+#include "tommath_private.h"
+
 static int test_trivial_stuff(void)
 {
    mp_int a, b, c, d;
@@ -1624,7 +1627,7 @@ static int test_mp_balance_mul(void)
       goto LTM_ERR;
    }
 
-   if ((e = mp_mul(&a, &b, &c)) != MP_OKAY) {
+   if ((e = mp_balance_mul(&a, &b, &c)) != MP_OKAY) {
       goto LTM_ERR;
    }
 
