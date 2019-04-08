@@ -14,7 +14,6 @@ int mp_balance_mul(const mp_int *a, const mp_int *b, mp_int *c)
 
    nblocks = MAX(a->used, b->used) / MIN(a->used, b->used);
    bsize = MIN(a->used, b->used) ;
-   e = MP_OKAY;
 
    if ((e = mp_init_size(&a0, bsize + 2)) != MP_OKAY) {
       return e;
