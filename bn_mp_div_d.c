@@ -56,12 +56,10 @@ int mp_div_d(const mp_int *a, mp_digit b, mp_int *c, mp_digit *d)
       return MP_OKAY;
    }
 
-#ifdef BN_MP_DIV_3_C
    /* three? */
-   if (b == 3u) {
+   if (MP_ENABLED(MP_DIV_3) && b == 3u) {
       return mp_div_3(a, c, d);
    }
-#endif
 
    /* no easy answer [c'est la vie].  Just division */
    if ((res = mp_init_size(&q, a->used)) != MP_OKAY) {
