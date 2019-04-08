@@ -35,8 +35,7 @@ extern void XFREE(void *mem, size_t size);
 
 /* feature detection macro */
 #define _MP_ENABLED_TEST        ,
-#define _MP_ENABLED_TEST1       ,
-#define MP_ENABLED(x)           _MP_ENABLED1(x)
+#define MP_ENABLED(x)           _MP_ENABLED1(BN_##x##_C)
 #define _MP_ENABLED1(x)         _MP_ENABLED2(_MP_ENABLED_TEST##x)
 #define _MP_ENABLED2(x)         _MP_ENABLED3(x 1, 0)
 #define _MP_ENABLED3(x, y, ...) y
