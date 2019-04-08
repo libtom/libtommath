@@ -5,8 +5,10 @@
 
 #ifdef MP_LOW_MEM
 #   define TAB_SIZE 32
+#   define MAX_WINSIZE 5
 #else
 #   define TAB_SIZE 256
+#   define MAX_WINSIZE 0
 #endif
 
 mp_err s_mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y, int redmode)
@@ -35,11 +37,7 @@ mp_err s_mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y
       winsize = 8;
    }
 
-#ifdef MP_LOW_MEM
-   if (winsize > 5) {
-      winsize = 5;
-   }
-#endif
+   winsize = MAX_WINSIZE ? MP_MIN(MAX_WINSIZE, winsize) : winsize;
 
    /* init M array */
    /* init first cell */
