@@ -25,21 +25,17 @@ int mp_reduce(mp_int *x, const mp_int *m, const mp_int *mu)
       if ((res = mp_mul(&q, mu, &q)) != MP_OKAY) {
          goto CLEANUP;
       }
-   } else {
-#ifdef BN_S_MP_MUL_HIGH_DIGS_C
+   } else if (MP_HAS(S_MP_MUL_HIGH_DIGS)) {
       if ((res = s_mp_mul_high_digs(&q, mu, &q, um)) != MP_OKAY) {
          goto CLEANUP;
       }
-#elif defined(BN_FAST_S_MP_MUL_HIGH_DIGS_C)
+   } else if (MP_HAS(FAST_S_MP_MUL_HIGH_DIGS)) {
       if ((res = fast_s_mp_mul_high_digs(&q, mu, &q, um)) != MP_OKAY) {
          goto CLEANUP;
       }
-#else
-      {
-         res = MP_VAL;
-         goto CLEANUP;
-      }
-#endif
+   } else {
+      res = MP_VAL;
+      goto CLEANUP;
    }
 
    /* q3 = q2 / b**(k+1) */

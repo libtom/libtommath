@@ -34,11 +34,9 @@ int s_mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y, i
       winsize = 8;
    }
 
-#ifdef MP_LOW_MEM
-   if (winsize > 5) {
+   if (MP_DEFINED(MP_LOW_MEM) && winsize > 5) {
       winsize = 5;
    }
-#endif
 
    /* init M array */
    /* init first cell */

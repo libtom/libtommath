@@ -33,6 +33,14 @@ extern void *XCALLOC(size_t nmemb, size_t size);
 extern void XFREE(void *mem, size_t size);
 #endif
 
+/* feature detection macro */
+#define MP_HAS(x)               MP_DEFINED(BN_##x##_C)
+#define MP_DEFINED(x)           _MP_DEFINED1(x)
+#define _MP_DEFINED1(x)         _MP_DEFINED2(_MP_DEFINED_TEST##x)
+#define _MP_DEFINED2(x)         _MP_DEFINED3(x 1, 0)
+#define _MP_DEFINED3(x, y, ...) y
+#define _MP_DEFINED_TEST        ,
+
 /* ---> Basic Manipulations <--- */
 #define IS_ZERO(a) ((a)->used == 0)
 #define IS_EVEN(a) (((a)->used == 0) || (((a)->dp[0] & 1u) == 0u))
@@ -48,6 +56,7 @@ int fast_s_mp_mul_high_digs(const mp_int *a, const mp_int *b, mp_int *c, int dig
 int s_mp_mul_high_digs(const mp_int *a, const mp_int *b, mp_int *c, int digs);
 int fast_s_mp_sqr(const mp_int *a, mp_int *b);
 int s_mp_sqr(const mp_int *a, mp_int *b);
+int mp_balance_mul(const mp_int *a, const mp_int *b, mp_int *c);
 int mp_karatsuba_mul(const mp_int *a, const mp_int *b, mp_int *c);
 int mp_toom_mul(const mp_int *a, const mp_int *b, mp_int *c);
 int mp_karatsuba_sqr(const mp_int *a, mp_int *b);
