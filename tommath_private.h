@@ -33,6 +33,14 @@ extern void *XCALLOC(size_t nmemb, size_t size);
 extern void XFREE(void *mem, size_t size);
 #endif
 
+/* feature detection macro */
+#define _MP_ENABLED_TEST        ,
+#define _MP_ENABLED_TEST1       ,
+#define MP_ENABLED(x)           _MP_ENABLED1(x)
+#define _MP_ENABLED1(x)         _MP_ENABLED2(_MP_ENABLED_TEST##x)
+#define _MP_ENABLED2(x)         _MP_ENABLED3(x 1, 0)
+#define _MP_ENABLED3(x, y, ...) y
+
 /* ---> Basic Manipulations <--- */
 #define IS_ZERO(a) ((a)->used == 0)
 #define IS_EVEN(a) (((a)->used == 0) || (((a)->dp[0] & 1u) == 0u))

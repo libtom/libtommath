@@ -3,13 +3,6 @@
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
-#define _MP_ENABLED_TEST        ,
-#define _MP_ENABLED_TEST1       ,
-#define MP_ENABLED(x)           _MP_ENABLED1(x)
-#define _MP_ENABLED1(x)         _MP_ENABLED2(_MP_ENABLED_TEST##x)
-#define _MP_ENABLED2(x)         _MP_ENABLED3(x 1, 0)
-#define _MP_ENABLED3(x, y, ...) y
-
 /* high level multiplication (handles sign) */
 int mp_mul(const mp_int *a, const mp_int *b, mp_int *c)
 {
