@@ -17,7 +17,7 @@ int mp_invmod(const mp_int *a, const mp_int *b, mp_int *c)
    }
 
    return MP_ENABLED(MP_INVMOD_SLOW)
-       ? mp_invmod_slow(a, b, c)
-       : MP_VAL;
+          ? mp_invmod_slow(a, b, c)
+          : MP_VAL;
 }
 #endif
