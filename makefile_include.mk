@@ -54,6 +54,7 @@ ifndef NO_ADDTL_WARNINGS
 CFLAGS += -Wsystem-headers
 CFLAGS += -Wdeclaration-after-statement -Wbad-function-cast -Wcast-align
 CFLAGS += -Wstrict-prototypes -Wpointer-arith
+CFLAGS += -Wundef
 #CFLAGS += -Wconversion -Wsign-conversion
 endif
 
