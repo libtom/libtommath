@@ -23,7 +23,8 @@ int mp_incr(mp_int *a)
    } else if (a->dp[0] < MP_MASK) {
       a->dp[0]++;
       return MP_OKAY;
+   } else {
+      return mp_add_d(a, 1uL,a);
    }
-   return mp_add_d(a, 1uL,a);
 }
 #endif

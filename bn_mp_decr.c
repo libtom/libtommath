@@ -23,11 +23,12 @@ int mp_decr(mp_int *a)
       return MP_OKAY;
    } else if (a->dp[0] > 1uL) {
       a->dp[0]--;
-      if (a->dp[0] == 0) {
+      if (a->dp[0] == 0u) {
          mp_zero(a);
       }
       return MP_OKAY;
+   } else {
+      return mp_sub_d(a, 1uL,a);
    }
-   return mp_sub_d(a, 1uL,a);
 }
 #endif
