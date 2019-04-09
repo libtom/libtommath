@@ -10,6 +10,14 @@
 extern "C" {
 #endif
 
+#if defined(__GNUC__) && (__GNUC__ * 100 + __GNUC_MINOR__ >= 301)
+#  define MP_DEPRECATED(x) __attribute__((deprecated("replaced by " #x)))
+#elif defined(_MSC_VER) && _MSC_VER >= 1500
+#  define MP_DEPRECATED(x) __declspec(deprecated("replaced by " #x))
+#else
+#  define MP_DEPRECATED
+#endif
+
 /* define heap macros */
 #ifndef MP_MALLOC
 /* default to libc stuff */
