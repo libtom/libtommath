@@ -5,6 +5,6 @@
 
 int mp_iseven(const mp_int *a)
 {
-   return IS_EVEN(a) ? MP_YES : MP_NO;
+   return MP_IS_EVEN(a) ? MP_YES : MP_NO;
 }
 #endif

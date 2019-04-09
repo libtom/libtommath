@@ -10,10 +10,10 @@ int mp_gcd(const mp_int *a, const mp_int *b, mp_int *c)
    int     k, u_lsb, v_lsb, res;
 
    /* either zero than gcd is the largest */
-   if (IS_ZERO(a)) {
+   if (MP_IS_ZERO(a)) {
       return mp_abs(b, c);
    }
-   if (IS_ZERO(b)) {
+   if (MP_IS_ZERO(b)) {
       return mp_abs(a, c);
    }
 
@@ -32,7 +32,7 @@ int mp_gcd(const mp_int *a, const mp_int *b, mp_int *c)
    /* B1.  Find the common power of two for u and v */
    u_lsb = mp_cnt_lsb(&u);
    v_lsb = mp_cnt_lsb(&v);
-   k     = MIN(u_lsb, v_lsb);
+   k     = MP_MIN(u_lsb, v_lsb);
 
    if (k > 0) {
       /* divide the power of two out */
@@ -58,7 +58,7 @@ int mp_gcd(const mp_int *a, const mp_int *b, mp_int *c)
       }
    }
 
-   while (!IS_ZERO(&v)) {
+   while (!MP_IS_ZERO(&v)) {
       /* make sure v is the largest */
       if (mp_cmp_mag(&u, &v) == MP_GT) {
          /* swap u and v to make sure v is >= u */

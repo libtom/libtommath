@@ -10,7 +10,7 @@ int mp_count_bits(const mp_int *a)
    mp_digit q;
 
    /* shortcut */
-   if (IS_ZERO(a)) {
+   if (MP_IS_ZERO(a)) {
       return 0;
    }
 

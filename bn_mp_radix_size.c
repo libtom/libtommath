@@ -17,7 +17,7 @@ int mp_radix_size(const mp_int *a, int radix, int *size)
       return MP_VAL;
    }
 
-   if (IS_ZERO(a)) {
+   if (MP_IS_ZERO(a)) {
       *size = 2;
       return MP_OKAY;
    }
@@ -45,7 +45,7 @@ int mp_radix_size(const mp_int *a, int radix, int *size)
    t.sign = MP_ZPOS;
 
    /* fetch out all of the digits */
-   while (!IS_ZERO(&t)) {
+   while (!MP_IS_ZERO(&t)) {
       if ((res = mp_div_d(&t, (mp_digit)radix, &t, &d)) != MP_OKAY) {
          mp_clear(&t);
          return res;

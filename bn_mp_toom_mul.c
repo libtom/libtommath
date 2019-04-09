@@ -23,7 +23,7 @@ int mp_toom_mul(const mp_int *a, const mp_int *b, mp_int *c)
    }
 
    /* B */
-   B = MIN(a->used, b->used) / 3;
+   B = MP_MIN(a->used, b->used) / 3;
 
    /* a = a2 * B**2 + a1 * B + a0 */
    if ((res = mp_mod_2d(a, DIGIT_BIT * B, &a0)) != MP_OKAY) {

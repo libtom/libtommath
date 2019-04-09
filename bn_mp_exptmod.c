@@ -76,7 +76,7 @@ int mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y)
 
    /* if the modulus is odd or dr != 0 use the montgomery method */
 #ifdef BN_MP_EXPTMOD_FAST_C
-   if (IS_ODD(P) || (dr !=  0)) {
+   if (MP_IS_ODD(P) || (dr !=  0)) {
       return mp_exptmod_fast(G, X, P, Y, dr);
    } else {
 #endif

@@ -13,7 +13,7 @@ int mp_tc_xor(const mp_int *a, const mp_int *b, mp_int *c)
    if ((sa == MP_NEG) || (sb == MP_NEG)) {
       abits = mp_count_bits(a);
       bbits = mp_count_bits(b);
-      bits = MAX(abits, bbits);
+      bits = MP_MAX(abits, bbits);
       res = mp_init_set_int(&_mx, 1uL);
       if (res != MP_OKAY) {
          goto end;

@@ -40,7 +40,7 @@ int mp_is_square(const mp_int *arg, int *ret)
       return MP_VAL;
    }
 
-   if (IS_ZERO(arg)) {
+   if (MP_IS_ZERO(arg)) {
       return MP_OKAY;
    }
 

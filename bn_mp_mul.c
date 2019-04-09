@@ -26,14 +26,14 @@ int mp_mul(const mp_int *a, const mp_int *b, mp_int *c)
     * Using it to cut the input into slices small enough for fast_s_mp_mul_digs
     * was actually slower on the author's machine, but YMMV.
     */
-   if ((MIN(len_a, len_b) < KARATSUBA_MUL_CUTOFF)
-       || ((MAX(len_a, len_b) / 2) < KARATSUBA_MUL_CUTOFF)) {
+   if ((MP_MIN(len_a, len_b) < KARATSUBA_MUL_CUTOFF)
+       || ((MP_MAX(len_a, len_b) / 2) < KARATSUBA_MUL_CUTOFF)) {
       goto GO_ON;
    }
    /*
     * Not much effect was observed below a ratio of 1:2, but again: YMMV.
     */
-   if ((MAX(len_a, len_b) /  MIN(len_a, len_b)) < 2) {
+   if ((MP_MAX(len_a, len_b) /  MP_MIN(len_a, len_b)) < 2) {
       goto GO_ON;
    }
 
@@ -45,13 +45,13 @@ GO_ON:
 
    /* use Toom-Cook? */
 #ifdef BN_MP_TOOM_MUL_C
-   if (MIN(a->used, b->used) >= TOOM_MUL_CUTOFF) {
+   if (MP_MIN(a->used, b->used) >= TOOM_MUL_CUTOFF) {
       res = mp_toom_mul(a, b, c);
    } else
 #endif
 #ifdef BN_MP_KARATSUBA_MUL_C
       /* use Karatsuba? */
-      if (MIN(a->used, b->used) >= KARATSUBA_MUL_CUTOFF) {
+      if (MP_MIN(a->used, b->used) >= KARATSUBA_MUL_CUTOFF) {
          res = mp_karatsuba_mul(a, b, c);
       } else
 #endif
@@ -66,7 +66,7 @@ GO_ON:
 
 #ifdef BN_FAST_S_MP_MUL_DIGS_C
          if ((digs < (int)MP_WARRAY) &&
-             (MIN(a->used, b->used) <=
+             (MP_MIN(a->used, b->used) <=
               (int)(1u << ((CHAR_BIT * sizeof(mp_word)) - (2u * (size_t)DIGIT_BIT))))) {
             res = fast_s_mp_mul_digs(a, b, c, digs);
          } else

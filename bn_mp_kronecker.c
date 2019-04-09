@@ -26,7 +26,7 @@ int mp_kronecker(const mp_int *a, const mp_int *p, int *c)
 
    static const int table[8] = {0, 1, 0, -1, 0, -1, 0, 1};
 
-   if (IS_ZERO(p)) {
+   if (MP_IS_ZERO(p)) {
       if ((a->used == 1) && (a->dp[0] == 1u)) {
          *c = 1;
          return e;
@@ -36,7 +36,7 @@ int mp_kronecker(const mp_int *a, const mp_int *p, int *c)
       }
    }
 
-   if (IS_EVEN(a) && IS_EVEN(p)) {
+   if (MP_IS_EVEN(a) && MP_IS_EVEN(p)) {
       *c = 0;
       return e;
    }
@@ -71,7 +71,7 @@ int mp_kronecker(const mp_int *a, const mp_int *p, int *c)
    }
 
    for (;;) {
-      if (IS_ZERO(&a1)) {
+      if (MP_IS_ZERO(&a1)) {
          if (mp_cmp_d(&p1, 1uL) == MP_EQ) {
             *c = k;
             goto LBL_KRON;

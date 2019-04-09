@@ -69,7 +69,7 @@ int mp_prime_next_prime(mp_int *a, int t, int bbs_style)
          };
       }
    } else {
-      if (IS_EVEN(a)) {
+      if (MP_IS_EVEN(a)) {
          /* force odd */
          if ((err = mp_sub_d(a, 1uL, a)) != MP_OKAY) {
             return err;
@@ -121,7 +121,7 @@ int mp_prime_next_prime(mp_int *a, int t, int bbs_style)
          goto LBL_ERR;
       }
 
-      /* if didn't pass sieve and step == MAX then skip test */
+      /* if didn't pass sieve and step == MP_MAX then skip test */
       if ((y == 1) && (step >= (((mp_digit)1 << DIGIT_BIT) - kstep))) {
          continue;
       }

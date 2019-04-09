@@ -16,7 +16,7 @@ void mp_clear(mp_int *a)
       }
 
       /* free ram */
-      XFREE(a->dp, sizeof(mp_digit) * (size_t)a->alloc);
+      MP_FREE(a->dp, sizeof(mp_digit) * (size_t)a->alloc);
 
       /* reset members to make debugging easier */
       a->dp    = NULL;

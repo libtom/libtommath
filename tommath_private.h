@@ -6,37 +6,32 @@
 
 #include "tommath.h"
 
-#ifndef MIN
-#define MIN(x, y) (((x) < (y)) ? (x) : (y))
-#endif
-
-#ifndef MAX
-#define MAX(x, y) (((x) > (y)) ? (x) : (y))
-#endif
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 /* define heap macros */
-#ifndef XMALLOC
+#ifndef MP_MALLOC
 /* default to libc stuff */
-#   define XMALLOC(size)                   malloc(size)
-#   define XREALLOC(mem, oldsize, newsize) realloc(mem, newsize)
-#   define XCALLOC(nmemb, size)            calloc(nmemb, size)
-#   define XFREE(mem, size)                free(mem)
+#   define MP_MALLOC(size)                   malloc(size)
+#   define MP_REALLOC(mem, oldsize, newsize) realloc(mem, newsize)
+#   define MP_CALLOC(nmemb, size)            calloc(nmemb, size)
+#   define MP_FREE(mem, size)                free(mem)
 #else
 /* prototypes for our heap functions */
-extern void *XMALLOC(size_t size);
-extern void *XREALLOC(void *mem, size_t oldsize, size_t newsize);
-extern void *XCALLOC(size_t nmemb, size_t size);
-extern void XFREE(void *mem, size_t size);
+extern void *MP_MALLOC(size_t size);
+extern void *MP_REALLOC(void *mem, size_t oldsize, size_t newsize);
+extern void *MP_CALLOC(size_t nmemb, size_t size);
+extern void MP_FREE(void *mem, size_t size);
 #endif
 
+#define MP_MIN(x, y) (((x) < (y)) ? (x) : (y))
+#define MP_MAX(x, y) (((x) > (y)) ? (x) : (y))
+
 /* ---> Basic Manipulations <--- */
-#define IS_ZERO(a) ((a)->used == 0)
-#define IS_EVEN(a) (((a)->used == 0) || (((a)->dp[0] & 1u) == 0u))
-#define IS_ODD(a)  (((a)->used > 0) && (((a)->dp[0] & 1u) == 1u))
+#define MP_IS_ZERO(a) ((a)->used == 0)
+#define MP_IS_EVEN(a) (((a)->used == 0) || (((a)->dp[0] & 1u) == 0u))
+#define MP_IS_ODD(a)  (((a)->used > 0) && (((a)->dp[0] & 1u) == 1u))
 
 /* lowlevel functions, do not call! */
 int s_mp_add(const mp_int *a, const mp_int *b, mp_int *c);

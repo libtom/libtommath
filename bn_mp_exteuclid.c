@@ -28,7 +28,7 @@ int mp_exteuclid(const mp_int *a, const mp_int *b, mp_int *U1, mp_int *U2, mp_in
    }
 
    /* loop while v3 != 0 */
-   while (!IS_ZERO(&v3)) {
+   while (!MP_IS_ZERO(&v3)) {
       /* q = u3/v3 */
       if ((err = mp_div(&u3, &v3, &q, NULL)) != MP_OKAY) {
          goto LBL_ERR;

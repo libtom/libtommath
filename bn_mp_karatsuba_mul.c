@@ -41,7 +41,7 @@ int mp_karatsuba_mul(const mp_int *a, const mp_int *b, mp_int *c)
    err = MP_MEM;
 
    /* min # of digits */
-   B = MIN(a->used, b->used);
+   B = MP_MIN(a->used, b->used);
 
    /* now divide in two */
    B = B >> 1;

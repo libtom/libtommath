@@ -17,7 +17,7 @@ int s_mp_mul_digs(const mp_int *a, const mp_int *b, mp_int *c, int digs)
 
    /* can we use the fast multiplier? */
    if ((digs < (int)MP_WARRAY) &&
-       (MIN(a->used, b->used) <
+       (MP_MIN(a->used, b->used) <
         (int)(1u << ((CHAR_BIT * sizeof(mp_word)) - (2u * (size_t)DIGIT_BIT))))) {
       return fast_s_mp_mul_digs(a, b, c, digs);
    }
@@ -34,7 +34,7 @@ int s_mp_mul_digs(const mp_int *a, const mp_int *b, mp_int *c, int digs)
       u = 0;
 
       /* limit ourselves to making digs digits of output */
-      pb = MIN(b->used, digs - ix);
+      pb = MP_MIN(b->used, digs - ix);
 
       /* setup some aliases */
       /* copy of the digit from a used within the nested loop */

@@ -14,7 +14,7 @@ int mp_cnt_lsb(const mp_int *a)
    mp_digit q, qq;
 
    /* easy out */
-   if (IS_ZERO(a)) {
+   if (MP_IS_ZERO(a)) {
       return 0;
    }
 

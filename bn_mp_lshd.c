@@ -13,7 +13,7 @@ int mp_lshd(mp_int *a, int b)
       return MP_OKAY;
    }
    /* no need to shift 0 around */
-   if (IS_ZERO(a)) {
+   if (MP_IS_ZERO(a)) {
       return MP_OKAY;
    }
 
