@@ -80,7 +80,7 @@ int func_name (mp_int * a, type b)                       \
      while (b != 0u) {                                   \
         a->dp[x++] = ((mp_digit)b & MP_MASK);            \
         if ((CHAR_BIT * sizeof (b)) <= DIGIT_BIT) { break; } \
-        b >>= ((CHAR_BIT * sizeof (b)) <= DIGIT_BIT ? 0 : DIGIT_BIT); \
+        b >>= (((CHAR_BIT * sizeof (b)) <= DIGIT_BIT) ? 0 : DIGIT_BIT); \
      }                                                   \
      a->used = x;                                        \
    }                                                     \

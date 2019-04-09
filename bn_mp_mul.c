@@ -27,7 +27,7 @@ int mp_mul(const mp_int *a, const mp_int *b, mp_int *c)
     * was actually slower on the author's machine, but YMMV.
     */
    if ((MIN(len_a, len_b) < KARATSUBA_MUL_CUTOFF)
-       || ((MAX(len_a, len_b)) / 2 < KARATSUBA_MUL_CUTOFF)) {
+       || ((MAX(len_a, len_b) / 2) < KARATSUBA_MUL_CUTOFF)) {
       goto GO_ON;
    }
    /*
