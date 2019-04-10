@@ -1844,6 +1844,71 @@ int mp_sqrt (mp_int * a, mp_digit b, mp_int * c)
 \end{alltt}
 
 
+\chapter{Logarithm}
+\section{Integer Logarithm}
+A logarithm function for positive integer input \texttt{a, base} computing  $\floor{\log_bx}$ such that $(\ilog_bx)^b \le x$.
+\index{mp\_ilogb}
+\begin{alltt}
+int mp_ilogb(mp_int *a, mp_digit base, mp_int *c)
+\end{alltt}
+\subsection{Example}
+\begin{alltt}
+#include <stdlib.h>
+#include <stdio.h>
+#include <errno.h>
+
+#include <tommath.h>
+
+int main(int argc, char **argv)
+{
+   mp_int x, output;
+   mp_digit base;
+   int e;
+
+   if (argc != 3) {
+      fprintf(stderr,"Usage %s base x\textbackslash{}n", argv[0]);
+      exit(EXIT_FAILURE);
+   }
+   if ((e = mp_init_multi(&x, &output, NULL)) != MP_OKAY) {
+      fprintf(stderr,"mp_init failed: \textbackslash{}"%s\textbackslash{}"\textbackslash{}n",
+                     mp_error_to_string(e));
+              exit(EXIT_FAILURE);
+   }
+   errno = 0;
+#ifdef MP_64BIT
+   base = (mp_digit)strtoull(argv[1], NULL, 10);
+#else
+   base = (mp_digit)strtoul(argv[1], NULL, 10);
+#endif
+   if ((errno == ERANGE) || (base > (base & MP_MASK))) {
+      fprintf(stderr,"strtoul(l) failed: input out of range\textbackslash{}n");
+      exit(EXIT_FAILURE);
+   }
+   if ((e = mp_read_radix(&x, argv[2], 10)) != MP_OKAY) {
+      fprintf(stderr,"mp_read_radix failed: \textbackslash{}"%s\textbackslash{}"\textbackslash{}n",
+                      mp_error_to_string(e));
+      exit(EXIT_FAILURE);
+   }
+   if ((e = mp_ilogb(&x, base, &output)) != MP_OKAY) {
+      fprintf(stderr,"mp_ilogb failed: \textbackslash{}"%s\textbackslash{}"\textbackslash{}n",
+                      mp_error_to_string(e));
+      exit(EXIT_FAILURE);
+   }
+
+   if ((e = mp_fwrite(&output, 10, stdout)) != MP_OKAY) {
+      fprintf(stderr,"mp_fwrite failed: \textbackslash{}"%s\textbackslash{}"\textbackslash{}n",
+                      mp_error_to_string(e));
+      exit(EXIT_FAILURE);
+   }
+   putchar('\textbackslash{}n');
+
+   mp_clear_multi(&x, &output, NULL);
+   exit(EXIT_SUCCESS);
+}
+\end{alltt}
+
+
+
 \chapter{Prime Numbers}
 \section{Trial Division}
 \index{mp\_prime\_is\_divisible}

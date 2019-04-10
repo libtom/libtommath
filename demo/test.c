@@ -1229,6 +1229,168 @@ LBL_ERR:
    return EXIT_SUCCESS;
 #   endif /* LTM_DEMO_TEST_REDUCE_2K_L */
 }
+/* stripped down version of mp_radix_size. The faster version can be off by up t
+o +3  */
+static int s_rs(const mp_int *a, int radix, int *size)
+{
+   int     res, digs = 0;
+   mp_int  t;
+   mp_digit d;
+   *size = 0;
+   if (mp_iszero(a) == MP_YES) {
+      *size = 2;
+      return MP_OKAY;
+   }
+   if (radix == 2) {
+      *size = mp_count_bits(a) + 1;
+      return MP_OKAY;
+   }
+   if ((res = mp_init_copy(&t, a)) != MP_OKAY) {
+      return res;
+   }
+   t.sign = MP_ZPOS;
+   while (mp_iszero(&t) == MP_NO) {
+      if ((res = mp_div_d(&t, (mp_digit)radix, &t, &d)) != MP_OKAY) {
+         mp_clear(&t);
+         return res;
+      }
+      ++digs;
+   }
+   mp_clear(&t);
+   *size = digs + 1;
+   return MP_OKAY;
+}
+static int test_mp_ilogb(void)
+{
+   mp_int a, lb;
+   mp_digit d, base;
+   int size;
+
+   if (mp_init_multi(&a, &lb, NULL) != MP_OKAY) {
+      goto LBL_ERR;
+   }
+
+   /*
+     base   a    result
+      0     x    MP_VAL
+      1     x    MP_VAL
+   */
+   mp_set(&a, 42uL);
+   base = 0uL;
+   if (mp_ilogb(&a, base, &lb) != MP_VAL) {
+      goto LBL_ERR;
+   }
+   base = 1uL;
+   if (mp_ilogb(&a, base, &lb) != MP_VAL) {
+      goto LBL_ERR;
+   }
+   /*
+     base   a    result
+      2     0    MP_VAL
+      2     1    0
+      2     2    1
+      2     3    1
+   */
+   base = 2uL;
+   mp_zero(&a);
+   if (mp_ilogb(&a, base, &lb) != MP_VAL) {
+      goto LBL_ERR;
+   }
+
+   for (d = 1; d < 4; d++) {
+      mp_set(&a, d);
+      if (mp_ilogb(&a, base, &lb) != MP_OKAY) {
+         goto LBL_ERR;
+      }
+      if (mp_cmp_d(&lb, (d == 1)?0uL:1uL) != MP_EQ) {
+         goto LBL_ERR;
+      }
+   }
+   /*
+    base   a    result
+     3     0    MP_VAL
+     3     1    0
+     3     2    0
+     3     3    1
+   */
+   base = 3uL;
+   mp_zero(&a);
+   if (mp_ilogb(&a, base, &lb) != MP_VAL) {
+      goto LBL_ERR;
+   }
+   for (d = 1; d < 4; d++) {
+      mp_set(&a, d);
+      if (mp_ilogb(&a, base, &lb) != MP_OKAY) {
+         goto LBL_ERR;
+      }
+      if (mp_cmp_d(&lb, (d < base)?0uL:1uL) != MP_EQ) {
+         goto LBL_ERR;
+      }
+   }
+
+   /*
+     bases 2..64 with "a" a random large constant.
+     The range of bases tested allows to check with
+     radix_size.
+   */
+   if (mp_rand(&a, 10) != MP_OKAY) {
+      goto LBL_ERR;
+   }
+   for (base = 2uL; base < 65uL; base++) {
+      if (mp_ilogb(&a, base, &lb) != MP_OKAY) {
+         goto LBL_ERR;
+      }
+      if (s_rs(&a,(int)base, &size) != MP_OKAY) {
+         goto LBL_ERR;
+      }
+      /* radix_size includes the memory needed for '\0', too*/
+      size -= 2;
+      if (mp_cmp_d(&lb, size) != MP_EQ) {
+         goto LBL_ERR;
+      }
+   }
+
+   /*
+     bases 2..64 with "a" a random small constant to
+     test the part of mp_ilogb that uses native types.
+   */
+   if (mp_rand(&a, 1) != MP_OKAY) {
+      goto LBL_ERR;
+   }
+   for (base = 2uL; base < 65uL; base++) {
+      if (mp_ilogb(&a, base, &lb) != MP_OKAY) {
+         goto LBL_ERR;
+      }
+      if (s_rs(&a,(int)base, &size) != MP_OKAY) {
+         goto LBL_ERR;
+      }
+      size -= 2;
+      if (mp_cmp_d(&lb, size) != MP_EQ) {
+         goto LBL_ERR;
+      }
+   }
+
+   /*Test upper edgecase with base MP_MASK and number (MP_MASK/2)*MP_MASK^10  */
+   mp_set(&a, MP_MASK);
+   if (mp_expt_d(&a, 10uL, &a) != MP_OKAY) {
+      goto LBL_ERR;
+   }
+   if (mp_add_d(&a, (MP_MASK>>1), &a) != MP_OKAY) {
+      goto LBL_ERR;
+   }
+   if (mp_ilogb(&a, MP_MASK, &lb) != MP_OKAY) {
+      goto LBL_ERR;
+   }
+   if (mp_cmp_d(&lb, 10uL) != MP_EQ) {
+      goto LBL_ERR;
+   }
+
+   mp_clear_multi(&a, &lb, NULL);
+   return EXIT_SUCCESS;
+LBL_ERR:
+   mp_clear_multi(&a, &lb, NULL);
+   return EXIT_FAILURE;
+}
 
 static int test_mp_incr(void)
 {
@@ -1678,7 +1840,8 @@ int unit_tests(void)
       T(mp_tc_xor),
       T(mp_incr),
       T(mp_decr),
-      T(mp_balance_mul)
+      T(mp_balance_mul),
+      T(mp_ilogb)
 #undef T
    };
    unsigned long i;
