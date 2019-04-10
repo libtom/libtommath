@@ -7,7 +7,7 @@
 static mp_word s_pow(mp_word base, mp_word exponent)
 {
    mp_word result = 1uLL;
-   while (exponent) {
+   while (exponent != 0u) {
       if ((exponent & 0x1) == 1) {
          result *= base;
       }
