@@ -145,7 +145,7 @@ int mp_ilogb(mp_int *a, mp_digit base, mp_int *c)
          err = MP_VAL;
          goto LBL_ERR;
       }
-      if ((err = mp_expt_d(&bi_base, (mid - low), &t)) != MP_OKAY) {
+      if ((err = mp_expt_d(&bi_base, (mp_digit)(mid - low), &t)) != MP_OKAY) {
          goto LBL_ERR;
       }
       if ((err = mp_mul(&bracket_low, &t, &bracket_mid)) != MP_OKAY) {
