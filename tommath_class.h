@@ -10,7 +10,6 @@
 #endif
 #define LTM1
 #if defined(LTM_ALL)
-#   define BN_ERROR_C
 #   define BN_FAST_MP_INVMOD_C
 #   define BN_FAST_MP_MONTGOMERY_REDUCE_C
 #   define BN_FAST_S_MP_MUL_DIGS_C
@@ -42,6 +41,7 @@
 #   define BN_MP_DR_IS_MODULUS_C
 #   define BN_MP_DR_REDUCE_C
 #   define BN_MP_DR_SETUP_C
+#   define BN_MP_ERROR_TO_STRING_C
 #   define BN_MP_EXCH_C
 #   define BN_MP_EXPORT_C
 #   define BN_MP_EXPT_D_C
@@ -156,10 +156,6 @@
 #   define BN_S_MP_SUB_C
 #   define BNCORE_C
 #endif
-#if defined(BN_ERROR_C)
-#   define BN_MP_ERROR_TO_STRING_C
-#endif
-
 #if defined(BN_FAST_MP_INVMOD_C)
 #   define BN_MP_INIT_MULTI_C
 #   define BN_MP_COPY_C
@@ -352,6 +348,9 @@
 #endif
 
 #if defined(BN_MP_DR_SETUP_C)
+#endif
+
+#if defined(BN_MP_ERROR_TO_STRING_C)
 #endif
 
 #if defined(BN_MP_EXCH_C)
