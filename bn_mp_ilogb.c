@@ -87,23 +87,25 @@ int mp_ilogb(mp_int *a, mp_digit base, mp_int *c)
 
    if (base < 2u) {
       return MP_VAL;
-   } else if (base == 2u) {
+   }
+   if (base == 2u) {
       cmp = mp_count_bits(a) - 1;
       mp_set_int(c, (unsigned long)cmp);
       return err;
-   } else if (a->used == 1) {
+   }
+   if (a->used == 1) {
       tmp = s_digit_ilogb(base, a->dp[0]);
       mp_set(c, tmp);
       return err;
    }
-
 
    cmp = mp_cmp_d(a, base);
 
    if (cmp == MP_LT) {
       mp_zero(c);
       return err;
-   } else if (cmp == MP_EQ) {
+   }
+   if (cmp == MP_EQ) {
       mp_set(c, (mp_digit)1uL);
       return err;
    }
