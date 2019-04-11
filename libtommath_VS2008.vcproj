@@ -313,10 +313,6 @@
 	</References>
 	<Files>
 		<File
-			RelativePath="bn_error.c"
-			>
-		</File>
-		<File
 			RelativePath="bn_fast_mp_invmod.c"
 			>
 		</File>
@@ -438,6 +434,10 @@
 		</File>
 		<File
 			RelativePath="bn_mp_dr_setup.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_mp_error_to_string.c"
 			>
 		</File>
 		<File

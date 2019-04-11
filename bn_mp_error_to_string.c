@@ -1,5 +1,5 @@
 #include "tommath_private.h"
-#ifdef BN_ERROR_C
+#ifdef BN_MP_ERROR_TO_STRING_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
