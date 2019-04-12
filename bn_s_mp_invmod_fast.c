@@ -1,5 +1,5 @@
 #include "tommath_private.h"
-#ifdef BN_FAST_MP_INVMOD_C
+#ifdef BN_S_MP_INVMOD_FAST_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
@@ -9,7 +9,7 @@
  * Based on slow invmod except this is optimized for the case where b is
  * odd as per HAC Note 14.64 on pp. 610
  */
-int fast_mp_invmod(const mp_int *a, const mp_int *b, mp_int *c)
+int s_mp_invmod_fast(const mp_int *a, const mp_int *b, mp_int *c)
 {
    mp_int  x, y, u, v, B, D;
    int     res, neg;

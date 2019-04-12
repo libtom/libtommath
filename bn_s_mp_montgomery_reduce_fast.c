@@ -1,5 +1,5 @@
 #include "tommath_private.h"
-#ifdef BN_FAST_MP_MONTGOMERY_REDUCE_C
+#ifdef BN_S_MP_MONTGOMERY_REDUCE_FAST_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
@@ -11,7 +11,7 @@
  *
  * Based on Algorithm 14.32 on pp.601 of HAC.
 */
-int fast_mp_montgomery_reduce(mp_int *x, const mp_int *n, mp_digit rho)
+int s_mp_montgomery_reduce_fast(mp_int *x, const mp_int *n, mp_digit rho)
 {
    int     ix, res, olduse;
    mp_word W[MP_WARRAY];

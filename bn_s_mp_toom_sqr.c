@@ -1,29 +1,21 @@
 #include "tommath_private.h"
-#ifdef BN_MP_TOOM_MUL_C
+#ifdef BN_S_MP_TOOM_SQR_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
-/* multiplication using the Toom-Cook 3-way algorithm
- *
- * Much more complicated than Karatsuba but has a lower
- * asymptotic running time of O(N**1.464).  This algorithm is
- * only particularly useful on VERY large inputs
- * (we're talking 1000s of digits here...).
-*/
-int mp_toom_mul(const mp_int *a, const mp_int *b, mp_int *c)
+/* squaring using Toom-Cook 3-way algorithm */
+int s_mp_toom_sqr(const mp_int *a, mp_int *b)
 {
-   mp_int w0, w1, w2, w3, w4, tmp1, tmp2, a0, a1, a2, b0, b1, b2;
+   mp_int w0, w1, w2, w3, w4, tmp1, a0, a1, a2;
    int res, B;
 
    /* init temps */
-   if ((res = mp_init_multi(&w0, &w1, &w2, &w3, &w4,
-                            &a0, &a1, &a2, &b0, &b1,
-                            &b2, &tmp1, &tmp2, NULL)) != MP_OKAY) {
+   if ((res = mp_init_multi(&w0, &w1, &w2, &w3, &w4, &a0, &a1, &a2, &tmp1, NULL)) != MP_OKAY) {
       return res;
    }
 
    /* B */
-   B = MP_MIN(a->used, b->used) / 3;
+   B = a->used / 3;
 
    /* a = a2 * B**2 + a1 * B + a0 */
    if ((res = mp_mod_2d(a, DIGIT_BIT * B, &a0)) != MP_OKAY) {
@@ -43,33 +35,17 @@ int mp_toom_mul(const mp_int *a, const mp_int *b, mp_int *c)
    }
    mp_rshd(&a2, B*2);
 
-   /* b = b2 * B**2 + b1 * B + b0 */
-   if ((res = mp_mod_2d(b, DIGIT_BIT * B, &b0)) != MP_OKAY) {
+   /* w0 = a0*a0 */
+   if ((res = mp_sqr(&a0, &w0)) != MP_OKAY) {
       goto LBL_ERR;
    }
 
-   if ((res = mp_copy(b, &b1)) != MP_OKAY) {
-      goto LBL_ERR;
-   }
-   mp_rshd(&b1, B);
-   (void)mp_mod_2d(&b1, DIGIT_BIT * B, &b1);
-
-   if ((res = mp_copy(b, &b2)) != MP_OKAY) {
-      goto LBL_ERR;
-   }
-   mp_rshd(&b2, B*2);
-
-   /* w0 = a0*b0 */
-   if ((res = mp_mul(&a0, &b0, &w0)) != MP_OKAY) {
+   /* w4 = a2 * a2 */
+   if ((res = mp_sqr(&a2, &w4)) != MP_OKAY) {
       goto LBL_ERR;
    }
 
-   /* w4 = a2 * b2 */
-   if ((res = mp_mul(&a2, &b2, &w4)) != MP_OKAY) {
-      goto LBL_ERR;
-   }
-
-   /* w1 = (a2 + 2(a1 + 2a0))(b2 + 2(b1 + 2b0)) */
+   /* w1 = (a2 + 2(a1 + 2a0))**2 */
    if ((res = mp_mul_2(&a0, &tmp1)) != MP_OKAY) {
       goto LBL_ERR;
    }
@@ -83,24 +59,11 @@ int mp_toom_mul(const mp_int *a, const mp_int *b, mp_int *c)
       goto LBL_ERR;
    }
 
-   if ((res = mp_mul_2(&b0, &tmp2)) != MP_OKAY) {
-      goto LBL_ERR;
-   }
-   if ((res = mp_add(&tmp2, &b1, &tmp2)) != MP_OKAY) {
-      goto LBL_ERR;
-   }
-   if ((res = mp_mul_2(&tmp2, &tmp2)) != MP_OKAY) {
-      goto LBL_ERR;
-   }
-   if ((res = mp_add(&tmp2, &b2, &tmp2)) != MP_OKAY) {
+   if ((res = mp_sqr(&tmp1, &w1)) != MP_OKAY) {
       goto LBL_ERR;
    }
 
-   if ((res = mp_mul(&tmp1, &tmp2, &w1)) != MP_OKAY) {
-      goto LBL_ERR;
-   }
-
-   /* w3 = (a0 + 2(a1 + 2a2))(b0 + 2(b1 + 2b2)) */
+   /* w3 = (a0 + 2(a1 + 2a2))**2 */
    if ((res = mp_mul_2(&a2, &tmp1)) != MP_OKAY) {
       goto LBL_ERR;
    }
@@ -114,38 +77,19 @@ int mp_toom_mul(const mp_int *a, const mp_int *b, mp_int *c)
       goto LBL_ERR;
    }
 
-   if ((res = mp_mul_2(&b2, &tmp2)) != MP_OKAY) {
-      goto LBL_ERR;
-   }
-   if ((res = mp_add(&tmp2, &b1, &tmp2)) != MP_OKAY) {
-      goto LBL_ERR;
-   }
-   if ((res = mp_mul_2(&tmp2, &tmp2)) != MP_OKAY) {
-      goto LBL_ERR;
-   }
-   if ((res = mp_add(&tmp2, &b0, &tmp2)) != MP_OKAY) {
-      goto LBL_ERR;
-   }
-
-   if ((res = mp_mul(&tmp1, &tmp2, &w3)) != MP_OKAY) {
+   if ((res = mp_sqr(&tmp1, &w3)) != MP_OKAY) {
       goto LBL_ERR;
    }
 
 
-   /* w2 = (a2 + a1 + a0)(b2 + b1 + b0) */
+   /* w2 = (a2 + a1 + a0)**2 */
    if ((res = mp_add(&a2, &a1, &tmp1)) != MP_OKAY) {
       goto LBL_ERR;
    }
    if ((res = mp_add(&tmp1, &a0, &tmp1)) != MP_OKAY) {
       goto LBL_ERR;
    }
-   if ((res = mp_add(&b2, &b1, &tmp2)) != MP_OKAY) {
-      goto LBL_ERR;
-   }
-   if ((res = mp_add(&tmp2, &b0, &tmp2)) != MP_OKAY) {
-      goto LBL_ERR;
-   }
-   if ((res = mp_mul(&tmp1, &tmp2, &w2)) != MP_OKAY) {
+   if ((res = mp_sqr(&tmp1, &w2)) != MP_OKAY) {
       goto LBL_ERR;
    }
 
@@ -157,8 +101,7 @@ int mp_toom_mul(const mp_int *a, const mp_int *b, mp_int *c)
       16 8  4  2  1
       1  0  0  0  0
 
-      using 12 subtractions, 4 shifts,
-             2 small divisions and 1 small multiplication
+      using 12 subtractions, 4 shifts, 2 small divisions and 1 small multiplication.
     */
 
    /* r1 - r4 */
@@ -247,7 +190,7 @@ int mp_toom_mul(const mp_int *a, const mp_int *b, mp_int *c)
       goto LBL_ERR;
    }
 
-   if ((res = mp_add(&w0, &w1, c)) != MP_OKAY) {
+   if ((res = mp_add(&w0, &w1, b)) != MP_OKAY) {
       goto LBL_ERR;
    }
    if ((res = mp_add(&w2, &w3, &tmp1)) != MP_OKAY) {
@@ -256,14 +199,12 @@ int mp_toom_mul(const mp_int *a, const mp_int *b, mp_int *c)
    if ((res = mp_add(&w4, &tmp1, &tmp1)) != MP_OKAY) {
       goto LBL_ERR;
    }
-   if ((res = mp_add(&tmp1, c, c)) != MP_OKAY) {
+   if ((res = mp_add(&tmp1, b, b)) != MP_OKAY) {
       goto LBL_ERR;
    }
 
 LBL_ERR:
-   mp_clear_multi(&w0, &w1, &w2, &w3, &w4,
-                  &a0, &a1, &a2, &b0, &b1,
-                  &b2, &tmp1, &tmp2, NULL);
+   mp_clear_multi(&w0, &w1, &w2, &w3, &w4, &a0, &a1, &a2, &tmp1, NULL);
    return res;
 }
 

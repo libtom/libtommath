@@ -19,7 +19,7 @@ int s_mp_mul_digs(const mp_int *a, const mp_int *b, mp_int *c, int digs)
    if ((digs < (int)MP_WARRAY) &&
        (MP_MIN(a->used, b->used) <
         (int)(1u << ((CHAR_BIT * sizeof(mp_word)) - (2u * (size_t)DIGIT_BIT))))) {
-      return fast_s_mp_mul_digs(a, b, c, digs);
+      return s_mp_mul_digs_fast(a, b, c, digs);
    }
 
    if ((res = mp_init_size(&t, digs)) != MP_OKAY) {

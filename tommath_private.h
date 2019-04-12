@@ -44,23 +44,23 @@ extern void MP_FREE(void *mem, size_t size);
 /* lowlevel functions, do not call! */
 int s_mp_add(const mp_int *a, const mp_int *b, mp_int *c);
 int s_mp_sub(const mp_int *a, const mp_int *b, mp_int *c);
-int fast_s_mp_mul_digs(const mp_int *a, const mp_int *b, mp_int *c, int digs);
+int s_mp_mul_digs_fast(const mp_int *a, const mp_int *b, mp_int *c, int digs);
 int s_mp_mul_digs(const mp_int *a, const mp_int *b, mp_int *c, int digs);
-int fast_s_mp_mul_high_digs(const mp_int *a, const mp_int *b, mp_int *c, int digs);
+int s_mp_mul_high_digs_fast(const mp_int *a, const mp_int *b, mp_int *c, int digs);
 int s_mp_mul_high_digs(const mp_int *a, const mp_int *b, mp_int *c, int digs);
-int fast_s_mp_sqr(const mp_int *a, mp_int *b);
+int s_mp_sqr_fast(const mp_int *a, mp_int *b);
 int s_mp_sqr(const mp_int *a, mp_int *b);
-int mp_balance_mul(const mp_int *a, const mp_int *b, mp_int *c);
-int mp_karatsuba_mul(const mp_int *a, const mp_int *b, mp_int *c);
-int mp_toom_mul(const mp_int *a, const mp_int *b, mp_int *c);
-int mp_karatsuba_sqr(const mp_int *a, mp_int *b);
-int mp_toom_sqr(const mp_int *a, mp_int *b);
-int fast_mp_invmod(const mp_int *a, const mp_int *b, mp_int *c);
-int mp_invmod_slow(const mp_int *a, const mp_int *b, mp_int *c);
-int fast_mp_montgomery_reduce(mp_int *x, const mp_int *n, mp_digit rho);
-int mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y, int redmode);
+int s_mp_balance_mul(const mp_int *a, const mp_int *b, mp_int *c);
+int s_mp_karatsuba_mul(const mp_int *a, const mp_int *b, mp_int *c);
+int s_mp_toom_mul(const mp_int *a, const mp_int *b, mp_int *c);
+int s_mp_karatsuba_sqr(const mp_int *a, mp_int *b);
+int s_mp_toom_sqr(const mp_int *a, mp_int *b);
+int s_mp_invmod_fast(const mp_int *a, const mp_int *b, mp_int *c);
+int s_mp_invmod_slow(const mp_int *a, const mp_int *b, mp_int *c);
+int s_mp_montgomery_reduce_fast(mp_int *x, const mp_int *n, mp_digit rho);
+int s_mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y, int redmode);
 int s_mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y, int redmode);
-void bn_reverse(unsigned char *s, int len);
+void s_mp_reverse(unsigned char *s, int len);
 
 extern const char *const mp_s_rmap;
 extern const uint8_t mp_s_rmap_reverse[];
@@ -91,6 +91,21 @@ int func_name (mp_int * a, type b)                       \
 }
 
 /* deprecated functions */
+MP_DEPRECATED(s_mp_invmod_fast) int fast_mp_invmod(const mp_int *a, const mp_int *b, mp_int *c);
+MP_DEPRECATED(s_mp_montgomery_reduce_fast) int fast_mp_montgomery_reduce(mp_int *x, const mp_int *n, mp_digit rho);
+MP_DEPRECATED(s_mp_mul_digs_fast) int fast_s_mp_mul_digs(const mp_int *a, const mp_int *b, mp_int *c, int digs);
+MP_DEPRECATED(s_mp_mul_high_digs_fast) int fast_s_mp_mul_high_digs(const mp_int *a, const mp_int *b, mp_int *c,
+      int digs);
+MP_DEPRECATED(s_mp_sqr_fast) int fast_s_mp_sqr(const mp_int *a, mp_int *b);
+MP_DEPRECATED(s_mp_balance_mul) int mp_balance_mul(const mp_int *a, const mp_int *b, mp_int *c);
+MP_DEPRECATED(s_mp_exptmod_fast) int mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y,
+      int redmode);
+MP_DEPRECATED(s_mp_invmod_slow) int mp_invmod_slow(const mp_int *a, const mp_int *b, mp_int *c);
+MP_DEPRECATED(s_mp_karatsuba_mul) int mp_karatsuba_mul(const mp_int *a, const mp_int *b, mp_int *c);
+MP_DEPRECATED(s_mp_karatsuba_sqr) int mp_karatsuba_sqr(const mp_int *a, mp_int *b);
+MP_DEPRECATED(s_mp_toom_mul) int mp_toom_mul(const mp_int *a, const mp_int *b, mp_int *c);
+MP_DEPRECATED(s_mp_toom_sqr) int mp_toom_sqr(const mp_int *a, mp_int *b);
+MP_DEPRECATED(s_mp_reverse) void bn_reverse(unsigned char *s, int len);
 
 #ifdef __cplusplus
 }

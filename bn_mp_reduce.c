@@ -30,8 +30,8 @@ int mp_reduce(mp_int *x, const mp_int *m, const mp_int *mu)
       if ((res = s_mp_mul_high_digs(&q, mu, &q, um)) != MP_OKAY) {
          goto CLEANUP;
       }
-#elif defined(BN_FAST_S_MP_MUL_HIGH_DIGS_C)
-      if ((res = fast_s_mp_mul_high_digs(&q, mu, &q, um)) != MP_OKAY) {
+#elif defined(BN_S_MP_MUL_HIGH_DIGS_FAST_C)
+      if ((res = s_mp_mul_high_digs_fast(&q, mu, &q, um)) != MP_OKAY) {
          goto CLEANUP;
       }
 #else

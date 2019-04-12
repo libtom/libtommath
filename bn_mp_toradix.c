@@ -47,7 +47,7 @@ int mp_toradix(const mp_int *a, char *str, int radix)
    /* reverse the digits of the string.  In this case _s points
     * to the first digit [exluding the sign] of the number]
     */
-   bn_reverse((unsigned char *)_s, digs);
+   s_mp_reverse((unsigned char *)_s, digs);
 
    /* append a NULL so the string is properly terminated */
    *str = '\0';

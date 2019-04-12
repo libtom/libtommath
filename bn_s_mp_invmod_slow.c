@@ -1,10 +1,10 @@
 #include "tommath_private.h"
-#ifdef BN_MP_INVMOD_SLOW_C
+#ifdef BN_S_MP_INVMOD_SLOW_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
 /* hac 14.61, pp608 */
-int mp_invmod_slow(const mp_int *a, const mp_int *b, mp_int *c)
+int s_mp_invmod_slow(const mp_int *a, const mp_int *b, mp_int *c)
 {
    mp_int  x, y, u, v, A, B, C, D;
    int     res;

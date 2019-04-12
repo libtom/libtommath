@@ -1,5 +1,5 @@
 #include "tommath_private.h"
-#ifdef BN_FAST_S_MP_MUL_HIGH_DIGS_C
+#ifdef BN_S_MP_MUL_HIGH_DIGS_FAST_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
@@ -12,7 +12,7 @@
  *
  * Based on Algorithm 14.12 on pp.595 of HAC.
  */
-int fast_s_mp_mul_high_digs(const mp_int *a, const mp_int *b, mp_int *c, int digs)
+int s_mp_mul_high_digs_fast(const mp_int *a, const mp_int *b, mp_int *c, int digs)
 {
    int     olduse, res, pa, ix, iz;
    mp_digit W[MP_WARRAY];

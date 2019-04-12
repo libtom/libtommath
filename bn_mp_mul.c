@@ -7,11 +7,11 @@
 int mp_mul(const mp_int *a, const mp_int *b, mp_int *c)
 {
    int     res, neg;
-#ifdef BN_MP_BALANCE_MUL_C
+#ifdef BN_S_MP_BALANCE_MUL_C
    int len_b, len_a;
 #endif
    neg = (a->sign == b->sign) ? MP_ZPOS : MP_NEG;
-#ifdef BN_MP_BALANCE_MUL_C
+#ifdef BN_S_MP_BALANCE_MUL_C
    len_a = a->used;
    len_b = b->used;
 
@@ -37,22 +37,22 @@ int mp_mul(const mp_int *a, const mp_int *b, mp_int *c)
       goto GO_ON;
    }
 
-   res = mp_balance_mul(a,b,c);
+   res = s_mp_balance_mul(a,b,c);
    goto END;
 
 GO_ON:
 #endif
 
    /* use Toom-Cook? */
-#ifdef BN_MP_TOOM_MUL_C
+#ifdef BN_S_MP_TOOM_MUL_C
    if (MP_MIN(a->used, b->used) >= TOOM_MUL_CUTOFF) {
-      res = mp_toom_mul(a, b, c);
+      res = s_mp_toom_mul(a, b, c);
    } else
 #endif
-#ifdef BN_MP_KARATSUBA_MUL_C
+#ifdef BN_S_MP_KARATSUBA_MUL_C
       /* use Karatsuba? */
       if (MP_MIN(a->used, b->used) >= KARATSUBA_MUL_CUTOFF) {
-         res = mp_karatsuba_mul(a, b, c);
+         res = s_mp_karatsuba_mul(a, b, c);
       } else
 #endif
       {
@@ -64,11 +64,11 @@ GO_ON:
           */
          int     digs = a->used + b->used + 1;
 
-#ifdef BN_FAST_S_MP_MUL_DIGS_C
+#ifdef BN_S_MP_MUL_DIGS_FAST_C
          if ((digs < (int)MP_WARRAY) &&
              (MP_MIN(a->used, b->used) <=
               (int)(1u << ((CHAR_BIT * sizeof(mp_word)) - (2u * (size_t)DIGIT_BIT))))) {
-            res = fast_s_mp_mul_digs(a, b, c, digs);
+            res = s_mp_mul_digs_fast(a, b, c, digs);
          } else
 #endif
          {

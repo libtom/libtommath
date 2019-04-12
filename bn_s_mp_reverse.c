@@ -1,10 +1,10 @@
 #include "tommath_private.h"
-#ifdef BN_REVERSE_C
+#ifdef BN_S_MP_REVERSE_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
 /* reverse an array, used for radix code */
-void bn_reverse(unsigned char *s, int len)
+void s_mp_reverse(unsigned char *s, int len)
 {
    int     ix, iy;
    unsigned char t;

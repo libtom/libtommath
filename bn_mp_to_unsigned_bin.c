@@ -25,7 +25,7 @@ int mp_to_unsigned_bin(const mp_int *a, unsigned char *b)
          return res;
       }
    }
-   bn_reverse(b, x);
+   s_mp_reverse(b, x);
    mp_clear(&t);
    return MP_OKAY;
 }

@@ -11,15 +11,15 @@ int mp_invmod(const mp_int *a, const mp_int *b, mp_int *c)
       return MP_VAL;
    }
 
-#ifdef BN_FAST_MP_INVMOD_C
+#ifdef BN_S_MP_INVMOD_FAST_C
    /* if the modulus is odd we can use a faster routine instead */
    if (MP_IS_ODD(b)) {
-      return fast_mp_invmod(a, b, c);
+      return s_mp_invmod_fast(a, b, c);
    }
 #endif
 
-#ifdef BN_MP_INVMOD_SLOW_C
-   return mp_invmod_slow(a, b, c);
+#ifdef BN_S_MP_INVMOD_SLOW_C
+   return s_mp_invmod_slow(a, b, c);
 #else
    return MP_VAL;
 #endif
