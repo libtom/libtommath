@@ -3,30 +3,21 @@
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
-static const struct {
-   int code;
-   const char *msg;
-} msgs[] = {
-   { MP_OKAY, "Successful" },
-   { MP_MEM,  "Out of heap" },
-   { MP_VAL,  "Value out of range" },
-   { MP_ITER, "Max. iterations reached" }
-};
-
 /* return a char * string for a given code */
 const char *mp_error_to_string(int code)
 {
-   size_t x;
-
-   /* scan the lookup table for the given message */
-   for (x = 0; x < (sizeof(msgs) / sizeof(msgs[0])); x++) {
-      if (msgs[x].code == code) {
-         return msgs[x].msg;
-      }
+   switch (code) {
+   case MP_OKAY:
+      return "Successful";
+   case MP_MEM:
+      return "Out of heap";
+   case MP_VAL:
+      return "Value out of range";
+   case MP_ITER:
+      return "Max. iterations reached";
+   default:
+      return "Invalid error code";
    }
-
-   /* generic reply for invalid code */
-   return "Invalid error code";
 }
 
 #endif
