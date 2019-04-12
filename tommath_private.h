@@ -76,18 +76,14 @@ extern const size_t mp_s_rmap_reverse_sz;
 int func_name (mp_int * a, type b)                       \
 {                                                        \
    int x = 0;                                            \
-   int new_size = (((CHAR_BIT * sizeof(type)) + DIGIT_BIT) - 1) / DIGIT_BIT; \
-   int res = mp_grow(a, new_size);                       \
-   if (res == MP_OKAY) {                                 \
-     mp_zero(a);                                         \
-     while (b != 0u) {                                   \
-        a->dp[x++] = ((mp_digit)b & MP_MASK);            \
-        if ((CHAR_BIT * sizeof (b)) <= DIGIT_BIT) { break; } \
-        b >>= (((CHAR_BIT * sizeof (b)) <= DIGIT_BIT) ? 0 : DIGIT_BIT); \
-     }                                                   \
-     a->used = x;                                        \
+   mp_zero(a);                                           \
+   while (b != 0u) {                                     \
+      a->dp[x++] = ((mp_digit)b & MP_MASK);              \
+      if ((CHAR_BIT * sizeof (b)) <= DIGIT_BIT) { break; } \
+      b >>= (((CHAR_BIT * sizeof (b)) <= DIGIT_BIT) ? 0 : DIGIT_BIT); \
    }                                                     \
-   return res;                                           \
+   a->used = x;                                          \
+   return MP_OKAY;                                       \
 }
 
 /* deprecated functions */

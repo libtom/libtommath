@@ -131,6 +131,8 @@ extern int KARATSUBA_MUL_CUTOFF,
 #ifndef MP_PREC
 #   ifndef MP_LOW_MEM
 #      define MP_PREC 32        /* default digits of precision */
+#   elif defined(MP_8BIT)
+#      define MP_PREC 16        /* default digits of precision */
 #   else
 #      define MP_PREC 8         /* default digits of precision */
 #   endif
