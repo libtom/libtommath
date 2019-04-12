@@ -9,7 +9,8 @@ static const struct {
 } msgs[] = {
    { MP_OKAY, "Successful" },
    { MP_MEM,  "Out of heap" },
-   { MP_VAL,  "Value out of range" }
+   { MP_VAL,  "Value out of range" },
+   { MP_ITER, "Max. iterations reached" }
 };
 
 /* return a char * string for a given code */
