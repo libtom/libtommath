@@ -148,10 +148,21 @@ typedef struct  {
 /* callback for mp_prime_random, should fill dst with random bytes and return how many read [upto len] */
 typedef int ltm_prime_callback(unsigned char *dst, int len, void *dat);
 
+#if defined(__GNUC__) && (__GNUC__ * 100 + __GNUC_MINOR__ >= 301)
+#  define MP_DEPRECATED(x) __attribute__((deprecated("replaced by " #x)))
+#  define _MP_DEPRECATED_PRAGMA(s) _Pragma(#s)
+#  define MP_DEPRECATED_PRAGMA(s) _MP_DEPRECATED_PRAGMA(GCC warning s)
+#elif defined(_MSC_VER) && _MSC_VER >= 1500
+#  define MP_DEPRECATED(x) __declspec(deprecated("replaced by " #x))
+#  define MP_DEPRECATED_PRAGMA(s) __pragma(message(s))
+#else
+#  define MP_DEPRECATED
+#  define MP_DEPRECATED_PRAGMA(s)
+#endif
 
-#define USED(m)     ((m)->used)
-#define DIGIT(m, k) ((m)->dp[(k)])
-#define SIGN(m)     ((m)->sign)
+#define USED(m)     (MP_DEPRECATED_PRAGMA("USED macro is deprecated, use z->used instead") (m)->used)
+#define DIGIT(m, k) (MP_DEPRECATED_PRAGMA("DIGIT macro is deprecated, use z->dp instead") (m)->dp[(k)])
+#define SIGN(m)     (MP_DEPRECATED_PRAGMA("SIGN macro is deprecated, use z->sign instead") (m)->sign)
 
 /* error code to char* string */
 const char *mp_error_to_string(int code);
