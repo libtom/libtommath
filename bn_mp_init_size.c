@@ -6,9 +6,12 @@
 /* init an mp_init for a given size */
 int mp_init_size(mp_int *a, int size)
 {
-   /* ensure there are always at least MP_PREC digits extra on top */
-   size += (MP_MIN_PREC + MP_PREC - 1) - ((size + (MP_PREC - 1)) % MP_PREC);
+   /* round up to a multiple of MP_PREC */
+   size += (MP_PREC - 1) - ((size + (MP_PREC - 1)) % MP_PREC);
 
+   if (size < MP_MIN_PREC) {
+      size = MP_MIN_PREC;
+   }
    /* alloc mem */
    a->dp = (mp_digit *) MP_CALLOC((size_t)size, sizeof(mp_digit));
    if (a->dp == NULL) {

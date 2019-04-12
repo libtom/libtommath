@@ -11,8 +11,8 @@ int mp_grow(mp_int *a, int size)
 
    /* if the alloc size is smaller alloc more ram */
    if (a->alloc < size) {
-      /* ensure there are always at least MP_PREC digits extra on top */
-      size += ((MP_PREC * 2) - 1) - ((size + (MP_PREC - 1)) % MP_PREC);
+      /* round up to a multiple of MP_PREC */
+      size += (MP_PREC - 1) - ((size + (MP_PREC - 1)) % MP_PREC);
 
       /* reallocate the array a->dp
        *
