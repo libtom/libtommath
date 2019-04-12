@@ -81,7 +81,7 @@ int mp_ilogb(mp_int *a, mp_digit base, mp_int *c)
    if (a->sign == MP_NEG) {
       return MP_VAL;
    }
-   if (IS_ZERO(a)) {
+   if (MP_IS_ZERO(a)) {
       return MP_VAL;
    }
 
