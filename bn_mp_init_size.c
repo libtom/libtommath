@@ -7,7 +7,7 @@
 int mp_init_size(mp_int *a, int size)
 {
    /* ensure there are always at least MP_PREC digits extra on top */
-   size += ((MP_PREC * 2) - 1) - ((size + (MP_PREC - 1)) % MP_PREC);
+   size += (MP_MIN_PREC + MP_PREC - 1) - ((size + (MP_PREC - 1)) % MP_PREC);
 
    /* alloc mem */
    a->dp = (mp_digit *) MP_CALLOC((size_t)size, sizeof(mp_digit));

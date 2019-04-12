@@ -7,7 +7,7 @@
 int mp_init(mp_int *a)
 {
    /* allocate memory required and clear it */
-   a->dp = (mp_digit *) MP_CALLOC((size_t)MP_PREC, sizeof(mp_digit));
+   a->dp = (mp_digit *) MP_CALLOC((size_t)MP_MIN_REC, sizeof(mp_digit));
    if (a->dp == NULL) {
       return MP_MEM;
    }
@@ -15,7 +15,7 @@ int mp_init(mp_int *a)
    /* set the used to zero, allocated digits to the default precision
     * and sign to positive */
    a->used  = 0;
-   a->alloc = MP_PREC;
+   a->alloc = MP_MIN_PREC;
    a->sign  = MP_ZPOS;
 
    return MP_OKAY;

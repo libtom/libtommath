@@ -7,9 +7,9 @@
 int mp_shrink(mp_int *a)
 {
    mp_digit *tmp;
-   int alloc = MP_PREC;
+   int alloc = MP_MIN_PREC;
 
-   if (a->used > MP_PREC) {
+   if (a->used > MP_MIN_PREC) {
       alloc = a->used;
       alloc += (MP_PREC - 1) - ((alloc + (MP_PREC - 1)) % MP_PREC);
    }
