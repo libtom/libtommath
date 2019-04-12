@@ -138,7 +138,7 @@ extern int KARATSUBA_MUL_CUTOFF,
 #   endif
 #endif
 
-#define MP_MIN_PREC ((((CHAR_BIT * sizeof(long long))/DIGIT_BIT) + MP_PREC - 1) / MP_PREC)
+#define MP_MIN_PREC ((((CHAR_BIT * (int)sizeof(long long))/DIGIT_BIT) + MP_PREC - 1) / MP_PREC)
 
 /* size of comba arrays, should be at least 2 * 2**(BITS_PER_WORD - BITS_PER_DIGIT*2) */
 #define MP_WARRAY               (1u << (((CHAR_BIT * sizeof(mp_word)) - (2 * DIGIT_BIT)) + 1))
