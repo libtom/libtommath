@@ -33,7 +33,7 @@
 #   define BN_MP_TO_UNSIGNED_BIN_C
 #   define BN_MP_MOD_D_C
 #   define BN_MP_PRIME_RABIN_MILLER_TRIALS_C
-#   define BN_REVERSE_C
+#   define BN_S_MP_REVERSE_C
 #   define BN_PRIME_TAB_C
 
 /* other modifiers */
@@ -44,10 +44,10 @@
  * like removing support for even moduli, etc...
  */
 #   ifdef LTM_LAST
-#      undef BN_MP_TOOM_MUL_C
-#      undef BN_MP_TOOM_SQR_C
-#      undef BN_MP_KARATSUBA_MUL_C
-#      undef BN_MP_KARATSUBA_SQR_C
+#      undef BN_S_MP_TOOM_MUL_C
+#      undef BN_S_MP_TOOM_SQR_C
+#      undef BN_S_MP_KARATSUBA_MUL_C
+#      undef BN_S_MP_KARATSUBA_SQR_C
 #      undef BN_MP_REDUCE_C
 #      undef BN_MP_REDUCE_SETUP_C
 #      undef BN_MP_DR_IS_MODULUS_C
@@ -59,8 +59,8 @@
 #      undef BN_S_MP_EXPTMOD_C
 #      undef BN_MP_DIV_3_C
 #      undef BN_S_MP_MUL_HIGH_DIGS_C
-#      undef BN_FAST_S_MP_MUL_HIGH_DIGS_C
-#      undef BN_FAST_MP_INVMOD_C
+#      undef BN_S_MP_MUL_HIGH_DIGS_FAST_C
+#      undef BN_S_MP_INVMOD_FAST_C
 
 /* To safely undefine these you have to make sure your RSA key won't exceed the Comba threshold
  * which is roughly 255 digits [7140 bits for 32-bit machines, 15300 bits for 64-bit machines]

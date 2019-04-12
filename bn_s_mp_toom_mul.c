@@ -1,5 +1,5 @@
 #include "tommath_private.h"
-#ifdef BN_MP_TOOM_MUL_C
+#ifdef BN_S_MP_TOOM_MUL_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
@@ -10,7 +10,7 @@
  * only particularly useful on VERY large inputs
  * (we're talking 1000s of digits here...).
 */
-int mp_toom_mul(const mp_int *a, const mp_int *b, mp_int *c)
+int s_mp_toom_mul(const mp_int *a, const mp_int *b, mp_int *c)
 {
    mp_int w0, w1, w2, w3, w4, tmp1, tmp2, a0, a1, a2, b0, b1, b2;
    int res, B;
@@ -23,7 +23,7 @@ int mp_toom_mul(const mp_int *a, const mp_int *b, mp_int *c)
    }
 
    /* B */
-   B = MIN(a->used, b->used) / 3;
+   B = MP_MIN(a->used, b->used) / 3;
 
    /* a = a2 * B**2 + a1 * B + a0 */
    if ((res = mp_mod_2d(a, DIGIT_BIT * B, &a0)) != MP_OKAY) {

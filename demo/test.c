@@ -1764,7 +1764,7 @@ LTM_ERR:
    return EXIT_FAILURE;
 }
 
-static int test_mp_balance_mul(void)
+static int test_s_mp_balance_mul(void)
 {
    mp_int a, b, c;
    int e = MP_OKAY;
@@ -1840,7 +1840,7 @@ int unit_tests(void)
       T(mp_tc_xor),
       T(mp_incr),
       T(mp_decr),
-      T(mp_balance_mul),
+      T(s_mp_balance_mul),
       T(mp_ilogb)
 #undef T
    };

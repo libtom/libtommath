@@ -32,7 +32,7 @@ int mp_set_double(mp_int *a, double b)
       return res;
    }
 
-   if (((cast.bits >> 63) != 0ULL) && !IS_ZERO(a)) {
+   if (((cast.bits >> 63) != 0ULL) && !MP_IS_ZERO(a)) {
       a->sign = MP_NEG;
    }
 

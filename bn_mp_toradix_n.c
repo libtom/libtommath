@@ -20,7 +20,7 @@ int mp_toradix_n(const mp_int *a, char *str, int radix, int maxlen)
    }
 
    /* quick out if its zero */
-   if (IS_ZERO(a)) {
+   if (MP_IS_ZERO(a)) {
       *str++ = '0';
       *str = '\0';
       return MP_OKAY;
@@ -44,7 +44,7 @@ int mp_toradix_n(const mp_int *a, char *str, int radix, int maxlen)
    }
 
    digs = 0;
-   while (!IS_ZERO(&t)) {
+   while (!MP_IS_ZERO(&t)) {
       if (--maxlen < 1) {
          /* no more room */
          break;
@@ -60,7 +60,7 @@ int mp_toradix_n(const mp_int *a, char *str, int radix, int maxlen)
    /* reverse the digits of the string.  In this case _s points
     * to the first digit [exluding the sign] of the number
     */
-   bn_reverse((unsigned char *)_s, digs);
+   s_mp_reverse((unsigned char *)_s, digs);
 
    /* append a NULL so the string is properly terminated */
    *str = '\0';

@@ -1,5 +1,5 @@
 #include "tommath_private.h"
-#ifdef BN_FAST_S_MP_SQR_C
+#ifdef BN_S_MP_SQR_FAST_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
@@ -13,7 +13,7 @@
 After that loop you do the squares and add them in.
 */
 
-int fast_s_mp_sqr(const mp_int *a, mp_int *b)
+int s_mp_sqr_fast(const mp_int *a, mp_int *b)
 {
    int       olduse, res, pa, ix, iz;
    mp_digit   W[MP_WARRAY], *tmpx;
@@ -38,7 +38,7 @@ int fast_s_mp_sqr(const mp_int *a, mp_int *b)
       _W = 0;
 
       /* get offsets into the two bignums */
-      ty = MIN(a->used-1, ix);
+      ty = MP_MIN(a->used-1, ix);
       tx = ix - ty;
 
       /* setup temp aliases */
@@ -48,13 +48,13 @@ int fast_s_mp_sqr(const mp_int *a, mp_int *b)
       /* this is the number of times the loop will iterrate, essentially
          while (tx++ < a->used && ty-- >= 0) { ... }
        */
-      iy = MIN(a->used-tx, ty+1);
+      iy = MP_MIN(a->used-tx, ty+1);
 
       /* now for squaring tx can never equal ty
        * we halve the distance since they approach at a rate of 2x
        * and we have to round because odd cases need to be executed
        */
-      iy = MIN(iy, ((ty-tx)+1)>>1);
+      iy = MP_MIN(iy, ((ty-tx)+1)>>1);
 
       /* execute loop */
       for (iz = 0; iz < iy; iz++) {

@@ -35,7 +35,7 @@ int mp_div_d(const mp_int *a, mp_digit b, mp_int *c, mp_digit *d)
    }
 
    /* quick outs */
-   if ((b == 1u) || IS_ZERO(a)) {
+   if ((b == 1u) || MP_IS_ZERO(a)) {
       if (d != NULL) {
          *d = 0;
       }

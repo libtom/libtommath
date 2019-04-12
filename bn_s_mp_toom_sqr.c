@@ -1,10 +1,10 @@
 #include "tommath_private.h"
-#ifdef BN_MP_TOOM_SQR_C
+#ifdef BN_S_MP_TOOM_SQR_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
 /* squaring using Toom-Cook 3-way algorithm */
-int mp_toom_sqr(const mp_int *a, mp_int *b)
+int s_mp_toom_sqr(const mp_int *a, mp_int *b)
 {
    mp_int w0, w1, w2, w3, w4, tmp1, a0, a1, a2;
    int res, B;

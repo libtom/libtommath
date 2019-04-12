@@ -313,23 +313,7 @@
 	</References>
 	<Files>
 		<File
-			RelativePath="bn_fast_mp_invmod.c"
-			>
-		</File>
-		<File
-			RelativePath="bn_fast_mp_montgomery_reduce.c"
-			>
-		</File>
-		<File
-			RelativePath="bn_fast_s_mp_mul_digs.c"
-			>
-		</File>
-		<File
-			RelativePath="bn_fast_s_mp_mul_high_digs.c"
-			>
-		</File>
-		<File
-			RelativePath="bn_fast_s_mp_sqr.c"
+			RelativePath="bn_deprecated.c"
 			>
 		</File>
 		<File
@@ -354,10 +338,6 @@
 		</File>
 		<File
 			RelativePath="bn_mp_and.c"
-			>
-		</File>
-		<File
-			RelativePath="bn_mp_balance_mul.c"
 			>
 		</File>
 		<File
@@ -461,10 +441,6 @@
 			>
 		</File>
 		<File
-			RelativePath="bn_mp_exptmod_fast.c"
-			>
-		</File>
-		<File
 			RelativePath="bn_mp_exteuclid.c"
 			>
 		</File>
@@ -545,10 +521,6 @@
 			>
 		</File>
 		<File
-			RelativePath="bn_mp_invmod_slow.c"
-			>
-		</File>
-		<File
 			RelativePath="bn_mp_is_square.c"
 			>
 		</File>
@@ -562,14 +534,6 @@
 		</File>
 		<File
 			RelativePath="bn_mp_jacobi.c"
-			>
-		</File>
-		<File
-			RelativePath="bn_mp_karatsuba_mul.c"
-			>
-		</File>
-		<File
-			RelativePath="bn_mp_karatsuba_sqr.c"
 			>
 		</File>
 		<File
@@ -829,14 +793,6 @@
 			>
 		</File>
 		<File
-			RelativePath="bn_mp_toom_mul.c"
-			>
-		</File>
-		<File
-			RelativePath="bn_mp_toom_sqr.c"
-			>
-		</File>
-		<File
 			RelativePath="bn_mp_toradix.c"
 			>
 		</File>
@@ -861,11 +817,11 @@
 			>
 		</File>
 		<File
-			RelativePath="bn_reverse.c"
+			RelativePath="bn_s_mp_add.c"
 			>
 		</File>
 		<File
-			RelativePath="bn_s_mp_add.c"
+			RelativePath="bn_s_mp_balance_mul.c"
 			>
 		</File>
 		<File
@@ -873,7 +829,35 @@
 			>
 		</File>
 		<File
+			RelativePath="bn_s_mp_exptmod_fast.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_s_mp_invmod_fast.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_s_mp_invmod_slow.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_s_mp_karatsuba_mul.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_s_mp_karatsuba_sqr.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_s_mp_montgomery_reduce_fast.c"
+			>
+		</File>
+		<File
 			RelativePath="bn_s_mp_mul_digs.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_s_mp_mul_digs_fast.c"
 			>
 		</File>
 		<File
@@ -881,11 +865,31 @@
 			>
 		</File>
 		<File
+			RelativePath="bn_s_mp_mul_high_digs_fast.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_s_mp_reverse.c"
+			>
+		</File>
+		<File
 			RelativePath="bn_s_mp_sqr.c"
 			>
 		</File>
 		<File
+			RelativePath="bn_s_mp_sqr_fast.c"
+			>
+		</File>
+		<File
 			RelativePath="bn_s_mp_sub.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_s_mp_toom_mul.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_s_mp_toom_sqr.c"
 			>
 		</File>
 		<File

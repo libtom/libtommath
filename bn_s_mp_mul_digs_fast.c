@@ -1,5 +1,5 @@
 #include "tommath_private.h"
-#ifdef BN_FAST_S_MP_MUL_DIGS_C
+#ifdef BN_S_MP_MUL_DIGS_FAST_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
@@ -19,7 +19,7 @@
  * Based on Algorithm 14.12 on pp.595 of HAC.
  *
  */
-int fast_s_mp_mul_digs(const mp_int *a, const mp_int *b, mp_int *c, int digs)
+int s_mp_mul_digs_fast(const mp_int *a, const mp_int *b, mp_int *c, int digs)
 {
    int     olduse, res, pa, ix, iz;
    mp_digit W[MP_WARRAY];
@@ -33,7 +33,7 @@ int fast_s_mp_mul_digs(const mp_int *a, const mp_int *b, mp_int *c, int digs)
    }
 
    /* number of output digits to produce */
-   pa = MIN(digs, a->used + b->used);
+   pa = MP_MIN(digs, a->used + b->used);
 
    /* clear the carry */
    _W = 0;
@@ -43,7 +43,7 @@ int fast_s_mp_mul_digs(const mp_int *a, const mp_int *b, mp_int *c, int digs)
       mp_digit *tmpx, *tmpy;
 
       /* get offsets into the two bignums */
-      ty = MIN(b->used-1, ix);
+      ty = MP_MIN(b->used-1, ix);
       tx = ix - ty;
 
       /* setup temp aliases */
@@ -53,7 +53,7 @@ int fast_s_mp_mul_digs(const mp_int *a, const mp_int *b, mp_int *c, int digs)
       /* this is the number of times the loop will iterrate, essentially
          while (tx++ < a->used && ty-- >= 0) { ... }
        */
-      iy = MIN(a->used-tx, ty+1);
+      iy = MP_MIN(a->used-tx, ty+1);
 
       /* execute loop */
       for (iz = 0; iz < iy; ++iz) {

@@ -7,7 +7,7 @@
 int mp_decr(mp_int *a)
 {
    int e = MP_OKAY;
-   if (IS_ZERO(a)) {
+   if (MP_IS_ZERO(a)) {
       mp_set(a,1uL);
       a->sign = MP_NEG;
       return MP_OKAY;
@@ -17,7 +17,7 @@ int mp_decr(mp_int *a)
          return e;
       }
       /* There is no -0 in LTM */
-      if (!IS_ZERO(a)) {
+      if (!MP_IS_ZERO(a)) {
          a->sign = MP_NEG;
       }
       return MP_OKAY;

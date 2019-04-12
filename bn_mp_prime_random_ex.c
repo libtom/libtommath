@@ -37,7 +37,7 @@ int mp_prime_random_ex(mp_int *a, int t, int size, int flags, ltm_prime_callback
    bsize = (size>>3) + ((size&7)?1:0);
 
    /* we need a buffer of bsize bytes */
-   tmp = (unsigned char *) XMALLOC((size_t)bsize);
+   tmp = (unsigned char *) MP_MALLOC((size_t)bsize);
    if (tmp == NULL) {
       return MP_MEM;
    }
@@ -114,7 +114,7 @@ int mp_prime_random_ex(mp_int *a, int t, int size, int flags, ltm_prime_callback
 
    err = MP_OKAY;
 error:
-   XFREE(tmp, bsize);
+   MP_FREE(tmp, bsize);
    return err;
 }
 

@@ -2644,7 +2644,7 @@ $O \left ((p + q)n^2 \right )$ time to multiply two $n$-digit numbers.  The Comb
 the speed increase is actually much more.  With $O(n)$ space the algorithm can be reduced to $O(pn + qn)$ time by implementing the $n$ multiply
 and addition operations in the nested loop in parallel.
 
-EXAM,bn_fast_s_mp_mul_digs.c
+EXAM,bn_s_mp_mul_digs_fast.c
 
 As per the pseudo--code we first calculate $pa$ (line @47,MIN@) as the number of digits to output.  Next we begin the outer loop
 to produce the individual columns of the product.  We use the two aliases $tmpx$ and $tmpy$ (lines @61,tmpx@, @62,tmpy@) to point
@@ -2842,7 +2842,7 @@ of an additional temporary variable, the algorithm can avoid an addition memory 
 
 The remaining steps 13 through 18 compute the Karatsuba polynomial through a variety of digit shifting and addition operations.
 
-EXAM,bn_mp_karatsuba_mul.c
+EXAM,bn_s_mp_karatsuba_mul.c
 
 The new coding element in this routine, not  seen in previous routines, is the usage of goto statements.  The conventional
 wisdom is that goto statements should be avoided.  This is generally true, however when every single function call can fail, it makes sense
@@ -2976,7 +2976,7 @@ that row $1$ must be subtracted from row $4$ and simultaneously row $0$ subtract
 Once the coeffients have been isolated, the polynomial $W(x) = \sum_{i=0}^{2n} w_i x^i$ is known.  By substituting $\beta^{k}$ for $x$, the integer
 result $a \cdot b$ is produced.
 
-EXAM,bn_mp_toom_mul.c
+EXAM,bn_s_mp_toom_mul.c
 
 The first obvious thing to note is that this algorithm is complicated.  The complexity is worth it if you are multiplying very
 large numbers.  For example, a 10,000 digit multiplication takes approximaly 99,282,205 fewer single precision multiplications with
@@ -3217,7 +3217,7 @@ fewer multiplications and the routine ends up being faster.
 Finally the last difference is the addition of the ``square'' term outside the inner loop (step 5.8).  We add in the square
 only to even outputs and it is the square of the term at the $\lfloor ix / 2 \rfloor$ position.
 
-EXAM,bn_fast_s_mp_sqr.c
+EXAM,bn_s_mp_sqr_fast.c
 
 This implementation is essentially a copy of Comba multiplication with the appropriate changes added to make it faster for
 the special case of squaring.
@@ -3321,7 +3321,7 @@ where multiplication is substantially slower\footnote{On the Athlon there is a 1
 the Intel P4 processor this ratio is 1:29 making this method even more beneficial.  The only common exception is the ARMv4 processor which has a
 ratio of 1:7.  } than simpler operations such as addition.
 
-EXAM,bn_mp_karatsuba_sqr.c
+EXAM,bn_s_mp_karatsuba_sqr.c
 
 This implementation is largely based on the implementation of algorithm mp\_karatsuba\_mul.  It uses the same inline style to copy and
 shift the input into the two halves.  The loop from line @54,{@ to line @70,}@ has been modified since only one input exists.  The \textbf{used}
@@ -3998,7 +3998,7 @@ point.
 Step 5 will propagate the remainder of the carries upwards.  On step 6 the columns are reduced modulo $\beta$ and shifted simultaneously as they are
 stored in the destination $x$.
 
-EXAM,bn_fast_mp_montgomery_reduce.c
+EXAM,bn_s_mp_montgomery_reduce_fast.c
 
 The $\hat W$ array is first filled with digits of $x$ on line @49,for@ then the rest of the digits are zeroed on line @54,for@.  Both loops share
 the same alias variables to make the code easier to read.

@@ -1,5 +1,5 @@
 #include "tommath_private.h"
-#ifdef BN_MP_KARATSUBA_SQR_C
+#ifdef BN_S_MP_KARATSUBA_SQR_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
@@ -10,7 +10,7 @@
  * is essentially the same algorithm but merely
  * tuned to perform recursive squarings.
  */
-int mp_karatsuba_sqr(const mp_int *a, mp_int *b)
+int s_mp_karatsuba_sqr(const mp_int *a, mp_int *b)
 {
    mp_int  x0, x1, t1, t2, x0x0, x1x1;
    int     B, err;

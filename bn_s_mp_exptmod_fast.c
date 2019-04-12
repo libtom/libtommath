@@ -1,5 +1,5 @@
 #include "tommath_private.h"
-#ifdef BN_MP_EXPTMOD_FAST_C
+#ifdef BN_S_MP_EXPTMOD_FAST_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
@@ -17,7 +17,7 @@
 #   define TAB_SIZE 256
 #endif
 
-int mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y, int redmode)
+int s_mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y, int redmode)
 {
    mp_int  M[TAB_SIZE], res;
    mp_digit buf, mp;
@@ -83,10 +83,10 @@ int mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y
 #endif
 
       /* automatically pick the comba one if available (saves quite a few calls/ifs) */
-#ifdef BN_FAST_MP_MONTGOMERY_REDUCE_C
+#ifdef BN_S_MP_MONTGOMERY_REDUCE_FAST_C
       if ((((P->used * 2) + 1) < (int)MP_WARRAY) &&
           (P->used < (1 << ((CHAR_BIT * sizeof(mp_word)) - (2 * DIGIT_BIT))))) {
-         redux = fast_mp_montgomery_reduce;
+         redux = s_mp_montgomery_reduce_fast;
       } else
 #endif
       {

@@ -12,7 +12,7 @@ int mp_div(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d)
    int    res, n, n2;
 
    /* is divisor zero ? */
-   if (IS_ZERO(b)) {
+   if (MP_IS_ZERO(b)) {
       return MP_VAL;
    }
 
@@ -62,11 +62,11 @@ int mp_div(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d)
    n2 = (a->sign == b->sign) ? MP_ZPOS : MP_NEG;
    if (c != NULL) {
       mp_exch(c, &q);
-      c->sign  = IS_ZERO(c) ? MP_ZPOS : n2;
+      c->sign  = MP_IS_ZERO(c) ? MP_ZPOS : n2;
    }
    if (d != NULL) {
       mp_exch(d, &ta);
-      d->sign = IS_ZERO(d) ? MP_ZPOS : n;
+      d->sign = MP_IS_ZERO(d) ? MP_ZPOS : n;
    }
 LBL_ERR:
    mp_clear_multi(&ta, &tb, &tq, &q, NULL);
@@ -94,7 +94,7 @@ int mp_div(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d)
    int     res, n, t, i, norm, neg;
 
    /* is divisor zero ? */
-   if (IS_ZERO(b)) {
+   if (MP_IS_ZERO(b)) {
       return MP_VAL;
    }
 

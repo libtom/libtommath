@@ -160,11 +160,11 @@ The wrong \texttt{libtool} will build it all fine but when it comes to the final
 cc -I./ -Wall -Wsign-compare -Wextra -Wshadow -Wsystem-headers -Wdeclaration-afo...
 cc -I./ -Wall -Wsign-compare -Wextra -Wshadow -Wsystem-headers -Wdeclaration-afo...
 cc -I./ -Wall -Wsign-compare -Wextra -Wshadow -Wsystem-headers -Wdeclaration-afo...
-libtool --mode=link --tag=CC cc  bn_error.lo bn_fast_mp_invmod.lo bn_fast_mp_mo 
-libtool: link: cc bn_error.lo bn_fast_mp_invmod.lo bn_fast_mp_montgomery_reduce0
+libtool --mode=link --tag=CC cc  bn_error.lo bn_s_mp_invmod_fast.lo bn_fast_mp_mo 
+libtool: link: cc bn_error.lo bn_s_mp_invmod_fast.lo bn_s_mp_montgomery_reduce_fast0
 bn_error.lo: file not recognized: File format not recognized
 cc: error: linker command failed with exit code 1 (use -v to see invocation)
-Error while executing cc bn_error.lo bn_fast_mp_invmod.lo bn_fast_mp_montgomery0
+Error while executing cc bn_error.lo bn_s_mp_invmod_fast.lo bn_fast_mp_montgomery0
 gmake: *** [makefile.shared:64: libtommath.la] Error 1
 \end{alltt}
 

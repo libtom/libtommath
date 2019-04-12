@@ -50,7 +50,7 @@ int mp_sqrtmod_prime(const mp_int *n, const mp_int *prime, mp_int *ret)
    /* Q = prime - 1 */
    mp_zero(&S);
    /* S = 0 */
-   while (IS_EVEN(&Q)) {
+   while (MP_IS_EVEN(&Q)) {
       if ((res = mp_div_2(&Q, &Q)) != MP_OKAY)                    goto cleanup;
       /* Q = Q / 2 */
       if ((res = mp_add_d(&S, 1uL, &S)) != MP_OKAY)               goto cleanup;
