@@ -25,6 +25,12 @@ extern void *MP_CALLOC(size_t nmemb, size_t size);
 extern void MP_FREE(void *mem, size_t size);
 #endif
 
+/* TODO: Remove _MP_WARRAY_PRIVATE as soon as deprecated
+ * MP_WARRAY is removed from tommath.h
+*/
+#undef MP_WARRAY
+#define MP_WARRAY _MP_WARRAY_PRIVATE
+
 #define MP_MIN(x, y) (((x) < (y)) ? (x) : (y))
 #define MP_MAX(x, y) (((x) > (y)) ? (x) : (y))
 

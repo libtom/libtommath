@@ -136,7 +136,8 @@ extern int KARATSUBA_MUL_CUTOFF,
 #endif
 
 /* size of comba arrays, should be at least 2 * 2**(BITS_PER_WORD - BITS_PER_DIGIT*2) */
-#define MP_WARRAY               (1u << (((CHAR_BIT * sizeof(mp_word)) - (2 * MP_DIGIT_BIT)) + 1))
+#define _MP_WARRAY_PRIVATE (1u << (((CHAR_BIT * sizeof(mp_word)) - (2 * MP_DIGIT_BIT)) + 1))
+#define MP_WARRAY (MP_DEPRECATED_PRAGMA("MP_WARRAY is an internal macro") _MP_WARRAY_PRIVATE)
 
 /* the infamous mp_int structure */
 typedef struct  {
