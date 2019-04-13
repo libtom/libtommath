@@ -19,7 +19,7 @@ int mp_montgomery_reduce(mp_int *x, const mp_int *n, mp_digit rho)
    if ((digs < (int)MP_WARRAY) &&
        (x->used <= (int)MP_WARRAY) &&
        (n->used <
-        (int)(1u << ((CHAR_BIT * sizeof(mp_word)) - (2u * (size_t)DIGIT_BIT))))) {
+        (int)(1u << ((CHAR_BIT * sizeof(mp_word)) - (2u * (size_t)MP_DIGIT_BIT))))) {
       return s_mp_montgomery_reduce_fast(x, n, rho);
    }
 
@@ -64,7 +64,7 @@ int mp_montgomery_reduce(mp_int *x, const mp_int *n, mp_digit rho)
                       (mp_word)u + (mp_word)*tmpx;
 
             /* get carry */
-            u       = (mp_digit)(r >> (mp_word)DIGIT_BIT);
+            u       = (mp_digit)(r >> (mp_word)MP_DIGIT_BIT);
 
             /* fix digit */
             *tmpx++ = (mp_digit)(r & (mp_word)MP_MASK);
@@ -75,7 +75,7 @@ int mp_montgomery_reduce(mp_int *x, const mp_int *n, mp_digit rho)
          /* propagate carries upwards as required*/
          while (u != 0u) {
             *tmpx   += u;
-            u        = *tmpx >> DIGIT_BIT;
+            u        = *tmpx >> MP_DIGIT_BIT;
             *tmpx++ &= MP_MASK;
          }
       }

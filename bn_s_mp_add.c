@@ -55,7 +55,7 @@ int s_mp_add(const mp_int *a, const mp_int *b, mp_int *c)
          *tmpc = *tmpa++ + *tmpb++ + u;
 
          /* U = carry bit of T[i] */
-         u = *tmpc >> (mp_digit)DIGIT_BIT;
+         u = *tmpc >> (mp_digit)MP_DIGIT_BIT;
 
          /* take away carry bit from T[i] */
          *tmpc++ &= MP_MASK;
@@ -70,7 +70,7 @@ int s_mp_add(const mp_int *a, const mp_int *b, mp_int *c)
             *tmpc = x->dp[i] + u;
 
             /* U = carry bit of T[i] */
-            u = *tmpc >> (mp_digit)DIGIT_BIT;
+            u = *tmpc >> (mp_digit)MP_DIGIT_BIT;
 
             /* take away carry bit from T[i] */
             *tmpc++ &= MP_MASK;

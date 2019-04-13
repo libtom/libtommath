@@ -12,7 +12,7 @@ static int s_is_power_of_two(mp_digit b, int *p)
       return 0;
    }
 
-   for (x = 0; x < DIGIT_BIT; x++) {
+   for (x = 0; x < MP_DIGIT_BIT; x++) {
       if (b == ((mp_digit)1<<(mp_digit)x)) {
          *p = x;
          return 1;
@@ -72,7 +72,7 @@ int mp_div_d(const mp_int *a, mp_digit b, mp_int *c, mp_digit *d)
    q.sign = a->sign;
    w = 0;
    for (ix = a->used - 1; ix >= 0; ix--) {
-      w = (w << (mp_word)DIGIT_BIT) | (mp_word)a->dp[ix];
+      w = (w << (mp_word)MP_DIGIT_BIT) | (mp_word)a->dp[ix];
 
       if (w >= b) {
          t = (mp_digit)(w / b);

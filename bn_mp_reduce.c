@@ -21,7 +21,7 @@ int mp_reduce(mp_int *x, const mp_int *m, const mp_int *mu)
    mp_rshd(&q, um - 1);
 
    /* according to HAC this optimization is ok */
-   if ((mp_digit)um > ((mp_digit)1 << (DIGIT_BIT - 1))) {
+   if ((mp_digit)um > ((mp_digit)1 << (MP_DIGIT_BIT - 1))) {
       if ((res = mp_mul(&q, mu, &q)) != MP_OKAY) {
          goto CLEANUP;
       }
@@ -46,7 +46,7 @@ int mp_reduce(mp_int *x, const mp_int *m, const mp_int *mu)
    mp_rshd(&q, um + 1);
 
    /* x = x mod b**(k+1), quick (no division) */
-   if ((res = mp_mod_2d(x, DIGIT_BIT * (um + 1), x)) != MP_OKAY) {
+   if ((res = mp_mod_2d(x, MP_DIGIT_BIT * (um + 1), x)) != MP_OKAY) {
       goto CLEANUP;
    }
 

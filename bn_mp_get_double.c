@@ -7,7 +7,7 @@ double mp_get_double(const mp_int *a)
 {
    int i;
    double d = 0.0, fac = 1.0;
-   for (i = 0; i < DIGIT_BIT; ++i) {
+   for (i = 0; i < MP_DIGIT_BIT; ++i) {
       fac *= 2.0;
    }
    for (i = a->used; i --> 0;) {

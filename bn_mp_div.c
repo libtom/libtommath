@@ -136,10 +136,10 @@ int mp_div(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d)
    neg = (a->sign == b->sign) ? MP_ZPOS : MP_NEG;
    x.sign = y.sign = MP_ZPOS;
 
-   /* normalize both x and y, ensure that y >= b/2, [b == 2**DIGIT_BIT] */
-   norm = mp_count_bits(&y) % DIGIT_BIT;
-   if (norm < (DIGIT_BIT - 1)) {
-      norm = (DIGIT_BIT - 1) - norm;
+   /* normalize both x and y, ensure that y >= b/2, [b == 2**MP_DIGIT_BIT] */
+   norm = mp_count_bits(&y) % MP_DIGIT_BIT;
+   if (norm < (MP_DIGIT_BIT - 1)) {
+      norm = (MP_DIGIT_BIT - 1) - norm;
       if ((res = mp_mul_2d(&x, norm, &x)) != MP_OKAY) {
          goto LBL_Y;
       }
@@ -178,10 +178,10 @@ int mp_div(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d)
       /* step 3.1 if xi == yt then set q{i-t-1} to b-1,
        * otherwise set q{i-t-1} to (xi*b + x{i-1})/yt */
       if (x.dp[i] == y.dp[t]) {
-         q.dp[(i - t) - 1] = ((mp_digit)1 << (mp_digit)DIGIT_BIT) - (mp_digit)1;
+         q.dp[(i - t) - 1] = ((mp_digit)1 << (mp_digit)MP_DIGIT_BIT) - (mp_digit)1;
       } else {
          mp_word tmp;
-         tmp = (mp_word)x.dp[i] << (mp_word)DIGIT_BIT;
+         tmp = (mp_word)x.dp[i] << (mp_word)MP_DIGIT_BIT;
          tmp |= (mp_word)x.dp[i - 1];
          tmp /= (mp_word)y.dp[t];
          if (tmp > (mp_word)MP_MASK) {

@@ -21,7 +21,7 @@ int mp_cnt_lsb(const mp_int *a)
    /* scan lower digits until non-zero */
    for (x = 0; (x < a->used) && (a->dp[x] == 0u); x++) {}
    q = a->dp[x];
-   x *= DIGIT_BIT;
+   x *= MP_DIGIT_BIT;
 
    /* now scan this digit until a 1 is found */
    if ((q & 1u) == 0u) {

@@ -14,14 +14,14 @@ unsigned long mp_get_long(const mp_int *a)
    }
 
    /* get number of digits of the lsb we have to read */
-   i = MP_MIN(a->used, (((CHAR_BIT * (int)sizeof(unsigned long)) + DIGIT_BIT - 1) / DIGIT_BIT)) - 1;
+   i = MP_MIN(a->used, (((CHAR_BIT * (int)sizeof(unsigned long)) + MP_DIGIT_BIT - 1) / MP_DIGIT_BIT)) - 1;
 
    /* get most significant digit of result */
    res = (unsigned long)a->dp[i];
 
-#if (ULONG_MAX != 0xFFFFFFFFUL) || (DIGIT_BIT < 32)
+#if (ULONG_MAX != 0xFFFFFFFFUL) || (MP_DIGIT_BIT < 32)
    while (--i >= 0) {
-      res = (res << DIGIT_BIT) | (unsigned long)a->dp[i];
+      res = (res << MP_DIGIT_BIT) | (unsigned long)a->dp[i];
    }
 #endif
    return res;

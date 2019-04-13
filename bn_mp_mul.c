@@ -67,7 +67,7 @@ GO_ON:
 #ifdef BN_S_MP_MUL_DIGS_FAST_C
          if ((digs < (int)MP_WARRAY) &&
              (MP_MIN(a->used, b->used) <=
-              (int)(1u << ((CHAR_BIT * sizeof(mp_word)) - (2u * (size_t)DIGIT_BIT))))) {
+              (int)(1u << ((CHAR_BIT * sizeof(mp_word)) - (2u * (size_t)MP_DIGIT_BIT))))) {
             res = s_mp_mul_digs_fast(a, b, c, digs);
          } else
 #endif

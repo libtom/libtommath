@@ -17,7 +17,7 @@ int s_mp_mul_high_digs(const mp_int *a, const mp_int *b, mp_int *c, int digs)
    /* can we use the fast multiplier? */
 #ifdef BN_S_MP_MUL_HIGH_DIGS_FAST_C
    if (((a->used + b->used + 1) < (int)MP_WARRAY)
-       && (MP_MIN(a->used, b->used) < (int)(1u << ((CHAR_BIT * sizeof(mp_word)) - (2u * (size_t)DIGIT_BIT))))) {
+       && (MP_MIN(a->used, b->used) < (int)(1u << ((CHAR_BIT * sizeof(mp_word)) - (2u * (size_t)MP_DIGIT_BIT))))) {
       return s_mp_mul_high_digs_fast(a, b, c, digs);
    }
 #endif
@@ -52,7 +52,7 @@ int s_mp_mul_high_digs(const mp_int *a, const mp_int *b, mp_int *c, int digs)
          *tmpt++ = (mp_digit)(r & (mp_word)MP_MASK);
 
          /* carry the carry */
-         u       = (mp_digit)(r >> (mp_word)DIGIT_BIT);
+         u       = (mp_digit)(r >> (mp_word)MP_DIGIT_BIT);
       }
       *tmpt = u;
    }

@@ -14,10 +14,10 @@ int mp_montgomery_calc_normalization(mp_int *a, const mp_int *b)
    int     x, bits, res;
 
    /* how many bits of last digit does b use */
-   bits = mp_count_bits(b) % DIGIT_BIT;
+   bits = mp_count_bits(b) % MP_DIGIT_BIT;
 
    if (b->used > 1) {
-      if ((res = mp_2expt(a, ((b->used - 1) * DIGIT_BIT) + bits - 1)) != MP_OKAY) {
+      if ((res = mp_2expt(a, ((b->used - 1) * MP_DIGIT_BIT) + bits - 1)) != MP_OKAY) {
          return res;
       }
    } else {
@@ -27,7 +27,7 @@ int mp_montgomery_calc_normalization(mp_int *a, const mp_int *b)
 
 
    /* now compute C = A * B mod b */
-   for (x = bits - 1; x < (int)DIGIT_BIT; x++) {
+   for (x = bits - 1; x < (int)MP_DIGIT_BIT; x++) {
       if ((res = mp_mul_2(a, a)) != MP_OKAY) {
          return res;
       }

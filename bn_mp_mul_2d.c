@@ -16,21 +16,21 @@ int mp_mul_2d(const mp_int *a, int b, mp_int *c)
       }
    }
 
-   if (c->alloc < (c->used + (b / DIGIT_BIT) + 1)) {
-      if ((res = mp_grow(c, c->used + (b / DIGIT_BIT) + 1)) != MP_OKAY) {
+   if (c->alloc < (c->used + (b / MP_DIGIT_BIT) + 1)) {
+      if ((res = mp_grow(c, c->used + (b / MP_DIGIT_BIT) + 1)) != MP_OKAY) {
          return res;
       }
    }
 
    /* shift by as many digits in the bit count */
-   if (b >= DIGIT_BIT) {
-      if ((res = mp_lshd(c, b / DIGIT_BIT)) != MP_OKAY) {
+   if (b >= MP_DIGIT_BIT) {
+      if ((res = mp_lshd(c, b / MP_DIGIT_BIT)) != MP_OKAY) {
          return res;
       }
    }
 
-   /* shift any bit count < DIGIT_BIT */
-   d = (mp_digit)(b % DIGIT_BIT);
+   /* shift any bit count < MP_DIGIT_BIT */
+   d = (mp_digit)(b % MP_DIGIT_BIT);
    if (d != 0u) {
       mp_digit *tmpc, shift, mask, r, rr;
       int x;
@@ -39,7 +39,7 @@ int mp_mul_2d(const mp_int *a, int b, mp_int *c)
       mask = ((mp_digit)1 << d) - (mp_digit)1;
 
       /* shift for msbs */
-      shift = (mp_digit)DIGIT_BIT - d;
+      shift = (mp_digit)MP_DIGIT_BIT - d;
 
       /* alias */
       tmpc = c->dp;

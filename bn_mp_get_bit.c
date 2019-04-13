@@ -16,13 +16,13 @@ int mp_get_bit(const mp_int *a, int b)
       return MP_VAL;
    }
 
-   limb = b / DIGIT_BIT;
+   limb = b / MP_DIGIT_BIT;
 
    if (limb >= a->used) {
       return MP_NO;
    }
 
-   bit = (mp_digit)(1) << (b % DIGIT_BIT);
+   bit = (mp_digit)(1) << (b % MP_DIGIT_BIT);
 
    isset = a->dp[limb] & bit;
    return (isset != 0u) ? MP_YES : MP_NO;

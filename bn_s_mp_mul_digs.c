@@ -18,7 +18,7 @@ int s_mp_mul_digs(const mp_int *a, const mp_int *b, mp_int *c, int digs)
    /* can we use the fast multiplier? */
    if ((digs < (int)MP_WARRAY) &&
        (MP_MIN(a->used, b->used) <
-        (int)(1u << ((CHAR_BIT * sizeof(mp_word)) - (2u * (size_t)DIGIT_BIT))))) {
+        (int)(1u << ((CHAR_BIT * sizeof(mp_word)) - (2u * (size_t)MP_DIGIT_BIT))))) {
       return s_mp_mul_digs_fast(a, b, c, digs);
    }
 
@@ -57,7 +57,7 @@ int s_mp_mul_digs(const mp_int *a, const mp_int *b, mp_int *c, int digs)
          *tmpt++ = (mp_digit)(r & (mp_word)MP_MASK);
 
          /* get the carry word from the result */
-         u       = (mp_digit)(r >> (mp_word)DIGIT_BIT);
+         u       = (mp_digit)(r >> (mp_word)MP_DIGIT_BIT);
       }
       /* set carry if it is placed below digs */
       if ((ix + iy) < digs) {

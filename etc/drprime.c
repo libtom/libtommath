@@ -1,7 +1,7 @@
 /* Makes safe primes of a DR nature */
 #include <tommath.h>
 
-static int sizes[] = { 1+256/DIGIT_BIT, 1+512/DIGIT_BIT, 1+768/DIGIT_BIT, 1+1024/DIGIT_BIT, 1+2048/DIGIT_BIT, 1+4096/DIGIT_BIT };
+static int sizes[] = { 1+256/MP_DIGIT_BIT, 1+512/MP_DIGIT_BIT, 1+768/MP_DIGIT_BIT, 1+1024/MP_DIGIT_BIT, 1+2048/MP_DIGIT_BIT, 1+4096/MP_DIGIT_BIT };
 
 int main(void)
 {
@@ -17,7 +17,7 @@ int main(void)
    if (out != NULL) {
       for (x = 0; x < (int)(sizeof(sizes)/sizeof(sizes[0])); x++) {
 top:
-         printf("Seeking a %d-bit safe prime\n", sizes[x] * DIGIT_BIT);
+         printf("Seeking a %d-bit safe prime\n", sizes[x] * MP_DIGIT_BIT);
          mp_grow(&a, sizes[x]);
          mp_zero(&a);
          for (y = 1; y < sizes[x]; y++) {

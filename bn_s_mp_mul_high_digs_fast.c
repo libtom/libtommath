@@ -55,7 +55,7 @@ int s_mp_mul_high_digs_fast(const mp_int *a, const mp_int *b, mp_int *c, int dig
       W[ix] = (mp_digit)_W & MP_MASK;
 
       /* make next carry */
-      _W = _W >> (mp_word)DIGIT_BIT;
+      _W = _W >> (mp_word)MP_DIGIT_BIT;
    }
 
    /* setup dest */

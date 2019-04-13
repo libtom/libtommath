@@ -51,7 +51,7 @@ top:
    for (i = 0; i < m; i++) {
       r         = ((mp_word)*tmpx2++ * (mp_word)k) + *tmpx1 + mu;
       *tmpx1++  = (mp_digit)(r & MP_MASK);
-      mu        = (mp_digit)(r >> ((mp_word)DIGIT_BIT));
+      mu        = (mp_digit)(r >> ((mp_word)MP_DIGIT_BIT));
    }
 
    /* set final carry */

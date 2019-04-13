@@ -15,7 +15,7 @@ int mp_count_bits(const mp_int *a)
    }
 
    /* get number of digits and add that */
-   r = (a->used - 1) * DIGIT_BIT;
+   r = (a->used - 1) * MP_DIGIT_BIT;
 
    /* take the last digit and count the bits in it */
    q = a->dp[a->used - 1];

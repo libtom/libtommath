@@ -33,7 +33,7 @@ int mp_div_2(const mp_int *a, mp_int *b)
          rr = *tmpa & 1u;
 
          /* shift the current digit, add in carry and store */
-         *tmpb-- = (*tmpa-- >> 1) | (r << (DIGIT_BIT - 1));
+         *tmpb-- = (*tmpa-- >> 1) | (r << (MP_DIGIT_BIT - 1));
 
          /* forward carry to next iteration */
          r = rr;
