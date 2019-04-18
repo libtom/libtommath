@@ -7,8 +7,8 @@
 static mp_word s_pow(mp_word base, mp_word exponent)
 {
    mp_word result = 1uLL;
-   while (exponent) {
-      if ((exponent & 0x1) == 1) {
+   while (exponent != 0u) {
+      if ((exponent & 1u) == 1u) {
          result *= base;
       }
       exponent >>= 1;
@@ -85,25 +85,27 @@ int mp_ilogb(mp_int *a, mp_digit base, mp_int *c)
       return MP_VAL;
    }
 
-   if (base < 2) {
+   if (base < 2u) {
       return MP_VAL;
-   } else if (base == 2) {
+   }
+   if (base == 2u) {
       cmp = mp_count_bits(a) - 1;
       mp_set_int(c, (unsigned long)cmp);
       return err;
-   } else if (a->used == 1) {
+   }
+   if (a->used == 1) {
       tmp = s_digit_ilogb(base, a->dp[0]);
       mp_set(c, tmp);
       return err;
    }
-
 
    cmp = mp_cmp_d(a, base);
 
    if (cmp == MP_LT) {
       mp_zero(c);
       return err;
-   } else if (cmp == MP_EQ) {
+   }
+   if (cmp == MP_EQ) {
       mp_set(c, (mp_digit)1uL);
       return err;
    }
@@ -114,9 +116,9 @@ int mp_ilogb(mp_int *a, mp_digit base, mp_int *c)
       return err;
    }
 
-   low = 0uL;
+   low = 0u;
    mp_set(&bracket_low, 1uL);
-   high = 1uL;
+   high = 1u;
 
    mp_set(&bracket_high, base);
 
@@ -138,14 +140,14 @@ int mp_ilogb(mp_int *a, mp_digit base, mp_int *c)
    }
    mp_set(&bi_base, base);
 
-   while ((high - low) > 1) {
+   while ((high - low) > 1u) {
       mid = (high + low) >> 1;
       /* Difference can be larger then the type behind mp_digit can hold */
       if ((mid - low) > (unsigned int)(MP_MASK)) {
          err = MP_VAL;
          goto LBL_ERR;
       }
-      if ((err = mp_expt_d(&bi_base, (mid - low), &t)) != MP_OKAY) {
+      if ((err = mp_expt_d(&bi_base, (mp_digit)(mid - low), &t)) != MP_OKAY) {
          goto LBL_ERR;
       }
       if ((err = mp_mul(&bracket_low, &t, &bracket_mid)) != MP_OKAY) {
