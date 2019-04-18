@@ -8,11 +8,16 @@
 
 set -e
 
+[ ! -z "$MAKE" ] || MAKE=make
+
 if [ -f /proc/cpuinfo ]
 then
-  MAKE_JOBS=$(( ($(cat /proc/cpuinfo | grep -E '^processor[[:space:]]*:' | tail -n -1 | cut -d':' -f2) + 1) * 2 + 1 ))
+  MAKE_JOBS="-j$(( ($(cat /proc/cpuinfo | grep -E '^processor[[:space:]]*:' | tail -n -1 | cut -d':' -f2) + 1) * 2 + 1 ))"
+elif [ "$MAKE" == "make" ]
+then
+  MAKE_JOBS="-j8"
 else
-  MAKE_JOBS=8
+  MAKE_JOBS=""
 fi
 
 ret=0
@@ -49,7 +54,11 @@ _help()
   echo "                            This is an option that will always be"
   echo "                            passed as parameter to CC."
   echo
-  echo "    --make-option=*         Give an option to make,"
+  echo "    --make=*                Use the given command instead of \""$MAKE"\"."
+  echo "                            This can also be accomplished by setting"
+  echo "                            the MAKE environment variable."
+  echo
+  echo "    --make-options=*        Give an option to make,"
   echo "                            e.g. --make-option=\"-f makefile.shared\""
   echo "                            This is an option that will always be"
   echo "                            passed as parameter to make."
@@ -105,7 +114,7 @@ _make()
 {
   echo -ne " Compile $1 $2"
   suffix=$(echo ${1}${2}  | tr ' ' '_')
-  CC="$1" CFLAGS="$2 $TEST_CFLAGS" make -j$MAKE_JOBS $3 $MAKE_OPTIONS > /dev/null 2>gcc_errors_${suffix}.log
+  CC="$1" CFLAGS="$2 $TEST_CFLAGS" $MAKE $MAKE_JOBS $3 $MAKE_OPTIONS > /dev/null 2>gcc_errors_${suffix}.log
   errcnt=$(wc -l < gcc_errors_${suffix}.log)
   if [[ ${errcnt} -gt 1 ]]; then
     echo " failed"
@@ -117,7 +126,7 @@ _make()
 
 _runtest()
 {
-  make clean > /dev/null
+  $MAKE clean > /dev/null
   _make "$1" "$2" "test_standalone"
   local _timeout=""
   which timeout >/dev/null && _timeout="timeout --foreground 90"
@@ -130,7 +139,7 @@ _runtest()
 # TODO: merge
 _runvalgrind()
 {
-  make clean > /dev/null
+  $MAKE clean > /dev/null
   _make "$1" "$2" "test_standalone"
   local _timeout=""
   # 30 minutes? Yes. Had it at 20 minutes and the Valgrind run needed over 25 minutes.
@@ -212,7 +221,10 @@ do
       fi
       start_alive_printing
     ;;
-    --make-option=*)
+    --make=*)
+      MAKE="${1#*=}"
+    ;;
+    --make-options=*)
       MAKE_OPTIONS="$MAKE_OPTIONS ${1#*=}"
     ;;
     --with-low-mp)
@@ -258,9 +270,9 @@ function _check_git() {
 
 if [[ "$CHECK_FORMAT" == "1" ]]
 then
-  make astyle
+  $MAKE astyle
   _check_git "make astyle"
-  make new_file
+  $MAKE new_file
   _check_git "make format"
   perl helper.pl -a
   exit $?
@@ -299,7 +311,7 @@ _banner
 
 if [[ "$TEST_VS_MTEST" != "" ]]
 then
-   make clean > /dev/null
+   $MAKE clean > /dev/null
    _make "${compilers[0]} ${archflags[0]}" "$CFLAGS" "test"
    echo
    _make "gcc" "$MTEST_RAND" "mtest"
