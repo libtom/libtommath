@@ -74,6 +74,8 @@ libtommath.pc
 gcc_errors_*.txt
 test_*.txt
 
+.#*
+*~
 *.bak
 *.orig
 *.asc
