@@ -885,6 +885,22 @@
 			>
 		</File>
 		<File
+			RelativePath="bn_s_mp_toom_cook_4_mul.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_s_mp_toom_cook_4_sqr.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_s_mp_toom_cook_5_mul.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_s_mp_toom_cook_5_sqr.c"
+			>
+		</File>
+		<File
 			RelativePath="bn_s_mp_toom_mul.c"
 			>
 		</File>

@@ -43,42 +43,54 @@ int mp_mul(const mp_int *a, const mp_int *b, mp_int *c)
 GO_ON:
 #endif
 
-   /* use Toom-Cook? */
-#ifdef BN_S_MP_TOOM_MUL_C
-   if (MP_MIN(a->used, b->used) >= TOOM_MUL_CUTOFF) {
-      res = s_mp_toom_mul(a, b, c);
+#ifdef BN_S_MP_TOOM_COOK_5_MUL_C
+
+   if (MP_MIN(a->used, b->used) >= TOOM_COOK_5_MUL_CO) {
+      res = s_mp_toom_cook_5_mul(a, b, c);
    } else
 #endif
-#ifdef BN_S_MP_KARATSUBA_MUL_C
-      /* use Karatsuba? */
-      if (MP_MIN(a->used, b->used) >= KARATSUBA_MUL_CUTOFF) {
-         res = s_mp_karatsuba_mul(a, b, c);
+
+#ifdef BN_S_MP_TOOM_COOK_4_MUL_C
+      if (MP_MIN(a->used, b->used) >= TOOM_COOK_4_MUL_CO) {
+         res = s_mp_toom_cook_4_mul(a, b, c);
       } else
 #endif
-      {
-         /* can we use the fast multiplier?
-          *
-          * The fast multiplier can be used if the output will
-          * have less than MP_WARRAY digits and the number of
-          * digits won't affect carry propagation
-          */
-         int     digs = a->used + b->used + 1;
-
-#ifdef BN_S_MP_MUL_DIGS_FAST_C
-         if ((digs < (int)MP_WARRAY) &&
-             (MP_MIN(a->used, b->used) <=
-              (int)(1u << ((CHAR_BIT * sizeof(mp_word)) - (2u * (size_t)MP_DIGIT_BIT))))) {
-            res = s_mp_mul_digs_fast(a, b, c, digs);
+         /* use Toom-Cook? */
+#ifdef BN_S_MP_TOOM_MUL_C
+         if (MP_MIN(a->used, b->used) >= TOOM_MUL_CUTOFF) {
+            res = s_mp_toom_mul(a, b, c);
          } else
 #endif
-         {
-#ifdef BN_S_MP_MUL_DIGS_C
-            res = s_mp_mul_digs(a, b, c, a->used + b->used + 1);
-#else
-            res = MP_VAL;
+#ifdef BN_S_MP_KARATSUBA_MUL_C
+            /* use Karatsuba? */
+            if (MP_MIN(a->used, b->used) >= KARATSUBA_MUL_CUTOFF) {
+               res = s_mp_karatsuba_mul(a, b, c);
+            } else
 #endif
-         }
-      }
+            {
+               /* can we use the fast multiplier?
+                *
+                * The fast multiplier can be used if the output will
+                * have less than MP_WARRAY digits and the number of
+                * digits won't affect carry propagation
+                */
+               int     digs = a->used + b->used + 1;
+
+#ifdef BN_S_MP_MUL_DIGS_FAST_C
+               if ((digs < (int)MP_WARRAY) &&
+                   (MP_MIN(a->used, b->used) <=
+                    (int)(1u << ((CHAR_BIT * sizeof(mp_word)) - (2u * (size_t)DIGIT_BIT))))) {
+                  res = s_mp_mul_digs_fast(a, b, c, digs);
+               } else
+#endif
+               {
+#ifdef BN_S_MP_MUL_DIGS_C
+                  res = s_mp_mul_digs(a, b, c, a->used + b->used + 1);
+#else
+                  res = MP_VAL;
+#endif
+               }
+            }
 END:
    c->sign = (c->used > 0) ? neg : MP_ZPOS;
    return res;

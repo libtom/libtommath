@@ -123,6 +123,11 @@ extern int KARATSUBA_MUL_CUTOFF,
        TOOM_MUL_CUTOFF,
        TOOM_SQR_CUTOFF;
 
+extern int TOOM_COOK_4_MUL_CO;
+extern int TOOM_COOK_4_SQR_CO;
+extern int TOOM_COOK_5_MUL_CO;
+extern int TOOM_COOK_5_SQR_CO;
+
 /* define this to use lower memory usage routines (exptmods mostly) */
 /* #define MP_LOW_MEM */
 
