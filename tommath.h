@@ -165,7 +165,9 @@ typedef int ltm_prime_callback(unsigned char *dst, int len, void *dat);
 #    define MP_DEPRECATED_PRAGMA(s)
 #  endif
 
-#  define DIGIT_BIT   MP_DIGIT_BIT
+/* DIGIT_BIT is used in #ifdefs, therefore we cannot use MP_DEPRECATED_PRAGMA */
+#  define DIGIT_BIT   /* DIGIT_BIT macro is deprecated, use MP_DIGIT_BIT instead */ MP_DIGIT_BIT
+
 #  define USED(m)     (MP_DEPRECATED_PRAGMA("USED macro is deprecated, use z->used instead") (m)->used)
 #  define DIGIT(m, k) (MP_DEPRECATED_PRAGMA("DIGIT macro is deprecated, use z->dp instead") (m)->dp[(k)])
 #  define SIGN(m)     (MP_DEPRECATED_PRAGMA("SIGN macro is deprecated, use z->sign instead") (m)->sign)
