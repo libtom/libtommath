@@ -142,6 +142,12 @@ TOOM_SQR_CUTOFF;
 #define PRIVATE_MP_WARRAY (1u << (((CHAR_BIT * sizeof(mp_word)) - (2 * MP_DIGIT_BIT)) + 1))
 #define MP_WARRAY (MP_DEPRECATED_PRAGMA("MP_WARRAY is an internal macro") PRIVATE_MP_WARRAY)
 
+#if defined(__GNUC__) && __GNUC__ >= 4
+#   define MP_NULL_TERMINATED __attribute__((sentinel))
+#else
+#   define MP_NULL_TERMINATED
+#endif
+
 /* the infamous mp_int structure */
 typedef struct  {
    int used, alloc, sign;
@@ -179,10 +185,10 @@ int mp_init(mp_int *a);
 void mp_clear(mp_int *a);
 
 /* init a null terminated series of arguments */
-int mp_init_multi(mp_int *mp, ...);
+int mp_init_multi(mp_int *mp, ...) MP_NULL_TERMINATED;
 
 /* clear a null terminated series of arguments */
-void mp_clear_multi(mp_int *mp, ...);
+void mp_clear_multi(mp_int *mp, ...) MP_NULL_TERMINATED;
 
 /* exchange two ints */
 void mp_exch(mp_int *a, mp_int *b);
