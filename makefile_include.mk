@@ -49,6 +49,8 @@ endif
 
 CFLAGS += -I./ -Wall -Wsign-compare -Wextra -Wshadow
 
+CFLAGS += -D_MP_NO_DEPRECATED_WARNING
+
 ifndef NO_ADDTL_WARNINGS
 # additional warnings
 CFLAGS += -Wdeclaration-after-statement -Wbad-function-cast -Wcast-align

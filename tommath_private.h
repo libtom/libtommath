@@ -89,6 +89,7 @@ int func_name (mp_int * a, type b)                       \
 }
 
 /* deprecated functions */
+#ifndef MP_NO_DEPRECATED
 MP_DEPRECATED(s_mp_invmod_fast) int fast_mp_invmod(const mp_int *a, const mp_int *b, mp_int *c);
 MP_DEPRECATED(s_mp_montgomery_reduce_fast) int fast_mp_montgomery_reduce(mp_int *x, const mp_int *n, mp_digit rho);
 MP_DEPRECATED(s_mp_mul_digs_fast) int fast_s_mp_mul_digs(const mp_int *a, const mp_int *b, mp_int *c, int digs);
@@ -104,6 +105,7 @@ MP_DEPRECATED(s_mp_karatsuba_sqr) int mp_karatsuba_sqr(const mp_int *a, mp_int *
 MP_DEPRECATED(s_mp_toom_mul) int mp_toom_mul(const mp_int *a, const mp_int *b, mp_int *c);
 MP_DEPRECATED(s_mp_toom_sqr) int mp_toom_sqr(const mp_int *a, mp_int *b);
 MP_DEPRECATED(s_mp_reverse) void bn_reverse(unsigned char *s, int len);
+#endif
 
 #ifdef __cplusplus
 }

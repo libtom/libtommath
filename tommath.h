@@ -137,7 +137,6 @@ extern int KARATSUBA_MUL_CUTOFF,
 
 /* size of comba arrays, should be at least 2 * 2**(BITS_PER_WORD - BITS_PER_DIGIT*2) */
 #define _MP_WARRAY_PRIVATE (1u << (((CHAR_BIT * sizeof(mp_word)) - (2 * MP_DIGIT_BIT)) + 1))
-#define MP_WARRAY (MP_DEPRECATED_PRAGMA("MP_WARRAY is an internal macro") _MP_WARRAY_PRIVATE)
 
 /* the infamous mp_int structure */
 typedef struct  {
@@ -148,22 +147,30 @@ typedef struct  {
 /* callback for mp_prime_random, should fill dst with random bytes and return how many read [upto len] */
 typedef int ltm_prime_callback(unsigned char *dst, int len, void *dat);
 
-#if defined(__GNUC__) && (__GNUC__ * 100 + __GNUC_MINOR__ >= 301)
-#  define MP_DEPRECATED(x) __attribute__((deprecated("replaced by " #x)))
-#  define _MP_DEPRECATED_PRAGMA(s) _Pragma(#s)
-#  define MP_DEPRECATED_PRAGMA(s) _MP_DEPRECATED_PRAGMA(GCC warning s)
-#elif defined(_MSC_VER) && _MSC_VER >= 1500
-#  define MP_DEPRECATED(x) __declspec(deprecated("replaced by " #x))
-#  define MP_DEPRECATED_PRAGMA(s) __pragma(message(s))
-#else
-#  define MP_DEPRECATED
-#  define MP_DEPRECATED_PRAGMA(s)
-#endif
+#ifndef MP_NO_DEPRECATED
 
-#define DIGIT_BIT   (MP_DEPRECATED_PRAGMA("DIGIT_BIT macro is deprecated, MP_DIGIT_BIT instead") MP_DIGIT_BIT)
-#define USED(m)     (MP_DEPRECATED_PRAGMA("USED macro is deprecated, use z->used instead") (m)->used)
-#define DIGIT(m, k) (MP_DEPRECATED_PRAGMA("DIGIT macro is deprecated, use z->dp instead") (m)->dp[(k)])
-#define SIGN(m)     (MP_DEPRECATED_PRAGMA("SIGN macro is deprecated, use z->sign instead") (m)->sign)
+#  ifndef _MP_NO_DEPRECATED_WARNING
+#    warning Deprecated functions are enabled, define MP_NO_DEPRECATED!
+#  endif
+
+#  if defined(__GNUC__) && (__GNUC__ * 100 + __GNUC_MINOR__ >= 301)
+#    define MP_DEPRECATED(x) __attribute__((deprecated("replaced by " #x)))
+#    define _MP_DEPRECATED_PRAGMA(s) _Pragma(#s)
+#    define MP_DEPRECATED_PRAGMA(s) _MP_DEPRECATED_PRAGMA(GCC warning s)
+#  elif defined(_MSC_VER) && _MSC_VER >= 1500
+#    define MP_DEPRECATED(x) __declspec(deprecated("replaced by " #x))
+#    define MP_DEPRECATED_PRAGMA(s) __pragma(message(s))
+#  else
+#    define MP_DEPRECATED
+#    define MP_DEPRECATED_PRAGMA(s)
+#  endif
+
+#  define DIGIT_BIT   MP_DIGIT_BIT
+#  define USED(m)     (MP_DEPRECATED_PRAGMA("USED macro is deprecated, use z->used instead") (m)->used)
+#  define DIGIT(m, k) (MP_DEPRECATED_PRAGMA("DIGIT macro is deprecated, use z->dp instead") (m)->dp[(k)])
+#  define SIGN(m)     (MP_DEPRECATED_PRAGMA("SIGN macro is deprecated, use z->sign instead") (m)->sign)
+#  define MP_WARRAY   (MP_DEPRECATED_PRAGMA("MP_WARRAY is an internal macro") _MP_WARRAY_PRIVATE)
+#endif
 
 /* error code to char* string */
 const char *mp_error_to_string(int code);

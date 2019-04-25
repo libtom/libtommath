@@ -6,6 +6,7 @@
 
 /* SPDX-License-Identifier: Unlicense */
 #include <tommath_private.h>
+#ifndef MP_NO_DEPRECATED
 #ifdef BN_FAST_MP_INVMOD_C
 int fast_mp_invmod(const mp_int *a, const mp_int *b, mp_int *c)
 {
@@ -83,5 +84,6 @@ void bn_reverse(unsigned char *s, int len)
 {
    s_mp_reverse(s, len);
 }
+#endif
 #endif
 #endif
