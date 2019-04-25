@@ -136,7 +136,7 @@ extern int KARATSUBA_MUL_CUTOFF,
 #endif
 
 /* size of comba arrays, should be at least 2 * 2**(BITS_PER_WORD - BITS_PER_DIGIT*2) */
-#define _MP_WARRAY_PRIVATE (1u << (((CHAR_BIT * sizeof(mp_word)) - (2 * MP_DIGIT_BIT)) + 1))
+#define PRIVATE_MP_WARRAY (1u << (((CHAR_BIT * sizeof(mp_word)) - (2 * MP_DIGIT_BIT)) + 1))
 
 /* the infamous mp_int structure */
 typedef struct  {
@@ -149,14 +149,14 @@ typedef int ltm_prime_callback(unsigned char *dst, int len, void *dat);
 
 #ifndef MP_NO_DEPRECATED
 
-#  ifndef _MP_NO_DEPRECATED_WARNING
+#  ifndef PRIVATE_MP_NO_DEPRECATED_WARNING
 #    warning Deprecated functions are enabled, define MP_NO_DEPRECATED!
 #  endif
 
 #  if defined(__GNUC__) && (__GNUC__ * 100 + __GNUC_MINOR__ >= 301)
 #    define MP_DEPRECATED(x) __attribute__((deprecated("replaced by " #x)))
-#    define _MP_DEPRECATED_PRAGMA(s) _Pragma(#s)
-#    define MP_DEPRECATED_PRAGMA(s) _MP_DEPRECATED_PRAGMA(GCC warning s)
+#    define PRIVATE_MP_DEPRECATED_PRAGMA(s) _Pragma(#s)
+#    define MP_DEPRECATED_PRAGMA(s) PRIVATE_MP_DEPRECATED_PRAGMA(GCC warning s)
 #  elif defined(_MSC_VER) && _MSC_VER >= 1500
 #    define MP_DEPRECATED(x) __declspec(deprecated("replaced by " #x))
 #    define MP_DEPRECATED_PRAGMA(s) __pragma(message(s))
@@ -171,7 +171,7 @@ typedef int ltm_prime_callback(unsigned char *dst, int len, void *dat);
 #  define USED(m)     (MP_DEPRECATED_PRAGMA("USED macro is deprecated, use z->used instead") (m)->used)
 #  define DIGIT(m, k) (MP_DEPRECATED_PRAGMA("DIGIT macro is deprecated, use z->dp instead") (m)->dp[(k)])
 #  define SIGN(m)     (MP_DEPRECATED_PRAGMA("SIGN macro is deprecated, use z->sign instead") (m)->sign)
-#  define MP_WARRAY   (MP_DEPRECATED_PRAGMA("MP_WARRAY is an internal macro") _MP_WARRAY_PRIVATE)
+#  define MP_WARRAY   (MP_DEPRECATED_PRAGMA("MP_WARRAY is an internal macro") PRIVATE_MP_WARRAY)
 #endif
 
 /* error code to char* string */

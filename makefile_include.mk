@@ -49,7 +49,7 @@ endif
 
 CFLAGS += -I./ -Wall -Wsign-compare -Wextra -Wshadow
 
-CFLAGS += -D_MP_NO_DEPRECATED_WARNING
+CFLAGS += -DPRIVATE_MP_NO_DEPRECATED_WARNING
 
 ifndef NO_ADDTL_WARNINGS
 # additional warnings
