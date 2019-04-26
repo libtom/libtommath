@@ -8,6 +8,11 @@
 #include <limits.h>
 
 #ifndef LTM_NO_FILE
+#  warning LTM_NO_FILE has been deprecated, use MP_NO_FILE.
+#  define MP_NO_FILE
+#endif
+
+#ifndef MP_NO_FILE
 #  include <stdio.h>
 #endif
 
@@ -610,7 +615,7 @@ int mp_toradix(const mp_int *a, char *str, int radix);
 int mp_toradix_n(const mp_int *a, char *str, int radix, int maxlen);
 int mp_radix_size(const mp_int *a, int radix, int *size);
 
-#ifndef LTM_NO_FILE
+#ifndef MP_NO_FILE
 int mp_fread(mp_int *a, int radix, FILE *stream);
 int mp_fwrite(const mp_int *a, int radix, FILE *stream);
 #endif

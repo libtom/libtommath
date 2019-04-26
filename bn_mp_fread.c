@@ -3,7 +3,7 @@
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
-#ifndef LTM_NO_FILE
+#ifndef MP_NO_FILE
 /* read a bigint from a file stream in ASCII */
 int mp_fread(mp_int *a, int radix, FILE *stream)
 {
