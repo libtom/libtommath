@@ -42,7 +42,7 @@ int main(void)
 #endif
    printf("Size of mp_digit: %u\n", (unsigned int)sizeof(mp_digit));
    printf("Size of mp_word: %u\n", (unsigned int)sizeof(mp_word));
-   printf("DIGIT_BIT: %d\n", DIGIT_BIT);
+   printf("MP_DIGIT_BIT: %d\n", MP_DIGIT_BIT);
    printf("MP_PREC: %d\n", MP_PREC);
 
    if (LTM_DEMO_TEST_VS_MTEST) {

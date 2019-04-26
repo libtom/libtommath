@@ -114,7 +114,7 @@ int mp_prime_next_prime(mp_int *a, int t, int bbs_style)
                y = 1;
             }
          }
-      } while ((y == 1) && (step < (((mp_digit)1 << DIGIT_BIT) - kstep)));
+      } while ((y == 1) && (step < (((mp_digit)1 << MP_DIGIT_BIT) - kstep)));
 
       /* add the step */
       if ((err = mp_add_d(a, step, a)) != MP_OKAY) {
@@ -122,7 +122,7 @@ int mp_prime_next_prime(mp_int *a, int t, int bbs_style)
       }
 
       /* if didn't pass sieve and step == MP_MAX then skip test */
-      if ((y == 1) && (step >= (((mp_digit)1 << DIGIT_BIT) - kstep))) {
+      if ((y == 1) && (step >= (((mp_digit)1 << MP_DIGIT_BIT) - kstep))) {
          continue;
       }
 

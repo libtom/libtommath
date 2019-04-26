@@ -6,7 +6,7 @@
 /* c = |a| * |b| using Karatsuba Multiplication using
  * three half size multiplications
  *
- * Let B represent the radix [e.g. 2**DIGIT_BIT] and
+ * Let B represent the radix [e.g. 2**MP_DIGIT_BIT] and
  * let n represent half of the number of digits in
  * the min(a,b)
  *

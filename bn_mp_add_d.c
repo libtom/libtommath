@@ -49,13 +49,13 @@ int mp_add_d(const mp_int *a, mp_digit b, mp_int *c)
        * the carry.
        */
       *tmpc   = *tmpa++ + b;
-      mu      = *tmpc >> DIGIT_BIT;
+      mu      = *tmpc >> MP_DIGIT_BIT;
       *tmpc++ &= MP_MASK;
 
       /* now handle rest of the digits */
       for (ix = 1; ix < a->used; ix++) {
          *tmpc   = *tmpa++ + mu;
-         mu      = *tmpc >> DIGIT_BIT;
+         mu      = *tmpc >> MP_DIGIT_BIT;
          *tmpc++ &= MP_MASK;
       }
       /* set final carry */

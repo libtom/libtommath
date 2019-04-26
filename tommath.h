@@ -43,8 +43,8 @@ extern "C" {
 
 /* some default configurations.
  *
- * A "mp_digit" must be able to hold DIGIT_BIT + 1 bits
- * A "mp_word" must be able to hold 2*DIGIT_BIT + 1 bits
+ * A "mp_digit" must be able to hold MP_DIGIT_BIT + 1 bits
+ * A "mp_word" must be able to hold 2*MP_DIGIT_BIT + 1 bits
  *
  * At the very least a mp_digit must be able to hold 7 bits
  * [any size beyond that is ok provided it doesn't overflow the data type]
@@ -53,21 +53,21 @@ extern "C" {
 typedef uint8_t              mp_digit;
 typedef uint16_t             mp_word;
 #   define MP_SIZEOF_MP_DIGIT 1
-#   ifdef DIGIT_BIT
-#      error You must not define DIGIT_BIT when using MP_8BIT
+#   ifdef MP_DIGIT_BIT
+#      error You must not define MP_DIGIT_BIT when using MP_8BIT
 #   endif
 #elif defined(MP_16BIT)
 typedef uint16_t             mp_digit;
 typedef uint32_t             mp_word;
 #   define MP_SIZEOF_MP_DIGIT 2
-#   ifdef DIGIT_BIT
-#      error You must not define DIGIT_BIT when using MP_16BIT
+#   ifdef MP_DIGIT_BIT
+#      error You must not define MP_DIGIT_BIT when using MP_16BIT
 #   endif
 #elif defined(MP_64BIT)
 /* for GCC only on supported platforms */
 typedef uint64_t mp_digit;
 typedef unsigned long        mp_word __attribute__((mode(TI)));
-#   define DIGIT_BIT 60
+#   define MP_DIGIT_BIT 60
 #else
 /* this is the default case, 28-bit digits */
 
@@ -77,21 +77,20 @@ typedef uint64_t             mp_word;
 
 #   ifdef MP_31BIT
 /* this is an extension that uses 31-bit digits */
-#      define DIGIT_BIT 31
+#      define MP_DIGIT_BIT 31
 #   else
 /* default case is 28-bit digits, defines MP_28BIT as a handy macro to test */
-#      define DIGIT_BIT 28
+#      define MP_DIGIT_BIT 28
 #      define MP_28BIT
 #   endif
 #endif
 
 /* otherwise the bits per digit is calculated automatically from the size of a mp_digit */
-#ifndef DIGIT_BIT
-#   define DIGIT_BIT (((CHAR_BIT * MP_SIZEOF_MP_DIGIT) - 1))  /* bits per digit */
+#ifndef MP_DIGIT_BIT
+#   define MP_DIGIT_BIT (((CHAR_BIT * MP_SIZEOF_MP_DIGIT) - 1))  /* bits per digit */
 #endif
 
-#define MP_DIGIT_BIT     DIGIT_BIT
-#define MP_MASK          ((((mp_digit)1)<<((mp_digit)DIGIT_BIT))-((mp_digit)1))
+#define MP_MASK          ((((mp_digit)1)<<((mp_digit)MP_DIGIT_BIT))-((mp_digit)1))
 #define MP_DIGIT_MAX     MP_MASK
 
 /* equalities */
@@ -137,7 +136,8 @@ extern int KARATSUBA_MUL_CUTOFF,
 #endif
 
 /* size of comba arrays, should be at least 2 * 2**(BITS_PER_WORD - BITS_PER_DIGIT*2) */
-#define MP_WARRAY               (1u << (((CHAR_BIT * sizeof(mp_word)) - (2 * DIGIT_BIT)) + 1))
+#define PRIVATE_MP_WARRAY (1u << (((CHAR_BIT * sizeof(mp_word)) - (2 * MP_DIGIT_BIT)) + 1))
+#define MP_WARRAY (MP_DEPRECATED_PRAGMA("MP_WARRAY is an internal macro") PRIVATE_MP_WARRAY)
 
 /* the infamous mp_int structure */
 typedef struct  {
@@ -148,10 +148,22 @@ typedef struct  {
 /* callback for mp_prime_random, should fill dst with random bytes and return how many read [upto len] */
 typedef int ltm_prime_callback(unsigned char *dst, int len, void *dat);
 
+#if defined(__GNUC__) && (__GNUC__ * 100 + __GNUC_MINOR__ >= 301)
+#  define MP_DEPRECATED(x) __attribute__((deprecated("replaced by " #x)))
+#  define PRIVATE_MP_DEPRECATED_PRAGMA(s) _Pragma(#s)
+#  define MP_DEPRECATED_PRAGMA(s) PRIVATE_MP_DEPRECATED_PRAGMA(GCC warning s)
+#elif defined(_MSC_VER) && _MSC_VER >= 1500
+#  define MP_DEPRECATED(x) __declspec(deprecated("replaced by " #x))
+#  define MP_DEPRECATED_PRAGMA(s) __pragma(message(s))
+#else
+#  define MP_DEPRECATED
+#  define MP_DEPRECATED_PRAGMA(s)
+#endif
 
-#define USED(m)     ((m)->used)
-#define DIGIT(m, k) ((m)->dp[(k)])
-#define SIGN(m)     ((m)->sign)
+#define DIGIT_BIT   (MP_DEPRECATED_PRAGMA("DIGIT_BIT macro is deprecated, MP_DIGIT_BIT instead") MP_DIGIT_BIT)
+#define USED(m)     (MP_DEPRECATED_PRAGMA("USED macro is deprecated, use z->used instead") (m)->used)
+#define DIGIT(m, k) (MP_DEPRECATED_PRAGMA("DIGIT macro is deprecated, use z->dp instead") (m)->dp[(k)])
+#define SIGN(m)     (MP_DEPRECATED_PRAGMA("SIGN macro is deprecated, use z->sign instead") (m)->sign)
 
 /* error code to char* string */
 const char *mp_error_to_string(int code);

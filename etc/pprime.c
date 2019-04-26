@@ -185,7 +185,7 @@ static int pprime(int k, int li, mp_int *p, mp_int *q)
    static const mp_digit bases[] = { 2, 3, 5, 7, 11, 13, 17, 19 };
 
    /* single digit ? */
-   if (k <= (int) DIGIT_BIT) {
+   if (k <= (int) MP_DIGIT_BIT) {
       mp_set(p, prime_digit());
       return MP_OKAY;
    }

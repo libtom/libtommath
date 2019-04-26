@@ -73,7 +73,7 @@ int s_mp_sqr_fast(const mp_int *a, mp_int *b)
       W[ix] = (mp_digit)_W & MP_MASK;
 
       /* make next carry */
-      W1 = _W >> (mp_word)DIGIT_BIT;
+      W1 = _W >> (mp_word)MP_DIGIT_BIT;
    }
 
    /* setup dest */

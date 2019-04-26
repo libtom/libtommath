@@ -18,7 +18,7 @@ int s_mp_toom_sqr(const mp_int *a, mp_int *b)
    B = a->used / 3;
 
    /* a = a2 * B**2 + a1 * B + a0 */
-   if ((res = mp_mod_2d(a, DIGIT_BIT * B, &a0)) != MP_OKAY) {
+   if ((res = mp_mod_2d(a, MP_DIGIT_BIT * B, &a0)) != MP_OKAY) {
       goto LBL_ERR;
    }
 
@@ -26,7 +26,7 @@ int s_mp_toom_sqr(const mp_int *a, mp_int *b)
       goto LBL_ERR;
    }
    mp_rshd(&a1, B);
-   if ((res = mp_mod_2d(&a1, DIGIT_BIT * B, &a1)) != MP_OKAY) {
+   if ((res = mp_mod_2d(&a1, MP_DIGIT_BIT * B, &a1)) != MP_OKAY) {
       goto LBL_ERR;
    }
 

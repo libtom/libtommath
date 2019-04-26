@@ -85,7 +85,7 @@ int s_mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_int 
       /* automatically pick the comba one if available (saves quite a few calls/ifs) */
 #ifdef BN_S_MP_MONTGOMERY_REDUCE_FAST_C
       if ((((P->used * 2) + 1) < (int)MP_WARRAY) &&
-          (P->used < (1 << ((CHAR_BIT * sizeof(mp_word)) - (2 * DIGIT_BIT))))) {
+          (P->used < (1 << ((CHAR_BIT * sizeof(mp_word)) - (2 * MP_DIGIT_BIT))))) {
          redux = s_mp_montgomery_reduce_fast;
       } else
 #endif
@@ -195,11 +195,11 @@ int s_mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_int 
          }
          /* read next digit and reset bitcnt */
          buf    = X->dp[digidx--];
-         bitcnt = (int)DIGIT_BIT;
+         bitcnt = (int)MP_DIGIT_BIT;
       }
 
       /* grab the next msb from the exponent */
-      y     = (mp_digit)(buf >> (DIGIT_BIT - 1)) & 1;
+      y     = (mp_digit)(buf >> (MP_DIGIT_BIT - 1)) & 1;
       buf <<= (mp_digit)1;
 
       /* if the bit is zero and mode == 0 then we ignore it

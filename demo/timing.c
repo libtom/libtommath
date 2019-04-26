@@ -177,7 +177,7 @@ int main(void)
       } while (++rr < 100000u);
       printf("Adding\t\t%4d-bit => %9" PRIu64 "/sec, %9" PRIu64 " cycles\n",
              mp_count_bits(&a), CLK_PER_SEC / tt, tt);
-      FPRINTF(log, "%6d %9" PRIu64 "\n", cnt * DIGIT_BIT, tt);
+      FPRINTF(log, "%6d %9" PRIu64 "\n", cnt * MP_DIGIT_BIT, tt);
       FFLUSH(log);
    }
    FCLOSE(log);
@@ -199,7 +199,7 @@ int main(void)
 
       printf("Subtracting\t\t%4d-bit => %9" PRIu64 "/sec, %9" PRIu64 " cycles\n",
              mp_count_bits(&a), CLK_PER_SEC / tt, tt);
-      FPRINTF(log, "%6d %9" PRIu64 "\n", cnt * DIGIT_BIT, tt);
+      FPRINTF(log, "%6d %9" PRIu64 "\n", cnt * MP_DIGIT_BIT, tt);
       FFLUSH(log);
    }
    FCLOSE(log);
@@ -219,7 +219,7 @@ int main(void)
       TOOM_SQR_CUTOFF = (ix == 2) ? old_toom_s : 9999;
 
       log = FOPEN((ix == 0) ? "logs/mult.log" : (ix == 1) ? "logs/mult_kara.log" : "logs/mult_toom.log", "w");
-      for (cnt = 4; cnt <= (10240 / DIGIT_BIT); cnt += 2) {
+      for (cnt = 4; cnt <= (10240 / MP_DIGIT_BIT); cnt += 2) {
          SLEEP;
          mp_rand(&a, cnt);
          mp_rand(&b, cnt);
@@ -240,7 +240,7 @@ int main(void)
       FCLOSE(log);
 
       log = FOPEN((ix == 0) ? "logs/sqr.log" : (ix == 1) ? "logs/sqr_kara.log" : "logs/sqr_toom.log", "w");
-      for (cnt = 4; cnt <= (10240 / DIGIT_BIT); cnt += 2) {
+      for (cnt = 4; cnt <= (10240 / MP_DIGIT_BIT); cnt += 2) {
          SLEEP;
          mp_rand(&a, cnt);
          rr = 0u;
@@ -366,7 +366,7 @@ int main(void)
       }
       printf("Inverting mod\t%4d-bit => %9" PRIu64 "/sec, %9" PRIu64 " cycles\n",
              mp_count_bits(&a), CLK_PER_SEC / tt, tt);
-      FPRINTF(log, "%6d %9" PRIu64 "\n", cnt * DIGIT_BIT, tt);
+      FPRINTF(log, "%6d %9" PRIu64 "\n", cnt * MP_DIGIT_BIT, tt);
    }
    FCLOSE(log);
 

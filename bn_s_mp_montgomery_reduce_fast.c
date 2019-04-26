@@ -99,7 +99,7 @@ int s_mp_montgomery_reduce_fast(mp_int *x, const mp_int *n, mp_digit rho)
       }
 
       /* now fix carry for next digit, W[ix+1] */
-      W[ix + 1] += W[ix] >> (mp_word)DIGIT_BIT;
+      W[ix + 1] += W[ix] >> (mp_word)MP_DIGIT_BIT;
    }
 
    /* now we have to propagate the carries and
@@ -119,7 +119,7 @@ int s_mp_montgomery_reduce_fast(mp_int *x, const mp_int *n, mp_digit rho)
       _W = W + ++ix;
 
       for (; ix <= ((n->used * 2) + 1); ix++) {
-         *_W++ += *_W1++ >> (mp_word)DIGIT_BIT;
+         *_W++ += *_W1++ >> (mp_word)MP_DIGIT_BIT;
       }
 
       /* copy out, A = A/b**n

@@ -26,7 +26,7 @@ int s_mp_toom_mul(const mp_int *a, const mp_int *b, mp_int *c)
    B = MP_MIN(a->used, b->used) / 3;
 
    /* a = a2 * B**2 + a1 * B + a0 */
-   if ((res = mp_mod_2d(a, DIGIT_BIT * B, &a0)) != MP_OKAY) {
+   if ((res = mp_mod_2d(a, MP_DIGIT_BIT * B, &a0)) != MP_OKAY) {
       goto LBL_ERR;
    }
 
@@ -34,7 +34,7 @@ int s_mp_toom_mul(const mp_int *a, const mp_int *b, mp_int *c)
       goto LBL_ERR;
    }
    mp_rshd(&a1, B);
-   if ((res = mp_mod_2d(&a1, DIGIT_BIT * B, &a1)) != MP_OKAY) {
+   if ((res = mp_mod_2d(&a1, MP_DIGIT_BIT * B, &a1)) != MP_OKAY) {
       goto LBL_ERR;
    }
 
@@ -44,7 +44,7 @@ int s_mp_toom_mul(const mp_int *a, const mp_int *b, mp_int *c)
    mp_rshd(&a2, B*2);
 
    /* b = b2 * B**2 + b1 * B + b0 */
-   if ((res = mp_mod_2d(b, DIGIT_BIT * B, &b0)) != MP_OKAY) {
+   if ((res = mp_mod_2d(b, MP_DIGIT_BIT * B, &b0)) != MP_OKAY) {
       goto LBL_ERR;
    }
 
@@ -52,7 +52,7 @@ int s_mp_toom_mul(const mp_int *a, const mp_int *b, mp_int *c)
       goto LBL_ERR;
    }
    mp_rshd(&b1, B);
-   (void)mp_mod_2d(&b1, DIGIT_BIT * B, &b1);
+   (void)mp_mod_2d(&b1, MP_DIGIT_BIT * B, &b1);
 
    if ((res = mp_copy(b, &b2)) != MP_OKAY) {
       goto LBL_ERR;

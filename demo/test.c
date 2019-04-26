@@ -1056,7 +1056,7 @@ static int test_mp_reduce_2k(void)
             printf(".");
             fflush(stdout);
          }
-         mp_rand(&b, (cnt / DIGIT_BIT + 1) * 2);
+         mp_rand(&b, (cnt / MP_DIGIT_BIT + 1) * 2);
          mp_copy(&c, &b);
          mp_mod(&c, &a, &c);
          mp_reduce_2k(&b, &a, 2uL);
