@@ -33,7 +33,7 @@ extern "C" {
     defined(__ia64) || defined(__ia64__) || defined(__itanium__) || defined(_M_IA64) || \
     defined(__LP64__) || defined(_LP64) || defined(__64BIT__)
 #   if !(defined(MP_32BIT) || defined(MP_16BIT) || defined(MP_8BIT))
-#      if defined(__GNUC__)
+#      if defined(__GNUC__) && !defined(__hppa)
 /* we support 128bit integers only via: __attribute__((mode(TI))) */
 #         define MP_64BIT
 #      else
