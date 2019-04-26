@@ -38,8 +38,6 @@ branches:
 install:
   - '[ "$OS" != "WIN" ] && sudo apt-get update -qq || true'
   - '[ "$OS" != "WIN" ] && sudo apt-get install valgrind || true'
-  - apt-cache search gcc | grep '^gcc-[0-9\.]* '
-  - apt-cache search clang | grep compiler
 
 # The language is C and it will load the respective dependencies
 language: c
@@ -60,116 +58,113 @@ matrix:
     # We have only one program and the variable $BUILDOPTIONS
     # has only the options to that program: testme.sh
 
-    # Check source code format
-    - env: BUILDOPTIONS='--format'
-      addons:
-        apt:
-          packages:
-            - astyle
+#    # Check source code format
+#    - env: BUILDOPTIONS='--format'
+#      addons:
+#        apt:
+#          packages:
+#            - astyle
 
     # Windows build with gcc
     - os: windows
       env: 
-      - MSBUILD_PATH="/C/Program Files (x86)/Microsoft Visual Studio/2017/BuildTools/MSBuild/15.0/Bin"
       - OS=WIN
-      - BUILDOPTIONS='--all --make-options="-f makefile.mingw"'
-      script:
-        - export PATH=$MSBUILD_PATH:$PATH
-        - ./testme.sh  ${BUILDOPTIONS}
+      - BUILDOPTIONS='--all'
+      before_script:
+        - chmod +x testme.sh
 
     # Windows build with msvc
     - os: windows
       env:
-      - MSBUILD_PATH="/C/Program Files (x86)/Microsoft Visual Studio/2017/BuildTools/MSBuild/15.0/Bin"
       - OS=WIN
-      - BUILDOPTIONS='--make=nmake.exe --make-options="-f makefile.msvc"'
-      script:
-        - export PATH=$MSBUILD_PATH:$PATH
-        - ./testme.sh  ${BUILDOPTIONS}
+      - BUILDOPTIONS='--make=nmake.exe --make-options=-f --make-options=makefile.msvc'
+      before_script:
+        - . '"C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvarsall.bat" amd64'
+        - chmod +x testme.sh
 
-    # GCC for the 32-bit architecture (no valgrind yet)
-    - env: BUILDOPTIONS='--with-cc=gcc-5 --with-m32'
-      addons:
-        apt:
-          packages:
-            - libc6-dev-i386
-            - gcc-multilib
-
-    # clang for the 32-bit architecture (no valgrind yet)
-    - env: BUILDOPTIONS='--with-cc=clang-7 --with-m32'
-      addons:
-        apt:
-          packages:
-            - libc6-dev-i386
-            - gcc-multilib
-
-    # GCC for the x64_32 architecture (32-bit longs and 32-bit pointers)
-    # TODO: Probably not possible to run anything in x32 in Travis
-    #       but needs to be checked to be sure.
-    - env: BUILDOPTIONS='--with-cc=gcc-5 --with-mx32'
-      addons:
-        apt:
-          packages:
-            - libc6-dev-x32
-            - gcc-multilib
-
-    # GCC for the x86-64 architecture (64-bit longs and 64-bit pointers)
-    - env: BUILDOPTIONS='--with-cc=gcc-5 --with-m64 --with-valgrind'
-    - env: BUILDOPTIONS='--with-cc=gcc-4.7 --with-m64 --with-valgrind'
-      addons:
-        apt:
-          packages:
-            - gcc-4.7
-    - env: BUILDOPTIONS='--with-cc=gcc-4.8 --with-m64 --with-valgrind'
-      addons:
-        apt:
-          packages:
-            - gcc-4.8
-    - env: BUILDOPTIONS='--with-cc=gcc-4.9 --with-m64 --with-valgrind'
-      addons:
-        apt:
-          packages:
-            - gcc-4.9
-
-    # clang for x86-64 architecture (64-bit longs and 64-bit pointers)
-    - env: CONV_WARNINGS=1 BUILDOPTIONS='--with-cc=clang-7 --with-m64 --with-valgrind'
-    - env: BUILDOPTIONS='--with-cc=clang-6.0 --with-m64 --with-valgrind'
-      addons:
-        apt:
-          packages:
-            - clang-6.0
-    - env: BUILDOPTIONS='--with-cc=clang-5.0 --with-m64 --with-valgrind'
-      addons:
-        apt:
-          packages:
-            - clang-5.0
-    - env: BUILDOPTIONS='--with-cc=clang-4.0 --with-m64 --with-valgrind'
-      addons:
-        apt:
-          packages:
-            - clang-4.0
-
-    # GCC for the x86-64 architecture with restricted limb sizes
-    # formerly started with the option "--with-low-mp" to testme.sh
-    # but testing all three in one run took to long and timed out.
-    - env: BUILDOPTIONS='--with-cc=gcc-5 --cflags=-DMP_8BIT  --with-valgrind'
-    - env: BUILDOPTIONS='--with-cc=gcc-5 --cflags=-DMP_16BIT --with-valgrind'
-    - env: BUILDOPTIONS='--with-cc=gcc-5 --cflags=-DMP_32BIT --with-valgrind'
-
-    # clang for the x86-64 architecture with restricted limb sizes
-    - env: BUILDOPTIONS='--with-cc=clang-7 --cflags=-DMP_8BIT  --with-valgrind'
-    - env: BUILDOPTIONS='--with-cc=clang-7 --cflags=-DMP_16BIT --with-valgrind'
-    - env: BUILDOPTIONS='--with-cc=clang-7 --cflags=-DMP_32BIT --with-valgrind'
-
-    # GCC for the x86-64 architecture testing against a different Bigint-implementation
-    # with 333333 different inputs.
-    - env: BUILDOPTIONS='--with-cc=gcc-5 --test-vs-mtest=333333 --with-valgrind'
-    - env: BUILDOPTIONS='--with-cc=clang-7 --test-vs-mtest=333333 --with-valgrind'
-
-    # clang for the x86-64 architecture testing against a different Bigint-implementation
-    # with a better random source.
-    - env: BUILDOPTIONS='--with-cc=gcc-5 --test-vs-mtest=333333 --mtest-real-rand --with-valgrind'
-    - env: BUILDOPTIONS='--with-cc=clang-7 --test-vs-mtest=333333 --mtest-real-rand --with-valgrind'
+#    # GCC for the 32-bit architecture (no valgrind yet)
+#    - env: BUILDOPTIONS='--with-cc=gcc-5 --with-m32'
+#      addons:
+#        apt:
+#          packages:
+#            - libc6-dev-i386
+#            - gcc-multilib
+#
+#    # clang for the 32-bit architecture (no valgrind yet)
+#    - env: BUILDOPTIONS='--with-cc=clang-7 --with-m32'
+#      addons:
+#        apt:
+#          packages:
+#            - libc6-dev-i386
+#            - gcc-multilib
+#
+#    # GCC for the x64_32 architecture (32-bit longs and 32-bit pointers)
+#    # TODO: Probably not possible to run anything in x32 in Travis
+#    #       but needs to be checked to be sure.
+#    - env: BUILDOPTIONS='--with-cc=gcc-5 --with-mx32'
+#      addons:
+#        apt:
+#          packages:
+#            - libc6-dev-x32
+#            - gcc-multilib
+#
+#    # GCC for the x86-64 architecture (64-bit longs and 64-bit pointers)
+#    - env: BUILDOPTIONS='--with-cc=gcc-5 --with-m64 --with-valgrind'
+#    - env: BUILDOPTIONS='--with-cc=gcc-4.7 --with-m64 --with-valgrind'
+#      addons:
+#        apt:
+#          packages:
+#            - gcc-4.7
+#    - env: BUILDOPTIONS='--with-cc=gcc-4.8 --with-m64 --with-valgrind'
+#      addons:
+#        apt:
+#          packages:
+#            - gcc-4.8
+#    - env: BUILDOPTIONS='--with-cc=gcc-4.9 --with-m64 --with-valgrind'
+#      addons:
+#        apt:
+#          packages:
+#            - gcc-4.9
+#
+#    # clang for x86-64 architecture (64-bit longs and 64-bit pointers)
+#    - env: CONV_WARNINGS=1 BUILDOPTIONS='--with-cc=clang-7 --with-m64 --with-valgrind'
+#    - env: BUILDOPTIONS='--with-cc=clang-6.0 --with-m64 --with-valgrind'
+#      addons:
+#        apt:
+#          packages:
+#            - clang-6.0
+#    - env: BUILDOPTIONS='--with-cc=clang-5.0 --with-m64 --with-valgrind'
+#      addons:
+#        apt:
+#          packages:
+#            - clang-5.0
+#    - env: BUILDOPTIONS='--with-cc=clang-4.0 --with-m64 --with-valgrind'
+#      addons:
+#        apt:
+#          packages:
+#            - clang-4.0
+#
+#    # GCC for the x86-64 architecture with restricted limb sizes
+#    # formerly started with the option "--with-low-mp" to testme.sh
+#    # but testing all three in one run took to long and timed out.
+#    - env: BUILDOPTIONS='--with-cc=gcc-5 --cflags=-DMP_8BIT  --with-valgrind'
+#    - env: BUILDOPTIONS='--with-cc=gcc-5 --cflags=-DMP_16BIT --with-valgrind'
+#    - env: BUILDOPTIONS='--with-cc=gcc-5 --cflags=-DMP_32BIT --with-valgrind'
+#
+#    # clang for the x86-64 architecture with restricted limb sizes
+#    - env: BUILDOPTIONS='--with-cc=clang-7 --cflags=-DMP_8BIT  --with-valgrind'
+#    - env: BUILDOPTIONS='--with-cc=clang-7 --cflags=-DMP_16BIT --with-valgrind'
+#    - env: BUILDOPTIONS='--with-cc=clang-7 --cflags=-DMP_32BIT --with-valgrind'
+#
+#    # GCC for the x86-64 architecture testing against a different Bigint-implementation
+#    # with 333333 different inputs.
+#    - env: BUILDOPTIONS='--with-cc=gcc-5 --test-vs-mtest=333333 --with-valgrind'
+#    - env: BUILDOPTIONS='--with-cc=clang-7 --test-vs-mtest=333333 --with-valgrind'
+#
+#    # clang for the x86-64 architecture testing against a different Bigint-implementation
+#    # with a better random source.
+#    - env: BUILDOPTIONS='--with-cc=gcc-5 --test-vs-mtest=333333 --mtest-real-rand --with-valgrind'
+#    - env: BUILDOPTIONS='--with-cc=clang-7 --test-vs-mtest=333333 --mtest-real-rand --with-valgrind'
 
 # Notifications go to
 # An email address is also possible.
