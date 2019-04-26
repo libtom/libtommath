@@ -18,7 +18,7 @@
  */
 
 /* This is possibly the mother of all prime generation functions, muahahahahaha! */
-int mp_prime_random_ex(mp_int *a, int t, int size, int flags, ltm_prime_callback cb, void *dat)
+int mp_prime_random_ex(mp_int *a, int t, int size, int flags, mp_prime_callback cb, void *dat)
 {
    unsigned char *tmp, maskAND, maskOR_msb, maskOR_lsb;
    int res, err, bsize, maskOR_msb_offset;

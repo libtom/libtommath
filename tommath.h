@@ -7,7 +7,7 @@
 #include <stdint.h>
 #include <limits.h>
 
-#ifndef LTM_NO_FILE
+#ifdef LTM_NO_FILE
 #  warning LTM_NO_FILE has been deprecated, use MP_NO_FILE.
 #  define MP_NO_FILE
 #endif
@@ -153,15 +153,6 @@ TOOM_SQR_CUTOFF;
 #   define MP_NULL_TERMINATED
 #endif
 
-/* the infamous mp_int structure */
-typedef struct  {
-   int used, alloc, sign;
-   mp_digit *dp;
-} mp_int;
-
-/* callback for mp_prime_random, should fill dst with random bytes and return how many read [upto len] */
-typedef int ltm_prime_callback(unsigned char *dst, int len, void *dat);
-
 #if defined(__GNUC__) && (__GNUC__ * 100 + __GNUC_MINOR__ >= 301)
 #  define MP_DEPRECATED(x) __attribute__((deprecated("replaced by " #x)))
 #  define PRIVATE_MP_DEPRECATED_PRAGMA(s) _Pragma(#s)
@@ -178,6 +169,16 @@ typedef int ltm_prime_callback(unsigned char *dst, int len, void *dat);
 #define USED(m)     (MP_DEPRECATED_PRAGMA("USED macro is deprecated, use z->used instead") (m)->used)
 #define DIGIT(m, k) (MP_DEPRECATED_PRAGMA("DIGIT macro is deprecated, use z->dp instead") (m)->dp[(k)])
 #define SIGN(m)     (MP_DEPRECATED_PRAGMA("SIGN macro is deprecated, use z->sign instead") (m)->sign)
+
+/* the infamous mp_int structure */
+typedef struct  {
+   int used, alloc, sign;
+   mp_digit *dp;
+} mp_int;
+
+/* callback for mp_prime_random, should fill dst with random bytes and return how many read [upto len] */
+typedef int mp_prime_callback(unsigned char *dst, int len, void *dat);
+typedef mp_prime_callback ltm_prime_callback MP_DEPRECATED(mp_prime_callback);
 
 /* error code to char* string */
 const char *mp_error_to_string(int code);
@@ -590,7 +591,7 @@ int mp_prime_next_prime(mp_int *a, int t, int bbs_style);
  * so it can be NULL
  *
  */
-int mp_prime_random_ex(mp_int *a, int t, int size, int flags, ltm_prime_callback cb, void *dat);
+int mp_prime_random_ex(mp_int *a, int t, int size, int flags, mp_prime_callback cb, void *dat);
 
 
 /* Integer logarithm to integer base */
