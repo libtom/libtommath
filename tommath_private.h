@@ -62,6 +62,16 @@ int s_mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_int 
 int s_mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y, int redmode);
 void s_mp_reverse(unsigned char *s, int len);
 
+int s_mp_fft_mul(const mp_int *a, const mp_int *b, mp_int *c);
+int s_mp_fft_sqr(const mp_int *a, mp_int *c);
+
+int s_mp_fft(double *x, double *y, unsigned long length);
+int s_mp_fft_sqr_ex(double *x, unsigned long length);
+int s_mp_fft_to_dp(double *fft_array, mp_int *a, int length, mp_word *cy);
+int s_mp_dp_to_fft_single(const mp_int *a, double **fa, int *length);
+int s_mp_dp_to_fft(const mp_int *a, double **fa, const mp_int *b, double **fb, int *length);
+
+
 extern const char *const mp_s_rmap;
 extern const uint8_t mp_s_rmap_reverse[];
 extern const size_t mp_s_rmap_reverse_sz;

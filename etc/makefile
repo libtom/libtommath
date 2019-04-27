@@ -12,12 +12,16 @@ pprime: pprime.o
 
 # portable [well requires clock()] tuning app
 tune: tune.o statistic_summary_single_column.o
-        # The actual benchmark program
+	# The actual benchmark program
 	$(CC) $(CFLAGS) tune.o $(LIBNAME) -o tune
-        # Computes basic statistics (min, max, mean, median, std. dev., skewness, and kurtosis)
+	# Computes basic statistics (min, max, mean, median, std. dev., skewness, and kurtosis)
 	$(CC) $(CFLAGS) statistic_summary_single_column.o -o statistic_summary_single_column
-        # a small script to run 'em
+	# a small script to run 'em
 	/bin/sh tune_it.sh
+
+test_standalone: tune.o
+	# The benchmark program works as a testtool, too
+	$(CC) $(CFLAGS) tune.o $(LIBNAME) -o test
         
 # spits out mersenne primes
 mersenne: mersenne.o
@@ -37,4 +41,5 @@ mont: mont.o
         
 clean:
 	rm -f *.log *.o *.obj *.exe pprime tune mersenne drprime mont 2kprime pprime.dat \
-        statistic_summary_single_column *.da *.dyn *.dpi *~
+        statistic_summary_single_column tuning_list multiplying squaring test *.da *.dyn *.dpi *~
+

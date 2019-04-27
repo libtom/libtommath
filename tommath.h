@@ -128,6 +128,13 @@ extern int TOOM_COOK_4_SQR_CO;
 extern int TOOM_COOK_5_MUL_CO;
 extern int TOOM_COOK_5_SQR_CO;
 
+extern int FFT_MUL_LOWER_CO;
+extern int FFT_MUL_UPPER_CO;
+
+extern int FFT_SQR_LOWER_CO;
+extern int FFT_SQR_UPPER_CO;
+
+
 /* define this to use lower memory usage routines (exptmods mostly) */
 /* #define MP_LOW_MEM */
 

@@ -20,7 +20,7 @@
    than the interpolation here:
 
      Bodrato, Marco, and Alberto Zanoni. "What about Toom-Cook matrices optimality."
-     Centro “Vito Volterra” Università di Roma Tor Vergata (2006).
+     Centro Vito Volterra Universita di Roma Tor Vergata (2006)
 */
 int s_mp_toom_mul(const mp_int *a, const mp_int *b, mp_int *c)
 {
@@ -40,24 +40,24 @@ int s_mp_toom_mul(const mp_int *a, const mp_int *b, mp_int *c)
       goto LTM_ERRa0;
    }
    for (count = 0; count < B; count++) {
-         a0.dp[count] = a->dp[count];
-         a0.used++;
+      a0.dp[count] = a->dp[count];
+      a0.used++;
    }
    mp_clamp(&a0);
    if ((e = mp_init_size(&a1, B)) != MP_OKAY) {
       goto LTM_ERRa1;
    }
    for (; count < (2 * B); count++) {
-         a1.dp[count - B] = a->dp[count];
-         a1.used++;
+      a1.dp[count - B] = a->dp[count];
+      a1.used++;
    }
    mp_clamp(&a1);
    if ((e = mp_init_size(&a2, B + (a->used - (3 * B)))) != MP_OKAY) {
       goto LTM_ERRa2;
    }
    for (; count < a->used; count++) {
-         a2.dp[count - 2 * B] = a->dp[count];
-         a2.used++;
+      a2.dp[count - 2 * B] = a->dp[count];
+      a2.used++;
    }
    mp_clamp(&a2);
 
@@ -66,24 +66,24 @@ int s_mp_toom_mul(const mp_int *a, const mp_int *b, mp_int *c)
       goto LTM_ERRb0;
    }
    for (count = 0; count < B; count++) {
-         b0.dp[count] = b->dp[count];
-         b0.used++;
+      b0.dp[count] = b->dp[count];
+      b0.used++;
    }
    mp_clamp(&b0);
    if ((e = mp_init_size(&b1, B)) != MP_OKAY) {
       goto LTM_ERRb1;
    }
    for (; count < (2 * B); count++) {
-         b1.dp[count - B] = b->dp[count];
-         b1.used++;
+      b1.dp[count - B] = b->dp[count];
+      b1.used++;
    }
    mp_clamp(&b1);
    if ((e = mp_init_size(&b2, B + (b->used - (3 * B)))) != MP_OKAY) {
       goto LTM_ERRb2;
    }
    for (; count < b->used; count++) {
-         b2.dp[count - 2 * B] = b->dp[count];
-         b2.used++;
+      b2.dp[count - 2 * B] = b->dp[count];
+      b2.used++;
    }
    mp_clamp(&b2);
 
@@ -214,7 +214,7 @@ int s_mp_toom_mul(const mp_int *a, const mp_int *b, mp_int *c)
       goto LTM_ERR;
    }
    /** S1 = S1 - S4 */
-   if ((e = mp_sub(&S1, &S4, &S1)) != MP_OKAY){
+   if ((e = mp_sub(&S1, &S4, &S1)) != MP_OKAY) {
       goto LTM_ERR;
    }
 

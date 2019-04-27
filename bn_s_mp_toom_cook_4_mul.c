@@ -444,7 +444,7 @@ int s_mp_toom_cook_4_mul(const mp_int *a, const mp_int *b, mp_int *c)
       goto LTM_ERR;
    }
 
-
+   /** S - a*b */
 
 LTM_ERR:
    mp_clear(&b3);

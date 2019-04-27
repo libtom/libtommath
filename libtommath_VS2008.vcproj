@@ -833,6 +833,18 @@
 			>
 		</File>
 		<File
+			RelativePath="bn_s_mp_fft.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_s_mp_fft_mul.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_s_mp_fft_sqr.c"
+			>
+		</File>
+		<File
 			RelativePath="bn_s_mp_invmod_fast.c"
 			>
 		</File>

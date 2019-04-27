@@ -5,7 +5,7 @@
 
 /*
      Bodrato, Marco, and Alberto Zanoni. "What about Toom-Cook matrices optimality."
-     Centro “Vito Volterra” Università di Roma Tor Vergata (2006).
+     Centro Vito Volterra Universita di Roma Tor Vergata (2006).
 */
 int s_mp_toom_cook_5_sqr(const mp_int *a, mp_int *c)
 {

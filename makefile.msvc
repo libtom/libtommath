@@ -44,12 +44,12 @@ bn_mp_signed_bin_size.obj bn_mp_sqr.obj bn_mp_sqrmod.obj bn_mp_sqrt.obj bn_mp_sq
 bn_mp_sub_d.obj bn_mp_submod.obj bn_mp_tc_and.obj bn_mp_tc_div_2d.obj bn_mp_tc_or.obj bn_mp_tc_xor.obj \
 bn_mp_to_signed_bin.obj bn_mp_to_signed_bin_n.obj bn_mp_to_unsigned_bin.obj bn_mp_to_unsigned_bin_n.obj \
 bn_mp_toradix.obj bn_mp_toradix_n.obj bn_mp_unsigned_bin_size.obj bn_mp_xor.obj bn_mp_zero.obj bn_prime_tab.obj \
-bn_s_mp_add.obj bn_s_mp_balance_mul.obj bn_s_mp_exptmod.obj bn_s_mp_exptmod_fast.obj bn_s_mp_invmod_fast.obj \
-bn_s_mp_invmod_slow.obj bn_s_mp_karatsuba_mul.obj bn_s_mp_karatsuba_sqr.obj bn_s_mp_montgomery_reduce_fast.obj \
-bn_s_mp_mul_digs.obj bn_s_mp_mul_digs_fast.obj bn_s_mp_mul_high_digs.obj bn_s_mp_mul_high_digs_fast.obj \
-bn_s_mp_reverse.obj bn_s_mp_sqr.obj bn_s_mp_sqr_fast.obj bn_s_mp_sub.obj bn_s_mp_toom_cook_4_mul.obj \
-bn_s_mp_toom_cook_4_sqr.obj bn_s_mp_toom_cook_5_mul.obj bn_s_mp_toom_cook_5_sqr.obj bn_s_mp_toom_mul.obj \
-bn_s_mp_toom_sqr.obj bncore.obj
+bn_s_mp_add.obj bn_s_mp_balance_mul.obj bn_s_mp_exptmod.obj bn_s_mp_exptmod_fast.obj bn_s_mp_fft.obj \
+bn_s_mp_fft_mul.obj bn_s_mp_fft_sqr.obj bn_s_mp_invmod_fast.obj bn_s_mp_invmod_slow.obj bn_s_mp_karatsuba_mul.obj \
+bn_s_mp_karatsuba_sqr.obj bn_s_mp_montgomery_reduce_fast.obj bn_s_mp_mul_digs.obj bn_s_mp_mul_digs_fast.obj \
+bn_s_mp_mul_high_digs.obj bn_s_mp_mul_high_digs_fast.obj bn_s_mp_reverse.obj bn_s_mp_sqr.obj bn_s_mp_sqr_fast.obj \
+bn_s_mp_sub.obj bn_s_mp_toom_cook_4_mul.obj bn_s_mp_toom_cook_4_sqr.obj bn_s_mp_toom_cook_5_mul.obj \
+bn_s_mp_toom_cook_5_sqr.obj bn_s_mp_toom_mul.obj bn_s_mp_toom_sqr.obj bncore.obj
 
 HEADERS_PUB=tommath.h tommath_class.h tommath_superclass.h
 

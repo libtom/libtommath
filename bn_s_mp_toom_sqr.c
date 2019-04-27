@@ -28,24 +28,24 @@ int s_mp_toom_sqr(const mp_int *a, mp_int *b)
       goto LTM_ERRa0;
    }
    for (count = 0; count < B; count++) {
-         a0.dp[count] = a->dp[count];
-         a0.used++;
+      a0.dp[count] = a->dp[count];
+      a0.used++;
    }
    mp_clamp(&a0);
    if ((e = mp_init_size(&a1, B)) != MP_OKAY) {
       goto LTM_ERRa1;
    }
    for (; count < (2 * B); count++) {
-         a1.dp[count - B] = a->dp[count];
-         a1.used++;
+      a1.dp[count - B] = a->dp[count];
+      a1.used++;
    }
    mp_clamp(&a1);
    if ((e = mp_init_size(&a2, B + (a->used - (3 * B)))) != MP_OKAY) {
       goto LTM_ERRa2;
    }
    for (; count < a->used; count++) {
-         a2.dp[count - 2 * B] = a->dp[count];
-         a2.used++;
+      a2.dp[count - 2 * B] = a->dp[count];
+      a2.used++;
    }
    mp_clamp(&a2);
 

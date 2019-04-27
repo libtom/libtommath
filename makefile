@@ -49,12 +49,12 @@ bn_mp_signed_bin_size.o bn_mp_sqr.o bn_mp_sqrmod.o bn_mp_sqrt.o bn_mp_sqrtmod_pr
 bn_mp_sub_d.o bn_mp_submod.o bn_mp_tc_and.o bn_mp_tc_div_2d.o bn_mp_tc_or.o bn_mp_tc_xor.o \
 bn_mp_to_signed_bin.o bn_mp_to_signed_bin_n.o bn_mp_to_unsigned_bin.o bn_mp_to_unsigned_bin_n.o \
 bn_mp_toradix.o bn_mp_toradix_n.o bn_mp_unsigned_bin_size.o bn_mp_xor.o bn_mp_zero.o bn_prime_tab.o \
-bn_s_mp_add.o bn_s_mp_balance_mul.o bn_s_mp_exptmod.o bn_s_mp_exptmod_fast.o bn_s_mp_invmod_fast.o \
-bn_s_mp_invmod_slow.o bn_s_mp_karatsuba_mul.o bn_s_mp_karatsuba_sqr.o bn_s_mp_montgomery_reduce_fast.o \
-bn_s_mp_mul_digs.o bn_s_mp_mul_digs_fast.o bn_s_mp_mul_high_digs.o bn_s_mp_mul_high_digs_fast.o \
-bn_s_mp_reverse.o bn_s_mp_sqr.o bn_s_mp_sqr_fast.o bn_s_mp_sub.o bn_s_mp_toom_cook_4_mul.o \
-bn_s_mp_toom_cook_4_sqr.o bn_s_mp_toom_cook_5_mul.o bn_s_mp_toom_cook_5_sqr.o bn_s_mp_toom_mul.o \
-bn_s_mp_toom_sqr.o bncore.o
+bn_s_mp_add.o bn_s_mp_balance_mul.o bn_s_mp_exptmod.o bn_s_mp_exptmod_fast.o bn_s_mp_fft.o \
+bn_s_mp_fft_mul.o bn_s_mp_fft_sqr.o bn_s_mp_invmod_fast.o bn_s_mp_invmod_slow.o bn_s_mp_karatsuba_mul.o \
+bn_s_mp_karatsuba_sqr.o bn_s_mp_montgomery_reduce_fast.o bn_s_mp_mul_digs.o bn_s_mp_mul_digs_fast.o \
+bn_s_mp_mul_high_digs.o bn_s_mp_mul_high_digs_fast.o bn_s_mp_reverse.o bn_s_mp_sqr.o bn_s_mp_sqr_fast.o \
+bn_s_mp_sub.o bn_s_mp_toom_cook_4_mul.o bn_s_mp_toom_cook_4_sqr.o bn_s_mp_toom_cook_5_mul.o \
+bn_s_mp_toom_cook_5_sqr.o bn_s_mp_toom_mul.o bn_s_mp_toom_sqr.o bncore.o
 
 #END_INS
 

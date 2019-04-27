@@ -15,12 +15,11 @@
    It has been written for a single use case with known input and not for general usage.
 */
 
-/* Simplified sqrt within 1 ulp, no rounding; good enough to compute the SD */
 /*
-   From a copy of a drafted paper by Prof W. Kahan and K.C. Ng, written in May, 1986.
+   Simplified sqrt within 1 ulp, no rounding; good enough to compute the SD
 
-   That copy can be found in the file
-   https://www.netlib.org/fdlibm/e_sqrt.c
+   From a copy of a drafted paper by Prof W. Kahan and K.C. Ng, written in May, 1986.
+   That copy can be found in the file https://www.netlib.org/fdlibm/e_sqrt.c
 */
 static double s_sqrt(double d)
 {
@@ -96,7 +95,8 @@ static double s_sd_kurt(long *array, int length, double mean)
    return s_sqrt(sum/length);
 }
 
-static double s_kurtosis(long *array, int length, double mean){
+static double s_kurtosis(long *array, int length, double mean)
+{
    double sum = 0.0, quad = 0.0;
    int i;
    for (i = 0; i < length; i++) {
@@ -108,10 +108,11 @@ static double s_kurtosis(long *array, int length, double mean){
    quad = s_sd_kurt(array, length, mean);
    quad = quad * quad;
    quad = quad * quad;
-   return  ( (sum/(length)) / quad);
+   return ((sum/(length)) / quad);
 }
 
-static double s_skewness(long *array, int length, double mean){
+static double s_skewness(long *array, int length, double mean)
+{
    double sum = 0.0, cube = 0.0;
    int i;
    for (i = 0; i < length; i++) {
@@ -120,7 +121,7 @@ static double s_skewness(long *array, int length, double mean){
    }
    cube = s_sd_kurt(array, length, mean);
    cube = cube * cube * cube;
-   return  ( (sum/(length)) / cube);
+   return ((sum/(length)) / cube);
 }
 
 /*
@@ -163,6 +164,28 @@ static long k_smallest(long *array, int length, int k)
    }
    return array[k];
 }
+static long s_mode(long *array,int length)
+{
+   long val, max, count;
+   int i, j;
+
+   val = 0L;
+   max = 0L;
+   for (i = 0; i < length; i++) {
+      count = 0;
+      for (j = 0; j < length; ++j) {
+         if (array[j] == array[i]) {
+            count++;
+         }
+      }
+      if (count > max) {
+         max = count;
+         val = array[i];
+      }
+   }
+   return val;
+}
+
 static long s_median(long *array, int length)
 {
    return k_smallest(array, length, ((length % 2) == 0) ? length/2 : (length / 2) - 1);
@@ -188,7 +211,8 @@ int main(int argc, char **argv)
    int count = -1;
    long min = LONG_MAX;
    long max = LONG_MIN;
-   long median = 0;
+   long median = 0L;
+   long mode = 0L;
    double mean = 0.0;
    double sd = 0.0;
    double sk = 0.0;
@@ -256,6 +280,7 @@ int main(int argc, char **argv)
    mean = mean/count;
    sd = s_sd(array, count, mean);
    median = s_median(array, count);
+   mode = s_mode(array, count);
    if (count < 4) {
       fprintf(stderr, "Calculating the quantiles needs at least 4 entries not just %d\n", count);
    } else {
@@ -266,11 +291,11 @@ int main(int argc, char **argv)
    ku = s_kurtosis(array, count, mean);
    /* TODO: A bit wide, make two tables out of it? */
    if (verbose == 1) {
-      printf("%8s%8s%8s%6s%7s%8s%10s%9s%8s%9s",
-             "N", "min", "median", "mean", "max", "sd", "skew", "kurt", "25%", "75%\n");
+      printf("%8s%8s%8s%6s%8s%7s%8s%10s%9s%8s%9s",
+             "N", "min", "median", "mode", "mean", "max", "sd", "skew", "kurt", "25%", "75%\n");
    }
-   printf("%5s %-4d %5ld %5ld %8.2f %5ld %8.2f %8.2f %8.2f %8.2f %8.2f\n",
-          col_name, count, min, median, mean, max, sd, sk, ku, lq, uq);
+   printf("%5s %-4d %5ld %5ld %5ld %8.2f %5ld %8.2f %8.2f %8.2f %8.2f %8.2f\n",
+          col_name, count, min, median, mode, mean, max, sd, sk, ku, lq, uq);
    free(array);
    exit(EXIT_SUCCESS);
 }

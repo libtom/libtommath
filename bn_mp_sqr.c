@@ -8,47 +8,53 @@ int mp_sqr(const mp_int *a, mp_int *b)
 {
    int     res;
 
-#ifdef BN_S_MP_TOOM_COOK_5_SQR_C
-   if (a->used >= TOOM_COOK_5_SQR_CO) {
-      res = s_mp_toom_cook_5_sqr(a, b);
+#ifdef BN_S_MP_FFT_SQR_C
+   if ((a->used >= FFT_SQR_LOWER_CO) && (a->used < FFT_SQR_UPPER_CO)) {
+      res = s_mp_fft_sqr(a, b);
    } else
 #endif
 
-#ifdef BN_S_MP_TOOM_COOK_4_SQR_C
-      if (a->used >= TOOM_COOK_4_SQR_CO) {
-         res = s_mp_toom_cook_4_sqr(a, b);
+#ifdef BN_S_MP_TOOM_COOK_5_SQR_C
+      if (a->used >= TOOM_COOK_5_SQR_CO) {
+         res = s_mp_toom_cook_5_sqr(a, b);
       } else
 #endif
 
-#ifdef BN_S_MP_TOOM_SQR_C
-         /* use Toom-Cook? */
-         if (a->used >= TOOM_SQR_CUTOFF) {
-            res = s_mp_toom_sqr(a, b);
-            /* Karatsuba? */
+#ifdef BN_S_MP_TOOM_COOK_4_SQR_C
+         if (a->used >= TOOM_COOK_4_SQR_CO) {
+            res = s_mp_toom_cook_4_sqr(a, b);
          } else
 #endif
-#ifdef BN_S_MP_KARATSUBA_SQR_C
-            if (a->used >= KARATSUBA_SQR_CUTOFF) {
-               res = s_mp_karatsuba_sqr(a, b);
+
+#ifdef BN_S_MP_TOOM_SQR_C
+            /* use Toom-Cook? */
+            if (a->used >= TOOM_SQR_CUTOFF) {
+               res = s_mp_toom_sqr(a, b);
+               /* Karatsuba? */
             } else
 #endif
-            {
-#ifdef BN_S_MP_SQR_FAST_C
-               /* can we use the fast comba multiplier? */
-               if ((((a->used * 2) + 1) < (int)MP_WARRAY) &&
-                   (a->used <
-                    (int)(1u << (((CHAR_BIT * sizeof(mp_word)) - (2u * (size_t)DIGIT_BIT)) - 1u)))) {
-                  res = s_mp_sqr_fast(a, b);
+#ifdef BN_S_MP_KARATSUBA_SQR_C
+               if (a->used >= KARATSUBA_SQR_CUTOFF) {
+                  res = s_mp_karatsuba_sqr(a, b);
                } else
 #endif
                {
-#ifdef BN_S_MP_SQR_C
-                  res = s_mp_sqr(a, b);
-#else
-                  res = MP_VAL;
+#ifdef BN_S_MP_SQR_FAST_C
+                  /* can we use the fast comba multiplier? */
+                  if ((((a->used * 2) + 1) < (int)MP_WARRAY) &&
+                      (a->used <
+                       (int)(1u << (((CHAR_BIT * sizeof(mp_word)) - (2u * (size_t)MP_DIGIT_BIT)) - 1u)))) {
+                     res = s_mp_sqr_fast(a, b);
+                  } else
 #endif
+                  {
+#ifdef BN_S_MP_SQR_C
+                     res = s_mp_sqr(a, b);
+#else
+                     res = MP_VAL;
+#endif
+                  }
                }
-            }
    b->sign = MP_ZPOS;
    return res;
 }
