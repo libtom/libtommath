@@ -4,6 +4,11 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /*
+   This file contains code from J. Arndt's book  "Matters Computational"
+   and the accompanying FXT-library with permission of the author.
+*/
+
+/*
      Bodrato, Marco, and Alberto Zanoni. "What about Toom-Cook matrices optimality."
      Centro Vito Volterra Universita di Roma Tor Vergata (2006).
 */
@@ -21,7 +26,7 @@ int s_mp_toom_cook_5_sqr(const mp_int *a, mp_int *c)
       return e;
    }
 
-   /** A = a4*x^4+ a3*x^3 + a2*x^2 + a1*x + a0 */
+   /** A = a4*x^4+ a3*x^3 + a2*x^2 + a1*x + a0; */
    if ((e = mp_init_size(&a0, B)) != MP_OKAY) {
       goto LTM_ERRa0;
    }
@@ -64,258 +69,258 @@ int s_mp_toom_cook_5_sqr(const mp_int *a, mp_int *c)
    mp_clamp(&a4);
 
 
-   /** S1 = a0^2  */
+   /** S1 = a0^2 ; */
    if ((e = mp_sqr(&a0, &S1)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S2 = a4^2  */
+   /** S2 = a4^2 ; */
    if ((e = mp_sqr(&a4, &S2)) != MP_OKAY) {
       goto LTM_ERR;
    }
 
-   /** \\S3 = (a0 + a1 + a2 + a3 + a4)^2 */
-   /** S3 = a0 + a1 */
+   /** \\S3 = (a0 + a1 + a2 + a3 + a4)^2; */
+   /** S3 = a0 + a1; */
    if ((e = mp_add(&a0, &a1, &S3)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S3 = S3 + a2 */
+   /** S3 = S3 + a2; */
    if ((e = mp_add(&S3, &a2, &S3)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S3 = S3 + a3 */
+   /** S3 = S3 + a3; */
    if ((e = mp_add(&S3, &a3, &S3)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S3 = S3 + a4 */
+   /** S3 = S3 + a4; */
    if ((e = mp_add(&S3, &a4, &S3)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S3 = S3^2 */
+   /** S3 = S3^2; */
    if ((e = mp_sqr(&S3, &S3)) != MP_OKAY) {
       goto LTM_ERR;
    }
 
-   /** \\S4 = (a0 - a1 + a2 - a3 + a4)^2  */
-   /** S4 = a0 - a1 */
+   /** \\S4 = (a0 - a1 + a2 - a3 + a4)^2 ; */
+   /** S4 = a0 - a1; */
    if ((e = mp_sub(&a0, &a1, &S4)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S4 = S4 + a2 */
+   /** S4 = S4 + a2; */
    if ((e = mp_add(&S4, &a2, &S4)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S4 = S4 - a3 */
+   /** S4 = S4 - a3; */
    if ((e = mp_sub(&S4, &a3, &S4)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S4 = S4 + a4 */
+   /** S4 = S4 + a4; */
    if ((e = mp_add(&S4, &a4, &S4)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S4 = S4^2 */
+   /** S4 = S4^2; */
    if ((e = mp_sqr(&S4, &S4)) != MP_OKAY) {
       goto LTM_ERR;
    }
 
-   /** \\S5 = 2 * (a0 - a2 + a4) * (a1 - a3) */
-   /** \\   = ((a0 - a2 + a4) * (a1 - a3)) << 1 */
-   /** S5 = a0 - a2 */
+   /** \\S5 = 2 * (a0 - a2 + a4) * (a1 - a3); */
+   /** \\   = ((a0 - a2 + a4) * (a1 - a3)) << 1; */
+   /** S5 = a0 - a2; */
    if ((e = mp_sub(&a0, &a2, &S5)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S5 = S5 + a4 */
+   /** S5 = S5 + a4; */
    if ((e = mp_add(&S5, &a4, &S5)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S6 = a1 - a3 */
+   /** S6 = a1 - a3; */
    if ((e = mp_sub(&a1, &a3, &S6)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S5 = S5 * S6 */
+   /** S5 = S5 * S6; */
    if ((e = mp_mul(&S5, &S6, &S5)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S5 = S5 * 2 */
+   /** S5 = S5 * 2; */
    if ((e = mp_mul_2(&S5, &S5)) != MP_OKAY) {
       goto LTM_ERR;
    }
 
-   /** \\S6 = (a0 + a1 - a2 - a3 + a4) * (a0 - a1 - a2 + a3 + a4)  */
-   /** S6 = a0 + a1 */
+   /** \\S6 = (a0 + a1 - a2 - a3 + a4) * (a0 - a1 - a2 + a3 + a4) ; */
+   /** S6 = a0 + a1; */
    if ((e = mp_add(&a0, &a1, &S6)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S6 = S6 - a2 */
+   /** S6 = S6 - a2; */
    if ((e = mp_sub(&S6, &a2, &S6)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S6 = S6 - a3 */
+   /** S6 = S6 - a3; */
    if ((e = mp_sub(&S6, &a3, &S6)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S6 = S6 + a4 */
+   /** S6 = S6 + a4; */
    if ((e = mp_add(&S6, &a4, &S6)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S7 = a0 - a1 */
+   /** S7 = a0 - a1; */
    if ((e = mp_sub(&a0, &a1, &S7)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S7 = S7 - a2 */
+   /** S7 = S7 - a2; */
    if ((e = mp_sub(&S7, &a2, &S7)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S7 = S7 + a3 */
+   /** S7 = S7 + a3; */
    if ((e = mp_add(&S7, &a3, &S7)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S7 = S7 + a4 */
+   /** S7 = S7 + a4; */
    if ((e = mp_add(&S7, &a4, &S7)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S6 = S6 * S7 */
+   /** S6 = S6 * S7; */
    if ((e = mp_mul(&S6, &S7, &S6)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** \\S7 = (a1 + a2 - a4) * (a1 - a2 - a4 + 2*(a0 - a3) )  */
-   /** \\S7 = (a1 + a2 - a4) * (2*(a0 - a3) + a1 - a2 - a4  ) */
-   /** \\S7 =      S7        *             S8 */
-   /** S8 =  a0 - a3 */
+   /** \\S7 = (a1 + a2 - a4) * (a1 - a2 - a4 + 2*(a0 - a3) ) ; */
+   /** \\S7 = (a1 + a2 - a4) * (2*(a0 - a3) + a1 - a2 - a4  ); */
+   /** \\S7 =      S7        *             S8; */
+   /** S8 =  a0 - a3; */
    if ((e = mp_sub(&a0, &a3, &S8)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S8 = S8 * 2 */
+   /** S8 = S8 * 2; */
    if ((e = mp_mul_2(&S8, &S8)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S8 = S8 + a1 */
+   /** S8 = S8 + a1; */
    if ((e = mp_add(&S8, &a1, &S8)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S8 = S8 - a2 */
+   /** S8 = S8 - a2; */
    if ((e = mp_sub(&S8, &a2, &S8)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S8 = S8 - a4 */
+   /** S8 = S8 - a4; */
    if ((e = mp_sub(&S8, &a4, &S8)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S7 = a1 + a2 */
+   /** S7 = a1 + a2; */
    if ((e = mp_add(&a1, &a2, &S7)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S7 = S7 - a4 */
+   /** S7 = S7 - a4; */
    if ((e = mp_sub(&S7, &a4, &S7)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S7 = S7 * S8 */
+   /** S7 = S7 * S8; */
    if ((e = mp_mul(&S7, &S8, &S7)) != MP_OKAY) {
       goto LTM_ERR;
    }
 
-   /** \\S8 = 2 * a0 * a1  */
-   /** S8 = a0 * a1  */
+   /** \\S8 = 2 * a0 * a1 ; */
+   /** S8 = a0 * a1 ; */
    if ((e = mp_mul(&a0, &a1, &S8)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S8 = S8 * 2 */
+   /** S8 = S8 * 2; */
    if ((e = mp_mul_2(&S8, &S8)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** \\S9 = 2 * a3 * a4  */
-   /** S9 =  a3 * a4 */
+   /** \\S9 = 2 * a3 * a4 ; */
+   /** S9 =  a3 * a4; */
    if ((e = mp_mul(&a3, &a4, &S9)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S9 = S9 * 2 */
+   /** S9 = S9 * 2; */
    if ((e = mp_mul_2(&S9, &S9)) != MP_OKAY) {
       goto LTM_ERR;
    }
 
-   /** \\S4 = (S4 + S3) / 2  */
-   /** S4 = S4 + S3 */
+   /** \\S4 = (S4 + S3) / 2 ; */
+   /** S4 = S4 + S3; */
    if ((e = mp_add(&S4, &S3, &S4)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S4 = S4 / 2 */
+   /** S4 = S4 / 2; */
    if ((e = mp_div_2(&S4, &S4)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S3 = S3 - S4  */
+   /** S3 = S3 - S4 ; */
    if ((e = mp_sub(&S3, &S4, &S3)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** \\S6 = (S6 + S4) / 2  */
-   /** S6 = S6 + S4 */
+   /** \\S6 = (S6 + S4) / 2 ; */
+   /** S6 = S6 + S4; */
    if ((e = mp_add(&S6, &S4, &S6)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S6 = S6  / 2  */
+   /** S6 = S6  / 2 ; */
    if ((e =  mp_div_2(&S6, &S6)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** \\S5 = (S3 - S5) / 2  */
-   /** S5 = S3 - S5 */
+   /** \\S5 = (S3 - S5) / 2 ; */
+   /** S5 = S3 - S5; */
    if ((e = mp_sub(&S3, &S5, &S5)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S5 = S5 / 2 */
+   /** S5 = S5 / 2; */
    if ((e = mp_div_2(&S5, &S5)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S4 = S4 - S6  */
+   /** S4 = S4 - S6 ; */
    if ((e = mp_sub(&S4, &S6, &S4)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** \\S3 = S3 - S5 - S8  */
-   /** S3 = S3 - S5  */
+   /** \\S3 = S3 - S5 - S8 ; */
+   /** S3 = S3 - S5 ; */
    if ((e = mp_sub(&S3, &S5, &S3)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S3 = S3 - S8 */
+   /** S3 = S3 - S8; */
    if ((e = mp_sub(&S3, &S8, &S3)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** \\S6 = S6 - S2 - S1  */
-   /** S6 = S6 - S2 */
+   /** \\S6 = S6 - S2 - S1 ; */
+   /** S6 = S6 - S2; */
    if ((e = mp_sub(&S6, &S2, &S6)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S6 = S6 - S1 */
+   /** S6 = S6 - S1; */
    if ((e = mp_sub(&S6, &S1, &S6)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S5 = S5 - S9  */
+   /** S5 = S5 - S9 ; */
    if ((e = mp_sub(&S5, &S9, &S5)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** \\S7 = S7 - S2 - S8 - S9 + S6 + S3  */
-   /** S7 = S7 - S2 */
+   /** \\S7 = S7 - S2 - S8 - S9 + S6 + S3 ; */
+   /** S7 = S7 - S2; */
    if ((e = mp_sub(&S7, &S2, &S7)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S7 = S7 - S8 */
+   /** S7 = S7 - S8; */
    if ((e = mp_sub(&S7, &S8, &S7)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S7 = S7 - S9 */
+   /** S7 = S7 - S9; */
    if ((e = mp_sub(&S7, &S9, &S7)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S7 = S7 + S6 */
+   /** S7 = S7 + S6; */
    if ((e = mp_add(&S7, &S6, &S7)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S7 = S7 + S3 */
+   /** S7 = S7 + S3; */
    if ((e = mp_add(&S7, &S3, &S7)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S4 = S4 - S7  */
+   /** S4 = S4 - S7 ; */
    if ((e = mp_sub(&S4, &S7, &S4)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** \\ coefficients not in order! */
-   /** P = S2*x^8+ S9*x^7+ S4*x^6+ S3*x^5+ S6*x^4+ S5*x^3+ S7*x^2+ S8*x+ S1  */
+   /** \\ coefficients not in order!; */
+   /** P = S2*x^8+ S9*x^7+ S4*x^6+ S3*x^5+ S6*x^4+ S5*x^3+ S7*x^2+ S8*x+ S1 ; */
 
    if ((e = mp_lshd(&S2, 8 * B)) != MP_OKAY) {
       goto LTM_ERR;

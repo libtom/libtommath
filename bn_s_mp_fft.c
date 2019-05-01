@@ -3,7 +3,10 @@
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
-
+/*
+   This file contains code from J. Arndt's book  "Matters Computational"
+   and the accompanying FXT-library with permission of the author.
+*/
 
 /* base two integer logarithm */
 static int s_highbit(int n)

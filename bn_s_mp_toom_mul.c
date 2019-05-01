@@ -10,6 +10,12 @@
  * only particularly useful on VERY large inputs
  * (we're talking 1000s of digits here...).
 */
+
+/*
+   This file contains code from J. Arndt's book  "Matters Computational"
+   and the accompanying FXT-library with permission of the author.
+*/
+
 /*
    Setup from
 
@@ -35,7 +41,7 @@ int s_mp_toom_mul(const mp_int *a, const mp_int *b, mp_int *c)
    /* B */
    B = MP_MIN(a->used, b->used) / 3;
 
-   /** a = a2 * x^2 + a1 * x + a0 */
+   /** a = a2 * x^2 + a1 * x + a0; */
    if ((e = mp_init_size(&a0, B)) != MP_OKAY) {
       goto LTM_ERRa0;
    }
@@ -61,7 +67,7 @@ int s_mp_toom_mul(const mp_int *a, const mp_int *b, mp_int *c)
    }
    mp_clamp(&a2);
 
-   /** b = b2 * x^2 + b1 * x + b0 */
+   /** b = b2 * x^2 + b1 * x + b0; */
    if ((e = mp_init_size(&b0, B)) != MP_OKAY) {
       goto LTM_ERRb0;
    }
@@ -88,150 +94,150 @@ int s_mp_toom_mul(const mp_int *a, const mp_int *b, mp_int *c)
    mp_clamp(&b2);
 
 
-   /** S0 = a0 * b0 */
+   /** S0 = a0 * b0; */
    if ((e = mp_mul(&a0, &b0, &S0)) != MP_OKAY) {
       goto LTM_ERR;
    }
 
-   /**\\ S1 = (a2+a1+a0) * (b2+b1+b0) **/
-   /** S2 = a2 + a1 */
+   /**\\ S1 = (a2+a1+a0) * (b2+b1+b0); */
+   /** S2 = a2 + a1; */
    if ((e = mp_add(&a2, &a1, &S2)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S2 = S2 + a0 */
+   /** S2 = S2 + a0; */
    if ((e = mp_add(&S2, &a0, &S2)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S1 = b2 + b1 */
+   /** S1 = b2 + b1; */
    if ((e = mp_add(&b2, &b1, &S1)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S1 = S1 + b0 */
+   /** S1 = S1 + b0; */
    if ((e = mp_add(&S1, &b0, &S1)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S1 = S1 * S2 */
+   /** S1 = S1 * S2; */
    if ((e = mp_mul(&S1, &S2, &S1)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** \\S2 = (4*a2+2*a1+a0) * (4*b2+2*b1+b0) */
-   /** S2 = a2 << 2 */
+   /** \\S2 = (4*a2+2*a1+a0) * (4*b2+2*b1+b0); */
+   /** S2 = a2 << 2; */
    if ((e = mp_mul_2d(&a2, 2, &S2)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S3 = a1 << 1 */
+   /** S3 = a1 << 1; */
    if ((e = mp_mul_2(&a1, &S3)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S2 = S2 + S3 */
+   /** S2 = S2 + S3; */
    if ((e = mp_add(&S2, &S3, &S2)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S2 = S2 + a0 */
+   /** S2 = S2 + a0; */
    if ((e = mp_add(&S2, &a0, &S2)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S3 = b2 << 2 */
+   /** S3 = b2 << 2; */
    if ((e = mp_mul_2d(&b2, 2, &S3)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S4 = b1 << 1 */
+   /** S4 = b1 << 1; */
    if ((e = mp_mul_2(&b1, &S4)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S3 = S3 + S4 */
+   /** S3 = S3 + S4; */
    if ((e = mp_add(&S3, &S4, &S3)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S3 = S3 + b0 */
+   /** S3 = S3 + b0; */
    if ((e = mp_add(&S3, &b0, &S3)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S2 = S2 * S3 */
+   /** S2 = S2 * S3; */
    if ((e = mp_mul(&S2, &S3, &S2)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** \\S3 = (a2-a1+a0) * (b2-b1+b0) */
-   /** S3 = a2 - a1 */
+   /** \\S3 = (a2-a1+a0) * (b2-b1+b0); */
+   /** S3 = a2 - a1; */
    if ((e = mp_sub(&a2, &a1, &S3)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S3 = S3 + a0 */
+   /** S3 = S3 + a0; */
    if ((e = mp_add(&S3, &a0, &S3)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S4 = b2 - b1 */
+   /** S4 = b2 - b1; */
    if ((e = mp_sub(&b2, &b1, &S4)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S4 = S4 + b0 */
+   /** S4 = S4 + b0; */
    if ((e = mp_add(&S4, &b0, &S4)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S3 = S3 * S4 */
+   /** S3 = S3 * S4; */
    if ((e = mp_mul(&S3, &S4, &S3)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S4 = a2 * b2 */
+   /** S4 = a2 * b2; */
    if ((e = mp_mul(&a2, &b2, &S4)) != MP_OKAY) {
       goto LTM_ERR;
    }
 
-   /** \\S2 = (S2 - S3)/3 */
-   /** S2 = S2 - S3 */
+   /** \\S2 = (S2 - S3)/3; */
+   /** S2 = S2 - S3; */
    if ((e = mp_sub(&S2, &S3, &S2)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S2 = S2 / 3 \\ this is an exact division */
+   /** S2 = S2 / 3; \\ this is an exact division */
    if ((e = mp_div_3(&S2, &S2, NULL)) != MP_OKAY) {
       goto LTM_ERR;
    }
 
-   /** S3 = S1 - S3 */
+   /** S3 = S1 - S3; */
    if ((e = mp_sub(&S1, &S3, &S3)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S3 = S3 >> 1 */
+   /** S3 = S3 >> 1; */
    if ((e = mp_div_2(&S3, &S3)) != MP_OKAY) {
       goto LTM_ERR;
    }
 
-   /** S1 = S1 - S0 */
+   /** S1 = S1 - S0; */
    if ((e = mp_sub(&S1, &S0, &S1)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S2 = S2 - S1 */
+   /** S2 = S2 - S1; */
    if ((e = mp_sub(&S2, &S1, &S2)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S2 = S2 >> 1 */
+   /** S2 = S2 >> 1; */
    if ((e = mp_div_2(&S2, &S2)) != MP_OKAY) {
       goto LTM_ERR;
    }
 
-   /** S1 = S1 - S3 */
+   /** S1 = S1 - S3; */
    if ((e = mp_sub(&S1, &S3, &S1)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S1 = S1 - S4 */
+   /** S1 = S1 - S4; */
    if ((e = mp_sub(&S1, &S4, &S1)) != MP_OKAY) {
       goto LTM_ERR;
    }
 
-   /** tmp = S4 << 1 */
+   /** tmp = S4 << 1; */
    if ((e = mp_mul_2(&S4, &tmp)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S2 = S2 - tmp */
+   /** S2 = S2 - tmp; */
    if ((e = mp_sub(&S2, &tmp, &S2)) != MP_OKAY) {
       goto LTM_ERR;
    }
 
-   /** S3 = S3 - S2 */
+   /** S3 = S3 - S2; */
    if ((e = mp_sub(&S3, &S2, &S3)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** P = S4*x^4+ S2*x^3+ S1*x^2+ S3*x + S0 */
+   /** P = S4*x^4+ S2*x^3+ S1*x^2+ S3*x + S0; */
    mp_zero(&tmp);
    if ((e = mp_lshd(&S4, 4 * B)) != MP_OKAY) {
       goto LTM_ERR;

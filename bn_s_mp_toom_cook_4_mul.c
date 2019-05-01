@@ -4,6 +4,11 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /*
+   This file contains code from J. Arndt's book  "Matters Computational"
+   and the accompanying FXT-library with permission of the author.
+*/
+
+/*
     Bodrato, Marco, and Alberto Zanoni. "Integer and polynomial multiplication:
     Towards optimal Toom-Cook matrices." Proceedings of the 2007 international
     symposium on Symbolic and algebraic computation. ACM, 2007.
@@ -93,11 +98,11 @@ int s_mp_toom_cook_4_mul(const mp_int *a, const mp_int *b, mp_int *c)
    mp_clamp(&b3);
 
 
-   /** S1 = a3 * b3 */
+   /** S1 = a3 * b3; */
    if ((e = mp_mul(&a3, &b3, &S1)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S2 = (8*a3 + 4*a2 + 2*a1 + a0)*(8*b3 + 4*b2 + 2*b1 + b0) */
+   /** S2 = (8*a3 + 4*a2 + 2*a1 + a0)*(8*b3 + 4*b2 + 2*b1 + b0); */
    if ((e = mp_mul_2d(&a3, 3, &S2)) != MP_OKAY) {
       goto LTM_ERR;
    }
@@ -139,7 +144,7 @@ int s_mp_toom_cook_4_mul(const mp_int *a, const mp_int *b, mp_int *c)
    if ((e = mp_mul(&S2, &S3, &S2)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S3 = (+a3 + a2 + a1 + a0)*(+b3 + b2 + b1 + b0) */
+   /** S3 = (+a3 + a2 + a1 + a0)*(+b3 + b2 + b1 + b0); */
    if ((e = mp_add(&a3, &a2, &S3)) != MP_OKAY) {
       goto LTM_ERR;
    }
@@ -163,8 +168,8 @@ int s_mp_toom_cook_4_mul(const mp_int *a, const mp_int *b, mp_int *c)
       goto LTM_ERR;
    }
 
-   /** S4 = (-a3+a2-a1+a0)*(-b3+b2-b1+b0) */
-   /* = (+a2-a1 + a0-a3)*(+b2-b1 + b0-b3) */
+   /** S4 = (-a3+a2-a1+a0)*(-b3+b2-b1+b0); */
+   /* = (+a2-a1 + a0-a3)*(+b2-b1 + b0-b3); */
 
    if ((e = mp_sub(&a2, &a1, &S4)) != MP_OKAY) {
       goto LTM_ERR;
@@ -188,7 +193,7 @@ int s_mp_toom_cook_4_mul(const mp_int *a, const mp_int *b, mp_int *c)
       goto LTM_ERR;
    }
 
-   /** S5 = (+8*a0+4*a1+2*a2+a3)*(+8*b0+4*b1+2*b2+b3) */
+   /** S5 = (+8*a0+4*a1+2*a2+a3)*(+8*b0+4*b1+2*b2+b3); */
    if ((e = mp_mul_2d(&a0, 3, &S5)) != MP_OKAY) {
       goto LTM_ERR;
    }
@@ -231,8 +236,8 @@ int s_mp_toom_cook_4_mul(const mp_int *a, const mp_int *b, mp_int *c)
       goto LTM_ERR;
    }
 
-   /** S6 = (-8*a0+4*a1-2*a2+a3)*(-8*b0+4*b1-2*b2+b3) */
-   /* = (+4*a1-2*a2+a3-8*a0)*(+4*b1-2*b2+b3-8*b0) */
+   /** S6 = (-8*a0+4*a1-2*a2+a3)*(-8*b0+4*b1-2*b2+b3); */
+   /* = (+4*a1-2*a2+a3-8*a0)*(+4*b1-2*b2+b3-8*b0); */
    if ((e = mp_mul_2d(&a1, 2, &S6)) != MP_OKAY) {
       goto LTM_ERR;
    }
@@ -273,7 +278,7 @@ int s_mp_toom_cook_4_mul(const mp_int *a, const mp_int *b, mp_int *c)
    if ((e = mp_mul(&S6, &S7, &S6)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S7 = a0 * b0 */
+   /** S7 = a0 * b0; */
    if ((e = mp_mul(&a0, &b0, &S7)) != MP_OKAY) {
       goto LTM_ERR;
    }

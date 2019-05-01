@@ -3,6 +3,11 @@
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
+/*
+   This file contains code from J. Arndt's book  "Matters Computational"
+   and the accompanying FXT-library with permission of the author.
+*/
+
 /* squaring using Toom-Cook 3-way algorithm */
 /*
    Setup and interpolation from
@@ -23,7 +28,7 @@ int s_mp_toom_sqr(const mp_int *a, mp_int *b)
    /* B */
    B = a->used / 3;
 
-   /** a = a2 * B**2 + a1 * B + a0 */
+   /** a = a2 * x^2 + a1 * x + a0; */
    if ((e = mp_init_size(&a0, B)) != MP_OKAY) {
       goto LTM_ERRa0;
    }
@@ -49,86 +54,86 @@ int s_mp_toom_sqr(const mp_int *a, mp_int *b)
    }
    mp_clamp(&a2);
 
-   /** S0 = a0^2  */
+   /** S0 = a0^2;  */
    if ((e = mp_sqr(&a0, &S0)) != MP_OKAY) {
       goto LTM_ERR;
    }
 
    /** \\S1 = (a2 + a1 + a0)^2 */
-   /** S1 = a2 + a1  */
+   /** S1 = a2 + a1;  */
    if ((e = mp_add(&a2, &a1, &S1)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S1 = S1 + a0  */
+   /** S1 = S1 + a0;  */
    if ((e = mp_add(&S1, &a0, &S1)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S1 = S1^2  */
+   /** S1 = S1^2;  */
    if ((e = mp_sqr(&S1, &S1)) != MP_OKAY) {
       goto LTM_ERR;
    }
 
    /** \\ S2 = (a2 - a1 + a0)^2  */
-   /** S2 = a2 - a1  */
+   /** S2 = a2 - a1;  */
    if ((e = mp_sub(&a2, &a1, &S2)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S2 = S2 + a0  */
+   /** S2 = S2 + a0;  */
    if ((e = mp_add(&S2, &a0, &S2)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S2 = S2^2  */
+   /** S2 = S2^2;  */
    if ((e = mp_sqr(&S2, &S2)) != MP_OKAY) {
       goto LTM_ERR;
    }
 
    /** \\ S3 = 2 * a1 * a2  */
-   /** S3 = a1 * a2  */
+   /** S3 = a1 * a2;  */
    if ((e = mp_mul(&a1, &a2, &S3)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S3 = S3 << 1  */
+   /** S3 = S3 << 1;  */
    if ((e = mp_mul_2(&S3, &S3)) != MP_OKAY) {
       goto LTM_ERR;
    }
 
-   /** S4 = a2^2  */
+   /** S4 = a2^2;  */
    if ((e = mp_sqr(&a2, &S4)) != MP_OKAY) {
       goto LTM_ERR;
    }
 
    /** \\ tmp = (S1 + S2)/2  */
-   /** tmp = S1 + S2 */
+   /** tmp = S1 + S2; */
    if ((e = mp_add(&S1, &S2, &tmp)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** tmp = tmp >> 1 */
+   /** tmp = tmp >> 1; */
    if ((e = mp_div_2(&tmp, &tmp)) != MP_OKAY) {
       goto LTM_ERR;
    }
 
    /** \\ S1 = S1 - tmp - S3  */
-   /** S1 = S1 - tmp */
+   /** S1 = S1 - tmp; */
    if ((e = mp_sub(&S1, &tmp, &S1)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S1 = S1 - S3  */
+   /** S1 = S1 - S3;  */
    if ((e = mp_sub(&S1, &S3, &S1)) != MP_OKAY) {
       goto LTM_ERR;
    }
 
    /** \\S2 = tmp - S4 -S0  */
-   /** S2 = tmp - S4  */
+   /** S2 = tmp - S4;  */
    if ((e = mp_sub(&tmp, &S4, &S2)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   /** S2 = S2 - S0  */
+   /** S2 = S2 - S0;  */
    if ((e = mp_sub(&S2, &S0, &S2)) != MP_OKAY) {
       goto LTM_ERR;
    }
 
 
-   /** P = S4*x^4 + S3*x^3 + S2*x^2 + S1*x + S0 */
+   /** P = S4*x^4 + S3*x^3 + S2*x^2 + S1*x + S0; */
    mp_zero(&tmp);
    if ((e = mp_lshd(&S4, 4 * B)) != MP_OKAY) {
       goto LTM_ERR;
