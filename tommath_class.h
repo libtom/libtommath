@@ -10,6 +10,7 @@
 #endif
 #define LTM1
 #if defined(LTM_ALL)
+#   define BN_CUTOFFS_C
 #   define BN_DEPRECATED_C
 #   define BN_MP_2EXPT_C
 #   define BN_MP_ABS_C
@@ -155,8 +156,10 @@
 #   define BN_S_MP_SUB_C
 #   define BN_S_MP_TOOM_MUL_C
 #   define BN_S_MP_TOOM_SQR_C
-#   define BNCORE_C
 #endif
+#if defined(BN_CUTOFFS_C)
+#endif
+
 #if defined(BN_DEPRECATED_C)
 #   define BN_FAST_MP_INVMOD_C
 #   define BN_S_MP_INVMOD_FAST_C
@@ -1244,9 +1247,6 @@
 #   define BN_MP_DIV_3_C
 #   define BN_MP_LSHD_C
 #   define BN_MP_CLEAR_MULTI_C
-#endif
-
-#if defined(BNCORE_C)
 #endif
 
 #ifdef LTM3

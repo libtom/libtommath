@@ -313,6 +313,10 @@
 	</References>
 	<Files>
 		<File
+			RelativePath="bn_cutoffs.c"
+			>
+		</File>
+		<File
 			RelativePath="bn_deprecated.c"
 			>
 		</File>
@@ -890,10 +894,6 @@
 		</File>
 		<File
 			RelativePath="bn_s_mp_toom_sqr.c"
-			>
-		</File>
-		<File
-			RelativePath="bncore.c"
 			>
 		</File>
 		<File
