@@ -10,6 +10,34 @@
 extern "C" {
 #endif
 
+/* Tunable cutoffs
+ * ---------------
+ *
+ *  - In the default settings, a cutoff X can be modified at runtime
+ *    by adjusting the corresponding X_CUTOFF variable.
+ *
+ *  - Tunability of the library can be disabled at compile time
+ *    by defining the MP_FIXED_CUTOFFS macro.
+ *
+ *  - There is an additional file tommath_cutoffs.h, which defines
+ *    the default cutoffs. These can be adjusted manually or by the
+ *    autotuner.
+ *
+ */
+
+#ifdef MP_FIXED_CUTOFFS
+#  include "tommath_cutoffs.h"
+#  define MP_KARATSUBA_MUL_CUTOFF MP_DEFAULT_KARATSUBA_MUL_CUTOFF
+#  define MP_KARATSUBA_SQR_CUTOFF MP_DEFAULT_KARATSUBA_SQR_CUTOFF
+#  define MP_TOOM_MUL_CUTOFF      MP_DEFAULT_TOOM_MUL_CUTOFF
+#  define MP_TOOM_SQR_CUTOFF      MP_DEFAULT_TOOM_SQR_CUTOFF
+#else
+#  define MP_KARATSUBA_MUL_CUTOFF KARATSUBA_MUL_CUTOFF
+#  define MP_KARATSUBA_SQR_CUTOFF KARATSUBA_SQR_CUTOFF
+#  define MP_TOOM_MUL_CUTOFF      TOOM_MUL_CUTOFF
+#  define MP_TOOM_SQR_CUTOFF      TOOM_SQR_CUTOFF
+#endif
+
 /* define heap macros */
 #ifndef MP_MALLOC
 /* default to libc stuff */

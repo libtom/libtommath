@@ -313,6 +313,10 @@
 	</References>
 	<Files>
 		<File
+			RelativePath="bn_cutoffs.c"
+			>
+		</File>
+		<File
 			RelativePath="bn_deprecated.c"
 			>
 		</File>
@@ -893,15 +897,15 @@
 			>
 		</File>
 		<File
-			RelativePath="bncore.c"
-			>
-		</File>
-		<File
 			RelativePath="tommath.h"
 			>
 		</File>
 		<File
 			RelativePath="tommath_class.h"
+			>
+		</File>
+		<File
+			RelativePath="tommath_cutoffs.h"
 			>
 		</File>
 		<File

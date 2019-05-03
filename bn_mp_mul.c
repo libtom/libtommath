@@ -26,8 +26,8 @@ int mp_mul(const mp_int *a, const mp_int *b, mp_int *c)
     * Using it to cut the input into slices small enough for fast_s_mp_mul_digs
     * was actually slower on the author's machine, but YMMV.
     */
-   if ((MP_MIN(len_a, len_b) < KARATSUBA_MUL_CUTOFF)
-       || ((MP_MAX(len_a, len_b) / 2) < KARATSUBA_MUL_CUTOFF)) {
+   if ((MP_MIN(len_a, len_b) < MP_KARATSUBA_MUL_CUTOFF)
+       || ((MP_MAX(len_a, len_b) / 2) < MP_KARATSUBA_MUL_CUTOFF)) {
       goto GO_ON;
    }
    /*
@@ -45,13 +45,13 @@ GO_ON:
 
    /* use Toom-Cook? */
 #ifdef BN_S_MP_TOOM_MUL_C
-   if (MP_MIN(a->used, b->used) >= TOOM_MUL_CUTOFF) {
+   if (MP_MIN(a->used, b->used) >= MP_TOOM_MUL_CUTOFF) {
       res = s_mp_toom_mul(a, b, c);
    } else
 #endif
 #ifdef BN_S_MP_KARATSUBA_MUL_C
       /* use Karatsuba? */
-      if (MP_MIN(a->used, b->used) >= KARATSUBA_MUL_CUTOFF) {
+      if (MP_MIN(a->used, b->used) >= MP_KARATSUBA_MUL_CUTOFF) {
          res = s_mp_karatsuba_mul(a, b, c);
       } else
 #endif
