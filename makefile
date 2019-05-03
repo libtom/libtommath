@@ -97,10 +97,10 @@ uninstall:
 	rm $(DESTDIR)$(LIBPATH)/$(LIBNAME)
 	rm $(HEADERS_PUB:%=$(DESTDIR)$(INCPATH)/%)
 
-test: demo/main.o demo/opponent.o demo/test.o $(LIBNAME)
+test: demo/main.o demo/opponent.o demo/test.o demo/prng.o $(LIBNAME)
 	$(CC) $(CFLAGS) $^ $(LFLAGS) -o test
 
-test_standalone: demo/main.o demo/opponent.o demo/test.o $(LIBNAME)
+test_standalone: demo/main.o demo/opponent.o demo/prng.o demo/test.o $(LIBNAME)
 	$(CC) $(CFLAGS) $^ $(LFLAGS) -o test
 
 .PHONY: mtest

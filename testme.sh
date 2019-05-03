@@ -123,11 +123,6 @@ _runtest()
   which timeout >/dev/null && _timeout="timeout --foreground 90"
   echo -e "\rRun test $1 $2"
   $_timeout ./test > test_${suffix}.log || _die "running tests" $?
-  cd etc
-  make clean > /dev/null
-  _make "$1" "$2" "test_standalone"
-  $_timeout ./test -T >> ../test_${suffix}.log || _die "running tests" $?
-  cd ..
 }
 
 # This is not much more of a C&P of _runtest with a different timeout
@@ -143,11 +138,6 @@ _runvalgrind()
   which timeout >/dev/null && _timeout="timeout --foreground 1800"
   echo -e "\rRun test $1 $2 inside valgrind"
   $_timeout $VALGRIND_BIN $VALGRIND_OPTS ./test > test_${suffix}.log || _die "running tests" $?
-  cd etc
-  make clean > /dev/null
-  _make "$1" "$2" "test_standalone"
-  $_timeout $VALGRIND_BIN $VALGRIND_OPTS ./test -T >> ../test_${suffix}.log || _die "running tests" $?
-  cd ..
 }
 
 

@@ -839,7 +839,7 @@ int main(int argc, char **argv)
       if ((verbose == 1) || (testmode == 1)) {
          puts("# Karatsuba squaring.");
       }
-      for (x = 8; x < 1000; x += increment_print) {
+      for (x = 8; x < upper_limit_print; x += increment_print) {
          KARATSUBA_SQR_CUTOFF = INT_MAX;
          t1 = time_sqr(x);
          if ((t1 == 0uLL) || (t1 == UINT64_MAX)) {

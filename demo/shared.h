@@ -25,4 +25,8 @@
 
 #include "tommath.h"
 
-extern void ndraw(mp_int* a, const char* name);
+extern void ndraw(mp_int *a, const char *name);
+
+void s_random_seed(uint64_t seed);
+uint64_t s_random(void);
+int s_mp_random(mp_int *a, int limbs);

@@ -1806,6 +1806,661 @@ LTM_ERR:
    return EXIT_FAILURE;
 }
 
+
+#include "tommath_private.h"
+#ifndef s_mp_mul
+#define s_mp_mul(a, b, c) s_mp_mul_digs(a, b, c, (a)->used + (b)->used + 1)
+#endif
+static int test_s_mp_karatsuba_mul(void)
+{
+   int x, e;
+   int ksm, kss, tc3m, tc3s, tc4m, tc4s, tc5m, tc5s, fftml, fftmu, fftsl, fftsu;
+   mp_int a, b, c, d;
+
+   ksm  = KARATSUBA_MUL_CUTOFF;
+   kss  = KARATSUBA_SQR_CUTOFF;
+   tc3m = TOOM_MUL_CUTOFF;
+   tc3s = TOOM_SQR_CUTOFF;
+   tc4m = TOOM_COOK_4_MUL_CO;
+   tc4s = TOOM_COOK_4_SQR_CO;
+   tc5m = TOOM_COOK_5_MUL_CO;
+   tc5s = TOOM_COOK_5_SQR_CO;
+   fftml = FFT_MUL_LOWER_CO;
+   fftmu = FFT_MUL_UPPER_CO;
+   fftsl = FFT_SQR_LOWER_CO;
+   fftsu = FFT_SQR_UPPER_CO;
+
+   KARATSUBA_MUL_CUTOFF = INT_MAX;
+   KARATSUBA_SQR_CUTOFF = INT_MAX;
+   TOOM_MUL_CUTOFF = INT_MAX;
+   TOOM_SQR_CUTOFF = INT_MAX;
+   TOOM_COOK_4_SQR_CO = INT_MAX;
+   TOOM_COOK_4_MUL_CO = INT_MAX;
+   TOOM_COOK_5_SQR_CO = INT_MAX;
+   TOOM_COOK_5_MUL_CO = INT_MAX;
+   FFT_MUL_LOWER_CO = INT_MAX;
+   FFT_MUL_UPPER_CO = INT_MAX;
+   FFT_SQR_LOWER_CO = INT_MAX;
+   FFT_SQR_UPPER_CO = INT_MAX;
+
+   if ((e = mp_init_multi(&a, &b, &c, &d, NULL)) != MP_OKAY) {
+      return EXIT_FAILURE;
+   }
+   for (x = 8; x < tc3m; x += 11) {
+      KARATSUBA_MUL_CUTOFF = x;
+      if ((e = s_mp_random(&a, x)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if ((e = s_mp_random(&b, x)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if ((e = mp_mul(&a,&b,&c)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if ((e = s_mp_mul(&a,&b,&d)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if (mp_cmp(&c, &d) != MP_EQ) {
+         goto LTM_ERR;
+      }
+   }
+   KARATSUBA_MUL_CUTOFF = kss;
+   KARATSUBA_SQR_CUTOFF = ksm;
+   TOOM_MUL_CUTOFF = tc3m;
+   TOOM_SQR_CUTOFF = tc3s;
+   TOOM_COOK_4_MUL_CO = tc4m;
+   TOOM_COOK_4_SQR_CO = tc4s;
+   TOOM_COOK_5_MUL_CO = tc5m;
+   TOOM_COOK_5_SQR_CO = tc5s;
+   FFT_MUL_LOWER_CO = fftml;
+   FFT_MUL_UPPER_CO = fftmu;
+   FFT_SQR_LOWER_CO = fftsl;
+   FFT_SQR_UPPER_CO = fftsu;
+
+   mp_clear_multi(&a, &b, &c, &d, NULL);
+   return EXIT_SUCCESS;
+LTM_ERR:
+   mp_clear_multi(&a, &b, &c, &d, NULL);
+   return EXIT_FAILURE;
+}
+static int test_s_mp_toom_mul(void)
+{
+   int x, e;
+   int ksm, kss, tc3m, tc3s, tc4m, tc4s, tc5m, tc5s, fftml, fftmu, fftsl, fftsu;
+   mp_int a, b, c, d;
+
+   ksm  = KARATSUBA_MUL_CUTOFF;
+   kss  = KARATSUBA_SQR_CUTOFF;
+   tc3m = TOOM_MUL_CUTOFF;
+   tc3s = TOOM_SQR_CUTOFF;
+   tc4m = TOOM_COOK_4_MUL_CO;
+   tc4s = TOOM_COOK_4_SQR_CO;
+   tc5m = TOOM_COOK_5_MUL_CO;
+   tc5s = TOOM_COOK_5_SQR_CO;
+   fftml = FFT_MUL_LOWER_CO;
+   fftmu = FFT_MUL_UPPER_CO;
+   fftsl = FFT_SQR_LOWER_CO;
+   fftsu = FFT_SQR_UPPER_CO;
+
+   KARATSUBA_MUL_CUTOFF = INT_MAX;
+   KARATSUBA_SQR_CUTOFF = INT_MAX;
+   TOOM_MUL_CUTOFF = INT_MAX;
+   TOOM_SQR_CUTOFF = INT_MAX;
+   TOOM_COOK_4_SQR_CO = INT_MAX;
+   TOOM_COOK_4_MUL_CO = INT_MAX;
+   TOOM_COOK_5_SQR_CO = INT_MAX;
+   TOOM_COOK_5_MUL_CO = INT_MAX;
+   FFT_MUL_LOWER_CO = INT_MAX;
+   FFT_MUL_UPPER_CO = INT_MAX;
+   FFT_SQR_LOWER_CO = INT_MAX;
+   FFT_SQR_UPPER_CO = INT_MAX;
+
+   if ((e = mp_init_multi(&a, &b, &c, &d, NULL)) != MP_OKAY) {
+      return EXIT_FAILURE;
+   }
+
+   for (x = ksm; x < tc4m; x += 11) {
+      TOOM_MUL_CUTOFF = x;
+      if ((e = s_mp_random(&a, x)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if ((e = s_mp_random(&b, x)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if ((e = mp_mul(&a,&b,&c)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if ((e = s_mp_mul(&a,&b,&d)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if (mp_cmp(&c, &d) != MP_EQ) {
+         goto LTM_ERR;
+      }
+   }
+   KARATSUBA_MUL_CUTOFF = kss;
+   KARATSUBA_SQR_CUTOFF = ksm;
+   TOOM_MUL_CUTOFF = tc3m;
+   TOOM_SQR_CUTOFF = tc3s;
+   TOOM_COOK_4_MUL_CO = tc4m;
+   TOOM_COOK_4_SQR_CO = tc4s;
+   TOOM_COOK_5_MUL_CO = tc5m;
+   TOOM_COOK_5_SQR_CO = tc5s;
+   FFT_MUL_LOWER_CO = fftml;
+   FFT_MUL_UPPER_CO = fftmu;
+   FFT_SQR_LOWER_CO = fftsl;
+   FFT_SQR_UPPER_CO = fftsu;
+
+   mp_clear_multi(&a, &b, &c, &d, NULL);
+   return EXIT_SUCCESS;
+LTM_ERR:
+   mp_clear_multi(&a, &b, &c, &d, NULL);
+   return EXIT_FAILURE;
+}
+static int test_s_mp_toom_cook_4_mul(void)
+{
+   int x, e;
+   int ksm, kss, tc3m, tc3s, tc4m, tc4s, tc5m, tc5s, fftml, fftmu, fftsl, fftsu;
+   mp_int a, b, c, d;
+
+   ksm  = KARATSUBA_MUL_CUTOFF;
+   kss  = KARATSUBA_SQR_CUTOFF;
+   tc3m = TOOM_MUL_CUTOFF;
+   tc3s = TOOM_SQR_CUTOFF;
+   tc4m = TOOM_COOK_4_MUL_CO;
+   tc4s = TOOM_COOK_4_SQR_CO;
+   tc5m = TOOM_COOK_5_MUL_CO;
+   tc5s = TOOM_COOK_5_SQR_CO;
+   fftml = FFT_MUL_LOWER_CO;
+   fftmu = FFT_MUL_UPPER_CO;
+   fftsl = FFT_SQR_LOWER_CO;
+   fftsu = FFT_SQR_UPPER_CO;
+
+   KARATSUBA_MUL_CUTOFF = INT_MAX;
+   KARATSUBA_SQR_CUTOFF = INT_MAX;
+   TOOM_MUL_CUTOFF = INT_MAX;
+   TOOM_SQR_CUTOFF = INT_MAX;
+   TOOM_COOK_4_SQR_CO = INT_MAX;
+   TOOM_COOK_4_MUL_CO = INT_MAX;
+   TOOM_COOK_5_SQR_CO = INT_MAX;
+   TOOM_COOK_5_MUL_CO = INT_MAX;
+   FFT_MUL_LOWER_CO = INT_MAX;
+   FFT_MUL_UPPER_CO = INT_MAX;
+   FFT_SQR_LOWER_CO = INT_MAX;
+   FFT_SQR_UPPER_CO = INT_MAX;
+
+   if ((e = mp_init_multi(&a, &b, &c, &d, NULL)) != MP_OKAY) {
+      return EXIT_FAILURE;
+   }
+
+   for (x = tc3m; x < tc5m; x += 11) {
+      TOOM_COOK_4_MUL_CO = x;
+      if ((e = s_mp_random(&a, x)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if ((e = s_mp_random(&b, x)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if ((e = mp_mul(&a,&b,&c)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if ((e = s_mp_mul(&a,&b,&d)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if (mp_cmp(&c, &d) != MP_EQ) {
+         goto LTM_ERR;
+      }
+   }
+   KARATSUBA_MUL_CUTOFF = kss;
+   KARATSUBA_SQR_CUTOFF = ksm;
+   TOOM_MUL_CUTOFF = tc3m;
+   TOOM_SQR_CUTOFF = tc3s;
+   TOOM_COOK_4_MUL_CO = tc4m;
+   TOOM_COOK_4_SQR_CO = tc4s;
+   TOOM_COOK_5_MUL_CO = tc5m;
+   TOOM_COOK_5_SQR_CO = tc5s;
+   FFT_MUL_LOWER_CO = fftml;
+   FFT_MUL_UPPER_CO = fftmu;
+   FFT_SQR_LOWER_CO = fftsl;
+   FFT_SQR_UPPER_CO = fftsu;
+
+   mp_clear_multi(&a, &b, &c, &d, NULL);
+   return EXIT_SUCCESS;
+LTM_ERR:
+   mp_clear_multi(&a, &b, &c, &d, NULL);
+   return EXIT_FAILURE;
+}
+static int test_s_mp_toom_cook_5_mul(void)
+{
+   int x, e;
+   int ksm, kss, tc3m, tc3s, tc4m, tc4s, tc5m, tc5s, fftml, fftmu, fftsl, fftsu;
+   mp_int a, b, c, d;
+
+   ksm  = KARATSUBA_MUL_CUTOFF;
+   kss  = KARATSUBA_SQR_CUTOFF;
+   tc3m = TOOM_MUL_CUTOFF;
+   tc3s = TOOM_SQR_CUTOFF;
+   tc4m = TOOM_COOK_4_MUL_CO;
+   tc4s = TOOM_COOK_4_SQR_CO;
+   tc5m = TOOM_COOK_5_MUL_CO;
+   tc5s = TOOM_COOK_5_SQR_CO;
+   fftml = FFT_MUL_LOWER_CO;
+   fftmu = FFT_MUL_UPPER_CO;
+   fftsl = FFT_SQR_LOWER_CO;
+   fftsu = FFT_SQR_UPPER_CO;
+
+   KARATSUBA_MUL_CUTOFF = INT_MAX;
+   KARATSUBA_SQR_CUTOFF = INT_MAX;
+   TOOM_MUL_CUTOFF = INT_MAX;
+   TOOM_SQR_CUTOFF = INT_MAX;
+   TOOM_COOK_4_SQR_CO = INT_MAX;
+   TOOM_COOK_4_MUL_CO = INT_MAX;
+   TOOM_COOK_5_SQR_CO = INT_MAX;
+   TOOM_COOK_5_MUL_CO = INT_MAX;
+   FFT_MUL_LOWER_CO = INT_MAX;
+   FFT_MUL_UPPER_CO = INT_MAX;
+   FFT_SQR_LOWER_CO = INT_MAX;
+   FFT_SQR_UPPER_CO = INT_MAX;
+
+   if ((e = mp_init_multi(&a, &b, &c, &d, NULL)) != MP_OKAY) {
+      return EXIT_FAILURE;
+   }
+
+   for (x = tc4m; x < (tc5m * 2); x += 11) {
+      TOOM_COOK_5_MUL_CO = x;
+      if ((e = s_mp_random(&a, x)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if ((e = s_mp_random(&b, x)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if ((e = mp_mul(&a,&b,&c)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if ((e = s_mp_mul(&a,&b,&d)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if (mp_cmp(&c, &d) != MP_EQ) {
+         goto LTM_ERR;
+      }
+   }
+   KARATSUBA_MUL_CUTOFF = kss;
+   KARATSUBA_SQR_CUTOFF = ksm;
+   TOOM_MUL_CUTOFF = tc3m;
+   TOOM_SQR_CUTOFF = tc3s;
+   TOOM_COOK_4_MUL_CO = tc4m;
+   TOOM_COOK_4_SQR_CO = tc4s;
+   TOOM_COOK_5_MUL_CO = tc5m;
+   TOOM_COOK_5_SQR_CO = tc5s;
+   FFT_MUL_LOWER_CO = fftml;
+   FFT_MUL_UPPER_CO = fftmu;
+   FFT_SQR_LOWER_CO = fftsl;
+   FFT_SQR_UPPER_CO = fftsu;
+
+   mp_clear_multi(&a, &b, &c, &d, NULL);
+   return EXIT_SUCCESS;
+LTM_ERR:
+   mp_clear_multi(&a, &b, &c, &d, NULL);
+   return EXIT_FAILURE;
+}
+static int test_s_mp_fft_mul(void)
+{
+   int x, e;
+   int fftml, fftmu;
+   mp_int a, b, c, d;
+
+   if ((e = mp_init_multi(&a, &b, &c, &d, NULL)) != MP_OKAY) {
+      return EXIT_FAILURE;
+   }
+   fftml = FFT_MUL_LOWER_CO;
+   fftmu = FFT_MUL_UPPER_CO;
+   FFT_MUL_LOWER_CO = INT_MAX;
+   FFT_MUL_UPPER_CO = INT_MAX;
+   for (x = FFT_MUL_LOWER_CO; (x < FFT_MUL_UPPER_CO) && (x < (FFT_MUL_LOWER_CO + 500)); x += 31) {
+      if ((e = s_mp_random(&a, x)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if ((e = s_mp_random(&b, x)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if ((e = s_mp_fft_mul(&a,&b,&c)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if ((e = mp_mul(&a,&b,&d)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if (mp_cmp(&c, &d) != MP_EQ) {
+         goto LTM_ERR;
+      }
+   }
+   FFT_MUL_LOWER_CO = fftml;
+   FFT_MUL_UPPER_CO = fftmu;
+   mp_clear_multi(&a, &b, &c, &d, NULL);
+   return EXIT_SUCCESS;
+LTM_ERR:
+   mp_clear_multi(&a, &b, &c, &d, NULL);
+   return EXIT_FAILURE;
+}
+
+static int test_s_mp_karatsuba_sqr(void)
+{
+   int x, e;
+   int ksm, kss, tc3m, tc3s, tc4m, tc4s, tc5m, tc5s, fftml, fftmu, fftsl, fftsu;
+   mp_int a, c, d;
+
+   /* T-C squaring involves some multiplications, too */
+   ksm  = KARATSUBA_MUL_CUTOFF;
+   kss  = KARATSUBA_SQR_CUTOFF;
+   tc3m = TOOM_MUL_CUTOFF;
+   tc3s = TOOM_SQR_CUTOFF;
+   tc4m = TOOM_COOK_4_MUL_CO;
+   tc4s = TOOM_COOK_4_SQR_CO;
+   tc5m = TOOM_COOK_5_MUL_CO;
+   tc5s = TOOM_COOK_5_SQR_CO;
+   fftml = FFT_MUL_LOWER_CO;
+   fftmu = FFT_MUL_UPPER_CO;
+   fftsl = FFT_SQR_LOWER_CO;
+   fftsu = FFT_SQR_UPPER_CO;
+
+   KARATSUBA_MUL_CUTOFF = INT_MAX;
+   KARATSUBA_SQR_CUTOFF = INT_MAX;
+   TOOM_MUL_CUTOFF = INT_MAX;
+   TOOM_SQR_CUTOFF = INT_MAX;
+   TOOM_COOK_4_SQR_CO = INT_MAX;
+   TOOM_COOK_4_MUL_CO = INT_MAX;
+   TOOM_COOK_5_SQR_CO = INT_MAX;
+   TOOM_COOK_5_MUL_CO = INT_MAX;
+   FFT_MUL_LOWER_CO = INT_MAX;
+   FFT_MUL_UPPER_CO = INT_MAX;
+   FFT_SQR_LOWER_CO = INT_MAX;
+   FFT_SQR_UPPER_CO = INT_MAX;
+
+   if ((e = mp_init_multi(&a, &c, &d, NULL)) != MP_OKAY) {
+      return EXIT_FAILURE;
+   }
+
+   for (x = 8; x < tc3s; x += 11) {
+      KARATSUBA_SQR_CUTOFF = x;
+      if ((e = s_mp_random(&a, x)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if ((e = mp_sqr(&a, &c)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if ((e = s_mp_sqr(&a,&d)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if (mp_cmp(&c, &d) != MP_EQ) {
+         goto LTM_ERR;
+      }
+   }
+   KARATSUBA_MUL_CUTOFF = kss;
+   KARATSUBA_SQR_CUTOFF = ksm;
+   TOOM_MUL_CUTOFF = tc3m;
+   TOOM_SQR_CUTOFF = tc3s;
+   TOOM_COOK_4_MUL_CO = tc4m;
+   TOOM_COOK_4_SQR_CO = tc4s;
+   TOOM_COOK_5_MUL_CO = tc5m;
+   TOOM_COOK_5_SQR_CO = tc5s;
+   FFT_MUL_LOWER_CO = fftml;
+   FFT_MUL_UPPER_CO = fftmu;
+   FFT_SQR_LOWER_CO = fftsl;
+   FFT_SQR_UPPER_CO = fftsu;
+
+   mp_clear_multi(&a, &c, &d, NULL);
+   return EXIT_SUCCESS;
+LTM_ERR:
+   mp_clear_multi(&a, &c, &d, NULL);
+   return EXIT_FAILURE;
+}
+static int test_s_mp_toom_sqr(void)
+{
+   int x, e;
+   int ksm, kss, tc3m, tc3s, tc4m, tc4s, tc5m, tc5s, fftml, fftmu, fftsl, fftsu;
+   mp_int a, c, d;
+
+   ksm  = KARATSUBA_MUL_CUTOFF;
+   kss  = KARATSUBA_SQR_CUTOFF;
+   tc3m = TOOM_MUL_CUTOFF;
+   tc3s = TOOM_SQR_CUTOFF;
+   tc4m = TOOM_COOK_4_MUL_CO;
+   tc4s = TOOM_COOK_4_SQR_CO;
+   tc5m = TOOM_COOK_5_MUL_CO;
+   tc5s = TOOM_COOK_5_SQR_CO;
+   fftml = FFT_MUL_LOWER_CO;
+   fftmu = FFT_MUL_UPPER_CO;
+   fftsl = FFT_SQR_LOWER_CO;
+   fftsu = FFT_SQR_UPPER_CO;
+
+   KARATSUBA_MUL_CUTOFF = INT_MAX;
+   KARATSUBA_SQR_CUTOFF = INT_MAX;
+   TOOM_MUL_CUTOFF = INT_MAX;
+   TOOM_SQR_CUTOFF = INT_MAX;
+   TOOM_COOK_4_SQR_CO = INT_MAX;
+   TOOM_COOK_4_MUL_CO = INT_MAX;
+   TOOM_COOK_5_SQR_CO = INT_MAX;
+   TOOM_COOK_5_MUL_CO = INT_MAX;
+   FFT_MUL_LOWER_CO = INT_MAX;
+   FFT_MUL_UPPER_CO = INT_MAX;
+   FFT_SQR_LOWER_CO = INT_MAX;
+   FFT_SQR_UPPER_CO = INT_MAX;
+
+   if ((e = mp_init_multi(&a, &c, &d, NULL)) != MP_OKAY) {
+      return EXIT_FAILURE;
+   }
+
+   for (x = kss; x < tc4s; x += 11) {
+      TOOM_SQR_CUTOFF = x;
+      if ((e = s_mp_random(&a, x)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if ((e = mp_sqr(&a, &c)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if ((e = s_mp_sqr(&a,&d)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if (mp_cmp(&c, &d) != MP_EQ) {
+         goto LTM_ERR;
+      }
+   }
+   KARATSUBA_MUL_CUTOFF = kss;
+   KARATSUBA_SQR_CUTOFF = ksm;
+   TOOM_MUL_CUTOFF = tc3m;
+   TOOM_SQR_CUTOFF = tc3s;
+   TOOM_COOK_4_MUL_CO = tc4m;
+   TOOM_COOK_4_SQR_CO = tc4s;
+   TOOM_COOK_5_MUL_CO = tc5m;
+   TOOM_COOK_5_SQR_CO = tc5s;
+   FFT_MUL_LOWER_CO = fftml;
+   FFT_MUL_UPPER_CO = fftmu;
+   FFT_SQR_LOWER_CO = fftsl;
+   FFT_SQR_UPPER_CO = fftsu;
+
+   mp_clear_multi(&a, &c, &d, NULL);
+   return EXIT_SUCCESS;
+LTM_ERR:
+   mp_clear_multi(&a, &c, &d, NULL);
+   return EXIT_FAILURE;
+}
+static int test_s_mp_toom_cook_4_sqr(void)
+{
+   int x, e;
+   int ksm, kss, tc3m, tc3s, tc4m, tc4s, tc5m, tc5s, fftml, fftmu, fftsl, fftsu;
+   mp_int a, c, d;
+
+   ksm  = KARATSUBA_MUL_CUTOFF;
+   kss  = KARATSUBA_SQR_CUTOFF;
+   tc3m = TOOM_MUL_CUTOFF;
+   tc3s = TOOM_SQR_CUTOFF;
+   tc4m = TOOM_COOK_4_MUL_CO;
+   tc4s = TOOM_COOK_4_SQR_CO;
+   tc5m = TOOM_COOK_5_MUL_CO;
+   tc5s = TOOM_COOK_5_SQR_CO;
+   fftml = FFT_MUL_LOWER_CO;
+   fftmu = FFT_MUL_UPPER_CO;
+   fftsl = FFT_SQR_LOWER_CO;
+   fftsu = FFT_SQR_UPPER_CO;
+
+   KARATSUBA_MUL_CUTOFF = INT_MAX;
+   KARATSUBA_SQR_CUTOFF = INT_MAX;
+   TOOM_MUL_CUTOFF = INT_MAX;
+   TOOM_SQR_CUTOFF = INT_MAX;
+   TOOM_COOK_4_SQR_CO = INT_MAX;
+   TOOM_COOK_4_MUL_CO = INT_MAX;
+   TOOM_COOK_5_SQR_CO = INT_MAX;
+   TOOM_COOK_5_MUL_CO = INT_MAX;
+   FFT_MUL_LOWER_CO = INT_MAX;
+   FFT_MUL_UPPER_CO = INT_MAX;
+   FFT_SQR_LOWER_CO = INT_MAX;
+   FFT_SQR_UPPER_CO = INT_MAX;
+
+   if ((e = mp_init_multi(&a, &c, &d, NULL)) != MP_OKAY) {
+      return EXIT_FAILURE;
+   }
+
+   for (x = tc3s; x < tc5s; x += 11) {
+      TOOM_COOK_4_SQR_CO = x;
+      if ((e = s_mp_random(&a, x)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if ((e = mp_sqr(&a, &c)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if ((e = s_mp_sqr(&a,&d)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if (mp_cmp(&c, &d) != MP_EQ) {
+         goto LTM_ERR;
+      }
+   }
+   KARATSUBA_MUL_CUTOFF = kss;
+   KARATSUBA_SQR_CUTOFF = ksm;
+   TOOM_MUL_CUTOFF = tc3m;
+   TOOM_SQR_CUTOFF = tc3s;
+   TOOM_COOK_4_MUL_CO = tc4m;
+   TOOM_COOK_4_SQR_CO = tc4s;
+   TOOM_COOK_5_MUL_CO = tc5m;
+   TOOM_COOK_5_SQR_CO = tc5s;
+   FFT_MUL_LOWER_CO = fftml;
+   FFT_MUL_UPPER_CO = fftmu;
+   FFT_SQR_LOWER_CO = fftsl;
+   FFT_SQR_UPPER_CO = fftsu;
+
+   mp_clear_multi(&a, &c, &d, NULL);
+   return EXIT_SUCCESS;
+LTM_ERR:
+   mp_clear_multi(&a, &c, &d, NULL);
+   return EXIT_FAILURE;
+}
+static int test_s_mp_toom_cook_5_sqr(void)
+{
+   int x, e;
+   int ksm, kss, tc3m, tc3s, tc4m, tc4s, tc5m, tc5s, fftml, fftmu, fftsl, fftsu;
+   mp_int a, c, d;
+
+   ksm  = KARATSUBA_MUL_CUTOFF;
+   kss  = KARATSUBA_SQR_CUTOFF;
+   tc3m = TOOM_MUL_CUTOFF;
+   tc3s = TOOM_SQR_CUTOFF;
+   tc4m = TOOM_COOK_4_MUL_CO;
+   tc4s = TOOM_COOK_4_SQR_CO;
+   tc5m = TOOM_COOK_5_MUL_CO;
+   tc5s = TOOM_COOK_5_SQR_CO;
+   fftml = FFT_MUL_LOWER_CO;
+   fftmu = FFT_MUL_UPPER_CO;
+   fftsl = FFT_SQR_LOWER_CO;
+   fftsu = FFT_SQR_UPPER_CO;
+
+   KARATSUBA_MUL_CUTOFF = INT_MAX;
+   KARATSUBA_SQR_CUTOFF = INT_MAX;
+   TOOM_MUL_CUTOFF = INT_MAX;
+   TOOM_SQR_CUTOFF = INT_MAX;
+   TOOM_COOK_4_SQR_CO = INT_MAX;
+   TOOM_COOK_4_MUL_CO = INT_MAX;
+   TOOM_COOK_5_SQR_CO = INT_MAX;
+   TOOM_COOK_5_MUL_CO = INT_MAX;
+   FFT_MUL_LOWER_CO = INT_MAX;
+   FFT_MUL_UPPER_CO = INT_MAX;
+   FFT_SQR_LOWER_CO = INT_MAX;
+   FFT_SQR_UPPER_CO = INT_MAX;
+
+   if ((e = mp_init_multi(&a, &c, &d, NULL)) != MP_OKAY) {
+      return EXIT_FAILURE;
+   }
+
+   for (x = tc4s; x < (tc5s * 2); x += 11) {
+      TOOM_COOK_5_SQR_CO = x;
+      if ((e = s_mp_random(&a, x)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if ((e = mp_sqr(&a, &c)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if ((e = s_mp_sqr(&a,&d)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if (mp_cmp(&c, &d) != MP_EQ) {
+         goto LTM_ERR;
+      }
+   }
+   KARATSUBA_MUL_CUTOFF = kss;
+   KARATSUBA_SQR_CUTOFF = ksm;
+   TOOM_MUL_CUTOFF = tc3m;
+   TOOM_SQR_CUTOFF = tc3s;
+   TOOM_COOK_4_MUL_CO = tc4m;
+   TOOM_COOK_4_SQR_CO = tc4s;
+   TOOM_COOK_5_MUL_CO = tc5m;
+   TOOM_COOK_5_SQR_CO = tc5s;
+   FFT_MUL_LOWER_CO = fftml;
+   FFT_MUL_UPPER_CO = fftmu;
+   FFT_SQR_LOWER_CO = fftsl;
+   FFT_SQR_UPPER_CO = fftsu;
+
+   mp_clear_multi(&a, &c, &d, NULL);
+   return EXIT_SUCCESS;
+LTM_ERR:
+   mp_clear_multi(&a, &c, &d, NULL);
+   return EXIT_FAILURE;
+}
+static int test_s_mp_fft_sqr(void)
+{
+   int x, e;
+   int fftsl, fftsu;
+   mp_int a, c, d;
+
+   if ((e = mp_init_multi(&a, &c, &d, NULL)) != MP_OKAY) {
+      return EXIT_FAILURE;
+   }
+
+   fftsl = FFT_SQR_LOWER_CO;
+   fftsu = FFT_SQR_UPPER_CO;
+   FFT_SQR_LOWER_CO = INT_MAX;
+   FFT_SQR_UPPER_CO = INT_MAX;
+   for (x = FFT_SQR_LOWER_CO; (x < FFT_SQR_UPPER_CO) && (x < (FFT_SQR_LOWER_CO + 500)); x += 31) {
+      if ((e = s_mp_random(&a, x)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if ((e = s_mp_fft_sqr(&a,&c)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if ((e = mp_sqr(&a,&d)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if (mp_cmp(&c, &d) != MP_EQ) {
+         goto LTM_ERR;
+      }
+   }
+   FFT_SQR_LOWER_CO = fftsl;
+   FFT_SQR_UPPER_CO = fftsu;
+
+   mp_clear_multi(&a, &c, &d, NULL);
+   return EXIT_SUCCESS;
+LTM_ERR:
+   mp_clear_multi(&a, &c, &d, NULL);
+   return EXIT_FAILURE;
+}
+
+
 int unit_tests(void)
 {
    static const struct {
@@ -1842,7 +2497,17 @@ int unit_tests(void)
       T(mp_incr),
       T(mp_decr),
       T(s_mp_balance_mul),
-      T(mp_ilogb)
+      T(mp_ilogb),
+      T(s_mp_karatsuba_mul),
+      T(s_mp_toom_mul),
+      T(s_mp_toom_cook_4_mul),
+      T(s_mp_toom_cook_5_mul),
+      T(s_mp_fft_mul),
+      T(s_mp_karatsuba_sqr),
+      T(s_mp_toom_sqr),
+      T(s_mp_toom_cook_4_sqr),
+      T(s_mp_toom_cook_5_sqr),
+      T(s_mp_fft_sqr)
 #undef T
    };
    unsigned long i;
@@ -1854,6 +2519,8 @@ int unit_tests(void)
       fprintf(stderr, "\ncould not open /dev/urandom\n");
    }
 #endif
+
+   s_random_seed(0xdeadbeefULL);
 
    for (i = 0; i < sizeof(test) / sizeof(test[0]); ++i) {
       printf("TEST %s\n\n", test[i].name);

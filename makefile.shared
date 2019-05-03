@@ -80,16 +80,18 @@ uninstall:
 	rm $(DESTDIR)$(LIBPATH)/pkgconfig/libtommath.pc
 
 test: $(LIBNAME)
+	$(LTCOMPILE) $(CFLAGS) -c demo/pnrg.c -o demo/prng.o
 	$(LTCOMPILE) $(CFLAGS) -c demo/main.c -o demo/main.o
 	$(LTCOMPILE) $(CFLAGS) -c demo/opponent.c -o demo/opponent.o
 	$(LTCOMPILE) $(CFLAGS) -c demo/test.c -o demo/test.o
-	$(LTLINK) $(LDFLAGS) -o test demo/main.o demo/opponent.o demo/test.o $(LIBNAME)
+	$(LTLINK) $(LDFLAGS) -o test demo/main.o demo/opponent.o demo/prng.o demo/test.o $(LIBNAME)
 
 test_standalone: $(LIBNAME)
+	$(LTCOMPILE) $(CFLAGS) -c demo/pnrg.c -o demo/prng.o
 	$(LTCOMPILE) $(CFLAGS) -c demo/main.c -o demo/main.o
 	$(LTCOMPILE) $(CFLAGS) -c demo/opponent.c -o demo/opponent.o
 	$(LTCOMPILE) $(CFLAGS) -c demo/test.c -o demo/test.o
-	$(LTLINK) $(LDFLAGS) -o test demo/main.o demo/opponent.o demo/test.o $(LIBNAME)
+	$(LTLINK) $(LDFLAGS) -o test demo/main.o demo/opponent.o demo/prng.o demo/test.o $(LIBNAME)
 
 .PHONY: mtest
 mtest:
