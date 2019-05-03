@@ -3,18 +3,9 @@
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
-/* Known optimal configurations
+int KARATSUBA_MUL_CUTOFF = MP_DEFAULT_KARATSUBA_MUL_CUTOFF,
+    KARATSUBA_SQR_CUTOFF = MP_DEFAULT_KARATSUBA_SQR_CUTOFF,
+    TOOM_MUL_CUTOFF = MP_DEFAULT_TOOM_MUL_CUTOFF,
+    TOOM_SQR_CUTOFF = MP_DEFAULT_TOOM_SQR_CUTOFF;
 
- CPU                    /Compiler     /MUL CUTOFF/SQR CUTOFF
--------------------------------------------------------------
- Intel P4 Northwood     /GCC v3.4.1   /        88/       128/LTM 0.32 ;-)
- AMD Athlon64           /GCC v3.4.4   /        80/       120/LTM 0.35
-
-*/
-
-int     KARATSUBA_MUL_CUTOFF = 80,      /* Min. number of digits before Karatsuba multiplication is used. */
-        KARATSUBA_SQR_CUTOFF = 120,     /* Min. number of digits before Karatsuba squaring is used. */
-
-        TOOM_MUL_CUTOFF      = 350,      /* no optimal values of these are known yet so set em high */
-        TOOM_SQR_CUTOFF      = 400;
 #endif

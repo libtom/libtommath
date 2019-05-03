@@ -117,11 +117,48 @@ typedef uint64_t             mp_word;
 
 typedef int           mp_err;
 
-/* you'll have to tune these... */
-extern int KARATSUBA_MUL_CUTOFF,
-       KARATSUBA_SQR_CUTOFF,
-       TOOM_MUL_CUTOFF,
-       TOOM_SQR_CUTOFF;
+/* Known optimal configurations
+ CPU                    /Compiler     /MUL CUTOFF/SQR CUTOFF
+-------------------------------------------------------------
+ Intel P4 Northwood     /GCC v3.4.1   /        88/       128/LTM 0.32 ;-)
+ AMD Athlon64           /GCC v3.4.4   /        80/       120/LTM 0.35
+*/
+#define MP_DEFAULT_KARATSUBA_MUL_CUTOFF 80      /* Min. number of digits before Karatsuba multiplication is used. */
+#define MP_DEFAULT_KARATSUBA_SQR_CUTOFF 120     /* Min. number of digits before Karatsuba squaring is used. */
+#define MP_DEFAULT_TOOM_MUL_CUTOFF      350      /* no optimal values of these are known yet so set em high */
+#define MP_DEFAULT_TOOM_SQR_CUTOFF      400
+
+/* You'll have to tune these either by defining MP_*_*_CUTOFF at compile time,
+ * or by setting the external variables. Furthermore all cutoffs
+ * can be fixed at compile time by defining MP_DEFAULT_CUTOFFS.
+ */
+#ifdef MP_DEFAULT_CUTOFFS
+#  define MP_KARATSUBA_MUL_CUTOFF MP_DEFAULT_KARATSUBA_MUL_CUTOFF
+#elif !defined(MP_KARATSUBA_MUL_CUTOFF)
+extern int KARATSUBA_MUL_CUTOFF;
+#  define MP_KARATSUBA_MUL_CUTOFF KARATSUBA_MUL_CUTOFF
+#endif
+
+#ifdef MP_DEFAULT_CUTOFFS
+#  define MP_KARATSUBA_SQR_CUTOFF MP_DEFAULT_KARATSUBA_SQR_CUTOFF
+#elif !defined(MP_KARATSUBA_SQR_CUTOFF)
+extern int KARATSUBA_SQR_CUTOFF;
+#  define MP_KARATSUBA_SQR_CUTOFF KARATSUBA_SQR_CUTOFF
+#endif
+
+#ifdef MP_DEFAULT_CUTOFFS
+#  define MP_TOOM_MUL_CUTOFF MP_DEFAULT_TOOM_MUL_CUTOFF
+#elif !defined(MP_TOOM_MUL_CUTOFF)
+extern int TOOM_MUL_CUTOFF;
+#  define MP_TOOM_MUL_CUTOFF TOOM_MUL_CUTOFF
+#endif
+
+#ifdef MP_DEFAULT_CUTOFFS
+#  define MP_TOOM_SQR_CUTOFF MP_DEFAULT_TOOM_SQR_CUTOFF
+#elif !defined(MP_TOOM_SQR_CUTOFF)
+extern int TOOM_SQR_CUTOFF;
+#  define MP_TOOM_SQR_CUTOFF TOOM_SQR_CUTOFF
+#endif
 
 /* define this to use lower memory usage routines (exptmods mostly) */
 /* #define MP_LOW_MEM */

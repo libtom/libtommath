@@ -10,13 +10,13 @@ int mp_sqr(const mp_int *a, mp_int *b)
 
 #ifdef BN_S_MP_TOOM_SQR_C
    /* use Toom-Cook? */
-   if (a->used >= TOOM_SQR_CUTOFF) {
+   if (a->used >= MP_TOOM_SQR_CUTOFF) {
       res = s_mp_toom_sqr(a, b);
       /* Karatsuba? */
    } else
 #endif
 #ifdef BN_S_MP_KARATSUBA_SQR_C
-      if (a->used >= KARATSUBA_SQR_CUTOFF) {
+      if (a->used >= MP_KARATSUBA_SQR_CUTOFF) {
          res = s_mp_karatsuba_sqr(a, b);
       } else
 #endif
