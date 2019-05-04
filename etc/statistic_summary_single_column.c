@@ -225,11 +225,14 @@ int main(int argc, char **argv)
    size_t size;
 
    int verbose = 0;
+   int print_median_only = 0;
 
    if (argc != 1) {
       /* To avoid a warning with clang's -Weverything */
       if (argv[1][0] == 'v') {
          verbose = 1;
+      } else if (argv[1][0] == 'm') {
+         print_median_only = 1;
       }
    }
    /* Beware! Does not check anything! */
@@ -290,12 +293,21 @@ int main(int argc, char **argv)
    sk = s_skewness(array, count, mean);
    ku = s_kurtosis(array, count, mean);
    /* TODO: A bit wide, make two tables out of it? */
-   if (verbose == 1) {
+   if ((verbose == 1) && (print_median_only == 0)) {
       printf("%8s%8s%8s%6s%8s%7s%8s%10s%9s%8s%9s",
              "N", "min", "median", "mode", "mean", "max", "sd", "skew", "kurt", "25%", "75%\n");
+
+   } else if ((verbose == 0) && (print_median_only == 0)) {
+      printf("%5s %-4d %5ld %5ld %5ld %8.2f %5ld %8.2f %8.2f %8.2f %8.2f %8.2f\n",
+             col_name, count, min, median, mode, mean, max, sd, sk, ku, lq, uq);
+   } else if ((verbose == 0) && (print_median_only == 1)) {
+      printf("%ld", median);
+   } else {
+      fprintf(stderr, "Don't know what to do, bailing out\n");
+      free(array);
+      exit(EXIT_FAILURE);
    }
-   printf("%5s %-4d %5ld %5ld %5ld %8.2f %5ld %8.2f %8.2f %8.2f %8.2f %8.2f\n",
-          col_name, count, min, median, mode, mean, max, sd, sk, ku, lq, uq);
+
    free(array);
    exit(EXIT_SUCCESS);
 }

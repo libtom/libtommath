@@ -110,6 +110,10 @@ mtest:
 timing: $(LIBNAME) demo/timing.c
 	$(CC) $(CFLAGS) -DTIMER demo/timing.c $(LIBNAME) $(LFLAGS) -o timing
 
+tune: $(LIBNAME)
+	$(MAKE) -C etc tune
+	$(MAKE)
+
 # You have to create a file .coveralls.yml with the content "repo_token: <the token>"
 # in the base folder to be able to submit to coveralls
 coveralls: lcov

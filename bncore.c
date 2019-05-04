@@ -17,17 +17,14 @@
    Please see etc/tune.c for ways to optimize them for your machine but
    be aware that it may take a long time.
  */
-int     KARATSUBA_MUL_CUTOFF = 125,     /* Min. number of digits before Karatsuba multiplication is used. */
-        KARATSUBA_SQR_CUTOFF = 150,     /* Min. number of digits before Karatsuba squaring is used. */
-
-        TOOM_MUL_CUTOFF      = 260,
-        TOOM_SQR_CUTOFF      = 260;
-
-int TOOM_COOK_4_MUL_CO = 300;
-int TOOM_COOK_4_SQR_CO = 300;
-int TOOM_COOK_5_MUL_CO = 400;
-int TOOM_COOK_5_SQR_CO = 400;
-
+int KARATSUBA_MUL_CUTOFF = 134;
+int KARATSUBA_SQR_CUTOFF = 134;
+int TOOM_MUL_CUTOFF = 225;
+int TOOM_SQR_CUTOFF = 260;
+int TOOM_COOK_4_MUL_CO = 449;
+int TOOM_COOK_4_SQR_CO = 386;
+int TOOM_COOK_5_MUL_CO = 526;
+int TOOM_COOK_5_SQR_CO = 386;
 /* These are just some safe values, please read the documentation for how to get your best fit */
 #if (MP_DIGIT_BIT == 60)
 int FFT_MUL_LOWER_CO = 75000;
@@ -68,9 +65,4 @@ int FFT_SQR_UPPER_CO = 900000;
 #    warning "7, 15, 28 and 60 bit limbs only (no 31 bit, sorry)."
 #  endif
 #endif /* FFT */
-
-
-
-
 #endif
-
