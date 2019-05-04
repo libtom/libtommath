@@ -118,11 +118,20 @@ _make()
 _runtest()
 {
   make clean > /dev/null
-  _make "$1" "$2" "test_standalone"
   local _timeout=""
   which timeout >/dev/null && _timeout="timeout --foreground 90"
-  echo -e "\rRun test $1 $2"
-  $_timeout ./test > test_${suffix}.log || _die "running tests" $?
+  if [[ "$MAKE_OPTIONS" =~ "tune" ]]
+  then
+    # "make tune" will run "tune_it.sh" automatically, hence "autotune", but it cannot
+    # get switched off without some effort, so we just let it run twice for testing purposes
+    _make "$1" "$2" ""
+    echo -e "\rRun autotune $1 $2"
+    $_timeout ./etc/tune_it.sh > test_${suffix}.log || _die "running autotune" $?
+  else
+    _make "$1" "$2" "test_standalone"
+    echo -e "\rRun test $1 $2"
+    $_timeout ./test > test_${suffix}.log || _die "running tests" $?
+  fi
 }
 
 # This is not much more of a C&P of _runtest with a different timeout
@@ -131,13 +140,24 @@ _runtest()
 _runvalgrind()
 {
   make clean > /dev/null
-  _make "$1" "$2" "test_standalone"
   local _timeout=""
   # 30 minutes? Yes. Had it at 20 minutes and the Valgrind run needed over 25 minutes.
   # A bit too close for comfort.
   which timeout >/dev/null && _timeout="timeout --foreground 1800"
-  echo -e "\rRun test $1 $2 inside valgrind"
-  $_timeout $VALGRIND_BIN $VALGRIND_OPTS ./test > test_${suffix}.log || _die "running tests" $?
+echo "MAKE_OPTIONS = \"$MAKE_OPTIONS\""
+  if [[ "$MAKE_OPTIONS" =~ "tune"  ]]
+  then
+echo "autotune branch"
+    _make "$1" "$2" ""
+    # The shell used for /bin/sh is DASH 0.5.7-4ubuntu1 on the author's machine which fails valgrind, so
+    # we just run on instance of etc/tune with the same options as in etc/tune_it.sh
+    echo -e "\rRun etc/tune $1 $2 once inside valgrind"
+    $_timeout $VALGRIND_BIN $VALGRIND_OPTS ./etc/tune -t -r 10 -L 3 > test_${suffix}.log || _die "running etc/tune" $?
+  else
+    _make "$1" "$2" "test_standalone"
+    echo -e "\rRun test $1 $2 inside valgrind"
+    $_timeout $VALGRIND_BIN $VALGRIND_OPTS ./test > test_${suffix}.log || _die "running tests" $?
+  fi
 }
 
 

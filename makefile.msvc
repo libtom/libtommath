@@ -75,6 +75,10 @@ test_standalone: test.exe
 
 all: $(LIBMAIN_S) test_standalone
 
+tune: $(LIBMAIN_S)
+	$(MAKE) -C etc tune
+	$(MAKE)
+
 clean:
 	@-cmd /c del /Q /S *.OBJ *.LIB *.EXE *.DLL 2>nul
 

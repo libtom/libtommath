@@ -110,7 +110,7 @@ ICC does not know all options available for GCC and LibTomMath uses two diagnost
 icc: command line warning #10148: option '-Wbad-function-cast' not supported
 icc: command line warning #10148: option '-Wcast-align' not supported
 \end{alltt}
-It is possible to mute this ICC warning with the compiler flag \texttt{-diag-disable=10006}\footnote{It is not recommended to suppress warnings without a very good reason but there is no harm in doing so in this very special case.}.
+It is possible to mute this ICC warning with the compiler flag \texttt{-diag-disable=10148}\footnote{It is not recommended to suppress warnings without a very good reason but there is no harm in doing so in this very special case.}.
 
 \subsection{Static Libraries}
 To build as a static library for GCC issue the following
@@ -127,6 +127,12 @@ nmake -f makefile.msvc
 This will build the library and archive the object files in ``tommath.lib''.  This has been tested with MSVC
 version 6.00 with service pack 5.
 
+To run a program to adapt the Toom-Cook cut-off values to your architecture type
+\begin{alltt}
+make tune
+\end{alltt}
+This will take some time.
+
 \subsection{Shared Libraries}
 \subsubsection{GNU based Operating Systems}
 To build as a shared library for GCC issue the following
@@ -137,6 +143,13 @@ This requires the ``libtool'' package (common on most Linux/BSD systems).  It wi
 and static then install (by default) into /usr/lib as well as install the header files in /usr/include.  The shared
 library (resource) will be called ``libtommath.la'' while the static library called ``libtommath.a''.  Generally
 you use libtool to link your application against the shared object.
+
+To run a program to adapt the Toom-Cook cut-off values to your architecture type
+\begin{alltt}
+make -f makefile.shared tune
+\end{alltt}
+This will take some time.
+
 \subsubsection{Microsoft Windows based Operating Systems}
 There is limited support for making a ``DLL'' in windows via the ``makefile.cygwin\_dll'' makefile.  It requires
 Cygwin to work with since it requires the auto-export/import functionality.  The resulting DLL and import library
@@ -1366,7 +1379,7 @@ should only be used with very large inputs.  This is followed by the Karatsuba m
 sized inputs.  Then followed by the Comba and baseline multipliers.
 
 Fortunately for the developer you don't really need to know this unless you really want to fine tune the system.  mp\_mul()
-will determine on its own\footnote{Some tweaking may be required.} what routine to use automatically when it is called.
+will determine on its own\footnote{Some tweaking may be required but \texttt{make tune} will put some reasonable values in \texttt{bncore.c}} what routine to use automatically when it is called.
 
 \begin{alltt}
 int main(void)
@@ -1448,34 +1461,17 @@ GCC 3.3.1 and an Athlon XP processor the cutoff point is roughly 110 digits (abo
 Toom-Cook has incredible overhead and is probably only useful for very large inputs.  So far no known cutoff points
 exist and for the most part I just set the cutoff points very high to make sure they're not called.
 
-A demo program in the ``etc/'' directory of the project called ``tune.c'' can be used to find the cutoff points.  This
-can be built with GCC as follows
+To get reasonable values for the cut-off points for your architecture, type
 
 \begin{alltt}
-make XXX
+make tune
 \end{alltt}
-Where ``XXX'' is one of the following entries from the table \ref{fig:tuning}.
 
-\begin{figure}[h]
-\begin{center}
-\begin{small}
-\begin{tabular}{|l|l|}
-\hline \textbf{Value of XXX} & \textbf{Meaning} \\
-\hline tune & Builds portable tuning application \\
-\hline tune86 & Builds x86 (pentium and up) program for COFF \\
-\hline tune86c & Builds x86 program for Cygwin \\
-\hline tune86l & Builds x86 program for Linux (ELF format) \\
-\hline
-\end{tabular}
-\end{small}
-\end{center}
-\caption{Build Names for Tuning Programs}
-\label{fig:tuning}
-\end{figure}
+This will run a benchmark, computes the medians, rewrites \texttt{bncore.c}, and recompiles \texttt{bncore.c} and relinks the library.
 
-When the program is running it will output a series of measurements for different cutoff points.  It will first find
-good Karatsuba squaring and multiplication points.  Then it proceeds to find Toom-Cook points.  Note that the Toom-Cook
-tuning takes a very long time as the cutoff points are likely to be very high.
+The benchmark itself can be fine-tuned in the file \texttt{etc/tune\_it.sh}.
+
+The program \texttt{etc/tune} is also able to print a list of values for printing curves with e.g.: \texttt{gnuplot}. type \texttt{./etc/tune -h} to get a list of all available options.
 
 \chapter{Modular Reduction}
 
@@ -1846,7 +1842,7 @@ int mp_sqrt (mp_int * a, mp_digit b, mp_int * c)
 
 \chapter{Logarithm}
 \section{Integer Logarithm}
-A logarithm function for positive integer input \texttt{a, base} computing  $\floor{\log_bx}$ such that $(\ilog_bx)^b \le x$.
+A logarithm function for positive integer input \texttt{a, base} computing  $\floor{\log_bx}$ such that $(\log_b x)^b \le x$.
 \index{mp\_ilogb}
 \begin{alltt}
 int mp_ilogb(mp_int *a, mp_digit base, mp_int *c)
