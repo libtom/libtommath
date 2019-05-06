@@ -23,10 +23,10 @@ LTLINK = $(LIBTOOL) --mode=link --tag=CC $(CC)
 LCOV_ARGS=--directory .libs --directory .
 
 #START_INS
-OBJECTS=bn_deprecated.o bn_mp_2expt.o bn_mp_abs.o bn_mp_add.o bn_mp_add_d.o bn_mp_addmod.o bn_mp_and.o \
-bn_mp_clamp.o bn_mp_clear.o bn_mp_clear_multi.o bn_mp_cmp.o bn_mp_cmp_d.o bn_mp_cmp_mag.o bn_mp_cnt_lsb.o \
-bn_mp_complement.o bn_mp_copy.o bn_mp_count_bits.o bn_mp_decr.o bn_mp_div.o bn_mp_div_2.o bn_mp_div_2d.o \
-bn_mp_div_3.o bn_mp_div_d.o bn_mp_dr_is_modulus.o bn_mp_dr_reduce.o bn_mp_dr_setup.o \
+OBJECTS=bn_cutoffs.o bn_deprecated.o bn_mp_2expt.o bn_mp_abs.o bn_mp_add.o bn_mp_add_d.o bn_mp_addmod.o \
+bn_mp_and.o bn_mp_clamp.o bn_mp_clear.o bn_mp_clear_multi.o bn_mp_cmp.o bn_mp_cmp_d.o bn_mp_cmp_mag.o \
+bn_mp_cnt_lsb.o bn_mp_complement.o bn_mp_copy.o bn_mp_count_bits.o bn_mp_decr.o bn_mp_div.o bn_mp_div_2.o \
+bn_mp_div_2d.o bn_mp_div_3.o bn_mp_div_d.o bn_mp_dr_is_modulus.o bn_mp_dr_reduce.o bn_mp_dr_setup.o \
 bn_mp_error_to_string.o bn_mp_exch.o bn_mp_export.o bn_mp_expt_d.o bn_mp_expt_d_ex.o bn_mp_exptmod.o \
 bn_mp_exteuclid.o bn_mp_fread.o bn_mp_fwrite.o bn_mp_gcd.o bn_mp_get_bit.o bn_mp_get_double.o \
 bn_mp_get_int.o bn_mp_get_long.o bn_mp_get_long_long.o bn_mp_grow.o bn_mp_ilogb.o bn_mp_import.o \
@@ -49,8 +49,7 @@ bn_mp_toradix.o bn_mp_toradix_n.o bn_mp_unsigned_bin_size.o bn_mp_xor.o bn_mp_ze
 bn_s_mp_add.o bn_s_mp_balance_mul.o bn_s_mp_exptmod.o bn_s_mp_exptmod_fast.o bn_s_mp_invmod_fast.o \
 bn_s_mp_invmod_slow.o bn_s_mp_karatsuba_mul.o bn_s_mp_karatsuba_sqr.o bn_s_mp_montgomery_reduce_fast.o \
 bn_s_mp_mul_digs.o bn_s_mp_mul_digs_fast.o bn_s_mp_mul_high_digs.o bn_s_mp_mul_high_digs_fast.o \
-bn_s_mp_reverse.o bn_s_mp_sqr.o bn_s_mp_sqr_fast.o bn_s_mp_sub.o bn_s_mp_toom_mul.o bn_s_mp_toom_sqr.o \
-bncore.o
+bn_s_mp_reverse.o bn_s_mp_sqr.o bn_s_mp_sqr_fast.o bn_s_mp_sub.o bn_s_mp_toom_mul.o bn_s_mp_toom_sqr.o
 
 #END_INS
 

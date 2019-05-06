@@ -117,11 +117,15 @@ typedef uint64_t             mp_word;
 
 typedef int           mp_err;
 
-/* you'll have to tune these... */
-extern int KARATSUBA_MUL_CUTOFF,
-       KARATSUBA_SQR_CUTOFF,
-       TOOM_MUL_CUTOFF,
-       TOOM_SQR_CUTOFF;
+/* tunable cutoffs */
+
+#ifndef MP_FIXED_CUTOFFS
+extern int
+KARATSUBA_MUL_CUTOFF,
+KARATSUBA_SQR_CUTOFF,
+TOOM_MUL_CUTOFF,
+TOOM_SQR_CUTOFF;
+#endif
 
 /* define this to use lower memory usage routines (exptmods mostly) */
 /* #define MP_LOW_MEM */
