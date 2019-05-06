@@ -99,11 +99,7 @@ timing: $(LIBNAME) demo/timing.c
 tune: $(LIBNAME)
 	$(LTCOMPILE) $(CFLAGS) -c etc/tune.c -o etc/tune.o
 	$(LTLINK) $(LDFLAGS) -o etc/tune etc/tune.o $(LIBNAME)
-	$(LTCOMPILE) $(CFLAGS) -c etc/statistic_summary_single_column.c -o etc/statistic_summary_single_column.o
-	$(LTLINK) $(LDFLAGS) -o etc/statistic_summary_single_column etc/statistic_summary_single_column.o
-	cd etc/
-	/bin/sh tune_it.sh
-	cd ..
+	cd etc/; /bin/sh tune_it.sh; cd ..
 	$(MAKE) -f makefile.shared
 
 

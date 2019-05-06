@@ -37,7 +37,7 @@ median() {
 
 MPWD=$(pwd)
 FILE_NAME="tuning_list"
-BNCORE_C="../bncore.c"
+TOMMATH_CUTOFFS_H="../tommath_cutoffs.h"
 BACKUP_SUFFIX=".orig"
 RNUM=0;
 #############################################################################
@@ -52,9 +52,9 @@ LIMIT=100
 # Number of loops for each input.
 RLOOPS=10
 # Offset ( > 0 ) . Runs tests with asymmetric input of the form 1:OFFSET
-# Please use another destination for BNCORE_C if you change OFFSET, because the numbers
+# Please use another destination for TOMMATH_CUTOFFS_H if you change OFFSET, because the numbers
 # with an offset different from 1 (one) are not usable as the general cut-off values
-# in "bncore.c".
+# in "tommath_cutoffs.h".
 OFFSET=1
 # Number ( >= 3 ) of positive results (TC-is-faster) accumulated until it is accepted.
 # Due to the algorithm used to compute the median in this Posix compliant shell script
@@ -74,7 +74,7 @@ echo "km ks tc3m tc3s" > $FILE_NAME || die "Writing header to $FILE_NAME" $?
 i=1
 while [ $i -le $LIMIT ]; do
    RNUM=$(LCG)
-   echo $i
+   printf "\r%d" $i
    "$MPWD"/tune -t -r $RLOOPS -L $LAG -S "$RNUM" -o $OFFSET >> $FILE_NAME || die "tune" $?
    i=$((i + 1))
 done
@@ -83,14 +83,12 @@ if [ $KEEP_TEMP -eq 0 ]; then
    rm -v $FILE_NAME || die "Removing $KEEP_TEMP" $?
 fi
 
-echo "Writing cut-off values to \"bncore.c\"."
-echo "In case of failure: a copy of \"bncore.c\" is in \"bncore.c.orig\""
+echo "Writing cut-off values to \"$TOMMATH_CUTOFFS_H\"."
+echo "In case of failure: a copy of \"$TOMMATH_CUTOFFS_H\" is in \"$TOMMATH_CUTOFFS_H$BACKUP_SUFFIX\""
 
-cp -v $BNCORE_C $BNCORE_C$BACKUP_SUFFIX || die "Making backup copy of bncore.c" $?
+cp -v $TOMMATH_CUTOFFS_H $TOMMATH_CUTOFFS_H$BACKUP_SUFFIX || die "Making backup copy of $TOMMATH_CUTOFFS_H" $?
 
-cat << END_OF_INPUT > $BNCORE_C || die "Writing header to bncore.c" $?
-#include "tommath_private.h"
-#ifdef BNCORE_C
+cat << END_OF_INPUT > $TOMMATH_CUTOFFS_H || die "Writing header to $TOMMATH_CUTOFFS_H" $?
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 /*
@@ -107,23 +105,21 @@ i=1;
 TMP=""
 TMP=$(cat $FILE_NAME | cut -d' ' -f$i )
 TMP=$(median $TMP )
-echo "int KARATSUBA_MUL_CUTOFF = $TMP;"
-echo "int KARATSUBA_MUL_CUTOFF = $TMP;" >> $BNCORE_C || die "(km) Appending to bncore.c" $?
+echo "#define MP_DEFAULT_KARATSUBA_MUL_CUTOFF $TMP"
+echo "#define MP_DEFAULT_KARATSUBA_MUL_CUTOFF $TMP" >> $TOMMATH_CUTOFFS_H || die "(km) Appending to $TOMMATH_CUTOFFS_H" $?
 i=$((i + 1))
 TMP=$(cat $FILE_NAME | cut -d' ' -f$i )
 TMP=$(median $TMP );
-echo "int KARATSUBA_SQR_CUTOFF = $TMP;"
-echo "int KARATSUBA_SQR_CUTOFF = $TMP;" >> $BNCORE_C || die "(ks) Appending to bncore.c" $?
+echo "#define MP_DEFAULT_KARATSUBA_SQR_CUTOFF $TMP"
+echo "#define MP_DEFAULT_KARATSUBA_SQR_CUTOFF $TMP" >> $TOMMATH_CUTOFFS_H || die "(ks) Appending to $TOMMATH_CUTOFFS_H" $?
 i=$((i + 1))
 TMP=$(cat $FILE_NAME | cut -d' ' -f$i)
 TMP=$(median $TMP );
-echo "int TOOM_MUL_CUTOFF = $TMP;"
-echo "int TOOM_MUL_CUTOFF = $TMP;" >> $BNCORE_C || die "(tc3m) Appending to bncore.c" $?
+echo "#define MP_DEFAULT_TOOM_MUL_CUTOFF      $TMP"
+echo "#define MP_DEFAULT_TOOM_MUL_CUTOFF      $TMP" >> $TOMMATH_CUTOFFS_H || die "(tc3m) Appending to $TOMMATH_CUTOFFS_H" $?
 i=$((i + 1))
 TMP=$(cat $FILE_NAME | cut -d' ' -f$i)
 TMP=$(median $TMP );
-echo "int TOOM_SQR_CUTOFF = $TMP;"
-echo "int TOOM_SQR_CUTOFF = $TMP;" >> $BNCORE_C || die "(tc3s) Appending to bncore.c" $?
-
-echo "#endif" >> $BNCORE_C || die "(end) Appending to bncore.c" $?
+echo "#define MP_DEFAULT_TOOM_SQR_CUTOFF      $TMP"
+echo "#define MP_DEFAULT_TOOM_SQR_CUTOFF      $TMP" >> $TOMMATH_CUTOFFS_H || die "(tc3s) Appending to $TOMMATH_CUTOFFS_H" $?
 
