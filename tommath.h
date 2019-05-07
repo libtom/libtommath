@@ -115,9 +115,13 @@ typedef uint64_t             mp_word;
 #define MP_NO         0   /* no response */
 
 /* Primality generation flags */
-#define LTM_PRIME_BBS      0x0001 /* BBS style prime */
-#define LTM_PRIME_SAFE     0x0002 /* Safe prime (p-1)/2 == prime */
-#define LTM_PRIME_2MSB_ON  0x0008 /* force 2nd MSB to 1 */
+#define MP_PRIME_BBS      0x0001 /* BBS style prime */
+#define MP_PRIME_SAFE     0x0002 /* Safe prime (p-1)/2 == prime */
+#define MP_PRIME_2MSB_ON  0x0008 /* force 2nd MSB to 1 */
+
+#define LTM_PRIME_BBS      (MP_DEPRECATED_PRAGMA("LTM_PRIME_BBS has been deprecated, use MP_PRIME_BBS") MP_PRIME_BBS)
+#define LTM_PRIME_SAFE     (MP_DEPRECATED_PRAGMA("LTM_PRIME_SAFE has been deprecated, use MP_PRIME_SAFE") MP_PRIME_SAFE)
+#define LTM_PRIME_2MSB_ON  (MP_DEPRECATED_PRAGMA("LTM_PRIME_2MSB_ON has been deprecated, use MP_PRIME_2MSB_ON") MP_PRIME_2MSB_ON)
 
 typedef int           mp_err;
 
@@ -576,15 +580,15 @@ int mp_prime_next_prime(mp_int *a, int t, int bbs_style);
  *
  * The prime generated will be larger than 2^(8*size).
  */
-#define mp_prime_random(a, t, size, bbs, cb, dat) mp_prime_random_ex(a, t, ((size) * 8) + 1, (bbs==1)?LTM_PRIME_BBS:0, cb, dat)
+#define mp_prime_random(a, t, size, bbs, cb, dat) mp_prime_random_ex(a, t, ((size) * 8) + 1, (bbs==1)?MP_PRIME_BBS:0, cb, dat)
 
 /* makes a truly random prime of a given size (bits),
  *
  * Flags are as follows:
  *
- *   LTM_PRIME_BBS      - make prime congruent to 3 mod 4
- *   LTM_PRIME_SAFE     - make sure (p-1)/2 is prime as well (implies LTM_PRIME_BBS)
- *   LTM_PRIME_2MSB_ON  - make the 2nd highest bit one
+ *   MP_PRIME_BBS      - make prime congruent to 3 mod 4
+ *   MP_PRIME_SAFE     - make sure (p-1)/2 is prime as well (implies MP_PRIME_BBS)
+ *   MP_PRIME_2MSB_ON  - make the 2nd highest bit one
  *
  * You have to supply a callback which fills in a buffer with random bytes.  "dat" is a parameter you can
  * have passed to the callback (e.g. a state or something).  This function doesn't use "dat" itself

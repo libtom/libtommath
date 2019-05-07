@@ -782,7 +782,7 @@ static int test_mp_prime_random_ex(void)
       printf("Testing (not safe-prime): %9d bits    \r", ix);
       fflush(stdout);
       err = mp_prime_random_ex(&a, 8, ix,
-                               (rand() & 1) ? 0 : LTM_PRIME_2MSB_ON, myrng,
+                               (rand() & 1) ? 0 : MP_PRIME_2MSB_ON, myrng,
                                NULL);
       if (err != MP_OKAY) {
          printf("\nfailed with error: %s\n", mp_error_to_string(err));
@@ -845,7 +845,7 @@ static int test_mp_prime_is_prime(void)
       printf("Testing (    safe-prime): %9d bits    \r", ix);
       fflush(stdout);
       err = mp_prime_random_ex(
-               &a, 8, ix, ((rand() & 1) ? 0 : LTM_PRIME_2MSB_ON) | LTM_PRIME_SAFE,
+               &a, 8, ix, ((rand() & 1) ? 0 : MP_PRIME_2MSB_ON) | MP_PRIME_SAFE,
                myrng, NULL);
       if (err != MP_OKAY) {
          printf("\nfailed with error: %s\n", mp_error_to_string(err));
