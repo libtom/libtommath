@@ -43,7 +43,7 @@ int mp_n_root_ex(const mp_int *a, mp_digit b, mp_int *c, int fast)
    ilog2 = mp_count_bits(a);
 
    /*
-      GCC and clang do not understand the sizeof(bla) tests and complain,
+      GCC and clang do not understand the sizeof tests and complain,
       icc (the Intel compiler) seems to understand, at least it doesn't complain.
       2 of 3 say these macros are necessary, so there they are.
    */
