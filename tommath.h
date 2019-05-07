@@ -512,15 +512,16 @@ int mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y);
 
 /* number of primes */
 #ifdef MP_8BIT
-#  define PRIME_SIZE 31
+#  define MP_PRIME_SIZE 31
 #else
-#  define PRIME_SIZE 256
+#  define MP_PRIME_SIZE 256
 #endif
+#define PRIME_SIZE (MP_DEPRECATED_PRAGMA("PRIME_SIZE has been deprecated, use MP_PRIME_SIZE") MP_PRIME_SIZE)
 
-/* table of first PRIME_SIZE primes */
-extern const mp_digit ltm_prime_tab[PRIME_SIZE];
+/* table of first MP_PRIME_SIZE primes */
+extern const mp_digit ltm_prime_tab[MP_PRIME_SIZE];
 
-/* result=1 if a is divisible by one of the first PRIME_SIZE primes */
+/* result=1 if a is divisible by one of the first MP_PRIME_SIZE primes */
 int mp_prime_is_divisible(const mp_int *a, int *result);
 
 /* performs one Fermat test of "a" using base "b".
