@@ -92,21 +92,16 @@ EOS
    # scan for mp_* and make classes
    while (<$src>) {
       my $line = $_;
-      while ($line =~ m/(fast_)*(s_)*mp\_[a-z_0-9]*/) {
-          $line = $';
-          # now $& is the match, we want to skip over LTM keywords like
-          # mp_int, mp_word, mp_digit
-          if (!($& eq 'mp_digit') && !($& eq 'mp_word') && !($& eq 'mp_int')) {
-             my $a = $&;
-             $a =~ tr/[a-z]/[A-Z]/;
-             $a = 'BN_' . $a . '_C';
-             if (!($list =~ /$a/)) {
-                print {$class} << "EOS";
+      while ($line =~ /(fast_)?(s_)?mp\_[a-z_0-9]*(?=\()/g) {
+          my $a = $&;
+          $a =~ tr/[a-z]/[A-Z]/;
+          $a = 'BN_' . $a . '_C';
+          if (!($list =~ /$a/)) {
+             print {$class} << "EOS";
 #   define $a
 EOS
-             }
-             $list = $list . ',' . $a;
           }
+          $list = $list . ',' . $a;
       }
    }
    $deplist{$filename} = $list;

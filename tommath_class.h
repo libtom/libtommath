@@ -385,8 +385,6 @@
 
 #if defined(BN_MP_FREAD_C)
 #   define BN_MP_ZERO_C
-#   define BN_MP_S_RMAP_REVERSE_SZ_C
-#   define BN_MP_S_RMAP_REVERSE_C
 #   define BN_MP_MUL_D_C
 #   define BN_MP_ADD_D_C
 #   define BN_MP_CMP_D_C
@@ -429,8 +427,6 @@
 #endif
 
 #if defined(BN_MP_ILOGB_C)
-#   define BN_MP_RADIX_SIZE_C
-#   define BN_MP_BITCOUNT_C
 #   define BN_MP_COUNT_BITS_C
 #   define BN_MP_SET_INT_C
 #   define BN_MP_SET_C
@@ -468,7 +464,6 @@
 #endif
 
 #if defined(BN_MP_INIT_MULTI_C)
-#   define BN_MP_ERR_C
 #   define BN_MP_INIT_C
 #   define BN_MP_CLEAR_C
 #endif
@@ -484,7 +479,6 @@
 #endif
 
 #if defined(BN_MP_INIT_SIZE_C)
-#   define BN_MP_INIT_C
 #endif
 
 #if defined(BN_MP_INVMOD_C)
@@ -536,7 +530,6 @@
 
 #if defined(BN_MP_LSHD_C)
 #   define BN_MP_GROW_C
-#   define BN_MP_RSHD_C
 #endif
 
 #if defined(BN_MP_MOD_C)
@@ -579,7 +572,6 @@
 #endif
 
 #if defined(BN_MP_MUL_C)
-#   define BN_FAST_S_MP_MUL_DIGS_C
 #   define BN_S_MP_BALANCE_MUL_C
 #   define BN_S_MP_TOOM_MUL_C
 #   define BN_S_MP_KARATSUBA_MUL_C
@@ -652,7 +644,6 @@
 #endif
 
 #if defined(BN_MP_PRIME_FROBENIUS_UNDERWOOD_C)
-#   define BN_MP_PRIME_IS_PRIME_C
 #   define BN_MP_INIT_MULTI_C
 #   define BN_MP_SET_LONG_C
 #   define BN_MP_SQR_C
@@ -731,7 +722,6 @@
 #endif
 
 #if defined(BN_MP_PRIME_STRONG_LUCAS_SELFRIDGE_C)
-#   define BN_MP_PRIME_IS_PRIME_C
 #   define BN_MP_MUL_D_C
 #   define BN_S_MP_MUL_SI_C
 #   define BN_MP_INIT_C
@@ -767,9 +757,6 @@
 #endif
 
 #if defined(BN_MP_RADIX_SMAP_C)
-#   define BN_MP_S_RMAP_C
-#   define BN_MP_S_RMAP_REVERSE_C
-#   define BN_MP_S_RMAP_REVERSE_SZ_C
 #endif
 
 #if defined(BN_MP_RAND_C)
@@ -781,8 +768,6 @@
 
 #if defined(BN_MP_READ_RADIX_C)
 #   define BN_MP_ZERO_C
-#   define BN_MP_S_RMAP_REVERSE_SZ_C
-#   define BN_MP_S_RMAP_REVERSE_C
 #   define BN_MP_MUL_D_C
 #   define BN_MP_ADD_D_C
 #endif
@@ -799,7 +784,6 @@
 #endif
 
 #if defined(BN_MP_REDUCE_C)
-#   define BN_MP_REDUCE_SETUP_C
 #   define BN_MP_INIT_COPY_C
 #   define BN_MP_RSHD_C
 #   define BN_MP_MUL_C
@@ -856,7 +840,6 @@
 #endif
 
 #if defined(BN_MP_REDUCE_IS_2K_C)
-#   define BN_MP_REDUCE_2K_C
 #   define BN_MP_COUNT_BITS_C
 #endif
 
@@ -914,7 +897,6 @@
 #endif
 
 #if defined(BN_MP_SQRT_C)
-#   define BN_MP_N_ROOT_C
 #   define BN_MP_ZERO_C
 #   define BN_MP_INIT_COPY_C
 #   define BN_MP_RSHD_C
@@ -1027,7 +1009,6 @@
 #   define BN_MP_INIT_COPY_C
 #   define BN_MP_DIV_D_C
 #   define BN_MP_CLEAR_C
-#   define BN_MP_S_RMAP_C
 #   define BN_S_MP_REVERSE_C
 #endif
 
@@ -1035,7 +1016,6 @@
 #   define BN_MP_INIT_COPY_C
 #   define BN_MP_DIV_D_C
 #   define BN_MP_CLEAR_C
-#   define BN_MP_S_RMAP_C
 #   define BN_S_MP_REVERSE_C
 #endif
 
@@ -1077,9 +1057,7 @@
 #   define BN_MP_INIT_C
 #   define BN_MP_CLEAR_C
 #   define BN_MP_REDUCE_SETUP_C
-#   define BN_MP_REDUCE_C
 #   define BN_MP_REDUCE_2K_SETUP_L_C
-#   define BN_MP_REDUCE_2K_L_C
 #   define BN_MP_MOD_C
 #   define BN_MP_COPY_C
 #   define BN_MP_SQR_C
@@ -1093,12 +1071,8 @@
 #   define BN_MP_INIT_SIZE_C
 #   define BN_MP_CLEAR_C
 #   define BN_MP_MONTGOMERY_SETUP_C
-#   define BN_S_MP_MONTGOMERY_REDUCE_FAST_C
-#   define BN_MP_MONTGOMERY_REDUCE_C
 #   define BN_MP_DR_SETUP_C
-#   define BN_MP_DR_REDUCE_C
 #   define BN_MP_REDUCE_2K_SETUP_C
-#   define BN_MP_REDUCE_2K_C
 #   define BN_MP_MONTGOMERY_CALC_NORMALIZATION_C
 #   define BN_MP_MULMOD_C
 #   define BN_MP_SET_C
@@ -1140,9 +1114,9 @@
 #endif
 
 #if defined(BN_S_MP_KARATSUBA_MUL_C)
-#   define BN_MP_MUL_C
 #   define BN_MP_INIT_SIZE_C
 #   define BN_MP_CLAMP_C
+#   define BN_MP_MUL_C
 #   define BN_S_MP_ADD_C
 #   define BN_MP_ADD_C
 #   define BN_S_MP_SUB_C
@@ -1163,7 +1137,6 @@
 
 #if defined(BN_S_MP_MONTGOMERY_REDUCE_FAST_C)
 #   define BN_MP_GROW_C
-#   define BN_MP_RSHD_C
 #   define BN_MP_CLAMP_C
 #   define BN_MP_CMP_MAG_C
 #   define BN_S_MP_SUB_C
