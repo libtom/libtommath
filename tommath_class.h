@@ -759,10 +759,12 @@
 #endif
 
 #if defined(BN_MP_RAND_C)
+#   define BN_S_MP_RAND_SOURCE_PLATFORM_C
+#   define BN_MP_RAND_SOURCE_C
 #   define BN_MP_RAND_DIGIT_C
 #   define BN_MP_ZERO_C
-#   define BN_MP_ADD_D_C
-#   define BN_MP_LSHD_C
+#   define BN_MP_GROW_C
+#   define BN_MP_CLAMP_C
 #endif
 
 #if defined(BN_MP_READ_RADIX_C)
