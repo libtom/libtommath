@@ -95,3 +95,13 @@ mtest:
 
 timing: $(LIBNAME) demo/timing.c
 	$(LTLINK) $(CFLAGS) $(LDFLAGS) -DTIMER demo/timing.c $(LIBNAME) -o timing
+
+tune: $(LIBNAME)
+	$(LTCOMPILE) $(CFLAGS) -c etc/tune.c -o etc/tune.o
+	$(LTLINK) $(LDFLAGS) -o etc/tune etc/tune.o $(LIBNAME)
+	cd etc/; /bin/sh tune_it.sh; cd ..
+	$(MAKE) -f makefile.shared
+
+
+
+

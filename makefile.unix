@@ -87,6 +87,10 @@ test_standalone: test
 
 all: $(LIBMAIN_S) test_standalone
 
+tune: $(LIBMAIN_S)
+	$(MAKE) -C etc tune
+	$(MAKE)
+
 #NOTE: this makefile works also on cygwin, thus we need to delete *.exe
 clean:
 	-@rm -f $(OBJECTS) $(LIBMAIN_S)
@@ -98,3 +102,4 @@ install: $(LIBMAIN_S)
 	@cp $(LIBMAIN_S) $(DESTDIR)$(LIBPATH)/
 	@cp $(HEADERS_PUB) $(DESTDIR)$(INCPATH)/
 	@sed -e 's,^prefix=.*,prefix=$(PREFIX),' -e 's,^Version:.*,Version: $(VERSION),' libtommath.pc.in > $(DESTDIR)$(LIBPATH)/pkgconfig/libtommath.pc
+

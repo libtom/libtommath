@@ -141,6 +141,16 @@ matrix:
     - env: BUILDOPTIONS='--with-cc=clang-7 --cflags=-DMP_16BIT --with-valgrind'
     - env: BUILDOPTIONS='--with-cc=clang-7 --cflags=-DMP_32BIT --with-valgrind'
 
+    # Test "autotuning", the automatic evaluation and setting of the Toom-Cook cut-offs.
+    - env: BUILDOPTIONS='--with-cc=gcc-5 --cflags=-DMP_8BIT  --with-valgrind --make-option=tune'
+    - env: BUILDOPTIONS='--with-cc=gcc-5 --cflags=-DMP_16BIT --with-valgrind --make-option=tune'
+    - env: BUILDOPTIONS='--with-cc=gcc-5 --cflags=-DMP_32BIT --with-valgrind --make-option=tune'
+    - env: BUILDOPTIONS='--with-cc=gcc-5 --with-valgrind --make-option=tune'
+    - env: BUILDOPTIONS='--with-cc=clang-7 --cflags=-DMP_8BIT  --with-valgrind --make-option=tune'
+    - env: BUILDOPTIONS='--with-cc=clang-7 --cflags=-DMP_16BIT --with-valgrind --make-option=tune'
+    - env: BUILDOPTIONS='--with-cc=clang-7 --cflags=-DMP_32BIT --with-valgrind --make-option=tune'
+    - env: BUILDOPTIONS='--with-cc=clang-7 --with-valgrind --make-option=tune'
+
     # GCC for the x86-64 architecture testing against a different Bigint-implementation
     # with 333333 different inputs.
     - env: BUILDOPTIONS='--with-cc=gcc-5 --test-vs-mtest=333333 --with-valgrind'
@@ -150,6 +160,7 @@ matrix:
     # with a better random source.
     - env: BUILDOPTIONS='--with-cc=gcc-5 --test-vs-mtest=333333 --mtest-real-rand --with-valgrind'
     - env: BUILDOPTIONS='--with-cc=clang-7 --test-vs-mtest=333333 --mtest-real-rand --with-valgrind'
+
 
 # Notifications go to
 # An email address is also possible.

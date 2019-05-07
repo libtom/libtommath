@@ -28,9 +28,11 @@ LIBNAME=../libtommath.a
 pprime: pprime.o
 	$(CC) pprime.o $(LIBNAME) -o pprime
 
-# portable [well requires clock()] tuning app
 tune: tune.o
-	$(CC) tune.o $(LIBNAME) -o tune
+	# The actual benchmark program
+	$(CC) $(CFLAGS) tune.o $(LIBNAME) -o tune
+	# a small script to run it
+	/bin/sh tune_it.sh
 	
 # same app but using RDTSC for higher precision [requires 80586+], coff based gcc installs [e.g. ming, cygwin, djgpp]
 tune86: tune.c
@@ -64,4 +66,4 @@ mont: mont.o
 
         
 clean:
-	rm -f *.log *.o *.obj *.exe pprime tune mersenne drprime tune86 tune86l mont 2kprime pprime.dat *.il
+	rm -f *.log *.o *.obj *.exe pprime tune mersenne drprime tune86 tune86l mont 2kprime pprime.dat *.il tuning_list
