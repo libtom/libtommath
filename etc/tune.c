@@ -495,6 +495,7 @@ int main(int argc, char **argv)
             i++;
             str = endptr + 1;
             TOOM_SQR_CUTOFF = (int)val;
+            break;
          case 'h':
          default:
             s_usage(argv[0]);
