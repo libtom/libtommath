@@ -4,7 +4,7 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* determines if an integers is divisible by one
- * of the first PRIME_SIZE primes or not
+ * of the first MP_PRIME_SIZE primes or not
  *
  * sets result to 0 if not, 1 if yes
  */
@@ -16,7 +16,7 @@ int mp_prime_is_divisible(const mp_int *a, int *result)
    /* default to not */
    *result = MP_NO;
 
-   for (ix = 0; ix < PRIME_SIZE; ix++) {
+   for (ix = 0; ix < MP_PRIME_SIZE; ix++) {
       /* what is a mod LBL_prime_tab[ix] */
       if ((err = mp_mod_d(a, ltm_prime_tab[ix], &res)) != MP_OKAY) {
          return err;

@@ -24,7 +24,7 @@ int mp_prime_is_prime(const mp_int *a, int t, int *result)
    *result = MP_NO;
 
    /* valid value of t? */
-   if (t > PRIME_SIZE) {
+   if (t > MP_PRIME_SIZE) {
       return MP_VAL;
    }
 
@@ -54,7 +54,7 @@ int mp_prime_is_prime(const mp_int *a, int t, int *result)
    }
 
    /* is the input equal to one of the primes in the table? */
-   for (ix = 0; ix < PRIME_SIZE; ix++) {
+   for (ix = 0; ix < MP_PRIME_SIZE; ix++) {
       if (mp_cmp_d(a, ltm_prime_tab[ix]) == MP_EQ) {
          *result = MP_YES;
          return MP_OKAY;
@@ -62,7 +62,7 @@ int mp_prime_is_prime(const mp_int *a, int t, int *result)
    }
 #ifdef MP_8BIT
    /* The search in the loop above was exhaustive in this case */
-   if ((a->used == 1) && (PRIME_SIZE >= 31)) {
+   if ((a->used == 1) && (MP_PRIME_SIZE >= 31)) {
       return MP_OKAY;
    }
 #endif
@@ -208,7 +208,7 @@ int mp_prime_is_prime(const mp_int *a, int t, int *result)
          p_max = t;
       }
 
-      if (p_max > PRIME_SIZE) {
+      if (p_max > MP_PRIME_SIZE) {
          err = MP_VAL;
          goto LBL_B;
       }

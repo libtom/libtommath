@@ -25,6 +25,12 @@ sub write_file {
   return;
 }
 
+sub sanitize_comments {
+  my($content) = @_;
+  $content =~ s{/\*(.*?)\*/}{my $x=$1; $x =~ s/\w/x/g; "/*$x*/";}egs;
+  return $content;
+}
+
 sub check_source {
   my @all_files = (
         bsd_glob("makefile*"),
@@ -37,6 +43,7 @@ sub check_source {
     my $troubles = {};
     my $lineno = 1;
     my $content = read_file($file);
+    $content = sanitize_comments $content;
     push @{$troubles->{crlf_line_end}}, '?' if $content =~ /\r/;
     for my $l (split /\n/, $content) {
       push @{$troubles->{merge_conflict}},     $lineno if $l =~ /^(<<<<<<<|=======|>>>>>>>)([^<=>]|$)/;

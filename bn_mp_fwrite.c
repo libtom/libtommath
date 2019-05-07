@@ -3,7 +3,7 @@
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
-#ifndef LTM_NO_FILE
+#ifndef MP_NO_FILE
 int mp_fwrite(const mp_int *a, int radix, FILE *stream)
 {
    char *buf;

@@ -4,11 +4,15 @@
 #ifndef BN_H_
 #define BN_H_
 
-#include <stdlib.h>
 #include <stdint.h>
 #include <limits.h>
 
-#ifndef LTM_NO_FILE
+#ifdef LTM_NO_FILE
+#  warning LTM_NO_FILE has been deprecated, use MP_NO_FILE.
+#  define MP_NO_FILE
+#endif
+
+#ifndef MP_NO_FILE
 #  include <stdio.h>
 #endif
 
@@ -111,9 +115,13 @@ typedef uint64_t             mp_word;
 #define MP_NO         0   /* no response */
 
 /* Primality generation flags */
-#define LTM_PRIME_BBS      0x0001 /* BBS style prime */
-#define LTM_PRIME_SAFE     0x0002 /* Safe prime (p-1)/2 == prime */
-#define LTM_PRIME_2MSB_ON  0x0008 /* force 2nd MSB to 1 */
+#define MP_PRIME_BBS      0x0001 /* BBS style prime */
+#define MP_PRIME_SAFE     0x0002 /* Safe prime (p-1)/2 == prime */
+#define MP_PRIME_2MSB_ON  0x0008 /* force 2nd MSB to 1 */
+
+#define LTM_PRIME_BBS      (MP_DEPRECATED_PRAGMA("LTM_PRIME_BBS has been deprecated, use MP_PRIME_BBS") MP_PRIME_BBS)
+#define LTM_PRIME_SAFE     (MP_DEPRECATED_PRAGMA("LTM_PRIME_SAFE has been deprecated, use MP_PRIME_SAFE") MP_PRIME_SAFE)
+#define LTM_PRIME_2MSB_ON  (MP_DEPRECATED_PRAGMA("LTM_PRIME_2MSB_ON has been deprecated, use MP_PRIME_2MSB_ON") MP_PRIME_2MSB_ON)
 
 typedef int           mp_err;
 
@@ -143,14 +151,11 @@ TOOM_SQR_CUTOFF;
 #define PRIVATE_MP_WARRAY (1u << (((CHAR_BIT * sizeof(mp_word)) - (2 * MP_DIGIT_BIT)) + 1))
 #define MP_WARRAY (MP_DEPRECATED_PRAGMA("MP_WARRAY is an internal macro") PRIVATE_MP_WARRAY)
 
-/* the infamous mp_int structure */
-typedef struct  {
-   int used, alloc, sign;
-   mp_digit *dp;
-} mp_int;
-
-/* callback for mp_prime_random, should fill dst with random bytes and return how many read [upto len] */
-typedef int ltm_prime_callback(unsigned char *dst, int len, void *dat);
+#if defined(__GNUC__) && __GNUC__ >= 4
+#   define MP_NULL_TERMINATED __attribute__((sentinel))
+#else
+#   define MP_NULL_TERMINATED
+#endif
 
 #if defined(__GNUC__) && (__GNUC__ * 100 + __GNUC_MINOR__ >= 301)
 #  define MP_DEPRECATED(x) __attribute__((deprecated("replaced by " #x)))
@@ -169,6 +174,16 @@ typedef int ltm_prime_callback(unsigned char *dst, int len, void *dat);
 #define DIGIT(m, k) (MP_DEPRECATED_PRAGMA("DIGIT macro is deprecated, use z->dp instead") (m)->dp[(k)])
 #define SIGN(m)     (MP_DEPRECATED_PRAGMA("SIGN macro is deprecated, use z->sign instead") (m)->sign)
 
+/* the infamous mp_int structure */
+typedef struct  {
+   int used, alloc, sign;
+   mp_digit *dp;
+} mp_int;
+
+/* callback for mp_prime_random, should fill dst with random bytes and return how many read [upto len] */
+typedef int mp_prime_callback(unsigned char *dst, int len, void *dat);
+typedef mp_prime_callback ltm_prime_callback MP_DEPRECATED(mp_prime_callback);
+
 /* error code to char* string */
 const char *mp_error_to_string(int code);
 
@@ -180,10 +195,10 @@ int mp_init(mp_int *a);
 void mp_clear(mp_int *a);
 
 /* init a null terminated series of arguments */
-int mp_init_multi(mp_int *mp, ...);
+int mp_init_multi(mp_int *mp, ...) MP_NULL_TERMINATED;
 
 /* clear a null terminated series of arguments */
-void mp_clear_multi(mp_int *mp, ...);
+void mp_clear_multi(mp_int *mp, ...) MP_NULL_TERMINATED;
 
 /* exchange two ints */
 void mp_exch(mp_int *a, mp_int *b);
@@ -497,15 +512,16 @@ int mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y);
 
 /* number of primes */
 #ifdef MP_8BIT
-#  define PRIME_SIZE 31
+#  define MP_PRIME_SIZE 31
 #else
-#  define PRIME_SIZE 256
+#  define MP_PRIME_SIZE 256
 #endif
+#define PRIME_SIZE (MP_DEPRECATED_PRAGMA("PRIME_SIZE has been deprecated, use MP_PRIME_SIZE") MP_PRIME_SIZE)
 
-/* table of first PRIME_SIZE primes */
-extern const mp_digit ltm_prime_tab[PRIME_SIZE];
+/* table of first MP_PRIME_SIZE primes */
+extern const mp_digit ltm_prime_tab[MP_PRIME_SIZE];
 
-/* result=1 if a is divisible by one of the first PRIME_SIZE primes */
+/* result=1 if a is divisible by one of the first MP_PRIME_SIZE primes */
 int mp_prime_is_divisible(const mp_int *a, int *result);
 
 /* performs one Fermat test of "a" using base "b".
@@ -565,22 +581,22 @@ int mp_prime_next_prime(mp_int *a, int t, int bbs_style);
  *
  * The prime generated will be larger than 2^(8*size).
  */
-#define mp_prime_random(a, t, size, bbs, cb, dat) mp_prime_random_ex(a, t, ((size) * 8) + 1, (bbs==1)?LTM_PRIME_BBS:0, cb, dat)
+#define mp_prime_random(a, t, size, bbs, cb, dat) mp_prime_random_ex(a, t, ((size) * 8) + 1, (bbs==1)?MP_PRIME_BBS:0, cb, dat)
 
 /* makes a truly random prime of a given size (bits),
  *
  * Flags are as follows:
  *
- *   LTM_PRIME_BBS      - make prime congruent to 3 mod 4
- *   LTM_PRIME_SAFE     - make sure (p-1)/2 is prime as well (implies LTM_PRIME_BBS)
- *   LTM_PRIME_2MSB_ON  - make the 2nd highest bit one
+ *   MP_PRIME_BBS      - make prime congruent to 3 mod 4
+ *   MP_PRIME_SAFE     - make sure (p-1)/2 is prime as well (implies MP_PRIME_BBS)
+ *   MP_PRIME_2MSB_ON  - make the 2nd highest bit one
  *
  * You have to supply a callback which fills in a buffer with random bytes.  "dat" is a parameter you can
  * have passed to the callback (e.g. a state or something).  This function doesn't use "dat" itself
  * so it can be NULL
  *
  */
-int mp_prime_random_ex(mp_int *a, int t, int size, int flags, ltm_prime_callback cb, void *dat);
+int mp_prime_random_ex(mp_int *a, int t, int size, int flags, mp_prime_callback cb, void *dat);
 
 
 /* Integer logarithm to integer base */
@@ -605,7 +621,7 @@ int mp_toradix(const mp_int *a, char *str, int radix);
 int mp_toradix_n(const mp_int *a, char *str, int radix, int maxlen);
 int mp_radix_size(const mp_int *a, int radix, int *size);
 
-#ifndef LTM_NO_FILE
+#ifndef MP_NO_FILE
 int mp_fread(mp_int *a, int radix, FILE *stream);
 int mp_fwrite(const mp_int *a, int radix, FILE *stream);
 #endif

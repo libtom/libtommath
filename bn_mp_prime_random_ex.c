@@ -7,9 +7,9 @@
  *
  * Flags are as follows:
  *
- *   LTM_PRIME_BBS      - make prime congruent to 3 mod 4
- *   LTM_PRIME_SAFE     - make sure (p-1)/2 is prime as well (implies LTM_PRIME_BBS)
- *   LTM_PRIME_2MSB_ON  - make the 2nd highest bit one
+ *   MP_PRIME_BBS      - make prime congruent to 3 mod 4
+ *   MP_PRIME_SAFE     - make sure (p-1)/2 is prime as well (implies MP_PRIME_BBS)
+ *   MP_PRIME_2MSB_ON  - make the 2nd highest bit one
  *
  * You have to supply a callback which fills in a buffer with random bytes.  "dat" is a parameter you can
  * have passed to the callback (e.g. a state or something).  This function doesn't use "dat" itself
@@ -18,7 +18,7 @@
  */
 
 /* This is possibly the mother of all prime generation functions, muahahahahaha! */
-int mp_prime_random_ex(mp_int *a, int t, int size, int flags, ltm_prime_callback cb, void *dat)
+int mp_prime_random_ex(mp_int *a, int t, int size, int flags, mp_prime_callback cb, void *dat)
 {
    unsigned char *tmp, maskAND, maskOR_msb, maskOR_lsb;
    int res, err, bsize, maskOR_msb_offset;
@@ -28,9 +28,9 @@ int mp_prime_random_ex(mp_int *a, int t, int size, int flags, ltm_prime_callback
       return MP_VAL;
    }
 
-   /* LTM_PRIME_SAFE implies LTM_PRIME_BBS */
-   if ((flags & LTM_PRIME_SAFE) != 0) {
-      flags |= LTM_PRIME_BBS;
+   /* MP_PRIME_SAFE implies MP_PRIME_BBS */
+   if ((flags & MP_PRIME_SAFE) != 0) {
+      flags |= MP_PRIME_BBS;
    }
 
    /* calc the byte size */
@@ -48,13 +48,13 @@ int mp_prime_random_ex(mp_int *a, int t, int size, int flags, ltm_prime_callback
    /* calc the maskOR_msb */
    maskOR_msb        = 0;
    maskOR_msb_offset = ((size & 7) == 1) ? 1 : 0;
-   if ((flags & LTM_PRIME_2MSB_ON) != 0) {
+   if ((flags & MP_PRIME_2MSB_ON) != 0) {
       maskOR_msb       |= (unsigned char)(0x80 >> ((9 - size) & 7));
    }
 
    /* get the maskOR_lsb */
    maskOR_lsb         = 1;
-   if ((flags & LTM_PRIME_BBS) != 0) {
+   if ((flags & MP_PRIME_BBS) != 0) {
       maskOR_lsb     |= 3;
    }
 
@@ -86,7 +86,7 @@ int mp_prime_random_ex(mp_int *a, int t, int size, int flags, ltm_prime_callback
          continue;
       }
 
-      if ((flags & LTM_PRIME_SAFE) != 0) {
+      if ((flags & MP_PRIME_SAFE) != 0) {
          /* see if (a-1)/2 is prime */
          if ((err = mp_sub_d(a, 1uL, a)) != MP_OKAY) {
             goto error;
@@ -102,7 +102,7 @@ int mp_prime_random_ex(mp_int *a, int t, int size, int flags, ltm_prime_callback
       }
    } while (res == MP_NO);
 
-   if ((flags & LTM_PRIME_SAFE) != 0) {
+   if ((flags & MP_PRIME_SAFE) != 0) {
       /* restore a to the original value */
       if ((err = mp_mul_2(a, a)) != MP_OKAY) {
          goto error;
