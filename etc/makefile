@@ -12,15 +12,13 @@ pprime: pprime.o
 
 # portable [well requires clock()] tuning app
 tune: tune.o
-	# The actual benchmark program
 	$(CC) $(CFLAGS) tune.o $(LIBNAME) -o tune
-	# a small script to run it
-	/bin/sh tune_it.sh
+	./tune_it.sh
 
 test_standalone: tune.o
 	# The benchmark program works as a testtool, too
 	$(CC) $(CFLAGS) tune.o $(LIBNAME) -o test
-        
+
 # spits out mersenne primes
 mersenne: mersenne.o
 	$(CC) $(CFLAGS) mersenne.o $(LIBNAME) -o mersenne
@@ -28,7 +26,7 @@ mersenne: mersenne.o
 # finds DR safe primes for the given config
 drprime: drprime.o
 	$(CC) $(CFLAGS) drprime.o $(LIBNAME) -o drprime
-	
+
 # finds 2k safe primes for the given config
 2kprime: 2kprime.o
 	$(CC) $(CFLAGS) 2kprime.o $(LIBNAME) -o 2kprime
@@ -36,7 +34,7 @@ drprime: drprime.o
 mont: mont.o
 	$(CC) $(CFLAGS) mont.o $(LIBNAME) -o mont
 
-        
+
 clean:
 	rm -f *.log *.o *.obj *.exe pprime tune mersenne drprime mont 2kprime pprime.dat \
         tuning_list multiplying squaring test *.da *.dyn *.dpi *~
