@@ -505,8 +505,8 @@
 #endif
 
 #if defined(BN_MP_JACOBI_C)
-#   define BN_MP_KRONECKER_C
 #   define BN_MP_CMP_D_C
+#   define BN_MP_KRONECKER_C
 #endif
 
 #if defined(BN_MP_KRONECKER_C)
@@ -722,7 +722,6 @@
 #endif
 
 #if defined(BN_MP_PRIME_STRONG_LUCAS_SELFRIDGE_C)
-#   define BN_MP_MUL_D_C
 #   define BN_S_MP_MUL_SI_C
 #   define BN_MP_INIT_C
 #   define BN_MP_SET_LONG_C

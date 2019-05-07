@@ -79,6 +79,8 @@ EOS
 
 foreach my $filename (glob 'bn*.c') {
    open(my $src, '<', $filename) or die "Can't open source file!\n";
+   read $src, my $content, -s $src;
+   close $src;
 
    # convert filename to upper case so we can use it as a define
    $filename =~ tr/[a-z]/[A-Z]/;
@@ -89,9 +91,11 @@ foreach my $filename (glob 'bn*.c') {
 EOS
    my $list = $filename;
 
+   # strip comments
+   $content =~ s{/\*.*?\*/}{}gs;
+
    # scan for mp_* and make classes
-   while (<$src>) {
-      my $line = $_;
+   foreach my $line (split /\n/, $content) {
       while ($line =~ /(fast_)?(s_)?mp\_[a-z_0-9]*(?=\()/g) {
           my $a = $&;
           $a =~ tr/[a-z]/[A-Z]/;
@@ -110,7 +114,6 @@ EOS
 #endif
 
 EOS
-   close $src;
 }
 
 print {$class} << 'EOS';
