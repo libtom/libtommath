@@ -212,7 +212,7 @@ static void s_usage(char *s)
    fprintf(stderr,"          -G [string] suffix for the filenames listed above\n");
    fprintf(stderr,"             Implies '-p'\n");
    fprintf(stderr,"          -b print benchmark of bncore.c\n");
-   fprintf(stderr,"          -t prints comma separated results\n");
+   fprintf(stderr,"          -t prints space (0x20) separated results\n");
    fprintf(stderr,"          -r [64] number of rounds\n");
    fprintf(stderr,"          -S [0xdeadbeef] seed for PRNG\n");
    fprintf(stderr,"          -L [3] number of negative values accumulated until the result is accepted\n");
