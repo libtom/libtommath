@@ -41,6 +41,7 @@ extern "C" {
 /* define heap macros */
 #ifndef MP_MALLOC
 /* default to libc stuff */
+#   include <stdlib.h>
 #   define MP_MALLOC(size)                   malloc(size)
 #   define MP_REALLOC(mem, oldsize, newsize) realloc(mem, newsize)
 #   define MP_CALLOC(nmemb, size)            calloc(nmemb, size)

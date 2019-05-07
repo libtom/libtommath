@@ -4,7 +4,6 @@
 #ifndef BN_H_
 #define BN_H_
 
-#include <stdlib.h>
 #include <stdint.h>
 #include <limits.h>
 
