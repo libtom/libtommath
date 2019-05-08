@@ -163,9 +163,9 @@ static int s_mp_rand_source_platform(void *p, size_t n)
 
 int (*s_rand_source)(void *out, size_t size) = s_mp_rand_source_platform;
 
-void mp_rand_source(int (*get)(void *out, size_t size))
+void mp_rand_source(int (*source)(void *out, size_t size))
 {
-   s_rand_source = get == NULL ? s_mp_rand_source_platform : get;
+   s_rand_source = source == NULL ? s_mp_rand_source_platform : source;
 }
 
 /* makes a pseudo-random int of a given size */
