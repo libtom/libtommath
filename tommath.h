@@ -182,8 +182,8 @@ typedef struct  {
 } mp_int;
 
 /* callback for mp_prime_random, should fill dst with random bytes and return how many read [upto len] */
-typedef int mp_prime_callback(unsigned char *dst, int len, void *dat);
-typedef mp_prime_callback ltm_prime_callback MP_DEPRECATED(mp_prime_callback);
+typedef int private_mp_prime_callback(unsigned char *dst, int len, void *dat);
+typedef private_mp_prime_callback ltm_prime_callback MP_DEPRECATED(mp_rand_source);
 
 /* error code to char* string */
 const char *mp_error_to_string(int code);
@@ -585,7 +585,7 @@ int mp_prime_next_prime(mp_int *a, int t, int bbs_style);
  *
  * The prime generated will be larger than 2^(8*size).
  */
-#define mp_prime_random(a, t, size, bbs, cb, dat) mp_prime_random_ex(a, t, ((size) * 8) + 1, (bbs==1)?MP_PRIME_BBS:0, cb, dat)
+#define mp_prime_random(a, t, size, bbs, cb, dat) (MP_DEPRECATED_PRAGMA("mp_prime_random has been deprecated, use mp_prime_rand instead") mp_prime_random_ex(a, t, ((size) * 8) + 1, (bbs==1)?MP_PRIME_BBS:0, cb, dat))
 
 /* makes a truly random prime of a given size (bits),
  *
@@ -600,8 +600,9 @@ int mp_prime_next_prime(mp_int *a, int t, int bbs_style);
  * so it can be NULL
  *
  */
-int mp_prime_random_ex(mp_int *a, int t, int size, int flags, mp_prime_callback cb, void *dat);
-
+MP_DEPRECATED(mp_prime_rand) int mp_prime_random_ex(mp_int *a, int t, int size, int flags,
+      private_mp_prime_callback cb, void *dat);
+int mp_prime_rand(mp_int *a, int t, int size, int flags);
 
 /* Integer logarithm to integer base */
 int mp_ilogb(mp_int *a, mp_digit base, mp_int *c);

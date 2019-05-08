@@ -173,7 +173,7 @@ The wrong \texttt{libtool} will build it all fine but when it comes to the final
 cc -I./ -Wall -Wsign-compare -Wextra -Wshadow -Wsystem-headers -Wdeclaration-afo...
 cc -I./ -Wall -Wsign-compare -Wextra -Wshadow -Wsystem-headers -Wdeclaration-afo...
 cc -I./ -Wall -Wsign-compare -Wextra -Wshadow -Wsystem-headers -Wdeclaration-afo...
-libtool --mode=link --tag=CC cc  bn_error.lo bn_s_mp_invmod_fast.lo bn_fast_mp_mo 
+libtool --mode=link --tag=CC cc  bn_error.lo bn_s_mp_invmod_fast.lo bn_fast_mp_mo
 libtool: link: cc bn_error.lo bn_s_mp_invmod_fast.lo bn_s_mp_montgomery_reduce_fast0
 bn_error.lo: file not recognized: File format not recognized
 cc: error: linker command failed with exit code 1 (use -v to see invocation)
@@ -187,7 +187,7 @@ $ sudo pkg_add gmake libtool
 \end{alltt}
 At this time two versions of \texttt{libtool} are installed and both are named \texttt{libtool}, unfortunately but GNU \texttt{libtool} has been placed in \texttt{/usr/local/bin/} and the native version in \texttt{/usr/bin/}. The path might be different in other versions of OpenBSD but both programms differ in the output of \texttt{libtool --version}
 \begin{alltt}
-$ /usr/local/bin/libtool --version                              
+$ /usr/local/bin/libtool --version
 libtool (GNU libtool) 2.4.2
 Written by Gordon Matzigkeit <gord@gnu.ai.mit.edu>, 1996
 
@@ -2076,38 +2076,21 @@ mp\_prime\_is\_prime for details regarding the use of the argument $t$.  Set $bb
 want only the next prime congruent to $3 \mbox{ mod } 4$, otherwise set it to zero to find any next prime.
 
 \section{Random Primes}
-\index{mp\_prime\_random}
-\begin{alltt}
-int mp_prime_random(mp_int *a, int t, int size, int bbs,
-                    ltm_prime_callback cb, void *dat)
-\end{alltt}
-This will find a prime greater than $256^{size}$ which can be ``bbs\_style'' or not depending on $bbs$ and must pass
-$t$ rounds of tests but see the documentation for mp\_prime\_is\_prime for details regarding the use of the argument $t$.
-The ``ltm\_prime\_callback'' is a typedef for
-
-\begin{alltt}
-typedef int ltm_prime_callback(unsigned char *dst, int len, void *dat);
-\end{alltt}
-
-Which is a function that must read $len$ bytes (and return the amount stored) into $dst$.  The $dat$ variable is simply
-copied from the original input.  It can be used to pass RNG context data to the callback.  The function
-mp\_prime\_random() is more suitable for generating primes which must be secret (as in the case of RSA) since there
-is no skew on the least significant bits.
-
-\textit{Note:}  As of v0.30 of the LibTomMath library this function has been deprecated.  It is still available
-but users are encouraged to use the new mp\_prime\_random\_ex() function instead.
-
-\subsection{Extended Generation}
 \index{mp\_prime\_random\_ex}
 \begin{alltt}
-int mp_prime_random_ex(mp_int *a,    int t,
-                       int     size, int flags,
-                       ltm_prime_callback cb, void *dat);
+int mp_prime_rand(mp_int *a,    int t,
+                  int     size, int flags);
 \end{alltt}
-This will generate a prime in $a$ using $t$ tests of the primality testing algorithms.  The variable $size$
-specifies the bit length of the prime desired.  The variable $flags$ specifies one of several options available
-(see fig. \ref{fig:primeopts}) which can be OR'ed together.  The callback parameters are used as in
-mp\_prime\_random().
+This will generate a prime in $a$ using $t$ tests of the primality testing algorithms.
+See the documentation for mp\_prime\_is\_prime for details regarding the use of the argument $t$.
+The variable $size$ specifies the bit length of the prime desired.
+The variable $flags$ specifies one of several options available
+(see fig. \ref{fig:primeopts}) which can be OR'ed together.
+
+The function mp\_prime\_rand() is suitable for generating primes which must be secret (as in the case of RSA) since there
+is no skew on the least significant bits.
+
+\textit{Note:} This function replaces the deprecated mp\_prime\_random and mp\_prime\_random\_ex functions.
 
 \begin{figure}[h]
 \begin{center}

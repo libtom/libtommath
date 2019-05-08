@@ -782,32 +782,7 @@ LBL_ERR:
    return EXIT_FAILURE;
 }
 
-#if defined(LTM_DEMO_REAL_RAND) && !defined(_WIN32)
-static FILE *fd_urandom = 0;
-#endif
-
-static int myrng(unsigned char *dst, int len, void *dat)
-{
-   int x;
-   (void)dat;
-#if defined(LTM_DEMO_REAL_RAND) && !defined(_WIN32)
-   if (!fd_urandom) {
-      fprintf(stderr, "\nno /dev/urandom\n");
-   } else {
-      return fread(dst, 1uL, len, fd_urandom);
-   }
-#endif
-   for (x = 0; x < len;) {
-      unsigned int r = (unsigned int)rand();
-      do {
-         dst[x++] = r & 0xFFu;
-         r >>= 8;
-      } while ((r != 0u) && (x < len));
-   }
-   return len;
-}
-
-static int test_mp_prime_random_ex(void)
+static int test_mp_prime_rand(void)
 {
    int ix, err;
 
@@ -820,9 +795,7 @@ static int test_mp_prime_random_ex(void)
    for (ix = 10; ix < 128; ix++) {
       printf("Testing (not safe-prime): %9d bits    \r", ix);
       fflush(stdout);
-      err = mp_prime_random_ex(&a, 8, ix,
-                               (rand() & 1) ? 0 : MP_PRIME_2MSB_ON, myrng,
-                               NULL);
+      err = mp_prime_rand(&a, 8, ix, (rand() & 1) ? 0 : MP_PRIME_2MSB_ON);
       if (err != MP_OKAY) {
          printf("\nfailed with error: %s\n", mp_error_to_string(err));
          goto LBL_ERR;
@@ -883,9 +856,7 @@ static int test_mp_prime_is_prime(void)
    for (ix = 16; ix < 128; ix++) {
       printf("Testing (    safe-prime): %9d bits    \r", ix);
       fflush(stdout);
-      err = mp_prime_random_ex(
-               &a, 8, ix, ((rand() & 1) ? 0 : MP_PRIME_2MSB_ON) | MP_PRIME_SAFE,
-               myrng, NULL);
+      err = mp_prime_rand(&a, 8, ix, ((rand() & 1) ? 0 : MP_PRIME_2MSB_ON) | MP_PRIME_SAFE);
       if (err != MP_OKAY) {
          printf("\nfailed with error: %s\n", mp_error_to_string(err));
          goto LBL_ERR;
@@ -1866,7 +1837,7 @@ int unit_tests(int argc, char **argv)
       T(mp_kronecker),
       T(mp_montgomery_reduce),
       T(mp_prime_is_prime),
-      T(mp_prime_random_ex),
+      T(mp_prime_rand),
       T(mp_rand),
       T(mp_read_radix),
       T(mp_reduce_2k),
@@ -1888,13 +1859,6 @@ int unit_tests(int argc, char **argv)
    unsigned long i;
    int res = EXIT_SUCCESS, j;
 
-#if defined(LTM_DEMO_REAL_RAND) && !defined(_WIN32)
-   fd_urandom = fopen("/dev/urandom", "r");
-   if (!fd_urandom) {
-      fprintf(stderr, "\ncould not open /dev/urandom\n");
-   }
-#endif
-
    for (i = 0; i < sizeof(test) / sizeof(test[0]); ++i) {
       if (argc > 1) {
          for (j = 1; j < argc; ++j) {
@@ -1913,10 +1877,5 @@ int unit_tests(int argc, char **argv)
       printf("\n\n");
    }
 
-#if defined(LTM_DEMO_REAL_RAND) && !defined(_WIN32)
-   if (fd_urandom) {
-      fclose(fd_urandom);
-   }
-#endif
    return res;
 }

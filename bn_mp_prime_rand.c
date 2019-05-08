@@ -1,5 +1,5 @@
 #include "tommath_private.h"
-#ifdef BN_MP_PRIME_RANDOM_EX_C
+#ifdef BN_MP_PRIME_RAND_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
@@ -18,7 +18,7 @@
  */
 
 /* This is possibly the mother of all prime generation functions, muahahahahaha! */
-int mp_prime_random_ex(mp_int *a, int t, int size, int flags, mp_prime_callback cb, void *dat)
+static int s_mp_prime_random_ex(mp_int *a, int t, int size, int flags, private_mp_prime_callback cb, void *dat)
 {
    unsigned char *tmp, maskAND, maskOR_msb, maskOR_lsb;
    int res, err, bsize, maskOR_msb_offset;
@@ -118,5 +118,26 @@ error:
    return err;
 }
 
+static int s_rand_cb(unsigned char *dst, int len, void *dat)
+{
+   (void)dat;
+   if (len <= 0) {
+      return len;
+   }
+   if (s_rand_source(dst, (size_t)len) != MP_OKAY) {
+      return 0;
+   }
+   return len;
+}
+
+int mp_prime_random_ex(mp_int *a, int t, int size, int flags, private_mp_prime_callback cb, void *dat)
+{
+   return s_mp_prime_random_ex(a, t, size, flags, cb, dat);
+}
+
+int mp_prime_rand(mp_int *a, int t, int size, int flags)
+{
+   return s_mp_prime_random_ex(a, t, size, flags, s_rand_cb, NULL);
+}
 
 #endif

@@ -35,7 +35,7 @@ bn_mp_montgomery_calc_normalization.obj bn_mp_montgomery_reduce.obj bn_mp_montgo
 bn_mp_mul_2.obj bn_mp_mul_2d.obj bn_mp_mul_d.obj bn_mp_mulmod.obj bn_mp_n_root.obj bn_mp_n_root_ex.obj bn_mp_neg.obj \
 bn_mp_or.obj bn_mp_prime_fermat.obj bn_mp_prime_frobenius_underwood.obj bn_mp_prime_is_divisible.obj \
 bn_mp_prime_is_prime.obj bn_mp_prime_miller_rabin.obj bn_mp_prime_next_prime.obj \
-bn_mp_prime_rabin_miller_trials.obj bn_mp_prime_random_ex.obj bn_mp_prime_strong_lucas_selfridge.obj \
+bn_mp_prime_rabin_miller_trials.obj bn_mp_prime_rand.obj bn_mp_prime_strong_lucas_selfridge.obj \
 bn_mp_radix_size.obj bn_mp_radix_smap.obj bn_mp_rand.obj bn_mp_read_radix.obj bn_mp_read_signed_bin.obj \
 bn_mp_read_unsigned_bin.obj bn_mp_reduce.obj bn_mp_reduce_2k.obj bn_mp_reduce_2k_l.obj bn_mp_reduce_2k_setup.obj \
 bn_mp_reduce_2k_setup_l.obj bn_mp_reduce_is_2k.obj bn_mp_reduce_is_2k_l.obj bn_mp_reduce_setup.obj bn_mp_rshd.obj \

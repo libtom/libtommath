@@ -161,7 +161,7 @@ static int s_mp_rand_source_platform(void *p, size_t n)
 #endif
 }
 
-static int (*s_rand_source)(void *, size_t) = s_mp_rand_source_platform;
+int (*s_rand_source)(void *, size_t) = s_mp_rand_source_platform;
 
 void mp_rand_source(int (*get)(void *out, size_t size))
 {

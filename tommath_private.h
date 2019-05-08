@@ -66,6 +66,9 @@ extern void MP_FREE(void *mem, size_t size);
 #define MP_IS_EVEN(a) (((a)->used == 0) || (((a)->dp[0] & 1u) == 0u))
 #define MP_IS_ODD(a)  (((a)->used > 0) && (((a)->dp[0] & 1u) == 1u))
 
+/* random number source */
+extern int (*s_rand_source)(void *, size_t);
+
 /* lowlevel functions, do not call! */
 int s_mp_add(const mp_int *a, const mp_int *b, mp_int *c);
 int s_mp_sub(const mp_int *a, const mp_int *b, mp_int *c);
