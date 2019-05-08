@@ -165,7 +165,7 @@ int (*s_rand_source)(void *out, size_t size) = s_mp_rand_source_platform;
 
 void mp_rand_source(int (*source)(void *out, size_t size))
 {
-   s_rand_source = source == NULL ? s_mp_rand_source_platform : source;
+   s_rand_source = (source == NULL) ? s_mp_rand_source_platform : source;
 }
 
 /* makes a pseudo-random int of a given size */
