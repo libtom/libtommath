@@ -8,22 +8,7 @@
  * - Windows
  */
 #if defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__) || defined(__DragonFly__)
-#define MP_ARC4RANDOM
-#define MP_GEN_RANDOM_MAX     0xffffffffu
-#define MP_GEN_RANDOM_SHIFT   32
-
-static int s_read_arc4random(mp_digit *p)
-{
-   mp_digit d = 0, msk = 0;
-   do {
-      d <<= MP_GEN_RANDOM_SHIFT;
-      d |= ((mp_digit) arc4random());
-      msk <<= MP_GEN_RANDOM_SHIFT;
-      msk |= (MP_MASK & MP_GEN_RANDOM_MAX);
-   } while ((MP_MASK & msk) != MP_MASK);
-   *p = d;
-   return MP_OKAY;
-}
+#  define MP_ARC4RANDOM
 #endif
 
 #if defined(_WIN32) || defined(_WIN32_WCE)
@@ -49,23 +34,19 @@ static void s_cleanup_win_csp(void)
    hProv = 0;
 }
 
-static int s_read_win_csp(mp_digit *p)
+static int s_read_win_csp(void *p, size_t n)
 {
-   int ret = -1;
    if (hProv == 0) {
       if (!CryptAcquireContext(&hProv, NULL, MS_DEF_PROV, PROV_RSA_FULL,
                                (CRYPT_VERIFYCONTEXT | CRYPT_MACHINE_KEYSET)) &&
           !CryptAcquireContext(&hProv, NULL, MS_DEF_PROV, PROV_RSA_FULL,
                                CRYPT_VERIFYCONTEXT | CRYPT_MACHINE_KEYSET | CRYPT_NEWKEYSET)) {
          hProv = 0;
-         return ret;
+         return MP_ERR;
       }
       atexit(s_cleanup_win_csp);
    }
-   if (CryptGenRandom(hProv, sizeof(*p), (void *)p) == TRUE) {
-      ret = MP_OKAY;
-   }
-   return ret;
+   return CryptGenRandom(hProv, (DWORD)n, (BYTE *)p) == TRUE ? MP_OKAY : MP_ERR;
 }
 #endif /* WIN32 */
 
@@ -75,14 +56,21 @@ static int s_read_win_csp(mp_digit *p)
 #include <sys/random.h>
 #include <errno.h>
 
-static int s_read_getrandom(mp_digit *p)
+static int s_read_getrandom(void *p, size_t n)
 {
-   ssize_t ret;
-   do {
-      ret = getrandom(p, sizeof(*p), 0);
-   } while ((ret == -1) && (errno == EINTR));
-   if (ret == sizeof(*p)) return MP_OKAY;
-   return -1;
+   char *q = (char *)p;
+   while (n > 0) {
+      ssize_t ret = getrandom(q, n, 0);
+      if (ret < 0) {
+         if (errno == EINTR) {
+            continue;
+         }
+         return MP_ERR;
+      }
+      q += ret;
+      n -= (size_t)ret;
+   }
+   return MP_OKAY;
 }
 #endif
 #endif
@@ -98,19 +86,30 @@ static int s_read_getrandom(mp_digit *p)
 #include <errno.h>
 #include <unistd.h>
 
-static int s_read_dev_urandom(mp_digit *p)
+static int s_read_dev_urandom(void *p, size_t n)
 {
-   ssize_t r;
    int fd;
+   char *q = (char *)p;
+
    do {
       fd = open(MP_DEV_URANDOM, O_RDONLY);
    } while ((fd == -1) && (errno == EINTR));
-   if (fd == -1) return -1;
-   do {
-      r = read(fd, p, sizeof(*p));
-   } while ((r == -1) && (errno == EINTR));
+   if (fd == -1) return MP_ERR;
+
+   while (n > 0) {
+      ssize_t ret = read(fd, p, n);
+      if (ret < 0) {
+         if (errno == EINTR) {
+            continue;
+         }
+         close(fd);
+         return MP_ERR;
+      }
+      q += ret;
+      n -= (size_t)ret;
+   }
+
    close(fd);
-   if (r != sizeof(*p)) return -1;
    return MP_OKAY;
 }
 #endif
@@ -119,89 +118,92 @@ static int s_read_dev_urandom(mp_digit *p)
 unsigned long (*ltm_rng)(unsigned char *out, unsigned long outlen, void (*callback)(void));
 void (*ltm_rng_callback)(void);
 
-static int s_read_ltm_rng(mp_digit *p)
+static int s_read_ltm_rng(void *p, size_t n)
 {
    unsigned long ret;
-   if (ltm_rng == NULL) return -1;
-   ret = ltm_rng((void *)p, sizeof(*p), ltm_rng_callback);
-   if (ret != sizeof(*p)) return -1;
+   if (ltm_rng == NULL) return MP_ERR;
+   ret = ltm_rng(p, n, ltm_rng_callback);
+   if (ret != n) return MP_ERR;
    return MP_OKAY;
 }
 #endif
 
-static int s_rand_digit(mp_digit *p)
+static int s_mp_rand_source_platform(void *p, size_t n)
 {
-   int ret = -1;
-
 #if defined(MP_ARC4RANDOM)
-   ret = s_read_arc4random(p);
-   if (ret == MP_OKAY) return ret;
-#endif
-
-#if defined(MP_WIN_CSP)
-   ret = s_read_win_csp(p);
-   if (ret == MP_OKAY) return ret;
+   arc4random_buf(p, n);
+   return MP_OKAY;
 #else
 
-#if defined(MP_GETRANDOM)
-   ret = s_read_getrandom(p);
-   if (ret == MP_OKAY) return ret;
-#endif
-#if defined(MP_DEV_URANDOM)
-   ret = s_read_dev_urandom(p);
+   int ret = MP_ERR;
+
+#if defined(MP_WIN_CSP)
+   ret = s_read_win_csp(p, n);
    if (ret == MP_OKAY) return ret;
 #endif
 
-#endif /* MP_WIN_CSP */
+#if defined(MP_GETRANDOM)
+   ret = s_read_getrandom(p, n);
+   if (ret == MP_OKAY) return ret;
+#endif
+
+#if defined(MP_DEV_URANDOM)
+   ret = s_read_dev_urandom(p, n);
+   if (ret == MP_OKAY) return ret;
+#endif
 
 #if defined(MP_PRNG_ENABLE_LTM_RNG)
-   ret = s_read_ltm_rng(p);
+   ret = s_read_ltm_rng(p, n);
    if (ret == MP_OKAY) return ret;
 #endif
 
    return ret;
+#endif
+}
+
+static int (*s_rand_source)(void *, size_t) = s_mp_rand_source_platform;
+
+void mp_rand_source(int (*get)(void *out, size_t size))
+{
+   s_rand_source = get == NULL ? s_mp_rand_source_platform : get;
 }
 
 /* makes a pseudo-random int of a given size */
 int mp_rand_digit(mp_digit *r)
 {
-   int ret = s_rand_digit(r);
+   int ret = s_rand_source(r, sizeof(mp_digit));
    *r &= MP_MASK;
    return ret;
 }
 
 int mp_rand(mp_int *a, int digits)
 {
-   int     res;
-   mp_digit d;
+   int ret, i;
 
    mp_zero(a);
+
    if (digits <= 0) {
       return MP_OKAY;
    }
 
-   /* first place a random non-zero digit */
-   do {
-      if (mp_rand_digit(&d) != MP_OKAY) {
-         return MP_VAL;
-      }
-   } while (d == 0u);
-
-   if ((res = mp_add_d(a, d, a)) != MP_OKAY) {
-      return res;
+   if ((ret = mp_grow(a, digits)) != MP_OKAY) {
+      return ret;
    }
 
-   while (--digits > 0) {
-      if ((res = mp_lshd(a, 1)) != MP_OKAY) {
-         return res;
-      }
+   if ((ret = s_rand_source(a->dp, (size_t)digits * sizeof(mp_digit))) != MP_OKAY) {
+      return ret;
+   }
 
-      if (mp_rand_digit(&d) != MP_OKAY) {
-         return MP_VAL;
+   /* TODO: We ensure that the highest digit is nonzero. Should this be removed? */
+   while ((a->dp[digits - 1] & MP_MASK) == 0) {
+      if ((ret = s_rand_source(a->dp + digits - 1, sizeof(mp_digit))) != MP_OKAY) {
+         return ret;
       }
-      if ((res = mp_add_d(a, d, a)) != MP_OKAY) {
-         return res;
-      }
+   }
+
+   a->used = digits;
+   for (i = 0; i < digits; ++i) {
+      a->dp[i] &= MP_MASK;
    }
 
    return MP_OKAY;

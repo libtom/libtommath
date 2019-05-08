@@ -56,7 +56,7 @@ CFLAGS += -Wstrict-prototypes -Wpointer-arith
 endif
 
 ifdef CONV_WARNINGS
-CFLAGS += -Wconversion -Wsign-conversion
+CFLAGS += -std=c89 -Wconversion -Wsign-conversion
 else
 CFLAGS += -Wsystem-headers
 endif

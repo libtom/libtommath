@@ -12,7 +12,6 @@
 
 static uint64_t s_ranval(void);
 static void s_raninit(uint64_t seed);
-static int s_mp_random(mp_int *a, int limbs);
 static uint64_t s_timer_function(void);
 static void s_timer_start(void);
 static uint64_t s_timer_stop(void);
@@ -64,19 +63,18 @@ static void s_raninit(uint64_t seed)
    source of the OS for its purpose. That is too expensive, too slow and
    most important for a benchmark: it is not repeatable.
 */
-static int s_mp_random(mp_int *a, int limbs)
+static int s_ranbuf(void *p, size_t n)
 {
-   int e = MP_OKAY;
-   if ((e = mp_grow(a, limbs + 1)) != MP_OKAY) {
-      goto LTM_ERR;
+   char *q = (char *)p;
+   while (n > 0) {
+      int i;
+      uint64_t x = s_ranval();
+      for (i = 0; i < 8 && n > 0; ++i, --n) {
+         *q++ = (char)(x & 0xFF);
+         x >>= 8;
+      }
    }
-   a->used = limbs--;
-   do {
-      a->dp[limbs] = (mp_digit)(s_ranval() & MP_MASK);
-   } while (limbs--);
-   mp_clamp(a);
-LTM_ERR:
-   return e;
+   return MP_OKAY;
 }
 
 static uint64_t s_timer_function(void)
@@ -127,11 +125,11 @@ static uint64_t s_time_mul(int size)
       goto LTM_ERR;
    }
 
-   if ((e = s_mp_random(&a, size * s_offset)) != MP_OKAY) {
+   if ((e = mp_rand(&a, size * s_offset)) != MP_OKAY) {
       t1 = UINT64_MAX;
       goto LTM_ERR;
    }
-   if ((e = s_mp_random(&b, size)) != MP_OKAY) {
+   if ((e = mp_rand(&b, size)) != MP_OKAY) {
       t1 = UINT64_MAX;
       goto LTM_ERR;
    }
@@ -172,7 +170,7 @@ static uint64_t s_time_sqr(int size)
       goto LTM_ERR;
    }
 
-   if ((e = s_mp_random(&a, size)) != MP_OKAY) {
+   if ((e = mp_rand(&a, size)) != MP_OKAY) {
       t1 = UINT64_MAX;
       goto LTM_ERR;
    }
@@ -264,6 +262,8 @@ int main(int argc, char **argv)
    char sqrlog[256] = "squaring";
    s_number_of_test_loops = 64;
    s_stabilization_extra = 3;
+
+   mp_rand_source(s_ranbuf);
 
    /* Very simple option parser, please treat it nicely. */
    if (argc != 1) {

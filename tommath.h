@@ -106,6 +106,7 @@ typedef uint64_t             mp_word;
 #define MP_NEG        1   /* negative */
 
 #define MP_OKAY       0   /* ok result */
+#define MP_ERR        -1  /* unknown error */
 #define MP_MEM        -2  /* out of mem */
 #define MP_VAL        -3  /* invalid input */
 #define MP_RANGE      MP_VAL
@@ -304,8 +305,11 @@ int mp_cnt_lsb(const mp_int *a);
 int mp_rand(mp_int *a, int digits);
 /* makes a pseudo-random small int of a given size */
 int mp_rand_digit(mp_digit *r);
+/* use custom random data source instead of source provided the platform */
+void mp_rand_source(int source(void *, size_t));
 
 #ifdef MP_PRNG_ENABLE_LTM_RNG
+#  warning MP_PRNG_ENABLE_LTM_RNG has been deprecated, use mp_rand_source instead.
 /* A last resort to provide random data on systems without any of the other
  * implemented ways to gather entropy.
  * It is compatible with `rng_get_bytes()` from libtomcrypt so you could
