@@ -68,6 +68,45 @@ LBL_ERR:
    return EXIT_FAILURE;
 }
 
+static int very_random_source(void *out, size_t size)
+{
+   memset(out, 0xff, size);
+   return MP_OKAY;
+}
+
+static int test_mp_rand(void)
+{
+   mp_int a, b;
+   int err, n;
+   if (mp_init_multi(&a, &b, NULL)!= MP_OKAY) {
+      return EXIT_FAILURE;
+   }
+   mp_rand_source(very_random_source);
+   for (n = 1; n < 1024; ++n) {
+      if ((err = mp_rand(&a, n)) != MP_OKAY) {
+         printf("Failed mp_rand() %s.\n", mp_error_to_string(err));
+         break;
+      }
+      if ((err = mp_incr(&a)) != MP_OKAY) {
+         printf("Failed mp_incr() %s.\n", mp_error_to_string(err));
+         break;
+      }
+      if ((err = mp_div_2d(&a, n * MP_DIGIT_BIT, &b, NULL)) != MP_OKAY) {
+         printf("Failed mp_div_2d() %s.\n", mp_error_to_string(err));
+         break;
+      }
+      if (mp_cmp_d(&b, 1) != MP_EQ) {
+         ndraw(&a, "mp_rand() a");
+         ndraw(&b, "mp_rand() b");
+         err = MP_ERR;
+         break;
+      }
+   }
+   mp_rand_source(NULL);
+   mp_clear_multi(&a, &b, NULL);
+   return err == MP_OKAY ? EXIT_SUCCESS : EXIT_FAILURE;
+}
+
 static int test_mp_jacobi(void)
 {
    struct mp_jacobi_st {
@@ -1828,6 +1867,7 @@ int unit_tests(int argc, char **argv)
       T(mp_montgomery_reduce),
       T(mp_prime_is_prime),
       T(mp_prime_random_ex),
+      T(mp_rand),
       T(mp_read_radix),
       T(mp_reduce_2k),
       T(mp_reduce_2k_l),
