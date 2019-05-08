@@ -67,6 +67,7 @@ extern void MP_FREE(void *mem, size_t size);
 #define MP_IS_ODD(a)  (((a)->used > 0) && (((a)->dp[0] & 1u) == 1u))
 
 #define MP_SIZEOF_BITS(type)    (CHAR_BIT * sizeof(type))
+#define MP_MAXFAST              (int)(1u << (MP_SIZEOF_BITS(mp_word) - (2u * (size_t)MP_DIGIT_BIT)))
 
 /* random number source */
 extern int (*s_rand_source)(void *, size_t);

@@ -18,8 +18,7 @@ int mp_montgomery_reduce(mp_int *x, const mp_int *n, mp_digit rho)
    digs = (n->used * 2) + 1;
    if ((digs < (int)MP_WARRAY) &&
        (x->used <= (int)MP_WARRAY) &&
-       (n->used <
-        (int)(1u << (MP_SIZEOF_BITS(mp_word) - (2u * (size_t)MP_DIGIT_BIT))))) {
+       (n->used < MP_MAXFAST)) {
       return s_mp_montgomery_reduce_fast(x, n, rho);
    }
 
