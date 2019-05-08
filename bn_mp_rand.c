@@ -206,7 +206,6 @@ int mp_rand(mp_int *a, int digits)
       a->dp[i] &= MP_MASK;
    }
 
-   mp_clamp(a);
    return MP_OKAY;
 }
 #endif
