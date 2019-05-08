@@ -130,28 +130,27 @@ static int s_read_ltm_rng(void *p, size_t n)
 
 static int s_mp_rand_source_platform(void *p, size_t n)
 {
-   int ret = MP_ERR;
-
 #if defined(MP_ARC4RANDOM)
    arc4random_buf(p, n);
    return MP_OKAY;
-#endif
+#else
+
+   int ret = MP_ERR;
 
 #if defined(MP_WIN_CSP)
    ret = s_read_win_csp(p, n);
    if (ret == MP_OKAY) return ret;
-#else
+#endif
 
 #if defined(MP_GETRANDOM)
    ret = s_read_getrandom(p, n);
    if (ret == MP_OKAY) return ret;
 #endif
+
 #if defined(MP_DEV_URANDOM)
    ret = s_read_dev_urandom(p, n);
    if (ret == MP_OKAY) return ret;
 #endif
-
-#endif /* MP_WIN_CSP */
 
 #if defined(MP_PRNG_ENABLE_LTM_RNG)
    ret = s_read_ltm_rng(p, n);
@@ -159,6 +158,7 @@ static int s_mp_rand_source_platform(void *p, size_t n)
 #endif
 
    return ret;
+#endif
 }
 
 static int (*s_rand_source)(void *, size_t) = s_mp_rand_source_platform;
