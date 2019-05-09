@@ -16,8 +16,7 @@ int mp_mod_2d(const mp_int *a, int b, mp_int *c)
 
    /* if the modulus is larger than the value than return */
    if (b >= (a->used * MP_DIGIT_BIT)) {
-      res = mp_copy(a, c);
-      return res;
+      return mp_copy(a, c);
    }
 
    /* copy */

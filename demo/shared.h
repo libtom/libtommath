@@ -24,6 +24,7 @@
 #define LTM_DEMO_RAND_SEED  23
 #endif
 
+#define MP_WUR /* TODO: result checks disabled for now */
 #include "tommath.h"
 
 extern void ndraw(mp_int* a, const char* name);

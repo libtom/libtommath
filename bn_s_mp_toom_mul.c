@@ -52,7 +52,9 @@ int s_mp_toom_mul(const mp_int *a, const mp_int *b, mp_int *c)
       goto LBL_ERR;
    }
    mp_rshd(&b1, B);
-   (void)mp_mod_2d(&b1, MP_DIGIT_BIT * B, &b1);
+   if ((res = mp_mod_2d(&b1, MP_DIGIT_BIT * B, &b1)) != MP_OKAY) {
+      goto LBL_ERR;
+   }
 
    if ((res = mp_copy(b, &b2)) != MP_OKAY) {
       goto LBL_ERR;
