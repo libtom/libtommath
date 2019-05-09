@@ -68,6 +68,45 @@ LBL_ERR:
    return EXIT_FAILURE;
 }
 
+static int very_random_source(void *out, size_t size)
+{
+   memset(out, 0xff, size);
+   return MP_OKAY;
+}
+
+static int test_mp_rand(void)
+{
+   mp_int a, b;
+   int err, n;
+   if (mp_init_multi(&a, &b, NULL)!= MP_OKAY) {
+      return EXIT_FAILURE;
+   }
+   mp_rand_source(very_random_source);
+   for (n = 1; n < 1024; ++n) {
+      if ((err = mp_rand(&a, n)) != MP_OKAY) {
+         printf("Failed mp_rand() %s.\n", mp_error_to_string(err));
+         break;
+      }
+      if ((err = mp_incr(&a)) != MP_OKAY) {
+         printf("Failed mp_incr() %s.\n", mp_error_to_string(err));
+         break;
+      }
+      if ((err = mp_div_2d(&a, n * MP_DIGIT_BIT, &b, NULL)) != MP_OKAY) {
+         printf("Failed mp_div_2d() %s.\n", mp_error_to_string(err));
+         break;
+      }
+      if (mp_cmp_d(&b, 1) != MP_EQ) {
+         ndraw(&a, "mp_rand() a");
+         ndraw(&b, "mp_rand() b");
+         err = MP_ERR;
+         break;
+      }
+   }
+   mp_rand_source(NULL);
+   mp_clear_multi(&a, &b, NULL);
+   return err == MP_OKAY ? EXIT_SUCCESS : EXIT_FAILURE;
+}
+
 static int test_mp_jacobi(void)
 {
    struct mp_jacobi_st {
@@ -1806,7 +1845,7 @@ LTM_ERR:
    return EXIT_FAILURE;
 }
 
-int unit_tests(void)
+int unit_tests(int argc, char **argv)
 {
    static const struct {
       const char *name;
@@ -1828,6 +1867,7 @@ int unit_tests(void)
       T(mp_montgomery_reduce),
       T(mp_prime_is_prime),
       T(mp_prime_random_ex),
+      T(mp_rand),
       T(mp_read_radix),
       T(mp_reduce_2k),
       T(mp_reduce_2k_l),
@@ -1846,7 +1886,7 @@ int unit_tests(void)
 #undef T
    };
    unsigned long i;
-   int res = EXIT_SUCCESS;
+   int res = EXIT_SUCCESS, j;
 
 #if defined(LTM_DEMO_REAL_RAND) && !defined(_WIN32)
    fd_urandom = fopen("/dev/urandom", "r");
@@ -1856,6 +1896,14 @@ int unit_tests(void)
 #endif
 
    for (i = 0; i < sizeof(test) / sizeof(test[0]); ++i) {
+      if (argc > 1) {
+         for (j = 1; j < argc; ++j) {
+            if (strstr(test[i].name, argv[j]) != NULL) {
+               break;
+            }
+         }
+         if (j == argc) continue;
+      }
       printf("TEST %s\n\n", test[i].name);
       if (test[i].fn() != EXIT_SUCCESS) {
          printf("\n\nFAIL %s\n\n", test[i].name);
