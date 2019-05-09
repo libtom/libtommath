@@ -9,6 +9,8 @@ const char *mp_error_to_string(int code)
    switch (code) {
    case MP_OKAY:
       return "Successful";
+   case MP_ERR:
+      return "Unknown error";
    case MP_MEM:
       return "Out of heap";
    case MP_VAL:
