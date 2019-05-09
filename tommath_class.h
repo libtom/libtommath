@@ -17,7 +17,6 @@
 #   define BN_MP_ADD_C
 #   define BN_MP_ADD_D_C
 #   define BN_MP_ADDMOD_C
-#   define BN_MP_AND_C
 #   define BN_MP_CLAMP_C
 #   define BN_MP_CLEAR_C
 #   define BN_MP_CLEAR_MULTI_C
@@ -84,7 +83,6 @@
 #   define BN_MP_N_ROOT_C
 #   define BN_MP_N_ROOT_EX_C
 #   define BN_MP_NEG_C
-#   define BN_MP_OR_C
 #   define BN_MP_PRIME_FERMAT_C
 #   define BN_MP_PRIME_FROBENIUS_UNDERWOOD_C
 #   define BN_MP_PRIME_IS_DIVISIBLE_C
@@ -134,10 +132,10 @@
 #   define BN_MP_TORADIX_C
 #   define BN_MP_TORADIX_N_C
 #   define BN_MP_UNSIGNED_BIN_SIZE_C
-#   define BN_MP_XOR_C
 #   define BN_MP_ZERO_C
 #   define BN_PRIME_TAB_C
 #   define BN_S_MP_ADD_C
+#   define BN_S_MP_AND_C
 #   define BN_S_MP_BALANCE_MUL_C
 #   define BN_S_MP_EXPTMOD_C
 #   define BN_S_MP_EXPTMOD_FAST_C
@@ -150,12 +148,14 @@
 #   define BN_S_MP_MUL_DIGS_FAST_C
 #   define BN_S_MP_MUL_HIGH_DIGS_C
 #   define BN_S_MP_MUL_HIGH_DIGS_FAST_C
+#   define BN_S_MP_OR_C
 #   define BN_S_MP_REVERSE_C
 #   define BN_S_MP_SQR_C
 #   define BN_S_MP_SQR_FAST_C
 #   define BN_S_MP_SUB_C
 #   define BN_S_MP_TOOM_MUL_C
 #   define BN_S_MP_TOOM_SQR_C
+#   define BN_S_MP_XOR_C
 #endif
 #if defined(BN_CUTOFFS_C)
 #endif
@@ -214,13 +214,6 @@
 #   define BN_MP_ADD_C
 #   define BN_MP_CLEAR_C
 #   define BN_MP_MOD_C
-#endif
-
-#if defined(BN_MP_AND_C)
-#   define BN_MP_INIT_COPY_C
-#   define BN_MP_CLAMP_C
-#   define BN_MP_EXCH_C
-#   define BN_MP_CLEAR_C
 #endif
 
 #if defined(BN_MP_CLAMP_C)
@@ -628,13 +621,6 @@
 #   define BN_MP_COPY_C
 #endif
 
-#if defined(BN_MP_OR_C)
-#   define BN_MP_INIT_COPY_C
-#   define BN_MP_CLAMP_C
-#   define BN_MP_EXCH_C
-#   define BN_MP_CLEAR_C
-#endif
-
 #if defined(BN_MP_PRIME_FERMAT_C)
 #   define BN_MP_CMP_D_C
 #   define BN_MP_INIT_C
@@ -952,7 +938,7 @@
 #   define BN_MP_INIT_C
 #   define BN_MP_ADD_C
 #   define BN_MP_CLEAR_C
-#   define BN_MP_AND_C
+#   define BN_S_MP_AND_C
 #   define BN_MP_SUB_C
 #endif
 
@@ -969,7 +955,7 @@
 #   define BN_MP_INIT_C
 #   define BN_MP_ADD_C
 #   define BN_MP_CLEAR_C
-#   define BN_MP_OR_C
+#   define BN_S_MP_OR_C
 #   define BN_MP_SUB_C
 #endif
 
@@ -980,7 +966,7 @@
 #   define BN_MP_INIT_C
 #   define BN_MP_ADD_C
 #   define BN_MP_CLEAR_C
-#   define BN_MP_XOR_C
+#   define BN_S_MP_XOR_C
 #   define BN_MP_SUB_C
 #endif
 
@@ -1023,13 +1009,6 @@
 #   define BN_MP_COUNT_BITS_C
 #endif
 
-#if defined(BN_MP_XOR_C)
-#   define BN_MP_INIT_COPY_C
-#   define BN_MP_CLAMP_C
-#   define BN_MP_EXCH_C
-#   define BN_MP_CLEAR_C
-#endif
-
 #if defined(BN_MP_ZERO_C)
 #endif
 
@@ -1039,6 +1018,14 @@
 #if defined(BN_S_MP_ADD_C)
 #   define BN_MP_GROW_C
 #   define BN_MP_CLAMP_C
+#endif
+
+#if defined(BN_S_MP_AND_C)
+#   define BN_MP_INIT_COPY_C
+#   define BN_MP_CLAMP_C
+#   define BN_MP_EXCH_C
+#   define BN_MP_CLEAR_C
+#   define BN_MP_AND_C
 #endif
 
 #if defined(BN_S_MP_BALANCE_MUL_C)
@@ -1168,6 +1155,14 @@
 #   define BN_MP_CLAMP_C
 #endif
 
+#if defined(BN_S_MP_OR_C)
+#   define BN_MP_INIT_COPY_C
+#   define BN_MP_CLAMP_C
+#   define BN_MP_EXCH_C
+#   define BN_MP_CLEAR_C
+#   define BN_MP_OR_C
+#endif
+
 #if defined(BN_S_MP_REVERSE_C)
 #endif
 
@@ -1220,6 +1215,14 @@
 #   define BN_MP_DIV_3_C
 #   define BN_MP_LSHD_C
 #   define BN_MP_CLEAR_MULTI_C
+#endif
+
+#if defined(BN_S_MP_XOR_C)
+#   define BN_MP_INIT_COPY_C
+#   define BN_MP_CLAMP_C
+#   define BN_MP_EXCH_C
+#   define BN_MP_CLEAR_C
+#   define BN_MP_XOR_C
 #endif
 
 #ifdef LTM3

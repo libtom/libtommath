@@ -318,37 +318,38 @@ extern unsigned long (*ltm_rng)(unsigned char *out, unsigned long outlen, void (
 extern void (*ltm_rng_callback)(void);
 #endif
 
-/* ---> binary operations <--- */
-/* c = a XOR b  */
-int mp_xor(const mp_int *a, const mp_int *b, mp_int *c);
-
-/* c = a OR b */
-int mp_or(const mp_int *a, const mp_int *b, mp_int *c);
-
-/* c = a AND b */
-int mp_and(const mp_int *a, const mp_int *b, mp_int *c);
+/* ---> bitwise operations <--- */
 
 /* Checks the bit at position b and returns MP_YES
    if the bit is 1, MP_NO if it is 0 and MP_VAL
    in case of error */
 int mp_get_bit(const mp_int *a, int b);
 
-/* c = a XOR b (two complement) */
+/* c = a XOR b  */
+MP_DEPRECATED(mp_tc_xor) int mp_xor(const mp_int *a, const mp_int *b, mp_int *c);
+
+/* c = a OR b */
+MP_DEPRECATED(mp_tc_or) int mp_or(const mp_int *a, const mp_int *b, mp_int *c);
+
+/* c = a AND b */
+MP_DEPRECATED(mp_tc_and) int mp_and(const mp_int *a, const mp_int *b, mp_int *c);
+
+/* b = ~a */
+int mp_complement(const mp_int *a, mp_int *b);
+
+/* c = a XOR b (two complement, generalised mp_xor) */
 int mp_tc_xor(const mp_int *a, const mp_int *b, mp_int *c);
 
-/* c = a OR b (two complement) */
+/* c = a OR b (two complement, generalised mp_or) */
 int mp_tc_or(const mp_int *a, const mp_int *b, mp_int *c);
 
-/* c = a AND b (two complement) */
+/* c = a AND b (two complement, generalised mp_and) */
 int mp_tc_and(const mp_int *a, const mp_int *b, mp_int *c);
 
 /* right shift (two complement) */
 int mp_tc_div_2d(const mp_int *a, int b, mp_int *c);
 
 /* ---> Basic arithmetic <--- */
-
-/* b = ~a */
-int mp_complement(const mp_int *a, mp_int *b);
 
 /* b = -a */
 int mp_neg(const mp_int *a, mp_int *b);

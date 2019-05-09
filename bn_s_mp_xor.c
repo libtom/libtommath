@@ -1,10 +1,10 @@
 #include "tommath_private.h"
-#ifdef BN_MP_XOR_C
+#ifdef BN_S_MP_XOR_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
 /* XOR two ints together */
-int mp_xor(const mp_int *a, const mp_int *b, mp_int *c)
+int s_mp_xor(const mp_int *a, const mp_int *b, mp_int *c)
 {
    int     res, ix, px;
    mp_int  t;
@@ -31,5 +31,10 @@ int mp_xor(const mp_int *a, const mp_int *b, mp_int *c)
    mp_exch(c, &t);
    mp_clear(&t);
    return MP_OKAY;
+}
+
+int mp_xor(const mp_int *a, const mp_int *b, mp_int *c)
+{
+   return s_mp_xor(a, b, c);
 }
 #endif

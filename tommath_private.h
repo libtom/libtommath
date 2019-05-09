@@ -86,6 +86,9 @@ int s_mp_montgomery_reduce_fast(mp_int *x, const mp_int *n, mp_digit rho);
 int s_mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y, int redmode);
 int s_mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y, int redmode);
 void s_mp_reverse(unsigned char *s, int len);
+int s_mp_xor(const mp_int *a, const mp_int *b, mp_int *c);
+int s_mp_or(const mp_int *a, const mp_int *b, mp_int *c);
+int s_mp_and(const mp_int *a, const mp_int *b, mp_int *c);
 
 extern const char *const mp_s_rmap;
 extern const uint8_t mp_s_rmap_reverse[];

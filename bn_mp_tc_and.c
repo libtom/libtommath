@@ -53,7 +53,7 @@ int mp_tc_and(const mp_int *a, const mp_int *b, mp_int *c)
       }
    }
 
-   res = mp_and(a, b, c);
+   res = s_mp_and(a, b, c);
 
    if ((sa == MP_NEG) && (sb == MP_NEG) && (res == MP_OKAY)) {
       res = mp_sub(c, mx, c);

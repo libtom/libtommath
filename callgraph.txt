@@ -899,17 +899,6 @@ BN_MP_ADD_D_C
 +--->BN_MP_CLAMP_C
 
 
-BN_MP_AND_C
-+--->BN_MP_INIT_COPY_C
-|   +--->BN_MP_INIT_SIZE_C
-|   +--->BN_MP_COPY_C
-|   |   +--->BN_MP_GROW_C
-|   +--->BN_MP_CLEAR_C
-+--->BN_MP_CLAMP_C
-+--->BN_MP_EXCH_C
-+--->BN_MP_CLEAR_C
-
-
 BN_MP_CLAMP_C
 
 
@@ -4493,17 +4482,6 @@ BN_MP_N_ROOT_EX_C
 +--->BN_MP_SUB_D_C
 |   +--->BN_MP_GROW_C
 |   +--->BN_MP_CLAMP_C
-+--->BN_MP_EXCH_C
-+--->BN_MP_CLEAR_C
-
-
-BN_MP_OR_C
-+--->BN_MP_INIT_COPY_C
-|   +--->BN_MP_INIT_SIZE_C
-|   +--->BN_MP_COPY_C
-|   |   +--->BN_MP_GROW_C
-|   +--->BN_MP_CLEAR_C
-+--->BN_MP_CLAMP_C
 +--->BN_MP_EXCH_C
 +--->BN_MP_CLEAR_C
 
@@ -14027,7 +14005,7 @@ BN_MP_TC_AND_C
 |   |   +--->BN_MP_GROW_C
 |   |   +--->BN_MP_CLAMP_C
 +--->BN_MP_CLEAR_C
-+--->BN_MP_AND_C
++--->BN_S_MP_AND_C
 |   +--->BN_MP_INIT_COPY_C
 |   |   +--->BN_MP_INIT_SIZE_C
 |   |   +--->BN_MP_COPY_C
@@ -14085,7 +14063,7 @@ BN_MP_TC_OR_C
 |   |   +--->BN_MP_GROW_C
 |   |   +--->BN_MP_CLAMP_C
 +--->BN_MP_CLEAR_C
-+--->BN_MP_OR_C
++--->BN_S_MP_OR_C
 |   +--->BN_MP_INIT_COPY_C
 |   |   +--->BN_MP_INIT_SIZE_C
 |   |   +--->BN_MP_COPY_C
@@ -14124,7 +14102,7 @@ BN_MP_TC_XOR_C
 |   |   +--->BN_MP_GROW_C
 |   |   +--->BN_MP_CLAMP_C
 +--->BN_MP_CLEAR_C
-+--->BN_MP_XOR_C
++--->BN_S_MP_XOR_C
 |   +--->BN_MP_INIT_COPY_C
 |   |   +--->BN_MP_INIT_SIZE_C
 |   |   +--->BN_MP_COPY_C
@@ -14282,17 +14260,6 @@ BN_MP_UNSIGNED_BIN_SIZE_C
 +--->BN_MP_COUNT_BITS_C
 
 
-BN_MP_XOR_C
-+--->BN_MP_INIT_COPY_C
-|   +--->BN_MP_INIT_SIZE_C
-|   +--->BN_MP_COPY_C
-|   |   +--->BN_MP_GROW_C
-|   +--->BN_MP_CLEAR_C
-+--->BN_MP_CLAMP_C
-+--->BN_MP_EXCH_C
-+--->BN_MP_CLEAR_C
-
-
 BN_MP_ZERO_C
 
 
@@ -14302,6 +14269,17 @@ BN_PRIME_TAB_C
 BN_S_MP_ADD_C
 +--->BN_MP_GROW_C
 +--->BN_MP_CLAMP_C
+
+
+BN_S_MP_AND_C
++--->BN_MP_INIT_COPY_C
+|   +--->BN_MP_INIT_SIZE_C
+|   +--->BN_MP_COPY_C
+|   |   +--->BN_MP_GROW_C
+|   +--->BN_MP_CLEAR_C
++--->BN_MP_CLAMP_C
++--->BN_MP_EXCH_C
++--->BN_MP_CLEAR_C
 
 
 BN_S_MP_BALANCE_MUL_C
@@ -15360,6 +15338,17 @@ BN_S_MP_MUL_HIGH_DIGS_FAST_C
 +--->BN_MP_CLAMP_C
 
 
+BN_S_MP_OR_C
++--->BN_MP_INIT_COPY_C
+|   +--->BN_MP_INIT_SIZE_C
+|   +--->BN_MP_COPY_C
+|   |   +--->BN_MP_GROW_C
+|   +--->BN_MP_CLEAR_C
++--->BN_MP_CLAMP_C
++--->BN_MP_EXCH_C
++--->BN_MP_CLEAR_C
+
+
 BN_S_MP_REVERSE_C
 
 
@@ -15541,5 +15530,16 @@ BN_S_MP_TOOM_SQR_C
 |   +--->BN_MP_GROW_C
 +--->BN_MP_CLEAR_MULTI_C
 |   +--->BN_MP_CLEAR_C
+
+
+BN_S_MP_XOR_C
++--->BN_MP_INIT_COPY_C
+|   +--->BN_MP_INIT_SIZE_C
+|   +--->BN_MP_COPY_C
+|   |   +--->BN_MP_GROW_C
+|   +--->BN_MP_CLEAR_C
++--->BN_MP_CLAMP_C
++--->BN_MP_EXCH_C
++--->BN_MP_CLEAR_C
 
 
