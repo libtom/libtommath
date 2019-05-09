@@ -120,9 +120,6 @@ coveralls: lcov
 docdvi poster docs mandvi manual:
 	$(MAKE) -C doc/ $@ V=$(V)
 
-pretty:
-	perl pretty.build
-
 .PHONY: pre_gen
 pre_gen:
 	mkdir -p pre_gen
