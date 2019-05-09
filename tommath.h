@@ -304,7 +304,7 @@ int mp_cnt_lsb(const mp_int *a);
 /* makes a pseudo-random mp_int of a given size */
 int mp_rand(mp_int *a, int digits);
 /* makes a pseudo-random small int of a given size */
-int mp_rand_digit(mp_digit *r);
+MP_DEPRECATED(mp_rand) int mp_rand_digit(mp_digit *r);
 /* use custom random data source instead of source provided the platform */
 void mp_rand_source(int source(void *, size_t));
 
@@ -630,12 +630,12 @@ int mp_fread(mp_int *a, int radix, FILE *stream);
 int mp_fwrite(const mp_int *a, int radix, FILE *stream);
 #endif
 
-#define mp_read_raw(mp, str, len) mp_read_signed_bin((mp), (str), (len))
-#define mp_raw_size(mp)           mp_signed_bin_size(mp)
-#define mp_toraw(mp, str)         mp_to_signed_bin((mp), (str))
-#define mp_read_mag(mp, str, len) mp_read_unsigned_bin((mp), (str), (len))
-#define mp_mag_size(mp)           mp_unsigned_bin_size(mp)
-#define mp_tomag(mp, str)         mp_to_unsigned_bin((mp), (str))
+#define mp_read_raw(mp, str, len) (MP_DEPRECATED_PRAGMA("replaced by mp_read_signed_bin") mp_read_signed_bin((mp), (str), (len)))
+#define mp_raw_size(mp)           (MP_DEPRECATED_PRAGMA("replaced by mp_signed_bin_size") mp_signed_bin_size(mp))
+#define mp_toraw(mp, str)         (MP_DEPRECATED_PRAGMA("replaced by mp_to_signed_bin") mp_to_signed_bin((mp), (str)))
+#define mp_read_mag(mp, str, len) (MP_DEPRECATED_PRAGMA("replaced by mp_read_unsigned_bin") mp_read_unsigned_bin((mp), (str), (len))
+#define mp_mag_size(mp)           (MP_DEPRECATED_PRAGMA("replaced by mp_unsigned_bin_size") mp_unsigned_bin_size(mp))
+#define mp_tomag(mp, str)         (MP_DEPRECATED_PRAGMA("replaced by mp_to_unsigned_bin") mp_to_unsigned_bin((mp), (str)))
 
 #define mp_tobinary(M, S)  mp_toradix((M), (S), 2)
 #define mp_tooctal(M, S)   mp_toradix((M), (S), 8)
