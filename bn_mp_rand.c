@@ -178,7 +178,10 @@ int mp_rand_digit(mp_digit *r)
 
 int mp_rand(mp_int *a, int digits)
 {
-   int ret, i;
+   int ret;
+   size_t i, n_rand, n_write, bits;
+   mp_digit d = 0;
+   const size_t leftover_bits = (sizeof(mp_digit) * CHAR_BIT) - MP_DIGIT_BIT;
 
    mp_zero(a);
 
@@ -190,20 +193,31 @@ int mp_rand(mp_int *a, int digits)
       return ret;
    }
 
-   if ((ret = s_rand_source(a->dp, (size_t)digits * sizeof(mp_digit))) != MP_OKAY) {
+   n_rand = (MP_DIGIT_BIT * (size_t)digits) / (sizeof(mp_digit) * CHAR_BIT);
+   if ((ret = s_rand_source(a->dp, n_rand * sizeof(mp_digit))) != MP_OKAY) {
       return ret;
    }
 
-   /* TODO: We ensure that the highest digit is nonzero. Should this be removed? */
-   while ((a->dp[digits - 1] & MP_MASK) == 0) {
-      if ((ret = s_rand_source(a->dp + digits - 1, sizeof(mp_digit))) != MP_OKAY) {
-         return ret;
+   n_write = n_rand;
+   bits = 0;
+   for (i = 0; i < n_rand; ++i) {
+      d |= a->dp[i] & (~MP_MASK);
+      a->dp[i] &= MP_MASK;
+      d >>= leftover_bits;
+      bits += leftover_bits;
+      if ((bits >= MP_DIGIT_BIT) && (n_write < (size_t)digits)) {
+         a->dp[n_write++] = d & MP_MASK;
+         d >>= MP_DIGIT_BIT;
+         bits = 0;
       }
    }
-
    a->used = digits;
-   for (i = 0; i < digits; ++i) {
-      a->dp[i] &= MP_MASK;
+
+   /* We ensure that the highest digit is nonzero. */
+   while (a->dp[digits - 1] == 0) {
+      if ((ret = mp_rand_digit(&a->dp[digits - 1])) != MP_OKAY) {
+         return ret;
+      }
    }
 
    return MP_OKAY;
