@@ -66,6 +66,12 @@ extern void MP_FREE(void *mem, size_t size);
 #define MP_IS_EVEN(a) (((a)->used == 0) || (((a)->dp[0] & 1u) == 0u))
 #define MP_IS_ODD(a)  (((a)->used > 0) && (((a)->dp[0] & 1u) == 1u))
 
+/* round up to a multiple of MP_PREC */
+#define MP_ROUND_TO_PREC(size) (MP_PREC * (((size) + (MP_PREC - 1)) / MP_PREC))
+
+/* Minimum number of available digits in mp_int, MP_PREC >= MP_MIN_SIZE */
+#define MP_MIN_SIZE ((CHAR_BIT * (int)sizeof(long long) + MP_DIGIT_BIT - 1) / MP_DIGIT_BIT)
+
 /* lowlevel functions, do not call! */
 int s_mp_add(const mp_int *a, const mp_int *b, mp_int *c);
 int s_mp_sub(const mp_int *a, const mp_int *b, mp_int *c);
@@ -101,18 +107,14 @@ extern const size_t mp_s_rmap_reverse_sz;
 int func_name (mp_int * a, type b)                       \
 {                                                        \
    int x = 0;                                            \
-   int new_size = (((CHAR_BIT * sizeof(type)) + MP_DIGIT_BIT) - 1) / MP_DIGIT_BIT; \
-   int res = mp_grow(a, new_size);                       \
-   if (res == MP_OKAY) {                                 \
-     mp_zero(a);                                         \
-     while (b != 0u) {                                   \
-        a->dp[x++] = ((mp_digit)b & MP_MASK);            \
-        if ((CHAR_BIT * sizeof (b)) <= MP_DIGIT_BIT) { break; } \
-        b >>= (((CHAR_BIT * sizeof (b)) <= MP_DIGIT_BIT) ? 0 : MP_DIGIT_BIT); \
-     }                                                   \
-     a->used = x;                                        \
+   mp_zero(a);                                           \
+   while (b != 0u) {                                     \
+      a->dp[x++] = ((mp_digit)b & MP_MASK);              \
+      if ((CHAR_BIT * sizeof (b)) <= MP_DIGIT_BIT) { break; } \
+      b >>= (((CHAR_BIT * sizeof (b)) <= MP_DIGIT_BIT) ? 0 : MP_DIGIT_BIT); \
    }                                                     \
-   return res;                                           \
+   a->used = x;                                          \
+   return MP_OKAY;                                       \
 }
 
 /* deprecated functions */

@@ -90,9 +90,7 @@ int mp_ilogb(mp_int *a, mp_digit base, mp_int *c)
    }
    if (base == 2u) {
       cmp = mp_count_bits(a) - 1;
-      if ((err = mp_set_int(c, (unsigned long)cmp)) != MP_OKAY) {
-         goto LBL_ERR;
-      }
+      mp_set_int(c, (unsigned long)cmp);
       return err;
    }
    if (a->used == 1) {
@@ -165,21 +163,15 @@ int mp_ilogb(mp_int *a, mp_digit base, mp_int *c)
          mp_exch(&bracket_mid, &bracket_low);
       }
       if (cmp == MP_EQ) {
-         if ((err = mp_set_int(c, (unsigned long)mid)) != MP_OKAY) {
-            goto LBL_ERR;
-         }
+         mp_set_int(c, (unsigned long)mid);
          goto LBL_END;
       }
    }
 
    if (mp_cmp(&bracket_high, a) == MP_EQ) {
-      if ((err = mp_set_int(c, (unsigned long)high)) != MP_OKAY) {
-         goto LBL_ERR;
-      }
+      mp_set_int(c, (unsigned long)high);
    } else {
-      if ((err = mp_set_int(c, (unsigned long)low)) != MP_OKAY) {
-         goto LBL_ERR;
-      }
+      mp_set_int(c, (unsigned long)low);
    }
 
 LBL_END:

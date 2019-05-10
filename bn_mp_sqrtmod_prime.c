@@ -58,7 +58,7 @@ int mp_sqrtmod_prime(const mp_int *n, const mp_int *prime, mp_int *ret)
    }
 
    /* find a Z such that the Legendre symbol (Z|prime) == -1 */
-   if ((res = mp_set_int(&Z, 2uL)) != MP_OKAY)                    goto cleanup;
+   mp_set_int(&Z, 2uL);
    /* Z = 2 */
    while (1) {
       if ((res = mp_jacobi(&Z, prime, &legendre)) != MP_OKAY)     goto cleanup;
@@ -78,7 +78,7 @@ int mp_sqrtmod_prime(const mp_int *n, const mp_int *prime, mp_int *ret)
    /* T = n ^ Q mod prime */
    if ((res = mp_copy(&S, &M)) != MP_OKAY)                       goto cleanup;
    /* M = S */
-   if ((res = mp_set_int(&two, 2uL)) != MP_OKAY)                 goto cleanup;
+   mp_set_int(&two, 2uL);
 
    res = MP_VAL;
    while (1) {

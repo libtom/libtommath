@@ -173,7 +173,7 @@ The wrong \texttt{libtool} will build it all fine but when it comes to the final
 cc -I./ -Wall -Wsign-compare -Wextra -Wshadow -Wsystem-headers -Wdeclaration-afo...
 cc -I./ -Wall -Wsign-compare -Wextra -Wshadow -Wsystem-headers -Wdeclaration-afo...
 cc -I./ -Wall -Wsign-compare -Wextra -Wshadow -Wsystem-headers -Wdeclaration-afo...
-libtool --mode=link --tag=CC cc  bn_error.lo bn_s_mp_invmod_fast.lo bn_fast_mp_mo 
+libtool --mode=link --tag=CC cc  bn_error.lo bn_s_mp_invmod_fast.lo bn_fast_mp_mo
 libtool: link: cc bn_error.lo bn_s_mp_invmod_fast.lo bn_s_mp_montgomery_reduce_fast0
 bn_error.lo: file not recognized: File format not recognized
 cc: error: linker command failed with exit code 1 (use -v to see invocation)
@@ -187,7 +187,7 @@ $ sudo pkg_add gmake libtool
 \end{alltt}
 At this time two versions of \texttt{libtool} are installed and both are named \texttt{libtool}, unfortunately but GNU \texttt{libtool} has been placed in \texttt{/usr/local/bin/} and the native version in \texttt{/usr/bin/}. The path might be different in other versions of OpenBSD but both programms differ in the output of \texttt{libtool --version}
 \begin{alltt}
-$ /usr/local/bin/libtool --version                              
+$ /usr/local/bin/libtool --version
 libtool (GNU libtool) 2.4.2
 Written by Gordon Matzigkeit <gord@gnu.ai.mit.edu>, 1996
 
@@ -856,11 +856,7 @@ int main(void)
    \}
 
    /* set the number to 654321 (note this is bigger than 127) */
-   if ((result = mp_set_int(&number, 654321)) != MP_OKAY) \{
-      printf("Error setting the value of the number.  \%s",
-             mp_error_to_string(result));
-      return EXIT_FAILURE;
-   \}
+   mp_set_int(&number, 654321);
 
    printf("number == \%lu", mp_get_int(&number));
 
@@ -1396,17 +1392,8 @@ int main(void)
    \}
 
    /* set the terms */
-   if ((result = mp_set_int(&number, 257)) != MP_OKAY) \{
-      printf("Error setting number1.  \%s",
-             mp_error_to_string(result));
-      return EXIT_FAILURE;
-   \}
-
-   if ((result = mp_set_int(&number2, 1023)) != MP_OKAY) \{
-      printf("Error setting number2.  \%s",
-             mp_error_to_string(result));
-      return EXIT_FAILURE;
-   \}
+   mp_set_int(&number, 257);
+   mp_set_int(&number2, 1023);
 
    /* multiply them */
    if ((result = mp_mul(&number1, &number2,

@@ -599,10 +599,7 @@ static int test_mp_get_long(void)
          t = ~0UL;
       printf(" t = 0x%lx i = %d\r", t, i);
       do {
-         if (mp_set_long(&a, t) != MP_OKAY) {
-            printf("\nmp_set_long() error!");
-            goto LBL_ERR;
-         }
+         mp_set_long(&a, t);
          s = mp_get_long(&a);
          if (s != t) {
             printf("\nmp_get_long() bad result! 0x%lx != 0x%lx", s, t);
@@ -635,10 +632,7 @@ static int test_mp_get_long_long(void)
          r = ~0ULL;
       printf(" r = 0x%llx i = %d\r", r, i);
       do {
-         if (mp_set_long_long(&a, r) != MP_OKAY) {
-            printf("\nmp_set_long_long() error!");
-            goto LBL_ERR;
-         }
+         mp_set_long_long(&a, r);
          q = mp_get_long_long(&a);
          if (q != r) {
             printf("\nmp_get_long_long() bad result! 0x%llx != 0x%llx", q, r);
