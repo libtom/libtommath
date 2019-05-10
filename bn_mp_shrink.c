@@ -7,7 +7,7 @@
 int mp_shrink(mp_int *a)
 {
    mp_digit *tmp;
-   int alloc = MP_MAX(MP_MIN_SIZE, a->used);
+   int alloc = MP_MAX(MP_MIN_PREC, a->used);
    if (a->alloc != alloc) {
       if ((tmp = (mp_digit *) MP_REALLOC(a->dp,
                                          (size_t)a->alloc * sizeof(mp_digit),

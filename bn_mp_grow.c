@@ -11,9 +11,6 @@ int mp_grow(mp_int *a, int size)
 
    /* if the alloc size is smaller alloc more ram */
    if (a->alloc < size) {
-      /* round up to a multiple of MP_PREC */
-      size = MP_ROUND_TO_PREC(size);
-
       /* reallocate the array a->dp
        *
        * We store the return in a temporary variable

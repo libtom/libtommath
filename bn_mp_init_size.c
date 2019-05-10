@@ -6,8 +6,7 @@
 /* init an mp_init for a given size */
 int mp_init_size(mp_int *a, int size)
 {
-   /* round up to a multiple of MP_PREC */
-   size = MP_ROUND_TO_PREC(size);
+   size = MP_MAX(MP_MIN_PREC, size);
 
    /* alloc mem */
    a->dp = (mp_digit *) MP_CALLOC((size_t)size, sizeof(mp_digit));

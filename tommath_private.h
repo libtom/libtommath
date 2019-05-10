@@ -66,11 +66,8 @@ extern void MP_FREE(void *mem, size_t size);
 #define MP_IS_EVEN(a) (((a)->used == 0) || (((a)->dp[0] & 1u) == 0u))
 #define MP_IS_ODD(a)  (((a)->used > 0) && (((a)->dp[0] & 1u) == 1u))
 
-/* round up to a multiple of MP_PREC */
-#define MP_ROUND_TO_PREC(size) (MP_PREC * (((size) + (MP_PREC - 1)) / MP_PREC))
-
-/* Minimum number of available digits in mp_int, MP_PREC >= MP_MIN_SIZE */
-#define MP_MIN_SIZE ((CHAR_BIT * (int)sizeof(long long) + MP_DIGIT_BIT - 1) / MP_DIGIT_BIT)
+/* Minimum number of available digits in mp_int, MP_PREC >= MP_MIN_PREC */
+#define MP_MIN_PREC ((CHAR_BIT * (int)sizeof(long long) + MP_DIGIT_BIT - 1) / MP_DIGIT_BIT)
 
 /* lowlevel functions, do not call! */
 int s_mp_add(const mp_int *a, const mp_int *b, mp_int *c);
