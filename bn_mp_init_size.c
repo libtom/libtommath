@@ -6,8 +6,7 @@
 /* init an mp_init for a given size */
 int mp_init_size(mp_int *a, int size)
 {
-   /* pad size so there are always extra digits */
-   size += (MP_PREC * 2) - (size % MP_PREC);
+   size = MP_MAX(MP_MIN_PREC, size);
 
    /* alloc mem */
    a->dp = (mp_digit *) MP_CALLOC((size_t)size, sizeof(mp_digit));

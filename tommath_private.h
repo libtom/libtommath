@@ -108,6 +108,9 @@ extern void MP_FREE(void *mem, size_t size);
 /* random number source */
 extern int (*s_rand_source)(void *out, size_t size);
 
+/* Minimum number of available digits in mp_int, MP_PREC >= MP_MIN_PREC */
+#define MP_MIN_PREC ((CHAR_BIT * (int)sizeof(long long) + MP_DIGIT_BIT - 1) / MP_DIGIT_BIT)
+
 /* lowlevel functions, do not call! */
 MP_WUR int s_mp_add(const mp_int *a, const mp_int *b, mp_int *c);
 MP_WUR int s_mp_sub(const mp_int *a, const mp_int *b, mp_int *c);
@@ -143,18 +146,14 @@ extern const size_t mp_s_rmap_reverse_sz;
 int func_name (mp_int * a, type b)                       \
 {                                                        \
    int x = 0;                                            \
-   int new_size = ((MP_SIZEOF_BITS(type) + MP_DIGIT_BIT) - 1) / MP_DIGIT_BIT; \
-   int res = mp_grow(a, new_size);                       \
-   if (res == MP_OKAY) {                                 \
-     mp_zero(a);                                         \
-     while (b != 0u) {                                   \
-        a->dp[x++] = ((mp_digit)b & MP_MASK);            \
-        if (MP_SIZEOF_BITS(b) <= MP_DIGIT_BIT) { break; } \
-        b >>= ((MP_SIZEOF_BITS(b) <= MP_DIGIT_BIT) ? 0 : MP_DIGIT_BIT); \
-     }                                                   \
-     a->used = x;                                        \
+   mp_zero(a);                                           \
+   while (b != 0u) {                                     \
+      a->dp[x++] = ((mp_digit)b & MP_MASK);              \
+      if (MP_SIZEOF_BITS(b) <= MP_DIGIT_BIT) { break; } \
+      b >>= ((MP_SIZEOF_BITS(b) <= MP_DIGIT_BIT) ? 0 : MP_DIGIT_BIT); \
    }                                                     \
-   return res;                                           \
+   a->used = x;                                          \
+   return MP_OKAY;                                       \
 }
 
 /* deprecated functions */

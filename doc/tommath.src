@@ -947,9 +947,7 @@ correct no further memory re-allocations are required to work with the mp\_int.
 
 EXAM,bn_mp_init_size.c
 
-The number of digits $b$ requested is padded (line @22,MP_PREC@) by first augmenting it to the next multiple of
-\textbf{MP\_PREC} and then adding \textbf{MP\_PREC} to the result.  If the memory can be successfully allocated the
-mp\_int is placed in a default state representing the integer zero.  Otherwise, the error code \textbf{MP\_MEM} will be
+If the memory can be successfully allocated the mp\_int is placed in a default state representing the integer zero.  Otherwise, the error code \textbf{MP\_MEM} will be
 returned (line @27,return@).
 
 The digits are allocated with the malloc() function (line @27,XMALLOC@) and set to zero afterwards (line @38,for@).  The

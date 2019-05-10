@@ -143,6 +143,8 @@ TOOM_SQR_CUTOFF;
 #ifndef MP_PREC
 #   ifndef MP_LOW_MEM
 #      define MP_PREC 32        /* default digits of precision */
+#   elif defined(MP_8BIT)
+#      define MP_PREC 16        /* default digits of precision */
 #   else
 #      define MP_PREC 8         /* default digits of precision */
 #   endif
@@ -252,13 +254,13 @@ void mp_set(mp_int *a, mp_digit b);
 MP_WUR int mp_set_double(mp_int *a, double b);
 
 /* set a 32-bit const */
-MP_WUR int mp_set_int(mp_int *a, unsigned long b);
+/* TODO void - never fails */ int mp_set_int(mp_int *a, unsigned long b);
 
 /* set a platform dependent unsigned long value */
-MP_WUR int mp_set_long(mp_int *a, unsigned long b);
+/* TODO void - never fails */ int mp_set_long(mp_int *a, unsigned long b);
 
 /* set a platform dependent unsigned long long value */
-MP_WUR int mp_set_long_long(mp_int *a, unsigned long long b);
+/* TODO void - never fails */ int mp_set_long_long(mp_int *a, unsigned long long b);
 
 /* get a double */
 MP_WUR double mp_get_double(const mp_int *a);
