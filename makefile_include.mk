@@ -49,6 +49,10 @@ endif
 
 CFLAGS += -I./ -Wall -Wsign-compare -Wextra -Wshadow
 
+ifdef SANITIZER
+CFLAGS += -fsanitize=undefined -fno-sanitize-recover=all -fno-sanitize=float-divide-by-zero
+endif
+
 ifndef NO_ADDTL_WARNINGS
 # additional warnings
 CFLAGS += -Wdeclaration-after-statement -Wbad-function-cast -Wcast-align

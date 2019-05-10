@@ -260,7 +260,7 @@ static int test_mp_complement(void)
    }
 
    for (i = 0; i < 1000; ++i) {
-      long l = (rand() * rand() + 1) * (rand() % 1 ? -1 : 1);
+      long l = ((long)rand() * rand() + 1) * (rand() % 1 ? -1 : 1);
       mp_set_long(&a, (unsigned long)labs(l));
       if (l < 0)
          mp_neg(&a, &a);
@@ -297,7 +297,7 @@ static int test_mp_tc_div_2d(void)
       long l;
       int em;
 
-      l = (rand() * rand() + 1) * (rand() % 1 ? -1 : 1);
+      l = ((long)rand() * rand() + 1) * (rand() % 1 ? -1 : 1);
       mp_set_long(&a, (unsigned long)labs(l));
       if (l < 0)
          mp_neg(&a, &a);
@@ -335,12 +335,12 @@ static int test_mp_tc_xor(void)
    for (i = 0; i < 1000; ++i) {
       int l, em;
 
-      l = (rand() * rand() + 1) * (rand() % 1 ? -1 : 1);
+      l = ((long)rand() * rand() + 1) * (rand() % 1 ? -1 : 1);
       mp_set_int(&a, (unsigned long)labs(l));
       if (l < 0)
          mp_neg(&a, &a);
 
-      em = (rand() * rand() + 1) * (rand() % 1 ? -1 : 1);
+      em = ((long)rand() * rand() + 1) * (rand() % 1 ? -1 : 1);
       mp_set_int(&b, (unsigned long)labs(em));
       if (em < 0)
          mp_neg(&b, &b);
@@ -376,12 +376,12 @@ static int test_mp_tc_or(void)
    for (i = 0; i < 1000; ++i) {
       long l, em;
 
-      l = (rand() * rand() + 1) * (rand() % 1 ? -1 : 1);
+      l = ((long)rand() * rand() + 1) * (rand() % 1 ? -1 : 1);
       mp_set_long(&a, (unsigned long)labs(l));
       if (l < 0)
          mp_neg(&a, &a);
 
-      em = (rand() * rand() + 1) * (rand() % 1 ? -1 : 1);
+      em = ((long)rand() * rand() + 1) * (rand() % 1 ? -1 : 1);
       mp_set_long(&b, (unsigned long)labs(em));
       if (em < 0)
          mp_neg(&b, &b);
@@ -416,12 +416,12 @@ static int test_mp_tc_and(void)
    for (i = 0; i < 1000; ++i) {
       long l, em;
 
-      l = (rand() * rand() + 1) * (rand() % 1 ? -1 : 1);
+      l = ((long)rand() * rand() + 1) * (rand() % 1 ? -1 : 1);
       mp_set_long(&a, (unsigned long)labs(l));
       if (l < 0)
          mp_neg(&a, &a);
 
-      em = (rand() * rand() + 1) * (rand() % 1 ? -1 : 1);
+      em = ((long)rand() * rand() + 1) * (rand() % 1 ? -1 : 1);
       mp_set_long(&b, (unsigned long)labs(em));
       if (em < 0)
          mp_neg(&b, &b);
@@ -558,7 +558,7 @@ static int test_mp_get_int(void)
    }
 
    for (i = 0; i < 1000; ++i) {
-      t = (unsigned long)(rand() * rand() + 1) & 0xFFFFFFFFuL;
+      t = ((unsigned long)rand() * (unsigned long)rand() + 1uL) & 0xFFFFFFFFuL;
       mp_set_int(&a, t);
       if (t != mp_get_int(&a)) {
          printf("\nmp_get_int() bad result!");
