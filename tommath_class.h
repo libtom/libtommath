@@ -720,6 +720,8 @@
 #   define BN_MP_DIV_2_C
 #   define BN_MP_MUL_2_C
 #   define BN_MP_ADD_D_C
+#   define BN_S_MP_RAND_CB_C
+#   define BN_S_MP_RAND_SOURCE_C
 #   define BN_MP_PRIME_RANDOM_EX_C
 #endif
 
@@ -764,6 +766,7 @@
 #   define BN_S_MP_RAND_SOURCE_PLATFORM_C
 #   define BN_MP_RAND_SOURCE_C
 #   define BN_MP_RAND_DIGIT_C
+#   define BN_S_MP_RAND_SOURCE_C
 #   define BN_MP_ZERO_C
 #   define BN_MP_GROW_C
 #endif
