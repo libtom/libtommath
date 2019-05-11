@@ -37,7 +37,7 @@ bn_mp_montgomery_calc_normalization.o bn_mp_montgomery_reduce.o bn_mp_montgomery
 bn_mp_mul_2.o bn_mp_mul_2d.o bn_mp_mul_d.o bn_mp_mulmod.o bn_mp_n_root.o bn_mp_n_root_ex.o bn_mp_neg.o \
 bn_mp_or.o bn_mp_prime_fermat.o bn_mp_prime_frobenius_underwood.o bn_mp_prime_is_divisible.o \
 bn_mp_prime_is_prime.o bn_mp_prime_miller_rabin.o bn_mp_prime_next_prime.o \
-bn_mp_prime_rabin_miller_trials.o bn_mp_prime_random_ex.o bn_mp_prime_strong_lucas_selfridge.o \
+bn_mp_prime_rabin_miller_trials.o bn_mp_prime_rand.o bn_mp_prime_strong_lucas_selfridge.o \
 bn_mp_radix_size.o bn_mp_radix_smap.o bn_mp_rand.o bn_mp_read_radix.o bn_mp_read_signed_bin.o \
 bn_mp_read_unsigned_bin.o bn_mp_reduce.o bn_mp_reduce_2k.o bn_mp_reduce_2k_l.o bn_mp_reduce_2k_setup.o \
 bn_mp_reduce_2k_setup_l.o bn_mp_reduce_is_2k.o bn_mp_reduce_is_2k_l.o bn_mp_reduce_setup.o bn_mp_rshd.o \

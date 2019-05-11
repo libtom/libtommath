@@ -92,7 +92,7 @@
 #   define BN_MP_PRIME_MILLER_RABIN_C
 #   define BN_MP_PRIME_NEXT_PRIME_C
 #   define BN_MP_PRIME_RABIN_MILLER_TRIALS_C
-#   define BN_MP_PRIME_RANDOM_EX_C
+#   define BN_MP_PRIME_RAND_C
 #   define BN_MP_PRIME_STRONG_LUCAS_SELFRIDGE_C
 #   define BN_MP_RADIX_SIZE_C
 #   define BN_MP_RADIX_SMAP_C
@@ -712,13 +712,15 @@
 #if defined(BN_MP_PRIME_RABIN_MILLER_TRIALS_C)
 #endif
 
-#if defined(BN_MP_PRIME_RANDOM_EX_C)
+#if defined(BN_MP_PRIME_RAND_C)
+#   define BN_S_MP_PRIME_RANDOM_EX_C
 #   define BN_MP_READ_UNSIGNED_BIN_C
 #   define BN_MP_PRIME_IS_PRIME_C
 #   define BN_MP_SUB_D_C
 #   define BN_MP_DIV_2_C
 #   define BN_MP_MUL_2_C
 #   define BN_MP_ADD_D_C
+#   define BN_MP_PRIME_RANDOM_EX_C
 #endif
 
 #if defined(BN_MP_PRIME_STRONG_LUCAS_SELFRIDGE_C)

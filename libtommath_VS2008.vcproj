@@ -641,7 +641,7 @@
 			>
 		</File>
 		<File
-			RelativePath="bn_mp_prime_random_ex.c"
+			RelativePath="bn_mp_prime_rand.c"
 			>
 		</File>
 		<File
