@@ -287,11 +287,11 @@ int mp_prime_is_prime(const mp_int *a, int t, int *result)
           * One 8-bit digit is too small, so concatenate two if the size of
           * unsigned int allows for it.
           */
-         if (((sizeof(unsigned int) * CHAR_BIT)/2) >= (sizeof(mp_digit) * CHAR_BIT)) {
+         if ((MP_SIZEOF_BITS(unsigned int)/2) >= MP_SIZEOF_BITS(mp_digit)) {
             if ((err = mp_rand(&b, 1)) != MP_OKAY) {
                goto LBL_B;
             }
-            fips_rand <<= CHAR_BIT * sizeof(mp_digit);
+            fips_rand <<= MP_SIZEOF_BITS(mp_digit);
             fips_rand |= (unsigned int) b.dp[0];
             fips_rand &= mask;
          }

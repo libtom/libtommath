@@ -24,8 +24,7 @@ int mp_sqr(const mp_int *a, mp_int *b)
 #ifdef BN_S_MP_SQR_FAST_C
          /* can we use the fast comba multiplier? */
          if ((((a->used * 2) + 1) < (int)MP_WARRAY) &&
-             (a->used <
-              (int)(1u << (((CHAR_BIT * sizeof(mp_word)) - (2u * (size_t)MP_DIGIT_BIT)) - 1u)))) {
+             (a->used < (MP_MAXFAST / 2))) {
             res = s_mp_sqr_fast(a, b);
          } else
 #endif

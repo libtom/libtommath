@@ -66,6 +66,9 @@ extern void MP_FREE(void *mem, size_t size);
 #define MP_IS_EVEN(a) (((a)->used == 0) || (((a)->dp[0] & 1u) == 0u))
 #define MP_IS_ODD(a)  (((a)->used > 0) && (((a)->dp[0] & 1u) == 1u))
 
+#define MP_SIZEOF_BITS(type)    (CHAR_BIT * sizeof(type))
+#define MP_MAXFAST              (int)(1u << (MP_SIZEOF_BITS(mp_word) - (2u * (size_t)MP_DIGIT_BIT)))
+
 /* random number source */
 extern int (*s_rand_source)(void *, size_t);
 
@@ -104,14 +107,14 @@ extern const size_t mp_s_rmap_reverse_sz;
 int func_name (mp_int * a, type b)                       \
 {                                                        \
    int x = 0;                                            \
-   int new_size = (((CHAR_BIT * sizeof(type)) + MP_DIGIT_BIT) - 1) / MP_DIGIT_BIT; \
+   int new_size = ((MP_SIZEOF_BITS(type) + MP_DIGIT_BIT) - 1) / MP_DIGIT_BIT; \
    int res = mp_grow(a, new_size);                       \
    if (res == MP_OKAY) {                                 \
      mp_zero(a);                                         \
      while (b != 0u) {                                   \
         a->dp[x++] = ((mp_digit)b & MP_MASK);            \
-        if ((CHAR_BIT * sizeof (b)) <= MP_DIGIT_BIT) { break; } \
-        b >>= (((CHAR_BIT * sizeof (b)) <= MP_DIGIT_BIT) ? 0 : MP_DIGIT_BIT); \
+        if (MP_SIZEOF_BITS(b) <= MP_DIGIT_BIT) { break; } \
+        b >>= ((MP_SIZEOF_BITS(b) <= MP_DIGIT_BIT) ? 0 : MP_DIGIT_BIT); \
      }                                                   \
      a->used = x;                                        \
    }                                                     \
