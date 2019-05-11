@@ -24,7 +24,7 @@ int mp_reduce_is_2k(const mp_int *a)
             return MP_NO;
          }
          iz <<= 1;
-         if (iz > (mp_digit)MP_MASK) {
+         if (iz > MP_MASK) {
             ++iw;
             iz = 1;
          }
