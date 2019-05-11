@@ -70,7 +70,7 @@ extern void MP_FREE(void *mem, size_t size);
 #define MP_MAXFAST              (int)(1u << (MP_SIZEOF_BITS(mp_word) - (2u * (size_t)MP_DIGIT_BIT)))
 
 /* random number source */
-extern int (*s_rand_source)(void *, size_t);
+extern int (*s_rand_source)(void *out, size_t size);
 
 /* lowlevel functions, do not call! */
 int s_mp_add(const mp_int *a, const mp_int *b, mp_int *c);
