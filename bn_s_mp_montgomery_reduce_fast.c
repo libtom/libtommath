@@ -49,8 +49,8 @@ int s_mp_montgomery_reduce_fast(mp_int *x, const mp_int *n, mp_digit rho)
       }
 
       /* zero the high words of W[a->used..m->used*2] */
-      for (; ix < ((n->used * 2) + 1); ix++) {
-         *_W++ = 0;
+      if (ix < ((n->used * 2) + 1)) {
+         MP_ZERO_BUFFER(_W, sizeof(mp_word) * (size_t)(((n->used * 2) + 1) - ix));
       }
    }
 
@@ -142,9 +142,7 @@ int s_mp_montgomery_reduce_fast(mp_int *x, const mp_int *n, mp_digit rho)
       /* zero oldused digits, if the input a was larger than
        * m->used+1 we'll have to clear the digits
        */
-      for (; ix < olduse; ix++) {
-         *tmpx++ = 0;
-      }
+      MP_ZERO_DIGITS(tmpx, olduse - ix);
    }
 
    /* set the max used and clamp */

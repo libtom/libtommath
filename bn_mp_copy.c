@@ -38,9 +38,7 @@ int mp_copy(const mp_int *a, mp_int *b)
       }
 
       /* clear high digits */
-      for (; n < b->used; n++) {
-         *tmpb++ = 0;
-      }
+      MP_ZERO_DIGITS(tmpb, b->used - n);
    }
 
    /* copy used count and sign */

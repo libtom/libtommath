@@ -58,9 +58,7 @@ top:
    *tmpx1++ = mu;
 
    /* zero words above m */
-   for (i = m + 1; i < x->used; i++) {
-      *tmpx1++ = 0;
-   }
+   MP_ZERO_DIGITS(tmpx1, x->used - m - 1);
 
    /* clamp, sub and return */
    mp_clamp(x);

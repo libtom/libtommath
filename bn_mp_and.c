@@ -29,9 +29,7 @@ int mp_and(const mp_int *a, const mp_int *b, mp_int *c)
    }
 
    /* zero digits above the last from the smallest mp_int */
-   for (; ix < t.used; ix++) {
-      t.dp[ix] = 0;
-   }
+   MP_ZERO_DIGITS(t.dp + ix, t.used - ix);
 
    mp_clamp(&t);
    mp_exch(c, &t);

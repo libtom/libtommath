@@ -60,9 +60,7 @@ int s_mp_sub(const mp_int *a, const mp_int *b, mp_int *c)
       }
 
       /* clear digits above used (since we may not have grown result above) */
-      for (i = c->used; i < olduse; i++) {
-         *tmpc++ = 0;
-      }
+      MP_ZERO_DIGITS(tmpc, olduse - c->used);
    }
 
    mp_clamp(c);

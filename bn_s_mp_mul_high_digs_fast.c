@@ -72,9 +72,7 @@ int s_mp_mul_high_digs_fast(const mp_int *a, const mp_int *b, mp_int *c, int dig
       }
 
       /* clear unused digits [that existed in the old copy of c] */
-      for (; ix < olduse; ix++) {
-         *tmpc++ = 0;
-      }
+      MP_ZERO_DIGITS(tmpc, olduse - ix);
    }
    mp_clamp(c);
    return MP_OKAY;

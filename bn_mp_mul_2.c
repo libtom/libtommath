@@ -55,10 +55,7 @@ int mp_mul_2(const mp_int *a, mp_int *b)
       /* now zero any excess digits on the destination
        * that we didn't write to
        */
-      tmpb = b->dp + b->used;
-      for (x = b->used; x < oldused; x++) {
-         *tmpb++ = 0;
-      }
+      MP_ZERO_DIGITS(b->dp + b->used, oldused - b->used);
    }
    b->sign = a->sign;
    return MP_OKAY;

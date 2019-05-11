@@ -67,9 +67,8 @@ int mp_sub_d(const mp_int *a, mp_digit b, mp_int *c)
    }
 
    /* zero excess digits */
-   while (ix++ < oldused) {
-      *tmpc++ = 0;
-   }
+   MP_ZERO_DIGITS(tmpc, oldused - ix);
+
    mp_clamp(c);
    return MP_OKAY;
 }

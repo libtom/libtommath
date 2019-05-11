@@ -6,17 +6,10 @@
 /* clear one (frees)  */
 void mp_clear(mp_int *a)
 {
-   int i;
-
    /* only do anything if a hasn't been freed previously */
    if (a->dp != NULL) {
-      /* first zero the digits */
-      for (i = 0; i < a->used; i++) {
-         a->dp[i] = 0;
-      }
-
       /* free ram */
-      MP_FREE(a->dp, sizeof(mp_digit) * (size_t)a->alloc);
+      MP_FREE_DIGITS(a->dp, a->alloc);
 
       /* reset members to make debugging easier */
       a->dp    = NULL;

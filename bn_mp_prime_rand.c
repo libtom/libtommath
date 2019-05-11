@@ -114,7 +114,7 @@ static int s_mp_prime_random_ex(mp_int *a, int t, int size, int flags, private_m
 
    err = MP_OKAY;
 error:
-   MP_FREE(tmp, bsize);
+   MP_FREE_BUFFER(tmp, (size_t)bsize);
    return err;
 }
 
