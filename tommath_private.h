@@ -106,7 +106,7 @@ extern void MP_FREE(void *mem, size_t size);
 #define MP_MAXFAST              (int)(1u << (MP_SIZEOF_BITS(mp_word) - (2u * (size_t)MP_DIGIT_BIT)))
 
 /* random number source */
-extern int (*s_rand_source)(void *out, size_t size);
+extern int (*s_mp_rand_source)(void *out, size_t size);
 
 /* Minimum number of available digits in mp_int, MP_PREC >= MP_MIN_PREC */
 #define MP_MIN_PREC ((CHAR_BIT * (int)sizeof(long long) + MP_DIGIT_BIT - 1) / MP_DIGIT_BIT)
@@ -130,6 +130,7 @@ MP_WUR int s_mp_invmod_slow(const mp_int *a, const mp_int *b, mp_int *c);
 MP_WUR int s_mp_montgomery_reduce_fast(mp_int *x, const mp_int *n, mp_digit rho);
 MP_WUR int s_mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y, int redmode);
 MP_WUR int s_mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y, int redmode);
+MP_WUR int s_mp_rand_source_platform(void *p, size_t n);
 void s_mp_reverse(unsigned char *s, int len);
 
 extern const char *const mp_s_rmap;

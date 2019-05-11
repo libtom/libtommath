@@ -118,13 +118,13 @@ error:
    return err;
 }
 
-static int s_rand_cb(unsigned char *dst, int len, void *dat)
+static int s_mp_rand_cb(unsigned char *dst, int len, void *dat)
 {
    (void)dat;
    if (len <= 0) {
       return len;
    }
-   if (s_rand_source(dst, (size_t)len) != MP_OKAY) {
+   if (s_mp_rand_source(dst, (size_t)len) != MP_OKAY) {
       return 0;
    }
    return len;
@@ -137,7 +137,7 @@ int mp_prime_random_ex(mp_int *a, int t, int size, int flags, private_mp_prime_c
 
 int mp_prime_rand(mp_int *a, int t, int size, int flags)
 {
-   return s_mp_prime_random_ex(a, t, size, flags, s_rand_cb, NULL);
+   return s_mp_prime_random_ex(a, t, size, flags, s_mp_rand_cb, NULL);
 }
 
 #endif

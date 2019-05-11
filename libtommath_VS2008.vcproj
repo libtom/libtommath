@@ -873,6 +873,10 @@
 			>
 		</File>
 		<File
+			RelativePath="bn_s_mp_rand_source_platform.c"
+			>
+		</File>
+		<File
 			RelativePath="bn_s_mp_reverse.c"
 			>
 		</File>
