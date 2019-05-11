@@ -158,6 +158,29 @@ TOOM_SQR_CUTOFF;
 #   define MP_NULL_TERMINATED
 #endif
 
+/*
+ * MP_WUR - warn unused result
+ * ---------------------------
+ *
+ * The result of functions annotated with MP_WUR must be
+ * checked and cannot be ignored.
+ *
+ * Most functions in libtommath return an error code.
+ * This error code must be checked in order to prevent crashes or invalid
+ * results.
+ *
+ * If you still want to avoid the error checks for quick and dirty programs
+ * without robustness guarantees, you can `#define MP_WUR` before including
+ * tommath.h, disabling the warnings.
+ */
+#ifndef MP_WUR
+#  if defined(__GNUC__) && __GNUC__ >= 4
+#     define MP_WUR __attribute__((warn_unused_result))
+#  else
+#     define MP_WUR
+#  endif
+#endif
+
 #if defined(__GNUC__) && (__GNUC__ * 100 + __GNUC_MINOR__ >= 301)
 #  define MP_DEPRECATED(x) __attribute__((deprecated("replaced by " #x)))
 #  define PRIVATE_MP_DEPRECATED_PRAGMA(s) _Pragma(#s)
@@ -190,13 +213,13 @@ const char *mp_error_to_string(int code);
 
 /* ---> init and deinit bignum functions <--- */
 /* init a bignum */
-int mp_init(mp_int *a);
+MP_WUR int mp_init(mp_int *a);
 
 /* free a bignum */
 void mp_clear(mp_int *a);
 
 /* init a null terminated series of arguments */
-int mp_init_multi(mp_int *mp, ...) MP_NULL_TERMINATED;
+MP_WUR int mp_init_multi(mp_int *mp, ...) MP_NULL_TERMINATED;
 
 /* clear a null terminated series of arguments */
 void mp_clear_multi(mp_int *mp, ...) MP_NULL_TERMINATED;
@@ -205,18 +228,18 @@ void mp_clear_multi(mp_int *mp, ...) MP_NULL_TERMINATED;
 void mp_exch(mp_int *a, mp_int *b);
 
 /* shrink ram required for a bignum */
-int mp_shrink(mp_int *a);
+MP_WUR int mp_shrink(mp_int *a);
 
 /* grow an int to a given size */
-int mp_grow(mp_int *a, int size);
+MP_WUR int mp_grow(mp_int *a, int size);
 
 /* init to a given number of digits */
-int mp_init_size(mp_int *a, int size);
+MP_WUR int mp_init_size(mp_int *a, int size);
 
 /* ---> Basic Manipulations <--- */
 #define mp_iszero(a) (((a)->used == 0) ? MP_YES : MP_NO)
-int mp_iseven(const mp_int *a);
-int mp_isodd(const mp_int *a);
+MP_WUR int mp_iseven(const mp_int *a);
+MP_WUR int mp_isodd(const mp_int *a);
 #define mp_isneg(a)  (((a)->sign != MP_ZPOS) ? MP_YES : MP_NO)
 
 /* set to zero */
@@ -226,49 +249,49 @@ void mp_zero(mp_int *a);
 void mp_set(mp_int *a, mp_digit b);
 
 /* set a double */
-int mp_set_double(mp_int *a, double b);
+MP_WUR int mp_set_double(mp_int *a, double b);
 
 /* set a 32-bit const */
-int mp_set_int(mp_int *a, unsigned long b);
+MP_WUR int mp_set_int(mp_int *a, unsigned long b);
 
 /* set a platform dependent unsigned long value */
-int mp_set_long(mp_int *a, unsigned long b);
+MP_WUR int mp_set_long(mp_int *a, unsigned long b);
 
 /* set a platform dependent unsigned long long value */
-int mp_set_long_long(mp_int *a, unsigned long long b);
+MP_WUR int mp_set_long_long(mp_int *a, unsigned long long b);
 
 /* get a double */
-double mp_get_double(const mp_int *a);
+MP_WUR double mp_get_double(const mp_int *a);
 
 /* get a 32-bit value */
-unsigned long mp_get_int(const mp_int *a);
+MP_WUR unsigned long mp_get_int(const mp_int *a);
 
 /* get a platform dependent unsigned long value */
-unsigned long mp_get_long(const mp_int *a);
+MP_WUR unsigned long mp_get_long(const mp_int *a);
 
 /* get a platform dependent unsigned long long value */
-unsigned long long mp_get_long_long(const mp_int *a);
+MP_WUR unsigned long long mp_get_long_long(const mp_int *a);
 
 /* initialize and set a digit */
-int mp_init_set(mp_int *a, mp_digit b);
+MP_WUR int mp_init_set(mp_int *a, mp_digit b);
 
 /* initialize and set 32-bit value */
-int mp_init_set_int(mp_int *a, unsigned long b);
+MP_WUR int mp_init_set_int(mp_int *a, unsigned long b);
 
 /* copy, b = a */
-int mp_copy(const mp_int *a, mp_int *b);
+MP_WUR int mp_copy(const mp_int *a, mp_int *b);
 
 /* inits and copies, a = b */
-int mp_init_copy(mp_int *a, const mp_int *b);
+MP_WUR int mp_init_copy(mp_int *a, const mp_int *b);
 
 /* trim unused digits */
 void mp_clamp(mp_int *a);
 
 /* import binary data */
-int mp_import(mp_int *rop, size_t count, int order, size_t size, int endian, size_t nails, const void *op);
+MP_WUR int mp_import(mp_int *rop, size_t count, int order, size_t size, int endian, size_t nails, const void *op);
 
 /* export binary data */
-int mp_export(void *rop, size_t *countp, int order, size_t size, int endian, size_t nails, const mp_int *op);
+MP_WUR int mp_export(void *rop, size_t *countp, int order, size_t size, int endian, size_t nails, const mp_int *op);
 
 /* ---> digit manipulation <--- */
 
@@ -276,35 +299,35 @@ int mp_export(void *rop, size_t *countp, int order, size_t size, int endian, siz
 void mp_rshd(mp_int *a, int b);
 
 /* left shift by "b" digits */
-int mp_lshd(mp_int *a, int b);
+MP_WUR int mp_lshd(mp_int *a, int b);
 
 /* c = a / 2**b, implemented as c = a >> b */
-int mp_div_2d(const mp_int *a, int b, mp_int *c, mp_int *d);
+MP_WUR int mp_div_2d(const mp_int *a, int b, mp_int *c, mp_int *d);
 
 /* b = a/2 */
-int mp_div_2(const mp_int *a, mp_int *b);
+MP_WUR int mp_div_2(const mp_int *a, mp_int *b);
 
 /* c = a * 2**b, implemented as c = a << b */
-int mp_mul_2d(const mp_int *a, int b, mp_int *c);
+MP_WUR int mp_mul_2d(const mp_int *a, int b, mp_int *c);
 
 /* b = a*2 */
-int mp_mul_2(const mp_int *a, mp_int *b);
+MP_WUR int mp_mul_2(const mp_int *a, mp_int *b);
 
 /* c = a mod 2**b */
-int mp_mod_2d(const mp_int *a, int b, mp_int *c);
+MP_WUR int mp_mod_2d(const mp_int *a, int b, mp_int *c);
 
 /* computes a = 2**b */
-int mp_2expt(mp_int *a, int b);
+MP_WUR int mp_2expt(mp_int *a, int b);
 
 /* Counts the number of lsbs which are zero before the first zero bit */
-int mp_cnt_lsb(const mp_int *a);
+MP_WUR int mp_cnt_lsb(const mp_int *a);
 
 /* I Love Earth! */
 
 /* makes a pseudo-random mp_int of a given size */
-int mp_rand(mp_int *a, int digits);
+MP_WUR int mp_rand(mp_int *a, int digits);
 /* makes a pseudo-random small int of a given size */
-MP_DEPRECATED(mp_rand) int mp_rand_digit(mp_digit *r);
+MP_WUR MP_DEPRECATED(mp_rand) int mp_rand_digit(mp_digit *r);
 /* use custom random data source instead of source provided the platform */
 void mp_rand_source(int source(void *out, size_t size));
 
@@ -320,197 +343,197 @@ extern void (*ltm_rng_callback)(void);
 
 /* ---> binary operations <--- */
 /* c = a XOR b  */
-int mp_xor(const mp_int *a, const mp_int *b, mp_int *c);
+MP_WUR int mp_xor(const mp_int *a, const mp_int *b, mp_int *c);
 
 /* c = a OR b */
-int mp_or(const mp_int *a, const mp_int *b, mp_int *c);
+MP_WUR int mp_or(const mp_int *a, const mp_int *b, mp_int *c);
 
 /* c = a AND b */
-int mp_and(const mp_int *a, const mp_int *b, mp_int *c);
+MP_WUR int mp_and(const mp_int *a, const mp_int *b, mp_int *c);
 
 /* Checks the bit at position b and returns MP_YES
    if the bit is 1, MP_NO if it is 0 and MP_VAL
    in case of error */
-int mp_get_bit(const mp_int *a, int b);
+MP_WUR int mp_get_bit(const mp_int *a, int b);
 
 /* c = a XOR b (two complement) */
-int mp_tc_xor(const mp_int *a, const mp_int *b, mp_int *c);
+MP_WUR int mp_tc_xor(const mp_int *a, const mp_int *b, mp_int *c);
 
 /* c = a OR b (two complement) */
-int mp_tc_or(const mp_int *a, const mp_int *b, mp_int *c);
+MP_WUR int mp_tc_or(const mp_int *a, const mp_int *b, mp_int *c);
 
 /* c = a AND b (two complement) */
-int mp_tc_and(const mp_int *a, const mp_int *b, mp_int *c);
+MP_WUR int mp_tc_and(const mp_int *a, const mp_int *b, mp_int *c);
 
 /* right shift (two complement) */
-int mp_tc_div_2d(const mp_int *a, int b, mp_int *c);
+MP_WUR int mp_tc_div_2d(const mp_int *a, int b, mp_int *c);
 
 /* ---> Basic arithmetic <--- */
 
 /* b = ~a */
-int mp_complement(const mp_int *a, mp_int *b);
+MP_WUR int mp_complement(const mp_int *a, mp_int *b);
 
 /* b = -a */
-int mp_neg(const mp_int *a, mp_int *b);
+MP_WUR int mp_neg(const mp_int *a, mp_int *b);
 
 /* b = |a| */
-int mp_abs(const mp_int *a, mp_int *b);
+MP_WUR int mp_abs(const mp_int *a, mp_int *b);
 
 /* compare a to b */
-int mp_cmp(const mp_int *a, const mp_int *b);
+MP_WUR int mp_cmp(const mp_int *a, const mp_int *b);
 
 /* compare |a| to |b| */
-int mp_cmp_mag(const mp_int *a, const mp_int *b);
+MP_WUR int mp_cmp_mag(const mp_int *a, const mp_int *b);
 
 /* c = a + b */
-int mp_add(const mp_int *a, const mp_int *b, mp_int *c);
+MP_WUR int mp_add(const mp_int *a, const mp_int *b, mp_int *c);
 
 /* c = a - b */
-int mp_sub(const mp_int *a, const mp_int *b, mp_int *c);
+MP_WUR int mp_sub(const mp_int *a, const mp_int *b, mp_int *c);
 
 /* c = a * b */
-int mp_mul(const mp_int *a, const mp_int *b, mp_int *c);
+MP_WUR int mp_mul(const mp_int *a, const mp_int *b, mp_int *c);
 
 /* b = a*a  */
-int mp_sqr(const mp_int *a, mp_int *b);
+MP_WUR int mp_sqr(const mp_int *a, mp_int *b);
 
 /* a/b => cb + d == a */
-int mp_div(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d);
+MP_WUR int mp_div(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d);
 
 /* c = a mod b, 0 <= c < b  */
-int mp_mod(const mp_int *a, const mp_int *b, mp_int *c);
+MP_WUR int mp_mod(const mp_int *a, const mp_int *b, mp_int *c);
 
 /* ---> single digit functions <--- */
 
 /* compare against a single digit */
-int mp_cmp_d(const mp_int *a, mp_digit b);
+MP_WUR int mp_cmp_d(const mp_int *a, mp_digit b);
 
 /* c = a + b */
-int mp_add_d(const mp_int *a, mp_digit b, mp_int *c);
+MP_WUR int mp_add_d(const mp_int *a, mp_digit b, mp_int *c);
 
 /* Increment "a" by one like "a++". Changes input! */
-int mp_incr(mp_int *a);
+MP_WUR int mp_incr(mp_int *a);
 
 /* c = a - b */
-int mp_sub_d(const mp_int *a, mp_digit b, mp_int *c);
+MP_WUR int mp_sub_d(const mp_int *a, mp_digit b, mp_int *c);
 
 /* Decrement "a" by one like "a--". Changes input! */
-int mp_decr(mp_int *a);
+MP_WUR int mp_decr(mp_int *a);
 
 /* c = a * b */
-int mp_mul_d(const mp_int *a, mp_digit b, mp_int *c);
+MP_WUR int mp_mul_d(const mp_int *a, mp_digit b, mp_int *c);
 
 /* a/b => cb + d == a */
-int mp_div_d(const mp_int *a, mp_digit b, mp_int *c, mp_digit *d);
+MP_WUR int mp_div_d(const mp_int *a, mp_digit b, mp_int *c, mp_digit *d);
 
 /* a/3 => 3c + d == a */
-int mp_div_3(const mp_int *a, mp_int *c, mp_digit *d);
+MP_WUR int mp_div_3(const mp_int *a, mp_int *c, mp_digit *d);
 
 /* c = a**b */
-int mp_expt_d(const mp_int *a, mp_digit b, mp_int *c);
-int mp_expt_d_ex(const mp_int *a, mp_digit b, mp_int *c, int fast);
+MP_WUR int mp_expt_d(const mp_int *a, mp_digit b, mp_int *c);
+MP_WUR int mp_expt_d_ex(const mp_int *a, mp_digit b, mp_int *c, int fast);
 
 /* c = a mod b, 0 <= c < b  */
-int mp_mod_d(const mp_int *a, mp_digit b, mp_digit *c);
+MP_WUR int mp_mod_d(const mp_int *a, mp_digit b, mp_digit *c);
 
 /* ---> number theory <--- */
 
 /* d = a + b (mod c) */
-int mp_addmod(const mp_int *a, const mp_int *b, const mp_int *c, mp_int *d);
+MP_WUR int mp_addmod(const mp_int *a, const mp_int *b, const mp_int *c, mp_int *d);
 
 /* d = a - b (mod c) */
-int mp_submod(const mp_int *a, const mp_int *b, const mp_int *c, mp_int *d);
+MP_WUR int mp_submod(const mp_int *a, const mp_int *b, const mp_int *c, mp_int *d);
 
 /* d = a * b (mod c) */
-int mp_mulmod(const mp_int *a, const mp_int *b, const mp_int *c, mp_int *d);
+MP_WUR int mp_mulmod(const mp_int *a, const mp_int *b, const mp_int *c, mp_int *d);
 
 /* c = a * a (mod b) */
-int mp_sqrmod(const mp_int *a, const mp_int *b, mp_int *c);
+MP_WUR int mp_sqrmod(const mp_int *a, const mp_int *b, mp_int *c);
 
 /* c = 1/a (mod b) */
-int mp_invmod(const mp_int *a, const mp_int *b, mp_int *c);
+MP_WUR int mp_invmod(const mp_int *a, const mp_int *b, mp_int *c);
 
 /* c = (a, b) */
-int mp_gcd(const mp_int *a, const mp_int *b, mp_int *c);
+MP_WUR int mp_gcd(const mp_int *a, const mp_int *b, mp_int *c);
 
 /* produces value such that U1*a + U2*b = U3 */
-int mp_exteuclid(const mp_int *a, const mp_int *b, mp_int *U1, mp_int *U2, mp_int *U3);
+MP_WUR int mp_exteuclid(const mp_int *a, const mp_int *b, mp_int *U1, mp_int *U2, mp_int *U3);
 
 /* c = [a, b] or (a*b)/(a, b) */
-int mp_lcm(const mp_int *a, const mp_int *b, mp_int *c);
+MP_WUR int mp_lcm(const mp_int *a, const mp_int *b, mp_int *c);
 
 /* finds one of the b'th root of a, such that |c|**b <= |a|
  *
  * returns error if a < 0 and b is even
  */
-int mp_n_root(const mp_int *a, mp_digit b, mp_int *c);
-int mp_n_root_ex(const mp_int *a, mp_digit b, mp_int *c, int fast);
+MP_WUR int mp_n_root(const mp_int *a, mp_digit b, mp_int *c);
+MP_WUR int mp_n_root_ex(const mp_int *a, mp_digit b, mp_int *c, int fast);
 
 /* special sqrt algo */
-int mp_sqrt(const mp_int *arg, mp_int *ret);
+MP_WUR int mp_sqrt(const mp_int *arg, mp_int *ret);
 
 /* special sqrt (mod prime) */
-int mp_sqrtmod_prime(const mp_int *n, const mp_int *prime, mp_int *ret);
+MP_WUR int mp_sqrtmod_prime(const mp_int *n, const mp_int *prime, mp_int *ret);
 
 /* is number a square? */
-int mp_is_square(const mp_int *arg, int *ret);
+MP_WUR int mp_is_square(const mp_int *arg, int *ret);
 
 /* computes the jacobi c = (a | n) (or Legendre if b is prime)  */
-int mp_jacobi(const mp_int *a, const mp_int *n, int *c);
+MP_WUR int mp_jacobi(const mp_int *a, const mp_int *n, int *c);
 
 /* computes the Kronecker symbol c = (a | p) (like jacobi() but with {a,p} in Z */
-int mp_kronecker(const mp_int *a, const mp_int *p, int *c);
+MP_WUR int mp_kronecker(const mp_int *a, const mp_int *p, int *c);
 
 /* used to setup the Barrett reduction for a given modulus b */
-int mp_reduce_setup(mp_int *a, const mp_int *b);
+MP_WUR int mp_reduce_setup(mp_int *a, const mp_int *b);
 
 /* Barrett Reduction, computes a (mod b) with a precomputed value c
  *
  * Assumes that 0 < x <= m*m, note if 0 > x > -(m*m) then you can merely
  * compute the reduction as -1 * mp_reduce(mp_abs(x)) [pseudo code].
  */
-int mp_reduce(mp_int *x, const mp_int *m, const mp_int *mu);
+MP_WUR int mp_reduce(mp_int *x, const mp_int *m, const mp_int *mu);
 
 /* setups the montgomery reduction */
-int mp_montgomery_setup(const mp_int *n, mp_digit *rho);
+MP_WUR int mp_montgomery_setup(const mp_int *n, mp_digit *rho);
 
 /* computes a = B**n mod b without division or multiplication useful for
  * normalizing numbers in a Montgomery system.
  */
-int mp_montgomery_calc_normalization(mp_int *a, const mp_int *b);
+MP_WUR int mp_montgomery_calc_normalization(mp_int *a, const mp_int *b);
 
 /* computes x/R == x (mod N) via Montgomery Reduction */
-int mp_montgomery_reduce(mp_int *x, const mp_int *n, mp_digit rho);
+MP_WUR int mp_montgomery_reduce(mp_int *x, const mp_int *n, mp_digit rho);
 
 /* returns 1 if a is a valid DR modulus */
-int mp_dr_is_modulus(const mp_int *a);
+MP_WUR int mp_dr_is_modulus(const mp_int *a);
 
 /* sets the value of "d" required for mp_dr_reduce */
 void mp_dr_setup(const mp_int *a, mp_digit *d);
 
 /* reduces a modulo n using the Diminished Radix method */
-int mp_dr_reduce(mp_int *x, const mp_int *n, mp_digit k);
+MP_WUR int mp_dr_reduce(mp_int *x, const mp_int *n, mp_digit k);
 
 /* returns true if a can be reduced with mp_reduce_2k */
-int mp_reduce_is_2k(const mp_int *a);
+MP_WUR int mp_reduce_is_2k(const mp_int *a);
 
 /* determines k value for 2k reduction */
-int mp_reduce_2k_setup(const mp_int *a, mp_digit *d);
+MP_WUR int mp_reduce_2k_setup(const mp_int *a, mp_digit *d);
 
 /* reduces a modulo b where b is of the form 2**p - k [0 <= a] */
-int mp_reduce_2k(mp_int *a, const mp_int *n, mp_digit d);
+MP_WUR int mp_reduce_2k(mp_int *a, const mp_int *n, mp_digit d);
 
 /* returns true if a can be reduced with mp_reduce_2k_l */
-int mp_reduce_is_2k_l(const mp_int *a);
+MP_WUR int mp_reduce_is_2k_l(const mp_int *a);
 
 /* determines k value for 2k reduction */
-int mp_reduce_2k_setup_l(const mp_int *a, mp_int *d);
+MP_WUR int mp_reduce_2k_setup_l(const mp_int *a, mp_int *d);
 
 /* reduces a modulo b where b is of the form 2**p - k [0 <= a] */
-int mp_reduce_2k_l(mp_int *a, const mp_int *n, const mp_int *d);
+MP_WUR int mp_reduce_2k_l(mp_int *a, const mp_int *n, const mp_int *d);
 
 /* Y = G**X (mod P) */
-int mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y);
+MP_WUR int mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y);
 
 /* ---> Primes <--- */
 
@@ -526,32 +549,32 @@ int mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y);
 extern const mp_digit ltm_prime_tab[MP_PRIME_SIZE];
 
 /* result=1 if a is divisible by one of the first MP_PRIME_SIZE primes */
-int mp_prime_is_divisible(const mp_int *a, int *result);
+MP_WUR int mp_prime_is_divisible(const mp_int *a, int *result);
 
 /* performs one Fermat test of "a" using base "b".
  * Sets result to 0 if composite or 1 if probable prime
  */
-int mp_prime_fermat(const mp_int *a, const mp_int *b, int *result);
+MP_WUR int mp_prime_fermat(const mp_int *a, const mp_int *b, int *result);
 
 /* performs one Miller-Rabin test of "a" using base "b".
  * Sets result to 0 if composite or 1 if probable prime
  */
-int mp_prime_miller_rabin(const mp_int *a, const mp_int *b, int *result);
+MP_WUR int mp_prime_miller_rabin(const mp_int *a, const mp_int *b, int *result);
 
 /* This gives [for a given bit size] the number of trials required
  * such that Miller-Rabin gives a prob of failure lower than 2^-96
  */
-int mp_prime_rabin_miller_trials(int size);
+MP_WUR int mp_prime_rabin_miller_trials(int size);
 
 /* performs one strong Lucas-Selfridge test of "a".
  * Sets result to 0 if composite or 1 if probable prime
  */
-int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result);
+MP_WUR int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result);
 
 /* performs one Frobenius test of "a" as described by Paul Underwood.
  * Sets result to 0 if composite or 1 if probable prime
  */
-int mp_prime_frobenius_underwood(const mp_int *N, int *result);
+MP_WUR int mp_prime_frobenius_underwood(const mp_int *N, int *result);
 
 /* performs t random rounds of Miller-Rabin on "a" additional to
  * bases 2 and 3.  Also performs an initial sieve of trial
@@ -567,14 +590,14 @@ int mp_prime_frobenius_underwood(const mp_int *N, int *result);
  *
  * Sets result to 1 if probably prime, 0 otherwise
  */
-int mp_prime_is_prime(const mp_int *a, int t, int *result);
+MP_WUR int mp_prime_is_prime(const mp_int *a, int t, int *result);
 
 /* finds the next prime after the number "a" using "t" trials
  * of Miller-Rabin.
  *
  * bbs_style = 1 means the prime must be congruent to 3 mod 4
  */
-int mp_prime_next_prime(mp_int *a, int t, int bbs_style);
+MP_WUR int mp_prime_next_prime(mp_int *a, int t, int bbs_style);
 
 /* makes a truly random prime of a given size (bytes),
  * call with bbs = 1 if you want it to be congruent to 3 mod 4
@@ -600,35 +623,35 @@ int mp_prime_next_prime(mp_int *a, int t, int bbs_style);
  * so it can be NULL
  *
  */
-MP_DEPRECATED(mp_prime_rand) int mp_prime_random_ex(mp_int *a, int t, int size, int flags,
+MP_WUR MP_DEPRECATED(mp_prime_rand) int mp_prime_random_ex(mp_int *a, int t, int size, int flags,
       private_mp_prime_callback cb, void *dat);
-int mp_prime_rand(mp_int *a, int t, int size, int flags);
+MP_WUR int mp_prime_rand(mp_int *a, int t, int size, int flags);
 
 /* Integer logarithm to integer base */
-int mp_ilogb(mp_int *a, mp_digit base, mp_int *c);
+MP_WUR int mp_ilogb(mp_int *a, mp_digit base, mp_int *c);
 
 
 /* ---> radix conversion <--- */
-int mp_count_bits(const mp_int *a);
+MP_WUR int mp_count_bits(const mp_int *a);
 
-int mp_unsigned_bin_size(const mp_int *a);
-int mp_read_unsigned_bin(mp_int *a, const unsigned char *b, int c);
-int mp_to_unsigned_bin(const mp_int *a, unsigned char *b);
-int mp_to_unsigned_bin_n(const mp_int *a, unsigned char *b, unsigned long *outlen);
+MP_WUR int mp_unsigned_bin_size(const mp_int *a);
+MP_WUR int mp_read_unsigned_bin(mp_int *a, const unsigned char *b, int c);
+MP_WUR int mp_to_unsigned_bin(const mp_int *a, unsigned char *b);
+MP_WUR int mp_to_unsigned_bin_n(const mp_int *a, unsigned char *b, unsigned long *outlen);
 
-int mp_signed_bin_size(const mp_int *a);
-int mp_read_signed_bin(mp_int *a, const unsigned char *b, int c);
-int mp_to_signed_bin(const mp_int *a,  unsigned char *b);
-int mp_to_signed_bin_n(const mp_int *a, unsigned char *b, unsigned long *outlen);
+MP_WUR int mp_signed_bin_size(const mp_int *a);
+MP_WUR int mp_read_signed_bin(mp_int *a, const unsigned char *b, int c);
+MP_WUR int mp_to_signed_bin(const mp_int *a,  unsigned char *b);
+MP_WUR int mp_to_signed_bin_n(const mp_int *a, unsigned char *b, unsigned long *outlen);
 
-int mp_read_radix(mp_int *a, const char *str, int radix);
-int mp_toradix(const mp_int *a, char *str, int radix);
-int mp_toradix_n(const mp_int *a, char *str, int radix, int maxlen);
-int mp_radix_size(const mp_int *a, int radix, int *size);
+MP_WUR int mp_read_radix(mp_int *a, const char *str, int radix);
+MP_WUR int mp_toradix(const mp_int *a, char *str, int radix);
+MP_WUR int mp_toradix_n(const mp_int *a, char *str, int radix, int maxlen);
+MP_WUR int mp_radix_size(const mp_int *a, int radix, int *size);
 
 #ifndef MP_NO_FILE
-int mp_fread(mp_int *a, int radix, FILE *stream);
-int mp_fwrite(const mp_int *a, int radix, FILE *stream);
+MP_WUR int mp_fread(mp_int *a, int radix, FILE *stream);
+MP_WUR int mp_fwrite(const mp_int *a, int radix, FILE *stream);
 #endif
 
 #define mp_read_raw(mp, str, len) (MP_DEPRECATED_PRAGMA("replaced by mp_read_signed_bin") mp_read_signed_bin((mp), (str), (len)))
