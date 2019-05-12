@@ -26,7 +26,7 @@
 #include <windows.h>
 #include <wincrypt.h>
 
-static int s_read_win_csp(void *p, size_t n)
+static mp_err s_read_win_csp(void *p, size_t n)
 {
    static HCRYPTPROV hProv = 0;
    if (hProv == 0) {
@@ -49,7 +49,7 @@ static int s_read_win_csp(void *p, size_t n)
 #include <sys/random.h>
 #include <errno.h>
 
-static int s_read_getrandom(void *p, size_t n)
+static mp_err s_read_getrandom(void *p, size_t n)
 {
    char *q = (char *)p;
    while (n > 0u) {
@@ -79,7 +79,7 @@ static int s_read_getrandom(void *p, size_t n)
 #include <errno.h>
 #include <unistd.h>
 
-static int s_read_dev_urandom(void *p, size_t n)
+static mp_err s_read_dev_urandom(void *p, size_t n)
 {
    int fd;
    char *q = (char *)p;
@@ -111,7 +111,7 @@ static int s_read_dev_urandom(void *p, size_t n)
 unsigned long (*ltm_rng)(unsigned char *out, unsigned long outlen, void (*callback)(void));
 void (*ltm_rng_callback)(void);
 
-static int s_read_ltm_rng(void *p, size_t n)
+static mp_err s_read_ltm_rng(void *p, size_t n)
 {
    unsigned long ret;
    if (ltm_rng == NULL) return MP_ERR;
@@ -121,14 +121,14 @@ static int s_read_ltm_rng(void *p, size_t n)
 }
 #endif
 
-int s_mp_rand_platform(void *p, size_t n)
+mp_err s_mp_rand_platform(void *p, size_t n)
 {
 #if defined(MP_ARC4RANDOM)
    arc4random_buf(p, n);
    return MP_OKAY;
 #else
 
-   int ret = MP_ERR;
+   mp_err ret = MP_ERR;
 
 #if defined(MP_WIN_CSP)
    ret = s_read_win_csp(p, n);

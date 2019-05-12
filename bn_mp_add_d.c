@@ -4,9 +4,10 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* single digit addition */
-int mp_add_d(const mp_int *a, mp_digit b, mp_int *c)
+mp_err mp_add_d(const mp_int *a, mp_digit b, mp_int *c)
 {
-   int     res, ix, oldused;
+   mp_err     res;
+   int ix, oldused;
    mp_digit *tmpa, *tmpc, mu;
 
    /* grow c as required */

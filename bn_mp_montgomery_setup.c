@@ -4,7 +4,7 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* setups the montgomery reduction stuff */
-int mp_montgomery_setup(const mp_int *n, mp_digit *rho)
+mp_err mp_montgomery_setup(const mp_int *n, mp_digit *rho)
 {
    mp_digit x, b;
 

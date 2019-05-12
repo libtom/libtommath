@@ -7,10 +7,11 @@
    This differs from reduce_2k since "d" can be larger
    than a single digit.
 */
-int mp_reduce_2k_l(mp_int *a, const mp_int *n, const mp_int *d)
+mp_err mp_reduce_2k_l(mp_int *a, const mp_int *n, const mp_int *d)
 {
    mp_int q;
-   int    p, res;
+   mp_err res;
+   int    p;
 
    if ((res = mp_init(&q)) != MP_OKAY) {
       return res;

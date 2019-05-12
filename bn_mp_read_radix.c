@@ -6,11 +6,13 @@
 #define MP_TOUPPER(c) ((((c) >= 'a') && ((c) <= 'z')) ? (((c) + 'A') - 'a') : (c))
 
 /* read a string [ASCII] in a given radix */
-int mp_read_radix(mp_int *a, const char *str, int radix)
+mp_err mp_read_radix(mp_int *a, const char *str, int radix)
 {
-   int     y, res, neg;
+   mp_err   res;
+   int      y;
+   mp_sign  neg;
    unsigned pos;
-   char    ch;
+   char     ch;
 
    /* zero the digit bignum */
    mp_zero(a);

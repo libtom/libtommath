@@ -4,10 +4,11 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* low level addition, based on HAC pp.594, Algorithm 14.7 */
-int s_mp_add(const mp_int *a, const mp_int *b, mp_int *c)
+mp_err s_mp_add(const mp_int *a, const mp_int *b, mp_int *c)
 {
    const mp_int *x;
-   int     olduse, res, min, max;
+   mp_err res;
+   int     olduse, min, max;
 
    /* find sizes, we let |a| <= |b| which means we have to sort
     * them.  "x" will point to the input with the most digits

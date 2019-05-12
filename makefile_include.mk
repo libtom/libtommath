@@ -61,6 +61,9 @@ endif
 
 ifdef CONV_WARNINGS
 CFLAGS += -std=c89 -Wconversion -Wsign-conversion
+ifeq ($(CONV_WARNINGS), strict)
+CFLAGS += -DMP_USE_ENUMS -Wc++-compat
+endif
 else
 CFLAGS += -Wsystem-headers
 endif

@@ -4,12 +4,13 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* divide by three (based on routine from MPI and the GMP manual) */
-int mp_div_3(const mp_int *a, mp_int *c, mp_digit *d)
+mp_err mp_div_3(const mp_int *a, mp_int *c, mp_digit *d)
 {
    mp_int   q;
    mp_word  w, t;
    mp_digit b;
-   int      res, ix;
+   mp_err   res;
+   int      ix;
 
    /* b = 2**MP_DIGIT_BIT / 3 */
    b = ((mp_word)1 << (mp_word)MP_DIGIT_BIT) / (mp_word)3;

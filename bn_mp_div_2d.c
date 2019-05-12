@@ -4,10 +4,11 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* shift right by a certain bit count (store quotient in c, optional remainder in d) */
-int mp_div_2d(const mp_int *a, int b, mp_int *c, mp_int *d)
+mp_err mp_div_2d(const mp_int *a, int b, mp_int *c, mp_int *d)
 {
    mp_digit D, r, rr;
-   int     x, res;
+   int     x;
+   mp_err res;
 
    /* if the shift count is <= 0 then we do no work */
    if (b <= 0) {

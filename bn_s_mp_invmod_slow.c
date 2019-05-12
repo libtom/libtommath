@@ -4,10 +4,10 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* hac 14.61, pp608 */
-int s_mp_invmod_slow(const mp_int *a, const mp_int *b, mp_int *c)
+mp_err s_mp_invmod_slow(const mp_int *a, const mp_int *b, mp_int *c)
 {
    mp_int  x, y, u, v, A, B, C, D;
-   int     res;
+   mp_err  res;
 
    /* b cannot be negative */
    if ((b->sign == MP_NEG) || MP_IS_ZERO(b)) {

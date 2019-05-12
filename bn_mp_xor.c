@@ -4,9 +4,10 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* XOR two ints together */
-int mp_xor(const mp_int *a, const mp_int *b, mp_int *c)
+mp_err mp_xor(const mp_int *a, const mp_int *b, mp_int *c)
 {
-   int     res, ix, px;
+   int     ix, px;
+   mp_err  res;
    mp_int  t;
    const mp_int *x;
 

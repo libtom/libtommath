@@ -32,13 +32,11 @@
  * Generally though the overhead of this method doesn't pay off
  * until a certain size (N ~ 80) is reached.
  */
-int s_mp_karatsuba_mul(const mp_int *a, const mp_int *b, mp_int *c)
+mp_err s_mp_karatsuba_mul(const mp_int *a, const mp_int *b, mp_int *c)
 {
    mp_int  x0, x1, y0, y1, t1, x0y0, x1y1;
-   int     B, err;
-
-   /* default the return code to an error */
-   err = MP_MEM;
+   int     B;
+   mp_err  err = MP_MEM; /* default the return code to an error */
 
    /* min # of digits */
    B = MP_MIN(a->used, b->used);

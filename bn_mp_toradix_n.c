@@ -7,9 +7,10 @@
  *
  * Stores upto maxlen-1 chars and always a NULL byte
  */
-int mp_toradix_n(const mp_int *a, char *str, int radix, int maxlen)
+mp_err mp_toradix_n(const mp_int *a, char *str, int radix, int maxlen)
 {
-   int     res, digs;
+   int     digs;
+   mp_err  res;
    mp_int  t;
    mp_digit d;
    char   *_s = str;

@@ -4,9 +4,9 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* b = ~a */
-int mp_complement(const mp_int *a, mp_int *b)
+mp_err mp_complement(const mp_int *a, mp_int *b)
 {
-   int res = mp_neg(a, b);
+   mp_err res = mp_neg(a, b);
    return (res == MP_OKAY) ? mp_sub_d(b, 1uL, b) : res;
 }
 #endif

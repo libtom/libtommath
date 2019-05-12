@@ -9,9 +9,10 @@
  *
  */
 
-int mp_sqrtmod_prime(const mp_int *n, const mp_int *prime, mp_int *ret)
+mp_err mp_sqrtmod_prime(const mp_int *n, const mp_int *prime, mp_int *ret)
 {
-   int res, legendre;
+   mp_err res;
+   int legendre;
    mp_int t1, C, Q, S, Z, M, T, R, two;
    mp_digit i;
 

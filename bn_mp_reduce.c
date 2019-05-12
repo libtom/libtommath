@@ -7,10 +7,11 @@
  * precomputed via mp_reduce_setup.
  * From HAC pp.604 Algorithm 14.42
  */
-int mp_reduce(mp_int *x, const mp_int *m, const mp_int *mu)
+mp_err mp_reduce(mp_int *x, const mp_int *m, const mp_int *mu)
 {
    mp_int  q;
-   int     res, um = m->used;
+   mp_err  res;
+   int     um = m->used;
 
    /* q = x */
    if ((res = mp_init_copy(&q, x)) != MP_OKAY) {

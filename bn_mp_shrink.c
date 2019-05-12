@@ -4,7 +4,7 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* shrink a bignum */
-int mp_shrink(mp_int *a)
+mp_err mp_shrink(mp_int *a)
 {
    static int static_check[-(MP_PREC < MP_MIN_PREC)];
    mp_digit *tmp;

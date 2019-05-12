@@ -7,9 +7,9 @@
  *
  * Simple function copies the input and fixes the sign to positive
  */
-int mp_abs(const mp_int *a, mp_int *b)
+mp_err mp_abs(const mp_int *a, mp_int *b)
 {
-   int     res;
+   mp_err     res;
 
    /* copy a to b */
    if (a != b) {

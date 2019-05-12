@@ -4,10 +4,11 @@
 /* SPDX-License-Identifier: Unlicense */
 
 #ifndef MP_NO_FILE
-int mp_fwrite(const mp_int *a, int radix, FILE *stream)
+mp_err mp_fwrite(const mp_int *a, int radix, FILE *stream)
 {
    char *buf;
-   int err, len;
+   mp_err err;
+   int len;
 
    if ((err = mp_radix_size(a, radix, &len)) != MP_OKAY) {
       return err;

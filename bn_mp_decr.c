@@ -4,9 +4,9 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* Decrement "a" by one like "a--". Changes input! */
-int mp_decr(mp_int *a)
+mp_err mp_decr(mp_int *a)
 {
-   int e = MP_OKAY;
+   mp_err e = MP_OKAY;
    if (MP_IS_ZERO(a)) {
       mp_set(a,1uL);
       a->sign = MP_NEG;

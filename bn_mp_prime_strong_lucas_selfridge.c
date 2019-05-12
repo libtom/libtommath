@@ -19,10 +19,11 @@
  * multiply bigint a with int d and put the result in c
  * Like mp_mul_d() but with a signed long as the small input
  */
-static int s_mp_mul_si(const mp_int *a, long d, mp_int *c)
+static mp_err s_mp_mul_si(const mp_int *a, long d, mp_int *c)
 {
    mp_int t;
-   int err, neg = 0;
+   mp_err err;
+   int neg = 0;
 
    if ((err = mp_init(&t)) != MP_OKAY) {
       return err;
@@ -64,13 +65,13 @@ LBL_MPMULSI_ERR:
     (If that name sounds familiar, he is the guy who found the fdiv bug in the
      Pentium (P5x, I think) Intel processor)
 */
-int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
+mp_err mp_prime_strong_lucas_selfridge(const mp_int *a, mp_bool *result)
 {
    /* CZ TODO: choose better variable names! */
    mp_int Dz, gcd, Np1, Uz, Vz, U2mz, V2mz, Qmz, Q2mz, Qkdz, T1z, T2z, T3z, T4z, Q2kdz;
    /* CZ TODO: Some of them need the full 32 bit, hence the (temporary) exclusion of MP_8BIT */
    int32_t D, Ds, J, sign, P, Q, r, s, u, Nbits;
-   int e;
+   mp_err e;
    int isset, oddness;
 
    *result = MP_NO;
@@ -246,7 +247,7 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
          goto LBL_LS_ERR;
       }
       if ((isset = mp_get_bit(&Dz, u)) == MP_VAL) {
-         e = isset;
+         e = MP_VAL;
          goto LBL_LS_ERR;
       }
       if (isset == MP_YES) {

@@ -4,7 +4,7 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* compare a digit */
-int mp_cmp_d(const mp_int *a, mp_digit b)
+mp_ord mp_cmp_d(const mp_int *a, mp_digit b)
 {
    /* compare based on sign */
    if (a->sign == MP_NEG) {

@@ -4,10 +4,11 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* returns size of ASCII reprensentation */
-int mp_radix_size(const mp_int *a, int radix, int *size)
+mp_err mp_radix_size(const mp_int *a, int radix, int *size)
 {
-   int     res, digs;
-   mp_int  t;
+   mp_err  res;
+   int     digs;
+   mp_int   t;
    mp_digit d;
 
    *size = 0;

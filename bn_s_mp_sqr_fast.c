@@ -13,11 +13,12 @@
 After that loop you do the squares and add them in.
 */
 
-int s_mp_sqr_fast(const mp_int *a, mp_int *b)
+mp_err s_mp_sqr_fast(const mp_int *a, mp_int *b)
 {
-   int       olduse, res, pa, ix, iz;
-   mp_digit   W[MP_WARRAY], *tmpx;
+   int       olduse, pa, ix, iz;
+   mp_digit  W[MP_WARRAY], *tmpx;
    mp_word   W1;
+   mp_err    res;
 
    /* grow the destination as required */
    pa = a->used + a->used;

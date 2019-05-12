@@ -12,11 +12,12 @@
  * which will find the root in log(N) time where
  * each step involves a fair bit.
  */
-int mp_n_root_ex(const mp_int *a, mp_digit b, mp_int *c, int fast)
+mp_err mp_n_root_ex(const mp_int *a, mp_digit b, mp_int *c, int fast)
 {
-   mp_int  t1, t2, t3, a_;
-   int   res, cmp;
-   int ilog2;
+   mp_int t1, t2, t3, a_;
+   int    cmp;
+   int    ilog2;
+   mp_err res;
 
    /* input must be positive if b is even */
    if (((b & 1u) == 0u) && (a->sign == MP_NEG)) {

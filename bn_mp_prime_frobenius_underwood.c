@@ -23,12 +23,12 @@
 #else
 #define LTM_FROBENIUS_UNDERWOOD_A 32764
 #endif
-int mp_prime_frobenius_underwood(const mp_int *N, int *result)
+mp_err mp_prime_frobenius_underwood(const mp_int *N, mp_bool *result)
 {
    mp_int T1z, T2z, Np1z, sz, tz;
 
    int a, ap2, length, i, j, isset;
-   int e;
+   mp_err e;
 
    *result = MP_NO;
 
@@ -130,7 +130,7 @@ int mp_prime_frobenius_underwood(const mp_int *N, int *result)
          goto LBL_FU_ERR;
       }
       if ((isset = mp_get_bit(&Np1z, i)) == MP_VAL) {
-         e = isset;
+         e = MP_VAL;
          goto LBL_FU_ERR;
       }
       if (isset == MP_YES) {

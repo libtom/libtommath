@@ -35,7 +35,7 @@ void s_mp_rand_jenkins_init(uint64_t seed)
    }
 }
 
-int s_mp_rand_jenkins(void *p, size_t n)
+mp_err s_mp_rand_jenkins(void *p, size_t n)
 {
    char *q = (char *)p;
    while (n > 0u) {

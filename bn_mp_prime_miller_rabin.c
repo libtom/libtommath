@@ -10,10 +10,11 @@
  * Randomly the chance of error is no more than 1/4 and often
  * very much lower.
  */
-int mp_prime_miller_rabin(const mp_int *a, const mp_int *b, int *result)
+mp_err mp_prime_miller_rabin(const mp_int *a, const mp_int *b, mp_bool *result)
 {
    mp_int  n1, y, r;
-   int     s, j, err;
+   mp_err  err;
+   int     s, j;
 
    /* default */
    *result = MP_NO;

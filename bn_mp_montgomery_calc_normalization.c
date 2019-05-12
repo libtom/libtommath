@@ -9,9 +9,10 @@
  * The method is slightly modified to shift B unconditionally upto just under
  * the leading bit of b.  This saves alot of multiple precision shifting.
  */
-int mp_montgomery_calc_normalization(mp_int *a, const mp_int *b)
+mp_err mp_montgomery_calc_normalization(mp_int *a, const mp_int *b)
 {
-   int     x, bits, res;
+   int    x, bits;
+   mp_err res;
 
    /* how many bits of last digit does b use */
    bits = mp_count_bits(b) % MP_DIGIT_BIT;

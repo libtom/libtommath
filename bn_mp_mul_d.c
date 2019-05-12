@@ -4,11 +4,12 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* multiply by a digit */
-int mp_mul_d(const mp_int *a, mp_digit b, mp_int *c)
+mp_err mp_mul_d(const mp_int *a, mp_digit b, mp_int *c)
 {
    mp_digit u, *tmpa, *tmpc;
    mp_word  r;
-   int      ix, res, olduse;
+   mp_err   res;
+   int      ix, olduse;
 
    /* make sure c is big enough to hold a*b */
    if (c->alloc < (a->used + 1)) {

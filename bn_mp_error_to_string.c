@@ -4,7 +4,7 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* return a char * string for a given code */
-const char *mp_error_to_string(int code)
+const char *mp_error_to_string(mp_err code)
 {
    switch (code) {
    case MP_OKAY:

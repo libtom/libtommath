@@ -4,9 +4,10 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* calc a value mod 2**b */
-int mp_mod_2d(const mp_int *a, int b, mp_int *c)
+mp_err mp_mod_2d(const mp_int *a, int b, mp_int *c)
 {
-   int     x, res;
+   int x;
+   mp_err res;
 
    /* if b is <= 0 then zero the int */
    if (b <= 0) {

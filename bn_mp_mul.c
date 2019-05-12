@@ -4,9 +4,10 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* high level multiplication (handles sign) */
-int mp_mul(const mp_int *a, const mp_int *b, mp_int *c)
+mp_err mp_mul(const mp_int *a, const mp_int *b, mp_int *c)
 {
-   int     res, neg;
+   mp_err  res;
+   mp_sign neg;
 #ifdef BN_S_MP_BALANCE_MUL_C
    int len_b, len_a;
 #endif

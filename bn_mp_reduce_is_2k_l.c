@@ -4,7 +4,7 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* determines if reduce_2k_l can be used */
-int mp_reduce_is_2k_l(const mp_int *a)
+mp_bool mp_reduce_is_2k_l(const mp_int *a)
 {
    int ix, iy;
 

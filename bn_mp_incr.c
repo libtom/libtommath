@@ -4,9 +4,9 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* Increment "a" by one like "a++". Changes input! */
-int mp_incr(mp_int *a)
+mp_err mp_incr(mp_int *a)
 {
-   int e = MP_OKAY;
+   mp_err e = MP_OKAY;
    if (MP_IS_ZERO(a)) {
       mp_set(a,1uL);
       return MP_OKAY;

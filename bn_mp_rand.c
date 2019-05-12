@@ -3,24 +3,25 @@
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
-int (*s_mp_rand_source)(void *out, size_t size) = s_mp_rand_platform;
+mp_err(*s_mp_rand_source)(void *out, size_t size) = s_mp_rand_platform;
 
-void mp_rand_source(int (*source)(void *out, size_t size))
+void mp_rand_source(mp_err(*source)(void *out, size_t size))
 {
    s_mp_rand_source = (source == NULL) ? s_mp_rand_platform : source;
 }
 
 /* makes a pseudo-random int of a given size */
-int mp_rand_digit(mp_digit *r)
+mp_err mp_rand_digit(mp_digit *r)
 {
-   int ret = s_mp_rand_source(r, sizeof(mp_digit));
+   mp_err ret = s_mp_rand_source(r, sizeof(mp_digit));
    *r &= MP_MASK;
    return ret;
 }
 
-int mp_rand(mp_int *a, int digits)
+mp_err mp_rand(mp_int *a, int digits)
 {
-   int ret, i;
+   int i;
+   mp_err ret;
 
    mp_zero(a);
 

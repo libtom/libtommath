@@ -22,12 +22,13 @@ static int s_is_power_of_two(mp_digit b, int *p)
 }
 
 /* single digit division (based on routine from MPI) */
-int mp_div_d(const mp_int *a, mp_digit b, mp_int *c, mp_digit *d)
+mp_err mp_div_d(const mp_int *a, mp_digit b, mp_int *c, mp_digit *d)
 {
    mp_int  q;
    mp_word w;
    mp_digit t;
-   int     res, ix;
+   mp_err res;
+   int ix;
 
    /* cannot divide by zero */
    if (b == 0u) {

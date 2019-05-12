@@ -9,7 +9,7 @@ void ndraw(mp_int *a, const char *name)
    int size;
 
    mp_radix_size(a, 10, &size);
-   buf = malloc((size_t) size);
+   buf = (char *)malloc((size_t) size);
    if (buf == NULL) {
       fprintf(stderr, "\nndraw: malloc(%d) failed\n", size);
       exit(EXIT_FAILURE);

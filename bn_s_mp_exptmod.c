@@ -9,12 +9,13 @@
 #   define TAB_SIZE 256
 #endif
 
-int s_mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y, int redmode)
+mp_err s_mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y, int redmode)
 {
    mp_int  M[TAB_SIZE], res, mu;
    mp_digit buf;
-   int     err, bitbuf, bitcpy, bitcnt, mode, digidx, x, y, winsize;
-   int (*redux)(mp_int *x, const mp_int *m, const mp_int *mu);
+   mp_err   err;
+   int      bitbuf, bitcpy, bitcnt, mode, digidx, x, y, winsize;
+   mp_err(*redux)(mp_int *x, const mp_int *m, const mp_int *mu);
 
    /* find window size */
    x = mp_count_bits(X);

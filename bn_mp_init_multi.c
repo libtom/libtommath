@@ -5,7 +5,7 @@
 
 #include <stdarg.h>
 
-int mp_init_multi(mp_int *mp, ...)
+mp_err mp_init_multi(mp_int *mp, ...)
 {
    mp_err res = MP_OKAY;      /* Assume ok until proven otherwise */
    int n = 0;                 /* Number of ok inits */

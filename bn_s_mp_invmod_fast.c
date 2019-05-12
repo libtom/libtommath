@@ -9,10 +9,11 @@
  * Based on slow invmod except this is optimized for the case where b is
  * odd as per HAC Note 14.64 on pp. 610
  */
-int s_mp_invmod_fast(const mp_int *a, const mp_int *b, mp_int *c)
+mp_err s_mp_invmod_fast(const mp_int *a, const mp_int *b, mp_int *c)
 {
    mp_int  x, y, u, v, B, D;
-   int     res, neg;
+   mp_sign neg;
+   mp_err  res;
 
    /* 2. [modified] b must be odd   */
    if (MP_IS_EVEN(b)) {

@@ -4,10 +4,9 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* store in signed [big endian] format */
-int mp_to_signed_bin(const mp_int *a, unsigned char *b)
+mp_err mp_to_signed_bin(const mp_int *a, unsigned char *b)
 {
-   int     res;
-
+   mp_err res;
    if ((res = mp_to_unsigned_bin(a, b + 1)) != MP_OKAY) {
       return res;
    }

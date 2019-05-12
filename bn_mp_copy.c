@@ -4,9 +4,10 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* copy, b = a */
-int mp_copy(const mp_int *a, mp_int *b)
+mp_err mp_copy(const mp_int *a, mp_int *b)
 {
-   int     res, n;
+   int n;
+   mp_err res;
 
    /* if dst == src do nothing */
    if (a == b) {

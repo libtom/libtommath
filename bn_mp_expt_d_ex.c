@@ -4,9 +4,9 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* calculate c = a**b  using a square-multiply algorithm */
-int mp_expt_d_ex(const mp_int *a, mp_digit b, mp_int *c, int fast)
+mp_err mp_expt_d_ex(const mp_int *a, mp_digit b, mp_int *c, int fast)
 {
-   int     res;
+   mp_err res;
    unsigned int x;
 
    mp_int  g;

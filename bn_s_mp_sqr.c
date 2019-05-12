@@ -4,11 +4,12 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* low level squaring, b = a*a, HAC pp.596-597, Algorithm 14.16 */
-int s_mp_sqr(const mp_int *a, mp_int *b)
+mp_err s_mp_sqr(const mp_int *a, mp_int *b)
 {
-   mp_int  t;
-   int     res, ix, iy, pa;
-   mp_word r;
+   mp_int   t;
+   int      ix, iy, pa;
+   mp_err   res;
+   mp_word  r;
    mp_digit u, tmpx, *tmpt;
 
    pa = a->used;

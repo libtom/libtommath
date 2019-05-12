@@ -8,9 +8,10 @@
  *
  * sets result to 0 if not, 1 if yes
  */
-int mp_prime_is_divisible(const mp_int *a, int *result)
+mp_err mp_prime_is_divisible(const mp_int *a, mp_bool *result)
 {
-   int     err, ix;
+   int      ix;
+   mp_err   err;
    mp_digit res;
 
    /* default to not */

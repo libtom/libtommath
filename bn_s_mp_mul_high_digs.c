@@ -6,12 +6,13 @@
 /* multiplies |a| * |b| and does not compute the lower digs digits
  * [meant to get the higher part of the product]
  */
-int s_mp_mul_high_digs(const mp_int *a, const mp_int *b, mp_int *c, int digs)
+mp_err s_mp_mul_high_digs(const mp_int *a, const mp_int *b, mp_int *c, int digs)
 {
-   mp_int  t;
-   int     res, pa, pb, ix, iy;
+   mp_int   t;
+   int      pa, pb, ix, iy;
+   mp_err   res;
    mp_digit u;
-   mp_word r;
+   mp_word  r;
    mp_digit tmpx, *tmpt, *tmpy;
 
    /* can we use the fast multiplier? */

@@ -11,9 +11,10 @@
  *
  * Based on Algorithm 14.32 on pp.601 of HAC.
 */
-int s_mp_montgomery_reduce_fast(mp_int *x, const mp_int *n, mp_digit rho)
+mp_err s_mp_montgomery_reduce_fast(mp_int *x, const mp_int *n, mp_digit rho)
 {
-   int     ix, res, olduse;
+   int     ix, olduse;
+   mp_err  res;
    mp_word W[MP_WARRAY];
 
    if (x->used > (int)MP_WARRAY) {
