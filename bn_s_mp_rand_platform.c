@@ -26,25 +26,18 @@
 #include <windows.h>
 #include <wincrypt.h>
 
-static HCRYPTPROV hProv = 0;
-
-static void s_cleanup_win_csp(void)
-{
-   CryptReleaseContext(hProv, 0);
-   hProv = 0;
-}
-
 static int s_read_win_csp(void *p, size_t n)
 {
+   static HCRYPTPROV hProv = 0;
    if (hProv == 0) {
-      if (!CryptAcquireContext(&hProv, NULL, MS_DEF_PROV, PROV_RSA_FULL,
+      HCRYPTPROV h = 0;
+      if (!CryptAcquireContext(&h, NULL, MS_DEF_PROV, PROV_RSA_FULL,
                                (CRYPT_VERIFYCONTEXT | CRYPT_MACHINE_KEYSET)) &&
-          !CryptAcquireContext(&hProv, NULL, MS_DEF_PROV, PROV_RSA_FULL,
+          !CryptAcquireContext(&h, NULL, MS_DEF_PROV, PROV_RSA_FULL,
                                CRYPT_VERIFYCONTEXT | CRYPT_MACHINE_KEYSET | CRYPT_NEWKEYSET)) {
-         hProv = 0;
          return MP_ERR;
       }
-      atexit(s_cleanup_win_csp);
+      hProc = h;
    }
    return CryptGenRandom(hProv, (DWORD)n, (BYTE *)p) == TRUE ? MP_OKAY : MP_ERR;
 }
