@@ -22,10 +22,7 @@ int mp_set_double(mp_int *a, double b)
    }
    exp -= 1023 + 52;
 
-   res = mp_set_long_long(a, frac);
-   if (res != MP_OKAY) {
-      return res;
-   }
+   mp_set_long_long(a, frac);
 
    res = (exp < 0) ? mp_div_2d(a, -exp, a, NULL) : mp_mul_2d(a, exp, a);
    if (res != MP_OKAY) {

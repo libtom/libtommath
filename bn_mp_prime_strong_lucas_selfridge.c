@@ -36,9 +36,7 @@ static int s_mp_mul_si(const mp_int *a, long d, mp_int *c)
     * mp_digit might be smaller than a long, which excludes
     * the use of mp_mul_d() here.
     */
-   if ((err = mp_set_long(&t, (unsigned long) d)) != MP_OKAY) {
-      goto LBL_MPMULSI_ERR;
-   }
+   mp_set_long(&t, (unsigned long) d);
    if ((err = mp_mul(a, &t, c)) != MP_OKAY) {
       goto LBL_MPMULSI_ERR;
    }
@@ -95,9 +93,7 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
    for (;;) {
       Ds   = sign * D;
       sign = -sign;
-      if ((e = mp_set_long(&Dz, (unsigned long)D)) != MP_OKAY) {
-         goto LBL_LS_ERR;
-      }
+      mp_set_long(&Dz, (unsigned long)D);
       if ((e = mp_gcd(a, &Dz, &gcd)) != MP_OKAY) {
          goto LBL_LS_ERR;
       }
@@ -193,31 +189,23 @@ int mp_prime_strong_lucas_selfridge(const mp_int *a, int *result)
 
    if (Q < 0) {
       Q = -Q;
-      if ((e = mp_set_long(&Qmz, (unsigned long)Q)) != MP_OKAY) {
-         goto LBL_LS_ERR;
-      }
+      mp_set_long(&Qmz, (unsigned long)Q);
       if ((e = mp_mul_2(&Qmz, &Q2mz)) != MP_OKAY) {
          goto LBL_LS_ERR;
       }
       /* Initializes calculation of Q^d */
-      if ((e = mp_set_long(&Qkdz, (unsigned long)Q)) != MP_OKAY) {
-         goto LBL_LS_ERR;
-      }
+      mp_set_long(&Qkdz, (unsigned long)Q);
       Qmz.sign = MP_NEG;
       Q2mz.sign = MP_NEG;
       Qkdz.sign = MP_NEG;
       Q = -Q;
    } else {
-      if ((e = mp_set_long(&Qmz, (unsigned long)Q)) != MP_OKAY) {
-         goto LBL_LS_ERR;
-      }
+      mp_set_long(&Qmz, (unsigned long)Q);
       if ((e = mp_mul_2(&Qmz, &Q2mz)) != MP_OKAY) {
          goto LBL_LS_ERR;
       }
       /* Initializes calculation of Q^d */
-      if ((e = mp_set_long(&Qkdz, (unsigned long)Q)) != MP_OKAY) {
-         goto LBL_LS_ERR;
-      }
+      mp_set_long(&Qkdz, (unsigned long)Q);
    }
 
    Nbits = mp_count_bits(&Dz);
