@@ -153,13 +153,13 @@ matrix:
 
     # GCC for the x86-64 architecture testing against a different Bigint-implementation
     # with 333333 different inputs.
-    - env: SANITIZER=1 BUILDOPTIONS='--with-cc=gcc-5 --test-vs-mtest=333333 --with-valgrind'
-    - env: SANITIZER=1 BUILDOPTIONS='--with-cc=clang-7 --test-vs-mtest=333333 --with-valgrind'
+    - env: BUILDOPTIONS='--with-cc=gcc-5 --test-vs-mtest=333333 --with-valgrind'
+    - env: BUILDOPTIONS='--with-cc=clang-7 --test-vs-mtest=333333 --with-valgrind'
 
     # clang for the x86-64 architecture testing against a different Bigint-implementation
     # with a better random source.
-    - env: SANITIZER=1 BUILDOPTIONS='--with-cc=gcc-5 --test-vs-mtest=333333 --mtest-real-rand --with-valgrind'
-    - env: SANITIZER=1 BUILDOPTIONS='--with-cc=clang-7 --test-vs-mtest=333333 --mtest-real-rand --with-valgrind'
+    - env: BUILDOPTIONS='--with-cc=gcc-5 --test-vs-mtest=333333 --mtest-real-rand --with-valgrind'
+    - env: BUILDOPTIONS='--with-cc=clang-7 --test-vs-mtest=333333 --mtest-real-rand --with-valgrind'
 
 
 # Notifications go to
