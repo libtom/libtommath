@@ -34,9 +34,7 @@ int mp_grow(mp_int *a, int size)
       /* zero excess digits */
       i        = a->alloc;
       a->alloc = size;
-      for (; i < a->alloc; i++) {
-         a->dp[i] = 0;
-      }
+      MP_ZERO_DIGITS(a->dp + i, a->alloc - i);
    }
    return MP_OKAY;
 }

@@ -10,6 +10,42 @@
 extern "C" {
 #endif
 
+/* Hardening libtommath
+ * --------------------
+ *
+ * By default memory is zeroed before calling
+ * MP_FREE to avoid leaking data. This is good
+ * practice in cryptographical applications.
+ *
+ * Note however that memory allocators used
+ * in cryptographical applications can often
+ * be configured by itself to clear memory,
+ * rendering the clearing in tommath unnecessary.
+ * See for example https://github.com/GrapheneOS/hardened_malloc
+ * and the option CONFIG_ZERO_ON_FREE.
+ *
+ * Furthermore there are applications which
+ * value performance more and want this
+ * feature to be disabled. For such applications
+ * define MP_NO_ZERO_ON_FREE during compilation.
+ */
+#ifdef MP_NO_ZERO_ON_FREE
+#  define MP_FREE_BUFFER(mem, size)   MP_FREE((mem), (size))
+#  define MP_FREE_DIGITS(mem, digits) MP_FREE((mem), sizeof (mp_digit) * (digits))
+#else
+#  define MP_FREE_BUFFER(mem, size)   do { size_t fs_ = (size); void* fm_ = (mem); if (fm_) { MP_ZERO_BUFFER(fm_, fs_); MP_FREE(fm_, fs_); } } while (0)
+#  define MP_FREE_DIGITS(mem, digits) do { int fd_ = (digits); void* fm_ = (mem); if (fm_) { MP_ZERO_BUFFER(fm_, sizeof (mp_digit) * (size_t)fd_); MP_FREE(fm_, sizeof (mp_digit) * (size_t)fd_); } } while (0)
+#endif
+
+#ifdef MP_USE_MEMSET
+#  include <string.h>
+#  define MP_ZERO_BUFFER(mem, size)   memset((mem), 0, (size))
+#  define MP_ZERO_DIGITS(mem, digits) do { int zd_ = (digits); if (zd_ > 0) { memset((mem), 0, sizeof (mp_digit) * (size_t)zd_); } } while (0)
+#else
+#  define MP_ZERO_BUFFER(mem, size)   do { size_t zs_ = (size); char* zm_ = (char*)(mem); while (zs_-- > 0) { *zm_++ = 0; } } while (0)
+#  define MP_ZERO_DIGITS(mem, digits) do { int zd_ = (digits); mp_digit* zm_ = (mem); while (zd_-- > 0) { *zm_++ = 0; } } while (0)
+#endif
+
 /* Tunable cutoffs
  * ---------------
  *
@@ -43,8 +79,8 @@ extern "C" {
 /* default to libc stuff */
 #   include <stdlib.h>
 #   define MP_MALLOC(size)                   malloc(size)
-#   define MP_REALLOC(mem, oldsize, newsize) realloc(mem, newsize)
-#   define MP_CALLOC(nmemb, size)            calloc(nmemb, size)
+#   define MP_REALLOC(mem, oldsize, newsize) realloc((mem), (newsize))
+#   define MP_CALLOC(nmemb, size)            calloc((nmemb), (size))
 #   define MP_FREE(mem, size)                free(mem)
 #else
 /* prototypes for our heap functions */

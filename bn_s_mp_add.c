@@ -81,9 +81,7 @@ int s_mp_add(const mp_int *a, const mp_int *b, mp_int *c)
       *tmpc++ = u;
 
       /* clear digits above oldused */
-      for (i = c->used; i < olduse; i++) {
-         *tmpc++ = 0;
-      }
+      MP_ZERO_DIGITS(tmpc, olduse - c->used);
    }
 
    mp_clamp(c);

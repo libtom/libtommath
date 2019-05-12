@@ -88,9 +88,7 @@ int s_mp_sqr_fast(const mp_int *a, mp_int *b)
       }
 
       /* clear unused digits [that existed in the old copy of c] */
-      for (; ix < olduse; ix++) {
-         *tmpb++ = 0;
-      }
+      MP_ZERO_DIGITS(tmpb, olduse - ix);
    }
    mp_clamp(b);
    return MP_OKAY;

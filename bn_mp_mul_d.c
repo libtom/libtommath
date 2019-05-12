@@ -49,9 +49,7 @@ int mp_mul_d(const mp_int *a, mp_digit b, mp_int *c)
    ++ix;
 
    /* now zero digits above the top */
-   while (ix++ < olduse) {
-      *tmpc++ = 0;
-   }
+   MP_ZERO_DIGITS(tmpc, olduse - ix);
 
    /* set used count */
    c->used = a->used + 1;

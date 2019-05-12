@@ -40,10 +40,7 @@ int mp_div_2(const mp_int *a, mp_int *b)
       }
 
       /* zero excess digits */
-      tmpb = b->dp + b->used;
-      for (x = b->used; x < oldused; x++) {
-         *tmpb++ = 0;
-      }
+      MP_ZERO_DIGITS(b->dp + b->used, oldused - b->used);
    }
    b->sign = a->sign;
    mp_clamp(b);

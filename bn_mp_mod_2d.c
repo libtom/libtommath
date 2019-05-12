@@ -25,9 +25,9 @@ int mp_mod_2d(const mp_int *a, int b, mp_int *c)
    }
 
    /* zero digits above the last digit of the modulus */
-   for (x = (b / MP_DIGIT_BIT) + (((b % MP_DIGIT_BIT) == 0) ? 0 : 1); x < c->used; x++) {
-      c->dp[x] = 0;
-   }
+   x = (b / MP_DIGIT_BIT) + (((b % MP_DIGIT_BIT) == 0) ? 0 : 1);
+   MP_ZERO_DIGITS(c->dp + x, c->used - x);
+
    /* clear the digit that is not completely outside/inside the modulus */
    c->dp[b / MP_DIGIT_BIT] &=
       ((mp_digit)1 << (mp_digit)(b % MP_DIGIT_BIT)) - (mp_digit)1;

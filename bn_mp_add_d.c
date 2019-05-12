@@ -85,9 +85,7 @@ int mp_add_d(const mp_int *a, mp_digit b, mp_int *c)
    c->sign = MP_ZPOS;
 
    /* now zero to oldused */
-   while (ix++ < oldused) {
-      *tmpc++ = 0;
-   }
+   MP_ZERO_DIGITS(tmpc, oldused - ix);
    mp_clamp(c);
 
    return MP_OKAY;
