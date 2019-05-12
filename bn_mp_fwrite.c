@@ -7,7 +7,7 @@
 int mp_fwrite(const mp_int *a, int radix, FILE *stream)
 {
    char *buf;
-   int err, len, x;
+   int err, len;
 
    if ((err = mp_radix_size(a, radix, &len)) != MP_OKAY) {
       return err;
@@ -23,11 +23,9 @@ int mp_fwrite(const mp_int *a, int radix, FILE *stream)
       return err;
    }
 
-   for (x = 0; x < len; x++) {
-      if (fputc((int)buf[x], stream) == EOF) {
-         MP_FREE_BUFFER(buf, (size_t)len);
-         return MP_VAL;
-      }
+   if (fwrite(buf, (size_t)len, 1, stream) != 1) {
+      MP_FREE_BUFFER(buf, (size_t)len);
+      return MP_ERR;
    }
 
    MP_FREE_BUFFER(buf, (size_t)len);
