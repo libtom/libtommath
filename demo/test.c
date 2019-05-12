@@ -21,6 +21,11 @@ static int rand_int(void)
    return x;
 }
 
+static unsigned long ulabs(long x)
+{
+   return x > 0 ? (unsigned long)x : -(unsigned long)x;
+}
+
 static int test_trivial_stuff(void)
 {
    mp_int a, b, c, d;
@@ -282,13 +287,13 @@ static int test_mp_complement(void)
 
    for (i = 0; i < 1000; ++i) {
       long l = rand_long();
-      mp_set_long(&a, (unsigned long)labs(l));
+      mp_set_long(&a, ulabs(l));
       if (l < 0)
          mp_neg(&a, &a);
       mp_complement(&a, &b);
 
       l = ~l;
-      mp_set_long(&c, (unsigned long)labs(l));
+      mp_set_long(&c, ulabs(l));
       if (l < 0)
          mp_neg(&c, &c);
 
@@ -319,13 +324,13 @@ static int test_mp_tc_div_2d(void)
       int em;
 
       l = rand_long();
-      mp_set_long(&a, (unsigned long)labs(l));
+      mp_set_long(&a, ulabs(l));
       if (l < 0)
          mp_neg(&a, &a);
 
       em = abs(rand_int()) % 32;
 
-      mp_set_long(&d, (unsigned long)labs(l >> em));
+      mp_set_long(&d, ulabs(l >> em));
       if ((l >> em) < 0)
          mp_neg(&d, &d);
 
@@ -357,16 +362,16 @@ static int test_mp_tc_xor(void)
       long l, em;
 
       l = rand_long();
-      mp_set_int(&a, (unsigned long)labs(l));
+      mp_set_int(&a, ulabs(l));
       if (l < 0)
          mp_neg(&a, &a);
 
       em = rand_long();
-      mp_set_int(&b, (unsigned long)labs(em));
+      mp_set_int(&b, ulabs(em));
       if (em < 0)
          mp_neg(&b, &b);
 
-      mp_set_int(&d, (unsigned long)labs(l ^ em));
+      mp_set_int(&d, ulabs(l ^ em));
       if ((l ^ em) < 0)
          mp_neg(&d, &d);
 
@@ -398,16 +403,16 @@ static int test_mp_tc_or(void)
       long l, em;
 
       l = rand_long();
-      mp_set_long(&a, (unsigned long)labs(l));
+      mp_set_long(&a, ulabs(l));
       if (l < 0)
          mp_neg(&a, &a);
 
       em = rand_long();
-      mp_set_long(&b, (unsigned long)labs(em));
+      mp_set_long(&b, ulabs(em));
       if (em < 0)
          mp_neg(&b, &b);
 
-      mp_set_long(&d, (unsigned long)labs(l | em));
+      mp_set_long(&d, ulabs(l | em));
       if ((l | em) < 0)
          mp_neg(&d, &d);
 
@@ -438,16 +443,16 @@ static int test_mp_tc_and(void)
       long l, em;
 
       l = rand_long();
-      mp_set_long(&a, (unsigned long)labs(l));
+      mp_set_long(&a, ulabs(l));
       if (l < 0)
          mp_neg(&a, &a);
 
       em = rand_long();
-      mp_set_long(&b, (unsigned long)labs(em));
+      mp_set_long(&b, ulabs(em));
       if (em < 0)
          mp_neg(&b, &b);
 
-      mp_set_long(&d, (unsigned long)labs(l & em));
+      mp_set_long(&d, ulabs(l & em));
       if ((l & em) < 0)
          mp_neg(&d, &d);
 
