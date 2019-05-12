@@ -6,8 +6,10 @@
 /* shrink a bignum */
 int mp_shrink(mp_int *a)
 {
+   static int static_check[-(MP_PREC < MP_MIN_PREC)];
    mp_digit *tmp;
    int alloc = MP_MAX(MP_MIN_PREC, a->used);
+   (void)static_check;
    if (a->alloc != alloc) {
       if ((tmp = (mp_digit *) MP_REALLOC(a->dp,
                                          (size_t)a->alloc * sizeof(mp_digit),
