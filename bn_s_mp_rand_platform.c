@@ -1,5 +1,5 @@
 #include "tommath_private.h"
-#ifdef BN_S_MP_RAND_SOURCE_PLATFORM_C
+#ifdef BN_S_MP_RAND_PLATFORM_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
@@ -128,7 +128,7 @@ static int s_read_ltm_rng(void *p, size_t n)
 }
 #endif
 
-int s_mp_rand_source_platform(void *p, size_t n)
+int s_mp_rand_platform(void *p, size_t n)
 {
 #if defined(MP_ARC4RANDOM)
    arc4random_buf(p, n);

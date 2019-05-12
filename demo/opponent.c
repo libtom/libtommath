@@ -1,5 +1,11 @@
 #include "shared.h"
 
+#ifdef LTM_MTEST_REAL_RAND
+#define LTM_MTEST_RAND_SEED  time(NULL)
+#else
+#define LTM_MTEST_RAND_SEED  23
+#endif
+
 static void draw(mp_int *a)
 {
    ndraw(a, "");
@@ -20,6 +26,8 @@ int mtest_opponent(void)
    mp_int a, b, c, d, e, f;
    unsigned long expt_n, add_n, sub_n, mul_n, div_n, sqr_n, mul2d_n, div2d_n,
             gcd_n, lcm_n, inv_n, div2_n, mul2_n, add_d_n, sub_d_n;
+
+   srand(LTM_MTEST_RAND_SEED);
 
    if (mp_init_multi(&a, &b, &c, &d, &e, &f, NULL)!= MP_OKAY)
       return EXIT_FAILURE;

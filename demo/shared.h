@@ -18,12 +18,6 @@
 #define LTM_DEMO_TEST_REDUCE_2K_L 0
 #endif
 
-#ifdef LTM_DEMO_REAL_RAND
-#define LTM_DEMO_RAND_SEED  time(NULL)
-#else
-#define LTM_DEMO_RAND_SEED  23
-#endif
-
 #define MP_WUR /* TODO: result checks disabled for now */
 #include "tommath.h"
 

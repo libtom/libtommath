@@ -26,8 +26,6 @@ void ndraw(mp_int *a, const char *name)
 
 int main(int argc, char **argv)
 {
-   srand(LTM_DEMO_RAND_SEED);
-
 #ifdef MP_8BIT
    printf("Digit size 8 Bit \n");
 #endif

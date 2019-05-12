@@ -10,15 +10,6 @@
 #include <limits.h>
 #include <errno.h>
 
-static uint64_t s_ranval(void);
-static void s_raninit(uint64_t seed);
-static uint64_t s_timer_function(void);
-static void s_timer_start(void);
-static uint64_t s_timer_stop(void);
-static uint64_t s_time_mul(int size);
-static uint64_t s_time_sqr(int size);
-static void s_usage(char *s);
-
 /*
    Please take in mind that both multiplicands are of the same size. The balancing
    mechanism in mp_balance works well but has some overhead itself. You can test
@@ -26,56 +17,12 @@ static void s_usage(char *s);
    to generate ratios of the form 1:x.
 */
 
-/* Bob Jenkins' http://burtleburtle.net/bob/rand/smallprng.html */
-/* Chosen for speed and a good "mix" */
-typedef struct ranctx {
-   uint64_t a;
-   uint64_t b;
-   uint64_t c;
-   uint64_t d;
-} ranctx;
-
-static ranctx burtle_x;
-
-#   define rot(x,k) (((x)<<(k))|((x)>>(64-(k))))
-static uint64_t s_ranval(void)
-{
-   uint64_t e = burtle_x.a - rot(burtle_x.b, 7);
-   burtle_x.a = burtle_x.b ^ rot(burtle_x.c, 13);
-   burtle_x.b = burtle_x.c + rot(burtle_x.d, 37);
-   burtle_x.c = burtle_x.d + e;
-   burtle_x.d = e + burtle_x.a;
-   return burtle_x.d;
-}
-
-static void s_raninit(uint64_t seed)
-{
-   uint64_t i;
-   burtle_x.a = 0xf1ea5eed;
-   burtle_x.b = burtle_x.c = burtle_x.d = seed;
-   for (i = 0; i < 20; ++i) {
-      (void) s_ranval();
-   }
-}
-
-/*
-   The original used LTM's mp_rand which uses the cryptographically secure
-   source of the OS for its purpose. That is too expensive, too slow and
-   most important for a benchmark: it is not repeatable.
-*/
-static int s_ranbuf(void *p, size_t n)
-{
-   char *q = (char *)p;
-   while (n > 0) {
-      int i;
-      uint64_t x = s_ranval();
-      for (i = 0; i < 8 && n > 0; ++i, --n) {
-         *q++ = (char)(x & 0xFF);
-         x >>= 8;
-      }
-   }
-   return MP_OKAY;
-}
+static uint64_t s_timer_function(void);
+static void s_timer_start(void);
+static uint64_t s_timer_stop(void);
+static uint64_t s_time_mul(int size);
+static uint64_t s_time_sqr(int size);
+static void s_usage(char *s);
 
 static uint64_t s_timer_function(void)
 {
@@ -262,8 +209,6 @@ int main(int argc, char **argv)
    char sqrlog[256] = "squaring";
    s_number_of_test_loops = 64;
    s_stabilization_extra = 3;
-
-   mp_rand_source(s_ranbuf);
 
    /* Very simple option parser, please treat it nicely. */
    if (argc != 1) {
@@ -504,7 +449,13 @@ int main(int argc, char **argv)
       }
    }
 
-   s_raninit(seed);
+   /*
+     mp_rand uses the cryptographically secure
+     source of the OS by default. That is too expensive, too slow and
+     most important for a benchmark: it is not repeatable.
+   */
+   s_mp_rand_jenkins_init(seed);
+   mp_rand_source(s_mp_rand_jenkins);
 
    ksm  = KARATSUBA_MUL_CUTOFF;
    kss  = KARATSUBA_SQR_CUTOFF;

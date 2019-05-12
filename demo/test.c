@@ -1,4 +1,25 @@
 #include "shared.h"
+#include "tommath_private.h"
+
+static long rand_long(void)
+{
+   long x;
+   if (s_mp_rand_source(&x, sizeof(x)) != MP_OKAY) {
+      fprintf(stderr, "s_mp_rand_source failed\n");
+      exit(EXIT_FAILURE);
+   }
+   return x;
+}
+
+static int rand_int(void)
+{
+   int x;
+   if (s_mp_rand_source(&x, sizeof(x)) != MP_OKAY) {
+      fprintf(stderr, "s_mp_rand_source failed\n");
+      exit(EXIT_FAILURE);
+   }
+   return x;
+}
 
 static int test_trivial_stuff(void)
 {
@@ -260,7 +281,7 @@ static int test_mp_complement(void)
    }
 
    for (i = 0; i < 1000; ++i) {
-      long l = ((long)rand() * rand() + 1) * (rand() % 1 ? -1 : 1);
+      long l = rand_long();
       mp_set_long(&a, (unsigned long)labs(l));
       if (l < 0)
          mp_neg(&a, &a);
@@ -297,12 +318,12 @@ static int test_mp_tc_div_2d(void)
       long l;
       int em;
 
-      l = ((long)rand() * rand() + 1) * (rand() % 1 ? -1 : 1);
+      l = rand_long();
       mp_set_long(&a, (unsigned long)labs(l));
       if (l < 0)
          mp_neg(&a, &a);
 
-      em = rand() % 32;
+      em = abs(rand_int()) % 32;
 
       mp_set_long(&d, (unsigned long)labs(l >> em));
       if ((l >> em) < 0)
@@ -333,14 +354,14 @@ static int test_mp_tc_xor(void)
    }
 
    for (i = 0; i < 1000; ++i) {
-      int l, em;
+      long l, em;
 
-      l = ((long)rand() * rand() + 1) * (rand() % 1 ? -1 : 1);
+      l = rand_long();
       mp_set_int(&a, (unsigned long)labs(l));
       if (l < 0)
          mp_neg(&a, &a);
 
-      em = ((long)rand() * rand() + 1) * (rand() % 1 ? -1 : 1);
+      em = rand_long();
       mp_set_int(&b, (unsigned long)labs(em));
       if (em < 0)
          mp_neg(&b, &b);
@@ -376,12 +397,12 @@ static int test_mp_tc_or(void)
    for (i = 0; i < 1000; ++i) {
       long l, em;
 
-      l = ((long)rand() * rand() + 1) * (rand() % 1 ? -1 : 1);
+      l = rand_long();
       mp_set_long(&a, (unsigned long)labs(l));
       if (l < 0)
          mp_neg(&a, &a);
 
-      em = ((long)rand() * rand() + 1) * (rand() % 1 ? -1 : 1);
+      em = rand_long();
       mp_set_long(&b, (unsigned long)labs(em));
       if (em < 0)
          mp_neg(&b, &b);
@@ -416,12 +437,12 @@ static int test_mp_tc_and(void)
    for (i = 0; i < 1000; ++i) {
       long l, em;
 
-      l = ((long)rand() * rand() + 1) * (rand() % 1 ? -1 : 1);
+      l = rand_long();
       mp_set_long(&a, (unsigned long)labs(l));
       if (l < 0)
          mp_neg(&a, &a);
 
-      em = ((long)rand() * rand() + 1) * (rand() % 1 ? -1 : 1);
+      em = rand_long();
       mp_set_long(&b, (unsigned long)labs(em));
       if (em < 0)
          mp_neg(&b, &b);
@@ -518,8 +539,8 @@ static int test_mp_set_double(void)
    }
 
    for (i = 0; i < 1000; ++i) {
-      int tmp = rand();
-      double dbl = (double)tmp * rand() + 1;
+      int tmp = rand_int();
+      double dbl = (double)tmp * rand_int() + 1;
       if (mp_set_double(&a, dbl) != MP_OKAY) {
          printf("\nmp_set_double() failed");
          goto LBL_ERR;
@@ -558,7 +579,7 @@ static int test_mp_get_int(void)
    }
 
    for (i = 0; i < 1000; ++i) {
-      t = ((unsigned long)rand() * (unsigned long)rand() + 1uL) & 0xFFFFFFFFuL;
+      t = (unsigned long)rand_long() & 0xFFFFFFFFuL;
       mp_set_int(&a, t);
       if (t != mp_get_int(&a)) {
          printf("\nmp_get_int() bad result!");
@@ -662,7 +683,7 @@ static int test_mp_sqrt(void)
    for (i = 0; i < 1000; ++i) {
       printf("%6d\r", i);
       fflush(stdout);
-      n = (rand() & 15) + 1;
+      n = (rand_int() & 15) + 1;
       mp_rand(&a, n);
       if (mp_sqrt(&a, &b) != MP_OKAY) {
          printf("\nmp_sqrt() error!");
@@ -701,7 +722,7 @@ static int test_mp_is_square(void)
       fflush(stdout);
 
       /* test mp_is_square false negatives */
-      n = (rand() & 7) + 1;
+      n = (rand_int() & 7) + 1;
       mp_rand(&a, n);
       mp_sqr(&a, &a);
       if (mp_is_square(&a, &n) != MP_OKAY) {
@@ -789,7 +810,7 @@ static int test_mp_prime_rand(void)
    for (ix = 10; ix < 128; ix++) {
       printf("Testing (not safe-prime): %9d bits    \r", ix);
       fflush(stdout);
-      err = mp_prime_rand(&a, 8, ix, (rand() & 1) ? 0 : MP_PRIME_2MSB_ON);
+      err = mp_prime_rand(&a, 8, ix, (rand_int() & 1) ? 0 : MP_PRIME_2MSB_ON);
       if (err != MP_OKAY) {
          printf("\nfailed with error: %s\n", mp_error_to_string(err));
          goto LBL_ERR;
@@ -850,7 +871,7 @@ static int test_mp_prime_is_prime(void)
    for (ix = 16; ix < 128; ix++) {
       printf("Testing (    safe-prime): %9d bits    \r", ix);
       fflush(stdout);
-      err = mp_prime_rand(&a, 8, ix, ((rand() & 1) ? 0 : MP_PRIME_2MSB_ON) | MP_PRIME_SAFE);
+      err = mp_prime_rand(&a, 8, ix, ((rand_int() & 1) ? 0 : MP_PRIME_2MSB_ON) | MP_PRIME_SAFE);
       if (err != MP_OKAY) {
          printf("\nfailed with error: %s\n", mp_error_to_string(err));
          goto LBL_ERR;
@@ -941,7 +962,7 @@ static int test_mp_montgomery_reduce(void)
 
          /* now test a random reduction */
          for (ix = 0; ix < 100; ix++) {
-            mp_rand(&c, 1 + abs(rand()) % (2*i));
+            mp_rand(&c, 1 + abs(rand_int()) % (2*i));
             mp_copy(&c, &d);
             mp_copy(&c, &e);
 
@@ -1096,7 +1117,7 @@ static int test_mp_div_3(void)
          printf("%9d\r", cnt);
          fflush(stdout);
       }
-      mp_rand(&a, abs(rand()) % 128 + 1);
+      mp_rand(&a, abs(rand_int()) % 128 + 1);
       mp_div(&a, &d, &b, &e);
       mp_div_3(&a, &c, &r2);
 
@@ -1852,6 +1873,9 @@ int unit_tests(int argc, char **argv)
    };
    unsigned long i;
    int res = EXIT_SUCCESS, j;
+
+   s_mp_rand_jenkins_init((uint64_t)time(NULL));
+   mp_rand_source(s_mp_rand_jenkins);
 
    for (i = 0; i < sizeof(test) / sizeof(test[0]); ++i) {
       if (argc > 1) {

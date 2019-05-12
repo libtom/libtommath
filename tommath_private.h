@@ -130,8 +130,12 @@ MP_WUR int s_mp_invmod_slow(const mp_int *a, const mp_int *b, mp_int *c);
 MP_WUR int s_mp_montgomery_reduce_fast(mp_int *x, const mp_int *n, mp_digit rho);
 MP_WUR int s_mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y, int redmode);
 MP_WUR int s_mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y, int redmode);
-MP_WUR int s_mp_rand_source_platform(void *p, size_t n);
+MP_WUR int s_mp_rand_platform(void *p, size_t n);
 void s_mp_reverse(unsigned char *s, int len);
+
+/* TODO: jenkins prng is not thread safe as of now */
+MP_WUR int s_mp_rand_jenkins(void *p, size_t n);
+void s_mp_rand_jenkins_init(uint64_t);
 
 extern const char *const mp_s_rmap;
 extern const uint8_t mp_s_rmap_reverse[];

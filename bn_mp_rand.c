@@ -3,11 +3,11 @@
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
-int (*s_mp_rand_source)(void *, size_t) = s_mp_rand_source_platform;
+int (*s_mp_rand_source)(void *, size_t) = s_mp_rand_platform;
 
 void mp_rand_source(int (*source)(void *out, size_t size))
 {
-   s_mp_rand_source = (source == NULL) ? s_mp_rand_source_platform : source;
+   s_mp_rand_source = (source == NULL) ? s_mp_rand_platform : source;
 }
 
 /* makes a pseudo-random int of a given size */

@@ -150,7 +150,8 @@
 #   define BN_S_MP_MUL_DIGS_FAST_C
 #   define BN_S_MP_MUL_HIGH_DIGS_C
 #   define BN_S_MP_MUL_HIGH_DIGS_FAST_C
-#   define BN_S_MP_RAND_SOURCE_PLATFORM_C
+#   define BN_S_MP_RAND_JENKINS_C
+#   define BN_S_MP_RAND_PLATFORM_C
 #   define BN_S_MP_REVERSE_C
 #   define BN_S_MP_SQR_C
 #   define BN_S_MP_SQR_FAST_C
@@ -1173,7 +1174,11 @@
 #   define BN_MP_CLAMP_C
 #endif
 
-#if defined(BN_S_MP_RAND_SOURCE_PLATFORM_C)
+#if defined(BN_S_MP_RAND_JENKINS_C)
+#   define BN_S_MP_RAND_JENKINS_INIT_C
+#endif
+
+#if defined(BN_S_MP_RAND_PLATFORM_C)
 #endif
 
 #if defined(BN_S_MP_REVERSE_C)

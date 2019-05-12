@@ -873,7 +873,11 @@
 			>
 		</File>
 		<File
-			RelativePath="bn_s_mp_rand_source_platform.c"
+			RelativePath="bn_s_mp_rand_jenkins.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_s_mp_rand_platform.c"
 			>
 		</File>
 		<File
