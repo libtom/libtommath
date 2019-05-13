@@ -47,8 +47,9 @@ do {                                                    \
    int fd_ = (digits);                                  \
    void* fm_ = (mem);                                   \
    if (fm_ != NULL) {                                   \
-      MP_ZERO_BUFFER(fm_, sizeof(mp_digit) * (size_t)fd_); \
-      MP_FREE(fm_, sizeof(mp_digit) * (size_t)fd_);     \
+      size_t fs_ = sizeof (mp_digit) * (size_t)fd_;     \
+      MP_ZERO_BUFFER(fm_, fs_);                         \
+      MP_FREE(fm_, fs_);                                \
    }                                                    \
 } while (0)
 #endif
