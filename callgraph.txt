@@ -2,6 +2,7 @@ BN_CUTOFFS_C
 
 
 BN_DEPRECATED_C
++--->BN_S_MP_GET_BIT_C
 +--->BN_MP_CMP_D_C
 +--->BN_MP_KRONECKER_C
 |   +--->BN_MP_INIT_COPY_C
@@ -2513,9 +2514,6 @@ BN_MP_GCD_C
 |   +--->BN_MP_LSHD_C
 |   +--->BN_MP_CLAMP_C
 +--->BN_MP_CLEAR_C
-
-
-BN_MP_GET_BIT_C
 
 
 BN_MP_GET_DOUBLE_C
@@ -5571,7 +5569,7 @@ BN_MP_PRIME_FROBENIUS_UNDERWOOD_C
 |   |   +--->BN_MP_CLEAR_C
 |   +--->BN_MP_CLEAR_C
 |   +--->BN_MP_EXCH_C
-+--->BN_MP_GET_BIT_C
++--->BN_S_MP_GET_BIT_C
 +--->BN_MP_EXCH_C
 +--->BN_MP_CMP_C
 |   +--->BN_MP_CMP_MAG_C
@@ -7015,7 +7013,7 @@ BN_MP_PRIME_IS_PRIME_C
 |   |   |   +--->BN_MP_CLEAR_C
 |   |   +--->BN_MP_CLEAR_C
 |   |   +--->BN_MP_EXCH_C
-|   +--->BN_MP_GET_BIT_C
+|   +--->BN_S_MP_GET_BIT_C
 |   +--->BN_MP_EXCH_C
 |   +--->BN_MP_CMP_C
 |   |   +--->BN_MP_CMP_MAG_C
@@ -7339,7 +7337,7 @@ BN_MP_PRIME_IS_PRIME_C
 |   |   +--->BN_S_MP_SUB_C
 |   |   |   +--->BN_MP_GROW_C
 |   |   |   +--->BN_MP_CLAMP_C
-|   +--->BN_MP_GET_BIT_C
+|   +--->BN_S_MP_GET_BIT_C
 |   +--->BN_MP_ADD_C
 |   |   +--->BN_S_MP_ADD_C
 |   |   |   +--->BN_MP_GROW_C
@@ -9622,7 +9620,7 @@ BN_MP_PRIME_NEXT_PRIME_C
 |   |   |   |   +--->BN_MP_CLEAR_C
 |   |   |   +--->BN_MP_CLEAR_C
 |   |   |   +--->BN_MP_EXCH_C
-|   |   +--->BN_MP_GET_BIT_C
+|   |   +--->BN_S_MP_GET_BIT_C
 |   |   +--->BN_MP_EXCH_C
 |   |   +--->BN_MP_CMP_C
 |   |   |   +--->BN_MP_CMP_MAG_C
@@ -9937,7 +9935,7 @@ BN_MP_PRIME_NEXT_PRIME_C
 |   |   |   +--->BN_S_MP_SUB_C
 |   |   |   |   +--->BN_MP_GROW_C
 |   |   |   |   +--->BN_MP_CLAMP_C
-|   |   +--->BN_MP_GET_BIT_C
+|   |   +--->BN_S_MP_GET_BIT_C
 |   |   +--->BN_MP_ADD_C
 |   |   |   +--->BN_S_MP_ADD_C
 |   |   |   |   +--->BN_MP_GROW_C
@@ -11399,7 +11397,7 @@ BN_MP_PRIME_RAND_C
 |   |   |   |   +--->BN_MP_CLEAR_C
 |   |   |   +--->BN_MP_CLEAR_C
 |   |   |   +--->BN_MP_EXCH_C
-|   |   +--->BN_MP_GET_BIT_C
+|   |   +--->BN_S_MP_GET_BIT_C
 |   |   +--->BN_MP_EXCH_C
 |   |   +--->BN_MP_CMP_C
 |   |   |   +--->BN_MP_CMP_MAG_C
@@ -11723,7 +11721,7 @@ BN_MP_PRIME_RAND_C
 |   |   |   +--->BN_S_MP_SUB_C
 |   |   |   |   +--->BN_MP_GROW_C
 |   |   |   |   +--->BN_MP_CLAMP_C
-|   |   +--->BN_MP_GET_BIT_C
+|   |   +--->BN_S_MP_GET_BIT_C
 |   |   +--->BN_MP_ADD_C
 |   |   |   +--->BN_S_MP_ADD_C
 |   |   |   |   +--->BN_MP_GROW_C
@@ -12100,7 +12098,7 @@ BN_MP_PRIME_STRONG_LUCAS_SELFRIDGE_C
 |   +--->BN_S_MP_SUB_C
 |   |   +--->BN_MP_GROW_C
 |   |   +--->BN_MP_CLAMP_C
-+--->BN_MP_GET_BIT_C
++--->BN_S_MP_GET_BIT_C
 +--->BN_MP_ADD_C
 |   +--->BN_S_MP_ADD_C
 |   |   +--->BN_MP_GROW_C
@@ -14992,6 +14990,9 @@ BN_S_MP_EXPTMOD_FAST_C
 |   |   +--->BN_MP_CLAMP_C
 |   |   +--->BN_MP_EXCH_C
 +--->BN_MP_EXCH_C
+
+
+BN_S_MP_GET_BIT_C
 
 
 BN_S_MP_INVMOD_FAST_C

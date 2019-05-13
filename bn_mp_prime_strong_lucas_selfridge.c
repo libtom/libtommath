@@ -72,7 +72,7 @@ mp_err mp_prime_strong_lucas_selfridge(const mp_int *a, mp_bool *result)
    /* CZ TODO: Some of them need the full 32 bit, hence the (temporary) exclusion of MP_8BIT */
    int32_t D, Ds, J, sign, P, Q, r, s, u, Nbits;
    mp_err e;
-   int isset, oddness;
+   int oddness;
 
    *result = MP_NO;
    /*
@@ -246,11 +246,7 @@ mp_err mp_prime_strong_lucas_selfridge(const mp_int *a, mp_bool *result)
       if ((e = mp_mul_2(&Qmz, &Q2mz)) != MP_OKAY) {
          goto LBL_LS_ERR;
       }
-      if ((isset = mp_get_bit(&Dz, u)) == MP_VAL) {
-         e = MP_VAL;
-         goto LBL_LS_ERR;
-      }
-      if (isset == MP_YES) {
+      if (s_mp_get_bit(&Dz, (unsigned int)u) == MP_YES) {
          /* Formulas for addition of indices (carried out mod N);
           *
           * U_(m+n) = (U_m*V_n + U_n*V_m)/2

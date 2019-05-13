@@ -6,6 +6,18 @@
 
 /* SPDX-License-Identifier: Unlicense */
 #include <tommath_private.h>
+#ifdef BN_MP_GET_BIT_C
+/* Checks the bit at position b and returns MP_YES
+   if the bit is 1, MP_NO if it is 0 and MP_VAL
+   in case of error */
+int mp_get_bit(const mp_int *a, int b)
+{
+   if (b < 0) {
+      return MP_VAL;
+   }
+   return s_mp_get_bit(a, (unsigned int)b) == MP_YES ? MP_YES : MP_NO;
+}
+#endif
 #ifdef BN_MP_JACOBI_C
 mp_err s_mp_jacobi(const mp_int *a, const mp_int *n, int *c)
 {

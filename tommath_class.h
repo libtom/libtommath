@@ -47,7 +47,6 @@
 #   define BN_MP_FREAD_C
 #   define BN_MP_FWRITE_C
 #   define BN_MP_GCD_C
-#   define BN_MP_GET_BIT_C
 #   define BN_MP_GET_DOUBLE_C
 #   define BN_MP_GET_INT_C
 #   define BN_MP_GET_LONG_C
@@ -140,6 +139,7 @@
 #   define BN_S_MP_BALANCE_MUL_C
 #   define BN_S_MP_EXPTMOD_C
 #   define BN_S_MP_EXPTMOD_FAST_C
+#   define BN_S_MP_GET_BIT_C
 #   define BN_S_MP_INVMOD_FAST_C
 #   define BN_S_MP_INVMOD_SLOW_C
 #   define BN_S_MP_KARATSUBA_MUL_C
@@ -162,6 +162,8 @@
 #endif
 
 #if defined(BN_DEPRECATED_C)
+#   define BN_MP_GET_BIT_C
+#   define BN_S_MP_GET_BIT_C
 #   define BN_S_MP_JACOBI_C
 #   define BN_MP_CMP_D_C
 #   define BN_MP_KRONECKER_C
@@ -416,9 +418,6 @@
 #   define BN_MP_CLEAR_C
 #endif
 
-#if defined(BN_MP_GET_BIT_C)
-#endif
-
 #if defined(BN_MP_GET_DOUBLE_C)
 #endif
 
@@ -663,7 +662,7 @@
 #   define BN_MP_MUL_C
 #   define BN_MP_SUB_C
 #   define BN_MP_MOD_C
-#   define BN_MP_GET_BIT_C
+#   define BN_S_MP_GET_BIT_C
 #   define BN_MP_EXCH_C
 #   define BN_MP_CMP_C
 #   define BN_MP_CLEAR_MULTI_C
@@ -748,7 +747,7 @@
 #   define BN_MP_MOD_C
 #   define BN_MP_SQR_C
 #   define BN_MP_SUB_C
-#   define BN_MP_GET_BIT_C
+#   define BN_S_MP_GET_BIT_C
 #   define BN_MP_ADD_C
 #   define BN_MP_DIV_2_C
 #   define BN_MP_SUB_D_C
@@ -1087,6 +1086,9 @@
 #   define BN_MP_SQR_C
 #   define BN_MP_MUL_C
 #   define BN_MP_EXCH_C
+#endif
+
+#if defined(BN_S_MP_GET_BIT_C)
 #endif
 
 #if defined(BN_S_MP_INVMOD_FAST_C)

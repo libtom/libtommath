@@ -6,6 +6,7 @@
 *.gcno
 *.gcov
 *.lib
+*.tmp
 [Dd]ebug/
 [Rr]elease/
 /MSVC_*

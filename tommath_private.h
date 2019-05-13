@@ -149,6 +149,7 @@ extern mp_err(*s_mp_rand_source)(void *out, size_t size);
 #define MP_MIN_PREC ((((CHAR_BIT * (int)sizeof(long long)) + MP_DIGIT_BIT) - 1) / MP_DIGIT_BIT)
 
 /* lowlevel functions, do not call! */
+mp_bool s_mp_get_bit(const mp_int *a, unsigned int b);
 mp_err s_mp_add(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
 mp_err s_mp_sub(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
 mp_err s_mp_mul_digs_fast(const mp_int *a, const mp_int *b, mp_int *c, int digs) MP_WUR;

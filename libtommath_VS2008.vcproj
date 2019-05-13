@@ -461,10 +461,6 @@
 			>
 		</File>
 		<File
-			RelativePath="bn_mp_get_bit.c"
-			>
-		</File>
-		<File
 			RelativePath="bn_mp_get_double.c"
 			>
 		</File>
@@ -830,6 +826,10 @@
 		</File>
 		<File
 			RelativePath="bn_s_mp_exptmod_fast.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_s_mp_get_bit.c"
 			>
 		</File>
 		<File
