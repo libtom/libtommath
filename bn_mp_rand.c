@@ -3,7 +3,7 @@
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
-int (*s_mp_rand_source)(void *, size_t) = s_mp_rand_platform;
+int (*s_mp_rand_source)(void *out, size_t size) = s_mp_rand_platform;
 
 void mp_rand_source(int (*source)(void *out, size_t size))
 {

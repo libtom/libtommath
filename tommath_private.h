@@ -171,7 +171,7 @@ void s_mp_reverse(unsigned char *s, int len);
 
 /* TODO: jenkins prng is not thread safe as of now */
 MP_WUR int s_mp_rand_jenkins(void *p, size_t n);
-void s_mp_rand_jenkins_init(uint64_t);
+void s_mp_rand_jenkins_init(uint64_t seed);
 
 extern const char *const mp_s_rmap;
 extern const uint8_t mp_s_rmap_reverse[];
