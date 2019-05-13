@@ -145,7 +145,7 @@ extern void MP_FREE(void *mem, size_t size);
 extern int (*s_mp_rand_source)(void *out, size_t size);
 
 /* Minimum number of available digits in mp_int, MP_PREC >= MP_MIN_PREC */
-#define MP_MIN_PREC ((CHAR_BIT * (int)sizeof(long long) + MP_DIGIT_BIT - 1) / MP_DIGIT_BIT)
+#define MP_MIN_PREC ((((CHAR_BIT * (int)sizeof(long long)) + MP_DIGIT_BIT) - 1) / MP_DIGIT_BIT)
 
 /* lowlevel functions, do not call! */
 MP_WUR int s_mp_add(const mp_int *a, const mp_int *b, mp_int *c);
