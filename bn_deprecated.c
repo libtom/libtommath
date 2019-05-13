@@ -6,6 +6,12 @@
 
 /* SPDX-License-Identifier: Unlicense */
 #include <tommath_private.h>
+#ifdef BN_MP_PRIME_RANDOM_EX_C
+mp_err mp_prime_random_ex(mp_int *a, int t, int size, int flags, private_mp_prime_callback cb, void *dat)
+{
+   return s_mp_prime_random_ex(a, t, size, flags, cb, dat);
+}
+#endif
 #ifdef BN_MP_RAND_DIGIT_C
 mp_err mp_rand_digit(mp_digit *r)
 {

@@ -163,6 +163,10 @@
 #endif
 
 #if defined(BN_DEPRECATED_C)
+#   define BN_MP_PRIME_RANDOM_EX_C
+#   define BN_S_MP_PRIME_RANDOM_EX_C
+#   define BN_MP_RAND_DIGIT_C
+#   define BN_S_MP_RAND_SOURCE_C
 #   define BN_FAST_MP_INVMOD_C
 #   define BN_S_MP_INVMOD_FAST_C
 #   define BN_FAST_MP_MONTGOMERY_REDUCE_C
@@ -724,7 +728,6 @@
 #   define BN_MP_ADD_D_C
 #   define BN_S_MP_RAND_CB_C
 #   define BN_S_MP_RAND_SOURCE_C
-#   define BN_MP_PRIME_RANDOM_EX_C
 #endif
 
 #if defined(BN_MP_PRIME_STRONG_LUCAS_SELFRIDGE_C)
@@ -766,10 +769,9 @@
 
 #if defined(BN_MP_RAND_C)
 #   define BN_MP_RAND_SOURCE_C
-#   define BN_MP_RAND_DIGIT_C
-#   define BN_S_MP_RAND_SOURCE_C
 #   define BN_MP_ZERO_C
 #   define BN_MP_GROW_C
+#   define BN_S_MP_RAND_SOURCE_C
 #endif
 
 #if defined(BN_MP_READ_RADIX_C)
