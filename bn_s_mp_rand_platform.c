@@ -52,7 +52,7 @@ static int s_read_win_csp(void *p, size_t n)
 static int s_read_getrandom(void *p, size_t n)
 {
    char *q = (char *)p;
-   while (n > 0) {
+   while (n > 0u) {
       ssize_t ret = getrandom(q, n, 0);
       if (ret < 0) {
          if (errno == EINTR) {
@@ -89,7 +89,7 @@ static int s_read_dev_urandom(void *p, size_t n)
    } while ((fd == -1) && (errno == EINTR));
    if (fd == -1) return MP_ERR;
 
-   while (n > 0) {
+   while (n > 0u) {
       ssize_t ret = read(fd, p, n);
       if (ret < 0) {
          if (errno == EINTR) {
