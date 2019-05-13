@@ -125,7 +125,6 @@ typedef enum {
    MP_ERR   = -1,
    MP_MEM   = -2,
    MP_VAL   = -3,
-   MP_RANGE = MP_VAL,
    MP_ITER  = -4
 } mp_err;
 #else
@@ -144,7 +143,7 @@ typedef int mp_err;
 #define MP_ERR        -1  /* unknown error */
 #define MP_MEM        -2  /* out of mem */
 #define MP_VAL        -3  /* invalid input */
-#define MP_RANGE      MP_VAL
+#define MP_RANGE      (MP_DEPRECATED_PRAGMA("MP_RANGE has been deprecated in favor of MP_VAL") MP_VAL)
 #define MP_ITER       -4  /* Max. iterations reached */
 #endif
 
