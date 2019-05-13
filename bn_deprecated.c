@@ -6,6 +6,14 @@
 
 /* SPDX-License-Identifier: Unlicense */
 #include <tommath_private.h>
+#ifdef BN_MP_RAND_DIGIT_C
+mp_err mp_rand_digit(mp_digit *r)
+{
+   mp_err ret = s_mp_rand_source(r, sizeof(mp_digit));
+   *r &= MP_MASK;
+   return ret;
+}
+#endif
 #ifdef BN_FAST_MP_INVMOD_C
 mp_err fast_mp_invmod(const mp_int *a, const mp_int *b, mp_int *c)
 {
