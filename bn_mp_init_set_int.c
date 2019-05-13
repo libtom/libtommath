@@ -7,9 +7,9 @@
 int mp_init_set_int(mp_int *a, unsigned long b)
 {
    int err;
-   if ((err = mp_init(a)) != MP_OKAY) {
-      return err;
+   if ((err = mp_init(a)) == MP_OKAY) {
+      mp_set_int(a, b);
    }
-   return mp_set_int(a, b);
+   return err;
 }
 #endif

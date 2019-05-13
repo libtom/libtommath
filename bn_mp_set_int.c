@@ -6,6 +6,7 @@
 /* set a 32-bit const */
 int mp_set_int(mp_int *a, unsigned long b)
 {
-   return mp_set_long(a, b & 0xFFFFFFFFUL);
+   mp_set_long(a, b & 0xFFFFFFFFUL);
+   return MP_OKAY;
 }
 #endif
