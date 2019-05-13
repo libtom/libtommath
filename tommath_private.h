@@ -33,17 +33,53 @@ extern "C" {
 #  define MP_FREE_BUFFER(mem, size)   MP_FREE((mem), (size))
 #  define MP_FREE_DIGITS(mem, digits) MP_FREE((mem), sizeof (mp_digit) * (digits))
 #else
-#  define MP_FREE_BUFFER(mem, size)   do { size_t fs_ = (size); void* fm_ = (mem); if (fm_) { MP_ZERO_BUFFER(fm_, fs_); MP_FREE(fm_, fs_); } } while (0)
-#  define MP_FREE_DIGITS(mem, digits) do { int fd_ = (digits); void* fm_ = (mem); if (fm_) { MP_ZERO_BUFFER(fm_, sizeof (mp_digit) * (size_t)fd_); MP_FREE(fm_, sizeof (mp_digit) * (size_t)fd_); } } while (0)
+#  define MP_FREE_BUFFER(mem, size)                     \
+do {                                                    \
+   size_t fs_ = (size);                                 \
+   void* fm_ = (mem);                                   \
+   if (fm_) {                                           \
+      MP_ZERO_BUFFER(fm_, fs_);                         \
+      MP_FREE(fm_, fs_);                                \
+   }                                                    \
+} while (0)
+#  define MP_FREE_DIGITS(mem, digits)                   \
+do {                                                    \
+   int fd_ = (digits);                                  \
+   void* fm_ = (mem);                                   \
+   if (fm_) {                                           \
+      MP_ZERO_BUFFER(fm_, sizeof(mp_digit) * (size_t)fd_); \
+      MP_FREE(fm_, sizeof(mp_digit) * (size_t)fd_);     \
+   }                                                    \
+} while (0)
 #endif
 
 #ifdef MP_USE_MEMSET
 #  include <string.h>
 #  define MP_ZERO_BUFFER(mem, size)   memset((mem), 0, (size))
-#  define MP_ZERO_DIGITS(mem, digits) do { int zd_ = (digits); if (zd_ > 0) { memset((mem), 0, sizeof (mp_digit) * (size_t)zd_); } } while (0)
+#  define MP_ZERO_DIGITS(mem, digits)                   \
+do {                                                    \
+   int zd_ = (digits);                                  \
+   if (zd_ > 0) {                                       \
+      memset((mem), 0, sizeof(mp_digit) * (size_t)zd_); \
+   }                                                    \
+} while (0)
 #else
-#  define MP_ZERO_BUFFER(mem, size)   do { size_t zs_ = (size); char* zm_ = (char*)(mem); while (zs_-- > 0) { *zm_++ = 0; } } while (0)
-#  define MP_ZERO_DIGITS(mem, digits) do { int zd_ = (digits); mp_digit* zm_ = (mem); while (zd_-- > 0) { *zm_++ = 0; } } while (0)
+#  define MP_ZERO_BUFFER(mem, size)                     \
+do {                                                    \
+   size_t zs_ = (size);                                 \
+   char* zm_ = (char*)(mem);                            \
+   while (zs_-- > 0) {                                  \
+      *zm_++ = 0;                                       \
+   }                                                    \
+} while (0)
+#  define MP_ZERO_DIGITS(mem, digits)                   \
+do {                                                    \
+   int zd_ = (digits);                                  \
+   mp_digit* zm_ = (mem);                               \
+   while (zd_-- > 0) {                                  \
+      *zm_++ = 0;                                       \
+   }                                                    \
+} while (0)
 #endif
 
 /* Tunable cutoffs
