@@ -537,10 +537,6 @@
 			>
 		</File>
 		<File
-			RelativePath="bn_mp_jacobi.c"
-			>
-		</File>
-		<File
 			RelativePath="bn_mp_kronecker.c"
 			>
 		</File>

@@ -66,7 +66,6 @@
 #   define BN_MP_IS_SQUARE_C
 #   define BN_MP_ISEVEN_C
 #   define BN_MP_ISODD_C
-#   define BN_MP_JACOBI_C
 #   define BN_MP_KRONECKER_C
 #   define BN_MP_LCM_C
 #   define BN_MP_LSHD_C
@@ -163,6 +162,10 @@
 #endif
 
 #if defined(BN_DEPRECATED_C)
+#   define BN_S_MP_JACOBI_C
+#   define BN_MP_CMP_D_C
+#   define BN_MP_KRONECKER_C
+#   define BN_MP_JACOBI_C
 #   define BN_MP_PRIME_RANDOM_EX_C
 #   define BN_S_MP_PRIME_RANDOM_EX_C
 #   define BN_MP_RAND_DIGIT_C
@@ -508,11 +511,6 @@
 #endif
 
 #if defined(BN_MP_ISODD_C)
-#endif
-
-#if defined(BN_MP_JACOBI_C)
-#   define BN_MP_CMP_D_C
-#   define BN_MP_KRONECKER_C
 #endif
 
 #if defined(BN_MP_KRONECKER_C)
@@ -919,7 +917,7 @@
 #if defined(BN_MP_SQRTMOD_PRIME_C)
 #   define BN_MP_CMP_D_C
 #   define BN_MP_ZERO_C
-#   define BN_MP_JACOBI_C
+#   define BN_MP_KRONECKER_C
 #   define BN_MP_INIT_MULTI_C
 #   define BN_MP_MOD_D_C
 #   define BN_MP_ADD_D_C

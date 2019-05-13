@@ -6,6 +6,22 @@
 
 /* SPDX-License-Identifier: Unlicense */
 #include <tommath_private.h>
+#ifdef BN_MP_JACOBI_C
+mp_err s_mp_jacobi(const mp_int *a, const mp_int *n, int *c)
+{
+   if (a->sign == MP_NEG) {
+      return MP_VAL;
+   }
+   if (mp_cmp_d(n, 0uL) != MP_GT) {
+      return MP_VAL;
+   }
+   return mp_kronecker(a, n, c);
+}
+mp_err mp_jacobi(const mp_int *a, const mp_int *n, int *c)
+{
+   return s_mp_jacobi(a, n, c);
+}
+#endif
 #ifdef BN_MP_PRIME_RANDOM_EX_C
 mp_err mp_prime_random_ex(mp_int *a, int t, int size, int flags, private_mp_prime_callback cb, void *dat)
 {

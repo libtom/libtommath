@@ -29,17 +29,17 @@ bn_mp_error_to_string.obj bn_mp_exch.obj bn_mp_export.obj bn_mp_expt_d.obj bn_mp
 bn_mp_exteuclid.obj bn_mp_fread.obj bn_mp_fwrite.obj bn_mp_gcd.obj bn_mp_get_bit.obj bn_mp_get_double.obj \
 bn_mp_get_int.obj bn_mp_get_long.obj bn_mp_get_long_long.obj bn_mp_grow.obj bn_mp_ilogb.obj bn_mp_import.obj \
 bn_mp_incr.obj bn_mp_init.obj bn_mp_init_copy.obj bn_mp_init_multi.obj bn_mp_init_set.obj bn_mp_init_set_int.obj \
-bn_mp_init_size.obj bn_mp_invmod.obj bn_mp_is_square.obj bn_mp_iseven.obj bn_mp_isodd.obj bn_mp_jacobi.obj \
-bn_mp_kronecker.obj bn_mp_lcm.obj bn_mp_lshd.obj bn_mp_mod.obj bn_mp_mod_2d.obj bn_mp_mod_d.obj \
-bn_mp_montgomery_calc_normalization.obj bn_mp_montgomery_reduce.obj bn_mp_montgomery_setup.obj bn_mp_mul.obj \
-bn_mp_mul_2.obj bn_mp_mul_2d.obj bn_mp_mul_d.obj bn_mp_mulmod.obj bn_mp_n_root.obj bn_mp_n_root_ex.obj bn_mp_neg.obj \
-bn_mp_or.obj bn_mp_prime_fermat.obj bn_mp_prime_frobenius_underwood.obj bn_mp_prime_is_divisible.obj \
-bn_mp_prime_is_prime.obj bn_mp_prime_miller_rabin.obj bn_mp_prime_next_prime.obj \
-bn_mp_prime_rabin_miller_trials.obj bn_mp_prime_rand.obj bn_mp_prime_strong_lucas_selfridge.obj \
-bn_mp_radix_size.obj bn_mp_radix_smap.obj bn_mp_rand.obj bn_mp_read_radix.obj bn_mp_read_signed_bin.obj \
-bn_mp_read_unsigned_bin.obj bn_mp_reduce.obj bn_mp_reduce_2k.obj bn_mp_reduce_2k_l.obj bn_mp_reduce_2k_setup.obj \
-bn_mp_reduce_2k_setup_l.obj bn_mp_reduce_is_2k.obj bn_mp_reduce_is_2k_l.obj bn_mp_reduce_setup.obj bn_mp_rshd.obj \
-bn_mp_set.obj bn_mp_set_double.obj bn_mp_set_int.obj bn_mp_set_long.obj bn_mp_set_long_long.obj bn_mp_shrink.obj \
+bn_mp_init_size.obj bn_mp_invmod.obj bn_mp_is_square.obj bn_mp_iseven.obj bn_mp_isodd.obj bn_mp_kronecker.obj \
+bn_mp_lcm.obj bn_mp_lshd.obj bn_mp_mod.obj bn_mp_mod_2d.obj bn_mp_mod_d.obj bn_mp_montgomery_calc_normalization.obj \
+bn_mp_montgomery_reduce.obj bn_mp_montgomery_setup.obj bn_mp_mul.obj bn_mp_mul_2.obj bn_mp_mul_2d.obj bn_mp_mul_d.obj \
+bn_mp_mulmod.obj bn_mp_n_root.obj bn_mp_n_root_ex.obj bn_mp_neg.obj bn_mp_or.obj bn_mp_prime_fermat.obj \
+bn_mp_prime_frobenius_underwood.obj bn_mp_prime_is_divisible.obj bn_mp_prime_is_prime.obj \
+bn_mp_prime_miller_rabin.obj bn_mp_prime_next_prime.obj bn_mp_prime_rabin_miller_trials.obj \
+bn_mp_prime_rand.obj bn_mp_prime_strong_lucas_selfridge.obj bn_mp_radix_size.obj bn_mp_radix_smap.obj \
+bn_mp_rand.obj bn_mp_read_radix.obj bn_mp_read_signed_bin.obj bn_mp_read_unsigned_bin.obj bn_mp_reduce.obj \
+bn_mp_reduce_2k.obj bn_mp_reduce_2k_l.obj bn_mp_reduce_2k_setup.obj bn_mp_reduce_2k_setup_l.obj \
+bn_mp_reduce_is_2k.obj bn_mp_reduce_is_2k_l.obj bn_mp_reduce_setup.obj bn_mp_rshd.obj bn_mp_set.obj \
+bn_mp_set_double.obj bn_mp_set_int.obj bn_mp_set_long.obj bn_mp_set_long_long.obj bn_mp_shrink.obj \
 bn_mp_signed_bin_size.obj bn_mp_sqr.obj bn_mp_sqrmod.obj bn_mp_sqrt.obj bn_mp_sqrtmod_prime.obj bn_mp_sub.obj \
 bn_mp_sub_d.obj bn_mp_submod.obj bn_mp_tc_and.obj bn_mp_tc_div_2d.obj bn_mp_tc_or.obj bn_mp_tc_xor.obj \
 bn_mp_to_signed_bin.obj bn_mp_to_signed_bin_n.obj bn_mp_to_unsigned_bin.obj bn_mp_to_unsigned_bin_n.obj \

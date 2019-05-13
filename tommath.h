@@ -503,7 +503,7 @@ mp_err mp_sqrtmod_prime(const mp_int *n, const mp_int *prime, mp_int *ret) MP_WU
 mp_err mp_is_square(const mp_int *arg, mp_bool *ret) MP_WUR;
 
 /* computes the jacobi c = (a | n) (or Legendre if b is prime)  */
-mp_err mp_jacobi(const mp_int *a, const mp_int *n, int *c) MP_WUR;
+MP_DEPRECATED(mp_kronecker) mp_err mp_jacobi(const mp_int *a, const mp_int *n, int *c) MP_WUR;
 
 /* computes the Kronecker symbol c = (a | p) (like jacobi() but with {a,p} in Z */
 mp_err mp_kronecker(const mp_int *a, const mp_int *p, int *c) MP_WUR;
