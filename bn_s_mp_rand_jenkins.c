@@ -41,7 +41,7 @@ int s_mp_rand_jenkins(void *p, size_t n)
    while (n > 0) {
       int i;
       uint64_t x = s_rand_jenkins_val();
-      for (i = 0; i < 8 && n > 0; ++i, --n) {
+      for (i = 0; (i < 8) && (n > 0); ++i, --n) {
          *q++ = (char)(x & 0xFF);
          x >>= 8;
       }
