@@ -47,7 +47,8 @@ bn_mp_toradix.obj bn_mp_toradix_n.obj bn_mp_unsigned_bin_size.obj bn_mp_xor.obj 
 bn_s_mp_add.obj bn_s_mp_balance_mul.obj bn_s_mp_exptmod.obj bn_s_mp_exptmod_fast.obj bn_s_mp_invmod_fast.obj \
 bn_s_mp_invmod_slow.obj bn_s_mp_karatsuba_mul.obj bn_s_mp_karatsuba_sqr.obj bn_s_mp_montgomery_reduce_fast.obj \
 bn_s_mp_mul_digs.obj bn_s_mp_mul_digs_fast.obj bn_s_mp_mul_high_digs.obj bn_s_mp_mul_high_digs_fast.obj \
-bn_s_mp_reverse.obj bn_s_mp_sqr.obj bn_s_mp_sqr_fast.obj bn_s_mp_sub.obj bn_s_mp_toom_mul.obj bn_s_mp_toom_sqr.obj
+bn_s_mp_rand_jenkins.obj bn_s_mp_rand_platform.obj bn_s_mp_reverse.obj bn_s_mp_sqr.obj bn_s_mp_sqr_fast.obj \
+bn_s_mp_sub.obj bn_s_mp_toom_mul.obj bn_s_mp_toom_sqr.obj
 
 HEADERS_PUB=tommath.h tommath_class.h tommath_superclass.h
 
