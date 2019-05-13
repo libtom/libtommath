@@ -630,7 +630,7 @@ MP_WUR MP_DEPRECATED(mp_prime_rand) int mp_prime_random_ex(mp_int *a, int t, int
 MP_WUR int mp_prime_rand(mp_int *a, int t, int size, int flags);
 
 /* Integer logarithm to integer base */
-MP_WUR int mp_ilogb(mp_int *a, mp_digit base, mp_int *c);
+MP_WUR int mp_ilogb(const mp_int *a, mp_digit base, mp_int *c);
 
 
 /* ---> radix conversion <--- */

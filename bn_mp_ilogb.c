@@ -70,7 +70,7 @@ static mp_digit s_digit_ilogb(mp_digit base, mp_digit n)
          as is the output of mp_bitcount.
          With the same problem: max size is INT_MAX * MP_DIGIT not INT_MAX only!
 */
-int mp_ilogb(mp_int *a, mp_digit base, mp_int *c)
+int mp_ilogb(const mp_int *a, mp_digit base, mp_int *c)
 {
    int err, cmp;
    unsigned int high, low, mid;
