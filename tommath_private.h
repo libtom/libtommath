@@ -170,7 +170,7 @@ mp_err s_mp_rand_platform(void *p, size_t n) MP_WUR;
 void s_mp_reverse(unsigned char *s, int len);
 
 /* TODO: jenkins prng is not thread safe as of now */
-MP_WUR int s_mp_rand_jenkins(void *p, size_t n);
+mp_err s_mp_rand_jenkins(void *p, size_t n) MP_WUR;
 void s_mp_rand_jenkins_init(uint64_t seed);
 
 extern const char *const mp_s_rmap;
@@ -184,7 +184,7 @@ extern const size_t mp_s_rmap_reverse_sz;
  *  b is the original value that should be set in the MPI.
  */
 #define MP_SET_XLONG(func_name, type)                    \
-int func_name (mp_int * a, type b)                       \
+mp_err func_name (mp_int * a, type b)                    \
 {                                                        \
    int x = 0;                                            \
    mp_zero(a);                                           \
