@@ -20,9 +20,9 @@ mp_bool mp_reduce_is_2k_l(const mp_int *a)
          }
       }
       return (iy >= (a->used/2)) ? MP_YES : MP_NO;
-
+   } else {
+      return MP_NO;
    }
-   return MP_NO;
 }
 
 #endif
