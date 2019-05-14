@@ -4,9 +4,9 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* b = -a */
-int mp_neg(const mp_int *a, mp_int *b)
+mp_err mp_neg(const mp_int *a, mp_int *b)
 {
-   int     res;
+   mp_err res;
    if (a != b) {
       if ((res = mp_copy(a, b)) != MP_OKAY) {
          return res;

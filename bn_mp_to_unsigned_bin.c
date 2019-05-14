@@ -4,9 +4,10 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* store in unsigned [big endian] format */
-int mp_to_unsigned_bin(const mp_int *a, unsigned char *b)
+mp_err mp_to_unsigned_bin(const mp_int *a, unsigned char *b)
 {
-   int     x, res;
+   int     x;
+   mp_err  res;
    mp_int  t;
 
    if ((res = mp_init_copy(&t, a)) != MP_OKAY) {

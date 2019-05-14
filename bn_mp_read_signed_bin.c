@@ -4,9 +4,9 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* read signed bin, big endian, first byte is 0==positive or 1==negative */
-int mp_read_signed_bin(mp_int *a, const unsigned char *b, int c)
+mp_err mp_read_signed_bin(mp_int *a, const unsigned char *b, int c)
 {
-   int     res;
+   mp_err res;
 
    /* read magnitude */
    if ((res = mp_read_unsigned_bin(a, b + 1, c - 1)) != MP_OKAY) {

@@ -4,7 +4,7 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* grow as required */
-int mp_grow(mp_int *a, int size)
+mp_err mp_grow(mp_int *a, int size)
 {
    int     i;
    mp_digit *tmp;

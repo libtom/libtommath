@@ -5,9 +5,11 @@
 
 #ifndef MP_NO_FILE
 /* read a bigint from a file stream in ASCII */
-int mp_fread(mp_int *a, int radix, FILE *stream)
+mp_err mp_fread(mp_int *a, int radix, FILE *stream)
 {
-   int err, ch, neg, y;
+   mp_err err;
+   mp_sign neg;
+   int ch, y;
    unsigned pos;
 
    /* clear a */

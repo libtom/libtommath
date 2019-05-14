@@ -4,10 +4,11 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* single-digit multiplication with the smaller number as the single-digit */
-int s_mp_balance_mul(const mp_int *a, const mp_int *b, mp_int *c)
+mp_err s_mp_balance_mul(const mp_int *a, const mp_int *b, mp_int *c)
 {
-   int e, count, len_a, len_b, nblocks, i, j, bsize;
+   int count, len_a, len_b, nblocks, i, j, bsize;
    mp_int a0, tmp, A, B, r;
+   mp_err e;
 
    len_a = a->used;
    len_b = b->used;

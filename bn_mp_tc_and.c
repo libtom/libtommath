@@ -4,10 +4,11 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* two complement and */
-int mp_tc_and(const mp_int *a, const mp_int *b, mp_int *c)
+mp_err mp_tc_and(const mp_int *a, const mp_int *b, mp_int *c)
 {
-   int res = MP_OKAY, bits, abits, bbits;
-   int sa = a->sign, sb = b->sign;
+   mp_err res = MP_OKAY;
+   int bits, abits, bbits;
+   mp_sign sa = a->sign, sb = b->sign;
    mp_int *mx = NULL, _mx, acpy, bcpy;
 
    if ((sa == MP_NEG) || (sb == MP_NEG)) {

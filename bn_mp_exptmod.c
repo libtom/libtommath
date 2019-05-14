@@ -8,7 +8,7 @@
  * embedded in the normal function but that wasted alot of stack space
  * for nothing (since 99% of the time the Montgomery code would be called)
  */
-int mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y)
+mp_err mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y)
 {
    int dr;
 
@@ -21,7 +21,7 @@ int mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y)
    if (X->sign == MP_NEG) {
 #ifdef BN_MP_INVMOD_C
       mp_int tmpG, tmpX;
-      int err;
+      mp_err err;
 
       /* first compute 1/G mod P */
       if ((err = mp_init(&tmpG)) != MP_OKAY) {
@@ -61,7 +61,7 @@ int mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y)
 
 #ifdef BN_MP_DR_IS_MODULUS_C
    /* is it a DR modulus? */
-   dr = mp_dr_is_modulus(P);
+   dr = mp_dr_is_modulus(P) == MP_YES;
 #else
    /* default to no */
    dr = 0;
@@ -70,7 +70,7 @@ int mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y)
 #ifdef BN_MP_REDUCE_IS_2K_C
    /* if not, is it a unrestricted DR modulus? */
    if (dr == 0) {
-      dr = mp_reduce_is_2k(P) << 1;
+      dr = (mp_reduce_is_2k(P) == MP_YES) << 1;
    }
 #endif
 

@@ -17,9 +17,10 @@
  *
  * Input x must be in the range 0 <= x <= (n-1)**2
  */
-int mp_dr_reduce(mp_int *x, const mp_int *n, mp_digit k)
+mp_err mp_dr_reduce(mp_int *x, const mp_int *n, mp_digit k)
 {
-   int      err, i, m;
+   mp_err      err;
+   int i, m;
    mp_word  r;
    mp_digit mu, *tmpx1, *tmpx2;
 
@@ -58,7 +59,7 @@ top:
    *tmpx1++ = mu;
 
    /* zero words above m */
-   MP_ZERO_DIGITS(tmpx1, x->used - m - 1);
+   MP_ZERO_DIGITS(tmpx1, (x->used - m) - 1);
 
    /* clamp, sub and return */
    mp_clamp(x);

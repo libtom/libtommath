@@ -4,9 +4,9 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* d = a + b (mod c) */
-int mp_addmod(const mp_int *a, const mp_int *b, const mp_int *c, mp_int *d)
+mp_err mp_addmod(const mp_int *a, const mp_int *b, const mp_int *c, mp_int *d)
 {
-   int     res;
+   mp_err  res;
    mp_int  t;
 
    if ((res = mp_init(&t)) != MP_OKAY) {

@@ -4,10 +4,11 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* Greatest Common Divisor using the binary method */
-int mp_gcd(const mp_int *a, const mp_int *b, mp_int *c)
+mp_err mp_gcd(const mp_int *a, const mp_int *b, mp_int *c)
 {
    mp_int  u, v;
-   int     k, u_lsb, v_lsb, res;
+   int     k, u_lsb, v_lsb;
+   mp_err res;
 
    /* either zero than gcd is the largest */
    if (MP_IS_ZERO(a)) {

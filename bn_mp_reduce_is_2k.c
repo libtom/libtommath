@@ -4,7 +4,7 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* determines if mp_reduce_2k can be used */
-int mp_reduce_is_2k(const mp_int *a)
+mp_bool mp_reduce_is_2k(const mp_int *a)
 {
    int ix, iy, iw;
    mp_digit iz;

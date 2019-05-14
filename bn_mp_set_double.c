@@ -4,10 +4,11 @@
 /* SPDX-License-Identifier: Unlicense */
 
 #if defined(__STDC_IEC_559__) || defined(__GCC_IEC_559)
-int mp_set_double(mp_int *a, double b)
+mp_err mp_set_double(mp_int *a, double b)
 {
    uint64_t frac;
-   int exp, res;
+   int exp;
+   mp_err res;
    union {
       double   dbl;
       uint64_t bits;

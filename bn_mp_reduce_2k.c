@@ -4,10 +4,11 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* reduces a modulo n where n is of the form 2**p - d */
-int mp_reduce_2k(mp_int *a, const mp_int *n, mp_digit d)
+mp_err mp_reduce_2k(mp_int *a, const mp_int *n, mp_digit d)
 {
    mp_int q;
-   int    p, res;
+   mp_err res;
+   int    p;
 
    if ((res = mp_init(&q)) != MP_OKAY) {
       return res;

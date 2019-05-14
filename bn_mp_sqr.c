@@ -4,9 +4,9 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* computes b = a*a */
-int mp_sqr(const mp_int *a, mp_int *b)
+mp_err mp_sqr(const mp_int *a, mp_int *b)
 {
-   int     res;
+   mp_err res;
 
 #ifdef BN_S_MP_TOOM_SQR_C
    /* use Toom-Cook? */

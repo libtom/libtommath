@@ -28,21 +28,21 @@ static uint64_t s_rand_jenkins_val(void)
 void s_mp_rand_jenkins_init(uint64_t seed)
 {
    uint64_t i;
-   jenkins_x.a = 0xf1ea5eed;
+   jenkins_x.a = 0xf1ea5eedULL;
    jenkins_x.b = jenkins_x.c = jenkins_x.d = seed;
-   for (i = 0; i < 20; ++i) {
+   for (i = 0uLL; i < 20uLL; ++i) {
       (void)s_rand_jenkins_val();
    }
 }
 
-int s_mp_rand_jenkins(void *p, size_t n)
+mp_err s_mp_rand_jenkins(void *p, size_t n)
 {
    char *q = (char *)p;
-   while (n > 0) {
+   while (n > 0u) {
       int i;
       uint64_t x = s_rand_jenkins_val();
-      for (i = 0; i < 8 && n > 0; ++i, --n) {
-         *q++ = (char)(x & 0xFF);
+      for (i = 0; (i < 8) && (n > 0u); ++i, --n) {
+         *q++ = (char)(x & 0xFFuLL);
          x >>= 8;
       }
    }

@@ -4,9 +4,9 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* initialize and set a digit */
-int mp_init_set_int(mp_int *a, unsigned long b)
+mp_err mp_init_set_int(mp_int *a, unsigned long b)
 {
-   int err;
+   mp_err err;
    if ((err = mp_init(a)) != MP_OKAY) {
       return err;
    }

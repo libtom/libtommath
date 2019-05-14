@@ -4,9 +4,9 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* two complement right shift */
-int mp_tc_div_2d(const mp_int *a, int b, mp_int *c)
+mp_err mp_tc_div_2d(const mp_int *a, int b, mp_int *c)
 {
-   int res;
+   mp_err res;
    if (a->sign == MP_ZPOS) {
       return mp_div_2d(a, b, c, NULL);
    }

@@ -10,12 +10,11 @@
  * is essentially the same algorithm but merely
  * tuned to perform recursive squarings.
  */
-int s_mp_karatsuba_sqr(const mp_int *a, mp_int *b)
+mp_err s_mp_karatsuba_sqr(const mp_int *a, mp_int *b)
 {
    mp_int  x0, x1, t1, t2, x0x0, x1x1;
-   int     B, err;
-
-   err = MP_MEM;
+   int     B;
+   mp_err  err = MP_MEM;
 
    /* min # of digits */
    B = a->used;

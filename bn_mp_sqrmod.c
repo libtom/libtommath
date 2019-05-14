@@ -4,9 +4,9 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* c = a * a (mod b) */
-int mp_sqrmod(const mp_int *a, const mp_int *b, mp_int *c)
+mp_err mp_sqrmod(const mp_int *a, const mp_int *b, mp_int *c)
 {
-   int     res;
+   mp_err  res;
    mp_int  t;
 
    if ((res = mp_init(&t)) != MP_OKAY) {

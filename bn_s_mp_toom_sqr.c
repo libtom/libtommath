@@ -4,10 +4,11 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* squaring using Toom-Cook 3-way algorithm */
-int s_mp_toom_sqr(const mp_int *a, mp_int *b)
+mp_err s_mp_toom_sqr(const mp_int *a, mp_int *b)
 {
    mp_int w0, w1, w2, w3, w4, tmp1, a0, a1, a2;
-   int res, B;
+   int B;
+   mp_err res;
 
    /* init temps */
    if ((res = mp_init_multi(&w0, &w1, &w2, &w3, &w4, &a0, &a1, &a2, &tmp1, NULL)) != MP_OKAY) {

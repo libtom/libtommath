@@ -17,11 +17,10 @@
      publisher={Springer Science \& Business Media}
     }
  */
-int mp_kronecker(const mp_int *a, const mp_int *p, int *c)
+mp_err mp_kronecker(const mp_int *a, const mp_int *p, int *c)
 {
    mp_int a1, p1, r;
-
-   int e = MP_OKAY;
+   mp_err e = MP_OKAY;
    int v, k;
 
    static const int table[8] = {0, 1, 0, -1, 0, -1, 0, 1};

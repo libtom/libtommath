@@ -4,9 +4,10 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* high level addition (handles signs) */
-int mp_add(const mp_int *a, const mp_int *b, mp_int *c)
+mp_err mp_add(const mp_int *a, const mp_int *b, mp_int *c)
 {
-   int     sa, sb, res;
+   mp_sign sa, sb;
+   mp_err res;
 
    /* get sign of both inputs */
    sa = a->sign;

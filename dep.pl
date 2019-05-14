@@ -98,6 +98,7 @@ EOS
    foreach my $line (split /\n/, $content) {
       while ($line =~ /(fast_)?(s_)?mp\_[a-z_0-9]*(?=\()/g) {
           my $a = $&;
+          next if $a eq "mp_err";
           $a =~ tr/[a-z]/[A-Z]/;
           $a = 'BN_' . $a . '_C';
           if (!($list =~ /$a/)) {

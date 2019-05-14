@@ -4,12 +4,10 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* high level subtraction (handles signs) */
-int mp_sub(const mp_int *a, const mp_int *b, mp_int *c)
+mp_err mp_sub(const mp_int *a, const mp_int *b, mp_int *c)
 {
-   int     sa, sb, res;
-
-   sa = a->sign;
-   sb = b->sign;
+   mp_sign sa = a->sign, sb = b->sign;
+   mp_err res;
 
    if (sa != sb) {
       /* subtract a negative from a positive, OR */

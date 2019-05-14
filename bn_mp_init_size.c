@@ -4,7 +4,7 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* init an mp_init for a given size */
-int mp_init_size(mp_int *a, int size)
+mp_err mp_init_size(mp_int *a, int size)
 {
    size = MP_MAX(MP_MIN_PREC, size);
 

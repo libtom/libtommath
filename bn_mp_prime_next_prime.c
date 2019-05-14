@@ -8,9 +8,11 @@
  *
  * bbs_style = 1 means the prime must be congruent to 3 mod 4
  */
-int mp_prime_next_prime(mp_int *a, int t, int bbs_style)
+mp_err mp_prime_next_prime(mp_int *a, int t, int bbs_style)
 {
-   int      err, res = MP_NO, x, y;
+   int      x, y;
+   mp_err  err;
+   mp_bool res = MP_NO;
    mp_digit res_tab[MP_PRIME_SIZE], step, kstep;
    mp_int   b;
 

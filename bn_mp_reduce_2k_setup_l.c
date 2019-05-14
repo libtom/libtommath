@@ -4,9 +4,9 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* determines the setup value */
-int mp_reduce_2k_setup_l(const mp_int *a, mp_int *d)
+mp_err mp_reduce_2k_setup_l(const mp_int *a, mp_int *d)
 {
-   int    res;
+   mp_err res;
    mp_int tmp;
 
    if ((res = mp_init(&tmp)) != MP_OKAY) {

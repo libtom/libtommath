@@ -4,9 +4,9 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* reads a unsigned char array, assumes the msb is stored first [big endian] */
-int mp_read_unsigned_bin(mp_int *a, const unsigned char *b, int c)
+mp_err mp_read_unsigned_bin(mp_int *a, const unsigned char *b, int c)
 {
-   int     res;
+   mp_err res;
 
    /* make sure there are at least two digits */
    if (a->alloc < 2) {

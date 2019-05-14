@@ -94,7 +94,7 @@ LBL_ERR:
    return EXIT_FAILURE;
 }
 
-static int very_random_source(void *out, size_t size)
+static mp_err very_random_source(void *out, size_t size)
 {
    memset(out, 0xff, size);
    return MP_OKAY;
@@ -103,7 +103,8 @@ static int very_random_source(void *out, size_t size)
 static int test_mp_rand(void)
 {
    mp_int a, b;
-   int err, n;
+   int n;
+   mp_err err;
    if (mp_init_multi(&a, &b, NULL)!= MP_OKAY) {
       return EXIT_FAILURE;
    }
@@ -147,8 +148,8 @@ static int test_mp_jacobi(void)
       { 9, { -1,  1,  0,  1,  1,  0,  1,  1,  0,  1,  1,  0,  1,  1,  0,  1 } },
    };
 
-   int i, n, err, should, cnt;
-
+   int i, n, should, cnt;
+   mp_err err;
    mp_int a, b;
    if (mp_init_multi(&a, &b, NULL)!= MP_OKAY) {
       return EXIT_FAILURE;
@@ -225,8 +226,8 @@ static int test_mp_kronecker(void)
    };
 
    long k, m;
-   int i, err, cnt;
-
+   int i, cnt;
+   mp_err err;
    mp_int a, b;
    if (mp_init_multi(&a, &b, NULL)!= MP_OKAY) {
       return EXIT_FAILURE;
@@ -718,6 +719,8 @@ static int test_mp_is_square(void)
    int i, n;
 
    mp_int a, b;
+   mp_bool res;
+
    if (mp_init_multi(&a, &b, NULL)!= MP_OKAY) {
       return EXIT_FAILURE;
    }
@@ -730,22 +733,22 @@ static int test_mp_is_square(void)
       n = (rand_int() & 7) + 1;
       mp_rand(&a, n);
       mp_sqr(&a, &a);
-      if (mp_is_square(&a, &n) != MP_OKAY) {
+      if (mp_is_square(&a, &res) != MP_OKAY) {
          printf("\nfn:mp_is_square() error!");
          goto LBL_ERR;
       }
-      if (n == 0) {
+      if (res == MP_NO) {
          printf("\nfn:mp_is_square() bad result!");
          goto LBL_ERR;
       }
 
       /* test for false positives */
       mp_add_d(&a, 1uL, &a);
-      if (mp_is_square(&a, &n) != MP_OKAY) {
+      if (mp_is_square(&a, &res) != MP_OKAY) {
          printf("\nfp:mp_is_square() error!");
          goto LBL_ERR;
       }
-      if (n == 1) {
+      if (res == MP_YES) {
          printf("\nfp:mp_is_square() bad result!");
          goto LBL_ERR;
       }
@@ -804,8 +807,8 @@ LBL_ERR:
 
 static int test_mp_prime_rand(void)
 {
-   int ix, err;
-
+   int ix;
+   mp_err err;
    mp_int a, b;
    if (mp_init_multi(&a, &b, NULL)!= MP_OKAY) {
       return EXIT_FAILURE;
@@ -836,7 +839,9 @@ LBL_ERR:
 
 static int test_mp_prime_is_prime(void)
 {
-   int ix, err, cnt;
+   int ix;
+   mp_err err;
+   mp_bool cnt;
 
    mp_int a, b;
    if (mp_init_multi(&a, &b, NULL)!= MP_OKAY) {

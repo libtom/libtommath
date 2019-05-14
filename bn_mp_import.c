@@ -6,10 +6,10 @@
 /* based on gmp's mpz_import.
  * see http://gmplib.org/manual/Integer-Import-and-Export.html
  */
-int mp_import(mp_int *rop, size_t count, int order, size_t size,
-              int endian, size_t nails, const void *op)
+mp_err mp_import(mp_int *rop, size_t count, int order, size_t size,
+                 int endian, size_t nails, const void *op)
 {
-   int result;
+   mp_err result;
    size_t odd_nails, nail_bytes, i, j;
    unsigned char odd_nail_mask;
 

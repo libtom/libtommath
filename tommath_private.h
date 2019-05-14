@@ -31,19 +31,56 @@ extern "C" {
  */
 #ifdef MP_NO_ZERO_ON_FREE
 #  define MP_FREE_BUFFER(mem, size)   MP_FREE((mem), (size))
-#  define MP_FREE_DIGITS(mem, digits) MP_FREE((mem), sizeof (mp_digit) * (digits))
+#  define MP_FREE_DIGITS(mem, digits) MP_FREE((mem), sizeof (mp_digit) * (size_t)(digits))
 #else
-#  define MP_FREE_BUFFER(mem, size)   do { size_t fs_ = (size); void* fm_ = (mem); if (fm_) { MP_ZERO_BUFFER(fm_, fs_); MP_FREE(fm_, fs_); } } while (0)
-#  define MP_FREE_DIGITS(mem, digits) do { int fd_ = (digits); void* fm_ = (mem); if (fm_) { MP_ZERO_BUFFER(fm_, sizeof (mp_digit) * (size_t)fd_); MP_FREE(fm_, sizeof (mp_digit) * (size_t)fd_); } } while (0)
+#  define MP_FREE_BUFFER(mem, size)                     \
+do {                                                    \
+   size_t fs_ = (size);                                 \
+   void* fm_ = (mem);                                   \
+   if (fm_ != NULL) {                                   \
+      MP_ZERO_BUFFER(fm_, fs_);                         \
+      MP_FREE(fm_, fs_);                                \
+   }                                                    \
+} while (0)
+#  define MP_FREE_DIGITS(mem, digits)                   \
+do {                                                    \
+   int fd_ = (digits);                                  \
+   void* fm_ = (mem);                                   \
+   if (fm_ != NULL) {                                   \
+      size_t fs_ = sizeof (mp_digit) * (size_t)fd_;     \
+      MP_ZERO_BUFFER(fm_, fs_);                         \
+      MP_FREE(fm_, fs_);                                \
+   }                                                    \
+} while (0)
 #endif
 
 #ifdef MP_USE_MEMSET
 #  include <string.h>
 #  define MP_ZERO_BUFFER(mem, size)   memset((mem), 0, (size))
-#  define MP_ZERO_DIGITS(mem, digits) do { int zd_ = (digits); if (zd_ > 0) { memset((mem), 0, sizeof (mp_digit) * (size_t)zd_); } } while (0)
+#  define MP_ZERO_DIGITS(mem, digits)                   \
+do {                                                    \
+   int zd_ = (digits);                                  \
+   if (zd_ > 0) {                                       \
+      memset((mem), 0, sizeof(mp_digit) * (size_t)zd_); \
+   }                                                    \
+} while (0)
 #else
-#  define MP_ZERO_BUFFER(mem, size)   do { size_t zs_ = (size); char* zm_ = (char*)(mem); while (zs_-- > 0) { *zm_++ = 0; } } while (0)
-#  define MP_ZERO_DIGITS(mem, digits) do { int zd_ = (digits); mp_digit* zm_ = (mem); while (zd_-- > 0) { *zm_++ = 0; } } while (0)
+#  define MP_ZERO_BUFFER(mem, size)                     \
+do {                                                    \
+   size_t zs_ = (size);                                 \
+   char* zm_ = (char*)(mem);                            \
+   while (zs_-- > 0) {                                  \
+      *zm_++ = 0;                                       \
+   }                                                    \
+} while (0)
+#  define MP_ZERO_DIGITS(mem, digits)                   \
+do {                                                    \
+   int zd_ = (digits);                                  \
+   mp_digit* zm_ = (mem);                               \
+   while (zd_-- > 0) {                                  \
+      *zm_++ = 0;                                       \
+   }                                                    \
+} while (0)
 #endif
 
 /* Tunable cutoffs
@@ -103,39 +140,39 @@ extern void MP_FREE(void *mem, size_t size);
 #define MP_IS_ODD(a)  (((a)->used > 0) && (((a)->dp[0] & 1u) == 1u))
 
 #define MP_SIZEOF_BITS(type)    (CHAR_BIT * sizeof(type))
-#define MP_MAXFAST              (int)(1u << (MP_SIZEOF_BITS(mp_word) - (2u * (size_t)MP_DIGIT_BIT)))
+#define MP_MAXFAST              (int)(1uL << (MP_SIZEOF_BITS(mp_word) - (2u * (size_t)MP_DIGIT_BIT)))
 
 /* random number source */
-extern int (*s_mp_rand_source)(void *out, size_t size);
+extern mp_err(*s_mp_rand_source)(void *out, size_t size);
 
 /* Minimum number of available digits in mp_int, MP_PREC >= MP_MIN_PREC */
-#define MP_MIN_PREC ((CHAR_BIT * (int)sizeof(long long) + MP_DIGIT_BIT - 1) / MP_DIGIT_BIT)
+#define MP_MIN_PREC ((((CHAR_BIT * (int)sizeof(long long)) + MP_DIGIT_BIT) - 1) / MP_DIGIT_BIT)
 
 /* lowlevel functions, do not call! */
-MP_WUR int s_mp_add(const mp_int *a, const mp_int *b, mp_int *c);
-MP_WUR int s_mp_sub(const mp_int *a, const mp_int *b, mp_int *c);
-MP_WUR int s_mp_mul_digs_fast(const mp_int *a, const mp_int *b, mp_int *c, int digs);
-MP_WUR int s_mp_mul_digs(const mp_int *a, const mp_int *b, mp_int *c, int digs);
-MP_WUR int s_mp_mul_high_digs_fast(const mp_int *a, const mp_int *b, mp_int *c, int digs);
-MP_WUR int s_mp_mul_high_digs(const mp_int *a, const mp_int *b, mp_int *c, int digs);
-MP_WUR int s_mp_sqr_fast(const mp_int *a, mp_int *b);
-MP_WUR int s_mp_sqr(const mp_int *a, mp_int *b);
-MP_WUR int s_mp_balance_mul(const mp_int *a, const mp_int *b, mp_int *c);
-MP_WUR int s_mp_karatsuba_mul(const mp_int *a, const mp_int *b, mp_int *c);
-MP_WUR int s_mp_toom_mul(const mp_int *a, const mp_int *b, mp_int *c);
-MP_WUR int s_mp_karatsuba_sqr(const mp_int *a, mp_int *b);
-MP_WUR int s_mp_toom_sqr(const mp_int *a, mp_int *b);
-MP_WUR int s_mp_invmod_fast(const mp_int *a, const mp_int *b, mp_int *c);
-MP_WUR int s_mp_invmod_slow(const mp_int *a, const mp_int *b, mp_int *c);
-MP_WUR int s_mp_montgomery_reduce_fast(mp_int *x, const mp_int *n, mp_digit rho);
-MP_WUR int s_mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y, int redmode);
-MP_WUR int s_mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y, int redmode);
-MP_WUR int s_mp_rand_platform(void *p, size_t n);
+mp_err s_mp_add(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
+mp_err s_mp_sub(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
+mp_err s_mp_mul_digs_fast(const mp_int *a, const mp_int *b, mp_int *c, int digs) MP_WUR;
+mp_err s_mp_mul_digs(const mp_int *a, const mp_int *b, mp_int *c, int digs) MP_WUR;
+mp_err s_mp_mul_high_digs_fast(const mp_int *a, const mp_int *b, mp_int *c, int digs) MP_WUR;
+mp_err s_mp_mul_high_digs(const mp_int *a, const mp_int *b, mp_int *c, int digs) MP_WUR;
+mp_err s_mp_sqr_fast(const mp_int *a, mp_int *b) MP_WUR;
+mp_err s_mp_sqr(const mp_int *a, mp_int *b) MP_WUR;
+mp_err s_mp_balance_mul(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
+mp_err s_mp_karatsuba_mul(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
+mp_err s_mp_toom_mul(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
+mp_err s_mp_karatsuba_sqr(const mp_int *a, mp_int *b) MP_WUR;
+mp_err s_mp_toom_sqr(const mp_int *a, mp_int *b) MP_WUR;
+mp_err s_mp_invmod_fast(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
+mp_err s_mp_invmod_slow(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
+mp_err s_mp_montgomery_reduce_fast(mp_int *x, const mp_int *n, mp_digit rho) MP_WUR;
+mp_err s_mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y, int redmode) MP_WUR;
+mp_err s_mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y, int redmode) MP_WUR;
+mp_err s_mp_rand_platform(void *p, size_t n) MP_WUR;
 void s_mp_reverse(unsigned char *s, int len);
 
 /* TODO: jenkins prng is not thread safe as of now */
-MP_WUR int s_mp_rand_jenkins(void *p, size_t n);
-void s_mp_rand_jenkins_init(uint64_t);
+mp_err s_mp_rand_jenkins(void *p, size_t n) MP_WUR;
+void s_mp_rand_jenkins_init(uint64_t seed);
 
 extern const char *const mp_s_rmap;
 extern const uint8_t mp_s_rmap_reverse[];
@@ -148,7 +185,7 @@ extern const size_t mp_s_rmap_reverse_sz;
  *  b is the original value that should be set in the MPI.
  */
 #define MP_SET_XLONG(func_name, type)                    \
-int func_name (mp_int * a, type b)                       \
+mp_err func_name (mp_int * a, type b)                    \
 {                                                        \
    int x = 0;                                            \
    mp_zero(a);                                           \
@@ -162,20 +199,20 @@ int func_name (mp_int * a, type b)                       \
 }
 
 /* deprecated functions */
-MP_DEPRECATED(s_mp_invmod_fast) int fast_mp_invmod(const mp_int *a, const mp_int *b, mp_int *c);
-MP_DEPRECATED(s_mp_montgomery_reduce_fast) int fast_mp_montgomery_reduce(mp_int *x, const mp_int *n, mp_digit rho);
-MP_DEPRECATED(s_mp_mul_digs_fast) int fast_s_mp_mul_digs(const mp_int *a, const mp_int *b, mp_int *c, int digs);
-MP_DEPRECATED(s_mp_mul_high_digs_fast) int fast_s_mp_mul_high_digs(const mp_int *a, const mp_int *b, mp_int *c,
+MP_DEPRECATED(s_mp_invmod_fast) mp_err fast_mp_invmod(const mp_int *a, const mp_int *b, mp_int *c);
+MP_DEPRECATED(s_mp_montgomery_reduce_fast) mp_err fast_mp_montgomery_reduce(mp_int *x, const mp_int *n, mp_digit rho);
+MP_DEPRECATED(s_mp_mul_digs_fast) mp_err fast_s_mp_mul_digs(const mp_int *a, const mp_int *b, mp_int *c, int digs);
+MP_DEPRECATED(s_mp_mul_high_digs_fast) mp_err fast_s_mp_mul_high_digs(const mp_int *a, const mp_int *b, mp_int *c,
       int digs);
-MP_DEPRECATED(s_mp_sqr_fast) int fast_s_mp_sqr(const mp_int *a, mp_int *b);
-MP_DEPRECATED(s_mp_balance_mul) int mp_balance_mul(const mp_int *a, const mp_int *b, mp_int *c);
-MP_DEPRECATED(s_mp_exptmod_fast) int mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y,
+MP_DEPRECATED(s_mp_sqr_fast) mp_err fast_s_mp_sqr(const mp_int *a, mp_int *b);
+MP_DEPRECATED(s_mp_balance_mul) mp_err mp_balance_mul(const mp_int *a, const mp_int *b, mp_int *c);
+MP_DEPRECATED(s_mp_exptmod_fast) mp_err mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y,
       int redmode);
-MP_DEPRECATED(s_mp_invmod_slow) int mp_invmod_slow(const mp_int *a, const mp_int *b, mp_int *c);
-MP_DEPRECATED(s_mp_karatsuba_mul) int mp_karatsuba_mul(const mp_int *a, const mp_int *b, mp_int *c);
-MP_DEPRECATED(s_mp_karatsuba_sqr) int mp_karatsuba_sqr(const mp_int *a, mp_int *b);
-MP_DEPRECATED(s_mp_toom_mul) int mp_toom_mul(const mp_int *a, const mp_int *b, mp_int *c);
-MP_DEPRECATED(s_mp_toom_sqr) int mp_toom_sqr(const mp_int *a, mp_int *b);
+MP_DEPRECATED(s_mp_invmod_slow) mp_err mp_invmod_slow(const mp_int *a, const mp_int *b, mp_int *c);
+MP_DEPRECATED(s_mp_karatsuba_mul) mp_err mp_karatsuba_mul(const mp_int *a, const mp_int *b, mp_int *c);
+MP_DEPRECATED(s_mp_karatsuba_sqr) mp_err mp_karatsuba_sqr(const mp_int *a, mp_int *b);
+MP_DEPRECATED(s_mp_toom_mul) mp_err mp_toom_mul(const mp_int *a, const mp_int *b, mp_int *c);
+MP_DEPRECATED(s_mp_toom_sqr) mp_err mp_toom_sqr(const mp_int *a, mp_int *b);
 MP_DEPRECATED(s_mp_reverse) void bn_reverse(unsigned char *s, int len);
 
 #ifdef __cplusplus

@@ -4,9 +4,10 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* b = a*2 */
-int mp_mul_2(const mp_int *a, mp_int *b)
+mp_err mp_mul_2(const mp_int *a, mp_int *b)
 {
-   int     x, res, oldused;
+   int     x, oldused;
+   mp_err res;
 
    /* grow to accomodate result */
    if (b->alloc < (a->used + 1)) {

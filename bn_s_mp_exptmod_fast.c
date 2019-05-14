@@ -17,17 +17,18 @@
 #   define TAB_SIZE 256
 #endif
 
-int s_mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y, int redmode)
+mp_err s_mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y, int redmode)
 {
    mp_int  M[TAB_SIZE], res;
    mp_digit buf, mp;
-   int     err, bitbuf, bitcpy, bitcnt, mode, digidx, x, y, winsize;
+   int     bitbuf, bitcpy, bitcnt, mode, digidx, x, y, winsize;
+   mp_err   err;
 
    /* use a pointer to the reduction algorithm.  This allows us to use
     * one of many reduction algorithms without modding the guts of
     * the code with if statements everywhere.
     */
-   int (*redux)(mp_int *x, const mp_int *n, mp_digit rho);
+   mp_err(*redux)(mp_int *x, const mp_int *n, mp_digit rho);
 
    /* find window size */
    x = mp_count_bits(X);

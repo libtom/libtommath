@@ -4,9 +4,10 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* computes xR**-1 == x (mod N) via Montgomery Reduction */
-int mp_montgomery_reduce(mp_int *x, const mp_int *n, mp_digit rho)
+mp_err mp_montgomery_reduce(mp_int *x, const mp_int *n, mp_digit rho)
 {
-   int     ix, res, digs;
+   int      ix, digs;
+   mp_err   res;
    mp_digit mu;
 
    /* can the fast reduction [comba] method be used?

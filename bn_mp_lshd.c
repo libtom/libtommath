@@ -4,9 +4,10 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* shift left a certain amount of digits */
-int mp_lshd(mp_int *a, int b)
+mp_err mp_lshd(mp_int *a, int b)
 {
-   int     x, res;
+   int x;
+   mp_err res;
 
    /* if its less than zero return */
    if (b <= 0) {

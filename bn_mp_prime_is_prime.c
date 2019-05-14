@@ -14,10 +14,12 @@ static unsigned int s_floor_ilog2(int value)
 }
 
 
-int mp_prime_is_prime(const mp_int *a, int t, int *result)
+mp_err mp_prime_is_prime(const mp_int *a, int t, mp_bool *result)
 {
    mp_int  b;
-   int     ix, err, res, p_max = 0, size_a, len;
+   int     ix, p_max = 0, size_a, len;
+   mp_bool res;
+   mp_err  err;
    unsigned int fips_rand, mask;
 
    /* default to no */
@@ -32,11 +34,11 @@ int mp_prime_is_prime(const mp_int *a, int t, int *result)
    /* N > 3 */
    if (a->used == 1) {
       if ((a->dp[0] == 0u) || (a->dp[0] == 1u)) {
-         *result = 0;
+         *result = MP_NO;
          return MP_OKAY;
       }
       if (a->dp[0] == 2u) {
-         *result = 1;
+         *result = MP_YES;
          return MP_OKAY;
       }
    }

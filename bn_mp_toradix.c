@@ -4,9 +4,10 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* stores a bignum as a ASCII string in a given radix (2..64) */
-int mp_toradix(const mp_int *a, char *str, int radix)
+mp_err mp_toradix(const mp_int *a, char *str, int radix)
 {
-   int     res, digs;
+   mp_err  res;
+   int digs;
    mp_int  t;
    mp_digit d;
    char   *_s = str;

@@ -4,7 +4,7 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* compare maginitude of two ints (unsigned) */
-int mp_cmp_mag(const mp_int *a, const mp_int *b)
+mp_ord mp_cmp_mag(const mp_int *a, const mp_int *b)
 {
    int     n;
    mp_digit *tmpa, *tmpb;

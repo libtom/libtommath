@@ -6,10 +6,10 @@
 /* Extended euclidean algorithm of (a, b) produces
    a*u1 + b*u2 = u3
  */
-int mp_exteuclid(const mp_int *a, const mp_int *b, mp_int *U1, mp_int *U2, mp_int *U3)
+mp_err mp_exteuclid(const mp_int *a, const mp_int *b, mp_int *U1, mp_int *U2, mp_int *U3)
 {
    mp_int u1, u2, u3, v1, v2, v3, t1, t2, t3, q, tmp;
-   int err;
+   mp_err err;
 
    if ((err = mp_init_multi(&u1, &u2, &u3, &v1, &v2, &v3, &t1, &t2, &t3, &q, &tmp, NULL)) != MP_OKAY) {
       return err;

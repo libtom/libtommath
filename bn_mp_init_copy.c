@@ -4,9 +4,9 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* creates "a" then copies b into it */
-int mp_init_copy(mp_int *a, const mp_int *b)
+mp_err mp_init_copy(mp_int *a, const mp_int *b)
 {
-   int     res;
+   mp_err     res;
 
    if ((res = mp_init_size(a, b->used)) != MP_OKAY) {
       return res;
