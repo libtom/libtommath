@@ -1171,36 +1171,31 @@
 
 #if defined(BN_S_MP_TOOM_MUL_C)
 #   define BN_MP_INIT_MULTI_C
-#   define BN_MP_MOD_2D_C
-#   define BN_MP_COPY_C
-#   define BN_MP_RSHD_C
+#   define BN_MP_INIT_SIZE_C
+#   define BN_MP_CLAMP_C
+#   define BN_MP_ADD_C
 #   define BN_MP_MUL_C
 #   define BN_MP_MUL_2_C
-#   define BN_MP_ADD_C
 #   define BN_MP_SUB_C
-#   define BN_MP_DIV_2_C
-#   define BN_MP_MUL_2D_C
-#   define BN_MP_MUL_D_C
 #   define BN_MP_DIV_3_C
+#   define BN_MP_DIV_2_C
 #   define BN_MP_LSHD_C
+#   define BN_MP_CLEAR_C
 #   define BN_MP_CLEAR_MULTI_C
 #endif
 
 #if defined(BN_S_MP_TOOM_SQR_C)
-#   define BN_MP_INIT_MULTI_C
-#   define BN_MP_MOD_2D_C
-#   define BN_MP_COPY_C
-#   define BN_MP_RSHD_C
+#   define BN_MP_INIT_C
+#   define BN_MP_INIT_SIZE_C
+#   define BN_MP_CLAMP_C
 #   define BN_MP_SQR_C
-#   define BN_MP_MUL_2_C
 #   define BN_MP_ADD_C
 #   define BN_MP_SUB_C
+#   define BN_MP_MUL_C
+#   define BN_MP_MUL_2_C
 #   define BN_MP_DIV_2_C
-#   define BN_MP_MUL_2D_C
-#   define BN_MP_MUL_D_C
-#   define BN_MP_DIV_3_C
 #   define BN_MP_LSHD_C
-#   define BN_MP_CLEAR_MULTI_C
+#   define BN_MP_CLEAR_C
 #endif
 
 #ifdef LTM3
