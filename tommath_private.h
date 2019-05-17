@@ -131,6 +131,10 @@ extern void MP_FREE(void *mem, size_t size);
 #undef MP_WARRAY
 #define MP_WARRAY PRIVATE_MP_WARRAY
 
+/* TODO: Remove private_mp_word as soon as deprecated mp_word is removed from tommath. */
+#undef mp_word
+typedef private_mp_word mp_word;
+
 #define MP_MIN(x, y) (((x) < (y)) ? (x) : (y))
 #define MP_MAX(x, y) (((x) > (y)) ? (x) : (y))
 
