@@ -177,6 +177,12 @@ TOOM_SQR_CUTOFF;
 #define MP_WARRAY (MP_DEPRECATED_PRAGMA("MP_WARRAY is an internal macro") PRIVATE_MP_WARRAY)
 
 #if defined(__GNUC__) && __GNUC__ >= 4
+#   define MP_PURE __attribute__((pure))
+#else
+#   define MP_PURE
+#endif
+
+#if defined(__GNUC__) && __GNUC__ >= 4
 #   define MP_NULL_TERMINATED __attribute__((sentinel))
 #else
 #   define MP_NULL_TERMINATED
@@ -402,10 +408,10 @@ mp_err mp_neg(const mp_int *a, mp_int *b) MP_WUR;
 mp_err mp_abs(const mp_int *a, mp_int *b) MP_WUR;
 
 /* compare a to b */
-mp_ord mp_cmp(const mp_int *a, const mp_int *b) MP_WUR;
+mp_ord mp_cmp(const mp_int *a, const mp_int *b) MP_WUR MP_PURE;
 
 /* compare |a| to |b| */
-mp_ord mp_cmp_mag(const mp_int *a, const mp_int *b) MP_WUR;
+mp_ord mp_cmp_mag(const mp_int *a, const mp_int *b) MP_WUR MP_PURE;
 
 /* c = a + b */
 mp_err mp_add(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
@@ -428,7 +434,7 @@ mp_err mp_mod(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
 /* ---> single digit functions <--- */
 
 /* compare against a single digit */
-mp_ord mp_cmp_d(const mp_int *a, mp_digit b) MP_WUR;
+mp_ord mp_cmp_d(const mp_int *a, mp_digit b) MP_WUR MP_PURE;
 
 /* c = a + b */
 mp_err mp_add_d(const mp_int *a, mp_digit b, mp_int *c) MP_WUR;
