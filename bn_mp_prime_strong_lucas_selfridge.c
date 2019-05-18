@@ -72,7 +72,7 @@ mp_err mp_prime_strong_lucas_selfridge(const mp_int *a, mp_bool *result)
    /* CZ TODO: Some of them need the full 32 bit, hence the (temporary) exclusion of MP_8BIT */
    int32_t D, Ds, J, sign, P, Q, r, s, u, Nbits;
    mp_err e;
-   int oddness;
+   mp_bool oddness;
 
    *result = MP_NO;
    /*

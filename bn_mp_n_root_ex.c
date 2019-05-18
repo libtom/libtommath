@@ -15,7 +15,7 @@
 mp_err mp_n_root_ex(const mp_int *a, mp_digit b, mp_int *c, int fast)
 {
    mp_int t1, t2, t3, a_;
-   int    cmp;
+   mp_ord cmp;
    int    ilog2;
    mp_err res;
 

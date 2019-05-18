@@ -148,8 +148,8 @@ static int test_s_mp_jacobi(void)
       { 9, { -1,  1,  0,  1,  1,  0,  1,  1,  0,  1,  1,  0,  1,  1,  0,  1 } },
    };
 
-   int i, n, should, cnt;
-   mp_err err;
+   int i, n, cnt;
+   mp_err err, should;
    mp_int a, b;
    if (mp_init_multi(&a, &b, NULL)!= MP_OKAY) {
       return EXIT_FAILURE;
@@ -1267,9 +1267,10 @@ LBL_ERR:
 }
 /* stripped down version of mp_radix_size. The faster version can be off by up t
 o +3  */
-static int s_rs(const mp_int *a, int radix, int *size)
+static mp_err s_rs(const mp_int *a, int radix, int *size)
 {
-   int     res, digs = 0;
+   mp_err res;
+   int digs = 0;
    mp_int  t;
    mp_digit d;
    *size = 0;
@@ -1431,7 +1432,7 @@ LBL_ERR:
 static int test_mp_incr(void)
 {
    mp_int a, b;
-   int e = MP_OKAY;
+   mp_err e = MP_OKAY;
 
    if ((e = mp_init_multi(&a, &b, NULL)) != MP_OKAY) {
       goto LTM_ERR;
@@ -1496,7 +1497,7 @@ LTM_ERR:
 static int test_mp_decr(void)
 {
    mp_int a, b;
-   int e = MP_OKAY;
+   mp_err e = MP_OKAY;
 
    if ((e = mp_init_multi(&a, &b, NULL)) != MP_OKAY) {
       goto LTM_ERR;
@@ -1585,7 +1586,7 @@ LTM_ERR:
 static int test_mp_n_root(void)
 {
    mp_int a, c, r;
-   int e;
+   mp_err e;
    int i, j;
 
    const char *input[] = {
@@ -1803,7 +1804,7 @@ LTM_ERR:
 static int test_s_mp_balance_mul(void)
 {
    mp_int a, b, c;
-   int e = MP_OKAY;
+   mp_err e = MP_OKAY;
 
    const char *na =
       "4b0I5uMTujCysw+1OOuOyH2FX2WymrHUqi8BBDb7XpkV/4i7vXTbEYUy/kdIfCKu5jT5JEqYkdmnn3jAYo8XShPzNLxZx9yoLjxYRyptSuOI2B1DspvbIVYXY12sxPZ4/HCJ4Usm2MU5lO/006KnDMxuxiv1rm6YZJZ0eZU";

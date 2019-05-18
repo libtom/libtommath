@@ -435,8 +435,8 @@
 #endif
 
 #if defined(BN_MP_ILOGB_C)
-#   define BN_MP_COUNT_BITS_C
 #   define BN_MP_SET_INT_C
+#   define BN_MP_COUNT_BITS_C
 #   define BN_MP_SET_C
 #   define BN_MP_CMP_D_C
 #   define BN_MP_ZERO_C
