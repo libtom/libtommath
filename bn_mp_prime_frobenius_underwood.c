@@ -27,7 +27,7 @@ mp_err mp_prime_frobenius_underwood(const mp_int *N, mp_bool *result)
 {
    mp_int T1z, T2z, Np1z, sz, tz;
 
-   int a, ap2, length, i, j, isset;
+   int a, ap2, length, i, j;
    mp_err e;
 
    *result = MP_NO;
@@ -129,11 +129,7 @@ mp_err mp_prime_frobenius_underwood(const mp_int *N, mp_bool *result)
       if ((e = mp_mod(&T1z, N, &sz)) != MP_OKAY) {
          goto LBL_FU_ERR;
       }
-      if ((isset = mp_get_bit(&Np1z, i)) == MP_VAL) {
-         e = MP_VAL;
-         goto LBL_FU_ERR;
-      }
-      if (isset == MP_YES) {
+      if (s_mp_get_bit(&Np1z, (unsigned int)i) == MP_YES) {
          /*
           *  temp = (a+2) * sz + tz
           *  tz   = 2 * tz - sz

@@ -73,7 +73,7 @@ static mp_digit s_digit_ilogb(mp_digit base, mp_digit n)
 mp_err mp_ilogb(const mp_int *a, mp_digit base, mp_int *c)
 {
    mp_err err;
-   int cmp;
+   mp_ord cmp;
    unsigned int high, low, mid;
    mp_int bracket_low, bracket_high, bracket_mid, t, bi_base;
    mp_digit tmp;
@@ -90,8 +90,7 @@ mp_err mp_ilogb(const mp_int *a, mp_digit base, mp_int *c)
       return MP_VAL;
    }
    if (base == 2u) {
-      cmp = mp_count_bits(a) - 1;
-      mp_set_int(c, (unsigned long)cmp);
+      mp_set_int(c, (unsigned long)(mp_count_bits(a) - 1));
       return err;
    }
    if (a->used == 1) {

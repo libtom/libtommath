@@ -376,9 +376,10 @@ mp_err mp_or(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
 mp_err mp_and(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
 
 /* Checks the bit at position b and returns MP_YES
-   if the bit is 1, MP_NO if it is 0 and MP_VAL
-   in case of error */
-/* TODO better return type, mixes mp_bool and mp_err */ int mp_get_bit(const mp_int *a, int b) MP_WUR;
+ * if the bit is 1, MP_NO if it is 0 and MP_VAL
+ * in case of error
+ */
+MP_DEPRECATED(s_mp_get_bit) int mp_get_bit(const mp_int *a, int b) MP_WUR;
 
 /* c = a XOR b (two complement) */
 mp_err mp_tc_xor(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
@@ -503,7 +504,7 @@ mp_err mp_sqrtmod_prime(const mp_int *n, const mp_int *prime, mp_int *ret) MP_WU
 mp_err mp_is_square(const mp_int *arg, mp_bool *ret) MP_WUR;
 
 /* computes the jacobi c = (a | n) (or Legendre if b is prime)  */
-mp_err mp_jacobi(const mp_int *a, const mp_int *n, int *c) MP_WUR;
+MP_DEPRECATED(mp_kronecker) mp_err mp_jacobi(const mp_int *a, const mp_int *n, int *c) MP_WUR;
 
 /* computes the Kronecker symbol c = (a | p) (like jacobi() but with {a,p} in Z */
 mp_err mp_kronecker(const mp_int *a, const mp_int *p, int *c) MP_WUR;

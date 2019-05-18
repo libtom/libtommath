@@ -134,22 +134,22 @@ static int test_mp_rand(void)
    return err == MP_OKAY ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
-static int test_mp_jacobi(void)
+static int test_s_mp_jacobi(void)
 {
-   struct mp_jacobi_st {
+   struct s_mp_jacobi_st {
       unsigned long n;
       int c[16];
    };
 
-   static struct mp_jacobi_st jacobi[] = {
+   static struct s_mp_jacobi_st jacobi[] = {
       { 3, {  1, -1,  0,  1, -1,  0,  1, -1,  0,  1, -1,  0,  1, -1,  0,  1 } },
       { 5, {  0,  1, -1, -1,  1,  0,  1, -1, -1,  1,  0,  1, -1, -1,  1,  0 } },
       { 7, {  1, -1,  1, -1, -1,  0,  1,  1, -1,  1, -1, -1,  0,  1,  1, -1 } },
       { 9, { -1,  1,  0,  1,  1,  0,  1,  1,  0,  1,  1,  0,  1,  1,  0,  1 } },
    };
 
-   int i, n, should, cnt;
-   mp_err err;
+   int i, n, cnt;
+   mp_err err, should;
    mp_int a, b;
    if (mp_init_multi(&a, &b, NULL)!= MP_OKAY) {
       return EXIT_FAILURE;
@@ -157,12 +157,12 @@ static int test_mp_jacobi(void)
 
    mp_set_int(&a, 0uL);
    mp_set_int(&b, 1uL);
-   if ((err = mp_jacobi(&a, &b, &i)) != MP_OKAY) {
-      printf("Failed executing mp_jacobi(0 | 1) %s.\n", mp_error_to_string(err));
+   if ((err = s_mp_jacobi(&a, &b, &i)) != MP_OKAY) {
+      printf("Failed executing s_mp_jacobi(0 | 1) %s.\n", mp_error_to_string(err));
       goto LBL_ERR;
    }
    if (i != 1) {
-      printf("Failed trivial mp_jacobi(0 | 1) %d != 1\n", i);
+      printf("Failed trivial s_mp_jacobi(0 | 1) %d != 1\n", i);
       goto LBL_ERR;
    }
    for (cnt = 0; cnt < (int)(sizeof(jacobi)/sizeof(jacobi[0])); ++cnt) {
@@ -176,12 +176,12 @@ static int test_mp_jacobi(void)
             /* Until #44 is fixed the negative a's must fail */
             should = MP_VAL;
          }
-         if ((err = mp_jacobi(&a, &b, &i)) != should) {
-            printf("Failed executing mp_jacobi(%d | %lu) %s.\n", n, jacobi[cnt].n, mp_error_to_string(err));
+         if ((err = s_mp_jacobi(&a, &b, &i)) != should) {
+            printf("Failed executing s_mp_jacobi(%d | %lu) %s.\n", n, jacobi[cnt].n, mp_error_to_string(err));
             goto LBL_ERR;
          }
          if ((err == MP_OKAY) && (i != jacobi[cnt].c[n + 5])) {
-            printf("Failed trivial mp_jacobi(%d | %lu) %d != %d\n", n, jacobi[cnt].n, i, jacobi[cnt].c[n + 5]);
+            printf("Failed trivial s_mp_jacobi(%d | %lu) %d != %d\n", n, jacobi[cnt].n, i, jacobi[cnt].c[n + 5]);
             goto LBL_ERR;
          }
       }
@@ -1267,9 +1267,10 @@ LBL_ERR:
 }
 /* stripped down version of mp_radix_size. The faster version can be off by up t
 o +3  */
-static int s_rs(const mp_int *a, int radix, int *size)
+static mp_err s_rs(const mp_int *a, int radix, int *size)
 {
-   int     res, digs = 0;
+   mp_err res;
+   int digs = 0;
    mp_int  t;
    mp_digit d;
    *size = 0;
@@ -1431,7 +1432,7 @@ LBL_ERR:
 static int test_mp_incr(void)
 {
    mp_int a, b;
-   int e = MP_OKAY;
+   mp_err e = MP_OKAY;
 
    if ((e = mp_init_multi(&a, &b, NULL)) != MP_OKAY) {
       goto LTM_ERR;
@@ -1496,7 +1497,7 @@ LTM_ERR:
 static int test_mp_decr(void)
 {
    mp_int a, b;
-   int e = MP_OKAY;
+   mp_err e = MP_OKAY;
 
    if ((e = mp_init_multi(&a, &b, NULL)) != MP_OKAY) {
       goto LTM_ERR;
@@ -1585,7 +1586,7 @@ LTM_ERR:
 static int test_mp_n_root(void)
 {
    mp_int a, c, r;
-   int e;
+   mp_err e;
    int i, j;
 
    const char *input[] = {
@@ -1803,7 +1804,7 @@ LTM_ERR:
 static int test_s_mp_balance_mul(void)
 {
    mp_int a, b, c;
-   int e = MP_OKAY;
+   mp_err e = MP_OKAY;
 
    const char *na =
       "4b0I5uMTujCysw+1OOuOyH2FX2WymrHUqi8BBDb7XpkV/4i7vXTbEYUy/kdIfCKu5jT5JEqYkdmnn3jAYo8XShPzNLxZx9yoLjxYRyptSuOI2B1DspvbIVYXY12sxPZ4/HCJ4Usm2MU5lO/006KnDMxuxiv1rm6YZJZ0eZU";
@@ -1851,23 +1852,25 @@ int unit_tests(int argc, char **argv)
       T(trivial_stuff),
       T(mp_cnt_lsb),
       T(mp_complement),
+      T(mp_decr),
       T(mp_div_3),
       T(mp_dr_reduce),
       T(mp_get_int),
       T(mp_get_long),
       T(mp_get_long_long),
+      T(mp_ilogb),
+      T(mp_incr),
       T(mp_invmod),
       T(mp_is_square),
-      T(mp_jacobi),
       T(mp_kronecker),
       T(mp_montgomery_reduce),
+      T(mp_n_root),
       T(mp_prime_is_prime),
       T(mp_prime_rand),
       T(mp_rand),
       T(mp_read_radix),
       T(mp_reduce_2k),
       T(mp_reduce_2k_l),
-      T(mp_n_root),
       T(mp_set_double),
       T(mp_sqrt),
       T(mp_sqrtmod_prime),
@@ -1875,10 +1878,8 @@ int unit_tests(int argc, char **argv)
       T(mp_tc_div_2d),
       T(mp_tc_or),
       T(mp_tc_xor),
-      T(mp_incr),
-      T(mp_decr),
       T(s_mp_balance_mul),
-      T(mp_ilogb)
+      T(s_mp_jacobi)
 #undef T
    };
    unsigned long i;

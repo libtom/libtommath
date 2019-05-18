@@ -10,14 +10,6 @@ void mp_rand_source(mp_err(*source)(void *out, size_t size))
    s_mp_rand_source = (source == NULL) ? s_mp_rand_platform : source;
 }
 
-/* makes a pseudo-random int of a given size */
-mp_err mp_rand_digit(mp_digit *r)
-{
-   mp_err ret = s_mp_rand_source(r, sizeof(mp_digit));
-   *r &= MP_MASK;
-   return ret;
-}
-
 mp_err mp_rand(mp_int *a, int digits)
 {
    int i;

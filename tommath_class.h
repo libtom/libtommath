@@ -47,7 +47,6 @@
 #   define BN_MP_FREAD_C
 #   define BN_MP_FWRITE_C
 #   define BN_MP_GCD_C
-#   define BN_MP_GET_BIT_C
 #   define BN_MP_GET_DOUBLE_C
 #   define BN_MP_GET_INT_C
 #   define BN_MP_GET_LONG_C
@@ -66,7 +65,6 @@
 #   define BN_MP_IS_SQUARE_C
 #   define BN_MP_ISEVEN_C
 #   define BN_MP_ISODD_C
-#   define BN_MP_JACOBI_C
 #   define BN_MP_KRONECKER_C
 #   define BN_MP_LCM_C
 #   define BN_MP_LSHD_C
@@ -141,6 +139,7 @@
 #   define BN_S_MP_BALANCE_MUL_C
 #   define BN_S_MP_EXPTMOD_C
 #   define BN_S_MP_EXPTMOD_FAST_C
+#   define BN_S_MP_GET_BIT_C
 #   define BN_S_MP_INVMOD_FAST_C
 #   define BN_S_MP_INVMOD_SLOW_C
 #   define BN_S_MP_KARATSUBA_MUL_C
@@ -163,6 +162,16 @@
 #endif
 
 #if defined(BN_DEPRECATED_C)
+#   define BN_MP_GET_BIT_C
+#   define BN_S_MP_GET_BIT_C
+#   define BN_S_MP_JACOBI_C
+#   define BN_MP_CMP_D_C
+#   define BN_MP_KRONECKER_C
+#   define BN_MP_JACOBI_C
+#   define BN_MP_PRIME_RANDOM_EX_C
+#   define BN_S_MP_PRIME_RANDOM_EX_C
+#   define BN_MP_RAND_DIGIT_C
+#   define BN_S_MP_RAND_SOURCE_C
 #   define BN_FAST_MP_INVMOD_C
 #   define BN_S_MP_INVMOD_FAST_C
 #   define BN_FAST_MP_MONTGOMERY_REDUCE_C
@@ -409,9 +418,6 @@
 #   define BN_MP_CLEAR_C
 #endif
 
-#if defined(BN_MP_GET_BIT_C)
-#endif
-
 #if defined(BN_MP_GET_DOUBLE_C)
 #endif
 
@@ -429,8 +435,8 @@
 #endif
 
 #if defined(BN_MP_ILOGB_C)
-#   define BN_MP_COUNT_BITS_C
 #   define BN_MP_SET_INT_C
+#   define BN_MP_COUNT_BITS_C
 #   define BN_MP_SET_C
 #   define BN_MP_CMP_D_C
 #   define BN_MP_ZERO_C
@@ -504,11 +510,6 @@
 #endif
 
 #if defined(BN_MP_ISODD_C)
-#endif
-
-#if defined(BN_MP_JACOBI_C)
-#   define BN_MP_CMP_D_C
-#   define BN_MP_KRONECKER_C
 #endif
 
 #if defined(BN_MP_KRONECKER_C)
@@ -661,7 +662,7 @@
 #   define BN_MP_MUL_C
 #   define BN_MP_SUB_C
 #   define BN_MP_MOD_C
-#   define BN_MP_GET_BIT_C
+#   define BN_S_MP_GET_BIT_C
 #   define BN_MP_EXCH_C
 #   define BN_MP_CMP_C
 #   define BN_MP_CLEAR_MULTI_C
@@ -724,7 +725,6 @@
 #   define BN_MP_ADD_D_C
 #   define BN_S_MP_RAND_CB_C
 #   define BN_S_MP_RAND_SOURCE_C
-#   define BN_MP_PRIME_RANDOM_EX_C
 #endif
 
 #if defined(BN_MP_PRIME_STRONG_LUCAS_SELFRIDGE_C)
@@ -747,7 +747,7 @@
 #   define BN_MP_MOD_C
 #   define BN_MP_SQR_C
 #   define BN_MP_SUB_C
-#   define BN_MP_GET_BIT_C
+#   define BN_S_MP_GET_BIT_C
 #   define BN_MP_ADD_C
 #   define BN_MP_DIV_2_C
 #   define BN_MP_SUB_D_C
@@ -766,10 +766,9 @@
 
 #if defined(BN_MP_RAND_C)
 #   define BN_MP_RAND_SOURCE_C
-#   define BN_MP_RAND_DIGIT_C
-#   define BN_S_MP_RAND_SOURCE_C
 #   define BN_MP_ZERO_C
 #   define BN_MP_GROW_C
+#   define BN_S_MP_RAND_SOURCE_C
 #endif
 
 #if defined(BN_MP_READ_RADIX_C)
@@ -917,7 +916,7 @@
 #if defined(BN_MP_SQRTMOD_PRIME_C)
 #   define BN_MP_CMP_D_C
 #   define BN_MP_ZERO_C
-#   define BN_MP_JACOBI_C
+#   define BN_MP_KRONECKER_C
 #   define BN_MP_INIT_MULTI_C
 #   define BN_MP_MOD_D_C
 #   define BN_MP_ADD_D_C
@@ -1087,6 +1086,9 @@
 #   define BN_MP_SQR_C
 #   define BN_MP_MUL_C
 #   define BN_MP_EXCH_C
+#endif
+
+#if defined(BN_S_MP_GET_BIT_C)
 #endif
 
 #if defined(BN_S_MP_INVMOD_FAST_C)

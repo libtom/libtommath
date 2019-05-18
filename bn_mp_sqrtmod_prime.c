@@ -22,7 +22,7 @@ mp_err mp_sqrtmod_prime(const mp_int *n, const mp_int *prime, mp_int *ret)
       return MP_OKAY;
    }
    if (mp_cmp_d(prime, 2uL) == MP_EQ)                            return MP_VAL; /* prime must be odd */
-   if ((res = mp_jacobi(n, prime, &legendre)) != MP_OKAY)        return res;
+   if ((res = mp_kronecker(n, prime, &legendre)) != MP_OKAY)        return res;
    if (legendre == -1)                                           return MP_VAL; /* quadratic non-residue mod prime */
 
    if ((res = mp_init_multi(&t1, &C, &Q, &S, &Z, &M, &T, &R, &two, NULL)) != MP_OKAY) {
@@ -62,7 +62,7 @@ mp_err mp_sqrtmod_prime(const mp_int *n, const mp_int *prime, mp_int *ret)
    mp_set_int(&Z, 2uL);
    /* Z = 2 */
    while (1) {
-      if ((res = mp_jacobi(&Z, prime, &legendre)) != MP_OKAY)     goto cleanup;
+      if ((res = mp_kronecker(&Z, prime, &legendre)) != MP_OKAY)     goto cleanup;
       if (legendre == -1) break;
       if ((res = mp_add_d(&Z, 1uL, &Z)) != MP_OKAY)               goto cleanup;
       /* Z = Z + 1 */

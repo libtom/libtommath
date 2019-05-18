@@ -51,7 +51,7 @@ mp_err mp_prime_is_prime(const mp_int *a, int t, mp_bool *result)
    if ((err = mp_is_square(a, &res)) != MP_OKAY) {
       return err;
    }
-   if (res != 0) {
+   if (res != MP_NO) {
       return MP_OKAY;
    }
 

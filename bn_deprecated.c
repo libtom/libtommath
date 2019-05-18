@@ -6,6 +6,48 @@
 
 /* SPDX-License-Identifier: Unlicense */
 #include <tommath_private.h>
+#ifdef BN_MP_GET_BIT_C
+/* Checks the bit at position b and returns MP_YES
+   if the bit is 1, MP_NO if it is 0 and MP_VAL
+   in case of error */
+int mp_get_bit(const mp_int *a, int b)
+{
+   if (b < 0) {
+      return MP_VAL;
+   }
+   return s_mp_get_bit(a, (unsigned int)b) == MP_YES ? MP_YES : MP_NO;
+}
+#endif
+#ifdef BN_MP_JACOBI_C
+mp_err s_mp_jacobi(const mp_int *a, const mp_int *n, int *c)
+{
+   if (a->sign == MP_NEG) {
+      return MP_VAL;
+   }
+   if (mp_cmp_d(n, 0uL) != MP_GT) {
+      return MP_VAL;
+   }
+   return mp_kronecker(a, n, c);
+}
+mp_err mp_jacobi(const mp_int *a, const mp_int *n, int *c)
+{
+   return s_mp_jacobi(a, n, c);
+}
+#endif
+#ifdef BN_MP_PRIME_RANDOM_EX_C
+mp_err mp_prime_random_ex(mp_int *a, int t, int size, int flags, private_mp_prime_callback cb, void *dat)
+{
+   return s_mp_prime_random_ex(a, t, size, flags, cb, dat);
+}
+#endif
+#ifdef BN_MP_RAND_DIGIT_C
+mp_err mp_rand_digit(mp_digit *r)
+{
+   mp_err ret = s_mp_rand_source(r, sizeof(mp_digit));
+   *r &= MP_MASK;
+   return ret;
+}
+#endif
 #ifdef BN_FAST_MP_INVMOD_C
 mp_err fast_mp_invmod(const mp_int *a, const mp_int *b, mp_int *c)
 {
