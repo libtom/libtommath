@@ -9,7 +9,7 @@ int mp_get_bit(const mp_int *a, int b)
    if (b < 0) {
       return MP_VAL;
    }
-   return s_mp_get_bit(a, (unsigned int)b) == MP_YES ? MP_YES : MP_NO;
+   return (s_mp_get_bit(a, (unsigned int)b) == MP_YES) ? MP_YES : MP_NO;
 }
 #endif
 #ifdef BN_S_MP_JACOBI_C
