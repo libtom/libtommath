@@ -61,7 +61,7 @@ mp_err mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y)
 
 #ifdef BN_MP_DR_IS_MODULUS_C
    /* is it a DR modulus? */
-   dr = mp_dr_is_modulus(P) == MP_YES;
+   dr = (mp_dr_is_modulus(P) == MP_YES) ? 1 : 0;
 #else
    /* default to no */
    dr = 0;
@@ -70,7 +70,7 @@ mp_err mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y)
 #ifdef BN_MP_REDUCE_IS_2K_C
    /* if not, is it a unrestricted DR modulus? */
    if (dr == 0) {
-      dr = (mp_reduce_is_2k(P) == MP_YES) << 1;
+      dr = (mp_reduce_is_2k(P) == MP_YES) ? 2 : 0;
    }
 #endif
 

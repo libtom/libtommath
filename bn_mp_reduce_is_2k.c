@@ -29,8 +29,10 @@ mp_bool mp_reduce_is_2k(const mp_int *a)
             iz = 1;
          }
       }
+      return MP_YES;
+   } else {
+      return MP_YES;
    }
-   return MP_YES;
 }
 
 #endif

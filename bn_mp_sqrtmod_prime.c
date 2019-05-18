@@ -81,7 +81,6 @@ mp_err mp_sqrtmod_prime(const mp_int *n, const mp_int *prime, mp_int *ret)
    /* M = S */
    mp_set_int(&two, 2uL);
 
-   res = MP_VAL;
    while (1) {
       if ((res = mp_copy(&T, &t1)) != MP_OKAY)                    goto cleanup;
       i = 0;

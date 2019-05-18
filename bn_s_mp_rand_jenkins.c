@@ -5,7 +5,7 @@
 
 /* Bob Jenkins' http://burtleburtle.net/bob/rand/smallprng.html */
 /* Chosen for speed and a good "mix" */
-typedef struct ranctx {
+typedef struct {
    uint64_t a;
    uint64_t b;
    uint64_t c;
