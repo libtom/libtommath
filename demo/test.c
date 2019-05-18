@@ -129,7 +129,7 @@ static int test_mp_rand(void)
          break;
       }
    }
-   mp_rand_source(NULL);
+   mp_rand_source(s_mp_rand_jenkins);
    mp_clear_multi(&a, &b, NULL);
    return err == MP_OKAY ? EXIT_SUCCESS : EXIT_FAILURE;
 }
