@@ -24,7 +24,7 @@ mp_err mp_fwrite(const mp_int *a, int radix, FILE *stream)
       return err;
    }
 
-   if (fwrite(buf, (size_t)len, 1, stream) != 1) {
+   if (fwrite(buf, (size_t)len, 1uL, stream) != 1uL) {
       MP_FREE_BUFFER(buf, (size_t)len);
       return MP_ERR;
    }

@@ -82,7 +82,7 @@ do {                                                    \
 do {                                                    \
    size_t zs_ = (size);                                 \
    char* zm_ = (char*)(mem);                            \
-   while (zs_-- > 0) {                                  \
+   while (zs_-- > 0u) {                                 \
       *zm_++ = 0;                                       \
    }                                                    \
 } while (0)
