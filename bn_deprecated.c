@@ -116,7 +116,7 @@ mp_err mp_toom_sqr(const mp_int *a, mp_int *b)
    return s_mp_toom_sqr(a, b);
 }
 #endif
-#ifdef BN_REVERSE_C
+#ifdef S_MP_REVERSE_C
 void bn_reverse(unsigned char *s, int len)
 {
    s_mp_reverse(s, len);
