@@ -7,7 +7,7 @@
 mp_err mp_mod_2d(const mp_int *a, int b, mp_int *c)
 {
    int x;
-   mp_err res;
+   mp_err err;
 
    /* if b is <= 0 then zero the int */
    if (b <= 0) {
@@ -21,8 +21,8 @@ mp_err mp_mod_2d(const mp_int *a, int b, mp_int *c)
    }
 
    /* copy */
-   if ((res = mp_copy(a, c)) != MP_OKAY) {
-      return res;
+   if ((err = mp_copy(a, c)) != MP_OKAY) {
+      return err;
    }
 
    /* zero digits above the last digit of the modulus */

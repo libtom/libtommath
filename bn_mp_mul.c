@@ -6,7 +6,7 @@
 /* high level multiplication (handles sign) */
 mp_err mp_mul(const mp_int *a, const mp_int *b, mp_int *c)
 {
-   mp_err  res;
+   mp_err  err;
    mp_sign neg;
 #ifdef BN_S_MP_BALANCE_MUL_C
    int len_b, len_a;
@@ -38,7 +38,7 @@ mp_err mp_mul(const mp_int *a, const mp_int *b, mp_int *c)
       goto GO_ON;
    }
 
-   res = s_mp_balance_mul(a,b,c);
+   err = s_mp_balance_mul(a,b,c);
    goto END;
 
 GO_ON:
@@ -47,13 +47,13 @@ GO_ON:
    /* use Toom-Cook? */
 #ifdef BN_S_MP_TOOM_MUL_C
    if (MP_MIN(a->used, b->used) >= MP_TOOM_MUL_CUTOFF) {
-      res = s_mp_toom_mul(a, b, c);
+      err = s_mp_toom_mul(a, b, c);
    } else
 #endif
 #ifdef BN_S_MP_KARATSUBA_MUL_C
       /* use Karatsuba? */
       if (MP_MIN(a->used, b->used) >= MP_KARATSUBA_MUL_CUTOFF) {
-         res = s_mp_karatsuba_mul(a, b, c);
+         err = s_mp_karatsuba_mul(a, b, c);
       } else
 #endif
       {
@@ -68,19 +68,19 @@ GO_ON:
 #ifdef BN_S_MP_MUL_DIGS_FAST_C
          if ((digs < (int)MP_WARRAY) &&
              (MP_MIN(a->used, b->used) <= MP_MAXFAST)) {
-            res = s_mp_mul_digs_fast(a, b, c, digs);
+            err = s_mp_mul_digs_fast(a, b, c, digs);
          } else
 #endif
          {
 #ifdef BN_S_MP_MUL_DIGS_C
-            res = s_mp_mul_digs(a, b, c, a->used + b->used + 1);
+            err = s_mp_mul_digs(a, b, c, a->used + b->used + 1);
 #else
-            res = MP_VAL;
+            err = MP_VAL;
 #endif
          }
       }
 END:
    c->sign = (c->used > 0) ? neg : MP_ZPOS;
-   return res;
+   return err;
 }
 #endif

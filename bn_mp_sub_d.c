@@ -7,13 +7,13 @@
 mp_err mp_sub_d(const mp_int *a, mp_digit b, mp_int *c)
 {
    mp_digit *tmpa, *tmpc, mu;
-   mp_err    res;
+   mp_err    err;
    int       ix, oldused;
 
    /* grow c as required */
    if (c->alloc < (a->used + 1)) {
-      if ((res = mp_grow(c, a->used + 1)) != MP_OKAY) {
-         return res;
+      if ((err = mp_grow(c, a->used + 1)) != MP_OKAY) {
+         return err;
       }
    }
 
@@ -23,13 +23,13 @@ mp_err mp_sub_d(const mp_int *a, mp_digit b, mp_int *c)
    if (a->sign == MP_NEG) {
       mp_int a_ = *a;
       a_.sign = MP_ZPOS;
-      res     = mp_add_d(&a_, b, c);
+      err     = mp_add_d(&a_, b, c);
       c->sign = MP_NEG;
 
       /* clamp */
       mp_clamp(c);
 
-      return res;
+      return err;
    }
 
    /* setup regs */

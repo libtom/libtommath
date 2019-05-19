@@ -7,7 +7,7 @@
 mp_err mp_montgomery_reduce(mp_int *x, const mp_int *n, mp_digit rho)
 {
    int      ix, digs;
-   mp_err   res;
+   mp_err   err;
    mp_digit mu;
 
    /* can the fast reduction [comba] method be used?
@@ -25,8 +25,8 @@ mp_err mp_montgomery_reduce(mp_int *x, const mp_int *n, mp_digit rho)
 
    /* grow the input as required */
    if (x->alloc < digs) {
-      if ((res = mp_grow(x, digs)) != MP_OKAY) {
-         return res;
+      if ((err = mp_grow(x, digs)) != MP_OKAY) {
+         return err;
       }
    }
    x->used = digs;

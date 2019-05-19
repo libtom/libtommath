@@ -113,10 +113,10 @@ void (*ltm_rng_callback)(void);
 
 static mp_err s_read_ltm_rng(void *p, size_t n)
 {
-   unsigned long ret;
+   unsigned long res;
    if (ltm_rng == NULL) return MP_ERR;
-   ret = ltm_rng(p, n, ltm_rng_callback);
-   if (ret != n) return MP_ERR;
+   res = ltm_rng(p, n, ltm_rng_callback);
+   if (res != n) return MP_ERR;
    return MP_OKAY;
 }
 #endif
@@ -128,29 +128,29 @@ mp_err s_mp_rand_platform(void *p, size_t n)
    return MP_OKAY;
 #else
 
-   mp_err ret = MP_ERR;
+   mp_err res = MP_ERR;
 
 #if defined(MP_WIN_CSP)
-   ret = s_read_win_csp(p, n);
-   if (ret == MP_OKAY) return ret;
+   res = s_read_win_csp(p, n);
+   if (res == MP_OKAY) return res;
 #endif
 
 #if defined(MP_GETRANDOM)
-   ret = s_read_getrandom(p, n);
-   if (ret == MP_OKAY) return ret;
+   res = s_read_getrandom(p, n);
+   if (res == MP_OKAY) return res;
 #endif
 
 #if defined(MP_DEV_URANDOM)
-   ret = s_read_dev_urandom(p, n);
-   if (ret == MP_OKAY) return ret;
+   res = s_read_dev_urandom(p, n);
+   if (res == MP_OKAY) return res;
 #endif
 
 #if defined(MP_PRNG_ENABLE_LTM_RNG)
-   ret = s_read_ltm_rng(p, n);
-   if (ret == MP_OKAY) return ret;
+   res = s_read_ltm_rng(p, n);
+   if (res == MP_OKAY) return res;
 #endif
 
-   return ret;
+   return res;
 #endif
 }
 

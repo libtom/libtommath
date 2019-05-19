@@ -6,7 +6,7 @@
 /* two complement or */
 mp_err mp_tc_or(const mp_int *a, const mp_int *b, mp_int *c)
 {
-   mp_err res = MP_OKAY;
+   mp_err err = MP_OKAY;
    int bits, abits, bbits;
    mp_sign sa = a->sign, sb = b->sign;
    mp_int *mx = NULL, _mx, acpy, bcpy;
@@ -15,38 +15,38 @@ mp_err mp_tc_or(const mp_int *a, const mp_int *b, mp_int *c)
       abits = mp_count_bits(a);
       bbits = mp_count_bits(b);
       bits = MP_MAX(abits, bbits);
-      res = mp_init_set_int(&_mx, 1uL);
-      if (res != MP_OKAY) {
+      err = mp_init_set_int(&_mx, 1uL);
+      if (err != MP_OKAY) {
          goto end;
       }
 
       mx = &_mx;
-      res = mp_mul_2d(mx, bits + 1, mx);
-      if (res != MP_OKAY) {
+      err = mp_mul_2d(mx, bits + 1, mx);
+      if (err != MP_OKAY) {
          goto end;
       }
 
       if (sa == MP_NEG) {
-         res = mp_init(&acpy);
-         if (res != MP_OKAY) {
+         err = mp_init(&acpy);
+         if (err != MP_OKAY) {
             goto end;
          }
 
-         res = mp_add(mx, a, &acpy);
-         if (res != MP_OKAY) {
+         err = mp_add(mx, a, &acpy);
+         if (err != MP_OKAY) {
             mp_clear(&acpy);
             goto end;
          }
          a = &acpy;
       }
       if (sb == MP_NEG) {
-         res = mp_init(&bcpy);
-         if (res != MP_OKAY) {
+         err = mp_init(&bcpy);
+         if (err != MP_OKAY) {
             goto end;
          }
 
-         res = mp_add(mx, b, &bcpy);
-         if (res != MP_OKAY) {
+         err = mp_add(mx, b, &bcpy);
+         if (err != MP_OKAY) {
             mp_clear(&bcpy);
             goto end;
          }
@@ -54,10 +54,10 @@ mp_err mp_tc_or(const mp_int *a, const mp_int *b, mp_int *c)
       }
    }
 
-   res = mp_or(a, b, c);
+   err = mp_or(a, b, c);
 
-   if (((sa == MP_NEG) || (sb == MP_NEG)) && (res == MP_OKAY)) {
-      res = mp_sub(c, mx, c);
+   if (((sa == MP_NEG) || (sb == MP_NEG)) && (err == MP_OKAY)) {
+      err = mp_sub(c, mx, c);
    }
 
 end:
@@ -73,6 +73,6 @@ end:
       mp_clear(mx);
    }
 
-   return res;
+   return err;
 }
 #endif

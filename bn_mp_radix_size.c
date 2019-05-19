@@ -6,7 +6,7 @@
 /* returns size of ASCII reprensentation */
 mp_err mp_radix_size(const mp_int *a, int radix, int *size)
 {
-   mp_err  res;
+   mp_err  err;
    int     digs;
    mp_int   t;
    mp_digit d;
@@ -38,8 +38,8 @@ mp_err mp_radix_size(const mp_int *a, int radix, int *size)
    }
 
    /* init a copy of the input */
-   if ((res = mp_init_copy(&t, a)) != MP_OKAY) {
-      return res;
+   if ((err = mp_init_copy(&t, a)) != MP_OKAY) {
+      return err;
    }
 
    /* force temp to positive */
@@ -47,9 +47,9 @@ mp_err mp_radix_size(const mp_int *a, int radix, int *size)
 
    /* fetch out all of the digits */
    while (!MP_IS_ZERO(&t)) {
-      if ((res = mp_div_d(&t, (mp_digit)radix, &t, &d)) != MP_OKAY) {
+      if ((err = mp_div_d(&t, (mp_digit)radix, &t, &d)) != MP_OKAY) {
          mp_clear(&t);
-         return res;
+         return err;
       }
       ++digs;
    }

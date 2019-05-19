@@ -9,12 +9,12 @@
  */
 mp_err mp_abs(const mp_int *a, mp_int *b)
 {
-   mp_err     res;
+   mp_err     err;
 
    /* copy a to b */
    if (a != b) {
-      if ((res = mp_copy(a, b)) != MP_OKAY) {
-         return res;
+      if ((err = mp_copy(a, b)) != MP_OKAY) {
+         return err;
       }
    }
 

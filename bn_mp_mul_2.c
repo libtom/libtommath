@@ -7,12 +7,12 @@
 mp_err mp_mul_2(const mp_int *a, mp_int *b)
 {
    int     x, oldused;
-   mp_err res;
+   mp_err err;
 
    /* grow to accomodate result */
    if (b->alloc < (a->used + 1)) {
-      if ((res = mp_grow(b, a->used + 1)) != MP_OKAY) {
-         return res;
+      if ((err = mp_grow(b, a->used + 1)) != MP_OKAY) {
+         return err;
       }
    }
 

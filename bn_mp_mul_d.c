@@ -8,13 +8,13 @@ mp_err mp_mul_d(const mp_int *a, mp_digit b, mp_int *c)
 {
    mp_digit u, *tmpa, *tmpc;
    mp_word  r;
-   mp_err   res;
+   mp_err   err;
    int      ix, olduse;
 
    /* make sure c is big enough to hold a*b */
    if (c->alloc < (a->used + 1)) {
-      if ((res = mp_grow(c, a->used + 1)) != MP_OKAY) {
-         return res;
+      if ((err = mp_grow(c, a->used + 1)) != MP_OKAY) {
+         return err;
       }
    }
 

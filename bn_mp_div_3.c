@@ -9,14 +9,14 @@ mp_err mp_div_3(const mp_int *a, mp_int *c, mp_digit *d)
    mp_int   q;
    mp_word  w, t;
    mp_digit b;
-   mp_err   res;
+   mp_err   err;
    int      ix;
 
    /* b = 2**MP_DIGIT_BIT / 3 */
    b = ((mp_word)1 << (mp_word)MP_DIGIT_BIT) / (mp_word)3;
 
-   if ((res = mp_init_size(&q, a->used)) != MP_OKAY) {
-      return res;
+   if ((err = mp_init_size(&q, a->used)) != MP_OKAY) {
+      return err;
    }
 
    q.used = a->used;
@@ -57,7 +57,7 @@ mp_err mp_div_3(const mp_int *a, mp_int *c, mp_digit *d)
    }
    mp_clear(&q);
 
-   return res;
+   return err;
 }
 
 #endif

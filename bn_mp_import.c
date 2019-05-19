@@ -9,7 +9,7 @@
 mp_err mp_import(mp_int *rop, size_t count, int order, size_t size,
                  int endian, size_t nails, const void *op)
 {
-   mp_err result;
+   mp_err err;
    size_t odd_nails, nail_bytes, i, j;
    unsigned char odd_nail_mask;
 
@@ -38,8 +38,8 @@ mp_err mp_import(mp_int *rop, size_t count, int order, size_t size,
                                 (((order == 1) ? i : ((count - 1u) - i)) * size) +
                                 ((endian == 1) ? (j + nail_bytes) : (((size - 1u) - j) - nail_bytes)));
 
-         if ((result = mp_mul_2d(rop, (j == 0u) ? (int)(8u - odd_nails) : 8, rop)) != MP_OKAY) {
-            return result;
+         if ((err = mp_mul_2d(rop, (j == 0u) ? (int)(8u - odd_nails) : 8, rop)) != MP_OKAY) {
+            return err;
          }
 
          rop->dp[0] |= (j == 0u) ? (mp_digit)(byte & odd_nail_mask) : (mp_digit)byte;

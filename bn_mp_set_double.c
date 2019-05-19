@@ -8,7 +8,7 @@ mp_err mp_set_double(mp_int *a, double b)
 {
    uint64_t frac;
    int exp;
-   mp_err res;
+   mp_err err;
    union {
       double   dbl;
       uint64_t bits;
@@ -25,9 +25,9 @@ mp_err mp_set_double(mp_int *a, double b)
 
    mp_set_long_long(a, frac);
 
-   res = (exp < 0) ? mp_div_2d(a, -exp, a, NULL) : mp_mul_2d(a, exp, a);
-   if (res != MP_OKAY) {
-      return res;
+   err = (exp < 0) ? mp_div_2d(a, -exp, a, NULL) : mp_mul_2d(a, exp, a);
+   if (err != MP_OKAY) {
+      return err;
    }
 
    if (((cast.bits >> 63) != 0ULL) && !MP_IS_ZERO(a)) {

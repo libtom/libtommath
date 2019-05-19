@@ -6,14 +6,14 @@
 /* single digit addition */
 mp_err mp_add_d(const mp_int *a, mp_digit b, mp_int *c)
 {
-   mp_err     res;
+   mp_err     err;
    int ix, oldused;
    mp_digit *tmpa, *tmpc, mu;
 
    /* grow c as required */
    if (c->alloc < (a->used + 1)) {
-      if ((res = mp_grow(c, a->used + 1)) != MP_OKAY) {
-         return res;
+      if ((err = mp_grow(c, a->used + 1)) != MP_OKAY) {
+         return err;
       }
    }
 
@@ -24,7 +24,7 @@ mp_err mp_add_d(const mp_int *a, mp_digit b, mp_int *c)
       a_.sign = MP_ZPOS;
 
       /* c = |a| - b */
-      res = mp_sub_d(&a_, b, c);
+      err = mp_sub_d(&a_, b, c);
 
       /* fix sign  */
       c->sign = MP_NEG;
@@ -32,7 +32,7 @@ mp_err mp_add_d(const mp_int *a, mp_digit b, mp_int *c)
       /* clamp */
       mp_clamp(c);
 
-      return res;
+      return err;
    }
 
    /* old number of used digits in c */

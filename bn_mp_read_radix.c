@@ -8,7 +8,7 @@
 /* read a string [ASCII] in a given radix */
 mp_err mp_read_radix(mp_int *a, const char *str, int radix)
 {
-   mp_err   res;
+   mp_err   err;
    int      y;
    mp_sign  neg;
    unsigned pos;
@@ -55,11 +55,11 @@ mp_err mp_read_radix(mp_int *a, const char *str, int radix)
       if ((y == 0xff) || (y >= radix)) {
          break;
       }
-      if ((res = mp_mul_d(a, (mp_digit)radix, a)) != MP_OKAY) {
-         return res;
+      if ((err = mp_mul_d(a, (mp_digit)radix, a)) != MP_OKAY) {
+         return err;
       }
-      if ((res = mp_add_d(a, (mp_digit)y, a)) != MP_OKAY) {
-         return res;
+      if ((err = mp_add_d(a, (mp_digit)y, a)) != MP_OKAY) {
+         return err;
       }
       ++str;
    }

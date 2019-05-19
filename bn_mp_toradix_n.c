@@ -10,7 +10,7 @@
 mp_err mp_toradix_n(const mp_int *a, char *str, int radix, int maxlen)
 {
    int     digs;
-   mp_err  res;
+   mp_err  err;
    mp_int  t;
    mp_digit d;
    char   *_s = str;
@@ -27,8 +27,8 @@ mp_err mp_toradix_n(const mp_int *a, char *str, int radix, int maxlen)
       return MP_OKAY;
    }
 
-   if ((res = mp_init_copy(&t, a)) != MP_OKAY) {
-      return res;
+   if ((err = mp_init_copy(&t, a)) != MP_OKAY) {
+      return err;
    }
 
    /* if it is negative output a - */
@@ -50,9 +50,9 @@ mp_err mp_toradix_n(const mp_int *a, char *str, int radix, int maxlen)
          /* no more room */
          break;
       }
-      if ((res = mp_div_d(&t, (mp_digit)radix, &t, &d)) != MP_OKAY) {
+      if ((err = mp_div_d(&t, (mp_digit)radix, &t, &d)) != MP_OKAY) {
          mp_clear(&t);
-         return res;
+         return err;
       }
       *str++ = mp_s_rmap[d];
       ++digs;

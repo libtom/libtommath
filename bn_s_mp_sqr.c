@@ -8,13 +8,13 @@ mp_err s_mp_sqr(const mp_int *a, mp_int *b)
 {
    mp_int   t;
    int      ix, iy, pa;
-   mp_err   res;
+   mp_err   err;
    mp_word  r;
    mp_digit u, tmpx, *tmpt;
 
    pa = a->used;
-   if ((res = mp_init_size(&t, (2 * pa) + 1)) != MP_OKAY) {
-      return res;
+   if ((err = mp_init_size(&t, (2 * pa) + 1)) != MP_OKAY) {
+      return err;
    }
 
    /* default used is maximum possible size */

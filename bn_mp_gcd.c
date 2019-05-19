@@ -8,7 +8,7 @@ mp_err mp_gcd(const mp_int *a, const mp_int *b, mp_int *c)
 {
    mp_int  u, v;
    int     k, u_lsb, v_lsb;
-   mp_err res;
+   mp_err err;
 
    /* either zero than gcd is the largest */
    if (MP_IS_ZERO(a)) {
@@ -19,11 +19,11 @@ mp_err mp_gcd(const mp_int *a, const mp_int *b, mp_int *c)
    }
 
    /* get copies of a and b we can modify */
-   if ((res = mp_init_copy(&u, a)) != MP_OKAY) {
-      return res;
+   if ((err = mp_init_copy(&u, a)) != MP_OKAY) {
+      return err;
    }
 
-   if ((res = mp_init_copy(&v, b)) != MP_OKAY) {
+   if ((err = mp_init_copy(&v, b)) != MP_OKAY) {
       goto LBL_U;
    }
 
@@ -37,24 +37,24 @@ mp_err mp_gcd(const mp_int *a, const mp_int *b, mp_int *c)
 
    if (k > 0) {
       /* divide the power of two out */
-      if ((res = mp_div_2d(&u, k, &u, NULL)) != MP_OKAY) {
+      if ((err = mp_div_2d(&u, k, &u, NULL)) != MP_OKAY) {
          goto LBL_V;
       }
 
-      if ((res = mp_div_2d(&v, k, &v, NULL)) != MP_OKAY) {
+      if ((err = mp_div_2d(&v, k, &v, NULL)) != MP_OKAY) {
          goto LBL_V;
       }
    }
 
    /* divide any remaining factors of two out */
    if (u_lsb != k) {
-      if ((res = mp_div_2d(&u, u_lsb - k, &u, NULL)) != MP_OKAY) {
+      if ((err = mp_div_2d(&u, u_lsb - k, &u, NULL)) != MP_OKAY) {
          goto LBL_V;
       }
    }
 
    if (v_lsb != k) {
-      if ((res = mp_div_2d(&v, v_lsb - k, &v, NULL)) != MP_OKAY) {
+      if ((err = mp_div_2d(&v, v_lsb - k, &v, NULL)) != MP_OKAY) {
          goto LBL_V;
       }
    }
@@ -67,26 +67,26 @@ mp_err mp_gcd(const mp_int *a, const mp_int *b, mp_int *c)
       }
 
       /* subtract smallest from largest */
-      if ((res = s_mp_sub(&v, &u, &v)) != MP_OKAY) {
+      if ((err = s_mp_sub(&v, &u, &v)) != MP_OKAY) {
          goto LBL_V;
       }
 
       /* Divide out all factors of two */
-      if ((res = mp_div_2d(&v, mp_cnt_lsb(&v), &v, NULL)) != MP_OKAY) {
+      if ((err = mp_div_2d(&v, mp_cnt_lsb(&v), &v, NULL)) != MP_OKAY) {
          goto LBL_V;
       }
    }
 
    /* multiply by 2**k which we divided out at the beginning */
-   if ((res = mp_mul_2d(&u, k, c)) != MP_OKAY) {
+   if ((err = mp_mul_2d(&u, k, c)) != MP_OKAY) {
       goto LBL_V;
    }
    c->sign = MP_ZPOS;
-   res = MP_OKAY;
+   err = MP_OKAY;
 LBL_V:
    mp_clear(&u);
 LBL_U:
    mp_clear(&v);
-   return res;
+   return err;
 }
 #endif

@@ -20,7 +20,7 @@
 mp_err mp_kronecker(const mp_int *a, const mp_int *p, int *c)
 {
    mp_int a1, p1, r;
-   mp_err e = MP_OKAY;
+   mp_err err = MP_OKAY;
    int v, k;
 
    static const int table[8] = {0, 1, 0, -1, 0, -1, 0, 1};
@@ -28,27 +28,27 @@ mp_err mp_kronecker(const mp_int *a, const mp_int *p, int *c)
    if (MP_IS_ZERO(p)) {
       if ((a->used == 1) && (a->dp[0] == 1u)) {
          *c = 1;
-         return e;
+         return err;
       } else {
          *c = 0;
-         return e;
+         return err;
       }
    }
 
    if (MP_IS_EVEN(a) && MP_IS_EVEN(p)) {
       *c = 0;
-      return e;
+      return err;
    }
 
-   if ((e = mp_init_copy(&a1, a)) != MP_OKAY) {
-      return e;
+   if ((err = mp_init_copy(&a1, a)) != MP_OKAY) {
+      return err;
    }
-   if ((e = mp_init_copy(&p1, p)) != MP_OKAY) {
+   if ((err = mp_init_copy(&p1, p)) != MP_OKAY) {
       goto LBL_KRON_0;
    }
 
    v = mp_cnt_lsb(&p1);
-   if ((e = mp_div_2d(&p1, v, &p1, NULL)) != MP_OKAY) {
+   if ((err = mp_div_2d(&p1, v, &p1, NULL)) != MP_OKAY) {
       goto LBL_KRON_1;
    }
 
@@ -65,7 +65,7 @@ mp_err mp_kronecker(const mp_int *a, const mp_int *p, int *c)
       }
    }
 
-   if ((e = mp_init(&r)) != MP_OKAY) {
+   if ((err = mp_init(&r)) != MP_OKAY) {
       goto LBL_KRON_1;
    }
 
@@ -81,7 +81,7 @@ mp_err mp_kronecker(const mp_int *a, const mp_int *p, int *c)
       }
 
       v = mp_cnt_lsb(&a1);
-      if ((e = mp_div_2d(&a1, v, &a1, NULL)) != MP_OKAY) {
+      if ((err = mp_div_2d(&a1, v, &a1, NULL)) != MP_OKAY) {
          goto LBL_KRON;
       }
 
@@ -105,14 +105,14 @@ mp_err mp_kronecker(const mp_int *a, const mp_int *p, int *c)
          }
       }
 
-      if ((e = mp_copy(&a1, &r)) != MP_OKAY) {
+      if ((err = mp_copy(&a1, &r)) != MP_OKAY) {
          goto LBL_KRON;
       }
       r.sign = MP_ZPOS;
-      if ((e = mp_mod(&p1, &r, &a1)) != MP_OKAY) {
+      if ((err = mp_mod(&p1, &r, &a1)) != MP_OKAY) {
          goto LBL_KRON;
       }
-      if ((e = mp_copy(&r, &p1)) != MP_OKAY) {
+      if ((err = mp_copy(&r, &p1)) != MP_OKAY) {
          goto LBL_KRON;
       }
    }
@@ -124,7 +124,7 @@ LBL_KRON_1:
 LBL_KRON_0:
    mp_clear(&a1);
 
-   return e;
+   return err;
 }
 
 #endif

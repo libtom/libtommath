@@ -9,14 +9,14 @@
 mp_err mp_export(void *rop, size_t *countp, int order, size_t size,
                  int endian, size_t nails, const mp_int *op)
 {
-   mp_err result;
+   mp_err err;
    size_t odd_nails, nail_bytes, i, j, bits, count;
    unsigned char odd_nail_mask;
 
    mp_int t;
 
-   if ((result = mp_init_copy(&t, op)) != MP_OKAY) {
-      return result;
+   if ((err = mp_init_copy(&t, op)) != MP_OKAY) {
+      return err;
    }
 
    if (endian == 0) {
@@ -52,9 +52,9 @@ mp_err mp_export(void *rop, size_t *countp, int order, size_t size,
 
          *byte = (unsigned char)((j == ((size - nail_bytes) - 1u)) ? (t.dp[0] & odd_nail_mask) : (t.dp[0] & 0xFFuL));
 
-         if ((result = mp_div_2d(&t, (j == ((size - nail_bytes) - 1u)) ? (int)(8u - odd_nails) : 8, &t, NULL)) != MP_OKAY) {
+         if ((err = mp_div_2d(&t, (j == ((size - nail_bytes) - 1u)) ? (int)(8u - odd_nails) : 8, &t, NULL)) != MP_OKAY) {
             mp_clear(&t);
-            return result;
+            return err;
          }
       }
    }

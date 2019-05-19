@@ -8,7 +8,7 @@ mp_err s_mp_balance_mul(const mp_int *a, const mp_int *b, mp_int *c)
 {
    int count, len_a, len_b, nblocks, i, j, bsize;
    mp_int a0, tmp, A, B, r;
-   mp_err e;
+   mp_err err;
 
    len_a = a->used;
    len_b = b->used;
@@ -16,12 +16,12 @@ mp_err s_mp_balance_mul(const mp_int *a, const mp_int *b, mp_int *c)
    nblocks = MP_MAX(a->used, b->used) / MP_MIN(a->used, b->used);
    bsize = MP_MIN(a->used, b->used) ;
 
-   if ((e = mp_init_size(&a0, bsize + 2)) != MP_OKAY) {
-      return e;
+   if ((err = mp_init_size(&a0, bsize + 2)) != MP_OKAY) {
+      return err;
    }
-   if ((e = mp_init_multi(&tmp, &r, NULL)) != MP_OKAY) {
+   if ((err = mp_init_multi(&tmp, &r, NULL)) != MP_OKAY) {
       mp_clear(&a0);
-      return e;
+      return err;
    }
 
    /* Make sure that A is the larger one*/
@@ -41,15 +41,15 @@ mp_err s_mp_balance_mul(const mp_int *a, const mp_int *b, mp_int *c)
          a0.used++;
       }
       /* Multiply with b */
-      if ((e = mp_mul(&a0, &B, &tmp)) != MP_OKAY) {
+      if ((err = mp_mul(&a0, &B, &tmp)) != MP_OKAY) {
          goto LBL_ERR;
       }
       /* Shift tmp to the correct position */
-      if ((e = mp_lshd(&tmp, bsize * i)) != MP_OKAY) {
+      if ((err = mp_lshd(&tmp, bsize * i)) != MP_OKAY) {
          goto LBL_ERR;
       }
       /* Add to output. No carry needed */
-      if ((e = mp_add(&r, &tmp, &r)) != MP_OKAY) {
+      if ((err = mp_add(&r, &tmp, &r)) != MP_OKAY) {
          goto LBL_ERR;
       }
    }
@@ -60,13 +60,13 @@ mp_err s_mp_balance_mul(const mp_int *a, const mp_int *b, mp_int *c)
          a0.dp[count] = A.dp[ j++ ];
          a0.used++;
       }
-      if ((e = mp_mul(&a0, &B, &tmp)) != MP_OKAY) {
+      if ((err = mp_mul(&a0, &B, &tmp)) != MP_OKAY) {
          goto LBL_ERR;
       }
-      if ((e = mp_lshd(&tmp, bsize * i)) != MP_OKAY) {
+      if ((err = mp_lshd(&tmp, bsize * i)) != MP_OKAY) {
          goto LBL_ERR;
       }
-      if ((e = mp_add(&r, &tmp, &r)) != MP_OKAY) {
+      if ((err = mp_add(&r, &tmp, &r)) != MP_OKAY) {
          goto LBL_ERR;
       }
    }
@@ -74,6 +74,6 @@ mp_err s_mp_balance_mul(const mp_int *a, const mp_int *b, mp_int *c)
    mp_exch(&r,c);
 LBL_ERR:
    mp_clear_multi(&a0, &tmp, &r,NULL);
-   return e;
+   return err;
 }
 #endif

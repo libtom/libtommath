@@ -6,19 +6,19 @@
 /* c = a * a (mod b) */
 mp_err mp_sqrmod(const mp_int *a, const mp_int *b, mp_int *c)
 {
-   mp_err  res;
+   mp_err  err;
    mp_int  t;
 
-   if ((res = mp_init(&t)) != MP_OKAY) {
-      return res;
+   if ((err = mp_init(&t)) != MP_OKAY) {
+      return err;
    }
 
-   if ((res = mp_sqr(a, &t)) != MP_OKAY) {
+   if ((err = mp_sqr(a, &t)) != MP_OKAY) {
       mp_clear(&t);
-      return res;
+      return err;
    }
-   res = mp_mod(&t, b, c);
+   err = mp_mod(&t, b, c);
    mp_clear(&t);
-   return res;
+   return err;
 }
 #endif

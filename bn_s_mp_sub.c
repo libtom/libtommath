@@ -7,7 +7,7 @@
 mp_err s_mp_sub(const mp_int *a, const mp_int *b, mp_int *c)
 {
    int    olduse, min, max;
-   mp_err res;
+   mp_err err;
 
    /* find sizes */
    min = b->used;
@@ -15,8 +15,8 @@ mp_err s_mp_sub(const mp_int *a, const mp_int *b, mp_int *c)
 
    /* init result */
    if (c->alloc < max) {
-      if ((res = mp_grow(c, max)) != MP_OKAY) {
-         return res;
+      if ((err = mp_grow(c, max)) != MP_OKAY) {
+         return err;
       }
    }
    olduse = c->used;

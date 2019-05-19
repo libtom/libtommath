@@ -6,18 +6,18 @@
 /* computes b = a*a */
 mp_err mp_sqr(const mp_int *a, mp_int *b)
 {
-   mp_err res;
+   mp_err err;
 
 #ifdef BN_S_MP_TOOM_SQR_C
    /* use Toom-Cook? */
    if (a->used >= MP_TOOM_SQR_CUTOFF) {
-      res = s_mp_toom_sqr(a, b);
+      err = s_mp_toom_sqr(a, b);
       /* Karatsuba? */
    } else
 #endif
 #ifdef BN_S_MP_KARATSUBA_SQR_C
       if (a->used >= MP_KARATSUBA_SQR_CUTOFF) {
-         res = s_mp_karatsuba_sqr(a, b);
+         err = s_mp_karatsuba_sqr(a, b);
       } else
 #endif
       {
@@ -25,18 +25,18 @@ mp_err mp_sqr(const mp_int *a, mp_int *b)
          /* can we use the fast comba multiplier? */
          if ((((a->used * 2) + 1) < (int)MP_WARRAY) &&
              (a->used < (MP_MAXFAST / 2))) {
-            res = s_mp_sqr_fast(a, b);
+            err = s_mp_sqr_fast(a, b);
          } else
 #endif
          {
 #ifdef BN_S_MP_SQR_C
-            res = s_mp_sqr(a, b);
+            err = s_mp_sqr(a, b);
 #else
-            res = MP_VAL;
+            err = MP_VAL;
 #endif
          }
       }
    b->sign = MP_ZPOS;
-   return res;
+   return err;
 }
 #endif

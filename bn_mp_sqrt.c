@@ -6,7 +6,7 @@
 /* this function is less generic than mp_n_root, simpler and faster */
 mp_err mp_sqrt(const mp_int *arg, mp_int *ret)
 {
-   mp_err res;
+   mp_err err;
    mp_int t1, t2;
 
    /* must be positive */
@@ -20,11 +20,11 @@ mp_err mp_sqrt(const mp_int *arg, mp_int *ret)
       return MP_OKAY;
    }
 
-   if ((res = mp_init_copy(&t1, arg)) != MP_OKAY) {
-      return res;
+   if ((err = mp_init_copy(&t1, arg)) != MP_OKAY) {
+      return err;
    }
 
-   if ((res = mp_init(&t2)) != MP_OKAY) {
+   if ((err = mp_init(&t2)) != MP_OKAY) {
       goto E2;
    }
 
@@ -32,24 +32,24 @@ mp_err mp_sqrt(const mp_int *arg, mp_int *ret)
    mp_rshd(&t1, t1.used/2);
 
    /* t1 > 0  */
-   if ((res = mp_div(arg, &t1, &t2, NULL)) != MP_OKAY) {
+   if ((err = mp_div(arg, &t1, &t2, NULL)) != MP_OKAY) {
       goto E1;
    }
-   if ((res = mp_add(&t1, &t2, &t1)) != MP_OKAY) {
+   if ((err = mp_add(&t1, &t2, &t1)) != MP_OKAY) {
       goto E1;
    }
-   if ((res = mp_div_2(&t1, &t1)) != MP_OKAY) {
+   if ((err = mp_div_2(&t1, &t1)) != MP_OKAY) {
       goto E1;
    }
    /* And now t1 > sqrt(arg) */
    do {
-      if ((res = mp_div(arg, &t1, &t2, NULL)) != MP_OKAY) {
+      if ((err = mp_div(arg, &t1, &t2, NULL)) != MP_OKAY) {
          goto E1;
       }
-      if ((res = mp_add(&t1, &t2, &t1)) != MP_OKAY) {
+      if ((err = mp_add(&t1, &t2, &t1)) != MP_OKAY) {
          goto E1;
       }
-      if ((res = mp_div_2(&t1, &t1)) != MP_OKAY) {
+      if ((err = mp_div_2(&t1, &t1)) != MP_OKAY) {
          goto E1;
       }
       /* t1 >= sqrt(arg) >= t2 at this point */
@@ -61,7 +61,7 @@ E1:
    mp_clear(&t2);
 E2:
    mp_clear(&t1);
-   return res;
+   return err;
 }
 
 #endif

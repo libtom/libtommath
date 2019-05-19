@@ -6,10 +6,10 @@
 /* b = -a */
 mp_err mp_neg(const mp_int *a, mp_int *b)
 {
-   mp_err res;
+   mp_err err;
    if (a != b) {
-      if ((res = mp_copy(a, b)) != MP_OKAY) {
-         return res;
+      if ((err = mp_copy(a, b)) != MP_OKAY) {
+         return err;
       }
    }
 
