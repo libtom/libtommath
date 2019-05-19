@@ -18,7 +18,7 @@ int mp_get_bit(const mp_int *a, int b)
    return s_mp_get_bit(a, (unsigned int)b) == MP_YES ? MP_YES : MP_NO;
 }
 #endif
-#ifdef BN_MP_JACOBI_C
+#ifdef BN_S_MP_JACOBI_C
 mp_err s_mp_jacobi(const mp_int *a, const mp_int *n, int *c)
 {
    if (a->sign == MP_NEG) {
@@ -29,6 +29,8 @@ mp_err s_mp_jacobi(const mp_int *a, const mp_int *n, int *c)
    }
    return mp_kronecker(a, n, c);
 }
+#endif
+#ifdef BN_MP_JACOBI_C
 mp_err mp_jacobi(const mp_int *a, const mp_int *n, int *c)
 {
    return s_mp_jacobi(a, n, c);
