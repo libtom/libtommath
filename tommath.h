@@ -16,8 +16,6 @@
 #  include <stdio.h>
 #endif
 
-#include "tommath_class.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif

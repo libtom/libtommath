@@ -50,9 +50,8 @@ bn_s_mp_montgomery_reduce_fast.obj bn_s_mp_mul_digs.obj bn_s_mp_mul_digs_fast.ob
 bn_s_mp_mul_high_digs_fast.obj bn_s_mp_rand_jenkins.obj bn_s_mp_rand_platform.obj bn_s_mp_reverse.obj \
 bn_s_mp_sqr.obj bn_s_mp_sqr_fast.obj bn_s_mp_sub.obj bn_s_mp_toom_mul.obj bn_s_mp_toom_sqr.obj
 
-HEADERS_PUB=tommath.h tommath_class.h tommath_superclass.h
-
-HEADERS=tommath_private.h $(HEADERS_PUB)
+HEADERS_PUB=tommath.h
+HEADERS=tommath_private.h tommath_class.h tommath_superclass.h $(HEADERS_PUB)
 
 #The default rule for make builds the tommath.lib library (static)
 default: $(LIBMAIN_S)

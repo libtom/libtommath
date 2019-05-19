@@ -116,8 +116,8 @@ else
    COVERAGE_APP = ./test
 endif
 
-HEADERS_PUB=tommath.h tommath_class.h tommath_superclass.h
-HEADERS=tommath_private.h $(HEADERS_PUB)
+HEADERS_PUB=tommath.h
+HEADERS=tommath_private.h tommath_class.h tommath_superclass.h $(HEADERS_PUB)
 
 test_standalone: CFLAGS+=-DLTM_DEMO_TEST_VS_MTEST=0
 
