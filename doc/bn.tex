@@ -2018,11 +2018,7 @@ If $t$ is set to a positive value $t$ additional rounds of the Miller-Rabin test
 
 One Miller-Rabin tests with a random base will be run automatically, so by setting $t$ to a positive value this function will run $t + 1$ Miller-Rabin tests with random bases.
 
-If  $t$ is set to a negative value the test will run the deterministic Miller-Rabin test for the primes up to
-$3317044064679887385961981$. That limit has to be checked by the caller. If $-t > 13$ than $-t - 13$ additional rounds of the
-Miller-Rabin test will be performed but note that $-t$ is bounded by $1 \le -t < PRIME\_SIZE$ where $PRIME\_SIZE$ is the number
-of primes in the prime number table (by default this is $256$) and the first 13 primes have already been used. It will return
-\texttt{MP\_VAL} in case of$-t > PRIME\_SIZE$.
+If  $t$ is set to a negative value the test will run the deterministic Miller-Rabin test for the primes up to $3317044064679887385961981$. That limit has to be checked by the caller.
 
 If $a$ passes all of the tests $result$ is set to one, otherwise it is set to zero.
 
