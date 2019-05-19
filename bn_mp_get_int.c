@@ -7,6 +7,6 @@
 unsigned long mp_get_int(const mp_int *a)
 {
    /* force result to 32-bits always so it is consistent on non 32-bit platforms */
-   return mp_get_long(a) & 0xFFFFFFFFUL;
+   return mp_get_long(a) & 0xFFFFFFFFuL;
 }
 #endif
