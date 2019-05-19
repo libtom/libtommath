@@ -68,7 +68,7 @@ mp_err mp_prime_next_prime(mp_int *a, int t, int bbs_style)
       if ((a->dp[0] & 3u) != 3u) {
          if ((err = mp_sub_d(a, (a->dp[0] & 3u) + 1u, a)) != MP_OKAY) {
             return err;
-         };
+         }
       }
    } else {
       if (MP_IS_EVEN(a)) {
