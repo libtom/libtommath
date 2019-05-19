@@ -25,11 +25,6 @@ mp_err mp_prime_is_prime(const mp_int *a, int t, mp_bool *result)
    /* default to no */
    *result = MP_NO;
 
-   /* valid value of t? */
-   if (t > MP_PRIME_SIZE) {
-      return MP_VAL;
-   }
-
    /* Some shortcuts */
    /* N > 3 */
    if (a->used == 1) {
