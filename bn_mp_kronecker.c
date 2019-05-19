@@ -51,7 +51,7 @@ mp_err mp_kronecker(const mp_int *a, const mp_int *p, int *c)
       goto LBL_KRON_1;
    }
 
-   if ((v & 0x1) == 0) {
+   if ((v & 1) == 0) {
       k = 1;
    } else {
       k = table[a->dp[0] & 7u];
@@ -84,7 +84,7 @@ mp_err mp_kronecker(const mp_int *a, const mp_int *p, int *c)
          goto LBL_KRON;
       }
 
-      if ((v & 0x1) == 1) {
+      if ((v & 1) == 1) {
          k = k * table[p1.dp[0] & 7u];
       }
 
