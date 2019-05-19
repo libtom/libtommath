@@ -890,7 +890,7 @@ static int test_mp_prime_is_prime(void)
    mp_read_radix(&a,
                  "91xLNF3roobhzgTzoFIG6P13ZqhOVYSN60Fa7Cj2jVR1g0k89zdahO9/kAiRprpfO1VAp1aBHucLFV/qLKLFb+zonV7R2Vxp1K13ClwUXStpV0oxTNQVjwybmFb5NBEHImZ6V7P6+udRJuH8VbMEnS0H8/pSqQrg82OoQQ2fPpAk6G1hkjqoCv5s/Yr",
                  64);
-   mp_prime_is_prime(&a, 8, &cnt);
+   mp_prime_is_prime(&a, mp_prime_rabin_miller_trials(mp_count_bits(&a)), &cnt);
    if (cnt == MP_YES) {
       printf("Arnault's pseudoprime is not prime but mp_prime_is_prime says it is.\n");
       goto LBL_ERR;
@@ -900,7 +900,7 @@ static int test_mp_prime_is_prime(void)
    mp_set(&a, 1uL);
    mp_mul_2d(&a,1119,&a);
    mp_add_d(&a, 53uL, &a);
-   err = mp_prime_is_prime(&a, 8, &cnt);
+   err = mp_prime_is_prime(&a, mp_prime_rabin_miller_trials(mp_count_bits(&a)), &cnt);
    /* small problem */
    if (err != MP_OKAY) {
       printf("\nfailed with error: %s\n", mp_error_to_string(err));
@@ -930,7 +930,7 @@ static int test_mp_prime_is_prime(void)
       /* let's see if it's really a safe prime */
       mp_sub_d(&a, 1uL, &b);
       mp_div_2(&b, &b);
-      err = mp_prime_is_prime(&b, 8, &cnt);
+      err = mp_prime_is_prime(&b, mp_prime_rabin_miller_trials(mp_count_bits(&b)), &cnt);
       /* small problem */
       if (err != MP_OKAY) {
          printf("\nfailed with error: %s\n", mp_error_to_string(err));
