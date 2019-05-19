@@ -20,7 +20,7 @@
 mp_err mp_kronecker(const mp_int *a, const mp_int *p, int *c)
 {
    mp_int a1, p1, r;
-   mp_err err = MP_OKAY;
+   mp_err err;
    int v, k;
 
    static const int table[8] = {0, 1, 0, -1, 0, -1, 0, 1};
@@ -28,16 +28,15 @@ mp_err mp_kronecker(const mp_int *a, const mp_int *p, int *c)
    if (MP_IS_ZERO(p)) {
       if ((a->used == 1) && (a->dp[0] == 1u)) {
          *c = 1;
-         return err;
       } else {
          *c = 0;
-         return err;
       }
+      return MP_OKAY;
    }
 
    if (MP_IS_EVEN(a) && MP_IS_EVEN(p)) {
       *c = 0;
-      return err;
+      return MP_OKAY;
    }
 
    if ((err = mp_init_copy(&a1, a)) != MP_OKAY) {

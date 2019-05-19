@@ -6,11 +6,11 @@
 /* Increment "a" by one like "a++". Changes input! */
 mp_err mp_incr(mp_int *a)
 {
-   mp_err err = MP_OKAY;
    if (MP_IS_ZERO(a)) {
       mp_set(a,1uL);
       return MP_OKAY;
    } else if (a->sign == MP_NEG) {
+      mp_err err;
       a->sign = MP_ZPOS;
       if ((err = mp_decr(a)) != MP_OKAY) {
          return err;

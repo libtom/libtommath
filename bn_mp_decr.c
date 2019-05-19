@@ -6,12 +6,12 @@
 /* Decrement "a" by one like "a--". Changes input! */
 mp_err mp_decr(mp_int *a)
 {
-   mp_err err = MP_OKAY;
    if (MP_IS_ZERO(a)) {
       mp_set(a,1uL);
       a->sign = MP_NEG;
       return MP_OKAY;
    } else if (a->sign == MP_NEG) {
+      mp_err err;
       a->sign = MP_ZPOS;
       if ((err = mp_incr(a)) != MP_OKAY) {
          return err;
