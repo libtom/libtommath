@@ -2,14 +2,8 @@
 #ifdef BN_DEPRECATED_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
-/* LibTomMath, multiple-precision integer library -- Tom St Denis */
 
-/* SPDX-License-Identifier: Unlicense */
-#include <tommath_private.h>
 #ifdef BN_MP_GET_BIT_C
-/* Checks the bit at position b and returns MP_YES
-   if the bit is 1, MP_NO if it is 0 and MP_VAL
-   in case of error */
 int mp_get_bit(const mp_int *a, int b)
 {
    if (b < 0) {
