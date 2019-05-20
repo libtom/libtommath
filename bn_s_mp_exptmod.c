@@ -123,7 +123,7 @@ mp_err s_mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y
    if ((err = mp_init(&res)) != MP_OKAY) {
       goto LBL_MU;
    }
-   mp_set(&res, 1uL);
+   mp_set_u(&res, 1uL);
 
    /* set initial mode and bit cnt */
    mode   = 0;

@@ -76,7 +76,6 @@ mp_err mp_ilogb(const mp_int *a, mp_digit base, mp_int *c)
    mp_ord cmp;
    unsigned int high, low, mid;
    mp_int bracket_low, bracket_high, bracket_mid, t, bi_base;
-   mp_digit tmp;
 
    err = MP_OKAY;
    if (a->sign == MP_NEG) {
@@ -90,12 +89,11 @@ mp_err mp_ilogb(const mp_int *a, mp_digit base, mp_int *c)
       return MP_VAL;
    }
    if (base == 2u) {
-      mp_set_int(c, (unsigned long)(mp_count_bits(a) - 1));
+      mp_set_i(c, mp_count_bits(a) - 1);
       return err;
    }
    if (a->used == 1) {
-      tmp = s_digit_ilogb(base, a->dp[0]);
-      mp_set(c, tmp);
+      mp_set_u64(c, s_digit_ilogb(base, a->dp[0]));
       return err;
    }
 
@@ -106,7 +104,7 @@ mp_err mp_ilogb(const mp_int *a, mp_digit base, mp_int *c)
       return err;
    }
    if (cmp == MP_EQ) {
-      mp_set(c, (mp_digit)1uL);
+      mp_set_u(c, 1u);
       return err;
    }
 
@@ -117,10 +115,10 @@ mp_err mp_ilogb(const mp_int *a, mp_digit base, mp_int *c)
    }
 
    low = 0u;
-   mp_set(&bracket_low, 1uL);
+   mp_set_u(&bracket_low, 1u);
    high = 1u;
 
-   mp_set(&bracket_high, base);
+   mp_set_u64(&bracket_high, base);
 
    /*
        A kind of Giant-step/baby-step algorithm.
@@ -138,7 +136,7 @@ mp_err mp_ilogb(const mp_int *a, mp_digit base, mp_int *c)
          goto LBL_ERR;
       }
    }
-   mp_set(&bi_base, base);
+   mp_set_u64(&bi_base, base);
 
    while ((high - low) > 1u) {
       mid = (high + low) >> 1;
@@ -163,15 +161,15 @@ mp_err mp_ilogb(const mp_int *a, mp_digit base, mp_int *c)
          mp_exch(&bracket_mid, &bracket_low);
       }
       if (cmp == MP_EQ) {
-         mp_set_int(c, (unsigned long)mid);
+         mp_set_u64(c, mid);
          goto LBL_END;
       }
    }
 
    if (mp_cmp(&bracket_high, a) == MP_EQ) {
-      mp_set_int(c, (unsigned long)high);
+      mp_set_u64(c, high);
    } else {
-      mp_set_int(c, (unsigned long)low);
+      mp_set_u64(c, low);
    }
 
 LBL_END:

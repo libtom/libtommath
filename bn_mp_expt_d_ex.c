@@ -16,7 +16,7 @@ mp_err mp_expt_d_ex(const mp_int *a, mp_digit b, mp_int *c, int fast)
    }
 
    /* set initial result */
-   mp_set(c, 1uL);
+   mp_set_u(c, 1u);
 
    if (fast != 0) {
       while (b > 0u) {

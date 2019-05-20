@@ -43,7 +43,7 @@ mp_err mp_prime_frobenius_underwood(const mp_int *N, mp_bool *result)
          continue;
       }
       /* (32764^2 - 4) < 2^31, no bigint for >MP_8BIT needed) */
-      mp_set_long(&T1z, (unsigned long)a);
+      mp_set_u(&T1z, (uint32_t)a);
 
       if ((err = mp_sqr(&T1z, &T1z)) != MP_OKAY) {
          goto LBL_FU_ERR;
@@ -72,7 +72,7 @@ mp_err mp_prime_frobenius_underwood(const mp_int *N, mp_bool *result)
       goto LBL_FU_ERR;
    }
    /* Composite if N and (a+4)*(2*a+5) are not coprime */
-   mp_set_long(&T1z, (unsigned long)((a+4)*((2*a)+5)));
+   mp_set_u(&T1z, (uint32_t)((a+4)*((2*a)+5)));
 
    if ((err = mp_gcd(N, &T1z, &T1z)) != MP_OKAY) {
       goto LBL_FU_ERR;
@@ -87,8 +87,8 @@ mp_err mp_prime_frobenius_underwood(const mp_int *N, mp_bool *result)
       goto LBL_FU_ERR;
    }
 
-   mp_set(&sz, 1uL);
-   mp_set(&tz, 2uL);
+   mp_set_u(&sz, 1uL);
+   mp_set_u(&tz, 2uL);
    length = mp_count_bits(&Np1z);
 
    for (i = length - 2; i >= 0; i--) {
@@ -157,7 +157,7 @@ mp_err mp_prime_frobenius_underwood(const mp_int *N, mp_bool *result)
       }
    }
 
-   mp_set_long(&T1z, (unsigned long)((2 * a) + 5));
+   mp_set_u(&T1z, (uint32_t)((2 * a) + 5));
    if ((err = mp_mod(&T1z, N, &T1z)) != MP_OKAY) {
       goto LBL_FU_ERR;
    }

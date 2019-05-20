@@ -198,26 +198,6 @@ extern MP_PRIVATE const char *const mp_s_rmap;
 extern MP_PRIVATE const uint8_t mp_s_rmap_reverse[];
 extern MP_PRIVATE const size_t mp_s_rmap_reverse_sz;
 
-/* Fancy macro to set an MPI from another type.
- * There are several things assumed:
- *  x is the counter
- *  a is the pointer to the MPI
- *  b is the original value that should be set in the MPI.
- */
-#define MP_SET_XLONG(func_name, type)                    \
-mp_err func_name (mp_int * a, type b)                    \
-{                                                        \
-   int x = 0;                                            \
-   mp_zero(a);                                           \
-   while (b != 0u) {                                     \
-      a->dp[x++] = ((mp_digit)b & MP_MASK);              \
-      if (MP_SIZEOF_BITS(b) <= MP_DIGIT_BIT) { break; } \
-      b >>= ((MP_SIZEOF_BITS(b) <= MP_DIGIT_BIT) ? 0 : MP_DIGIT_BIT); \
-   }                                                     \
-   a->used = x;                                          \
-   return MP_OKAY;                                       \
-}
-
 /* deprecated functions */
 MP_DEPRECATED(s_mp_invmod_fast) mp_err fast_mp_invmod(const mp_int *a, const mp_int *b, mp_int *c);
 MP_DEPRECATED(s_mp_montgomery_reduce_fast) mp_err fast_mp_montgomery_reduce(mp_int *x, const mp_int *n,

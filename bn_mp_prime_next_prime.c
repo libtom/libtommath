@@ -35,20 +35,20 @@ mp_err mp_prime_next_prime(mp_int *a, int t, int bbs_style)
                   /* scan upwards for a prime congruent to 3 mod 4 */
                   for (y = x + 1; y < MP_PRIME_SIZE; y++) {
                      if ((ltm_prime_tab[y] & 3u) == 3u) {
-                        mp_set(a, ltm_prime_tab[y]);
+                        mp_set_u(a, (uint32_t)ltm_prime_tab[y]);
                         return MP_OKAY;
                      }
                   }
                }
             } else {
-               mp_set(a, ltm_prime_tab[x + 1]);
+               mp_set_u(a, (uint32_t)ltm_prime_tab[x + 1]);
                return MP_OKAY;
             }
          }
       }
       /* at this point a maybe 1 */
       if (mp_cmp_d(a, 1uL) == MP_EQ) {
-         mp_set(a, 2uL);
+         mp_set_u(a, 2u);
          return MP_OKAY;
       }
       /* fall through to the sieve */

@@ -7,7 +7,7 @@
 mp_err mp_incr(mp_int *a)
 {
    if (MP_IS_ZERO(a)) {
-      mp_set(a,1uL);
+      mp_set_u(a,1uL);
       return MP_OKAY;
    } else if (a->sign == MP_NEG) {
       mp_err err;

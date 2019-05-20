@@ -77,7 +77,7 @@ mp_err mp_prime_is_prime(const mp_int *a, int t, mp_bool *result)
    /*
        Run the Miller-Rabin test with base 2 for the BPSW test.
     */
-   if ((err = mp_init_set(&b, 2uL)) != MP_OKAY) {
+   if ((err = mp_init_u(&b, 2uL)) != MP_OKAY) {
       return err;
    }
 
@@ -211,7 +211,7 @@ mp_err mp_prime_is_prime(const mp_int *a, int t, mp_bool *result)
       }
       /* we did bases 2 and 3  already, skip them */
       for (ix = 2; ix < p_max; ix++) {
-         mp_set(&b, ltm_prime_tab[ix]);
+         mp_set_u(&b, (uint32_t)ltm_prime_tab[ix]);
          if ((err = mp_prime_miller_rabin(a, &b, &res)) != MP_OKAY) {
             goto LBL_B;
          }

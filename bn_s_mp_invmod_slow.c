@@ -41,8 +41,8 @@ mp_err s_mp_invmod_slow(const mp_int *a, const mp_int *b, mp_int *c)
    if ((err = mp_copy(&y, &v)) != MP_OKAY) {
       goto LBL_ERR;
    }
-   mp_set(&A, 1uL);
-   mp_set(&D, 1uL);
+   mp_set_u(&A, 1uL);
+   mp_set_u(&D, 1uL);
 
 top:
    /* 4.  while u is even do */

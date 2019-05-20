@@ -49,7 +49,7 @@ mp_err mp_n_root_ex(const mp_int *a, mp_digit b, mp_int *c, int fast)
     */
    if (sizeof(mp_digit) >= sizeof(int)) {
       if (b > (mp_digit)(INT_MAX/2)) {
-         mp_set(c, 1uL);
+         mp_set_u(c, 1u);
          c->sign = a->sign;
          err = MP_OKAY;
          goto LBL_ERR;
@@ -58,14 +58,14 @@ mp_err mp_n_root_ex(const mp_int *a, mp_digit b, mp_int *c, int fast)
 #endif
    /* "b" is smaller than INT_MAX, we can cast safely */
    if (ilog2 < (int)b) {
-      mp_set(c, 1uL);
+      mp_set_u(c, 1u);
       c->sign = a->sign;
       err = MP_OKAY;
       goto LBL_ERR;
    }
    ilog2 =  ilog2 / ((int)b);
    if (ilog2 == 0) {
-      mp_set(c, 1uL);
+      mp_set_u(c, 1u);
       c->sign = a->sign;
       err = MP_OKAY;
       goto LBL_ERR;

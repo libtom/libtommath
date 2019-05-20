@@ -22,7 +22,7 @@ mp_err mp_montgomery_calc_normalization(mp_int *a, const mp_int *b)
          return err;
       }
    } else {
-      mp_set(a, 1uL);
+      mp_set_u(a, 1uL);
       bits = 1;
    }
 
