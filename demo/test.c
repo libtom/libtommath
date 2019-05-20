@@ -20,9 +20,39 @@ static int rand_int(void)
    return x;
 }
 
+static int32_t rand_int32(void)
+{
+   int32_t x;
+   if (s_mp_rand_source(&x, sizeof(x)) != MP_OKAY) {
+      fprintf(stderr, "s_mp_rand_source failed\n");
+      exit(EXIT_FAILURE);
+   }
+   return x;
+}
+
+static int64_t rand_int64(void)
+{
+   int64_t x;
+   if (s_mp_rand_source(&x, sizeof(x)) != MP_OKAY) {
+      fprintf(stderr, "s_mp_rand_source failed\n");
+      exit(EXIT_FAILURE);
+   }
+   return x;
+}
+
 static unsigned long ulabs(long x)
 {
    return x > 0 ? (unsigned long)x : -(unsigned long)x;
+}
+
+static uint32_t uabs32(int32_t x)
+{
+   return x > 0 ? (uint32_t)x : -(uint32_t)x;
+}
+
+static uint64_t uabs64(int64_t x)
+{
+   return x > 0 ? (uint64_t)x : -(uint64_t)x;
 }
 
 static int test_trivial_stuff(void)
@@ -35,7 +65,7 @@ static int test_trivial_stuff(void)
    (void)mp_error_to_string(e);
 
    /* a: 0->5 */
-   mp_set_int(&a, 5uL);
+   mp_set(&a, 5u);
    /* a: 5-> b: -5 */
    mp_neg(&a, &b);
    if (mp_cmp(&a, &b) != MP_GT) {
@@ -59,33 +89,39 @@ static int test_trivial_stuff(void)
    if (mp_isneg(&b) != MP_YES) {
       goto LBL_ERR;
    }
-   if (mp_get_int(&b) != 4) {
+   if (mp_get_sint(&b) != -4) {
+      goto LBL_ERR;
+   }
+   if (mp_get_uint(&b) != (uint32_t)-4) {
+      goto LBL_ERR;
+   }
+   if (mp_get_mag(&b) != 4) {
       goto LBL_ERR;
    }
    /* a: -5-> b: 1 */
    mp_add_d(&a, 6uL, &b);
-   if (mp_get_int(&b) != 1) {
+   if (mp_get_uint(&b) != 1) {
       goto LBL_ERR;
    }
    /* a: -5-> a: 1 */
    mp_add_d(&a, 6uL, &a);
-   if (mp_get_int(&a) != 1) {
+   if (mp_get_uint(&a) != 1) {
       goto LBL_ERR;
    }
    mp_zero(&a);
    /* a: 0-> a: 6 */
    mp_add_d(&a, 6uL, &a);
-   if (mp_get_int(&a) != 6) {
+   if (mp_get_uint(&a) != 6) {
       goto LBL_ERR;
    }
 
-   mp_set_int(&a, 42uL);
-   mp_set_int(&b, 1uL);
+   mp_set(&a, 42u);
+   mp_set(&b, 1u);
    mp_neg(&b, &b);
-   mp_set_int(&c, 1uL);
+   mp_set(&c, 1u);
    mp_exptmod(&a, &b, &c, &d);
 
-   mp_set_int(&c, 7uL);
+   mp_set(&c, 7u);
    mp_exptmod(&a, &b, &c, &d);
 
    if (mp_iseven(&a) == mp_isodd(&a)) {
@@ -99,6 +135,92 @@ LBL_ERR:
    return EXIT_FAILURE;
 }
 
+static int check_get_set_int32(mp_int *a, int32_t b)
+{
+   mp_set_sint(a, b);
+   if (mp_get_sint(a) != b) return EXIT_FAILURE;
+   if (mp_get_uint(a) != (uint32_t)b) return EXIT_FAILURE;
+   if (mp_get_mag(a) != uabs32(b)) return EXIT_FAILURE;
+
+   mp_set_uint(a, (uint32_t)b);
+   if (mp_get_uint(a) != (uint32_t)b) return EXIT_FAILURE;
+   if (mp_get_sint(a) != (int32_t)(uint32_t)b) return EXIT_FAILURE;
+
+   return EXIT_SUCCESS;
+}
+
+static int test_mp_get_set_int(void)
+{
+   int i;
+   mp_int a;
+
+   if (mp_init(&a) != MP_OKAY) {
+      return EXIT_FAILURE;
+   }
+
+   check_get_set_int32(&a, 0);
+   check_get_set_int32(&a, -1);
+   check_get_set_int32(&a, 1);
+   check_get_set_int32(&a, INT32_MIN);
+   check_get_set_int32(&a, INT32_MAX);
+
+   for (i = 0; i < 1000; ++i) {
+      int32_t b = rand_int32();
+      if (check_get_set_int32(&a, b) != EXIT_SUCCESS) {
+         goto LBL_ERR;
+      }
+   }
+
+   mp_clear(&a);
+   return EXIT_SUCCESS;
+LBL_ERR:
+   mp_clear(&a);
+   return EXIT_FAILURE;
+}
+
+static int check_get_set_int64(mp_int *a, int64_t b)
+{
+   mp_set_sint64(a, b);
+   if (mp_get_sint64(a) != b) return EXIT_FAILURE;
+   if (mp_get_uint64(a) != (uint64_t)b) return EXIT_FAILURE;
+   if (mp_get_mag64(a) != uabs64(b)) return EXIT_FAILURE;
+
+   mp_set_uint64(a, (uint64_t)b);
+   if (mp_get_uint64(a) != (uint64_t)b) return EXIT_FAILURE;
+   if (mp_get_sint64(a) != (int64_t)(uint64_t)b) return EXIT_FAILURE;
+
+   return EXIT_SUCCESS;
+}
+
+static int test_mp_get_set_int64(void)
+{
+   int i;
+   mp_int a;
+
+   if (mp_init(&a) != MP_OKAY) {
+      return EXIT_FAILURE;
+   }
+
+   check_get_set_int64(&a, 0);
+   check_get_set_int64(&a, -1);
+   check_get_set_int64(&a, 1);
+   check_get_set_int64(&a, INT64_MIN);
+   check_get_set_int64(&a, INT64_MAX);
+
+   for (i = 0; i < 1000; ++i) {
+      int64_t b = rand_int64();
+      if (check_get_set_int64(&a, b) != EXIT_SUCCESS) {
+         goto LBL_ERR;
+      }
+   }
+
+   mp_clear(&a);
+   return EXIT_SUCCESS;
+LBL_ERR:
+   mp_clear(&a);
+   return EXIT_FAILURE;
+}
+
 static int test_mp_fread_fwrite(void)
 {
    mp_int a, b;
@@ -108,7 +230,7 @@ static int test_mp_fread_fwrite(void)
       return EXIT_FAILURE;
    }
 
-   mp_set_int(&a, 123456uL);
+   mp_set_ulong(&a, 123456uL);
    tmp = tmpfile();
    if ((e = mp_fwrite(&a, 64, tmp)) != MP_OKAY) {
       goto LBL_ERR;
@@ -117,7 +239,7 @@ static int test_mp_fread_fwrite(void)
    if ((e = mp_fread(&b, 64, tmp)) != MP_OKAY) {
       goto LBL_ERR;
    }
-   if (mp_get_int(&b) != 123456uL) {
+   if (mp_get_uint(&b) != 123456uL) {
       goto LBL_ERR;
    }
    fclose(tmp);
@@ -191,8 +313,8 @@ static int test_s_mp_jacobi(void)
       return EXIT_FAILURE;
    }
 
-   mp_set_int(&a, 0uL);
-   mp_set_int(&b, 1uL);
+   mp_set_ulong(&a, 0uL);
+   mp_set_ulong(&b, 1uL);
    if ((err = s_mp_jacobi(&a, &b, &i)) != MP_OKAY) {
       printf("Failed executing s_mp_jacobi(0 | 1) %s.\n", mp_error_to_string(err));
       goto LBL_ERR;
@@ -202,10 +324,10 @@ static int test_s_mp_jacobi(void)
       goto LBL_ERR;
    }
    for (cnt = 0; cnt < (int)(sizeof(jacobi)/sizeof(jacobi[0])); ++cnt) {
-      mp_set_int(&b, jacobi[cnt].n);
+      mp_set_ulong(&b, jacobi[cnt].n);
       /* only test positive values of a */
       for (n = -5; n <= 10; ++n) {
-         mp_set_int(&a, (unsigned int)abs(n));
+         mp_set_ulong(&a, (unsigned int)abs(n));
          should = MP_OKAY;
          if (n < 0) {
             mp_neg(&a, &a);
@@ -269,8 +391,8 @@ static int test_mp_kronecker(void)
       return EXIT_FAILURE;
    }
 
-   mp_set_int(&a, 0uL);
-   mp_set_int(&b, 1uL);
+   mp_set_ulong(&a, 0uL);
+   mp_set_ulong(&b, 1uL);
    if ((err = mp_kronecker(&a, &b, &i)) != MP_OKAY) {
       printf("Failed executing mp_kronecker(0 | 1) %s.\n", mp_error_to_string(err));
       goto LBL_ERR;
@@ -282,18 +404,18 @@ static int test_mp_kronecker(void)
    for (cnt = 0; cnt < (int)(sizeof(kronecker)/sizeof(kronecker[0])); ++cnt) {
       k = kronecker[cnt].n;
       if (k < 0) {
-         mp_set_int(&a, (unsigned long)(-k));
+         mp_set_ulong(&a, (unsigned long)(-k));
          mp_neg(&a, &a);
       } else {
-         mp_set_int(&a, (unsigned long) k);
+         mp_set_ulong(&a, (unsigned long) k);
       }
       /* only test positive values of a */
       for (m = -10; m <= 10; m++) {
          if (m < 0) {
-            mp_set_int(&b,(unsigned long)(-m));
+            mp_set_ulong(&b,(unsigned long)(-m));
             mp_neg(&b, &b);
          } else {
-            mp_set_int(&b, (unsigned long) m);
+            mp_set_ulong(&b, (unsigned long) m);
          }
          if ((err = mp_kronecker(&a, &b, &i)) != MP_OKAY) {
             printf("Failed executing mp_kronecker(%ld | %ld) %s.\n", kronecker[cnt].n, m, mp_error_to_string(err));
@@ -324,13 +446,13 @@ static int test_mp_complement(void)
 
    for (i = 0; i < 1000; ++i) {
       long l = rand_long();
-      mp_set_long(&a, ulabs(l));
+      mp_set_ulong(&a, ulabs(l));
       if (l < 0)
          mp_neg(&a, &a);
       mp_complement(&a, &b);
 
       l = ~l;
-      mp_set_long(&c, ulabs(l));
+      mp_set_ulong(&c, ulabs(l));
       if (l < 0)
          mp_neg(&c, &c);
 
@@ -361,13 +483,13 @@ static int test_mp_signed_rsh(void)
       int em;
 
       l = rand_long();
-      mp_set_long(&a, ulabs(l));
+      mp_set_ulong(&a, ulabs(l));
       if (l < 0)
          mp_neg(&a, &a);
 
       em = abs(rand_int()) % 32;
 
-      mp_set_long(&d, ulabs(l >> em));
+      mp_set_ulong(&d, ulabs(l >> em));
       if ((l >> em) < 0)
          mp_neg(&d, &d);
 
@@ -399,16 +521,16 @@ static int test_mp_xor(void)
       long l, em;
 
       l = rand_long();
-      mp_set_int(&a, ulabs(l));
+      mp_set_ulong(&a, ulabs(l));
       if (l < 0)
          mp_neg(&a, &a);
 
       em = rand_long();
-      mp_set_int(&b, ulabs(em));
+      mp_set_ulong(&b, ulabs(em));
       if (em < 0)
          mp_neg(&b, &b);
 
-      mp_set_int(&d, ulabs(l ^ em));
+      mp_set_ulong(&d, ulabs(l ^ em));
       if ((l ^ em) < 0)
          mp_neg(&d, &d);
 
@@ -440,16 +562,16 @@ static int test_mp_or(void)
       long l, em;
 
       l = rand_long();
-      mp_set_long(&a, ulabs(l));
+      mp_set_ulong(&a, ulabs(l));
       if (l < 0)
          mp_neg(&a, &a);
 
       em = rand_long();
-      mp_set_long(&b, ulabs(em));
+      mp_set_ulong(&b, ulabs(em));
       if (em < 0)
          mp_neg(&b, &b);
 
-      mp_set_long(&d, ulabs(l | em));
+      mp_set_ulong(&d, ulabs(l | em));
       if ((l | em) < 0)
          mp_neg(&d, &d);
 
@@ -480,16 +602,16 @@ static int test_mp_and(void)
       long l, em;
 
       l = rand_long();
-      mp_set_long(&a, ulabs(l));
+      mp_set_ulong(&a, ulabs(l));
       if (l < 0)
          mp_neg(&a, &a);
 
       em = rand_long();
-      mp_set_long(&b, ulabs(em));
+      mp_set_ulong(&b, ulabs(em));
       if (em < 0)
          mp_neg(&b, &b);
 
-      mp_set_long(&d, ulabs(l & em));
+      mp_set_ulong(&d, ulabs(l & em));
       if ((l & em) < 0)
          mp_neg(&d, &d);
 
@@ -610,7 +732,7 @@ LBL_ERR:
 
 }
 
-static int test_mp_get_int(void)
+static int test_mp_get_uint(void)
 {
    unsigned long t;
    int i;
@@ -622,20 +744,20 @@ static int test_mp_get_int(void)
 
    for (i = 0; i < 1000; ++i) {
       t = (unsigned long)rand_long() & 0xFFFFFFFFuL;
-      mp_set_int(&a, t);
-      if (t != mp_get_int(&a)) {
-         printf("\nmp_get_int() bad result!");
+      mp_set_ulong(&a, t);
+      if (t != mp_get_uint(&a)) {
+         printf("\nmp_get_uint() bad result!");
          goto LBL_ERR;
       }
    }
-   mp_set_int(&a, 0uL);
-   if (mp_get_int(&a) != 0) {
-      printf("\nmp_get_int() bad result!");
+   mp_set_ulong(&a, 0uL);
+   if (mp_get_uint(&a) != 0) {
+      printf("\nmp_get_uint() bad result!");
       goto LBL_ERR;
    }
-   mp_set_int(&a, 0xFFFFFFFFuL);
-   if (mp_get_int(&a) != 0xFFFFFFFFuL) {
-      printf("\nmp_get_int() bad result!");
+   mp_set_ulong(&a, 0xFFFFFFFFuL);
+   if (mp_get_uint(&a) != 0xFFFFFFFFuL) {
+      printf("\nmp_get_uint() bad result!");
       goto LBL_ERR;
    }
 
@@ -646,7 +768,7 @@ LBL_ERR:
    return EXIT_FAILURE;
 }
 
-static int test_mp_get_long(void)
+static int test_mp_get_ulong(void)
 {
    unsigned long s, t;
    int i;
@@ -662,10 +784,10 @@ static int test_mp_get_long(void)
          t = ~0UL;
       printf(" t = 0x%lx i = %d\r", t, i);
       do {
-         mp_set_long(&a, t);
-         s = mp_get_long(&a);
+         mp_set_ulong(&a, t);
+         s = mp_get_ulong(&a);
          if (s != t) {
-            printf("\nmp_get_long() bad result! 0x%lx != 0x%lx", s, t);
+            printf("\nmp_get_ulong() bad result! 0x%lx != 0x%lx", s, t);
             goto LBL_ERR;
          }
          t <<= 1;
@@ -679,7 +801,7 @@ LBL_ERR:
    return EXIT_FAILURE;
 }
 
-static int test_mp_get_long_long(void)
+static int test_mp_get_uint64(void)
 {
    unsigned long long q, r;
    int i;
@@ -695,10 +817,10 @@ static int test_mp_get_long_long(void)
          r = ~0ULL;
       printf(" r = 0x%llx i = %d\r", r, i);
       do {
-         mp_set_long_long(&a, r);
-         q = mp_get_long_long(&a);
+         mp_set_uint64(&a, r);
+         q = mp_get_uint64(&a);
          if (q != r) {
-            printf("\nmp_get_long_long() bad result! 0x%llx != 0x%llx", q, r);
+            printf("\nmp_get_uint64() bad result! 0x%llx != 0x%llx", q, r);
             goto LBL_ERR;
          }
          r <<= 1;
@@ -821,8 +943,8 @@ static int test_mp_sqrtmod_prime(void)
 
    /* r^2 = n (mod p) */
    for (i = 0; i < (int)(sizeof(sqrtmod_prime)/sizeof(sqrtmod_prime[0])); ++i) {
-      mp_set_int(&a, sqrtmod_prime[i].p);
-      mp_set_int(&b, sqrtmod_prime[i].n);
+      mp_set_ulong(&a, sqrtmod_prime[i].p);
+      mp_set_ulong(&b, sqrtmod_prime[i].n);
       if (mp_sqrtmod_prime(&b, &a, &c) != MP_OKAY) {
          printf("Failed executing %d. mp_sqrtmod_prime\n", (i+1));
          goto LBL_ERR;
@@ -2021,6 +2143,8 @@ int unit_tests(int argc, char **argv)
    } test[] = {
 #define T(n) { #n, test_##n }
       T(trivial_stuff),
+      T(mp_get_set_int),
+      T(mp_get_set_int64),
       T(mp_and),
       T(mp_cnt_lsb),
       T(mp_complement),
@@ -2028,9 +2152,9 @@ int unit_tests(int argc, char **argv)
       T(mp_div_3),
       T(mp_dr_reduce),
       T(mp_fread_fwrite),
-      T(mp_get_int),
-      T(mp_get_long),
-      T(mp_get_long_long),
+      T(mp_get_uint),
+      T(mp_get_uint64),
+      T(mp_get_ulong),
       T(mp_ilogb),
       T(mp_incr),
       T(mp_invmod),

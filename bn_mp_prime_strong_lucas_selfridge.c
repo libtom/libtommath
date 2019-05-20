@@ -19,32 +19,21 @@
  * multiply bigint a with int d and put the result in c
  * Like mp_mul_d() but with a signed long as the small input
  */
-static mp_err s_mp_mul_si(const mp_int *a, long d, mp_int *c)
+static mp_err s_mp_mul_si(const mp_int *a, int32_t d, mp_int *c)
 {
    mp_int t;
    mp_err err;
-   int neg = 0;
 
    if ((err = mp_init(&t)) != MP_OKAY) {
       return err;
-   }
-   if (d < 0) {
-      neg = 1;
-      d = -d;
    }
 
    /*
     * mp_digit might be smaller than a long, which excludes
     * the use of mp_mul_d() here.
     */
-   mp_set_long(&t, (unsigned long) d);
-   if ((err = mp_mul(a, &t, c)) != MP_OKAY) {
-      goto LBL_MPMULSI_ERR;
-   }
-   if (neg ==  1) {
-      c->sign = (a->sign == MP_NEG) ? MP_ZPOS: MP_NEG;
-   }
-LBL_MPMULSI_ERR:
+   mp_set_sint(&t, d);
+   err = mp_mul(a, &t, c);
    mp_clear(&t);
    return err;
 }
@@ -94,7 +83,7 @@ mp_err mp_prime_strong_lucas_selfridge(const mp_int *a, mp_bool *result)
    for (;;) {
       Ds   = sign * D;
       sign = -sign;
-      mp_set_long(&Dz, (unsigned long)D);
+      mp_set_uint(&Dz, (uint32_t)D);
       if ((err = mp_gcd(a, &Dz, &gcd)) != MP_OKAY) {
          goto LBL_LS_ERR;
       }
@@ -183,30 +172,30 @@ mp_err mp_prime_strong_lucas_selfridge(const mp_int *a, mp_bool *result)
       combined with the previous totals for U and V, using the
       composition formulas for addition of indices. */
 
-   mp_set(&Uz, 1uL);    /* U=U_1 */
+   mp_set(&Uz, 1u);    /* U=U_1 */
    mp_set(&Vz, (mp_digit)P);    /* V=V_1 */
-   mp_set(&U2mz, 1uL);  /* U_1 */
+   mp_set(&U2mz, 1u);  /* U_1 */
    mp_set(&V2mz, (mp_digit)P);  /* V_1 */
 
    if (Q < 0) {
       Q = -Q;
-      mp_set_long(&Qmz, (unsigned long)Q);
+      mp_set_uint(&Qmz, (uint32_t)Q);
       if ((err = mp_mul_2(&Qmz, &Q2mz)) != MP_OKAY) {
          goto LBL_LS_ERR;
       }
       /* Initializes calculation of Q^d */
-      mp_set_long(&Qkdz, (unsigned long)Q);
+      mp_set_uint(&Qkdz, (uint32_t)Q);
       Qmz.sign = MP_NEG;
       Q2mz.sign = MP_NEG;
       Qkdz.sign = MP_NEG;
       Q = -Q;
    } else {
-      mp_set_long(&Qmz, (unsigned long)Q);
+      mp_set_uint(&Qmz, (uint32_t)Q);
       if ((err = mp_mul_2(&Qmz, &Q2mz)) != MP_OKAY) {
          goto LBL_LS_ERR;
       }
       /* Initializes calculation of Q^d */
-      mp_set_long(&Qkdz, (unsigned long)Q);
+      mp_set_uint(&Qkdz, (uint32_t)Q);
    }
 
    Nbits = mp_count_bits(&Dz);
@@ -266,7 +255,7 @@ mp_err mp_prime_strong_lucas_selfridge(const mp_int *a, mp_bool *result)
          if ((err = mp_mul(&U2mz, &Uz, &T4z)) != MP_OKAY) {
             goto LBL_LS_ERR;
          }
-         if ((err = s_mp_mul_si(&T4z, (long)Ds, &T4z)) != MP_OKAY) {
+         if ((err = s_mp_mul_si(&T4z, Ds, &T4z)) != MP_OKAY) {
             goto LBL_LS_ERR;
          }
          if ((err = mp_add(&T1z, &T2z, &Uz)) != MP_OKAY) {
