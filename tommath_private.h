@@ -7,6 +7,22 @@
 #include "tommath.h"
 #include "tommath_class.h"
 
+/*
+ * Private symbols
+ * ---------------
+ *
+ * On Unix symbols can be marked as hidden if libtommath is compiled
+ * as a shared object. By default, symbols are visible.
+ * As of now, this feature is opt-in via the MP_PRIVATE_SYMBOLS define.
+ *
+ * On Win32 a .def file must be used to specify the exported symbols.
+ */
+#if defined (MP_PRIVATE_SYMBOLS) && __GNUC__ >= 4
+#   define MP_PRIVATE __attribute__ ((visibility ("hidden")))
+#else
+#   define MP_PRIVATE
+#endif
+
 /* Hardening libtommath
  * --------------------
  *
@@ -143,44 +159,44 @@ typedef private_mp_word mp_word;
 #define MP_SIZEOF_BITS(type)    (CHAR_BIT * sizeof(type))
 #define MP_MAXFAST              (int)(1uL << (MP_SIZEOF_BITS(mp_word) - (2u * (size_t)MP_DIGIT_BIT)))
 
-/* random number source */
-extern mp_err(*s_mp_rand_source)(void *out, size_t size);
-
 /* Minimum number of available digits in mp_int, MP_PREC >= MP_MIN_PREC */
 #define MP_MIN_PREC ((((CHAR_BIT * (int)sizeof(long long)) + MP_DIGIT_BIT) - 1) / MP_DIGIT_BIT)
 
+/* random number source */
+extern MP_PRIVATE mp_err(*s_mp_rand_source)(void *out, size_t size);
+
 /* lowlevel functions, do not call! */
-mp_bool s_mp_get_bit(const mp_int *a, unsigned int b);
-mp_err s_mp_add(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
-mp_err s_mp_sub(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
-mp_err s_mp_mul_digs_fast(const mp_int *a, const mp_int *b, mp_int *c, int digs) MP_WUR;
-mp_err s_mp_mul_digs(const mp_int *a, const mp_int *b, mp_int *c, int digs) MP_WUR;
-mp_err s_mp_mul_high_digs_fast(const mp_int *a, const mp_int *b, mp_int *c, int digs) MP_WUR;
-mp_err s_mp_mul_high_digs(const mp_int *a, const mp_int *b, mp_int *c, int digs) MP_WUR;
-mp_err s_mp_sqr_fast(const mp_int *a, mp_int *b) MP_WUR;
-mp_err s_mp_sqr(const mp_int *a, mp_int *b) MP_WUR;
-mp_err s_mp_balance_mul(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
-mp_err s_mp_karatsuba_mul(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
-mp_err s_mp_toom_mul(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
-mp_err s_mp_karatsuba_sqr(const mp_int *a, mp_int *b) MP_WUR;
-mp_err s_mp_toom_sqr(const mp_int *a, mp_int *b) MP_WUR;
-mp_err s_mp_invmod_fast(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
-mp_err s_mp_invmod_slow(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
-mp_err s_mp_montgomery_reduce_fast(mp_int *x, const mp_int *n, mp_digit rho) MP_WUR;
-mp_err s_mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y, int redmode) MP_WUR;
-mp_err s_mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y, int redmode) MP_WUR;
-mp_err s_mp_rand_platform(void *p, size_t n) MP_WUR;
-mp_err s_mp_prime_random_ex(mp_int *a, int t, int size, int flags, private_mp_prime_callback cb, void *dat);
-mp_err s_mp_jacobi(const mp_int *a, const mp_int *n, int *c);
-void s_mp_reverse(unsigned char *s, int len);
+MP_PRIVATE mp_bool s_mp_get_bit(const mp_int *a, unsigned int b);
+MP_PRIVATE mp_err s_mp_add(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
+MP_PRIVATE mp_err s_mp_sub(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
+MP_PRIVATE mp_err s_mp_mul_digs_fast(const mp_int *a, const mp_int *b, mp_int *c, int digs) MP_WUR;
+MP_PRIVATE mp_err s_mp_mul_digs(const mp_int *a, const mp_int *b, mp_int *c, int digs) MP_WUR;
+MP_PRIVATE mp_err s_mp_mul_high_digs_fast(const mp_int *a, const mp_int *b, mp_int *c, int digs) MP_WUR;
+MP_PRIVATE mp_err s_mp_mul_high_digs(const mp_int *a, const mp_int *b, mp_int *c, int digs) MP_WUR;
+MP_PRIVATE mp_err s_mp_sqr_fast(const mp_int *a, mp_int *b) MP_WUR;
+MP_PRIVATE mp_err s_mp_sqr(const mp_int *a, mp_int *b) MP_WUR;
+MP_PRIVATE mp_err s_mp_balance_mul(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
+MP_PRIVATE mp_err s_mp_karatsuba_mul(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
+MP_PRIVATE mp_err s_mp_toom_mul(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
+MP_PRIVATE mp_err s_mp_karatsuba_sqr(const mp_int *a, mp_int *b) MP_WUR;
+MP_PRIVATE mp_err s_mp_toom_sqr(const mp_int *a, mp_int *b) MP_WUR;
+MP_PRIVATE mp_err s_mp_invmod_fast(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
+MP_PRIVATE mp_err s_mp_invmod_slow(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
+MP_PRIVATE mp_err s_mp_montgomery_reduce_fast(mp_int *x, const mp_int *n, mp_digit rho) MP_WUR;
+MP_PRIVATE mp_err s_mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y, int redmode) MP_WUR;
+MP_PRIVATE mp_err s_mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y, int redmode) MP_WUR;
+MP_PRIVATE mp_err s_mp_rand_platform(void *p, size_t n) MP_WUR;
+MP_PRIVATE mp_err s_mp_prime_random_ex(mp_int *a, int t, int size, int flags, private_mp_prime_callback cb, void *dat);
+MP_PRIVATE mp_err s_mp_jacobi(const mp_int *a, const mp_int *n, int *c);
+MP_PRIVATE void s_mp_reverse(unsigned char *s, int len);
 
 /* TODO: jenkins prng is not thread safe as of now */
-mp_err s_mp_rand_jenkins(void *p, size_t n) MP_WUR;
-void s_mp_rand_jenkins_init(uint64_t seed);
+MP_PRIVATE mp_err s_mp_rand_jenkins(void *p, size_t n) MP_WUR;
+MP_PRIVATE void s_mp_rand_jenkins_init(uint64_t seed);
 
-extern const char *const mp_s_rmap;
-extern const uint8_t mp_s_rmap_reverse[];
-extern const size_t mp_s_rmap_reverse_sz;
+extern MP_PRIVATE const char *const mp_s_rmap;
+extern MP_PRIVATE const uint8_t mp_s_rmap_reverse[];
+extern MP_PRIVATE const size_t mp_s_rmap_reverse_sz;
 
 /* Fancy macro to set an MPI from another type.
  * There are several things assumed:
@@ -204,13 +220,17 @@ mp_err func_name (mp_int * a, type b)                    \
 
 /* deprecated functions */
 MP_DEPRECATED(s_mp_invmod_fast) mp_err fast_mp_invmod(const mp_int *a, const mp_int *b, mp_int *c);
-MP_DEPRECATED(s_mp_montgomery_reduce_fast) mp_err fast_mp_montgomery_reduce(mp_int *x, const mp_int *n, mp_digit rho);
-MP_DEPRECATED(s_mp_mul_digs_fast) mp_err fast_s_mp_mul_digs(const mp_int *a, const mp_int *b, mp_int *c, int digs);
-MP_DEPRECATED(s_mp_mul_high_digs_fast) mp_err fast_s_mp_mul_high_digs(const mp_int *a, const mp_int *b, mp_int *c,
+MP_DEPRECATED(s_mp_montgomery_reduce_fast) mp_err fast_mp_montgomery_reduce(mp_int *x, const mp_int *n,
+      mp_digit rho);
+MP_DEPRECATED(s_mp_mul_digs_fast) mp_err fast_s_mp_mul_digs(const mp_int *a, const mp_int *b, mp_int *c,
+      int digs);
+MP_DEPRECATED(s_mp_mul_high_digs_fast) mp_err fast_s_mp_mul_high_digs(const mp_int *a, const mp_int *b,
+      mp_int *c,
       int digs);
 MP_DEPRECATED(s_mp_sqr_fast) mp_err fast_s_mp_sqr(const mp_int *a, mp_int *b);
 MP_DEPRECATED(s_mp_balance_mul) mp_err mp_balance_mul(const mp_int *a, const mp_int *b, mp_int *c);
-MP_DEPRECATED(s_mp_exptmod_fast) mp_err mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y,
+MP_DEPRECATED(s_mp_exptmod_fast) mp_err mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P,
+      mp_int *Y,
       int redmode);
 MP_DEPRECATED(s_mp_invmod_slow) mp_err mp_invmod_slow(const mp_int *a, const mp_int *b, mp_int *c);
 MP_DEPRECATED(s_mp_karatsuba_mul) mp_err mp_karatsuba_mul(const mp_int *a, const mp_int *b, mp_int *c);
