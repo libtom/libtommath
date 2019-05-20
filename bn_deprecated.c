@@ -122,4 +122,28 @@ void bn_reverse(unsigned char *s, int len)
    s_mp_reverse(s, len);
 }
 #endif
+#ifdef BN_MP_TC_AND_C
+mp_err mp_tc_and(const mp_int *a, const mp_int *b, mp_int *c)
+{
+   return mp_and(a, b, c);
+}
+#endif
+#ifdef BN_MP_TC_OR_C
+mp_err mp_tc_or(const mp_int *a, const mp_int *b, mp_int *c)
+{
+   return mp_or(a, b, c);
+}
+#endif
+#ifdef BN_MP_TC_XOR_C
+mp_err mp_tc_xor(const mp_int *a, const mp_int *b, mp_int *c)
+{
+   return mp_xor(a, b, c);
+}
+#endif
+#ifdef BN_MP_TC_DIV_2D_C
+mp_err mp_tc_div_2d(const mp_int *a, int b, mp_int *c)
+{
+   return mp_signed_rsh(a, b, c);
+}
+#endif
 #endif

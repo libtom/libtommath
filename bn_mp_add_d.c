@@ -8,7 +8,7 @@ mp_err mp_add_d(const mp_int *a, mp_digit b, mp_int *c)
 {
    mp_err     err;
    int ix, oldused;
-   mp_digit *tmpa, *tmpc, mu;
+   mp_digit *tmpa, *tmpc;
 
    /* grow c as required */
    if (c->alloc < (a->used + 1)) {
@@ -46,15 +46,9 @@ mp_err mp_add_d(const mp_int *a, mp_digit b, mp_int *c)
 
    /* if a is positive */
    if (a->sign == MP_ZPOS) {
-      /* add digit, after this we're propagating
-       * the carry.
-       */
-      *tmpc   = *tmpa++ + b;
-      mu      = *tmpc >> MP_DIGIT_BIT;
-      *tmpc++ &= MP_MASK;
-
-      /* now handle rest of the digits */
-      for (ix = 1; ix < a->used; ix++) {
+      /* add digits, mu is carry */
+      mp_digit mu = b;
+      for (ix = 0; ix < a->used; ix++) {
          *tmpc   = *tmpa++ + mu;
          mu      = *tmpc >> MP_DIGIT_BIT;
          *tmpc++ &= MP_MASK;

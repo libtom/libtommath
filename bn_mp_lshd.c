@@ -44,10 +44,7 @@ mp_err mp_lshd(mp_int *a, int b)
    }
 
    /* zero the lower digits */
-   top = a->dp;
-   for (x = 0; x < b; x++) {
-      *top++ = 0;
-   }
+   MP_ZERO_DIGITS(a->dp, b);
 
    return MP_OKAY;
 }
