@@ -398,7 +398,7 @@
 #   define BN_MP_ZERO_C
 #   define BN_MP_MUL_D_C
 #   define BN_MP_ADD_D_C
-#   define BN_MP_CMP_D_C
+#   define BN_MP_ISZERO_C
 #endif
 
 #if defined(BN_MP_FWRITE_C)
