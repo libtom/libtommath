@@ -88,3 +88,5 @@ test_*.txt
 *.zip
 
 doc/pics/*.ps
+
+callgraph.txt
