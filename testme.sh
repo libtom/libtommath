@@ -61,11 +61,13 @@ _help()
   echo "    --with-valgrind"
   echo "    --with-valgrind=*       Run in valgrind (slow!)."
   echo
-  echo "    --valgrind-options       Additional Valgrind options"
-  echo "                             Some of the options like e.g.:"
-  echo "                             --track-origins=yes add a lot of extra"
-  echo "                             runtime and may trigger the 30 minutes"
-  echo "                             timeout."
+  echo "    --with-travis-valgrind  Run with valgrind on Travis on specific branches."
+  echo
+  echo "    --valgrind-options      Additional Valgrind options"
+  echo "                            Some of the options like e.g.:"
+  echo "                            --track-origins=yes add a lot of extra"
+  echo "                            runtime and may trigger the 30 minutes"
+  echo "                            timeout."
   echo
   echo "Godmode:"
   echo
@@ -231,6 +233,18 @@ do
         VALGRIND_BIN="valgrind"
       fi
       start_alive_printing
+    ;;
+    --with-travis-valgrind*)
+      if [[ ("$TRAVIS_BRANCH" == "develop" && "$TRAVIS_PULL_REQUEST" == "false") || "$TRAVIS_BRANCH" == *"valgrind"* || "$TRAVIS_COMMIT_MESSAGE" == *"valgrind"* ]]
+      then
+        if [[ ${1#*d} != "" ]]
+        then
+          VALGRIND_BIN="${1#*=}"
+        else
+          VALGRIND_BIN="valgrind"
+        fi
+        start_alive_printing
+      fi
     ;;
     --make-option=*)
       MAKE_OPTIONS="$MAKE_OPTIONS ${1#*=}"
