@@ -29,9 +29,11 @@ static unsigned long ulabs(long x)
 static int test_trivial_stuff(void)
 {
    mp_int a, b, c, d;
-   if (mp_init_multi(&a, &b, &c, &d, NULL)!= MP_OKAY) {
+   mp_err e;
+   if ((e = mp_init_multi(&a, &b, &c, &d, NULL)) != MP_OKAY) {
       return EXIT_FAILURE;
    }
+   (void)mp_error_to_string(e);
 
    /* a: 0->5 */
    mp_set_int(&a, 5uL);
@@ -87,10 +89,45 @@ static int test_trivial_stuff(void)
    mp_set_int(&c, 7uL);
    mp_exptmod(&a, &b, &c, &d);
 
+   if (mp_iseven(&a) == mp_isodd(&a)) {
+      goto LBL_ERR;
+   }
+
    mp_clear_multi(&a, &b, &c, &d, NULL);
    return EXIT_SUCCESS;
 LBL_ERR:
    mp_clear_multi(&a, &b, &c, &d, NULL);
+   return EXIT_FAILURE;
+}
+
+static int test_mp_fread_fwrite(void)
+{
+   mp_int a, b;
+   mp_err e;
+   FILE *tmp = NULL;
+   if ((e = mp_init_multi(&a, &b, NULL)) != MP_OKAY) {
+      return EXIT_FAILURE;
+   }
+
+   mp_set_int(&a, 123456uL);
+   tmp = tmpfile();
+   if ((e = mp_fwrite(&a, 64, tmp)) != MP_OKAY) {
+      goto LBL_ERR;
+   }
+   rewind(tmp);
+   if ((e = mp_fread(&b, 64, tmp)) != MP_OKAY) {
+      goto LBL_ERR;
+   }
+   if (mp_get_int(&b) != 123456uL) {
+      goto LBL_ERR;
+   }
+   fclose(tmp);
+
+   mp_clear_multi(&a, &b, NULL);
+   return EXIT_SUCCESS;
+LBL_ERR:
+   if (tmp != NULL) fclose(tmp);
+   mp_clear_multi(&a, &b, NULL);
    return EXIT_FAILURE;
 }
 
@@ -841,7 +878,7 @@ static int test_mp_prime_is_prime(void)
 {
    int ix;
    mp_err err;
-   mp_bool cnt;
+   mp_bool cnt, fu;
 
    mp_int a, b;
    if (mp_init_multi(&a, &b, NULL)!= MP_OKAY) {
@@ -901,6 +938,10 @@ static int test_mp_prime_is_prime(void)
       /* large problem */
       if (cnt == MP_NO) {
          printf("\nsub is not prime!\n");
+      }
+      mp_prime_frobenius_underwood(&b, &fu);
+      if (fu == MP_NO) {
+         printf("\nfrobenius-underwood says sub is not prime!\n");
       }
       if ((err != MP_OKAY) || (cnt == MP_NO)) {
          printf("prime tested was: ");
@@ -1823,7 +1864,7 @@ static int test_s_mp_balance_mul(void)
       goto LTM_ERR;
    }
 
-   if ((e = mp_mul(&a, &b, &c)) != MP_OKAY) {
+   if ((e = s_mp_balance_mul(&a, &b, &c)) != MP_OKAY) {
       goto LTM_ERR;
    }
 
@@ -1855,6 +1896,7 @@ int unit_tests(int argc, char **argv)
       T(mp_decr),
       T(mp_div_3),
       T(mp_dr_reduce),
+      T(mp_fread_fwrite),
       T(mp_get_int),
       T(mp_get_long),
       T(mp_get_long_long),
