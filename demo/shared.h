@@ -19,6 +19,6 @@
 #endif
 
 #define MP_WUR /* TODO: result checks disabled for now */
-#include "tommath.h"
+#include "tommath_private.h"
 
 extern void ndraw(mp_int* a, const char* name);
