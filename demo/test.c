@@ -1883,6 +1883,137 @@ LTM_ERR:
    return EXIT_FAILURE;
 }
 
+#define s_mp_mul(a, b, c) s_mp_mul_digs(a, b, c, (a)->used + (b)->used + 1)
+static int test_s_mp_karatsuba_mul(void)
+{
+   mp_int a, b, c, d;
+   int size, err;
+
+   if ((err = mp_init_multi(&a, &b, &c, &d, NULL)) != MP_OKAY) {
+      goto LTM_ERR;
+   }
+   for (size = MP_KARATSUBA_MUL_CUTOFF; size < MP_KARATSUBA_MUL_CUTOFF + 20; size++) {
+      if ((err = mp_rand(&a, size)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if ((err = mp_rand(&b, size)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if ((err = s_mp_karatsuba_mul(&a, &b, &c)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if ((err = s_mp_mul(&a,&b,&d)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if (mp_cmp(&c, &d) != MP_EQ) {
+         fprintf(stderr, "Karatsuba multiplication failed at size %d\n", size);
+         goto LTM_ERR;
+      }
+   }
+
+   mp_clear_multi(&a, &b, &c, &d, NULL);
+   return EXIT_SUCCESS;
+LTM_ERR:
+   mp_clear_multi(&a, &b, &c, &d, NULL);
+   return EXIT_FAILURE;
+}
+
+static int test_s_mp_karatsuba_sqr(void)
+{
+   mp_int a, b, c;
+   int size, err;
+
+   if ((err = mp_init_multi(&a, &b, &c, NULL)) != MP_OKAY) {
+      goto LTM_ERR;
+   }
+   for (size = MP_KARATSUBA_SQR_CUTOFF; size < MP_KARATSUBA_SQR_CUTOFF + 20; size++) {
+      if ((err = mp_rand(&a, size)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if ((err = s_mp_karatsuba_sqr(&a, &b)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if ((err = s_mp_sqr(&a, &c)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if (mp_cmp(&b, &c) != MP_EQ) {
+         fprintf(stderr, "Karatsuba squaring failed at size %d\n", size);
+         goto LTM_ERR;
+      }
+   }
+
+   mp_clear_multi(&a, &b, &c, NULL);
+   return EXIT_SUCCESS;
+LTM_ERR:
+   mp_clear_multi(&a, &b, &c, NULL);
+   return EXIT_FAILURE;
+}
+
+static int test_s_mp_toom_mul(void)
+{
+   mp_int a, b, c, d;
+   int size, err;
+
+   if ((err = mp_init_multi(&a, &b, &c, &d, NULL)) != MP_OKAY) {
+      goto LTM_ERR;
+   }
+   for (size = MP_TOOM_MUL_CUTOFF; size < MP_TOOM_MUL_CUTOFF + 20; size++) {
+      if ((err = mp_rand(&a, size)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if ((err = mp_rand(&b, size)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if ((err = s_mp_toom_mul(&a, &b, &c)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if ((err = s_mp_mul(&a,&b,&d)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if (mp_cmp(&c, &d) != MP_EQ) {
+         fprintf(stderr, "Toom-Cook 3-way multiplication failed at size %d\n", size);
+         goto LTM_ERR;
+      }
+   }
+
+   mp_clear_multi(&a, &b, &c, &d, NULL);
+   return EXIT_SUCCESS;
+LTM_ERR:
+   mp_clear_multi(&a, &b, &c, &d, NULL);
+   return EXIT_FAILURE;
+}
+
+static int test_s_mp_toom_sqr(void)
+{
+   mp_int a, b, c;
+   int size, err;
+
+   if ((err = mp_init_multi(&a, &b, &c, NULL)) != MP_OKAY) {
+      goto LTM_ERR;
+   }
+   for (size = MP_TOOM_SQR_CUTOFF; size < MP_TOOM_SQR_CUTOFF + 20; size++) {
+      if ((err = mp_rand(&a, size)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if ((err = s_mp_toom_sqr(&a, &b)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if ((err = s_mp_sqr(&a, &c)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if (mp_cmp(&b, &c) != MP_EQ) {
+         fprintf(stderr, "Toom-Cook 3-way squaring failed at size %d\n", size);
+         goto LTM_ERR;
+      }
+   }
+
+   mp_clear_multi(&a, &b, &c, NULL);
+   return EXIT_SUCCESS;
+LTM_ERR:
+   mp_clear_multi(&a, &b, &c, NULL);
+   return EXIT_FAILURE;
+}
+
 int unit_tests(int argc, char **argv)
 {
    static const struct {
@@ -1921,7 +2052,11 @@ int unit_tests(int argc, char **argv)
       T(mp_tc_or),
       T(mp_tc_xor),
       T(s_mp_balance_mul),
-      T(s_mp_jacobi)
+      T(s_mp_jacobi),
+      T(s_mp_karatsuba_mul),
+      T(s_mp_karatsuba_sqr),
+      T(s_mp_toom_mul),
+      T(s_mp_toom_sqr)
 #undef T
    };
    unsigned long i;
