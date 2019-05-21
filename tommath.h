@@ -367,14 +367,6 @@ extern void (*ltm_rng_callback)(void);
 #endif
 
 /* ---> binary operations <--- */
-/* c = a XOR b  */
-mp_err mp_xor(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
-
-/* c = a OR b */
-mp_err mp_or(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
-
-/* c = a AND b */
-mp_err mp_and(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
 
 /* Checks the bit at position b and returns MP_YES
  * if the bit is 1, MP_NO if it is 0 and MP_VAL
@@ -383,21 +375,25 @@ mp_err mp_and(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
 MP_DEPRECATED(s_mp_get_bit) int mp_get_bit(const mp_int *a, int b) MP_WUR;
 
 /* c = a XOR b (two complement) */
-mp_err mp_tc_xor(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
+MP_DEPRECATED(mp_xor) mp_err mp_tc_xor(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
+mp_err mp_xor(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
 
 /* c = a OR b (two complement) */
-mp_err mp_tc_or(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
+MP_DEPRECATED(mp_or) mp_err mp_tc_or(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
+mp_err mp_or(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
 
 /* c = a AND b (two complement) */
-mp_err mp_tc_and(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
+MP_DEPRECATED(mp_and) mp_err mp_tc_and(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
+mp_err mp_and(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
 
-/* right shift (two complement) */
-mp_err mp_tc_div_2d(const mp_int *a, int b, mp_int *c) MP_WUR;
+/* b = ~a (bitwise not, two complement) */
+mp_err mp_complement(const mp_int *a, mp_int *b) MP_WUR;
+
+/* right shift with sign extension */
+MP_DEPRECATED(mp_signed_rsh) mp_err mp_tc_div_2d(const mp_int *a, int b, mp_int *c) MP_WUR;
+mp_err mp_signed_rsh(const mp_int *a, int b, mp_int *c) MP_WUR;
 
 /* ---> Basic arithmetic <--- */
-
-/* b = ~a */
-mp_err mp_complement(const mp_int *a, mp_int *b) MP_WUR;
 
 /* b = -a */
 mp_err mp_neg(const mp_int *a, mp_int *b) MP_WUR;

@@ -43,9 +43,7 @@ void mp_rshd(mp_int *a, int b)
    }
 
    /* zero the top digits */
-   for (; x < a->used; x++) {
-      *bottom++ = 0;
-   }
+   MP_ZERO_DIGITS(bottom, a->used - x);
 
    /* remove excess digits */
    a->used -= b;

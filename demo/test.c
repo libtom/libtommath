@@ -347,7 +347,7 @@ LBL_ERR:
    return EXIT_FAILURE;
 }
 
-static int test_mp_tc_div_2d(void)
+static int test_mp_signed_rsh(void)
 {
    int i;
 
@@ -371,9 +371,9 @@ static int test_mp_tc_div_2d(void)
       if ((l >> em) < 0)
          mp_neg(&d, &d);
 
-      mp_tc_div_2d(&a, em, &b);
+      mp_signed_rsh(&a, em, &b);
       if (mp_cmp(&b, &d) != MP_EQ) {
-         printf("\nmp_tc_div_2d() bad result!");
+         printf("\nmp_signed_rsh() bad result!");
          goto LBL_ERR;
       }
    }
@@ -386,7 +386,7 @@ LBL_ERR:
 
 }
 
-static int test_mp_tc_xor(void)
+static int test_mp_xor(void)
 {
    int i;
 
@@ -412,9 +412,9 @@ static int test_mp_tc_xor(void)
       if ((l ^ em) < 0)
          mp_neg(&d, &d);
 
-      mp_tc_xor(&a, &b, &c);
+      mp_xor(&a, &b, &c);
       if (mp_cmp(&c, &d) != MP_EQ) {
-         printf("\nmp_tc_xor() bad result!");
+         printf("\nmp_xor() bad result!");
          goto LBL_ERR;
       }
    }
@@ -427,7 +427,7 @@ LBL_ERR:
 
 }
 
-static int test_mp_tc_or(void)
+static int test_mp_or(void)
 {
    int i;
 
@@ -453,9 +453,9 @@ static int test_mp_tc_or(void)
       if ((l | em) < 0)
          mp_neg(&d, &d);
 
-      mp_tc_or(&a, &b, &c);
+      mp_or(&a, &b, &c);
       if (mp_cmp(&c, &d) != MP_EQ) {
-         printf("\nmp_tc_or() bad result!");
+         printf("\nmp_or() bad result!");
          goto LBL_ERR;
       }
    }
@@ -467,7 +467,7 @@ LBL_ERR:
    return EXIT_FAILURE;
 }
 
-static int test_mp_tc_and(void)
+static int test_mp_and(void)
 {
    int i;
 
@@ -493,9 +493,9 @@ static int test_mp_tc_and(void)
       if ((l & em) < 0)
          mp_neg(&d, &d);
 
-      mp_tc_and(&a, &b, &c);
+      mp_and(&a, &b, &c);
       if (mp_cmp(&c, &d) != MP_EQ) {
-         printf("\nmp_tc_and() bad result!");
+         printf("\nmp_and() bad result!");
          goto LBL_ERR;
       }
    }
@@ -2021,6 +2021,7 @@ int unit_tests(int argc, char **argv)
    } test[] = {
 #define T(n) { #n, test_##n }
       T(trivial_stuff),
+      T(mp_and),
       T(mp_cnt_lsb),
       T(mp_complement),
       T(mp_decr),
@@ -2037,6 +2038,7 @@ int unit_tests(int argc, char **argv)
       T(mp_kronecker),
       T(mp_montgomery_reduce),
       T(mp_n_root),
+      T(mp_or),
       T(mp_prime_is_prime),
       T(mp_prime_rand),
       T(mp_rand),
@@ -2044,12 +2046,10 @@ int unit_tests(int argc, char **argv)
       T(mp_reduce_2k),
       T(mp_reduce_2k_l),
       T(mp_set_double),
+      T(mp_signed_rsh),
       T(mp_sqrt),
       T(mp_sqrtmod_prime),
-      T(mp_tc_and),
-      T(mp_tc_div_2d),
-      T(mp_tc_or),
-      T(mp_tc_xor),
+      T(mp_xor),
       T(s_mp_balance_mul),
       T(s_mp_jacobi),
       T(s_mp_karatsuba_mul),

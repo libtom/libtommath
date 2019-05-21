@@ -729,6 +729,10 @@
 			>
 		</File>
 		<File
+			RelativePath="bn_mp_signed_rsh.c"
+			>
+		</File>
+		<File
 			RelativePath="bn_mp_sqr.c"
 			>
 		</File>
@@ -754,22 +758,6 @@
 		</File>
 		<File
 			RelativePath="bn_mp_submod.c"
-			>
-		</File>
-		<File
-			RelativePath="bn_mp_tc_and.c"
-			>
-		</File>
-		<File
-			RelativePath="bn_mp_tc_div_2d.c"
-			>
-		</File>
-		<File
-			RelativePath="bn_mp_tc_or.c"
-			>
-		</File>
-		<File
-			RelativePath="bn_mp_tc_xor.c"
 			>
 		</File>
 		<File

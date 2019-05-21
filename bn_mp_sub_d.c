@@ -6,7 +6,7 @@
 /* single digit subtraction */
 mp_err mp_sub_d(const mp_int *a, mp_digit b, mp_int *c)
 {
-   mp_digit *tmpa, *tmpc, mu;
+   mp_digit *tmpa, *tmpc;
    mp_err    err;
    int       ix, oldused;
 
@@ -50,17 +50,14 @@ mp_err mp_sub_d(const mp_int *a, mp_digit b, mp_int *c)
       c->sign = MP_NEG;
       c->used = 1;
    } else {
+      mp_digit mu = b;
+
       /* positive/size */
       c->sign = MP_ZPOS;
       c->used = a->used;
 
-      /* subtract first digit */
-      *tmpc    = *tmpa++ - b;
-      mu       = *tmpc >> (MP_SIZEOF_BITS(mp_digit) - 1u);
-      *tmpc++ &= MP_MASK;
-
-      /* handle rest of the digits */
-      for (ix = 1; ix < a->used; ix++) {
+      /* subtract digits, mu is carry */
+      for (ix = 0; ix < a->used; ix++) {
          *tmpc    = *tmpa++ - mu;
          mu       = *tmpc >> (MP_SIZEOF_BITS(mp_digit) - 1u);
          *tmpc++ &= MP_MASK;

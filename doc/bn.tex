@@ -1238,13 +1238,6 @@ function simply copies $a$ over to ``c'' and zeroes $d$.  The variable $d$ may b
 value to signal that the remainder is not desired.  The division itself is implemented as a left-shift
 operation of $a$ by $b$ bits.
 
-\index{mp\_tc\_div\_2d}\label{arithrightshift}
-\begin{alltt}
-int mp_tc_div_2d (mp_int * a, int b, mp_int * c, mp_int * d);
-\end{alltt}
-The two-co,mplement version of the function above. This can be used to implement arbitrary-precision two-complement integers together with the two-complement bit-wise operations at page \ref{tcbitwiseops}.
-
-
 It is also not very uncommon to need just the power of two $2^b$;  for example the startvalue for the Newton method.
 
 \index{mp\_2expt}
@@ -1280,30 +1273,20 @@ in place and no new digits are required to complete it.
 
 \subsection{AND, OR, XOR and COMPLEMENT Operations}
 
-While AND, OR and XOR operations are not typical ``bignum functions'' they can be useful in several instances.  The
-three functions are prototyped as follows.
+While AND, OR and XOR operations compute arbitrary-precision bitwise operations. Negative numbers
+are treated as if they are in two-complement representation, while internally they are sign-magnitude however.
 
-\index{mp\_or} \index{mp\_and} \index{mp\_xor}
+\index{mp\_or} \index{mp\_and} \index{mp\_xor} \index{mp\_complement}
 \begin{alltt}
 int mp_or  (mp_int * a, mp_int * b, mp_int * c);
 int mp_and (mp_int * a, mp_int * b, mp_int * c);
 int mp_xor (mp_int * a, mp_int * b, mp_int * c);
-\end{alltt}
-
-Which compute $c = a \odot b$ where $\odot$ is one of OR, AND or XOR.
-
-The following four functions allow implementing arbitrary-precision two-complement numbers.
-
-\index{mp\_tc\_or} \index{mp\_tc\_and} \index{mp\_tc\_xor} \index{mp\_complement} \label{tcbitwiseops}
-\begin{alltt}
-int mp_tc_or  (mp_int * a, mp_int * b, mp_int * c);
-int mp_tc_and (mp_int * a, mp_int * b, mp_int * c);
-int mp_tc_xor (mp_int * a, mp_int * b, mp_int * c);
 int mp_complement(const mp_int *a, mp_int *b);
+int mp_signed_rsh(mp_int * a, int b, mp_int * c, mp_int * d);
 \end{alltt}
 
-They compute $c = a \odot b$ as above if both $a$ and $b$ are positive. Negative values are converted into their two-complement representations first. The function \texttt{mp\_complement} computes a two-complement $b = \sim a$.
-
+The function \texttt{mp\_complement} computes a two-complement $b = \sim a$. The function \texttt{mp\_signed\_rsh} performs
+sign extending right shift. For positive numbers it is equivalent to \texttt{mp\_div\_2d}.
 
 \subsection{Bit Picking}
 \index{mp\_get\_bit}
