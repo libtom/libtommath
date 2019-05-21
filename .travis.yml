@@ -157,12 +157,12 @@ matrix:
     # GCC for the x86-64 architecture testing against a different Bigint-implementation
     # with 333333 different inputs.
     #- env: BUILDOPTIONS='--with-cc=gcc-5 --test-vs-mtest=333333 --with-travis-valgrind'
-    #- env: BUILDOPTIONS='--with-cc=gcc-5 --test-vs-mtest=333333 --mtest-real-rand --with-travis-valgrind'
+    - env: BUILDOPTIONS='--with-cc=gcc-5 --test-vs-mtest=333333 --mtest-real-rand --with-travis-valgrind'
 
     # clang for the x86-64 architecture testing against a different Bigint-implementation
     # with a better random source.
     - env: BUILDOPTIONS='--with-cc=clang-7 --test-vs-mtest=333333 --with-travis-valgrind'
-    - env: BUILDOPTIONS='--with-cc=clang-7 --test-vs-mtest=333333 --mtest-real-rand --with-travis-valgrind'
+    #- env: BUILDOPTIONS='--with-cc=clang-7 --test-vs-mtest=333333 --mtest-real-rand --with-travis-valgrind'
 
 
 # Notifications go to
