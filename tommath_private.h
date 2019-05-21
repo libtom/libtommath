@@ -82,8 +82,8 @@ do {                                                    \
 do {                                                    \
    size_t zs_ = (size);                                 \
    char* zm_ = (char*)(mem);                            \
-   while (zs_-- > 0) {                                  \
-      *zm_++ = 0;                                       \
+   while (zs_-- > 0u) {                                 \
+      *zm_++ = '\0';                                    \
    }                                                    \
 } while (0)
 #  define MP_ZERO_DIGITS(mem, digits)                   \
@@ -156,7 +156,7 @@ typedef private_mp_word mp_word;
 #define MP_IS_EVEN(a) (((a)->used == 0) || (((a)->dp[0] & 1u) == 0u))
 #define MP_IS_ODD(a)  (((a)->used > 0) && (((a)->dp[0] & 1u) == 1u))
 
-#define MP_SIZEOF_BITS(type)    (CHAR_BIT * sizeof(type))
+#define MP_SIZEOF_BITS(type)    ((size_t)CHAR_BIT * sizeof(type))
 #define MP_MAXFAST              (int)(1uL << (MP_SIZEOF_BITS(mp_word) - (2u * (size_t)MP_DIGIT_BIT)))
 
 /* Minimum number of available digits in mp_int, MP_PREC >= MP_MIN_PREC */

@@ -7,7 +7,7 @@
 mp_ord mp_cmp_mag(const mp_int *a, const mp_int *b)
 {
    int     n;
-   mp_digit *tmpa, *tmpb;
+   const mp_digit *tmpa, *tmpb;
 
    /* compare based on # of non-zero digits */
    if (a->used > b->used) {
