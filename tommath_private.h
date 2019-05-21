@@ -5,6 +5,7 @@
 #define TOMMATH_PRIV_H_
 
 #include "tommath.h"
+#include "tommath_class.h"
 
 /* Hardening libtommath
  * --------------------
