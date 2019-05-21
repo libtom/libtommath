@@ -26,7 +26,7 @@ mp_err mp_and(const mp_int *a, const mp_int *b, mp_int *c)
          x = ac & MP_MASK;
          ac >>= MP_DIGIT_BIT;
       } else {
-         x = (i >= a->used) ? 0 : a->dp[i];
+         x = (i >= a->used) ? 0uL : a->dp[i];
       }
 
       /* convert to two complement if negative */
@@ -35,7 +35,7 @@ mp_err mp_and(const mp_int *a, const mp_int *b, mp_int *c)
          y = bc & MP_MASK;
          bc >>= MP_DIGIT_BIT;
       } else {
-         y = (i >= b->used) ? 0 : b->dp[i];
+         y = (i >= b->used) ? 0uL : b->dp[i];
       }
 
       c->dp[i] = x & y;
