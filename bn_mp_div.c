@@ -213,7 +213,7 @@ mp_err mp_div(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d)
 
          /* find right hand */
          t2.dp[0] = ((i - 2) < 0) ? 0u : x.dp[i - 2];
-         t2.dp[1] = ((i - 1) < 0) ? 0u : x.dp[i - 1];
+         t2.dp[1] = x.dp[i - 1]; /* i >= 1 always holds */
          t2.dp[2] = x.dp[i];
          t2.used = 3;
       } while (mp_cmp_mag(&t1, &t2) == MP_GT);
