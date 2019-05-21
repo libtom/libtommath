@@ -28,7 +28,7 @@ static const char rem_105[105] = {
 /* Store non-zero to ret if arg is square, and zero if not */
 mp_err mp_is_square(const mp_int *arg, mp_bool *ret)
 {
-   mp_err        res;
+   mp_err        err;
    mp_digit      c;
    mp_int        t;
    unsigned long r;
@@ -50,23 +50,23 @@ mp_err mp_is_square(const mp_int *arg, mp_bool *ret)
    }
 
    /* Next check mod 105 (3*5*7) */
-   if ((res = mp_mod_d(arg, 105uL, &c)) != MP_OKAY) {
-      return res;
+   if ((err = mp_mod_d(arg, 105uL, &c)) != MP_OKAY) {
+      return err;
    }
    if (rem_105[c] == (char)1) {
       return MP_OKAY;
    }
 
 
-   if ((res = mp_init_set_int(&t, 11L*13L*17L*19L*23L*29L*31L)) != MP_OKAY) {
-      return res;
+   if ((err = mp_init_set_int(&t, 11L*13L*17L*19L*23L*29L*31L)) != MP_OKAY) {
+      return err;
    }
-   if ((res = mp_mod(arg, &t, &t)) != MP_OKAY) {
+   if ((err = mp_mod(arg, &t, &t)) != MP_OKAY) {
       goto LBL_ERR;
    }
    r = mp_get_int(&t);
    /* Check for other prime modules, note it's not an ERROR but we must
-    * free "t" so the easiest way is to goto LBL_ERR.  We know that res
+    * free "t" so the easiest way is to goto LBL_ERR.  We know that err
     * is already equal to MP_OKAY from the mp_mod call
     */
    if (((1uL<<(r%11uL)) & 0x5C4uL) != 0uL)         goto LBL_ERR;
@@ -78,16 +78,16 @@ mp_err mp_is_square(const mp_int *arg, mp_bool *ret)
    if (((1uL<<(r%31uL)) & 0x6DE2B848uL) != 0uL)    goto LBL_ERR;
 
    /* Final check - is sqr(sqrt(arg)) == arg ? */
-   if ((res = mp_sqrt(arg, &t)) != MP_OKAY) {
+   if ((err = mp_sqrt(arg, &t)) != MP_OKAY) {
       goto LBL_ERR;
    }
-   if ((res = mp_sqr(&t, &t)) != MP_OKAY) {
+   if ((err = mp_sqr(&t, &t)) != MP_OKAY) {
       goto LBL_ERR;
    }
 
    *ret = (mp_cmp_mag(&t, arg) == MP_EQ) ? MP_YES : MP_NO;
 LBL_ERR:
    mp_clear(&t);
-   return res;
+   return err;
 }
 #endif

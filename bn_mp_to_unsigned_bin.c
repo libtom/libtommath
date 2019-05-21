@@ -7,11 +7,11 @@
 mp_err mp_to_unsigned_bin(const mp_int *a, unsigned char *b)
 {
    int     x;
-   mp_err  res;
+   mp_err  err;
    mp_int  t;
 
-   if ((res = mp_init_copy(&t, a)) != MP_OKAY) {
-      return res;
+   if ((err = mp_init_copy(&t, a)) != MP_OKAY) {
+      return err;
    }
 
    x = 0;
@@ -21,9 +21,9 @@ mp_err mp_to_unsigned_bin(const mp_int *a, unsigned char *b)
 #else
       b[x++] = (unsigned char)(t.dp[0] | ((t.dp[1] & 1u) << 7));
 #endif
-      if ((res = mp_div_2d(&t, 8, &t, NULL)) != MP_OKAY) {
+      if ((err = mp_div_2d(&t, 8, &t, NULL)) != MP_OKAY) {
          mp_clear(&t);
-         return res;
+         return err;
       }
    }
    s_mp_reverse(b, x);

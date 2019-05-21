@@ -27,7 +27,7 @@ mp_err mp_div_d(const mp_int *a, mp_digit b, mp_int *c, mp_digit *d)
    mp_int  q;
    mp_word w;
    mp_digit t;
-   mp_err res;
+   mp_err err;
    int ix;
 
    /* cannot divide by zero */
@@ -65,8 +65,8 @@ mp_err mp_div_d(const mp_int *a, mp_digit b, mp_int *c, mp_digit *d)
 #endif
 
    /* no easy answer [c'est la vie].  Just division */
-   if ((res = mp_init_size(&q, a->used)) != MP_OKAY) {
-      return res;
+   if ((err = mp_init_size(&q, a->used)) != MP_OKAY) {
+      return err;
    }
 
    q.used = a->used;
@@ -94,7 +94,7 @@ mp_err mp_div_d(const mp_int *a, mp_digit b, mp_int *c, mp_digit *d)
    }
    mp_clear(&q);
 
-   return res;
+   return err;
 }
 
 #endif

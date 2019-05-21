@@ -6,15 +6,15 @@
 /* Decrement "a" by one like "a--". Changes input! */
 mp_err mp_decr(mp_int *a)
 {
-   mp_err e = MP_OKAY;
    if (MP_IS_ZERO(a)) {
       mp_set(a,1uL);
       a->sign = MP_NEG;
       return MP_OKAY;
    } else if (a->sign == MP_NEG) {
+      mp_err err;
       a->sign = MP_ZPOS;
-      if ((e = mp_incr(a)) != MP_OKAY) {
-         return e;
+      if ((err = mp_incr(a)) != MP_OKAY) {
+         return err;
       }
       /* There is no -0 in LTM */
       if (!MP_IS_ZERO(a)) {

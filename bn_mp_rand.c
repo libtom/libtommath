@@ -13,7 +13,7 @@ void mp_rand_source(mp_err(*source)(void *out, size_t size))
 mp_err mp_rand(mp_int *a, int digits)
 {
    int i;
-   mp_err ret;
+   mp_err err;
 
    mp_zero(a);
 
@@ -21,18 +21,18 @@ mp_err mp_rand(mp_int *a, int digits)
       return MP_OKAY;
    }
 
-   if ((ret = mp_grow(a, digits)) != MP_OKAY) {
-      return ret;
+   if ((err = mp_grow(a, digits)) != MP_OKAY) {
+      return err;
    }
 
-   if ((ret = s_mp_rand_source(a->dp, (size_t)digits * sizeof(mp_digit))) != MP_OKAY) {
-      return ret;
+   if ((err = s_mp_rand_source(a->dp, (size_t)digits * sizeof(mp_digit))) != MP_OKAY) {
+      return err;
    }
 
    /* TODO: We ensure that the highest digit is nonzero. Should this be removed? */
    while ((a->dp[digits - 1] & MP_MASK) == 0) {
-      if ((ret = s_mp_rand_source(a->dp + digits - 1, sizeof(mp_digit))) != MP_OKAY) {
-         return ret;
+      if ((err = s_mp_rand_source(a->dp + digits - 1, sizeof(mp_digit))) != MP_OKAY) {
+         return err;
       }
    }
 

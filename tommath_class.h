@@ -610,7 +610,7 @@
 #endif
 
 #if defined(BN_MP_N_ROOT_EX_C)
-#   define BN_MP_INIT_C
+#   define BN_MP_INIT_MULTI_C
 #   define BN_MP_COUNT_BITS_C
 #   define BN_MP_SET_C
 #   define BN_MP_2EXPT_C
@@ -624,7 +624,7 @@
 #   define BN_MP_ADD_D_C
 #   define BN_MP_SUB_D_C
 #   define BN_MP_EXCH_C
-#   define BN_MP_CLEAR_C
+#   define BN_MP_CLEAR_MULTI_C
 #endif
 
 #if defined(BN_MP_NEG_C)

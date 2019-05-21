@@ -7,25 +7,25 @@
 mp_err mp_mul_2d(const mp_int *a, int b, mp_int *c)
 {
    mp_digit d;
-   mp_err   res;
+   mp_err   err;
 
    /* copy */
    if (a != c) {
-      if ((res = mp_copy(a, c)) != MP_OKAY) {
-         return res;
+      if ((err = mp_copy(a, c)) != MP_OKAY) {
+         return err;
       }
    }
 
    if (c->alloc < (c->used + (b / MP_DIGIT_BIT) + 1)) {
-      if ((res = mp_grow(c, c->used + (b / MP_DIGIT_BIT) + 1)) != MP_OKAY) {
-         return res;
+      if ((err = mp_grow(c, c->used + (b / MP_DIGIT_BIT) + 1)) != MP_OKAY) {
+         return err;
       }
    }
 
    /* shift by as many digits in the bit count */
    if (b >= MP_DIGIT_BIT) {
-      if ((res = mp_lshd(c, b / MP_DIGIT_BIT)) != MP_OKAY) {
-         return res;
+      if ((err = mp_lshd(c, b / MP_DIGIT_BIT)) != MP_OKAY) {
+         return err;
       }
    }
 

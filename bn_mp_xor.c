@@ -7,19 +7,19 @@
 mp_err mp_xor(const mp_int *a, const mp_int *b, mp_int *c)
 {
    int     ix, px;
-   mp_err  res;
+   mp_err  err;
    mp_int  t;
    const mp_int *x;
 
    if (a->used > b->used) {
-      if ((res = mp_init_copy(&t, a)) != MP_OKAY) {
-         return res;
+      if ((err = mp_init_copy(&t, a)) != MP_OKAY) {
+         return err;
       }
       px = b->used;
       x = b;
    } else {
-      if ((res = mp_init_copy(&t, b)) != MP_OKAY) {
-         return res;
+      if ((err = mp_init_copy(&t, b)) != MP_OKAY) {
+         return err;
       }
       px = a->used;
       x = a;

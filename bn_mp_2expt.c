@@ -10,14 +10,14 @@
  */
 mp_err mp_2expt(mp_int *a, int b)
 {
-   mp_err    res;
+   mp_err    err;
 
    /* zero a as per default */
    mp_zero(a);
 
    /* grow a to accomodate the single bit */
-   if ((res = mp_grow(a, (b / MP_DIGIT_BIT) + 1)) != MP_OKAY) {
-      return res;
+   if ((err = mp_grow(a, (b / MP_DIGIT_BIT) + 1)) != MP_OKAY) {
+      return err;
    }
 
    /* set the used count of where the bit will go */

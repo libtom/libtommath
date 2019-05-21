@@ -7,7 +7,7 @@
 mp_err s_mp_add(const mp_int *a, const mp_int *b, mp_int *c)
 {
    const mp_int *x;
-   mp_err res;
+   mp_err err;
    int     olduse, min, max;
 
    /* find sizes, we let |a| <= |b| which means we have to sort
@@ -25,8 +25,8 @@ mp_err s_mp_add(const mp_int *a, const mp_int *b, mp_int *c)
 
    /* init result */
    if (c->alloc < (max + 1)) {
-      if ((res = mp_grow(c, max + 1)) != MP_OKAY) {
-         return res;
+      if ((err = mp_grow(c, max + 1)) != MP_OKAY) {
+         return err;
       }
    }
 

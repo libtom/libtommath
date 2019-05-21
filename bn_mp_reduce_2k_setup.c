@@ -6,23 +6,23 @@
 /* determines the setup value */
 mp_err mp_reduce_2k_setup(const mp_int *a, mp_digit *d)
 {
-   mp_err res;
+   mp_err err;
    mp_int tmp;
    int    p;
 
-   if ((res = mp_init(&tmp)) != MP_OKAY) {
-      return res;
+   if ((err = mp_init(&tmp)) != MP_OKAY) {
+      return err;
    }
 
    p = mp_count_bits(a);
-   if ((res = mp_2expt(&tmp, p)) != MP_OKAY) {
+   if ((err = mp_2expt(&tmp, p)) != MP_OKAY) {
       mp_clear(&tmp);
-      return res;
+      return err;
    }
 
-   if ((res = s_mp_sub(&tmp, a, &tmp)) != MP_OKAY) {
+   if ((err = s_mp_sub(&tmp, a, &tmp)) != MP_OKAY) {
       mp_clear(&tmp);
-      return res;
+      return err;
    }
 
    *d = tmp.dp[0];

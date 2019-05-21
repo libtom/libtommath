@@ -19,7 +19,7 @@ unsigned long mp_get_long(const mp_int *a)
    /* get most significant digit of result */
    res = (unsigned long)a->dp[i];
 
-#if (ULONG_MAX != 0xFFFFFFFFUL) || (MP_DIGIT_BIT < 32)
+#if (ULONG_MAX != 0xFFFFFFFFuL) || (MP_DIGIT_BIT < 32)
    while (--i >= 0) {
       res = (res << MP_DIGIT_BIT) | (unsigned long)a->dp[i];
    }

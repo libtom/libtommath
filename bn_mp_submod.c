@@ -6,19 +6,19 @@
 /* d = a - b (mod c) */
 mp_err mp_submod(const mp_int *a, const mp_int *b, const mp_int *c, mp_int *d)
 {
-   mp_err res;
+   mp_err err;
    mp_int t;
 
-   if ((res = mp_init(&t)) != MP_OKAY) {
-      return res;
+   if ((err = mp_init(&t)) != MP_OKAY) {
+      return err;
    }
 
-   if ((res = mp_sub(a, b, &t)) != MP_OKAY) {
+   if ((err = mp_sub(a, b, &t)) != MP_OKAY) {
       mp_clear(&t);
-      return res;
+      return err;
    }
-   res = mp_mod(&t, c, d);
+   err = mp_mod(&t, c, d);
    mp_clear(&t);
-   return res;
+   return err;
 }
 #endif

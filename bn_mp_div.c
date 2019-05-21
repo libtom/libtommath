@@ -10,7 +10,7 @@ mp_err mp_div(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d)
 {
    mp_int ta, tb, tq, q;
    int     n, n2;
-   mp_err res;
+   mp_err err;
 
    /* is divisor zero ? */
    if (MP_IS_ZERO(b)) {
@@ -20,40 +20,40 @@ mp_err mp_div(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d)
    /* if a < b then q=0, r = a */
    if (mp_cmp_mag(a, b) == MP_LT) {
       if (d != NULL) {
-         res = mp_copy(a, d);
+         err = mp_copy(a, d);
       } else {
-         res = MP_OKAY;
+         err = MP_OKAY;
       }
       if (c != NULL) {
          mp_zero(c);
       }
-      return res;
+      return err;
    }
 
    /* init our temps */
-   if ((res = mp_init_multi(&ta, &tb, &tq, &q, NULL)) != MP_OKAY) {
-      return res;
+   if ((err = mp_init_multi(&ta, &tb, &tq, &q, NULL)) != MP_OKAY) {
+      return err;
    }
 
 
    mp_set(&tq, 1uL);
    n = mp_count_bits(a) - mp_count_bits(b);
-   if (((res = mp_abs(a, &ta)) != MP_OKAY) ||
-       ((res = mp_abs(b, &tb)) != MP_OKAY) ||
-       ((res = mp_mul_2d(&tb, n, &tb)) != MP_OKAY) ||
-       ((res = mp_mul_2d(&tq, n, &tq)) != MP_OKAY)) {
+   if (((err = mp_abs(a, &ta)) != MP_OKAY) ||
+       ((err = mp_abs(b, &tb)) != MP_OKAY) ||
+       ((err = mp_mul_2d(&tb, n, &tb)) != MP_OKAY) ||
+       ((err = mp_mul_2d(&tq, n, &tq)) != MP_OKAY)) {
       goto LBL_ERR;
    }
 
    while (n-- >= 0) {
       if (mp_cmp(&tb, &ta) != MP_GT) {
-         if (((res = mp_sub(&ta, &tb, &ta)) != MP_OKAY) ||
-             ((res = mp_add(&q, &tq, &q)) != MP_OKAY)) {
+         if (((err = mp_sub(&ta, &tb, &ta)) != MP_OKAY) ||
+             ((err = mp_add(&q, &tq, &q)) != MP_OKAY)) {
             goto LBL_ERR;
          }
       }
-      if (((res = mp_div_2d(&tb, 1, &tb, NULL)) != MP_OKAY) ||
-          ((res = mp_div_2d(&tq, 1, &tq, NULL)) != MP_OKAY)) {
+      if (((err = mp_div_2d(&tb, 1, &tb, NULL)) != MP_OKAY) ||
+          ((err = mp_div_2d(&tq, 1, &tq, NULL)) != MP_OKAY)) {
          goto LBL_ERR;
       }
    }
@@ -71,7 +71,7 @@ mp_err mp_div(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d)
    }
 LBL_ERR:
    mp_clear_multi(&ta, &tb, &tq, &q, NULL);
-   return res;
+   return err;
 }
 
 #else
@@ -94,7 +94,7 @@ mp_err mp_div(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d)
    mp_int  q, x, y, t1, t2;
    int     n, t, i, norm;
    mp_sign neg;
-   mp_err  res;
+   mp_err  err;
 
    /* is divisor zero ? */
    if (MP_IS_ZERO(b)) {
@@ -104,34 +104,34 @@ mp_err mp_div(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d)
    /* if a < b then q=0, r = a */
    if (mp_cmp_mag(a, b) == MP_LT) {
       if (d != NULL) {
-         res = mp_copy(a, d);
+         err = mp_copy(a, d);
       } else {
-         res = MP_OKAY;
+         err = MP_OKAY;
       }
       if (c != NULL) {
          mp_zero(c);
       }
-      return res;
+      return err;
    }
 
-   if ((res = mp_init_size(&q, a->used + 2)) != MP_OKAY) {
-      return res;
+   if ((err = mp_init_size(&q, a->used + 2)) != MP_OKAY) {
+      return err;
    }
    q.used = a->used + 2;
 
-   if ((res = mp_init(&t1)) != MP_OKAY) {
+   if ((err = mp_init(&t1)) != MP_OKAY) {
       goto LBL_Q;
    }
 
-   if ((res = mp_init(&t2)) != MP_OKAY) {
+   if ((err = mp_init(&t2)) != MP_OKAY) {
       goto LBL_T1;
    }
 
-   if ((res = mp_init_copy(&x, a)) != MP_OKAY) {
+   if ((err = mp_init_copy(&x, a)) != MP_OKAY) {
       goto LBL_T2;
    }
 
-   if ((res = mp_init_copy(&y, b)) != MP_OKAY) {
+   if ((err = mp_init_copy(&y, b)) != MP_OKAY) {
       goto LBL_X;
    }
 
@@ -143,10 +143,10 @@ mp_err mp_div(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d)
    norm = mp_count_bits(&y) % MP_DIGIT_BIT;
    if (norm < (MP_DIGIT_BIT - 1)) {
       norm = (MP_DIGIT_BIT - 1) - norm;
-      if ((res = mp_mul_2d(&x, norm, &x)) != MP_OKAY) {
+      if ((err = mp_mul_2d(&x, norm, &x)) != MP_OKAY) {
          goto LBL_Y;
       }
-      if ((res = mp_mul_2d(&y, norm, &y)) != MP_OKAY) {
+      if ((err = mp_mul_2d(&y, norm, &y)) != MP_OKAY) {
          goto LBL_Y;
       }
    } else {
@@ -158,13 +158,13 @@ mp_err mp_div(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d)
    t = y.used - 1;
 
    /* while (x >= y*b**n-t) do { q[n-t] += 1; x -= y*b**{n-t} } */
-   if ((res = mp_lshd(&y, n - t)) != MP_OKAY) { /* y = y*b**{n-t} */
+   if ((err = mp_lshd(&y, n - t)) != MP_OKAY) { /* y = y*b**{n-t} */
       goto LBL_Y;
    }
 
    while (mp_cmp(&x, &y) != MP_LT) {
       ++(q.dp[n - t]);
-      if ((res = mp_sub(&x, &y, &x)) != MP_OKAY) {
+      if ((err = mp_sub(&x, &y, &x)) != MP_OKAY) {
          goto LBL_Y;
       }
    }
@@ -207,7 +207,7 @@ mp_err mp_div(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d)
          t1.dp[0] = ((t - 1) < 0) ? 0u : y.dp[t - 1];
          t1.dp[1] = y.dp[t];
          t1.used = 2;
-         if ((res = mp_mul_d(&t1, q.dp[(i - t) - 1], &t1)) != MP_OKAY) {
+         if ((err = mp_mul_d(&t1, q.dp[(i - t) - 1], &t1)) != MP_OKAY) {
             goto LBL_Y;
          }
 
@@ -219,27 +219,27 @@ mp_err mp_div(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d)
       } while (mp_cmp_mag(&t1, &t2) == MP_GT);
 
       /* step 3.3 x = x - q{i-t-1} * y * b**{i-t-1} */
-      if ((res = mp_mul_d(&y, q.dp[(i - t) - 1], &t1)) != MP_OKAY) {
+      if ((err = mp_mul_d(&y, q.dp[(i - t) - 1], &t1)) != MP_OKAY) {
          goto LBL_Y;
       }
 
-      if ((res = mp_lshd(&t1, (i - t) - 1)) != MP_OKAY) {
+      if ((err = mp_lshd(&t1, (i - t) - 1)) != MP_OKAY) {
          goto LBL_Y;
       }
 
-      if ((res = mp_sub(&x, &t1, &x)) != MP_OKAY) {
+      if ((err = mp_sub(&x, &t1, &x)) != MP_OKAY) {
          goto LBL_Y;
       }
 
       /* if x < 0 then { x = x + y*b**{i-t-1}; q{i-t-1} -= 1; } */
       if (x.sign == MP_NEG) {
-         if ((res = mp_copy(&y, &t1)) != MP_OKAY) {
+         if ((err = mp_copy(&y, &t1)) != MP_OKAY) {
             goto LBL_Y;
          }
-         if ((res = mp_lshd(&t1, (i - t) - 1)) != MP_OKAY) {
+         if ((err = mp_lshd(&t1, (i - t) - 1)) != MP_OKAY) {
             goto LBL_Y;
          }
-         if ((res = mp_add(&x, &t1, &x)) != MP_OKAY) {
+         if ((err = mp_add(&x, &t1, &x)) != MP_OKAY) {
             goto LBL_Y;
          }
 
@@ -261,13 +261,13 @@ mp_err mp_div(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d)
    }
 
    if (d != NULL) {
-      if ((res = mp_div_2d(&x, norm, &x, NULL)) != MP_OKAY) {
+      if ((err = mp_div_2d(&x, norm, &x, NULL)) != MP_OKAY) {
          goto LBL_Y;
       }
       mp_exch(&x, d);
    }
 
-   res = MP_OKAY;
+   err = MP_OKAY;
 
 LBL_Y:
    mp_clear(&y);
@@ -279,7 +279,7 @@ LBL_T1:
    mp_clear(&t1);
 LBL_Q:
    mp_clear(&q);
-   return res;
+   return err;
 }
 
 #endif

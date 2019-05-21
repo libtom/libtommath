@@ -6,7 +6,7 @@
 /* stores a bignum as a ASCII string in a given radix (2..64) */
 mp_err mp_toradix(const mp_int *a, char *str, int radix)
 {
-   mp_err  res;
+   mp_err  err;
    int digs;
    mp_int  t;
    mp_digit d;
@@ -24,8 +24,8 @@ mp_err mp_toradix(const mp_int *a, char *str, int radix)
       return MP_OKAY;
    }
 
-   if ((res = mp_init_copy(&t, a)) != MP_OKAY) {
-      return res;
+   if ((err = mp_init_copy(&t, a)) != MP_OKAY) {
+      return err;
    }
 
    /* if it is negative output a - */
@@ -37,9 +37,9 @@ mp_err mp_toradix(const mp_int *a, char *str, int radix)
 
    digs = 0;
    while (!MP_IS_ZERO(&t)) {
-      if ((res = mp_div_d(&t, (mp_digit)radix, &t, &d)) != MP_OKAY) {
+      if ((err = mp_div_d(&t, (mp_digit)radix, &t, &d)) != MP_OKAY) {
          mp_clear(&t);
-         return res;
+         return err;
       }
       *str++ = mp_s_rmap[d];
       ++digs;

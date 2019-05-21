@@ -18,13 +18,13 @@ mp_err s_mp_sqr_fast(const mp_int *a, mp_int *b)
    int       olduse, pa, ix, iz;
    mp_digit  W[MP_WARRAY], *tmpx;
    mp_word   W1;
-   mp_err    res;
+   mp_err    err;
 
    /* grow the destination as required */
    pa = a->used + a->used;
    if (b->alloc < pa) {
-      if ((res = mp_grow(b, pa)) != MP_OKAY) {
-         return res;
+      if ((err = mp_grow(b, pa)) != MP_OKAY) {
+         return err;
       }
    }
 

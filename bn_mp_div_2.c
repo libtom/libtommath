@@ -7,12 +7,12 @@
 mp_err mp_div_2(const mp_int *a, mp_int *b)
 {
    int     x, oldused;
-   mp_err res;
+   mp_err err;
 
    /* copy */
    if (b->alloc < a->used) {
-      if ((res = mp_grow(b, a->used)) != MP_OKAY) {
-         return res;
+      if ((err = mp_grow(b, a->used)) != MP_OKAY) {
+         return err;
       }
    }
 

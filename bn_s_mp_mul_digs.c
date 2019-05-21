@@ -10,7 +10,7 @@
 mp_err s_mp_mul_digs(const mp_int *a, const mp_int *b, mp_int *c, int digs)
 {
    mp_int  t;
-   mp_err  res;
+   mp_err  err;
    int     pa, pb, ix, iy;
    mp_digit u;
    mp_word r;
@@ -22,8 +22,8 @@ mp_err s_mp_mul_digs(const mp_int *a, const mp_int *b, mp_int *c, int digs)
       return s_mp_mul_digs_fast(a, b, c, digs);
    }
 
-   if ((res = mp_init_size(&t, digs)) != MP_OKAY) {
-      return res;
+   if ((err = mp_init_size(&t, digs)) != MP_OKAY) {
+      return err;
    }
    t.used = digs;
 

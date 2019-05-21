@@ -6,6 +6,6 @@
 /* set a 32-bit const */
 mp_err mp_set_int(mp_int *a, unsigned long b)
 {
-   return mp_set_long(a, b & 0xFFFFFFFFUL);
+   return mp_set_long(a, b & 0xFFFFFFFFuL);
 }
 #endif

@@ -1239,7 +1239,7 @@ static int test_mp_reduce_2k_l(void)
    mp_copy(&b, &c);
    printf("Testing: mp_reduce_2k_l...");
    fflush(stdout);
-   for (cnt = 0; cnt < (int)(1UL << 20); cnt++) {
+   for (cnt = 0; cnt < (int)(1uL << 20); cnt++) {
       mp_sqr(&b, &b);
       mp_add_d(&b, 1uL, &b);
       mp_reduce_2k_l(&b, &a, &d);

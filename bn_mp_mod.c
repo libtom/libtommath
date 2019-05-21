@@ -7,25 +7,25 @@
 mp_err mp_mod(const mp_int *a, const mp_int *b, mp_int *c)
 {
    mp_int  t;
-   mp_err  res;
+   mp_err  err;
 
-   if ((res = mp_init_size(&t, b->used)) != MP_OKAY) {
-      return res;
+   if ((err = mp_init_size(&t, b->used)) != MP_OKAY) {
+      return err;
    }
 
-   if ((res = mp_div(a, b, NULL, &t)) != MP_OKAY) {
+   if ((err = mp_div(a, b, NULL, &t)) != MP_OKAY) {
       mp_clear(&t);
-      return res;
+      return err;
    }
 
    if (MP_IS_ZERO(&t) || (t.sign == b->sign)) {
-      res = MP_OKAY;
+      err = MP_OKAY;
       mp_exch(&t, c);
    } else {
-      res = mp_add(b, &t, c);
+      err = mp_add(b, &t, c);
    }
 
    mp_clear(&t);
-   return res;
+   return err;
 }
 #endif

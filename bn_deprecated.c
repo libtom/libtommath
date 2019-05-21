@@ -43,9 +43,9 @@ mp_err mp_prime_random_ex(mp_int *a, int t, int size, int flags, private_mp_prim
 #ifdef BN_MP_RAND_DIGIT_C
 mp_err mp_rand_digit(mp_digit *r)
 {
-   mp_err ret = s_mp_rand_source(r, sizeof(mp_digit));
+   mp_err err = s_mp_rand_source(r, sizeof(mp_digit));
    *r &= MP_MASK;
-   return ret;
+   return err;
 }
 #endif
 #ifdef BN_FAST_MP_INVMOD_C

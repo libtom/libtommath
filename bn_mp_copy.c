@@ -7,7 +7,7 @@
 mp_err mp_copy(const mp_int *a, mp_int *b)
 {
    int n;
-   mp_err res;
+   mp_err err;
 
    /* if dst == src do nothing */
    if (a == b) {
@@ -16,8 +16,8 @@ mp_err mp_copy(const mp_int *a, mp_int *b)
 
    /* grow dest */
    if (b->alloc < a->used) {
-      if ((res = mp_grow(b, a->used)) != MP_OKAY) {
-         return res;
+      if ((err = mp_grow(b, a->used)) != MP_OKAY) {
+         return err;
       }
    }
 

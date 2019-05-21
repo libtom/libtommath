@@ -7,7 +7,7 @@
 
 mp_err mp_init_multi(mp_int *mp, ...)
 {
-   mp_err res = MP_OKAY;      /* Assume ok until proven otherwise */
+   mp_err err = MP_OKAY;      /* Assume ok until proven otherwise */
    int n = 0;                 /* Number of ok inits */
    mp_int *cur_arg = mp;
    va_list args;
@@ -28,14 +28,14 @@ mp_err mp_init_multi(mp_int *mp, ...)
             cur_arg = va_arg(clean_args, mp_int *);
          }
          va_end(clean_args);
-         res = MP_MEM;
+         err = MP_MEM;
          break;
       }
       n++;
       cur_arg = va_arg(args, mp_int *);
    }
    va_end(args);
-   return res;                /* Assumed ok, if error flagged above. */
+   return err;                /* Assumed ok, if error flagged above. */
 }
 
 #endif

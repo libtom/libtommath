@@ -14,7 +14,7 @@
 mp_err s_mp_montgomery_reduce_fast(mp_int *x, const mp_int *n, mp_digit rho)
 {
    int     ix, olduse;
-   mp_err  res;
+   mp_err  err;
    mp_word W[MP_WARRAY];
 
    if (x->used > (int)MP_WARRAY) {
@@ -26,8 +26,8 @@ mp_err s_mp_montgomery_reduce_fast(mp_int *x, const mp_int *n, mp_digit rho)
 
    /* grow a as required */
    if (x->alloc < (n->used + 1)) {
-      if ((res = mp_grow(x, n->used + 1)) != MP_OKAY) {
-         return res;
+      if ((err = mp_grow(x, n->used + 1)) != MP_OKAY) {
+         return err;
       }
    }
 
