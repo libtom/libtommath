@@ -83,6 +83,35 @@ matrix:
             - libc6-dev-i386
             - gcc-multilib
 
+    # Test "autotuning", the automatic evaluation and setting of the Toom-Cook cut-offs.
+    #- env: SANITIZER=1 BUILDOPTIONS='--with-cc=gcc-5 --cflags=-DMP_8BIT  --with-travis-valgrind --make-option=tune'
+    #- env: SANITIZER=1 BUILDOPTIONS='--with-cc=gcc-5 --cflags=-DMP_16BIT --with-travis-valgrind --make-option=tune'
+    #- env: SANITIZER=1 BUILDOPTIONS='--with-cc=gcc-5 --cflags=-DMP_32BIT --with-travis-valgrind --make-option=tune'
+    #- env: SANITIZER=1 BUILDOPTIONS='--with-cc=gcc-5 --with-travis-valgrind --make-option=tune'
+    #- env: SANITIZER=1 BUILDOPTIONS='--with-cc=clang-7 --cflags=-DMP_8BIT  --with-travis-valgrind --make-option=tune'
+    #- env: SANITIZER=1 BUILDOPTIONS='--with-cc=clang-7 --cflags=-DMP_16BIT --with-travis-valgrind --make-option=tune'
+    #- env: SANITIZER=1 BUILDOPTIONS='--with-cc=clang-7 --cflags=-DMP_32BIT --with-travis-valgrind --make-option=tune'
+    - env: SANITIZER=1 BUILDOPTIONS='--with-cc=clang-7 --with-travis-valgrind --make-option=tune'
+
+    # clang for x86-64 architecture (64-bit longs and 64-bit pointers)
+    - env: SANITIZER=1 CONV_WARNINGS=relaxed BUILDOPTIONS='--with-cc=clang-7 --with-m64 --with-valgrind'
+    - env: SANITIZER=1 CONV_WARNINGS=strict BUILDOPTIONS='--with-cc=clang-7 --with-m64 --with-travis-valgrind'
+    - env: SANITIZER=1 BUILDOPTIONS='--with-cc=clang-6.0 --with-m64 --with-travis-valgrind'
+      addons:
+        apt:
+          packages:
+            - clang-6.0
+    - env: SANITIZER=1 BUILDOPTIONS='--with-cc=clang-5.0 --with-m64 --with-travis-valgrind'
+      addons:
+        apt:
+          packages:
+            - clang-5.0
+    - env: BUILDOPTIONS='--with-cc=clang-4.0 --with-m64 --with-travis-valgrind'
+      addons:
+        apt:
+          packages:
+            - clang-4.0
+
     # GCC for the x64_32 architecture (32-bit longs and 32-bit pointers)
     # TODO: Probably not possible to run anything in x32 in Travis
     #       but needs to be checked to be sure.
@@ -111,25 +140,6 @@ matrix:
           packages:
             - gcc-4.9
 
-    # clang for x86-64 architecture (64-bit longs and 64-bit pointers)
-    - env: SANITIZER=1 CONV_WARNINGS=relaxed BUILDOPTIONS='--with-cc=clang-7 --with-m64 --with-valgrind'
-    - env: SANITIZER=1 CONV_WARNINGS=strict BUILDOPTIONS='--with-cc=clang-7 --with-m64 --with-travis-valgrind'
-    - env: SANITIZER=1 BUILDOPTIONS='--with-cc=clang-6.0 --with-m64 --with-travis-valgrind'
-      addons:
-        apt:
-          packages:
-            - clang-6.0
-    - env: SANITIZER=1 BUILDOPTIONS='--with-cc=clang-5.0 --with-m64 --with-travis-valgrind'
-      addons:
-        apt:
-          packages:
-            - clang-5.0
-    - env: BUILDOPTIONS='--with-cc=clang-4.0 --with-m64 --with-travis-valgrind'
-      addons:
-        apt:
-          packages:
-            - clang-4.0
-
     # GCC for the x86-64 architecture with restricted limb sizes
     # formerly started with the option "--with-low-mp" to testme.sh
     # but testing all three in one run took to long and timed out.
@@ -141,16 +151,6 @@ matrix:
     - env: SANITIZER=1 BUILDOPTIONS='--with-cc=clang-7 --cflags=-DMP_8BIT  --with-travis-valgrind'
     - env: SANITIZER=1 BUILDOPTIONS='--with-cc=clang-7 --cflags=-DMP_16BIT --with-travis-valgrind'
     - env: SANITIZER=1 BUILDOPTIONS='--with-cc=clang-7 --cflags=-DMP_32BIT --with-travis-valgrind'
-
-    # Test "autotuning", the automatic evaluation and setting of the Toom-Cook cut-offs.
-    #- env: SANITIZER=1 BUILDOPTIONS='--with-cc=gcc-5 --cflags=-DMP_8BIT  --with-travis-valgrind --make-option=tune'
-    #- env: SANITIZER=1 BUILDOPTIONS='--with-cc=gcc-5 --cflags=-DMP_16BIT --with-travis-valgrind --make-option=tune'
-    #- env: SANITIZER=1 BUILDOPTIONS='--with-cc=gcc-5 --cflags=-DMP_32BIT --with-travis-valgrind --make-option=tune'
-    #- env: SANITIZER=1 BUILDOPTIONS='--with-cc=gcc-5 --with-travis-valgrind --make-option=tune'
-    #- env: SANITIZER=1 BUILDOPTIONS='--with-cc=clang-7 --cflags=-DMP_8BIT  --with-travis-valgrind --make-option=tune'
-    #- env: SANITIZER=1 BUILDOPTIONS='--with-cc=clang-7 --cflags=-DMP_16BIT --with-travis-valgrind --make-option=tune'
-    #- env: SANITIZER=1 BUILDOPTIONS='--with-cc=clang-7 --cflags=-DMP_32BIT --with-travis-valgrind --make-option=tune'
-    - env: SANITIZER=1 BUILDOPTIONS='--with-cc=clang-7 --with-travis-valgrind --make-option=tune'
 
     # GCC for the x86-64 architecture testing against a different Bigint-implementation
     # with 333333 different inputs.
