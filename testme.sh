@@ -61,11 +61,13 @@ _help()
   echo "    --with-valgrind"
   echo "    --with-valgrind=*       Run in valgrind (slow!)."
   echo
-  echo "    --valgrind-options       Additional Valgrind options"
-  echo "                             Some of the options like e.g.:"
-  echo "                             --track-origins=yes add a lot of extra"
-  echo "                             runtime and may trigger the 30 minutes"
-  echo "                             timeout."
+  echo "    --with-travis-valgrind  Run with valgrind on Travis on specific branches."
+  echo
+  echo "    --valgrind-options      Additional Valgrind options"
+  echo "                            Some of the options like e.g.:"
+  echo "                            --track-origins=yes add a lot of extra"
+  echo "                            runtime and may trigger the 30 minutes"
+  echo "                            timeout."
   echo
   echo "Godmode:"
   echo
@@ -126,7 +128,7 @@ _runtest()
     # get switched off without some effort, so we just let it run twice for testing purposes
     _make "$1" "$2" ""
     echo -e "\rRun autotune $1 $2"
-    $_timeout ./etc/tune_it.sh > test_${suffix}.log || _die "running autotune" $?
+    $_timeout $TUNE_CMD > ../test_${suffix}.log || _die "running autotune" $?
   else
     _make "$1" "$2" "test_standalone"
     echo -e "\rRun test $1 $2"
@@ -152,7 +154,7 @@ echo "autotune branch"
     # The shell used for /bin/sh is DASH 0.5.7-4ubuntu1 on the author's machine which fails valgrind, so
     # we just run on instance of etc/tune with the same options as in etc/tune_it.sh
     echo -e "\rRun etc/tune $1 $2 once inside valgrind"
-    $_timeout $VALGRIND_BIN $VALGRIND_OPTS ./etc/tune -t -r 10 -L 3 > test_${suffix}.log || _die "running etc/tune" $?
+    $_timeout $VALGRIND_BIN $VALGRIND_OPTS $TUNE_CMD > test_${suffix}.log || _die "running etc/tune" $?
   else
     _make "$1" "$2" "test_standalone"
     echo -e "\rRun test $1 $2 inside valgrind"
@@ -193,6 +195,7 @@ VALGRIND_OPTS=" --leak-check=full --show-leak-kinds=all --error-exitcode=1 "
 #VALGRIND_OPTS=""
 VALGRIND_BIN=""
 CHECK_FORMAT=""
+TUNE_CMD="./etc/tune -t -r 10 -L 3"
 
 alive_pid=0
 
@@ -231,6 +234,18 @@ do
         VALGRIND_BIN="valgrind"
       fi
       start_alive_printing
+    ;;
+    --with-travis-valgrind*)
+      if [[ ("$TRAVIS_BRANCH" == "develop" && "$TRAVIS_PULL_REQUEST" == "false") || "$TRAVIS_BRANCH" == *"valgrind"* || "$TRAVIS_COMMIT_MESSAGE" == *"valgrind"* ]]
+      then
+        if [[ ${1#*d} != "" ]]
+        then
+          VALGRIND_BIN="${1#*=}"
+        else
+          VALGRIND_BIN="valgrind"
+        fi
+        start_alive_printing
+      fi
     ;;
     --make-option=*)
       MAKE_OPTIONS="$MAKE_OPTIONS ${1#*=}"

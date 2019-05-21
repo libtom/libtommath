@@ -71,7 +71,7 @@ endif
 ifdef COMPILE_DEBUG
 #debug
 CFLAGS += -g3
-else
+endif
 
 ifdef COMPILE_SIZE
 #for size
@@ -87,7 +87,6 @@ CFLAGS  += -fomit-frame-pointer
 endif
 
 endif # COMPILE_SIZE
-endif # COMPILE_DEBUG
 
 ifneq ($(findstring clang,$(CC)),)
 CFLAGS += -Wno-typedef-redefinition -Wno-tautological-compare -Wno-builtin-requires-header
