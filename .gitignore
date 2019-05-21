@@ -86,3 +86,5 @@ test_*.txt
 *.asc
 *.tar.xz
 *.zip
+
+doc/pics/*.ps

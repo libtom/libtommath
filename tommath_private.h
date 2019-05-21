@@ -6,10 +6,6 @@
 
 #include "tommath.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /* Hardening libtommath
  * --------------------
  *
@@ -221,9 +217,5 @@ MP_DEPRECATED(s_mp_karatsuba_sqr) mp_err mp_karatsuba_sqr(const mp_int *a, mp_in
 MP_DEPRECATED(s_mp_toom_mul) mp_err mp_toom_mul(const mp_int *a, const mp_int *b, mp_int *c);
 MP_DEPRECATED(s_mp_toom_sqr) mp_err mp_toom_sqr(const mp_int *a, mp_int *b);
 MP_DEPRECATED(s_mp_reverse) void bn_reverse(unsigned char *s, int len);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

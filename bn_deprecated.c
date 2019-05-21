@@ -2,14 +2,8 @@
 #ifdef BN_DEPRECATED_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
-/* LibTomMath, multiple-precision integer library -- Tom St Denis */
 
-/* SPDX-License-Identifier: Unlicense */
-#include <tommath_private.h>
 #ifdef BN_MP_GET_BIT_C
-/* Checks the bit at position b and returns MP_YES
-   if the bit is 1, MP_NO if it is 0 and MP_VAL
-   in case of error */
 int mp_get_bit(const mp_int *a, int b)
 {
    if (b < 0) {
@@ -18,7 +12,7 @@ int mp_get_bit(const mp_int *a, int b)
    return s_mp_get_bit(a, (unsigned int)b) == MP_YES ? MP_YES : MP_NO;
 }
 #endif
-#ifdef BN_MP_JACOBI_C
+#ifdef BN_S_MP_JACOBI_C
 mp_err s_mp_jacobi(const mp_int *a, const mp_int *n, int *c)
 {
    if (a->sign == MP_NEG) {
@@ -29,6 +23,8 @@ mp_err s_mp_jacobi(const mp_int *a, const mp_int *n, int *c)
    }
    return mp_kronecker(a, n, c);
 }
+#endif
+#ifdef BN_MP_JACOBI_C
 mp_err mp_jacobi(const mp_int *a, const mp_int *n, int *c)
 {
    return s_mp_jacobi(a, n, c);
@@ -120,7 +116,7 @@ mp_err mp_toom_sqr(const mp_int *a, mp_int *b)
    return s_mp_toom_sqr(a, b);
 }
 #endif
-#ifdef BN_REVERSE_C
+#ifdef S_MP_REVERSE_C
 void bn_reverse(unsigned char *s, int len)
 {
    s_mp_reverse(s, len);
