@@ -49,7 +49,7 @@ mp_err mp_fread(mp_int *a, int radix, FILE *stream)
       }
    } while ((ch = fgetc(stream)) != EOF);
 
-   if (!mp_iszero(a)) {
+   if (a->used != 0) {
       a->sign = neg;
    }
 
