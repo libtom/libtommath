@@ -19,9 +19,9 @@ int mp_count_bits(const mp_int *a)
 
    /* take the last digit and count the bits in it */
    q = a->dp[a->used - 1];
-   while (q > (mp_digit)0) {
+   while (q > 0u) {
       ++r;
-      q >>= (mp_digit)1;
+      q >>= 1u;
    }
    return r;
 }
