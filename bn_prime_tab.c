@@ -43,4 +43,19 @@ const mp_digit ltm_prime_tab[] = {
    0x062B, 0x062F, 0x063D, 0x0641, 0x0647, 0x0649, 0x064D, 0x0653
 #endif
 };
+
+#if defined(__GNUC__) && (__GNUC__ * 100 + __GNUC_MINOR__ >= 301)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+const mp_digit *s_mp_prime_tab = ltm_prime_tab;
+#pragma GCC diagnostic pop
+#elif defined(_MSC_VER) && _MSC_VER >= 1500
+#pragma warning(push)
+#pragma warning(disable: 4996)
+const mp_digit *s_mp_prime_tab = ltm_prime_tab;
+#pragma warning(pop)
+#else
+const mp_digit *s_mp_prime_tab = ltm_prime_tab;
+#endif
+
 #endif

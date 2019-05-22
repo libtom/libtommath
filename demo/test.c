@@ -292,66 +292,6 @@ static int test_mp_rand(void)
    return err == MP_OKAY ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
-static int test_s_mp_jacobi(void)
-{
-   struct s_mp_jacobi_st {
-      unsigned long n;
-      int c[16];
-   };
-
-   static struct s_mp_jacobi_st jacobi[] = {
-      { 3, {  1, -1,  0,  1, -1,  0,  1, -1,  0,  1, -1,  0,  1, -1,  0,  1 } },
-      { 5, {  0,  1, -1, -1,  1,  0,  1, -1, -1,  1,  0,  1, -1, -1,  1,  0 } },
-      { 7, {  1, -1,  1, -1, -1,  0,  1,  1, -1,  1, -1, -1,  0,  1,  1, -1 } },
-      { 9, { -1,  1,  0,  1,  1,  0,  1,  1,  0,  1,  1,  0,  1,  1,  0,  1 } },
-   };
-
-   int i, n, cnt;
-   mp_err err, should;
-   mp_int a, b;
-   if (mp_init_multi(&a, &b, NULL)!= MP_OKAY) {
-      return EXIT_FAILURE;
-   }
-
-   mp_set_ul(&a, 0uL);
-   mp_set_ul(&b, 1uL);
-   if ((err = s_mp_jacobi(&a, &b, &i)) != MP_OKAY) {
-      printf("Failed executing s_mp_jacobi(0 | 1) %s.\n", mp_error_to_string(err));
-      goto LBL_ERR;
-   }
-   if (i != 1) {
-      printf("Failed trivial s_mp_jacobi(0 | 1) %d != 1\n", i);
-      goto LBL_ERR;
-   }
-   for (cnt = 0; cnt < (int)(sizeof(jacobi)/sizeof(jacobi[0])); ++cnt) {
-      mp_set_ul(&b, jacobi[cnt].n);
-      /* only test positive values of a */
-      for (n = -5; n <= 10; ++n) {
-         mp_set_ul(&a, (unsigned int)abs(n));
-         should = MP_OKAY;
-         if (n < 0) {
-            mp_neg(&a, &a);
-            /* Until #44 is fixed the negative a's must fail */
-            should = MP_VAL;
-         }
-         if ((err = s_mp_jacobi(&a, &b, &i)) != should) {
-            printf("Failed executing s_mp_jacobi(%d | %lu) %s.\n", n, jacobi[cnt].n, mp_error_to_string(err));
-            goto LBL_ERR;
-         }
-         if ((err == MP_OKAY) && (i != jacobi[cnt].c[n + 5])) {
-            printf("Failed trivial s_mp_jacobi(%d | %lu) %d != %d\n", n, jacobi[cnt].n, i, jacobi[cnt].c[n + 5]);
-            goto LBL_ERR;
-         }
-      }
-   }
-
-   mp_clear_multi(&a, &b, NULL);
-   return EXIT_SUCCESS;
-LBL_ERR:
-   mp_clear_multi(&a, &b, NULL);
-   return EXIT_FAILURE;
-}
-
 static int test_mp_kronecker(void)
 {
    struct mp_kronecker_st {
@@ -2175,7 +2115,6 @@ int unit_tests(int argc, char **argv)
       T(mp_sqrtmod_prime),
       T(mp_xor),
       T(s_mp_balance_mul),
-      T(s_mp_jacobi),
       T(s_mp_karatsuba_mul),
       T(s_mp_karatsuba_sqr),
       T(s_mp_toom_mul),

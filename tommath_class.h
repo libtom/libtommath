@@ -82,7 +82,6 @@
 #   define BN_MP_OR_C
 #   define BN_MP_PRIME_FERMAT_C
 #   define BN_MP_PRIME_FROBENIUS_UNDERWOOD_C
-#   define BN_MP_PRIME_IS_DIVISIBLE_C
 #   define BN_MP_PRIME_IS_PRIME_C
 #   define BN_MP_PRIME_MILLER_RABIN_C
 #   define BN_MP_PRIME_NEXT_PRIME_C
@@ -140,6 +139,7 @@
 #   define BN_S_MP_MUL_DIGS_FAST_C
 #   define BN_S_MP_MUL_HIGH_DIGS_C
 #   define BN_S_MP_MUL_HIGH_DIGS_FAST_C
+#   define BN_S_MP_PRIME_IS_DIVISIBLE_C
 #   define BN_S_MP_RAND_JENKINS_C
 #   define BN_S_MP_RAND_PLATFORM_C
 #   define BN_S_MP_REVERSE_C
@@ -171,10 +171,9 @@
 #if defined(BN_DEPRECATED_C)
 #   define BN_MP_GET_BIT_C
 #   define BN_S_MP_GET_BIT_C
-#   define BN_S_MP_JACOBI_C
+#   define BN_MP_JACOBI_C
 #   define BN_MP_CMP_D_C
 #   define BN_MP_KRONECKER_C
-#   define BN_MP_JACOBI_C
 #   define BN_MP_PRIME_RANDOM_EX_C
 #   define BN_S_MP_PRIME_RANDOM_EX_C
 #   define BN_MP_RAND_DIGIT_C
@@ -224,6 +223,8 @@
 #   define BN_MP_GET_LONG_C
 #   define BN_MP_GET_MAG64_C
 #   define BN_MP_GET_LONG_LONG_C
+#   define BN_MP_PRIME_IS_DIVISIBLE_C
+#   define BN_S_MP_PRIME_IS_DIVISIBLE_C
 #endif
 
 #if defined(BN_MP_2EXPT_C)
@@ -675,14 +676,10 @@
 #   define BN_MP_CLEAR_MULTI_C
 #endif
 
-#if defined(BN_MP_PRIME_IS_DIVISIBLE_C)
-#   define BN_MP_MOD_D_C
-#endif
-
 #if defined(BN_MP_PRIME_IS_PRIME_C)
 #   define BN_MP_IS_SQUARE_C
 #   define BN_MP_CMP_D_C
-#   define BN_MP_PRIME_IS_DIVISIBLE_C
+#   define BN_S_MP_PRIME_IS_DIVISIBLE_C
 #   define BN_MP_INIT_SET_C
 #   define BN_MP_PRIME_MILLER_RABIN_C
 #   define BN_MP_PRIME_FROBENIUS_UNDERWOOD_C
@@ -1136,6 +1133,10 @@
 #if defined(BN_S_MP_MUL_HIGH_DIGS_FAST_C)
 #   define BN_MP_GROW_C
 #   define BN_MP_CLAMP_C
+#endif
+
+#if defined(BN_S_MP_PRIME_IS_DIVISIBLE_C)
+#   define BN_MP_MOD_D_C
 #endif
 
 #if defined(BN_S_MP_RAND_JENKINS_C)

@@ -601,10 +601,6 @@
 			>
 		</File>
 		<File
-			RelativePath="bn_mp_prime_is_divisible.c"
-			>
-		</File>
-		<File
 			RelativePath="bn_mp_prime_is_prime.c"
 			>
 		</File>
@@ -830,6 +826,10 @@
 		</File>
 		<File
 			RelativePath="bn_s_mp_mul_high_digs_fast.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_s_mp_prime_is_divisible.c"
 			>
 		</File>
 		<File

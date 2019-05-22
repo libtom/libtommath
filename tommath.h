@@ -576,17 +576,17 @@ mp_err mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y) 
 
 /* number of primes */
 #ifdef MP_8BIT
-#  define MP_PRIME_SIZE 31
+#  define PRIVATE_MP_PRIME_TAB_SIZE 31
 #else
-#  define MP_PRIME_SIZE 256
+#  define PRIVATE_MP_PRIME_TAB_SIZE 256
 #endif
-#define PRIME_SIZE (MP_DEPRECATED_PRAGMA("PRIME_SIZE has been deprecated, use MP_PRIME_SIZE") MP_PRIME_SIZE)
+#define PRIME_SIZE (MP_DEPRECATED_PRAGMA("PRIME_SIZE has been made internal") PRIVATE_MP_PRIME_TAB_SIZE)
 
-/* table of first MP_PRIME_SIZE primes */
-extern const mp_digit ltm_prime_tab[MP_PRIME_SIZE];
+/* table of first PRIME_SIZE primes */
+MP_DEPRECATED(internal) extern const mp_digit ltm_prime_tab[PRIVATE_MP_PRIME_TAB_SIZE];
 
-/* result=1 if a is divisible by one of the first MP_PRIME_SIZE primes */
-mp_err mp_prime_is_divisible(const mp_int *a, mp_bool *result) MP_WUR;
+/* result=1 if a is divisible by one of the first PRIME_SIZE primes */
+MP_DEPRECATED(mp_prime_is_prime) mp_err mp_prime_is_divisible(const mp_int *a, mp_bool *result) MP_WUR;
 
 /* performs one Fermat test of "a" using base "b".
  * Sets result to 0 if composite or 1 if probable prime
