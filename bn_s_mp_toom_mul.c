@@ -63,7 +63,7 @@ mp_err s_mp_toom_mul(const mp_int *a, const mp_int *b, mp_int *c)
       goto LTM_ERRa2;
    }
    for (; count < a->used; count++) {
-      a2.dp[count - 2 * B] = a->dp[count];
+      a2.dp[count - (2 * B)] = a->dp[count];
       a2.used++;
    }
 
@@ -88,7 +88,7 @@ mp_err s_mp_toom_mul(const mp_int *a, const mp_int *b, mp_int *c)
       goto LTM_ERRb2;
    }
    for (; count < b->used; count++) {
-      b2.dp[count - 2 * B] = b->dp[count];
+      b2.dp[count - (2 * B)] = b->dp[count];
       b2.used++;
    }
 

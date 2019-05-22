@@ -22,20 +22,20 @@ mp_err mp_xor(const mp_int *a, const mp_int *b, mp_int *c)
 
       /* convert to two complement if negative */
       if (a->sign == MP_NEG) {
-         ac += i >= a->used ? MP_MASK : ~a->dp[i] & MP_MASK;
+         ac += (i >= a->used) ? MP_MASK : (~a->dp[i] & MP_MASK);
          x = ac & MP_MASK;
          ac >>= MP_DIGIT_BIT;
       } else {
-         x = i >= a->used ? 0 : a->dp[i];
+         x = (i >= a->used) ? 0 : a->dp[i];
       }
 
       /* convert to two complement if negative */
       if (b->sign == MP_NEG) {
-         bc += i >= b->used ? MP_MASK : ~b->dp[i] & MP_MASK;
+         bc += (i >= b->used) ? MP_MASK : (~b->dp[i] & MP_MASK);
          y = bc & MP_MASK;
          bc >>= MP_DIGIT_BIT;
       } else {
-         y = i >= b->used ? 0 : b->dp[i];
+         y = (i >= b->used) ? 0 : b->dp[i];
       }
 
       c->dp[i] = x ^ y;
