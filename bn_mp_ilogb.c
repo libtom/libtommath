@@ -24,10 +24,10 @@ static mp_digit s_digit_ilogb(mp_digit base, mp_digit n)
    mp_digit ret, high = 1uL, low = 0uL, mid;
 
    if (n < base) {
-      return (mp_digit)0uL;
+      return 0uL;
    }
    if (n == base) {
-      return (mp_digit)1uL;
+      return 1uL;
    }
 
    bracket_high = (mp_word) base ;
