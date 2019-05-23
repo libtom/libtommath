@@ -85,7 +85,7 @@ mp_err s_mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_i
 
       /* automatically pick the comba one if available (saves quite a few calls/ifs) */
 #ifdef BN_S_MP_MONTGOMERY_REDUCE_FAST_C
-      if ((((P->used * 2) + 1) < (int)MP_WARRAY) &&
+      if ((((P->used * 2) + 1) < MP_WARRAY) &&
           (P->used < MP_MAXFAST)) {
          redux = s_mp_montgomery_reduce_fast;
       } else

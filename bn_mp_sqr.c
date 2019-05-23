@@ -23,7 +23,7 @@ mp_err mp_sqr(const mp_int *a, mp_int *b)
       {
 #ifdef BN_S_MP_SQR_FAST_C
          /* can we use the fast comba multiplier? */
-         if ((((a->used * 2) + 1) < (int)MP_WARRAY) &&
+         if ((((a->used * 2) + 1) < MP_WARRAY) &&
              (a->used < (MP_MAXFAST / 2))) {
             err = s_mp_sqr_fast(a, b);
          } else
