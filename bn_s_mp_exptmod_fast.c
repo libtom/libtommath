@@ -200,7 +200,7 @@ mp_err s_mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_i
       }
 
       /* grab the next msb from the exponent */
-      y     = (mp_digit)(buf >> (MP_DIGIT_BIT - 1)) & 1;
+      y     = (mp_digit)(buf >> (MP_DIGIT_BIT - 1)) & 1uL;
       buf <<= (mp_digit)1;
 
       /* if the bit is zero and mode == 0 then we ignore it

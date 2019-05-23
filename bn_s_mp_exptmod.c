@@ -146,7 +146,7 @@ mp_err s_mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y
       }
 
       /* grab the next msb from the exponent */
-      y     = (buf >> (mp_digit)(MP_DIGIT_BIT - 1)) & 1;
+      y     = (buf >> (mp_digit)(MP_DIGIT_BIT - 1)) & 1uL;
       buf <<= (mp_digit)1;
 
       /* if the bit is zero and mode == 0 then we ignore it
