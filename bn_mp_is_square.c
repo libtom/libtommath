@@ -58,13 +58,13 @@ mp_err mp_is_square(const mp_int *arg, mp_bool *ret)
    }
 
 
-   if ((err = mp_init_uint(&t, 11L*13L*17L*19L*23L*29L*31L)) != MP_OKAY) {
+   if ((err = mp_init_uint32(&t, 11L*13L*17L*19L*23L*29L*31L)) != MP_OKAY) {
       return err;
    }
    if ((err = mp_mod(arg, &t, &t)) != MP_OKAY) {
       goto LBL_ERR;
    }
-   r = mp_get_uint(&t);
+   r = mp_get_uint32(&t);
    /* Check for other prime modules, note it's not an ERROR but we must
     * free "t" so the easiest way is to goto LBL_ERR.  We know that err
     * is already equal to MP_OKAY from the mp_mod call

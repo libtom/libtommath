@@ -824,11 +824,11 @@ int main(void)
 
 These functions can be used to set a constant with 32 or 64 bits.
 
-\index{mp\_set\_sint}
+\index{mp\_set\_int}
 \begin{alltt}
-void mp_set_sint (mp_int * a, int32_t b);
-void mp_set_uint (mp_int * a, uint32_t b);
-void mp_set_sint64 (mp_int * a, int64_t b);
+void mp_set_int32 (mp_int * a, int32_t b);
+void mp_set_uint32 (mp_int * a, uint32_t b);
+void mp_set_int64 (mp_int * a, int64_t b);
 void mp_set_uint64 (mp_int * a, uint64_t b);
 \end{alltt}
 
@@ -837,10 +837,10 @@ The value can be obtained again by calling the following functions.
 
 \index{mp\_get\_int}
 \begin{alltt}
-int32_t mp_get_sint (mp_int * a);
-uint32_t mp_get_uint (mp_int * a);
-uint32_t mp_get_mag (mp_int * a);
-int64_t mp_get_sint64 (mp_int * a);
+int32_t mp_get_int32 (mp_int * a);
+uint32_t mp_get_uint32 (mp_int * a);
+uint32_t mp_get_mag32 (mp_int * a);
+int64_t mp_get_int64 (mp_int * a);
 uint64_t mp_get_uint64 (mp_int * a);
 uint64_t mp_get_mag64 (mp_int * a);
 \end{alltt}
@@ -903,8 +903,8 @@ To both initialize and set small constants the following two functions are avail
 \index{mp\_init\_set} \index{mp\_init\_set\_int}
 \begin{alltt}
 int mp_init_set (mp_int * a, mp_digit b);
-int mp_init_set_sint (mp_int * a, int32_t b);
-int mp_init_set_uint (mp_int * a, uint32_t b);
+int mp_init_set_int32 (mp_int * a, int32_t b);
+int mp_init_set_uint32 (mp_int * a, uint32_t b);
 \end{alltt}
 
 Both functions work like the previous counterparts except they first mp\_init $a$ before setting the values.
