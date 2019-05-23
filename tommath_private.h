@@ -151,6 +151,9 @@ typedef private_mp_word mp_word;
 #define MP_MIN(x, y) (((x) < (y)) ? (x) : (y))
 #define MP_MAX(x, y) (((x) > (y)) ? (x) : (y))
 
+/* Static assertion */
+#define MP_STATIC_ASSERT(msg, cond) typedef char mp_static_assert_##msg[-(!(cond))];
+
 /* ---> Basic Manipulations <--- */
 #define MP_IS_ZERO(a) ((a)->used == 0)
 #define MP_IS_EVEN(a) (((a)->used == 0) || (((a)->dp[0] & 1u) == 0u))
@@ -161,6 +164,8 @@ typedef private_mp_word mp_word;
 
 /* Minimum number of available digits in mp_int, MP_PREC >= MP_MIN_PREC */
 #define MP_MIN_PREC ((((CHAR_BIT * (int)sizeof(long long)) + MP_DIGIT_BIT) - 1) / MP_DIGIT_BIT)
+
+MP_STATIC_ASSERT(prec_geq_min_prec, MP_PREC >= MP_MIN_PREC)
 
 /* random number source */
 extern MP_PRIVATE mp_err(*s_mp_rand_source)(void *out, size_t size);
