@@ -140,10 +140,6 @@ extern void *MP_CALLOC(size_t nmemb, size_t size);
 extern void MP_FREE(void *mem, size_t size);
 #endif
 
-/* TODO: Remove PRIVATE_MP_WARRAY as soon as deprecated MP_WARRAY is removed from tommath.h */
-#undef MP_WARRAY
-#define MP_WARRAY PRIVATE_MP_WARRAY
-
 /* TODO: Remove private_mp_word as soon as deprecated mp_word is removed from tommath. */
 #undef mp_word
 typedef private_mp_word mp_word;
@@ -161,6 +157,16 @@ typedef private_mp_word mp_word;
 
 #define MP_SIZEOF_BITS(type)    ((size_t)CHAR_BIT * sizeof(type))
 #define MP_MAXFAST              (int)(1uL << (MP_SIZEOF_BITS(mp_word) - (2u * (size_t)MP_DIGIT_BIT)))
+
+/* TODO: Remove PRIVATE_MP_WARRAY as soon as deprecated MP_WARRAY is removed from tommath.h */
+#undef MP_WARRAY
+#define MP_WARRAY PRIVATE_MP_WARRAY
+
+/* TODO: Remove PRIVATE_MP_PREC as soon as deprecated MP_PREC is removed from tommath.h */
+#ifdef PRIVATE_MP_PREC
+#   undef MP_PREC
+#   define MP_PREC PRIVATE_MP_PREC
+#endif
 
 /* Minimum number of available digits in mp_int, MP_PREC >= MP_MIN_PREC */
 #define MP_MIN_PREC ((((CHAR_BIT * (int)sizeof(long long)) + MP_DIGIT_BIT) - 1) / MP_DIGIT_BIT)
