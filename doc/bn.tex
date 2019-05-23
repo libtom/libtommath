@@ -882,8 +882,8 @@ number == 654321
 
 \index{mp\_set\_ulong}
 \begin{alltt}
-void mp_set_slong (mp_int * a, long b);
-void mp_set_ulong (mp_int * a, unsigned long b);
+void mp_set_l (mp_int * a, long b);
+void mp_set_ul (mp_int * a, unsigned long b);
 \end{alltt}
 
 This will assign the value of the platform-dependent sized variable $b$ to the mp\_int $a$.
@@ -892,8 +892,8 @@ To retrieve the value, the following functions can be used.
 
 \index{mp\_get\_ulong}
 \begin{alltt}
-long mp_get_slong (mp_int * a);
-unsigned long mp_get_ulong (mp_int * a);
+long mp_get_l (mp_int * a);
+unsigned long mp_get_ul (mp_int * a);
 \end{alltt}
 
 This will return the least significant bits of the mp\_int $a$ that fit into a ``long''.

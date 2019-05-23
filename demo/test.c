@@ -230,7 +230,7 @@ static int test_mp_fread_fwrite(void)
       return EXIT_FAILURE;
    }
 
-   mp_set_ulong(&a, 123456uL);
+   mp_set_ul(&a, 123456uL);
    tmp = tmpfile();
    if ((e = mp_fwrite(&a, 64, tmp)) != MP_OKAY) {
       goto LBL_ERR;
@@ -313,8 +313,8 @@ static int test_s_mp_jacobi(void)
       return EXIT_FAILURE;
    }
 
-   mp_set_ulong(&a, 0uL);
-   mp_set_ulong(&b, 1uL);
+   mp_set_ul(&a, 0uL);
+   mp_set_ul(&b, 1uL);
    if ((err = s_mp_jacobi(&a, &b, &i)) != MP_OKAY) {
       printf("Failed executing s_mp_jacobi(0 | 1) %s.\n", mp_error_to_string(err));
       goto LBL_ERR;
@@ -324,10 +324,10 @@ static int test_s_mp_jacobi(void)
       goto LBL_ERR;
    }
    for (cnt = 0; cnt < (int)(sizeof(jacobi)/sizeof(jacobi[0])); ++cnt) {
-      mp_set_ulong(&b, jacobi[cnt].n);
+      mp_set_ul(&b, jacobi[cnt].n);
       /* only test positive values of a */
       for (n = -5; n <= 10; ++n) {
-         mp_set_ulong(&a, (unsigned int)abs(n));
+         mp_set_ul(&a, (unsigned int)abs(n));
          should = MP_OKAY;
          if (n < 0) {
             mp_neg(&a, &a);
@@ -391,8 +391,8 @@ static int test_mp_kronecker(void)
       return EXIT_FAILURE;
    }
 
-   mp_set_ulong(&a, 0uL);
-   mp_set_ulong(&b, 1uL);
+   mp_set_ul(&a, 0uL);
+   mp_set_ul(&b, 1uL);
    if ((err = mp_kronecker(&a, &b, &i)) != MP_OKAY) {
       printf("Failed executing mp_kronecker(0 | 1) %s.\n", mp_error_to_string(err));
       goto LBL_ERR;
@@ -404,18 +404,18 @@ static int test_mp_kronecker(void)
    for (cnt = 0; cnt < (int)(sizeof(kronecker)/sizeof(kronecker[0])); ++cnt) {
       k = kronecker[cnt].n;
       if (k < 0) {
-         mp_set_ulong(&a, (unsigned long)(-k));
+         mp_set_ul(&a, (unsigned long)(-k));
          mp_neg(&a, &a);
       } else {
-         mp_set_ulong(&a, (unsigned long) k);
+         mp_set_ul(&a, (unsigned long) k);
       }
       /* only test positive values of a */
       for (m = -10; m <= 10; m++) {
          if (m < 0) {
-            mp_set_ulong(&b,(unsigned long)(-m));
+            mp_set_ul(&b,(unsigned long)(-m));
             mp_neg(&b, &b);
          } else {
-            mp_set_ulong(&b, (unsigned long) m);
+            mp_set_ul(&b, (unsigned long) m);
          }
          if ((err = mp_kronecker(&a, &b, &i)) != MP_OKAY) {
             printf("Failed executing mp_kronecker(%ld | %ld) %s.\n", kronecker[cnt].n, m, mp_error_to_string(err));
@@ -446,13 +446,13 @@ static int test_mp_complement(void)
 
    for (i = 0; i < 1000; ++i) {
       long l = rand_long();
-      mp_set_ulong(&a, ulabs(l));
+      mp_set_ul(&a, ulabs(l));
       if (l < 0)
          mp_neg(&a, &a);
       mp_complement(&a, &b);
 
       l = ~l;
-      mp_set_ulong(&c, ulabs(l));
+      mp_set_ul(&c, ulabs(l));
       if (l < 0)
          mp_neg(&c, &c);
 
@@ -483,13 +483,13 @@ static int test_mp_signed_rsh(void)
       int em;
 
       l = rand_long();
-      mp_set_ulong(&a, ulabs(l));
+      mp_set_ul(&a, ulabs(l));
       if (l < 0)
          mp_neg(&a, &a);
 
       em = abs(rand_int()) % 32;
 
-      mp_set_ulong(&d, ulabs(l >> em));
+      mp_set_ul(&d, ulabs(l >> em));
       if ((l >> em) < 0)
          mp_neg(&d, &d);
 
@@ -521,16 +521,16 @@ static int test_mp_xor(void)
       long l, em;
 
       l = rand_long();
-      mp_set_ulong(&a, ulabs(l));
+      mp_set_ul(&a, ulabs(l));
       if (l < 0)
          mp_neg(&a, &a);
 
       em = rand_long();
-      mp_set_ulong(&b, ulabs(em));
+      mp_set_ul(&b, ulabs(em));
       if (em < 0)
          mp_neg(&b, &b);
 
-      mp_set_ulong(&d, ulabs(l ^ em));
+      mp_set_ul(&d, ulabs(l ^ em));
       if ((l ^ em) < 0)
          mp_neg(&d, &d);
 
@@ -562,16 +562,16 @@ static int test_mp_or(void)
       long l, em;
 
       l = rand_long();
-      mp_set_ulong(&a, ulabs(l));
+      mp_set_ul(&a, ulabs(l));
       if (l < 0)
          mp_neg(&a, &a);
 
       em = rand_long();
-      mp_set_ulong(&b, ulabs(em));
+      mp_set_ul(&b, ulabs(em));
       if (em < 0)
          mp_neg(&b, &b);
 
-      mp_set_ulong(&d, ulabs(l | em));
+      mp_set_ul(&d, ulabs(l | em));
       if ((l | em) < 0)
          mp_neg(&d, &d);
 
@@ -602,16 +602,16 @@ static int test_mp_and(void)
       long l, em;
 
       l = rand_long();
-      mp_set_ulong(&a, ulabs(l));
+      mp_set_ul(&a, ulabs(l));
       if (l < 0)
          mp_neg(&a, &a);
 
       em = rand_long();
-      mp_set_ulong(&b, ulabs(em));
+      mp_set_ul(&b, ulabs(em));
       if (em < 0)
          mp_neg(&b, &b);
 
-      mp_set_ulong(&d, ulabs(l & em));
+      mp_set_ul(&d, ulabs(l & em));
       if ((l & em) < 0)
          mp_neg(&d, &d);
 
@@ -744,18 +744,18 @@ static int test_mp_get_uint32(void)
 
    for (i = 0; i < 1000; ++i) {
       t = (unsigned long)rand_long() & 0xFFFFFFFFuL;
-      mp_set_ulong(&a, t);
+      mp_set_ul(&a, t);
       if (t != mp_get_uint32(&a)) {
          printf("\nmp_get_uint32() bad result!");
          goto LBL_ERR;
       }
    }
-   mp_set_ulong(&a, 0uL);
+   mp_set_ul(&a, 0uL);
    if (mp_get_uint32(&a) != 0) {
       printf("\nmp_get_uint32() bad result!");
       goto LBL_ERR;
    }
-   mp_set_ulong(&a, 0xFFFFFFFFuL);
+   mp_set_ul(&a, 0xFFFFFFFFuL);
    if (mp_get_uint32(&a) != 0xFFFFFFFFuL) {
       printf("\nmp_get_uint32() bad result!");
       goto LBL_ERR;
@@ -768,7 +768,7 @@ LBL_ERR:
    return EXIT_FAILURE;
 }
 
-static int test_mp_get_ulong(void)
+static int test_mp_get_ul(void)
 {
    unsigned long s, t;
    int i;
@@ -784,10 +784,10 @@ static int test_mp_get_ulong(void)
          t = ~0UL;
       printf(" t = 0x%lx i = %d\r", t, i);
       do {
-         mp_set_ulong(&a, t);
-         s = mp_get_ulong(&a);
+         mp_set_ul(&a, t);
+         s = mp_get_ul(&a);
          if (s != t) {
-            printf("\nmp_get_ulong() bad result! 0x%lx != 0x%lx", s, t);
+            printf("\nmp_get_ul() bad result! 0x%lx != 0x%lx", s, t);
             goto LBL_ERR;
          }
          t <<= 1;
@@ -943,8 +943,8 @@ static int test_mp_sqrtmod_prime(void)
 
    /* r^2 = n (mod p) */
    for (i = 0; i < (int)(sizeof(sqrtmod_prime)/sizeof(sqrtmod_prime[0])); ++i) {
-      mp_set_ulong(&a, sqrtmod_prime[i].p);
-      mp_set_ulong(&b, sqrtmod_prime[i].n);
+      mp_set_ul(&a, sqrtmod_prime[i].p);
+      mp_set_ul(&b, sqrtmod_prime[i].n);
       if (mp_sqrtmod_prime(&b, &a, &c) != MP_OKAY) {
          printf("Failed executing %d. mp_sqrtmod_prime\n", (i+1));
          goto LBL_ERR;
@@ -2154,7 +2154,7 @@ int unit_tests(int argc, char **argv)
       T(mp_fread_fwrite),
       T(mp_get_uint32),
       T(mp_get_uint64),
-      T(mp_get_ulong),
+      T(mp_get_ul),
       T(mp_ilogb),
       T(mp_incr),
       T(mp_invmod),

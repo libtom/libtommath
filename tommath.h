@@ -297,13 +297,13 @@ uint32_t mp_get_mag32(const mp_int *a) MP_WUR;
 uint64_t mp_get_mag64(const mp_int *a) MP_WUR;
 
 /* get integer, set integer (long) */
-#define mp_get_slong(a)        (sizeof (long) == 8 ? (long)mp_get_int64(a) : (long)mp_get_int32(a))
-#define mp_set_slong(a, b)     (sizeof (long) == 8 ? mp_set_int64((a), (b)) : mp_set_int32((a), (int32_t)(b)))
+#define mp_get_l(a)        (sizeof (long) == 8 ? (long)mp_get_int64(a) : (long)mp_get_int32(a))
+#define mp_set_l(a, b)     (sizeof (long) == 8 ? mp_set_int64((a), (b)) : mp_set_int32((a), (int32_t)(b)))
 
 /* get integer, set integer (unsigned long) */
-#define mp_get_ulong(a)       (sizeof (long) == 8 ? (unsigned long)mp_get_uint64(a) : (unsigned long)mp_get_uint32(a))
-#define mp_set_ulong(a, b)    (sizeof (long) == 8 ? mp_set_uint64((a), (b)) : mp_set_uint32((a), (uint32_t)(b)))
-#define mp_get_mag_long(a)    (sizeof (long) == 8 ? (unsigned long)mp_get_mag64(a) : (unsigned long)mp_get_mag32(a))
+#define mp_get_ul(a)       (sizeof (long) == 8 ? (unsigned long)mp_get_uint64(a) : (unsigned long)mp_get_uint32(a))
+#define mp_set_ul(a, b)    (sizeof (long) == 8 ? mp_set_uint64((a), (b)) : mp_set_uint32((a), (uint32_t)(b)))
+#define mp_get_magl(a)     (sizeof (long) == 8 ? (unsigned long)mp_get_mag64(a) : (unsigned long)mp_get_mag32(a))
 
 /* set to single unsigned digit, up to MP_DIGIT_MAX */
 void mp_set(mp_int *a, mp_digit b);
@@ -311,10 +311,10 @@ mp_err mp_init_set(mp_int *a, mp_digit b) MP_WUR;
 
 /* get integer, set integer and init with integer (deprecated) */
 MP_DEPRECATED(mp_get_mag32/mp_get_uint32) unsigned long mp_get_int(const mp_int *a) MP_WUR;
-MP_DEPRECATED(mp_get_mag_long/mp_get_ulong) unsigned long mp_get_long(const mp_int *a) MP_WUR;
+MP_DEPRECATED(mp_get_magl/mp_get_ul) unsigned long mp_get_long(const mp_int *a) MP_WUR;
 MP_DEPRECATED(mp_get_mag64/mp_get_uint64) unsigned long long mp_get_long_long(const mp_int *a) MP_WUR;
 MP_DEPRECATED(mp_set_uint32) mp_err mp_set_int(mp_int *a, unsigned long b);
-MP_DEPRECATED(mp_set_ulong) mp_err mp_set_long(mp_int *a, unsigned long b);
+MP_DEPRECATED(mp_set_ul) mp_err mp_set_long(mp_int *a, unsigned long b);
 MP_DEPRECATED(mp_set_uint64) mp_err mp_set_long_long(mp_int *a, unsigned long long b);
 MP_DEPRECATED(mp_init_uint32) mp_err mp_init_set_int(mp_int *a, unsigned long b) MP_WUR;
 
