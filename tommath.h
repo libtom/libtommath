@@ -305,7 +305,7 @@ uint64_t mp_get_mag64(const mp_int *a) MP_WUR;
 #define mp_get_maglong(a)     (sizeof (long) == 8 ? (unsigned long)mp_get_mag64(a) : (unsigned long)mp_get_mag(a))
 #define mp_set_ulong(a, b)    (sizeof (long) == 8 ? mp_set_uint64((a), (b)) : mp_set_uint((a), (uint32_t)(b)))
 
-/* set to single unsigned digit, only 8 bit guaranteed */
+/* set to single unsigned digit, up to MP_DIGIT_MAX */
 void mp_set(mp_int *a, mp_digit b);
 mp_err mp_init_set(mp_int *a, mp_digit b) MP_WUR;
 
