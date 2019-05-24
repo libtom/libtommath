@@ -437,6 +437,8 @@ EOS
         print {$out} "\n\n";
     }
     close $out;
+
+    return 0;
 }
 
 sub die_usage {
