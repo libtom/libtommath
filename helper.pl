@@ -275,7 +275,7 @@ sub process_makefiles {
   }
 }
 
-my %deplist;
+my %depmap;
 my $deplist;
 
 sub draw_func
@@ -297,7 +297,7 @@ sub draw_func
    shift @funcs;
    my $temp = $deplist;
    foreach my $i (@funcs) {
-      draw_func($out, $indent + 1, $deplist{$i}) if exists $deplist{$i};
+      draw_func($out, $indent + 1, $depmap{$i}) if exists $depmap{$i};
    }
    $deplist = $temp;
    return;
@@ -407,7 +407,7 @@ EOS
                 $list = $list . ',' . $a;
             }
         }
-        $deplist{$filename} = $list;
+        $depmap{$filename} = $list;
 
         print {$class} << 'EOS';
 #endif
@@ -431,9 +431,9 @@ EOS
     #now let's make a cool call graph...
 
     open(my $out, '>', 'callgraph.txt');
-    foreach (sort keys %deplist) {
+    foreach (sort keys %depmap) {
         $deplist = '';
-        draw_func($out, 0, $deplist{$_});
+        draw_func($out, 0, $depmap{$_});
         print {$out} "\n\n";
     }
     close $out;
