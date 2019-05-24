@@ -35,11 +35,12 @@ median() {
   echo $median
 }
 
-MPWD=$(pwd)
+MPWD=$(dirname $(readlink -f "$0"))
 FILE_NAME="tuning_list"
-TOMMATH_CUTOFFS_H="../tommath_cutoffs.h"
+TOMMATH_CUTOFFS_H="$MPWD/../tommath_cutoffs.h"
 BACKUP_SUFFIX=".orig"
-RNUM=0;
+RNUM=0
+
 #############################################################################
 # It would be a good idea to isolate these processes (with e.g.: cpuset)    #
 #                                                                           #
