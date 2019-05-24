@@ -1,6 +1,6 @@
 # MAKEFILE for MS Windows (nmake + Windows SDK)
 #
-# BEWARE: variable OBJECTS is updated via ./updatemakes.sh
+# BEWARE: variable OBJECTS is updated via helper.pl
 
 ### USAGE:
 # Open a command prompt with WinSDK variables set and start:
