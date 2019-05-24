@@ -43,6 +43,10 @@ extern "C" {
 #   endif
 #endif
 
+#ifdef MP_DIGIT_BIT
+#   error Defining MP_DIGIT_BIT is disallowed, use MP_8/16/31/32/64BIT
+#endif
+
 /* some default configurations.
  *
  * A "mp_digit" must be able to hold MP_DIGIT_BIT + 1 bits
@@ -51,34 +55,30 @@ extern "C" {
  * At the very least a mp_digit must be able to hold 7 bits
  * [any size beyond that is ok provided it doesn't overflow the data type]
  */
+
 #ifdef MP_8BIT
 typedef uint8_t              mp_digit;
 typedef uint16_t             private_mp_word;
-#   define MP_SIZEOF_MP_DIGIT 1
-#   ifdef MP_DIGIT_BIT
-#      error You must not define MP_DIGIT_BIT when using MP_8BIT
-#   endif
+#   define MP_DIGIT_BIT 7
 #elif defined(MP_16BIT)
 typedef uint16_t             mp_digit;
 typedef uint32_t             private_mp_word;
-#   define MP_SIZEOF_MP_DIGIT 2
-#   ifdef MP_DIGIT_BIT
-#      error You must not define MP_DIGIT_BIT when using MP_16BIT
-#   endif
+#   define MP_DIGIT_BIT 15
 #elif defined(MP_64BIT)
 /* for GCC only on supported platforms */
 typedef uint64_t mp_digit;
 typedef unsigned long        private_mp_word __attribute__((mode(TI)));
 #   define MP_DIGIT_BIT 60
 #else
-/* this is the default case, 28-bit digits */
-
-/* this is to make porting into LibTomCrypt easier :-) */
 typedef uint32_t             mp_digit;
 typedef uint64_t             private_mp_word;
-
 #   ifdef MP_31BIT
-/* this is an extension that uses 31-bit digits */
+/*
+ * This is an extension that uses 31-bit digits.
+ * Please be aware that not all functions support this size, especially s_mp_mul_digs_fast
+ * will be reduced to work on small numbers only:
+ * Up to 8 limbs, 248 bits instead of up to 512 limbs, 15872 bits with MP_28BIT.
+ */
 #      define MP_DIGIT_BIT 31
 #   else
 /* default case is 28-bit digits, defines MP_28BIT as a handy macro to test */
@@ -90,10 +90,7 @@ typedef uint64_t             private_mp_word;
 /* mp_word is a private type */
 #define mp_word MP_DEPRECATED_PRAGMA("mp_word has been made private") private_mp_word
 
-/* otherwise the bits per digit is calculated automatically from the size of a mp_digit */
-#ifndef MP_DIGIT_BIT
-#   define MP_DIGIT_BIT (((CHAR_BIT * MP_SIZEOF_MP_DIGIT) - 1))  /* bits per digit */
-#endif
+#define MP_SIZEOF_MP_DIGIT (MP_DEPRECATED_PRAGMA("MP_SIZEOF_MP_DIGIT has been deprecated, use sizeof (mp_digit)") sizeof (mp_digit))
 
 #define MP_MASK          ((((mp_digit)1)<<((mp_digit)MP_DIGIT_BIT))-((mp_digit)1))
 #define MP_DIGIT_MAX     MP_MASK
