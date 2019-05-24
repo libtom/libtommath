@@ -275,6 +275,11 @@ sub process_makefiles {
   }
 }
 
+sub update_dep {
+    system("perl helper-dep.pl");
+    return $? != 0;
+}
+
 sub die_usage {
   die <<"MARKER";
 usage: $0 -s   OR   $0 --check-source
@@ -300,6 +305,7 @@ $failure ||= check_comments()     if $check_all || $check_comments;
 $failure ||= check_doc()          if $check_doc; # temporarily excluded from --check-all
 $failure ||= process_makefiles(0) if $check_all || $check_makefiles;
 $failure ||= process_makefiles(1) if $update_makefiles;
+$failure ||= update_dep()         if $update_makefiles;
 
 die_usage unless defined $failure;
 exit $failure ? 1 : 0;
