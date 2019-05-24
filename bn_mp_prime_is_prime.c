@@ -137,41 +137,12 @@ mp_err mp_prime_is_prime(const mp_int *a, int t, mp_bool *result)
    }
 
    /*
-      abs(t) extra rounds of M-R to extend the range of primes it can find if t < 0.
       Only recommended if the input range is known to be < 3317044064679887385961981
 
-      It uses the bases for a deterministic M-R test if input < 3317044064679887385961981
+      It uses the bases necessary for a deterministic M-R test if the input is
+      smaller than  3317044064679887385961981
       The caller has to check the size.
-
-      Not for cryptographic use because with known bases strong M-R pseudoprimes can
-      be constructed. Use at least one M-R test with a random base (t >= 1).
-
-      The 1119 bit large number
-
-      80383745745363949125707961434194210813883768828755814583748891752229742737653\
-      33652186502336163960045457915042023603208766569966760987284043965408232928738\
-      79185086916685732826776177102938969773947016708230428687109997439976544144845\
-      34115587245063340927902227529622941498423068816854043264575340183297861112989\
-      60644845216191652872597534901
-
-      has been constructed by F. Arnault (F. Arnault, "Rabin-Miller primality test:
-      composite numbers which pass it.",  Mathematics of Computation, 1995, 64. Jg.,
-      Nr. 209, S. 355-361), is a semiprime with the two factors
-
-      40095821663949960541830645208454685300518816604113250877450620473800321707011\
-      96242716223191597219733582163165085358166969145233813917169287527980445796800\
-      452592031836601
-
-      20047910831974980270915322604227342650259408302056625438725310236900160853505\
-      98121358111595798609866791081582542679083484572616906958584643763990222898400\
-      226296015918301
-
-      and it is a strong pseudoprime to all forty-six prime M-R bases up to 200
-
-      It does not fail the strong Bailley-PSP test as implemented here, it is just
-      given as an example, if not the reason to use the BPSW-test instead of M-R-tests
-      with a sequence of primes 2...n.
-
+      TODO: can be made a bit finer grained but comparing is not free.
    */
    if (t < 0) {
       t = -t;
@@ -200,15 +171,6 @@ mp_err mp_prime_is_prime(const mp_int *a, int t, mp_bool *result)
          }
       }
 
-      /* for compatibility with the current API (well, compatible within a sign's width) */
-      if (p_max < t) {
-         p_max = t;
-      }
-
-      if (p_max > MP_PRIME_SIZE) {
-         err = MP_VAL;
-         goto LBL_B;
-      }
       /* we did bases 2 and 3  already, skip them */
       for (ix = 2; ix < p_max; ix++) {
          mp_set(&b, ltm_prime_tab[ix]);
