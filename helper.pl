@@ -275,16 +275,14 @@ sub process_makefiles {
   }
 }
 
-my $deplist;
-
 sub draw_func
 {
-   my ($depmap, $out, $indent, $funcslist) = @_;
+   my ($deplist, $depmap, $out, $indent, $funcslist) = @_;
    my @funcs = split ',', $funcslist;
    # try this if you want to have a look at a minimized version of the callgraph without all the trivial functions
    #if ($deplist =~ /$funcs[0]/ || $funcs[0] =~ /BN_MP_(ADD|SUB|CLEAR|CLEAR_\S+|DIV|MUL|COPY|ZERO|GROW|CLAMP|INIT|INIT_\S+|SET|ABS|CMP|CMP_D|EXCH)_C/) {
    if ($deplist =~ /$funcs[0]/) {
-      return;
+      return $deplist;
    } else {
       $deplist = $deplist . $funcs[0];
    }
@@ -294,12 +292,11 @@ sub draw_func
    }
    print {$out} $funcs[0] . "\n";
    shift @funcs;
-   my $temp = $deplist;
+   my $olddeplist = $deplist;
    foreach my $i (@funcs) {
-      draw_func($depmap, $out, $indent + 1, ${$depmap}{$i}) if exists ${$depmap}{$i};
+      $deplist = draw_func($deplist, $depmap, $out, $indent + 1, ${$depmap}{$i}) if exists ${$depmap}{$i};
    }
-   $deplist = $temp;
-   return;
+   return $olddeplist;
 }
 
 sub update_dep
@@ -431,8 +428,7 @@ EOS
 
     open(my $out, '>', 'callgraph.txt');
     foreach (sort keys %depmap) {
-        $deplist = '';
-        draw_func(\%depmap, $out, 0, $depmap{$_});
+        draw_func("", \%depmap, $out, 0, $depmap{$_});
         print {$out} "\n\n";
     }
     close $out;
