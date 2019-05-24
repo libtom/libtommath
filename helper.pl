@@ -275,12 +275,11 @@ sub process_makefiles {
   }
 }
 
-my %depmap;
 my $deplist;
 
 sub draw_func
 {
-   my ($out, $indent, $funcslist) = @_;
+   my ($depmap, $out, $indent, $funcslist) = @_;
    my @funcs = split ',', $funcslist;
    # try this if you want to have a look at a minimized version of the callgraph without all the trivial functions
    #if ($deplist =~ /$funcs[0]/ || $funcs[0] =~ /BN_MP_(ADD|SUB|CLEAR|CLEAR_\S+|DIV|MUL|COPY|ZERO|GROW|CLAMP|INIT|INIT_\S+|SET|ABS|CMP|CMP_D|EXCH)_C/) {
@@ -297,7 +296,7 @@ sub draw_func
    shift @funcs;
    my $temp = $deplist;
    foreach my $i (@funcs) {
-      draw_func($out, $indent + 1, $depmap{$i}) if exists $depmap{$i};
+      draw_func($depmap, $out, $indent + 1, ${$depmap}{$i}) if exists ${$depmap}{$i};
    }
    $deplist = $temp;
    return;
@@ -374,7 +373,7 @@ EOS
 EOS
 
     # now do classes
-
+    my %depmap;
     foreach my $filename (glob 'bn*.c') {
         open(my $src, '<', $filename) or die "Can't open source file!\n";
         read $src, my $content, -s $src;
@@ -433,7 +432,7 @@ EOS
     open(my $out, '>', 'callgraph.txt');
     foreach (sort keys %depmap) {
         $deplist = '';
-        draw_func($out, 0, $depmap{$_});
+        draw_func(\%depmap, $out, 0, $depmap{$_});
         print {$out} "\n\n";
     }
     close $out;
