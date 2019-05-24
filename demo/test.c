@@ -137,7 +137,11 @@ LBL_ERR:
 
 static int check_get_set_i32(mp_int *a, int32_t b)
 {
+   mp_clear(a);
+   if (mp_shrink(a) != MP_OKAY) return EXIT_FAILURE;
+
    mp_set_i32(a, b);
+   if (mp_shrink(a) != MP_OKAY) return EXIT_FAILURE;
    if (mp_get_i32(a) != b) return EXIT_FAILURE;
    if (mp_get_u32(a) != (uint32_t)b) return EXIT_FAILURE;
    if (mp_get_mag32(a) != uabs32(b)) return EXIT_FAILURE;
@@ -180,7 +184,11 @@ LBL_ERR:
 
 static int check_get_set_i64(mp_int *a, int64_t b)
 {
+   mp_clear(a);
+   if (mp_shrink(a) != MP_OKAY) return EXIT_FAILURE;
+
    mp_set_i64(a, b);
+   if (mp_shrink(a) != MP_OKAY) return EXIT_FAILURE;
    if (mp_get_i64(a) != b) return EXIT_FAILURE;
    if (mp_get_u64(a) != (uint64_t)b) return EXIT_FAILURE;
    if (mp_get_mag64(a) != uabs64(b)) return EXIT_FAILURE;
