@@ -51,21 +51,21 @@ mp_err mp_prime_is_prime(const mp_int *a, int t, mp_bool *result)
    }
 
    /* is the input equal to one of the primes in the table? */
-   for (ix = 0; ix < MP_PRIME_SIZE; ix++) {
-      if (mp_cmp_d(a, ltm_prime_tab[ix]) == MP_EQ) {
+   for (ix = 0; ix < PRIVATE_MP_PRIME_TAB_SIZE; ix++) {
+      if (mp_cmp_d(a, s_mp_prime_tab[ix]) == MP_EQ) {
          *result = MP_YES;
          return MP_OKAY;
       }
    }
 #ifdef MP_8BIT
    /* The search in the loop above was exhaustive in this case */
-   if ((a->used == 1) && (MP_PRIME_SIZE >= 31)) {
+   if ((a->used == 1) && (PRIVATE_MP_PRIME_TAB_SIZE >= 31)) {
       return MP_OKAY;
    }
 #endif
 
    /* first perform trial division */
-   if ((err = mp_prime_is_divisible(a, &res)) != MP_OKAY) {
+   if ((err = s_mp_prime_is_divisible(a, &res)) != MP_OKAY) {
       return err;
    }
 
@@ -173,7 +173,7 @@ mp_err mp_prime_is_prime(const mp_int *a, int t, mp_bool *result)
 
       /* we did bases 2 and 3  already, skip them */
       for (ix = 2; ix < p_max; ix++) {
-         mp_set(&b, ltm_prime_tab[ix]);
+         mp_set(&b, s_mp_prime_tab[ix]);
          if ((err = mp_prime_miller_rabin(a, &b, &res)) != MP_OKAY) {
             goto LBL_B;
          }

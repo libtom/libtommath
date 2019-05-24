@@ -13,17 +13,17 @@ mp_err mp_prime_next_prime(mp_int *a, int t, int bbs_style)
    int      x, y;
    mp_err  err;
    mp_bool res = MP_NO;
-   mp_digit res_tab[MP_PRIME_SIZE], step, kstep;
+   mp_digit res_tab[PRIVATE_MP_PRIME_TAB_SIZE], step, kstep;
    mp_int   b;
 
    /* force positive */
    a->sign = MP_ZPOS;
 
    /* simple algo if a is less than the largest prime in the table */
-   if (mp_cmp_d(a, ltm_prime_tab[MP_PRIME_SIZE-1]) == MP_LT) {
+   if (mp_cmp_d(a, s_mp_prime_tab[PRIVATE_MP_PRIME_TAB_SIZE-1]) == MP_LT) {
       /* find which prime it is bigger than */
-      for (x = MP_PRIME_SIZE - 2; x >= 0; x--) {
-         if (mp_cmp_d(a, ltm_prime_tab[x]) != MP_LT) {
+      for (x = PRIVATE_MP_PRIME_TAB_SIZE - 2; x >= 0; x--) {
+         if (mp_cmp_d(a, s_mp_prime_tab[x]) != MP_LT) {
             if (bbs_style == 1) {
                /* ok we found a prime smaller or
                 * equal [so the next is larger]
@@ -31,17 +31,17 @@ mp_err mp_prime_next_prime(mp_int *a, int t, int bbs_style)
                 * however, the prime must be
                 * congruent to 3 mod 4
                 */
-               if ((ltm_prime_tab[x + 1] & 3u) != 3u) {
+               if ((s_mp_prime_tab[x + 1] & 3u) != 3u) {
                   /* scan upwards for a prime congruent to 3 mod 4 */
-                  for (y = x + 1; y < MP_PRIME_SIZE; y++) {
-                     if ((ltm_prime_tab[y] & 3u) == 3u) {
-                        mp_set(a, ltm_prime_tab[y]);
+                  for (y = x + 1; y < PRIVATE_MP_PRIME_TAB_SIZE; y++) {
+                     if ((s_mp_prime_tab[y] & 3u) == 3u) {
+                        mp_set(a, s_mp_prime_tab[y]);
                         return MP_OKAY;
                      }
                   }
                }
             } else {
-               mp_set(a, ltm_prime_tab[x + 1]);
+               mp_set(a, s_mp_prime_tab[x + 1]);
                return MP_OKAY;
             }
          }
@@ -80,8 +80,8 @@ mp_err mp_prime_next_prime(mp_int *a, int t, int bbs_style)
    }
 
    /* generate the restable */
-   for (x = 1; x < MP_PRIME_SIZE; x++) {
-      if ((err = mp_mod_d(a, ltm_prime_tab[x], res_tab + x)) != MP_OKAY) {
+   for (x = 1; x < PRIVATE_MP_PRIME_TAB_SIZE; x++) {
+      if ((err = mp_mod_d(a, s_mp_prime_tab[x], res_tab + x)) != MP_OKAY) {
          return err;
       }
    }
@@ -102,13 +102,13 @@ mp_err mp_prime_next_prime(mp_int *a, int t, int bbs_style)
          step += kstep;
 
          /* compute the new residue without using division */
-         for (x = 1; x < MP_PRIME_SIZE; x++) {
+         for (x = 1; x < PRIVATE_MP_PRIME_TAB_SIZE; x++) {
             /* add the step to each residue */
             res_tab[x] += kstep;
 
             /* subtract the modulus [instead of using division] */
-            if (res_tab[x] >= ltm_prime_tab[x]) {
-               res_tab[x]  -= ltm_prime_tab[x];
+            if (res_tab[x] >= s_mp_prime_tab[x]) {
+               res_tab[x]  -= s_mp_prime_tab[x];
             }
 
             /* set flag if zero */

@@ -12,8 +12,8 @@ int mp_get_bit(const mp_int *a, int b)
    return (s_mp_get_bit(a, (unsigned int)b) == MP_YES) ? MP_YES : MP_NO;
 }
 #endif
-#ifdef BN_S_MP_JACOBI_C
-mp_err s_mp_jacobi(const mp_int *a, const mp_int *n, int *c)
+#ifdef BN_MP_JACOBI_C
+mp_err mp_jacobi(const mp_int *a, const mp_int *n, int *c)
 {
    if (a->sign == MP_NEG) {
       return MP_VAL;
@@ -22,12 +22,6 @@ mp_err s_mp_jacobi(const mp_int *a, const mp_int *n, int *c)
       return MP_VAL;
    }
    return mp_kronecker(a, n, c);
-}
-#endif
-#ifdef BN_MP_JACOBI_C
-mp_err mp_jacobi(const mp_int *a, const mp_int *n, int *c)
-{
-   return s_mp_jacobi(a, n, c);
 }
 #endif
 #ifdef BN_MP_PRIME_RANDOM_EX_C
@@ -189,6 +183,12 @@ unsigned long mp_get_long(const mp_int *a)
 unsigned long long mp_get_long_long(const mp_int *a)
 {
    return (unsigned long long)mp_get_mag64(a);
+}
+#endif
+#ifdef BN_MP_PRIME_IS_DIVISIBLE_C
+mp_err mp_prime_is_divisible(const mp_int *a, mp_bool *result)
+{
+   return s_mp_prime_is_divisible(a, result);
 }
 #endif
 #endif

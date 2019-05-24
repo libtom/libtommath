@@ -198,8 +198,8 @@ MP_PRIVATE mp_err s_mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_i
 MP_PRIVATE mp_err s_mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y, int redmode) MP_WUR;
 MP_PRIVATE mp_err s_mp_rand_platform(void *p, size_t n) MP_WUR;
 MP_PRIVATE mp_err s_mp_prime_random_ex(mp_int *a, int t, int size, int flags, private_mp_prime_callback cb, void *dat);
-MP_PRIVATE mp_err s_mp_jacobi(const mp_int *a, const mp_int *n, int *c);
 MP_PRIVATE void s_mp_reverse(unsigned char *s, int len);
+MP_PRIVATE mp_err s_mp_prime_is_divisible(const mp_int *a, mp_bool *result);
 
 /* TODO: jenkins prng is not thread safe as of now */
 MP_PRIVATE mp_err s_mp_rand_jenkins(void *p, size_t n) MP_WUR;
@@ -208,6 +208,7 @@ MP_PRIVATE void s_mp_rand_jenkins_init(uint64_t seed);
 extern MP_PRIVATE const char *const mp_s_rmap;
 extern MP_PRIVATE const uint8_t mp_s_rmap_reverse[];
 extern MP_PRIVATE const size_t mp_s_rmap_reverse_sz;
+extern MP_PRIVATE const mp_digit *s_mp_prime_tab;
 
 /* deprecated functions */
 MP_DEPRECATED(s_mp_invmod_fast) mp_err fast_mp_invmod(const mp_int *a, const mp_int *b, mp_int *c);
