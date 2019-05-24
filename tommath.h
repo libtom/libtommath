@@ -81,9 +81,7 @@ typedef uint64_t             private_mp_word;
  */
 #      define MP_DIGIT_BIT 31
 #   else
-/* default case is 28-bit digits, defines MP_28BIT as a handy macro to test
- * this is to make porting into LibTomCrypt easier :-)
- */
+/* default case is 28-bit digits, defines MP_28BIT as a handy macro to test */
 #      define MP_DIGIT_BIT 28
 #      define MP_28BIT
 #   endif
