@@ -146,4 +146,49 @@ mp_err mp_tc_div_2d(const mp_int *a, int b, mp_int *c)
    return mp_signed_rsh(a, b, c);
 }
 #endif
+#ifdef BN_MP_INIT_SET_INT_C
+mp_err mp_init_set_int(mp_int *a, unsigned long b)
+{
+   return mp_init_u32(a, (uint32_t)b);
+}
+#endif
+#ifdef BN_MP_SET_INT_C
+mp_err mp_set_int(mp_int *a, unsigned long b)
+{
+   mp_set_u32(a, (uint32_t)b);
+   return MP_OKAY;
+}
+#endif
+#ifdef BN_MP_SET_LONG_C
+mp_err mp_set_long(mp_int *a, unsigned long b)
+{
+   mp_set_u64(a, b);
+   return MP_OKAY;
+}
+#endif
+#ifdef BN_MP_SET_LONG_LONG_C
+mp_err mp_set_long_long(mp_int *a, unsigned long long b)
+{
+   mp_set_u64(a, b);
+   return MP_OKAY;
+}
+#endif
+#ifdef BN_MP_GET_INT_C
+unsigned long mp_get_int(const mp_int *a)
+{
+   return mp_get_mag32(a);
+}
+#endif
+#ifdef BN_MP_GET_LONG_C
+unsigned long mp_get_long(const mp_int *a)
+{
+   return sizeof(long) > sizeof(int32_t) ? (unsigned long)mp_get_mag64(a) : (unsigned long)mp_get_mag32(a);
+}
+#endif
+#ifdef BN_MP_GET_LONG_LONG_C
+unsigned long long mp_get_long_long(const mp_int *a)
+{
+   return (unsigned long long)mp_get_mag64(a);
+}
+#endif
 #endif

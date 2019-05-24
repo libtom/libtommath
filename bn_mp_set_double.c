@@ -23,7 +23,7 @@ mp_err mp_set_double(mp_int *a, double b)
    }
    exp -= 1023 + 52;
 
-   mp_set_long_long(a, frac);
+   mp_set_u64(a, frac);
 
    err = (exp < 0) ? mp_div_2d(a, -exp, a, NULL) : mp_mul_2d(a, exp, a);
    if (err != MP_OKAY) {

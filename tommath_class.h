@@ -10,6 +10,7 @@
 #endif
 #define LTM1
 #if defined(LTM_ALL)
+#   define BN_CONVERSION_C
 #   define BN_CUTOFFS_C
 #   define BN_DEPRECATED_C
 #   define BN_MP_2EXPT_C
@@ -48,9 +49,6 @@
 #   define BN_MP_FWRITE_C
 #   define BN_MP_GCD_C
 #   define BN_MP_GET_DOUBLE_C
-#   define BN_MP_GET_INT_C
-#   define BN_MP_GET_LONG_C
-#   define BN_MP_GET_LONG_LONG_C
 #   define BN_MP_GROW_C
 #   define BN_MP_ILOGB_C
 #   define BN_MP_IMPORT_C
@@ -59,7 +57,6 @@
 #   define BN_MP_INIT_COPY_C
 #   define BN_MP_INIT_MULTI_C
 #   define BN_MP_INIT_SET_C
-#   define BN_MP_INIT_SET_INT_C
 #   define BN_MP_INIT_SIZE_C
 #   define BN_MP_INVMOD_C
 #   define BN_MP_IS_SQUARE_C
@@ -109,9 +106,6 @@
 #   define BN_MP_RSHD_C
 #   define BN_MP_SET_C
 #   define BN_MP_SET_DOUBLE_C
-#   define BN_MP_SET_INT_C
-#   define BN_MP_SET_LONG_C
-#   define BN_MP_SET_LONG_LONG_C
 #   define BN_MP_SHRINK_C
 #   define BN_MP_SIGNED_BIN_SIZE_C
 #   define BN_MP_SIGNED_RSH_C
@@ -155,6 +149,22 @@
 #   define BN_S_MP_TOOM_MUL_C
 #   define BN_S_MP_TOOM_SQR_C
 #endif
+#if defined(BN_CONVERSION_C)
+#   define BN_MP_INIT_C
+#   define BN_MP_SET_U32_C
+#   define BN_MP_SET_U64_C
+#   define BN_MP_SET_I32_C
+#   define BN_MP_SET_I64_C
+#   define BN_MP_GET_I32_C
+#   define BN_MP_GET_I64_C
+#   define BN_MP_GET_MAG32_C
+#   define BN_MP_GET_MAG64_C
+#   define BN_MP_INIT_U32_C
+#   define BN_MP_INIT_I32_C
+#   define BN_MP_INIT_U64_C
+#   define BN_MP_INIT_I64_C
+#endif
+
 #if defined(BN_CUTOFFS_C)
 #endif
 
@@ -202,6 +212,18 @@
 #   define BN_MP_XOR_C
 #   define BN_MP_TC_DIV_2D_C
 #   define BN_MP_SIGNED_RSH_C
+#   define BN_MP_INIT_SET_INT_C
+#   define BN_MP_INIT_U32_C
+#   define BN_MP_SET_INT_C
+#   define BN_MP_SET_U32_C
+#   define BN_MP_SET_LONG_C
+#   define BN_MP_SET_U64_C
+#   define BN_MP_SET_LONG_LONG_C
+#   define BN_MP_GET_INT_C
+#   define BN_MP_GET_MAG32_C
+#   define BN_MP_GET_LONG_C
+#   define BN_MP_GET_MAG64_C
+#   define BN_MP_GET_LONG_LONG_C
 #endif
 
 #if defined(BN_MP_2EXPT_C)
@@ -423,21 +445,11 @@
 #if defined(BN_MP_GET_DOUBLE_C)
 #endif
 
-#if defined(BN_MP_GET_INT_C)
-#   define BN_MP_GET_LONG_C
-#endif
-
-#if defined(BN_MP_GET_LONG_C)
-#endif
-
-#if defined(BN_MP_GET_LONG_LONG_C)
-#endif
-
 #if defined(BN_MP_GROW_C)
 #endif
 
 #if defined(BN_MP_ILOGB_C)
-#   define BN_MP_SET_INT_C
+#   define BN_MP_SET_U32_C
 #   define BN_MP_COUNT_BITS_C
 #   define BN_MP_SET_C
 #   define BN_MP_CMP_D_C
@@ -483,11 +495,6 @@
 #   define BN_MP_SET_C
 #endif
 
-#if defined(BN_MP_INIT_SET_INT_C)
-#   define BN_MP_INIT_C
-#   define BN_MP_SET_INT_C
-#endif
-
 #if defined(BN_MP_INIT_SIZE_C)
 #endif
 
@@ -499,9 +506,9 @@
 
 #if defined(BN_MP_IS_SQUARE_C)
 #   define BN_MP_MOD_D_C
-#   define BN_MP_INIT_SET_INT_C
+#   define BN_MP_INIT_U32_C
 #   define BN_MP_MOD_C
-#   define BN_MP_GET_INT_C
+#   define BN_MP_GET_U32_C
 #   define BN_MP_SQRT_C
 #   define BN_MP_SQR_C
 #   define BN_MP_CMP_MAG_C
@@ -648,7 +655,7 @@
 
 #if defined(BN_MP_PRIME_FROBENIUS_UNDERWOOD_C)
 #   define BN_MP_INIT_MULTI_C
-#   define BN_MP_SET_LONG_C
+#   define BN_MP_SET_U32_C
 #   define BN_MP_SQR_C
 #   define BN_MP_SUB_D_C
 #   define BN_MP_KRONECKER_C
@@ -730,10 +737,11 @@
 #if defined(BN_MP_PRIME_STRONG_LUCAS_SELFRIDGE_C)
 #   define BN_S_MP_MUL_SI_C
 #   define BN_MP_INIT_C
-#   define BN_MP_SET_LONG_C
+#   define BN_MP_SET_I32_C
 #   define BN_MP_MUL_C
 #   define BN_MP_CLEAR_C
 #   define BN_MP_INIT_MULTI_C
+#   define BN_MP_SET_U32_C
 #   define BN_MP_GCD_C
 #   define BN_MP_CMP_D_C
 #   define BN_MP_CMP_C
@@ -861,23 +869,12 @@
 #endif
 
 #if defined(BN_MP_SET_C)
-#   define BN_MP_ZERO_C
 #endif
 
 #if defined(BN_MP_SET_DOUBLE_C)
-#   define BN_MP_SET_LONG_LONG_C
+#   define BN_MP_SET_U64_C
 #   define BN_MP_DIV_2D_C
 #   define BN_MP_MUL_2D_C
-#endif
-
-#if defined(BN_MP_SET_INT_C)
-#   define BN_MP_SET_LONG_C
-#endif
-
-#if defined(BN_MP_SET_LONG_C)
-#endif
-
-#if defined(BN_MP_SET_LONG_LONG_C)
 #endif
 
 #if defined(BN_MP_SHRINK_C)
@@ -930,7 +927,7 @@
 #   define BN_MP_EXPTMOD_C
 #   define BN_MP_COPY_C
 #   define BN_MP_SUB_D_C
-#   define BN_MP_SET_INT_C
+#   define BN_MP_SET_U32_C
 #   define BN_MP_SQRMOD_C
 #   define BN_MP_MULMOD_C
 #   define BN_MP_SET_C

@@ -313,6 +313,10 @@
 	</References>
 	<Files>
 		<File
+			RelativePath="bn_conversion.c"
+			>
+		</File>
+		<File
 			RelativePath="bn_cutoffs.c"
 			>
 		</File>
@@ -465,18 +469,6 @@
 			>
 		</File>
 		<File
-			RelativePath="bn_mp_get_int.c"
-			>
-		</File>
-		<File
-			RelativePath="bn_mp_get_long.c"
-			>
-		</File>
-		<File
-			RelativePath="bn_mp_get_long_long.c"
-			>
-		</File>
-		<File
 			RelativePath="bn_mp_grow.c"
 			>
 		</File>
@@ -506,10 +498,6 @@
 		</File>
 		<File
 			RelativePath="bn_mp_init_set.c"
-			>
-		</File>
-		<File
-			RelativePath="bn_mp_init_set_int.c"
 			>
 		</File>
 		<File
@@ -706,18 +694,6 @@
 		</File>
 		<File
 			RelativePath="bn_mp_set_double.c"
-			>
-		</File>
-		<File
-			RelativePath="bn_mp_set_int.c"
-			>
-		</File>
-		<File
-			RelativePath="bn_mp_set_long.c"
-			>
-		</File>
-		<File
-			RelativePath="bn_mp_set_long_long.c"
 			>
 		</File>
 		<File

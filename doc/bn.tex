@@ -820,28 +820,33 @@ int main(void)
 \}
 \end{alltt} \end{small}
 
-\subsection{Long Constants}
+\subsection{Int32 and Int64 Constants}
 
-To set a constant that is the size of an ISO C ``unsigned long'' and larger than a single digit the following function
-can be used.
+These functions can be used to set a constant with 32 or 64 bits.
 
 \index{mp\_set\_int}
 \begin{alltt}
-int mp_set_int (mp_int * a, unsigned long b);
+void mp_set_i32 (mp_int * a, int32_t b);
+void mp_set_u32 (mp_int * a, uint32_t b);
+void mp_set_i64 (mp_int * a, int64_t b);
+void mp_set_u64 (mp_int * a, uint64_t b);
 \end{alltt}
 
-This will assign the value of the 32-bit variable $b$ to the mp\_int $a$.  Unlike mp\_set() this function will always
-accept a 32-bit input regardless of the size of a single digit.  However, since the value may span several digits
-this function can fail if it runs out of heap memory.
-
-To get the ``unsigned long'' copy of an mp\_int the following function can be used.
+These functions assign the sign and value of the input \texttt{b} to \texttt{mp_int a}.
+The value can be obtained again by calling the following functions.
 
 \index{mp\_get\_int}
 \begin{alltt}
-unsigned long mp_get_int (mp_int * a);
+int32_t mp_get_i32 (mp_int * a);
+uint32_t mp_get_u32 (mp_int * a);
+uint32_t mp_get_mag32 (mp_int * a);
+int64_t mp_get_i64 (mp_int * a);
+uint64_t mp_get_u64 (mp_int * a);
+uint64_t mp_get_mag64 (mp_int * a);
 \end{alltt}
 
-This will return the 32 least significant bits of the mp\_int $a$.
+These functions return the 32 or 64 least significant bits of $a$ respectively. The unsigned functions
+return negative values in a twos complement representation. The absolute value or magnitude can be obtained using the mp\_get\_mag functions.
 
 \begin{small} \begin{alltt}
 int main(void)
@@ -856,9 +861,9 @@ int main(void)
    \}
 
    /* set the number to 654321 (note this is bigger than 127) */
-   mp_set_int(&number, 654321);
+   mp_set_u32(&number, 654321);
 
-   printf("number == \%lu", mp_get_int(&number));
+   printf("number == \%lu", mp_get_i32(&number));
 
    /* we're done with it. */
    mp_clear(&number);
@@ -875,46 +880,31 @@ number == 654321
 
 \subsection{Long Constants - platform dependant}
 
-\index{mp\_set\_long}
+\index{mp\_set\_ulong}
 \begin{alltt}
-int mp_set_long (mp_int * a, unsigned long b);
+void mp_set_l (mp_int * a, long b);
+void mp_set_ul (mp_int * a, unsigned long b);
 \end{alltt}
 
 This will assign the value of the platform-dependent sized variable $b$ to the mp\_int $a$.
 
-To get the ``unsigned long'' copy of an mp\_int the following function can be used.
+To retrieve the value, the following functions can be used.
 
-\index{mp\_get\_long}
+\index{mp\_get\_ulong}
 \begin{alltt}
-unsigned long mp_get_long (mp_int * a);
+long mp_get_l (mp_int * a);
+unsigned long mp_get_ul (mp_int * a);
 \end{alltt}
 
-This will return the least significant bits of the mp\_int $a$ that fit into an ``unsigned long''.
-
-\subsection{Long Long Constants}
-
-\index{mp\_set\_long\_long}
-\begin{alltt}
-int mp_set_long_long (mp_int * a, unsigned long long b);
-\end{alltt}
-
-This will assign the value of the 64-bit variable $b$ to the mp\_int $a$.
-
-To get the ``unsigned long long'' copy of an mp\_int the following function can be used.
-
-\index{mp\_get\_long\_long}
-\begin{alltt}
-unsigned long long mp_get_long_long (mp_int * a);
-\end{alltt}
-
-This will return the 64 least significant bits of the mp\_int $a$.
+This will return the least significant bits of the mp\_int $a$ that fit into a ``long''.
 
 \subsection{Initialize and Setting Constants}
 To both initialize and set small constants the following two functions are available.
 \index{mp\_init\_set} \index{mp\_init\_set\_int}
 \begin{alltt}
 int mp_init_set (mp_int * a, mp_digit b);
-int mp_init_set_int (mp_int * a, unsigned long b);
+int mp_init_i32 (mp_int * a, int32_t b);
+int mp_init_u32 (mp_int * a, uint32_t b);
 \end{alltt}
 
 Both functions work like the previous counterparts except they first mp\_init $a$ before setting the values.
@@ -933,7 +923,7 @@ int main(void)
    \}
 
    /* initialize and set a long */
-   if ((result = mp_init_set_int(&number2, 1023)) != MP_OKAY) \{
+   if ((result = mp_init_set_uint(&number2, 1023)) != MP_OKAY) \{
       printf("Error setting number2: \%s",
              mp_error_to_string(result));
       return EXIT_FAILURE;
@@ -941,7 +931,7 @@ int main(void)
 
    /* display */
    printf("Number1, Number2 == \%lu, \%lu",
-          mp_get_int(&number1), mp_get_int(&number2));
+          mp_get_i32(&number1), mp_get_i32(&number2));
 
    /* clear */
    mp_clear_multi(&number1, &number2, NULL);
@@ -1375,8 +1365,8 @@ int main(void)
    \}
 
    /* set the terms */
-   mp_set_int(&number, 257);
-   mp_set_int(&number2, 1023);
+   mp_set_i32(&number, 257);
+   mp_set_i32(&number2, 1023);
 
    /* multiply them */
    if ((result = mp_mul(&number1, &number2,
@@ -1387,7 +1377,7 @@ int main(void)
    \}
 
    /* display */
-   printf("number1 * number2 == \%lu", mp_get_int(&number1));
+   printf("number1 * number2 == \%lu", mp_get_i32(&number1));
 
    /* free terms and return */
    mp_clear_multi(&number1, &number2, NULL);
