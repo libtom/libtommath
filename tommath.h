@@ -161,12 +161,13 @@ TOOM_SQR_CUTOFF;
 /* default precision */
 #ifndef MP_PREC
 #   ifndef MP_LOW_MEM
-#      define MP_PREC 32        /* default digits of precision */
+#      define PRIVATE_MP_PREC 32        /* default digits of precision */
 #   elif defined(MP_8BIT)
-#      define MP_PREC 16        /* default digits of precision */
+#      define PRIVATE_MP_PREC 16        /* default digits of precision */
 #   else
-#      define MP_PREC 8         /* default digits of precision */
+#      define PRIVATE_MP_PREC 8         /* default digits of precision */
 #   endif
+#   define MP_PREC (MP_DEPRECATED_PRAGMA("MP_PREC is an internal macro") PRIVATE_MP_PREC)
 #endif
 
 /* size of comba arrays, should be at least 2 * 2**(BITS_PER_WORD - BITS_PER_DIGIT*2) */
