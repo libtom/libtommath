@@ -826,10 +826,10 @@ These functions can be used to set a constant with 32 or 64 bits.
 
 \index{mp\_set\_int}
 \begin{alltt}
-void mp_set_int32 (mp_int * a, int32_t b);
-void mp_set_uint32 (mp_int * a, uint32_t b);
-void mp_set_int64 (mp_int * a, int64_t b);
-void mp_set_uint64 (mp_int * a, uint64_t b);
+void mp_set_i32 (mp_int * a, int32_t b);
+void mp_set_u32 (mp_int * a, uint32_t b);
+void mp_set_i64 (mp_int * a, int64_t b);
+void mp_set_u64 (mp_int * a, uint64_t b);
 \end{alltt}
 
 These functions assign the sign and value of the input \texttt{b} to \texttt{mp_int a}.
@@ -837,11 +837,11 @@ The value can be obtained again by calling the following functions.
 
 \index{mp\_get\_int}
 \begin{alltt}
-int32_t mp_get_int32 (mp_int * a);
-uint32_t mp_get_uint32 (mp_int * a);
+int32_t mp_get_i32 (mp_int * a);
+uint32_t mp_get_u32 (mp_int * a);
 uint32_t mp_get_mag32 (mp_int * a);
-int64_t mp_get_int64 (mp_int * a);
-uint64_t mp_get_uint64 (mp_int * a);
+int64_t mp_get_i64 (mp_int * a);
+uint64_t mp_get_u64 (mp_int * a);
 uint64_t mp_get_mag64 (mp_int * a);
 \end{alltt}
 
@@ -861,9 +861,9 @@ int main(void)
    \}
 
    /* set the number to 654321 (note this is bigger than 127) */
-   mp_set_uint(&number, 654321);
+   mp_set_u32(&number, 654321);
 
-   printf("number == \%lu", mp_get_int(&number));
+   printf("number == \%lu", mp_get_i32(&number));
 
    /* we're done with it. */
    mp_clear(&number);
@@ -903,8 +903,8 @@ To both initialize and set small constants the following two functions are avail
 \index{mp\_init\_set} \index{mp\_init\_set\_int}
 \begin{alltt}
 int mp_init_set (mp_int * a, mp_digit b);
-int mp_init_set_int32 (mp_int * a, int32_t b);
-int mp_init_set_uint32 (mp_int * a, uint32_t b);
+int mp_init_i32 (mp_int * a, int32_t b);
+int mp_init_u32 (mp_int * a, uint32_t b);
 \end{alltt}
 
 Both functions work like the previous counterparts except they first mp\_init $a$ before setting the values.
@@ -931,7 +931,7 @@ int main(void)
 
    /* display */
    printf("Number1, Number2 == \%lu, \%lu",
-          mp_get_int(&number1), mp_get_int(&number2));
+          mp_get_i32(&number1), mp_get_i32(&number2));
 
    /* clear */
    mp_clear_multi(&number1, &number2, NULL);
@@ -1365,8 +1365,8 @@ int main(void)
    \}
 
    /* set the terms */
-   mp_set_int(&number, 257);
-   mp_set_int(&number2, 1023);
+   mp_set_i32(&number, 257);
+   mp_set_i32(&number2, 1023);
 
    /* multiply them */
    if ((result = mp_mul(&number1, &number2,
@@ -1377,7 +1377,7 @@ int main(void)
    \}
 
    /* display */
-   printf("number1 * number2 == \%lu", mp_get_int(&number1));
+   printf("number1 * number2 == \%lu", mp_get_i32(&number1));
 
    /* free terms and return */
    mp_clear_multi(&number1, &number2, NULL);

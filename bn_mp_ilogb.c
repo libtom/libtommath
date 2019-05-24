@@ -89,7 +89,7 @@ mp_err mp_ilogb(const mp_int *a, mp_digit base, mp_int *c)
       return MP_VAL;
    }
    if (base == 2u) {
-      mp_set_uint32(c, (uint32_t)(mp_count_bits(a) - 1));
+      mp_set_u32(c, (uint32_t)(mp_count_bits(a) - 1));
       return err;
    }
    if (a->used == 1) {
@@ -161,15 +161,15 @@ mp_err mp_ilogb(const mp_int *a, mp_digit base, mp_int *c)
          mp_exch(&bracket_mid, &bracket_low);
       }
       if (cmp == MP_EQ) {
-         mp_set_uint32(c, mid);
+         mp_set_u32(c, mid);
          goto LBL_END;
       }
    }
 
    if (mp_cmp(&bracket_high, a) == MP_EQ) {
-      mp_set_uint32(c, high);
+      mp_set_u32(c, high);
    } else {
-      mp_set_uint32(c, low);
+      mp_set_u32(c, low);
    }
 
 LBL_END:

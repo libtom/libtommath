@@ -149,27 +149,27 @@ mp_err mp_tc_div_2d(const mp_int *a, int b, mp_int *c)
 #ifdef BN_MP_INIT_SET_INT_C
 mp_err mp_init_set_int(mp_int *a, unsigned long b)
 {
-   return mp_init_uint32(a, (uint32_t)b);
+   return mp_init_u32(a, (uint32_t)b);
 }
 #endif
 #ifdef BN_MP_SET_INT_C
 mp_err mp_set_int(mp_int *a, unsigned long b)
 {
-   mp_set_uint32(a, (uint32_t)b);
+   mp_set_u32(a, (uint32_t)b);
    return MP_OKAY;
 }
 #endif
 #ifdef BN_MP_SET_LONG_C
 mp_err mp_set_long(mp_int *a, unsigned long b)
 {
-   mp_set_uint64(a, b);
+   mp_set_u64(a, b);
    return MP_OKAY;
 }
 #endif
 #ifdef BN_MP_SET_LONG_LONG_C
 mp_err mp_set_long_long(mp_int *a, unsigned long long b)
 {
-   mp_set_uint64(a, b);
+   mp_set_u64(a, b);
    return MP_OKAY;
 }
 #endif

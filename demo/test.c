@@ -89,10 +89,10 @@ static int test_trivial_stuff(void)
    if (mp_isneg(&b) != MP_YES) {
       goto LBL_ERR;
    }
-   if (mp_get_int32(&b) != -4) {
+   if (mp_get_i32(&b) != -4) {
       goto LBL_ERR;
    }
-   if (mp_get_uint32(&b) != (uint32_t)-4) {
+   if (mp_get_u32(&b) != (uint32_t)-4) {
       goto LBL_ERR;
    }
    if (mp_get_mag32(&b) != 4) {
@@ -100,18 +100,18 @@ static int test_trivial_stuff(void)
    }
    /* a: -5-> b: 1 */
    mp_add_d(&a, 6uL, &b);
-   if (mp_get_uint32(&b) != 1) {
+   if (mp_get_u32(&b) != 1) {
       goto LBL_ERR;
    }
    /* a: -5-> a: 1 */
    mp_add_d(&a, 6uL, &a);
-   if (mp_get_uint32(&a) != 1) {
+   if (mp_get_u32(&a) != 1) {
       goto LBL_ERR;
    }
    mp_zero(&a);
    /* a: 0-> a: 6 */
    mp_add_d(&a, 6uL, &a);
-   if (mp_get_uint32(&a) != 6) {
+   if (mp_get_u32(&a) != 6) {
       goto LBL_ERR;
    }
 
@@ -135,21 +135,21 @@ LBL_ERR:
    return EXIT_FAILURE;
 }
 
-static int check_get_set_int32(mp_int *a, int32_t b)
+static int check_get_set_i32(mp_int *a, int32_t b)
 {
-   mp_set_int32(a, b);
-   if (mp_get_int32(a) != b) return EXIT_FAILURE;
-   if (mp_get_uint32(a) != (uint32_t)b) return EXIT_FAILURE;
+   mp_set_i32(a, b);
+   if (mp_get_i32(a) != b) return EXIT_FAILURE;
+   if (mp_get_u32(a) != (uint32_t)b) return EXIT_FAILURE;
    if (mp_get_mag32(a) != uabs32(b)) return EXIT_FAILURE;
 
-   mp_set_uint32(a, (uint32_t)b);
-   if (mp_get_uint32(a) != (uint32_t)b) return EXIT_FAILURE;
-   if (mp_get_int32(a) != (int32_t)(uint32_t)b) return EXIT_FAILURE;
+   mp_set_u32(a, (uint32_t)b);
+   if (mp_get_u32(a) != (uint32_t)b) return EXIT_FAILURE;
+   if (mp_get_i32(a) != (int32_t)(uint32_t)b) return EXIT_FAILURE;
 
    return EXIT_SUCCESS;
 }
 
-static int test_mp_get_set_int32(void)
+static int test_mp_get_set_i32(void)
 {
    int i;
    mp_int a;
@@ -158,15 +158,15 @@ static int test_mp_get_set_int32(void)
       return EXIT_FAILURE;
    }
 
-   check_get_set_int32(&a, 0);
-   check_get_set_int32(&a, -1);
-   check_get_set_int32(&a, 1);
-   check_get_set_int32(&a, INT32_MIN);
-   check_get_set_int32(&a, INT32_MAX);
+   check_get_set_i32(&a, 0);
+   check_get_set_i32(&a, -1);
+   check_get_set_i32(&a, 1);
+   check_get_set_i32(&a, INT32_MIN);
+   check_get_set_i32(&a, INT32_MAX);
 
    for (i = 0; i < 1000; ++i) {
       int32_t b = rand_int32();
-      if (check_get_set_int32(&a, b) != EXIT_SUCCESS) {
+      if (check_get_set_i32(&a, b) != EXIT_SUCCESS) {
          goto LBL_ERR;
       }
    }
@@ -178,21 +178,21 @@ LBL_ERR:
    return EXIT_FAILURE;
 }
 
-static int check_get_set_int64(mp_int *a, int64_t b)
+static int check_get_set_i64(mp_int *a, int64_t b)
 {
-   mp_set_int64(a, b);
-   if (mp_get_int64(a) != b) return EXIT_FAILURE;
-   if (mp_get_uint64(a) != (uint64_t)b) return EXIT_FAILURE;
+   mp_set_i64(a, b);
+   if (mp_get_i64(a) != b) return EXIT_FAILURE;
+   if (mp_get_u64(a) != (uint64_t)b) return EXIT_FAILURE;
    if (mp_get_mag64(a) != uabs64(b)) return EXIT_FAILURE;
 
-   mp_set_uint64(a, (uint64_t)b);
-   if (mp_get_uint64(a) != (uint64_t)b) return EXIT_FAILURE;
-   if (mp_get_int64(a) != (int64_t)(uint64_t)b) return EXIT_FAILURE;
+   mp_set_u64(a, (uint64_t)b);
+   if (mp_get_u64(a) != (uint64_t)b) return EXIT_FAILURE;
+   if (mp_get_i64(a) != (int64_t)(uint64_t)b) return EXIT_FAILURE;
 
    return EXIT_SUCCESS;
 }
 
-static int test_mp_get_set_int64(void)
+static int test_mp_get_set_i64(void)
 {
    int i;
    mp_int a;
@@ -201,15 +201,15 @@ static int test_mp_get_set_int64(void)
       return EXIT_FAILURE;
    }
 
-   check_get_set_int64(&a, 0);
-   check_get_set_int64(&a, -1);
-   check_get_set_int64(&a, 1);
-   check_get_set_int64(&a, INT64_MIN);
-   check_get_set_int64(&a, INT64_MAX);
+   check_get_set_i64(&a, 0);
+   check_get_set_i64(&a, -1);
+   check_get_set_i64(&a, 1);
+   check_get_set_i64(&a, INT64_MIN);
+   check_get_set_i64(&a, INT64_MAX);
 
    for (i = 0; i < 1000; ++i) {
       int64_t b = rand_int64();
-      if (check_get_set_int64(&a, b) != EXIT_SUCCESS) {
+      if (check_get_set_i64(&a, b) != EXIT_SUCCESS) {
          goto LBL_ERR;
       }
    }
@@ -239,7 +239,7 @@ static int test_mp_fread_fwrite(void)
    if ((e = mp_fread(&b, 64, tmp)) != MP_OKAY) {
       goto LBL_ERR;
    }
-   if (mp_get_uint32(&b) != 123456uL) {
+   if (mp_get_u32(&b) != 123456uL) {
       goto LBL_ERR;
    }
    fclose(tmp);
@@ -732,7 +732,7 @@ LBL_ERR:
 
 }
 
-static int test_mp_get_uint32(void)
+static int test_mp_get_u32(void)
 {
    unsigned long t;
    int i;
@@ -745,19 +745,19 @@ static int test_mp_get_uint32(void)
    for (i = 0; i < 1000; ++i) {
       t = (unsigned long)rand_long() & 0xFFFFFFFFuL;
       mp_set_ul(&a, t);
-      if (t != mp_get_uint32(&a)) {
-         printf("\nmp_get_uint32() bad result!");
+      if (t != mp_get_u32(&a)) {
+         printf("\nmp_get_u32() bad result!");
          goto LBL_ERR;
       }
    }
    mp_set_ul(&a, 0uL);
-   if (mp_get_uint32(&a) != 0) {
-      printf("\nmp_get_uint32() bad result!");
+   if (mp_get_u32(&a) != 0) {
+      printf("\nmp_get_u32() bad result!");
       goto LBL_ERR;
    }
    mp_set_ul(&a, 0xFFFFFFFFuL);
-   if (mp_get_uint32(&a) != 0xFFFFFFFFuL) {
-      printf("\nmp_get_uint32() bad result!");
+   if (mp_get_u32(&a) != 0xFFFFFFFFuL) {
+      printf("\nmp_get_u32() bad result!");
       goto LBL_ERR;
    }
 
@@ -801,7 +801,7 @@ LBL_ERR:
    return EXIT_FAILURE;
 }
 
-static int test_mp_get_uint64(void)
+static int test_mp_get_u64(void)
 {
    unsigned long long q, r;
    int i;
@@ -817,10 +817,10 @@ static int test_mp_get_uint64(void)
          r = ~0ULL;
       printf(" r = 0x%llx i = %d\r", r, i);
       do {
-         mp_set_uint64(&a, r);
-         q = mp_get_uint64(&a);
+         mp_set_u64(&a, r);
+         q = mp_get_u64(&a);
          if (q != r) {
-            printf("\nmp_get_uint64() bad result! 0x%llx != 0x%llx", q, r);
+            printf("\nmp_get_u64() bad result! 0x%llx != 0x%llx", q, r);
             goto LBL_ERR;
          }
          r <<= 1;
@@ -2143,8 +2143,8 @@ int unit_tests(int argc, char **argv)
    } test[] = {
 #define T(n) { #n, test_##n }
       T(trivial_stuff),
-      T(mp_get_set_int32),
-      T(mp_get_set_int64),
+      T(mp_get_set_i32),
+      T(mp_get_set_i64),
       T(mp_and),
       T(mp_cnt_lsb),
       T(mp_complement),
@@ -2152,8 +2152,8 @@ int unit_tests(int argc, char **argv)
       T(mp_div_3),
       T(mp_dr_reduce),
       T(mp_fread_fwrite),
-      T(mp_get_uint32),
-      T(mp_get_uint64),
+      T(mp_get_u32),
+      T(mp_get_u64),
       T(mp_get_ul),
       T(mp_ilogb),
       T(mp_incr),

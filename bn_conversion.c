@@ -52,28 +52,28 @@
         return a->sign == MP_NEG ? (int##w##_t)-res : (int##w##_t)res;  \
     }
 
-#ifdef BN_MP_SET_UINT32_C
-MP_SET_UNSIGNED(mp_set_uint32, 32)
+#ifdef BN_MP_SET_U32_C
+MP_SET_UNSIGNED(mp_set_u32, 32)
 #endif
 
-#ifdef BN_MP_SET_UINT64_C
-MP_SET_UNSIGNED(mp_set_uint64, 64)
+#ifdef BN_MP_SET_U64_C
+MP_SET_UNSIGNED(mp_set_u64, 64)
 #endif
 
-#ifdef BN_MP_SET_INT32_C
-MP_SET_SIGNED(mp_set_int32, mp_set_uint32, 32)
+#ifdef BN_MP_SET_I32_C
+MP_SET_SIGNED(mp_set_i32, mp_set_u32, 32)
 #endif
 
-#ifdef BN_MP_SET_INT64_C
-MP_SET_SIGNED(mp_set_int64, mp_set_uint64, 64)
+#ifdef BN_MP_SET_I64_C
+MP_SET_SIGNED(mp_set_i64, mp_set_u64, 64)
 #endif
 
-#if defined(BN_MP_GET_INT32_C) || defined(BN_MP_GET_UINT32_C)
-MP_GET_SIGNED(mp_get_int32, mp_get_mag32, 32)
+#if defined(BN_MP_GET_I32_C) || defined(BN_MP_GET_U32_C)
+MP_GET_SIGNED(mp_get_i32, mp_get_mag32, 32)
 #endif
 
-#if defined(BN_MP_GET_INT64_C) || defined(BN_MP_GET_UINT64_C)
-MP_GET_SIGNED(mp_get_int64, mp_get_mag64, 64)
+#if defined(BN_MP_GET_I64_C) || defined(BN_MP_GET_U64_C)
+MP_GET_SIGNED(mp_get_i64, mp_get_mag64, 64)
 #endif
 
 #ifdef BN_MP_GET_MAG32_C
@@ -84,12 +84,20 @@ MP_GET_MAG(mp_get_mag32, 32)
 MP_GET_MAG(mp_get_mag64, 64)
 #endif
 
-#ifdef BN_MP_INIT_UINT32_C
-MP_INIT_INT(mp_init_uint32, mp_set_uint32, uint32_t)
+#ifdef BN_MP_INIT_U32_C
+MP_INIT_INT(mp_init_u32, mp_set_u32, uint32_t)
 #endif
 
-#ifdef BN_MP_INIT_INT32_C
-MP_INIT_INT(mp_init_int32, mp_set_int32, int32_t)
+#ifdef BN_MP_INIT_I32_C
+MP_INIT_INT(mp_init_i32, mp_set_i32, int32_t)
+#endif
+
+#ifdef BN_MP_INIT_U64_C
+MP_INIT_INT(mp_init_u64, mp_set_u64, uint64_t)
+#endif
+
+#ifdef BN_MP_INIT_I64_C
+MP_INIT_INT(mp_init_i64, mp_set_i64, int64_t)
 #endif
 
 #endif

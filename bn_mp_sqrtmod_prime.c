@@ -59,7 +59,7 @@ mp_err mp_sqrtmod_prime(const mp_int *n, const mp_int *prime, mp_int *ret)
    }
 
    /* find a Z such that the Legendre symbol (Z|prime) == -1 */
-   mp_set_uint32(&Z, 2uL);
+   mp_set_u32(&Z, 2uL);
    /* Z = 2 */
    while (1) {
       if ((err = mp_kronecker(&Z, prime, &legendre)) != MP_OKAY)     goto cleanup;
@@ -79,7 +79,7 @@ mp_err mp_sqrtmod_prime(const mp_int *n, const mp_int *prime, mp_int *ret)
    /* T = n ^ Q mod prime */
    if ((err = mp_copy(&S, &M)) != MP_OKAY)                       goto cleanup;
    /* M = S */
-   mp_set_uint32(&two, 2uL);
+   mp_set_u32(&two, 2uL);
 
    while (1) {
       if ((err = mp_copy(&T, &t1)) != MP_OKAY)                    goto cleanup;

@@ -32,7 +32,7 @@ static mp_err s_mp_mul_si(const mp_int *a, int32_t d, mp_int *c)
     * mp_digit might be smaller than a long, which excludes
     * the use of mp_mul_d() here.
     */
-   mp_set_int32(&t, d);
+   mp_set_i32(&t, d);
    err = mp_mul(a, &t, c);
    mp_clear(&t);
    return err;
@@ -83,7 +83,7 @@ mp_err mp_prime_strong_lucas_selfridge(const mp_int *a, mp_bool *result)
    for (;;) {
       Ds   = sign * D;
       sign = -sign;
-      mp_set_uint32(&Dz, (uint32_t)D);
+      mp_set_u32(&Dz, (uint32_t)D);
       if ((err = mp_gcd(a, &Dz, &gcd)) != MP_OKAY) {
          goto LBL_LS_ERR;
       }
@@ -179,23 +179,23 @@ mp_err mp_prime_strong_lucas_selfridge(const mp_int *a, mp_bool *result)
 
    if (Q < 0) {
       Q = -Q;
-      mp_set_uint32(&Qmz, (uint32_t)Q);
+      mp_set_u32(&Qmz, (uint32_t)Q);
       if ((err = mp_mul_2(&Qmz, &Q2mz)) != MP_OKAY) {
          goto LBL_LS_ERR;
       }
       /* Initializes calculation of Q^d */
-      mp_set_uint32(&Qkdz, (uint32_t)Q);
+      mp_set_u32(&Qkdz, (uint32_t)Q);
       Qmz.sign = MP_NEG;
       Q2mz.sign = MP_NEG;
       Qkdz.sign = MP_NEG;
       Q = -Q;
    } else {
-      mp_set_uint32(&Qmz, (uint32_t)Q);
+      mp_set_u32(&Qmz, (uint32_t)Q);
       if ((err = mp_mul_2(&Qmz, &Q2mz)) != MP_OKAY) {
          goto LBL_LS_ERR;
       }
       /* Initializes calculation of Q^d */
-      mp_set_uint32(&Qkdz, (uint32_t)Q);
+      mp_set_u32(&Qkdz, (uint32_t)Q);
    }
 
    Nbits = mp_count_bits(&Dz);
