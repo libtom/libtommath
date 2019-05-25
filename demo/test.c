@@ -787,8 +787,8 @@ static int test_mp_sqrt(void)
 {
    int i, n;
 
-   mp_int a, b, c, d;
-   if (mp_init_multi(&a, &b, &c, &d, NULL)!= MP_OKAY) {
+   mp_int a, b, c;
+   if (mp_init_multi(&a, &b, &c, NULL)!= MP_OKAY) {
       return EXIT_FAILURE;
    }
 
@@ -801,22 +801,17 @@ static int test_mp_sqrt(void)
          printf("\nmp_sqrt() error!");
          goto LBL_ERR;
       }
-      mp_n_root_ex(&a, 2uL, &c, 0);
-      mp_n_root_ex(&a, 2uL, &d, 1);
-      if (mp_cmp_mag(&c, &d) != MP_EQ) {
-         printf("\nmp_n_root_ex() bad result!");
-         goto LBL_ERR;
-      }
+      mp_n_root(&a, 2uL, &c);
       if (mp_cmp_mag(&b, &c) != MP_EQ) {
          printf("mp_sqrt() bad result!\n");
          goto LBL_ERR;
       }
    }
 
-   mp_clear_multi(&a, &b, &c, &d, NULL);
+   mp_clear_multi(&a, &b, &c, NULL);
    return EXIT_SUCCESS;
 LBL_ERR:
-   mp_clear_multi(&a, &b, &c, &d, NULL);
+   mp_clear_multi(&a, &b, &c, NULL);
    return EXIT_FAILURE;
 }
 

@@ -441,10 +441,6 @@
 			>
 		</File>
 		<File
-			RelativePath="bn_mp_expt_d_ex.c"
-			>
-		</File>
-		<File
 			RelativePath="bn_mp_exptmod.c"
 			>
 		</File>
@@ -578,10 +574,6 @@
 		</File>
 		<File
 			RelativePath="bn_mp_n_root.c"
-			>
-		</File>
-		<File
-			RelativePath="bn_mp_n_root_ex.c"
 			>
 		</File>
 		<File

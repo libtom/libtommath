@@ -191,4 +191,18 @@ mp_err mp_prime_is_divisible(const mp_int *a, mp_bool *result)
    return s_mp_prime_is_divisible(a, result);
 }
 #endif
+#ifdef BN_MP_EXPT_D_EX_C
+mp_err mp_expt_d_ex(const mp_int *a, mp_digit b, mp_int *c, int fast)
+{
+   (void)fast;
+   return mp_expt_d(a, b, c);
+}
+#endif
+#ifdef BN_MP_N_ROOT_EX_C
+mp_err mp_n_root_ex(const mp_int *a, mp_digit b, mp_int *c, int fast)
+{
+   (void)fast;
+   return mp_n_root(a, b, c);
+}
+#endif
 #endif

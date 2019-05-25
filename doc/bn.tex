@@ -1735,29 +1735,11 @@ int mp_sqrmod(const mp_int *a, const mp_int *b, const mp_int *c, mp_int *d);
 
 \chapter{Exponentiation}
 \section{Single Digit Exponentiation}
-\index{mp\_expt\_d\_ex}
-\begin{alltt}
-int mp_expt_d_ex (mp_int * a, mp_digit b, mp_int * c, int fast)
-\end{alltt}
-This function computes $c = a^b$.
-
-With parameter \textit{fast} set to $0$ the old version of the algorithm is used,
-when \textit{fast} is $1$, a faster but not statically timed version of the algorithm is used.
-
-The old version uses a simple binary left-to-right algorithm.
-It is faster than repeated multiplications by $a$ for all values of $b$ greater than three.
-
-The new version uses a binary right-to-left algorithm.
-
-The difference between the old and the new version is that the old version always
-executes $DIGIT\_BIT$ iterations. The new algorithm executes only $n$ iterations
-where $n$ is equal to the position of the highest bit that is set in $b$.
-
 \index{mp\_expt\_d}
 \begin{alltt}
 int mp_expt_d (mp_int * a, mp_digit b, mp_int * c)
 \end{alltt}
-mp\_expt\_d(a, b, c) is a wrapper function to mp\_expt\_d\_ex(a, b, c, 0).
+This function computes $c = a^b$.
 
 \section{Modular Exponentiation}
 \index{mp\_exptmod}
