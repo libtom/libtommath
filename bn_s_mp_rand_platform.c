@@ -37,7 +37,7 @@ static mp_err s_read_win_csp(void *p, size_t n)
                                CRYPT_VERIFYCONTEXT | CRYPT_MACHINE_KEYSET | CRYPT_NEWKEYSET)) {
          return MP_ERR;
       }
-      hProc = h;
+      hProv = h;
    }
    return CryptGenRandom(hProv, (DWORD)n, (BYTE *)p) == TRUE ? MP_OKAY : MP_ERR;
 }

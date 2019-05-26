@@ -148,7 +148,7 @@ typedef private_mp_word mp_word;
 #define MP_MAX(x, y) (((x) > (y)) ? (x) : (y))
 
 /* Static assertion */
-#define MP_STATIC_ASSERT(msg, cond) typedef char mp_static_assert_##msg[-(!(cond))];
+#define MP_STATIC_ASSERT(msg, cond) typedef char mp_static_assert_##msg[(cond) ? 1 : -1];
 
 /* ---> Basic Manipulations <--- */
 #define MP_IS_ZERO(a) ((a)->used == 0)

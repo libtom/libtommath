@@ -229,7 +229,7 @@ typedef struct  {
 
 /* callback for mp_prime_random, should fill dst with random bytes and return how many read [upto len] */
 typedef int private_mp_prime_callback(unsigned char *dst, int len, void *dat);
-typedef private_mp_prime_callback ltm_prime_callback MP_DEPRECATED(mp_rand_source);
+typedef private_mp_prime_callback MP_DEPRECATED(mp_rand_source) ltm_prime_callback;
 
 /* error code to char* string */
 const char *mp_error_to_string(mp_err code) MP_WUR;
