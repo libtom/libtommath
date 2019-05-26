@@ -172,9 +172,9 @@ mp_err mp_prime_strong_lucas_selfridge(const mp_int *a, mp_bool *result)
       combined with the previous totals for U and V, using the
       composition formulas for addition of indices. */
 
-   mp_set(&Uz, 1u);    /* U=U_1 */
+   mp_set(&Uz, 1uL);    /* U=U_1 */
    mp_set(&Vz, (mp_digit)P);    /* V=V_1 */
-   mp_set(&U2mz, 1u);  /* U_1 */
+   mp_set(&U2mz, 1uL);  /* U_1 */
    mp_set(&V2mz, (mp_digit)P);  /* V_1 */
 
    if (Q < 0) {

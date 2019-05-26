@@ -37,8 +37,8 @@
     uint##w##_t name(const mp_int* a)                                   \
     {                                                                   \
         unsigned i = MP_MIN((unsigned)a->used, (unsigned)((w + MP_DIGIT_BIT - 1) / MP_DIGIT_BIT)); \
-        uint##w##_t res = 0;                                            \
-        while (i --> 0) {                                               \
+        uint##w##_t res = 0u;                                           \
+        while (i --> 0u) {                                              \
             res <<= ((w <= MP_DIGIT_BIT) ? 0 : MP_DIGIT_BIT);           \
             res |= (uint##w##_t)a->dp[i];                               \
             if (w <= MP_DIGIT_BIT) { break; }                           \
