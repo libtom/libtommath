@@ -126,9 +126,9 @@ _runtest()
   then
     # "make tune" will run "tune_it.sh" automatically, hence "autotune", but it cannot
     # get switched off without some effort, so we just let it run twice for testing purposes
-    _make "$1" "$2" ""
     echo -e "\rRun autotune $1 $2"
-    $_timeout $TUNE_CMD > ../test_${suffix}.log || _die "running autotune" $?
+    _make "$1" "$2" ""
+    $_timeout $TUNE_CMD > test_${suffix}.log || _die "running autotune" $?
   else
     _make "$1" "$2" "test_standalone"
     echo -e "\rRun test $1 $2"
