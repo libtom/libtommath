@@ -1,6 +1,6 @@
 # MAKEFILE for MS Windows (mingw + gcc + gmake)
 #
-# BEWARE: variable OBJECTS is updated via ./updatemakes.sh
+# BEWARE: variable OBJECTS is updated via helper.pl
 
 ### USAGE:
 # Open a command prompt with gcc + gmake in PATH and start:
