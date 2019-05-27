@@ -468,7 +468,7 @@ mp_err mp_div_3(const mp_int *a, mp_int *c, mp_digit *d) MP_WUR;
 
 /* c = a**b */
 mp_err mp_expt_d(const mp_int *a, mp_digit b, mp_int *c) MP_WUR;
-mp_err mp_expt_d_ex(const mp_int *a, mp_digit b, mp_int *c, int fast) MP_WUR;
+MP_DEPRECATED(mp_expt_d) mp_err mp_expt_d_ex(const mp_int *a, mp_digit b, mp_int *c, int fast) MP_WUR;
 
 /* c = a mod b, 0 <= c < b  */
 mp_err mp_mod_d(const mp_int *a, mp_digit b, mp_digit *c) MP_WUR;
@@ -504,7 +504,7 @@ mp_err mp_lcm(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
  * returns error if a < 0 and b is even
  */
 mp_err mp_n_root(const mp_int *a, mp_digit b, mp_int *c) MP_WUR;
-mp_err mp_n_root_ex(const mp_int *a, mp_digit b, mp_int *c, int fast) MP_WUR;
+MP_DEPRECATED(mp_n_root_ex) mp_err mp_n_root_ex(const mp_int *a, mp_digit b, mp_int *c, int fast) MP_WUR;
 
 /* special sqrt algo */
 mp_err mp_sqrt(const mp_int *arg, mp_int *ret) MP_WUR;
