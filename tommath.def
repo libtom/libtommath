@@ -44,19 +44,27 @@ EXPORTS
     mp_gcd
     mp_get_bit
     mp_get_double
+    mp_get_i32
+    mp_get_i64
     mp_get_int
     mp_get_long
     mp_get_long_long
+    mp_get_mag32
+    mp_get_mag64
     mp_grow
     mp_ilogb
     mp_import
     mp_incr
     mp_init
     mp_init_copy
+    mp_init_i32
+    mp_init_i64
     mp_init_multi
     mp_init_set
     mp_init_set_int
     mp_init_size
+    mp_init_u32
+    mp_init_u64
     mp_invmod
     mp_is_square
     mp_iseven
@@ -87,11 +95,13 @@ EXPORTS
     mp_prime_miller_rabin
     mp_prime_next_prime
     mp_prime_rabin_miller_trials
+    mp_prime_rand
     mp_prime_random_ex
     mp_prime_strong_lucas_selfridge
     mp_radix_size
     mp_rand
     mp_rand_digit
+    mp_rand_source
     mp_read_radix
     mp_read_signed_bin
     mp_read_unsigned_bin
@@ -106,11 +116,16 @@ EXPORTS
     mp_rshd
     mp_set
     mp_set_double
+    mp_set_i32
+    mp_set_i64
     mp_set_int
     mp_set_long
     mp_set_long_long
+    mp_set_u32
+    mp_set_u64
     mp_shrink
     mp_signed_bin_size
+    mp_signed_rsh
     mp_sqr
     mp_sqrmod
     mp_sqrt
