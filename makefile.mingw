@@ -21,7 +21,7 @@ LDFLAGS   =
 
 #Compilation flags
 LTM_CFLAGS  = -I. $(CFLAGS)
-LTM_LDFLAGS = $(LDFLAGS)
+LTM_LDFLAGS = $(LDFLAGS) -static-libgcc
 
 #Libraries to be created
 LIBMAIN_S =libtommath.a
