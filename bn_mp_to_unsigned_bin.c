@@ -22,12 +22,14 @@ mp_err mp_to_unsigned_bin(const mp_int *a, unsigned char *b)
       b[x++] = (unsigned char)(t.dp[0] | ((t.dp[1] & 1u) << 7));
 #endif
       if ((err = mp_div_2d(&t, 8, &t, NULL)) != MP_OKAY) {
-         mp_clear(&t);
-         return err;
+         goto LBL_ERR;
       }
    }
    s_mp_reverse(b, x);
+   err = MP_OKAY;
+
+LBL_ERR:
    mp_clear(&t);
-   return MP_OKAY;
+   return err;
 }
 #endif
