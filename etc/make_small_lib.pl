@@ -27,6 +27,40 @@ my %fast_functions = (
        s_mp_toom_mul               => 1,
        s_mp_toom_sqr               => 1
    );
+
+my %deprecated_functions = (
+       mp_get_bit                  => 's_mp_get_bit',
+       mp_jacobi                   => 'mp_kronecker',
+       mp_prime_random_ex          => 's_mp_prime_random_ex',
+       mp_rand_digit               => 's_mp_rand_source',
+       fast_mp_invmod              => 's_mp_invmod_fast',
+       fast_mp_montgomery_reduce   => 's_mp_montgomery_reduce_fast',
+       fast_s_mp_mul_digs          => 's_mp_mul_digs_fast',
+       fast_s_mp_mul_high_digs     => 's_mp_mul_high_digs_fast',
+       fast_s_mp_sqr               => 's_mp_sqr_fast',
+       mp_balance_mul              => 's_mp_balance_mul',
+       mp_exptmod_fast             => 's_mp_exptmod_fast',
+       mp_invmod_slow              => 's_mp_invmod_slow',
+       mp_karatsuba_mul            => 's_mp_karatsuba_mul',
+       mp_karatsuba_sqr            => 's_mp_karatsuba_sqr',
+       mp_toom_mul                 => 's_mp_toom_mul',
+       mp_toom_sqr                 => 's_mp_toom_sqr',
+       bn_reverse                  => 's_mp_reverse',
+       mp_tc_and                   => 'mp_and',
+       mp_tc_or                    => 'mp_or',
+       mp_tc_xor                   => 'mp_xor',
+       mp_tc_div_2d                => 'mp_signed_rsh',
+       mp_init_set_int             => 'mp_init_u32',
+       mp_set_int                  => 'mp_set_u32',
+       mp_set_long                 => 'mp_set_u64',
+       mp_set_long_long            => 'mp_set_u64',
+       mp_get_int                  => 'mp_get_mag32',
+       mp_get_long_long            => 'mp_get_mag64',
+       mp_prime_is_divisible       => 's_mp_prime_is_divisible',
+       mp_expt_d_ex                => 'mp_expt_d',
+       mp_n_root_ex                => 'mp_n_root'
+   );
+
 # The global variable where gather_functions() puts all it's findings in.
 my @dependency_list = ();
 
@@ -274,7 +308,8 @@ sub start
   my @tmp;
 
   # TODO: checks&balances
-   -e $td.$sep."tommath.h" or die "$td.$sep.tommath.h not found, please check path to LibTomMath sources\n";
+   -e $td.$sep."tommath.h"
+       or die "$td.$sep.tommath.h not found, please check path to LibTomMath sources\n";
 
   %depmap = gather_functions($td);
   %user_functions = gather_functions($sd);
@@ -285,9 +320,13 @@ sub start
   }
   @functions = uniq(sort @functions);
 
-  # No functions starting with "mp_" other than those in LibTomMath are allowed.
-  # For now.
   foreach (@functions) {
+    # Deprecated functions are not accepted.
+    exists $deprecated_functions{$_}
+      and die "Function \"$_\" is deprecated, please use \"" .
+               $deprecated_functions{$_} . "\" instead\n";
+
+    # No functions starting with "mp_" other than those in LibTomMath are allowed.
     exists $depmap{$_} or die "Function \"$_\" does not exist in LibTomMath.\n";
   }
 
@@ -297,7 +336,7 @@ sub start
   }
   @dependency_list = uniq(sort @dependency_list);
 
-  # make an even smaller lib by removing non-essential functions (e.g. Karatsuba for multiplication)
+  # make an even smaller lib by removing non-essential functions (e.g. Karatsuba for mp_mul)
   if ($no == 1) {
     foreach (@dependency_list) {
       next if exists $fast_functions{$_};
