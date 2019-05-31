@@ -7,8 +7,13 @@ use Getopt::Long;
 use File::Basename 'basename';
 use File::Glob 'bsd_glob';
 use File::Spec;
+use List::MoreUtils 'any';
 
+# OS dependent path separator
 my $sep = File::Spec->catfile('', '');
+
+# A list of the functions that trade space for speed.
+# They will be removed from the list if the option "-n" is given
 my %fast_functions = (
        s_mp_balance_mul            => 1,
        s_mp_exptmod_fast           => 1,
@@ -22,13 +27,17 @@ my %fast_functions = (
        s_mp_toom_mul               => 1,
        s_mp_toom_sqr               => 1
    );
+# The global variable where gather_functions() puts all it's findings in.
 my @dependency_list = ();
 
+# Uniquefy an array.
 sub uniq {
     my %seen;
     grep !$seen{$_}++, @_;
 }
 
+# reading a file while working around OS specific quirks.
+# TODO: check if it can get replaced with functionailty from File::Slurper
 sub read_file {
   my $f = shift;
   open my $fh, "<", $f or die "FATAL: read_rawfile() cannot open file '$f': $!";
@@ -36,6 +45,7 @@ sub read_file {
   return do { local $/; <$fh> };
 }
 
+# Writing to a file while working around OS specific quirks.
 sub write_file {
   my ($f, $data) = @_;
   die "FATAL: write_file() no data" unless defined $data;
@@ -46,6 +56,7 @@ sub write_file {
   return;
 }
 
+# Change makefile to compile all the files needed but not more.
 sub patch_makefile {
   my ($content, @variables) = @_;
   for my $v (@variables) {
@@ -60,6 +71,7 @@ sub patch_makefile {
   return $content;
 }
 
+# Pretty-print the list for the variable `OBJECTS` in the makfiles
 sub prepare_makefile_variable {
   my ($varname, @list) = @_;
   my $output = "$varname=";
@@ -77,6 +89,7 @@ sub prepare_makefile_variable {
   return $output;
 }
 
+# Support for a certain IDE
 sub prepare_msvc_files_xml {
   my ($all, $exclude_re, $targets) = @_;
   my $last = [];
@@ -193,6 +206,7 @@ sub write_header
   warn "File $tcpath emptied\n";
 }
 
+#  A stripped down version of "helper.pl"'s "update_dep()"
 sub gather_functions
 {
   my $path = shift;
@@ -203,7 +217,6 @@ sub gather_functions
   }
 
   foreach my $filename (glob $path) {
-print "filename: " . $filename . " path: ". $path . "\n";
     open(my $src, '<', $filename) or die "Can't open source file!\n";
     read $src, my $content, -s $src;
     close $src;
@@ -230,7 +243,8 @@ print "filename: " . $filename . " path: ". $path . "\n";
   }
   return %depmap;
 }
-
+# A stripped down version of "helper.pl"'s "draw_func()" changed to put its findings into
+# a variable instead of printing them into "callgraph.txt"
 sub gather_dependencies
 {
    my ($deplist, $depmap, $funcslist) = @_;
@@ -251,7 +265,7 @@ sub gather_dependencies
 
 sub start
 {
-  my ($sd, $td, $no, $cm) = @_;
+  my ($sd, $td, $no, $cm, $ch) = @_;
 
   my %depmap;
   my %user_functions;
@@ -265,16 +279,19 @@ sub start
   %depmap = gather_functions($td);
   %user_functions = gather_functions($sd);
 
+  # we need them as an array, too, for simplicity.
   foreach (sort keys %user_functions) {
     push @functions, split /,/ , $user_functions{$_};
   }
   @functions = uniq(sort @functions);
 
+  # No functions starting with "mp_" other than those in LibTomMath are allowed.
+  # For now.
   foreach (@functions) {
     exists $depmap{$_} or die "Function \"$_\" does not exist in LibTomMath.\n";
   }
 
-  # gather dependencies
+  # Compute dependencies for the functions the user uses.
   foreach (sort keys %user_functions) {
     gather_dependencies("", \%depmap, $user_functions{$_});
   }
@@ -290,14 +307,23 @@ sub start
     @tmp = ();
   }
 
+  # If we use fast multiplication/division we need the cutoffs, too. They are in bn_cutoffs.c
+  if (any {/kara|toom/} @dependency_list) {
+    push @dependency_list, "cutoffs";
+  }
+
+  # Change makefiles (and MSVC's project file)
   if ($cm == 1) {
+    # The makefiles need the names of the objectfiles.
+    # It could be done in process_makefiles() itself, of course
     foreach my $entry (@dependency_list) {
       $entry = 'bn_' . $entry . '.o';
       push @tmp, $entry;
     }
     process_makefiles($td, @tmp);
   }
-  else {
+  # [Default] Change the headers "tommath_class.h" and "tommath_superclass.h"
+  if ( ($ch == 1) || ( ($cm + $ch) == 0 )) {
     write_header($td, @dependency_list);
   }
   return 1;
@@ -309,6 +335,7 @@ usage: $0 -s   OR   $0 --source-dir         [./]
        $0 -t   OR   $0 --tommath-dir        [./libtommath]
        $0 -n   OR   $0 --no-optimization
        $0 -m   OR   $0 --change-makefiles
+       $0 -c   OR   $0 --change-headers     [default]
 
 The option --source-dir accepts a directory or a single file.
 
@@ -320,16 +347,19 @@ my $tommath_dir = "libtommath$sep";
 my $config_file = "";
 my $no_optimizations = 0;
 my $change_makefiles = 0;
+my $change_headers   = 0;
 
 GetOptions( "s|source-dir=s"        => \$source_dir,
             "t|tommath-dir=s"       => \$tommath_dir,
             "n|no-optimizations"    => \$no_optimizations,
             "m|change-makefiles"    => \$change_makefiles,
+            "c|change-headers"      => \$change_headers,
             "h|help"                => \my $help
           ) or die_usage;
 
 my $exit_value = start($source_dir,
                        $tommath_dir,
                        $no_optimizations,
-                       $change_makefiles);
+                       $change_makefiles,
+                       $change_headers);
 exit $exit_value;
