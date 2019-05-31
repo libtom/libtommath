@@ -17,7 +17,7 @@ mp_err s_mp_montgomery_reduce_fast(mp_int *x, const mp_int *n, mp_digit rho)
    mp_err  err;
    mp_word W[MP_WARRAY];
 
-   if (x->used > (int)MP_WARRAY) {
+   if (x->used > MP_WARRAY) {
       return MP_VAL;
    }
 

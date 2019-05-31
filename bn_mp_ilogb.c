@@ -42,7 +42,7 @@ static mp_digit s_digit_ilogb(mp_digit base, mp_digit n)
 
    while (((mp_digit)(high - low)) > 1uL) {
       mid = (low + high) >> 1;
-      bracket_mid = bracket_low * s_pow(base, mid - low) ;
+      bracket_mid = bracket_low * s_pow(base, (mp_word)(mid - low));
 
       if (N < bracket_mid) {
          high = mid ;

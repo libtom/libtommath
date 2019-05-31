@@ -45,7 +45,7 @@ mp_err s_mp_prime_random_ex(mp_int *a, int t, int size, int flags, private_mp_pr
    }
 
    /* calc the maskAND value for the MSbyte*/
-   maskAND = ((size&7) == 0) ? 0xFF : (unsigned char)(0xFF >> (8 - (size & 7)));
+   maskAND = ((size&7) == 0) ? 0xFFu : (unsigned char)(0xFFu >> (8 - (size & 7)));
 
    /* calc the maskOR_msb */
    maskOR_msb        = 0;
@@ -55,9 +55,9 @@ mp_err s_mp_prime_random_ex(mp_int *a, int t, int size, int flags, private_mp_pr
    }
 
    /* get the maskOR_lsb */
-   maskOR_lsb         = 1;
+   maskOR_lsb         = 1u;
    if ((flags & MP_PRIME_BBS) != 0) {
-      maskOR_lsb     |= 3;
+      maskOR_lsb     |= 3u;
    }
 
    do {

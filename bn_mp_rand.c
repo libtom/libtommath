@@ -30,7 +30,7 @@ mp_err mp_rand(mp_int *a, int digits)
    }
 
    /* TODO: We ensure that the highest digit is nonzero. Should this be removed? */
-   while ((a->dp[digits - 1] & MP_MASK) == 0) {
+   while ((a->dp[digits - 1] & MP_MASK) == 0u) {
       if ((err = s_mp_rand_source(a->dp + digits - 1, sizeof(mp_digit))) != MP_OKAY) {
          return err;
       }

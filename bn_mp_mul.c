@@ -66,7 +66,7 @@ GO_ON:
          int     digs = a->used + b->used + 1;
 
 #ifdef BN_S_MP_MUL_DIGS_FAST_C
-         if ((digs < (int)MP_WARRAY) &&
+         if ((digs < MP_WARRAY) &&
              (MP_MIN(a->used, b->used) <= MP_MAXFAST)) {
             err = s_mp_mul_digs_fast(a, b, c, digs);
          } else
