@@ -20,7 +20,7 @@
 #define MP_SET_SIGNED(name, uname, w)                                   \
     void name(mp_int * a, int##w##_t b)                                 \
     {                                                                   \
-        uname(a, b < 0 ? -(uint##w##_t)b : (uint##w##_t)b);             \
+        uname(a, (b < 0) ? -(uint##w##_t)b : (uint##w##_t)b);           \
         if (b < 0) { a->sign = MP_NEG; }                                \
     }
 #define MP_INIT_INT(name , set, type)                     \
@@ -49,7 +49,7 @@
     int##w##_t name(const mp_int* a)                                    \
     {                                                                   \
         uint64_t res = mag(a);                                          \
-        return a->sign == MP_NEG ? (int##w##_t)-res : (int##w##_t)res;  \
+        return (a->sign == MP_NEG) ? (int##w##_t)-res : (int##w##_t)res;\
     }
 
 #ifdef BN_MP_SET_U32_C

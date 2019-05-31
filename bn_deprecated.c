@@ -176,7 +176,7 @@ unsigned long mp_get_int(const mp_int *a)
 #ifdef BN_MP_GET_LONG_C
 unsigned long mp_get_long(const mp_int *a)
 {
-   return sizeof(long) > sizeof(int32_t) ? (unsigned long)mp_get_mag64(a) : (unsigned long)mp_get_mag32(a);
+   return (sizeof(long) > sizeof(int32_t)) ? (unsigned long)mp_get_mag64(a) : (unsigned long)mp_get_mag32(a);
 }
 #endif
 #ifdef BN_MP_GET_LONG_LONG_C
