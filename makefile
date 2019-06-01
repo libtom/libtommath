@@ -75,7 +75,7 @@ profiled:
 
 #make a single object profiled library
 profiled_single:
-	perl gen.pl
+	perl put_all_in_one_file.pl
 	$(CC) $(CFLAGS) -fprofile-arcs -DTESTING -c mpi.c -o mpi.o
 	$(CC) $(CFLAGS) -DTESTING -DTIMER demo/timing.c mpi.o -lgcov -o timing
 	./timing
@@ -122,7 +122,7 @@ docdvi poster docs mandvi manual:
 .PHONY: pre_gen
 pre_gen:
 	mkdir -p pre_gen
-	perl gen.pl
+	perl put_all_in_one_file.pl
 	sed -e 's/[[:blank:]]*$$//' mpi.c > pre_gen/mpi.c
 	rm mpi.c
 

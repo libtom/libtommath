@@ -71,7 +71,7 @@ sub uniq {
 }
 
 # reading a file while working around OS specific quirks.
-# TODO: check if it can get replaced with functionailty from File::Slurper
+# TODO: check if it can get replaced with functionality from File::Slurper
 sub read_file {
   my $f = shift;
   open my $fh, "<", $f or die "FATAL: read_rawfile() cannot open file '$f': $!";
@@ -246,6 +246,8 @@ sub gather_functions
   my $path = shift;
   my %depmap;
 
+  -e $path or die "$path does not exist\n";
+
   if(-d $path) {
     $path = $path . $sep . '*.c';
   }
@@ -310,7 +312,7 @@ sub start
 
   # TODO: checks&balances
    -e $td.$sep."tommath.h"
-       or die "$td.$sep.tommath.h not found, please check path to LibTomMath sources\n";
+       or die $td.$sep . "tommath.h not found, please check path to LibTomMath sources\n";
 
   %depmap = gather_functions($td);
   %user_functions = gather_functions($sd);
