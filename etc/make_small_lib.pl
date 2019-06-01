@@ -7,7 +7,7 @@ use Getopt::Long;
 use File::Basename 'basename';
 use File::Glob 'bsd_glob';
 use File::Spec;
-use List::MoreUtils 'any';
+use List::MoreUtils qw(any uniq);
 
 # OS dependent path separator
 my $sep = File::Spec->catfile('', '');
@@ -63,12 +63,6 @@ my %deprecated_functions = (
 
 # The global variable where gather_functions() puts all it's findings in.
 my @dependency_list = ();
-
-# Uniquefy an array.
-sub uniq {
-    my %seen;
-    grep !$seen{$_}++, @_;
-}
 
 # reading a file while working around OS specific quirks.
 # TODO: check if it can get replaced with functionality from File::Slurper

@@ -11,15 +11,11 @@ use File::Basename 'basename';
 use File::Glob 'bsd_glob';
 use File::Spec;
 use Cwd 'getcwd';
+use List::MoreUtils 'uniq';
 
 # OS dependent path separator
 my $sep = File::Spec->catfile('', '');
 
-# Uniquefy an array.
-sub uniq {
-    my %seen;
-    grep !$seen{$_}++, @_;
-}
 
 # reading a file while working around OS specific quirks.
 # TODO: check if it can get replaced with functionality from File::Slurper
