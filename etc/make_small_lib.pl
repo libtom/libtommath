@@ -288,11 +288,12 @@ sub gather_dependencies
    } else {
       $deplist = $deplist . $funcs[0];
    }
-   push @dependency_list, $funcs[0];
+   push @dependency_list, split( ',', ${$depmap}{$funcs[0]});
+   @dependency_list = uniq(sort @dependency_list);
    shift @funcs;
    my $olddeplist = $deplist;
    foreach my $i (@funcs) {
-      $deplist = gather_dependencies($deplist, $depmap, ${$depmap}{$i}) if exists ${$depmap}{$i};
+     $deplist = gather_dependencies($deplist, $depmap, ${$depmap}{$i}) if exists ${$depmap}{$i};
    }
    return $olddeplist;
 }
