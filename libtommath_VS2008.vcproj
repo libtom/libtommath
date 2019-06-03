@@ -313,10 +313,6 @@
 	</References>
 	<Files>
 		<File
-			RelativePath="bn_conversion.c"
-			>
-		</File>
-		<File
 			RelativePath="bn_cutoffs.c"
 			>
 		</File>
@@ -465,6 +461,22 @@
 			>
 		</File>
 		<File
+			RelativePath="bn_mp_get_i32.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_mp_get_i64.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_mp_get_mag32.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_mp_get_mag64.c"
+			>
+		</File>
+		<File
 			RelativePath="bn_mp_grow.c"
 			>
 		</File>
@@ -489,6 +501,14 @@
 			>
 		</File>
 		<File
+			RelativePath="bn_mp_init_i32.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_mp_init_i64.c"
+			>
+		</File>
+		<File
 			RelativePath="bn_mp_init_multi.c"
 			>
 		</File>
@@ -498,6 +518,14 @@
 		</File>
 		<File
 			RelativePath="bn_mp_init_size.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_mp_init_u32.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_mp_init_u64.c"
 			>
 		</File>
 		<File
@@ -682,6 +710,22 @@
 		</File>
 		<File
 			RelativePath="bn_mp_set_double.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_mp_set_i32.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_mp_set_i64.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_mp_set_u32.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_mp_set_u64.c"
 			>
 		</File>
 		<File

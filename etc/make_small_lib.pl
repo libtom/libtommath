@@ -253,7 +253,6 @@ sub gather_functions
 
     $filename = basename($filename);
     $filename =~ s/^bn_|\.c$//g;
-
     $content =~ s{/\*.*?\*/}{}gs;
     my $list = "";
     foreach my $line (split /\n/, $content) {
@@ -296,7 +295,7 @@ sub gather_dependencies
 
 sub start
 {
-  my ($sd, $td, $no, $cm, $ch) = @_;
+  my ($sd, $td, $no, $id, $cm, $ch) = @_;
 
   my %depmap;
   my %user_functions;
@@ -304,13 +303,31 @@ sub start
   my @functions;
   my @tmp;
 
-  # TODO: checks&balances
+  my $bail_out = 0;
+
+  # TODO: the rest of the checks&balances
    -e $td.$sep."tommath.h"
        or die $td.$sep . "tommath.h not found, please check path to LibTomMath sources\n";
 
   %depmap = gather_functions($td);
   %user_functions = gather_functions($sd);
 
+  # TODO: The chance is high that there is a proper Perl way to do it.
+  if($id == 1) {
+    # Replace every occurrence of a deprecated function with their new counterpart,
+    # such that we an find their dependencies (assuming that those are the very same)
+    # and include the code of the replacements itself, too.
+    foreach (sort keys %user_functions) {
+      my $item = $user_functions{$_};
+      # search and replace;
+      foreach (split /,/, $item) {
+        if (exists $deprecated_functions{$_}) {
+          $item =~ s/$_/$deprecated_functions{$_}/g;
+        }
+      }
+      $user_functions{$_} = $item;
+    }
+  }
   # we need them as an array, too, for simplicity.
   foreach (sort keys %user_functions) {
     push @functions, split /,/ , $user_functions{$_};
@@ -318,18 +335,33 @@ sub start
   @functions = uniq(sort @functions);
 
   foreach (@functions) {
-    # Deprecated functions are not accepted.
-    exists $deprecated_functions{$_}
-      and die "Function \"$_\" is deprecated, please use \"" .
-               $deprecated_functions{$_} . "\" instead\n";
-
+    if ($id == 0) {
+      # Deprecated functions are not accepted.
+      if (exists $deprecated_functions{$_} ) {
+         # Let's be nice and print all errors before bailing out.
+         $bail_out = 1;
+         print "Function \"$_\" is deprecated, please use \"" .
+                 $deprecated_functions{$_} . "\" instead\n";
+      }
+    }
     # No functions starting with "mp_" other than those in LibTomMath are allowed.
-    exists $depmap{$_} or die "Function \"$_\" does not exist in LibTomMath.\n";
+    if ( (!exists $depmap{$_}) && ($id != 0) && (exists $deprecated_functions{$_} )) {
+      $bail_out = 1;
+      print "Function \"$_\" does not exist in LibTomMath.\n";
+    }
+  }
+  if($bail_out == 1) {
+    die "Too many errors, giving out \n";
   }
 
-  # Compute dependencies for the functions the user uses.
+  # Compute the dependencies for the functions the user uses.
   foreach (sort keys %user_functions) {
     gather_dependencies("", \%depmap, $user_functions{$_});
+  }
+  # All of the deprecated functions are in a single file, so for
+  # simplicity just add the whole file.
+  if($id == 1) {
+   push @dependency_list, "deprecated";
   }
   @dependency_list = uniq(sort @dependency_list);
 
@@ -367,27 +399,33 @@ sub start
 
 sub die_usage {
   die <<"EOO";
-usage: $0 -s   OR   $0 --source-dir         [./]
-       $0 -t   OR   $0 --tommath-dir        [./libtommath]
-       $0 -n   OR   $0 --no-optimization
-       $0 -m   OR   $0 --change-makefiles
-       $0 -c   OR   $0 --change-headers     [default]
+       short            long                defaults
+usage: $0 -s   OR   $0 --source-dir=dir         [./]
+       $0 -t   OR   $0 --tommath-dir=dir        [./libtommath]
+       $0 -n   OR   $0 --no-optimization        [with optimizations]
+       $0 -d   OR   $0 --include-deprecated     [no]
+       $0 -m   OR   $0 --change-makefiles       [no]
+       $0 -c   OR   $0 --change-headers         [default]
 
 The option --source-dir accepts a directory or a single file.
 
 EOO
 }
 
-my $source_dir = "";
-my $tommath_dir = "libtommath$sep";
-my $config_file = "";
-my $no_optimizations = 0;
-my $change_makefiles = 0;
-my $change_headers   = 0;
+my $source_dir         = "";
+my $tommath_dir        = "libtommath" . $sep;
+# The option of parsing a dir/file given to $source_dir makes a dedicated config-file
+# option obsolete.
+# my $config_file        = "";
+my $no_optimizations   = 0;
+my $include_deprecated = 0;
+my $change_makefiles   = 0;
+my $change_headers     = 0;
 
 GetOptions( "s|source-dir=s"        => \$source_dir,
             "t|tommath-dir=s"       => \$tommath_dir,
             "n|no-optimizations"    => \$no_optimizations,
+            "d|include-deprecated"  => \$include_deprecated,
             "m|change-makefiles"    => \$change_makefiles,
             "c|change-headers"      => \$change_headers,
             "h|help"                => \my $help
@@ -396,6 +434,9 @@ GetOptions( "s|source-dir=s"        => \$source_dir,
 my $exit_value = start($source_dir,
                        $tommath_dir,
                        $no_optimizations,
+                       $include_deprecated,
                        $change_makefiles,
                        $change_headers);
+# TODO: checks&balances&cleanup
 exit $exit_value;
+
