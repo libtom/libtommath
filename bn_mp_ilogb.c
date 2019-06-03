@@ -104,7 +104,7 @@ mp_err mp_ilogb(const mp_int *a, mp_digit base, mp_int *c)
       return err;
    }
    if (cmp == MP_EQ) {
-      mp_set(c, 1u);
+      mp_set(c, 1uL);
       return err;
    }
 
