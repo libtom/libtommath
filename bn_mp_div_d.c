@@ -3,24 +3,6 @@
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
-static int s_is_power_of_two(mp_digit b, int *p)
-{
-   int x;
-
-   /* fast return if no power of two */
-   if ((b == 0u) || ((b & (b-1u)) != 0u)) {
-      return 0;
-   }
-
-   for (x = 0; x < MP_DIGIT_BIT; x++) {
-      if (b == ((mp_digit)1<<(mp_digit)x)) {
-         *p = x;
-         return 1;
-      }
-   }
-   return 0;
-}
-
 /* single digit division (based on routine from MPI) */
 mp_err mp_div_d(const mp_int *a, mp_digit b, mp_int *c, mp_digit *d)
 {
@@ -47,7 +29,11 @@ mp_err mp_div_d(const mp_int *a, mp_digit b, mp_int *c, mp_digit *d)
    }
 
    /* power of two ? */
-   if (s_is_power_of_two(b, &ix) == 1) {
+   if ((b & (b-1)) == 0u) {
+      ix = 1;
+      while ((ix < MP_DIGIT_BIT) && (b != (((mp_digit)1)<<ix))) {
+         ix++;
+      }
       if (d != NULL) {
          *d = a->dp[0] & (((mp_digit)1<<(mp_digit)ix) - 1uL);
       }
