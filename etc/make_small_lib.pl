@@ -12,6 +12,15 @@ use List::MoreUtils qw(any uniq);
 # OS dependent path separator
 my $sep = File::Spec->catfile('', '');
 
+# Minimum needed to do RSA
+my %rsa_functions = (
+       rsa_functions => "mp_shrink,mp_lcm,s_mp_prime_random_ex,mp_invmod,mp_gcd,mp_mod," .
+                        "mp_mulmod,mp_addmod,mp_exptmod,mp_set_u32,mp_init_multi," .
+                        "mp_clear_multi,mp_unsigned_bin_size,mp_to_unsigned_bin," .
+                        "mp_mod_d,mp_prime_rabin_miller_trials,s_mp_reverse"
+   );
+
+
 # A list of the functions that trade space for speed.
 # They will be removed from the list if the option "-n" is given
 my %fast_functions = (
@@ -295,7 +304,7 @@ sub gather_dependencies
 
 sub start
 {
-  my ($sd, $td, $no, $id, $cm, $ch) = @_;
+  my ($sd, $td, $no, $id, $mr, $cm, $ch) = @_;
 
   my %depmap;
   my %user_functions;
@@ -310,7 +319,15 @@ sub start
        or die $td.$sep . "tommath.h not found, please check path to LibTomMath sources\n";
 
   %depmap = gather_functions($td);
-  %user_functions = gather_functions($sd);
+  if($mr > 0) {
+    # For simplicity, reuse the already working mechanic.
+    %user_functions = %rsa_functions;
+    # We want it small, hence no space-grabbing optimizations.
+    $no = 1;
+  }
+  else {
+    %user_functions = gather_functions($sd);
+  }
 
   # TODO: The chance is high that there is a proper Perl way to do it.
   if($id == 1) {
@@ -375,9 +392,15 @@ sub start
     @tmp = ();
   }
 
+  # Handle functions in files with filenames that do not follow the scheme bn(s_)?_mp([a-z_0-9])+.c
+
   # If we use fast multiplication/division we need the cutoffs, too. They are in bn_cutoffs.c
   if (any {/kara|toom/} @dependency_list) {
     push @dependency_list, "cutoffs";
+  }
+  # if we do anything with primes we need the primes-table which is in bn_prime_tab.c
+  if (any {/prime/} @dependency_list) {
+    push @dependency_list, "prime_tab";
   }
 
   # Change makefiles (and MSVC's project file)
@@ -394,6 +417,21 @@ sub start
   if ( ($ch == 1) || ( ($cm + $ch) == 0 )) {
     write_header($td, @dependency_list);
   }
+  # Add "#define BN_MP_DIV_SMALL" to "tommath_superclass.h" for the RSA minimal set.
+  if($mr == 1) {
+    my $tsch = $td . $sep . "tommath_superclass.h";
+    my $define = "/* LibTomMath, multiple-precision integer library -- Tom St Denis */\n";
+    $define = $define . "/* SPDX-License-Identifier: Unlicense */\n";
+    $define = $define . "#define BN_MP_DIV_SMALL\n";
+    # make it even smaller
+    if($mr == 2) {
+      $define = $define . "#undef BN_S_MP_MUL_DIGS_C\n";
+      $define = $define . "#undef BN_S_MP_SQR_C\n";
+      $define = $define . "#undef BN_MP_MONTGOMERY_REDUCE_C\n";
+    }
+    write_file($tsch, $define);
+  }
+
   return 1;
 }
 
@@ -404,21 +442,42 @@ usage: $0 -s   OR   $0 --source-dir=dir         [./]
        $0 -t   OR   $0 --tommath-dir=dir        [./libtommath]
        $0 -n   OR   $0 --no-optimization        [with optimizations]
        $0 -d   OR   $0 --include-deprecated     [no]
+       $0 -r   OR   $0 --rsa                    [no]
+       $0 -R   OR   $0 --reduced-rsa            [no]
        $0 -m   OR   $0 --change-makefiles       [no]
        $0 -c   OR   $0 --change-headers         [default]
 
 The option --source-dir accepts a directory or a single file.
+
+The option --rsa builds the bare minimum to do RSA. It also defines
+
+  BN_MP_DIV_SMALL
+
+in "tommath_superclass.h".
+
+The option --reduced-rsa does the same as --rsa but it also removes the
+functions
+
+  s_mp_mul_digs
+  s_mp_sqr
+  mp_montgomery_reduce
+
+which makes the maximum length of RSA keys dependent on the size of MP_WARRAY.
+The resulting limits are small, even on 64-bit architectures and this option
+is therefore not recommended for use in the open.
 
 EOO
 }
 
 my $source_dir         = "";
 my $tommath_dir        = "libtommath" . $sep;
-# The option of parsing a dir/file given to $source_dir makes a dedicated config-file
-# option obsolete.
+# The option of parsing a dir/file given to $source_dir makes a dedicated
+# config-file obsolete.
 # my $config_file        = "";
 my $no_optimizations   = 0;
 my $include_deprecated = 0;
+my $minimum_rsa        = 0;
+my $reduced_rsa        = 0;
 my $change_makefiles   = 0;
 my $change_headers     = 0;
 
@@ -426,15 +485,20 @@ GetOptions( "s|source-dir=s"        => \$source_dir,
             "t|tommath-dir=s"       => \$tommath_dir,
             "n|no-optimizations"    => \$no_optimizations,
             "d|include-deprecated"  => \$include_deprecated,
+            "r|rsa"                 => \$minimum_rsa,
+            "R|reduced-rsa"         => \$reduced_rsa,
             "m|change-makefiles"    => \$change_makefiles,
             "c|change-headers"      => \$change_headers,
             "h|help"                => \my $help
           ) or die_usage;
 
+$minimum_rsa = 2 if $reduced_rsa == 1;
+
 my $exit_value = start($source_dir,
                        $tommath_dir,
                        $no_optimizations,
                        $include_deprecated,
+                       $minimum_rsa,
                        $change_makefiles,
                        $change_headers);
 # TODO: checks&balances&cleanup
