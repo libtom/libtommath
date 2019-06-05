@@ -211,7 +211,7 @@ TOOM_SQR_CUTOFF;
 #  define MP_DEPRECATED(x) __declspec(deprecated("replaced by " #x))
 #  define MP_DEPRECATED_PRAGMA(s) __pragma(message(s))
 #else
-#  define MP_DEPRECATED
+#  define MP_DEPRECATED(s)
 #  define MP_DEPRECATED_PRAGMA(s)
 #endif
 
