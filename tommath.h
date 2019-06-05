@@ -369,7 +369,7 @@ mp_err mp_rand(mp_int *a, int digits) MP_WUR;
 /* makes a pseudo-random small int of a given size */
 MP_DEPRECATED(mp_rand) mp_err mp_rand_digit(mp_digit *r) MP_WUR;
 /* use custom random data source instead of source provided the platform */
-void mp_rand_source(mp_err source(void *out, size_t size));
+void mp_rand_source(mp_err(*source)(void *out, size_t size));
 
 #ifdef MP_PRNG_ENABLE_LTM_RNG
 #  warning MP_PRNG_ENABLE_LTM_RNG has been deprecated, use mp_rand_source instead.
