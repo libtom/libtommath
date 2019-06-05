@@ -152,7 +152,7 @@ my $tommath_dir = $current_dir;
 my $config_file = "";
 my $make_static = 0;
 
-GetOptions( "s|output=s"          => \$output,
+GetOptions( "o|output=s"          => \$output,
             "t|tommath-dir=s"     => \$tommath_dir,
             "c|config-file=s"     => \$config_file,
             "s|make-static"       => \$make_static,
