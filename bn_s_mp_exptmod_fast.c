@@ -28,7 +28,7 @@ mp_err s_mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_i
     * one of many reduction algorithms without modding the guts of
     * the code with if statements everywhere.
     */
-   mp_err(*redux)(mp_int *x, const mp_int *n, mp_digit rho);
+   mp_err (*redux)(mp_int *x, const mp_int *n, mp_digit rho);
 
    /* find window size */
    x = mp_count_bits(X);

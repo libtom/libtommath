@@ -15,7 +15,7 @@ mp_err s_mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y
    mp_digit buf;
    mp_err   err;
    int      bitbuf, bitcpy, bitcnt, mode, digidx, x, y, winsize;
-   mp_err(*redux)(mp_int *x, const mp_int *m, const mp_int *mu);
+   mp_err (*redux)(mp_int *x, const mp_int *m, const mp_int *mu);
 
    /* find window size */
    x = mp_count_bits(X);

@@ -174,7 +174,7 @@ typedef private_mp_word mp_word;
 MP_STATIC_ASSERT(prec_geq_min_prec, MP_PREC >= MP_MIN_PREC)
 
 /* random number source */
-extern MP_PRIVATE mp_err(*s_mp_rand_source)(void *out, size_t size);
+extern MP_PRIVATE mp_err (*s_mp_rand_source)(void *out, size_t size);
 
 /* lowlevel functions, do not call! */
 MP_PRIVATE mp_bool s_mp_get_bit(const mp_int *a, unsigned int b);
