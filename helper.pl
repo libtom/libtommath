@@ -363,8 +363,9 @@ EOS
             read $src, $content, -s $src;
             close $src;
         } else {
-            my $cmd = "gcc -E -x c -DLTM_ALL $filename | sed '/# 1 \"$filename\"/,/# 2 \"$filename\"/d'";
-            $content = qx/$cmd/;
+            my $cc = $ENV{'CC'} || 'gcc';
+            $content = `$cc -E -x c -DLTM_ALL $filename`;
+            $content =~ s/^# 1 "$filename".*?^# 2 "$filename"//ms;
         }
 
         # convert filename to upper case so we can use it as a define
