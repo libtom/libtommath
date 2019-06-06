@@ -23,10 +23,10 @@ EXPORTS
     mp_copy
     mp_count_bits
     mp_decr
-    mp_div
     mp_div_2
     mp_div_2d
     mp_div_3
+    mp_div
     mp_div_d
     mp_dr_is_modulus
     mp_dr_reduce
@@ -63,25 +63,25 @@ EXPORTS
     mp_init_u32
     mp_init_u64
     mp_invmod
-    mp_is_square
     mp_iseven
     mp_isodd
+    mp_is_square
     mp_kronecker
     mp_lcm
     mp_lshd
-    mp_mod
     mp_mod_2d
+    mp_mod
     mp_mod_d
     mp_montgomery_calc_normalization
     mp_montgomery_reduce
     mp_montgomery_setup
-    mp_mul
     mp_mul_2
     mp_mul_2d
+    mp_mul
     mp_mul_d
     mp_mulmod
-    mp_n_root
     mp_neg
+    mp_n_root
     mp_or
     mp_prime_fermat
     mp_prime_frobenius_underwood
@@ -97,11 +97,11 @@ EXPORTS
     mp_read_radix
     mp_read_signed_bin
     mp_read_unsigned_bin
-    mp_reduce
     mp_reduce_2k
     mp_reduce_2k_l
     mp_reduce_2k_setup
     mp_reduce_2k_setup_l
+    mp_reduce
     mp_reduce_is_2k
     mp_reduce_is_2k_l
     mp_reduce_setup
@@ -125,12 +125,12 @@ EXPORTS
     mp_sub
     mp_sub_d
     mp_submod
+    mp_toradix
+    mp_toradix_n
     mp_to_signed_bin
     mp_to_signed_bin_n
     mp_to_unsigned_bin
     mp_to_unsigned_bin_n
-    mp_toradix
-    mp_toradix_n
     mp_unsigned_bin_size
     mp_xor
     mp_zero

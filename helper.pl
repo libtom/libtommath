@@ -436,6 +436,10 @@ EOS
     return 0;
 }
 
+sub generate_def {
+  system("sh", "generate_def.sh");
+}
+
 sub die_usage {
   die <<"MARKER";
 usage: $0 -s   OR   $0 --check-source
@@ -462,6 +466,7 @@ $failure ||= check_doc()          if $check_doc; # temporarily excluded from --c
 $failure ||= process_makefiles(0) if $check_all || $check_makefiles;
 $failure ||= process_makefiles(1) if $update_makefiles;
 $failure ||= update_dep()         if $update_makefiles;
+$failure ||= generate_def()       if $update_makefiles;
 
 die_usage unless defined $failure;
 exit $failure ? 1 : 0;
