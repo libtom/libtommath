@@ -314,7 +314,7 @@ EOS
 
         print "Processing $filename\n";
 
-    # convert filename to upper case so we can use it as a define
+        # convert filename to upper case so we can use it as a define
         $define =~ tr/[a-z]/[A-Z]/;
         $define =~ tr/\./_/;
         print {$class} "#   define $define\n";
@@ -339,7 +339,7 @@ EOS
             $apply = 1;
         }
         while (<$src>) {
-            if (!($_ =~ /tommath\.h/)) {
+            if ($_ !~ /tommath\.h/) {
                 print {$out} $_;
             }
         }
@@ -378,17 +378,22 @@ EOS
         $content =~ s{/\*.*?\*/}{}gs;
 
         # scan for mp_* and make classes
+        my @deps = ();
         foreach my $line (split /\n/, $content) {
             while ($line =~ /(fast_)?(s_)?mp\_[a-z_0-9]*(?=\()|(?<=\()mp\_[a-z_0-9]*(?=,)/g) {
                 my $a = $&;
                 next if $a eq "mp_err";
                 $a =~ tr/[a-z]/[A-Z]/;
                 $a = 'BN_' . $a . '_C';
-                if (!($list =~ /$a/)) {
-                    print {$class} "#   define $a\n";
-                }
-                $list = $list . ',' . $a;
+                push @deps, $a;
             }
+        }
+        @deps = sort(@deps);
+        foreach my $a (@deps) {
+            if ($list !~ /$a/) {
+                print {$class} "#   define $a\n";
+            }
+            $list = $list . ',' . $a;
         }
         $depmap{$filename} = $list;
 
