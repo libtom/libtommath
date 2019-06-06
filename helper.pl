@@ -222,16 +222,6 @@ sub patch_file {
   return $content;
 }
 
-sub version_from_tomcrypt_h {
-  my $h = read_file(shift);
-  if ($h =~ /\n#define\s*SCRYPT\s*"([0-9]+)\.([0-9]+)\.([0-9]+)(.*)"/s) {
-    return "VERSION_PC=$1.$2.$3", "VERSION_LT=1:1", "VERSION=$1.$2.$3$4", "PROJECT_NUMBER=$1.$2.$3$4";
-  }
-  else {
-    die "#define SCRYPT not found in tomcrypt.h";
-  }
-}
-
 sub process_makefiles {
   my $write = shift;
   my $changed_count = 0;
