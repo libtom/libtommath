@@ -317,9 +317,7 @@ EOS
     # convert filename to upper case so we can use it as a define
         $define =~ tr/[a-z]/[A-Z]/;
         $define =~ tr/\./_/;
-        print {$class} << "EOS";
-#   define $define
-EOS
+        print {$class} "#   define $define\n";
 
         # now copy text and apply #ifdef as required
         my $apply = 0;
@@ -346,9 +344,7 @@ EOS
             }
         }
         if ($apply == 1) {
-            print {$out} << 'EOS';
-#endif
-EOS
+            print {$out} "#endif\n";
         }
         close $src;
         close $out;
@@ -356,10 +352,7 @@ EOS
         unlink $filename;
         rename 'tmp', $filename;
     }
-    print {$class} << 'EOS';
-#endif
-#endif
-EOS
+    print {$class} "#endif\n#endif\n";
 
     # now do classes
     my %depmap;
@@ -378,9 +371,7 @@ EOS
         $filename =~ tr/[a-z]/[A-Z]/;
         $filename =~ tr/\./_/;
 
-        print {$class} << "EOS";
-#if defined($filename)
-EOS
+        print {$class} "#if defined($filename)\n";
         my $list = $filename;
 
         # strip comments
@@ -394,19 +385,14 @@ EOS
                 $a =~ tr/[a-z]/[A-Z]/;
                 $a = 'BN_' . $a . '_C';
                 if (!($list =~ /$a/)) {
-                    print {$class} << "EOS";
-#   define $a
-EOS
+                    print {$class} "#   define $a\n";
                 }
                 $list = $list . ',' . $a;
             }
         }
         $depmap{$filename} = $list;
 
-        print {$class} << 'EOS';
-#endif
-
-EOS
+        print {$class} "#endif\n\n";
     }
 
     print {$class} << 'EOS';
