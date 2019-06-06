@@ -246,10 +246,10 @@ MP_DEPRECATED(s_mp_reverse) void bn_reverse(unsigned char *s, int len);
         MP_ZERO_DIGITS(a->dp + a->used, a->alloc - a->used);                           \
     }
 
-#define MP_SET_SIGNED(name, uname, type)                 \
+#define MP_SET_SIGNED(name, uname, type, utype)          \
     void name(mp_int * a, type b)                        \
     {                                                    \
-        uname(a, (b < 0) ? -(u##type)b : (u##type)b);    \
+        uname(a, (b < 0) ? -(utype)b : (utype)b);        \
         if (b < 0) { a->sign = MP_NEG; }                 \
     }
 
