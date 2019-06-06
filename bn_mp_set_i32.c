@@ -3,5 +3,5 @@
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
-MP_SET_SIGNED(mp_set_i32, mp_set_u32, 32)
+MP_SET_SIGNED(mp_set_i32, mp_set_u32, int32_t)
 #endif
