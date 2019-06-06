@@ -2,6 +2,7 @@
 /* SPDX-License-Identifier: Unlicense */
 
 #if !(defined(LTM1) && defined(LTM2) && defined(LTM3))
+#define LTM_INSIDE
 #if defined(LTM2)
 #   define LTM3
 #endif
@@ -158,6 +159,7 @@
 #   define BN_S_MP_TOOM_MUL_C
 #   define BN_S_MP_TOOM_SQR_C
 #endif
+#endif
 #if defined(BN_CUTOFFS_C)
 #endif
 
@@ -303,24 +305,20 @@
 #   define BN_MP_CMP_MAG_C
 #   define BN_MP_COPY_C
 #   define BN_MP_ZERO_C
-#   define BN_MP_INIT_MULTI_C
-#   define BN_MP_SET_C
-#   define BN_MP_COUNT_BITS_C
-#   define BN_MP_ABS_C
-#   define BN_MP_MUL_2D_C
-#   define BN_MP_CMP_C
-#   define BN_MP_SUB_C
-#   define BN_MP_ADD_C
-#   define BN_MP_DIV_2D_C
-#   define BN_MP_EXCH_C
-#   define BN_MP_CLEAR_MULTI_C
 #   define BN_MP_INIT_SIZE_C
 #   define BN_MP_INIT_C
 #   define BN_MP_INIT_COPY_C
+#   define BN_MP_COUNT_BITS_C
+#   define BN_MP_MUL_2D_C
 #   define BN_MP_LSHD_C
+#   define BN_MP_CMP_C
+#   define BN_MP_SUB_C
 #   define BN_MP_RSHD_C
 #   define BN_MP_MUL_D_C
+#   define BN_MP_ADD_C
 #   define BN_MP_CLAMP_C
+#   define BN_MP_EXCH_C
+#   define BN_MP_DIV_2D_C
 #   define BN_MP_CLEAR_C
 #endif
 
@@ -440,9 +438,11 @@
 #endif
 
 #if defined(BN_MP_GET_I32_C)
+#   define BN_MP_GET_MAG32_C
 #endif
 
 #if defined(BN_MP_GET_I64_C)
+#   define BN_MP_GET_MAG64_C
 #endif
 
 #if defined(BN_MP_GET_MAG32_C)
@@ -492,9 +492,13 @@
 #endif
 
 #if defined(BN_MP_INIT_I32_C)
+#   define BN_MP_INIT_C
+#   define BN_MP_SET_I32_C
 #endif
 
 #if defined(BN_MP_INIT_I64_C)
+#   define BN_MP_INIT_C
+#   define BN_MP_SET_I64_C
 #endif
 
 #if defined(BN_MP_INIT_MULTI_C)
@@ -511,9 +515,13 @@
 #endif
 
 #if defined(BN_MP_INIT_U32_C)
+#   define BN_MP_INIT_C
+#   define BN_MP_SET_U32_C
 #endif
 
 #if defined(BN_MP_INIT_U64_C)
+#   define BN_MP_INIT_C
+#   define BN_MP_SET_U64_C
 #endif
 
 #if defined(BN_MP_INVMOD_C)
@@ -526,7 +534,7 @@
 #   define BN_MP_MOD_D_C
 #   define BN_MP_INIT_U32_C
 #   define BN_MP_MOD_C
-#   define BN_MP_GET_U32_C
+#   define BN_MP_GET_I32_C
 #   define BN_MP_SQRT_C
 #   define BN_MP_SQR_C
 #   define BN_MP_CMP_MAG_C
@@ -695,7 +703,6 @@
 #   define BN_S_MP_PRIME_IS_DIVISIBLE_C
 #   define BN_MP_INIT_SET_C
 #   define BN_MP_PRIME_MILLER_RABIN_C
-#   define BN_MP_PRIME_FROBENIUS_UNDERWOOD_C
 #   define BN_MP_PRIME_STRONG_LUCAS_SELFRIDGE_C
 #   define BN_MP_READ_RADIX_C
 #   define BN_MP_CMP_C
@@ -811,7 +818,6 @@
 #   define BN_MP_RSHD_C
 #   define BN_MP_MUL_C
 #   define BN_S_MP_MUL_HIGH_DIGS_C
-#   define BN_S_MP_MUL_HIGH_DIGS_FAST_C
 #   define BN_MP_MOD_2D_C
 #   define BN_S_MP_MUL_DIGS_C
 #   define BN_MP_SUB_C
@@ -888,9 +894,11 @@
 #endif
 
 #if defined(BN_MP_SET_I32_C)
+#   define BN_MP_SET_U32_C
 #endif
 
 #if defined(BN_MP_SET_I64_C)
+#   define BN_MP_SET_U64_C
 #endif
 
 #if defined(BN_MP_SET_U32_C)
@@ -1220,6 +1228,8 @@
 #   define BN_MP_CLEAR_C
 #endif
 
+#ifdef LTM_INSIDE
+#undef LTM_INSIDE
 #ifdef LTM3
 #   define LTM_LAST
 #endif

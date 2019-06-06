@@ -308,6 +308,7 @@ sub update_dep
 /* SPDX-License-Identifier: Unlicense */
 
 #if !(defined(LTM1) && defined(LTM2) && defined(LTM3))
+#define LTM_INSIDE
 #if defined(LTM2)
 #   define LTM3
 #endif
@@ -367,14 +368,21 @@ EOS
     }
     print {$class} << 'EOS';
 #endif
+#endif
 EOS
 
     # now do classes
     my %depmap;
     foreach my $filename (glob 'bn*.c') {
-        open(my $src, '<', $filename) or die "Can't open source file!\n";
-        read $src, my $content, -s $src;
-        close $src;
+        my $content;
+        if ($filename =~ "bn_deprecated.c") {
+            open(my $src, '<', $filename) or die "Can't open source file!\n";
+            read $src, $content, -s $src;
+            close $src;
+        } else {
+            my $cmd = "gcc -E -x c -DLTM_ALL $filename | sed '/# 1 \"$filename\"/,/# 2 \"$filename\"/d'";
+            $content = qx/$cmd/;
+        }
 
         # convert filename to upper case so we can use it as a define
         $filename =~ tr/[a-z]/[A-Z]/;
@@ -412,6 +420,8 @@ EOS
     }
 
     print {$class} << 'EOS';
+#ifdef LTM_INSIDE
+#undef LTM_INSIDE
 #ifdef LTM3
 #   define LTM_LAST
 #endif
