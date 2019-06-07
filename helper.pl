@@ -434,8 +434,7 @@ sub generate_def {
     @files = map { my $x = $_; $x =~ s/^bn_|\.c$//g; $x; } @files;
     @files = grep(!/mp_radix_smap/, @files);
 
-    @files = grep(!/conversion/, @files);
-    push(@files, qw(mp_set_i32 mp_set_i64 mp_set_u32 mp_set_u64 mp_set_int mp_set_long mp_set_long_long mp_get_i32 mp_get_i64 mp_get_mag32 mp_get_mag64 mp_get_int mp_get_long mp_get_long_long mp_init_i32 mp_init_i64 mp_init_u32 mp_init_u64 mp_init_set_int));
+    push(@files, qw(mp_set_int mp_set_long mp_set_long_long mp_get_int mp_get_long mp_get_long_long mp_init_set_int));
 
     my $files = join("\n    ", sort(grep(/^mp_/, @files)));
     write_file "tommath.def", "; libtommath
