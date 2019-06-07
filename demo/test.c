@@ -622,6 +622,7 @@ LBL_ERR:
 
 }
 
+#if defined(__STDC_IEC_559__) || defined(__GCC_IEC_559)
 static int test_mp_set_double(void)
 {
    int i;
@@ -632,7 +633,6 @@ static int test_mp_set_double(void)
    }
 
    /* test mp_get_double/mp_set_double */
-#if defined(__STDC_IEC_559__) || defined(__GCC_IEC_559)
    if (mp_set_double(&a, +1.0/0.0) != MP_VAL) {
       printf("\nmp_set_double should return MP_VAL for +inf");
       goto LBL_ERR;
@@ -670,7 +670,6 @@ static int test_mp_set_double(void)
          goto LBL_ERR;
       }
    }
-#endif
 
    mp_clear_multi(&a, &b, NULL);
    return EXIT_SUCCESS;
@@ -679,6 +678,7 @@ LBL_ERR:
    return EXIT_FAILURE;
 
 }
+#endif
 
 static int test_mp_get_u32(void)
 {
@@ -2112,7 +2112,9 @@ int unit_tests(int argc, char **argv)
       T(mp_read_radix),
       T(mp_reduce_2k),
       T(mp_reduce_2k_l),
+#if defined(__STDC_IEC_559__) || defined(__GCC_IEC_559)
       T(mp_set_double),
+#endif
       T(mp_signed_rsh),
       T(mp_sqrt),
       T(mp_sqrtmod_prime),
