@@ -149,7 +149,7 @@ zipup: clean astyle new_file manual poster docs
 	gpg -b -a ltm-$(VERSION).zip
 
 new_file:
-	perl helper.pl --update-makefiles
+	perl helper.pl --update-files
 
 perlcritic:
 	perlcritic *.pl doc/*.pl

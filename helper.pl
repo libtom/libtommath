@@ -437,7 +437,26 @@ EOS
 }
 
 sub generate_def {
-  system("sh", "generate_def.sh");
+    my @files = split /\n/, `git ls-files`;
+    @files = grep(/\.c/, @files);
+    @files = map { my $x = $_; $x =~ s/^bn_|\.c$//g; $x; } @files;
+    @files = grep(!/mp_radix_smap/, @files);
+
+    @files = grep(!/conversion/, @files);
+    push(@files, qw(mp_set_i32 mp_set_i64 mp_set_u32 mp_set_u64 mp_set_int mp_set_long mp_set_long_long mp_get_i32 mp_get_i64 mp_get_mag32 mp_get_mag64 mp_get_int mp_get_long mp_get_long_long mp_init_i32 mp_init_i64 mp_init_u32 mp_init_u64 mp_init_set_int));
+
+    my $files = join("\n    ", sort(grep(/^mp_/, @files)));
+    write_file "tommath.def", "; libtommath
+;
+; Use this command to produce a 32-bit .lib file, for use in any MSVC version
+;   lib -machine:X86 -name:libtommath.dll -def:tommath.def -out:tommath.lib
+; Use this command to produce a 64-bit .lib file, for use in any MSVC version
+;   lib -machine:X64 -name:libtommath.dll -def:tommath.def -out:tommath.lib
+;
+EXPORTS
+    $files
+";
+    return 0;
 }
 
 sub die_usage {
@@ -446,7 +465,7 @@ usage: $0 -s   OR   $0 --check-source
        $0 -o   OR   $0 --check-comments
        $0 -m   OR   $0 --check-makefiles
        $0 -a   OR   $0 --check-all
-       $0 -u   OR   $0 --update-makefiles
+       $0 -u   OR   $0 --update-files
 MARKER
 }
 
@@ -455,7 +474,7 @@ GetOptions( "s|check-source"        => \my $check_source,
             "m|check-makefiles"     => \my $check_makefiles,
             "d|check-doc"           => \my $check_doc,
             "a|check-all"           => \my $check_all,
-            "u|update-makefiles"    => \my $update_makefiles,
+            "u|update-files"        => \my $update_files,
             "h|help"                => \my $help
           ) or die_usage;
 
@@ -464,9 +483,9 @@ $failure ||= check_source()       if $check_all || $check_source;
 $failure ||= check_comments()     if $check_all || $check_comments;
 $failure ||= check_doc()          if $check_doc; # temporarily excluded from --check-all
 $failure ||= process_makefiles(0) if $check_all || $check_makefiles;
-$failure ||= process_makefiles(1) if $update_makefiles;
-$failure ||= update_dep()         if $update_makefiles;
-$failure ||= generate_def()       if $update_makefiles;
+$failure ||= process_makefiles(1) if $update_files;
+$failure ||= update_dep()         if $update_files;
+$failure ||= generate_def()       if $update_files;
 
 die_usage unless defined $failure;
 exit $failure ? 1 : 0;

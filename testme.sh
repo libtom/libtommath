@@ -295,8 +295,8 @@ if [[ "$CHECK_FORMAT" == "1" ]]
 then
   make astyle
   _check_git "make astyle"
-  perl helper.pl --update-makefiles
-  _check_git "helper.pl --update-makefiles"
+  perl helper.pl --update-files
+  _check_git "helper.pl --update-files"
   perl helper.pl --check-all
   _check_git "helper.pl --check-all"
   exit $?
