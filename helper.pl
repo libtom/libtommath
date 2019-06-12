@@ -222,16 +222,6 @@ sub patch_file {
   return $content;
 }
 
-sub version_from_tomcrypt_h {
-  my $h = read_file(shift);
-  if ($h =~ /\n#define\s*SCRYPT\s*"([0-9]+)\.([0-9]+)\.([0-9]+)(.*)"/s) {
-    return "VERSION_PC=$1.$2.$3", "VERSION_LT=1:1", "VERSION=$1.$2.$3$4", "PROJECT_NUMBER=$1.$2.$3$4";
-  }
-  else {
-    die "#define SCRYPT not found in tomcrypt.h";
-  }
-}
-
 sub process_makefiles {
   my $write = shift;
   my $changed_count = 0;
@@ -308,6 +298,7 @@ sub update_dep
 /* SPDX-License-Identifier: Unlicense */
 
 #if !(defined(LTM1) && defined(LTM2) && defined(LTM3))
+#define LTM_INSIDE
 #if defined(LTM2)
 #   define LTM3
 #endif
@@ -323,12 +314,10 @@ EOS
 
         print "Processing $filename\n";
 
-    # convert filename to upper case so we can use it as a define
+        # convert filename to upper case so we can use it as a define
         $define =~ tr/[a-z]/[A-Z]/;
         $define =~ tr/\./_/;
-        print {$class} << "EOS";
-#   define $define
-EOS
+        print {$class} "#   define $define\n";
 
         # now copy text and apply #ifdef as required
         my $apply = 0;
@@ -350,14 +339,12 @@ EOS
             $apply = 1;
         }
         while (<$src>) {
-            if (!($_ =~ /tommath\.h/)) {
+            if ($_ !~ /tommath\.h/) {
                 print {$out} $_;
             }
         }
         if ($apply == 1) {
-            print {$out} << 'EOS';
-#endif
-EOS
+            print {$out} "#endif\n";
         }
         close $src;
         close $out;
@@ -365,53 +352,58 @@ EOS
         unlink $filename;
         rename 'tmp', $filename;
     }
-    print {$class} << 'EOS';
-#endif
-EOS
+    print {$class} "#endif\n#endif\n";
 
     # now do classes
     my %depmap;
     foreach my $filename (glob 'bn*.c') {
-        open(my $src, '<', $filename) or die "Can't open source file!\n";
-        read $src, my $content, -s $src;
-        close $src;
+        my $content;
+        if ($filename =~ "bn_deprecated.c") {
+            open(my $src, '<', $filename) or die "Can't open source file!\n";
+            read $src, $content, -s $src;
+            close $src;
+        } else {
+            my $cc = $ENV{'CC'} || 'gcc';
+            $content = `$cc -E -x c -DLTM_ALL $filename`;
+            $content =~ s/^# 1 "$filename".*?^# 2 "$filename"//ms;
+        }
 
         # convert filename to upper case so we can use it as a define
         $filename =~ tr/[a-z]/[A-Z]/;
         $filename =~ tr/\./_/;
 
-        print {$class} << "EOS";
-#if defined($filename)
-EOS
+        print {$class} "#if defined($filename)\n";
         my $list = $filename;
 
         # strip comments
         $content =~ s{/\*.*?\*/}{}gs;
 
         # scan for mp_* and make classes
+        my @deps = ();
         foreach my $line (split /\n/, $content) {
             while ($line =~ /(fast_)?(s_)?mp\_[a-z_0-9]*(?=\()|(?<=\()mp\_[a-z_0-9]*(?=,)/g) {
                 my $a = $&;
                 next if $a eq "mp_err";
                 $a =~ tr/[a-z]/[A-Z]/;
                 $a = 'BN_' . $a . '_C';
-                if (!($list =~ /$a/)) {
-                    print {$class} << "EOS";
-#   define $a
-EOS
-                }
-                $list = $list . ',' . $a;
+                push @deps, $a;
             }
+        }
+        @deps = sort(@deps);
+        foreach my $a (@deps) {
+            if ($list !~ /$a/) {
+                print {$class} "#   define $a\n";
+            }
+            $list = $list . ',' . $a;
         }
         $depmap{$filename} = $list;
 
-        print {$class} << 'EOS';
-#endif
-
-EOS
+        print {$class} "#endif\n\n";
     }
 
     print {$class} << 'EOS';
+#ifdef LTM_INSIDE
+#undef LTM_INSIDE
 #ifdef LTM3
 #   define LTM_LAST
 #endif
@@ -442,8 +434,7 @@ sub generate_def {
     @files = map { my $x = $_; $x =~ s/^bn_|\.c$//g; $x; } @files;
     @files = grep(!/mp_radix_smap/, @files);
 
-    @files = grep(!/conversion/, @files);
-    push(@files, qw(mp_set_i32 mp_set_i64 mp_set_u32 mp_set_u64 mp_set_int mp_set_long mp_set_long_long mp_get_i32 mp_get_i64 mp_get_mag32 mp_get_mag64 mp_get_int mp_get_long mp_get_long_long mp_init_i32 mp_init_i64 mp_init_u32 mp_init_u64 mp_init_set_int));
+    push(@files, qw(mp_set_int mp_set_long mp_set_long_long mp_get_int mp_get_long mp_get_long_long mp_init_set_int));
 
     my $files = join("\n    ", sort(grep(/^mp_/, @files)));
     write_file "tommath.def", "; libtommath

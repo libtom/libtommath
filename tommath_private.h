@@ -169,7 +169,7 @@ typedef private_mp_word mp_word;
 #endif
 
 /* Minimum number of available digits in mp_int, MP_PREC >= MP_MIN_PREC */
-#define MP_MIN_PREC ((((CHAR_BIT * (int)sizeof(long long)) + MP_DIGIT_BIT) - 1) / MP_DIGIT_BIT)
+#define MP_MIN_PREC ((((int)MP_SIZEOF_BITS(long long) + MP_DIGIT_BIT) - 1) / MP_DIGIT_BIT)
 
 MP_STATIC_ASSERT(prec_geq_min_prec, MP_PREC >= MP_MIN_PREC)
 
@@ -230,5 +230,58 @@ MP_DEPRECATED(s_mp_karatsuba_sqr) mp_err mp_karatsuba_sqr(const mp_int *a, mp_in
 MP_DEPRECATED(s_mp_toom_mul) mp_err mp_toom_mul(const mp_int *a, const mp_int *b, mp_int *c);
 MP_DEPRECATED(s_mp_toom_sqr) mp_err mp_toom_sqr(const mp_int *a, mp_int *b);
 MP_DEPRECATED(s_mp_reverse) void bn_reverse(unsigned char *s, int len);
+
+/* code-generating macros */
+#define MP_SET_UNSIGNED(name, type)                                                    \
+    void name(mp_int * a, type b)                                                      \
+    {                                                                                  \
+        int i = 0;                                                                     \
+        while (b != 0u) {                                                              \
+            a->dp[i++] = ((mp_digit)b & MP_MASK);                                      \
+            if (MP_SIZEOF_BITS(type) <= MP_DIGIT_BIT) { break; }                       \
+            b >>= ((MP_SIZEOF_BITS(type) <= MP_DIGIT_BIT) ? 0 : MP_DIGIT_BIT);         \
+        }                                                                              \
+        a->used = i;                                                                   \
+        a->sign = MP_ZPOS;                                                             \
+        MP_ZERO_DIGITS(a->dp + a->used, a->alloc - a->used);                           \
+    }
+
+#define MP_SET_SIGNED(name, uname, type, utype)          \
+    void name(mp_int * a, type b)                        \
+    {                                                    \
+        uname(a, (b < 0) ? -(utype)b : (utype)b);        \
+        if (b < 0) { a->sign = MP_NEG; }                 \
+    }
+
+#define MP_INIT_INT(name , set, type)                    \
+    mp_err name(mp_int * a, type b)                      \
+    {                                                    \
+        mp_err err;                                      \
+        if ((err = mp_init(a)) != MP_OKAY) {             \
+            return err;                                  \
+        }                                                \
+        set(a, b);                                       \
+        return MP_OKAY;                                  \
+    }
+
+#define MP_GET_MAG(type, name)                                                         \
+    type name(const mp_int* a)                                                         \
+    {                                                                                  \
+        unsigned i = MP_MIN((unsigned)a->used, (unsigned)((MP_SIZEOF_BITS(type) + MP_DIGIT_BIT - 1) / MP_DIGIT_BIT)); \
+        type res = 0u;                                                                 \
+        while (i --> 0u) {                                                             \
+            res <<= ((MP_SIZEOF_BITS(type) <= MP_DIGIT_BIT) ? 0 : MP_DIGIT_BIT);       \
+            res |= (type)a->dp[i];                                                     \
+            if (MP_SIZEOF_BITS(type) <= MP_DIGIT_BIT) { break; }                       \
+        }                                                                              \
+        return res;                                                                    \
+    }
+
+#define MP_GET_SIGNED(type, name, mag)                        \
+    type name(const mp_int* a)                                \
+    {                                                         \
+        uint64_t res = mag(a);                                \
+        return (a->sign == MP_NEG) ? (type)-res : (type)res;  \
+    }
 
 #endif
