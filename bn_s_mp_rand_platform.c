@@ -22,9 +22,16 @@
 #define ARM
 #endif
 
+#ifdef _MSC_VER
+# pragma warning(push)
+# pragma warning (disable : 4668)
+#endif
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <wincrypt.h>
+#ifdef _MSC_VER
+# pragma warning(pop)
+#endif
 
 static mp_err s_read_win_csp(void *p, size_t n)
 {
