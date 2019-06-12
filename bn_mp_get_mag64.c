@@ -3,5 +3,5 @@
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
-MP_GET_MAG(uint64_t, mp_get_mag64)
+MP_GET_MAG(mp_get_mag64, uint64_t)
 #endif
