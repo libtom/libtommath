@@ -899,6 +899,27 @@ unsigned long mp_get_magl (mp_int * a);
 
 This will return the least significant bits of the mp\_int $a$ that fit into a ``long''.
 
+\subsection{Long Long Constants - platform dependant}
+
+\index{mp\_set\_ulonglong}
+\begin{alltt}
+void mp_set_ll (mp_int * a, long long b);
+void mp_set_ull (mp_int * a, unsigned long long b);
+\end{alltt}
+
+This will assign the value of the platform-dependent sized variable $b$ to the mp\_int $a$.
+
+To retrieve the value, the following functions can be used.
+
+\index{mp\_get\_ulonglong}
+\begin{alltt}
+long long mp_get_ll (mp_int * a);
+unsigned long long mp_get_ull (mp_int * a);
+unsigned long long mp_get_magll (mp_int * a);
+\end{alltt}
+
+This will return the least significant bits of the mp\_int $a$ that fit into a ``long''.
+
 \subsection{Initialize and Setting Constants}
 To both initialize and set small constants the following two functions are available.
 \index{mp\_init\_set} \index{mp\_init\_set\_int}

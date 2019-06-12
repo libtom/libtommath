@@ -469,11 +469,27 @@
 			>
 		</File>
 		<File
+			RelativePath="bn_mp_get_l.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_mp_get_ll.c"
+			>
+		</File>
+		<File
 			RelativePath="bn_mp_get_mag32.c"
 			>
 		</File>
 		<File
 			RelativePath="bn_mp_get_mag64.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_mp_get_magl.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_mp_get_magll.c"
 			>
 		</File>
 		<File
@@ -721,11 +737,27 @@
 			>
 		</File>
 		<File
+			RelativePath="bn_mp_set_l.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_mp_set_ll.c"
+			>
+		</File>
+		<File
 			RelativePath="bn_mp_set_u32.c"
 			>
 		</File>
 		<File
 			RelativePath="bn_mp_set_u64.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_mp_set_ul.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_mp_set_ull.c"
 			>
 		</File>
 		<File
