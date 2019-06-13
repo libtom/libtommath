@@ -780,9 +780,9 @@ int mp_count_bits(const mp_int *a);
 
 
 \section{Small Constants}
-Setting mp\_ints to small constants is a relatively common operation.  To accommodate these instances there are two
-small constant assignment functions.  The first function is used to set a single digit constant while the second sets
-an ISO C style ``unsigned long'' constant.  The reason for both functions is efficiency.  Setting a single digit is quick but the
+Setting mp\_ints to small constants is a relatively common operation.  To accommodate these instances there is a
+small constant assignment function.  This function is used to set a single digit constant.
+The reason for this function is efficiency.  Setting a single digit is quick but the
 domain of a digit can change (it's always at least $0 \ldots 127$).
 
 \subsection{Single Digit}
