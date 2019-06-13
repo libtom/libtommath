@@ -123,7 +123,7 @@ int main(void)
          tt = clock() - tt;
 
          /* display if prime */
-         printf("2^%-5ld - 1 is prime, test took %ld ticks\n", k, tt);
+         printf("2^%-5ld - 1 is prime, test took %ld ticks\n", k, (long)tt);
       }
 
       /* goto next odd exponent */
