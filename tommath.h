@@ -297,24 +297,28 @@ mp_err mp_init_u64(mp_int *a, uint64_t b) MP_WUR;
 /* get magnitude */
 uint32_t mp_get_mag32(const mp_int *a) MP_WUR;
 uint64_t mp_get_mag64(const mp_int *a) MP_WUR;
+unsigned long mp_get_magl(const mp_int *a) MP_WUR;
+unsigned long long mp_get_magll(const mp_int *a) MP_WUR;
 
 /* get integer, set integer (long) */
 long mp_get_l(const mp_int *a) MP_WUR;
 void mp_set_l(mp_int *a, long b);
+mp_err mp_init_l(mp_int *a, long b) MP_WUR;
 
 /* get integer, set integer (unsigned long) */
 #define mp_get_ul(a) ((unsigned long)mp_get_l(a))
 void mp_set_ul(mp_int *a, unsigned long b);
-unsigned long mp_get_magl(const mp_int *a) MP_WUR;
+mp_err mp_init_ul(mp_int *a, unsigned long b) MP_WUR;
 
 /* get integer, set integer (long long) */
 long long mp_get_ll(const mp_int *a) MP_WUR;
 void mp_set_ll(mp_int *a, long long b);
+mp_err mp_init_ll(mp_int *a, long long b) MP_WUR;
 
 /* get integer, set integer (unsigned long long) */
 #define mp_get_ull(a) ((unsigned long long)mp_get_ll(a))
 void mp_set_ull(mp_int *a, unsigned long long b);
-unsigned long long mp_get_magll(const mp_int *a) MP_WUR;
+mp_err mp_init_ull(mp_int *a, unsigned long long b) MP_WUR;
 
 /* set to single unsigned digit, up to MP_DIGIT_MAX */
 void mp_set(mp_int *a, mp_digit b);

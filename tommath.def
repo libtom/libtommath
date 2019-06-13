@@ -60,12 +60,16 @@ EXPORTS
     mp_init_copy
     mp_init_i32
     mp_init_i64
+    mp_init_l
+    mp_init_ll
     mp_init_multi
     mp_init_set
     mp_init_set_int
     mp_init_size
     mp_init_u32
     mp_init_u64
+    mp_init_ul
+    mp_init_ull
     mp_invmod
     mp_is_square
     mp_iseven

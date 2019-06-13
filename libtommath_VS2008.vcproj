@@ -525,6 +525,14 @@
 			>
 		</File>
 		<File
+			RelativePath="bn_mp_init_l.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_mp_init_ll.c"
+			>
+		</File>
+		<File
 			RelativePath="bn_mp_init_multi.c"
 			>
 		</File>
@@ -542,6 +550,14 @@
 		</File>
 		<File
 			RelativePath="bn_mp_init_u64.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_mp_init_ul.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_mp_init_ull.c"
 			>
 		</File>
 		<File
