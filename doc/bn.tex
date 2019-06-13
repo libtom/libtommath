@@ -927,6 +927,12 @@ To both initialize and set small constants the following two functions are avail
 int mp_init_set (mp_int * a, mp_digit b);
 int mp_init_i32 (mp_int * a, int32_t b);
 int mp_init_u32 (mp_int * a, uint32_t b);
+int mp_init_i64 (mp_int * a, int64_t b);
+int mp_init_u64 (mp_int * a, uint64_t b);
+int mp_init_l   (mp_int * a, long b);
+int mp_init_ul  (mp_int * a, unsigned long b);
+int mp_init_ll  (mp_int * a, long long b);
+int mp_init_ull (mp_int * a, unsigned long long b);
 \end{alltt}
 
 Both functions work like the previous counterparts except they first mp\_init $a$ before setting the values.
@@ -945,7 +951,7 @@ int main(void)
    \}
 
    /* initialize and set a long */
-   if ((result = mp_init_set_uint(&number2, 1023)) != MP_OKAY) \{
+   if ((result = mp_init_l(&number2, 1023)) != MP_OKAY) \{
       printf("Error setting number2: \%s",
              mp_error_to_string(result));
       return EXIT_FAILURE;
