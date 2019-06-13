@@ -863,7 +863,7 @@ int main(void)
    /* set the number to 654321 (note this is bigger than 127) */
    mp_set_u32(&number, 654321);
 
-   printf("number == \%lu", mp_get_i32(&number));
+   printf("number == \%" PRIi32, mp_get_i32(&number));
 
    /* we're done with it. */
    mp_clear(&number);
@@ -894,6 +894,7 @@ To retrieve the value, the following functions can be used.
 \begin{alltt}
 long mp_get_l (mp_int * a);
 unsigned long mp_get_ul (mp_int * a);
+unsigned long mp_get_magl (mp_int * a);
 \end{alltt}
 
 This will return the least significant bits of the mp\_int $a$ that fit into a ``long''.
@@ -930,7 +931,7 @@ int main(void)
    \}
 
    /* display */
-   printf("Number1, Number2 == \%lu, \%lu",
+   printf("Number1, Number2 == \%" PRIi32 ", \%" PRIi32,
           mp_get_i32(&number1), mp_get_i32(&number2));
 
    /* clear */
@@ -1377,7 +1378,7 @@ int main(void)
    \}
 
    /* display */
-   printf("number1 * number2 == \%lu", mp_get_i32(&number1));
+   printf("number1 * number2 == \%" PRIi32, mp_get_i32(&number1));
 
    /* free terms and return */
    mp_clear_multi(&number1, &number2, NULL);
