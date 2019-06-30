@@ -398,7 +398,7 @@ int main(void)
    pprime(k, li, &p, &q);
    t1 = clock() - t1;
 
-   printf("\n\nTook %ld ticks, %d bits\n", t1, mp_count_bits(&p));
+   printf("\n\nTook %d ticks, %d bits\n", t1, mp_count_bits(&p));
 
    mp_toradix(&p, buf, 10);
    printf("P == %s\n", buf);

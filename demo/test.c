@@ -40,11 +40,6 @@ static int64_t rand_int64(void)
    return x;
 }
 
-static unsigned long ulabs(long x)
-{
-   return x > 0 ? (unsigned long)x : -(unsigned long)x;
-}
-
 static uint32_t uabs32(int32_t x)
 {
    return x > 0 ? (uint32_t)x : -(uint32_t)x;
@@ -351,20 +346,10 @@ static int test_mp_kronecker(void)
    }
    for (cnt = 0; cnt < (int)(sizeof(kronecker)/sizeof(kronecker[0])); ++cnt) {
       k = kronecker[cnt].n;
-      if (k < 0) {
-         mp_set_ul(&a, (unsigned long)(-k));
-         mp_neg(&a, &a);
-      } else {
-         mp_set_ul(&a, (unsigned long) k);
-      }
+      mp_set_l(&a, k);
       /* only test positive values of a */
       for (m = -10; m <= 10; m++) {
-         if (m < 0) {
-            mp_set_ul(&b,(unsigned long)(-m));
-            mp_neg(&b, &b);
-         } else {
-            mp_set_ul(&b, (unsigned long) m);
-         }
+         mp_set_l(&b, m);
          if ((err = mp_kronecker(&a, &b, &i)) != MP_OKAY) {
             printf("Failed executing mp_kronecker(%ld | %ld) %s.\n", kronecker[cnt].n, m, mp_error_to_string(err));
             goto LBL_ERR;
@@ -394,15 +379,11 @@ static int test_mp_complement(void)
 
    for (i = 0; i < 1000; ++i) {
       long l = rand_long();
-      mp_set_ul(&a, ulabs(l));
-      if (l < 0)
-         mp_neg(&a, &a);
+      mp_set_l(&a, l);
       mp_complement(&a, &b);
 
       l = ~l;
-      mp_set_ul(&c, ulabs(l));
-      if (l < 0)
-         mp_neg(&c, &c);
+      mp_set_l(&c, l);
 
       if (mp_cmp(&b, &c) != MP_EQ) {
          printf("\nmp_complement() bad result!");
@@ -431,15 +412,11 @@ static int test_mp_signed_rsh(void)
       int em;
 
       l = rand_long();
-      mp_set_ul(&a, ulabs(l));
-      if (l < 0)
-         mp_neg(&a, &a);
+      mp_set_l(&a, l);
 
       em = abs(rand_int()) % 32;
 
-      mp_set_ul(&d, ulabs(l >> em));
-      if ((l >> em) < 0)
-         mp_neg(&d, &d);
+      mp_set_l(&d, l >> em);
 
       mp_signed_rsh(&a, em, &b);
       if (mp_cmp(&b, &d) != MP_EQ) {
@@ -469,18 +446,12 @@ static int test_mp_xor(void)
       long l, em;
 
       l = rand_long();
-      mp_set_ul(&a, ulabs(l));
-      if (l < 0)
-         mp_neg(&a, &a);
+      mp_set_l(&a,l);
 
       em = rand_long();
-      mp_set_ul(&b, ulabs(em));
-      if (em < 0)
-         mp_neg(&b, &b);
+      mp_set_l(&b, em);
 
-      mp_set_ul(&d, ulabs(l ^ em));
-      if ((l ^ em) < 0)
-         mp_neg(&d, &d);
+      mp_set_l(&d, l ^ em);
 
       mp_xor(&a, &b, &c);
       if (mp_cmp(&c, &d) != MP_EQ) {
@@ -510,18 +481,12 @@ static int test_mp_or(void)
       long l, em;
 
       l = rand_long();
-      mp_set_ul(&a, ulabs(l));
-      if (l < 0)
-         mp_neg(&a, &a);
+      mp_set_l(&a, l);
 
       em = rand_long();
-      mp_set_ul(&b, ulabs(em));
-      if (em < 0)
-         mp_neg(&b, &b);
+      mp_set_l(&b, em);
 
-      mp_set_ul(&d, ulabs(l | em));
-      if ((l | em) < 0)
-         mp_neg(&d, &d);
+      mp_set_l(&d, l | em);
 
       mp_or(&a, &b, &c);
       if (mp_cmp(&c, &d) != MP_EQ) {
@@ -550,18 +515,12 @@ static int test_mp_and(void)
       long l, em;
 
       l = rand_long();
-      mp_set_ul(&a, ulabs(l));
-      if (l < 0)
-         mp_neg(&a, &a);
+      mp_set_l(&a, l);
 
       em = rand_long();
-      mp_set_ul(&b, ulabs(em));
-      if (em < 0)
-         mp_neg(&b, &b);
+      mp_set_l(&b, em);
 
-      mp_set_ul(&d, ulabs(l & em));
-      if ((l & em) < 0)
-         mp_neg(&d, &d);
+      mp_set_l(&d, l & em);
 
       mp_and(&a, &b, &c);
       if (mp_cmp(&c, &d) != MP_EQ) {
