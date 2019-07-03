@@ -477,19 +477,19 @@
 			>
 		</File>
 		<File
-			RelativePath="bn_mp_get_mag32.c"
+			RelativePath="bn_mp_get_mag_u32.c"
 			>
 		</File>
 		<File
-			RelativePath="bn_mp_get_mag64.c"
+			RelativePath="bn_mp_get_mag_u64.c"
 			>
 		</File>
 		<File
-			RelativePath="bn_mp_get_magl.c"
+			RelativePath="bn_mp_get_mag_ul.c"
 			>
 		</File>
 		<File
-			RelativePath="bn_mp_get_magll.c"
+			RelativePath="bn_mp_get_mag_ull.c"
 			>
 		</File>
 		<File

@@ -48,10 +48,10 @@ EXPORTS
     mp_get_ll
     mp_get_long
     mp_get_long_long
-    mp_get_mag32
-    mp_get_mag64
-    mp_get_magl
-    mp_get_magll
+    mp_get_mag_u32
+    mp_get_mag_u64
+    mp_get_mag_ul
+    mp_get_mag_ull
     mp_grow
     mp_ilogb
     mp_import

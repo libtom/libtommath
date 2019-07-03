@@ -29,13 +29,13 @@ bn_mp_cnt_lsb.o bn_mp_complement.o bn_mp_copy.o bn_mp_count_bits.o bn_mp_decr.o 
 bn_mp_div_2d.o bn_mp_div_3.o bn_mp_div_d.o bn_mp_dr_is_modulus.o bn_mp_dr_reduce.o bn_mp_dr_setup.o \
 bn_mp_error_to_string.o bn_mp_exch.o bn_mp_export.o bn_mp_expt_d.o bn_mp_exptmod.o bn_mp_exteuclid.o \
 bn_mp_fread.o bn_mp_fwrite.o bn_mp_gcd.o bn_mp_get_double.o bn_mp_get_i32.o bn_mp_get_i64.o bn_mp_get_l.o \
-bn_mp_get_ll.o bn_mp_get_mag32.o bn_mp_get_mag64.o bn_mp_get_magl.o bn_mp_get_magll.o bn_mp_grow.o \
-bn_mp_ilogb.o bn_mp_import.o bn_mp_incr.o bn_mp_init.o bn_mp_init_copy.o bn_mp_init_i32.o bn_mp_init_i64.o \
-bn_mp_init_l.o bn_mp_init_ll.o bn_mp_init_multi.o bn_mp_init_set.o bn_mp_init_size.o bn_mp_init_u32.o \
-bn_mp_init_u64.o bn_mp_init_ul.o bn_mp_init_ull.o bn_mp_invmod.o bn_mp_is_square.o bn_mp_iseven.o \
-bn_mp_isodd.o bn_mp_kronecker.o bn_mp_lcm.o bn_mp_lshd.o bn_mp_mod.o bn_mp_mod_2d.o bn_mp_mod_d.o \
-bn_mp_montgomery_calc_normalization.o bn_mp_montgomery_reduce.o bn_mp_montgomery_setup.o bn_mp_mul.o \
-bn_mp_mul_2.o bn_mp_mul_2d.o bn_mp_mul_d.o bn_mp_mulmod.o bn_mp_n_root.o bn_mp_neg.o bn_mp_or.o \
+bn_mp_get_ll.o bn_mp_get_mag_u32.o bn_mp_get_mag_u64.o bn_mp_get_mag_ul.o bn_mp_get_mag_ull.o \
+bn_mp_grow.o bn_mp_ilogb.o bn_mp_import.o bn_mp_incr.o bn_mp_init.o bn_mp_init_copy.o bn_mp_init_i32.o \
+bn_mp_init_i64.o bn_mp_init_l.o bn_mp_init_ll.o bn_mp_init_multi.o bn_mp_init_set.o bn_mp_init_size.o \
+bn_mp_init_u32.o bn_mp_init_u64.o bn_mp_init_ul.o bn_mp_init_ull.o bn_mp_invmod.o bn_mp_is_square.o \
+bn_mp_iseven.o bn_mp_isodd.o bn_mp_kronecker.o bn_mp_lcm.o bn_mp_lshd.o bn_mp_mod.o bn_mp_mod_2d.o \
+bn_mp_mod_d.o bn_mp_montgomery_calc_normalization.o bn_mp_montgomery_reduce.o bn_mp_montgomery_setup.o \
+bn_mp_mul.o bn_mp_mul_2.o bn_mp_mul_2d.o bn_mp_mul_d.o bn_mp_mulmod.o bn_mp_n_root.o bn_mp_neg.o bn_mp_or.o \
 bn_mp_prime_fermat.o bn_mp_prime_frobenius_underwood.o bn_mp_prime_is_prime.o \
 bn_mp_prime_miller_rabin.o bn_mp_prime_next_prime.o bn_mp_prime_rabin_miller_trials.o \
 bn_mp_prime_rand.o bn_mp_prime_strong_lucas_selfridge.o bn_mp_radix_size.o bn_mp_radix_smap.o \
