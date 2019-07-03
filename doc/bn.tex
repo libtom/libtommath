@@ -780,9 +780,9 @@ int mp_count_bits(const mp_int *a);
 
 
 \section{Small Constants}
-Setting mp\_ints to small constants is a relatively common operation.  To accommodate these instances there are two
-small constant assignment functions.  The first function is used to set a single digit constant while the second sets
-an ISO C style ``unsigned long'' constant.  The reason for both functions is efficiency.  Setting a single digit is quick but the
+Setting mp\_ints to small constants is a relatively common operation.  To accommodate these instances there is a
+small constant assignment function.  This function is used to set a single digit constant.
+The reason for this function is efficiency.  Setting a single digit is quick but the
 domain of a digit can change (it's always at least $0 \ldots 127$).
 
 \subsection{Single Digit}
@@ -899,6 +899,27 @@ unsigned long mp_get_magl (mp_int * a);
 
 This will return the least significant bits of the mp\_int $a$ that fit into a ``long''.
 
+\subsection{Long Long Constants - platform dependant}
+
+\index{mp\_set\_ulonglong}
+\begin{alltt}
+void mp_set_ll (mp_int * a, long long b);
+void mp_set_ull (mp_int * a, unsigned long long b);
+\end{alltt}
+
+This will assign the value of the platform-dependent sized variable $b$ to the mp\_int $a$.
+
+To retrieve the value, the following functions can be used.
+
+\index{mp\_get\_ulonglong}
+\begin{alltt}
+long long mp_get_ll (mp_int * a);
+unsigned long long mp_get_ull (mp_int * a);
+unsigned long long mp_get_magll (mp_int * a);
+\end{alltt}
+
+This will return the least significant bits of the mp\_int $a$ that fit into a ``long long''.
+
 \subsection{Initialize and Setting Constants}
 To both initialize and set small constants the following two functions are available.
 \index{mp\_init\_set} \index{mp\_init\_set\_int}
@@ -906,6 +927,12 @@ To both initialize and set small constants the following two functions are avail
 int mp_init_set (mp_int * a, mp_digit b);
 int mp_init_i32 (mp_int * a, int32_t b);
 int mp_init_u32 (mp_int * a, uint32_t b);
+int mp_init_i64 (mp_int * a, int64_t b);
+int mp_init_u64 (mp_int * a, uint64_t b);
+int mp_init_l   (mp_int * a, long b);
+int mp_init_ul  (mp_int * a, unsigned long b);
+int mp_init_ll  (mp_int * a, long long b);
+int mp_init_ull (mp_int * a, unsigned long long b);
 \end{alltt}
 
 Both functions work like the previous counterparts except they first mp\_init $a$ before setting the values.
@@ -924,7 +951,7 @@ int main(void)
    \}
 
    /* initialize and set a long */
-   if ((result = mp_init_set_uint(&number2, 1023)) != MP_OKAY) \{
+   if ((result = mp_init_l(&number2, 1023)) != MP_OKAY) \{
       printf("Error setting number2: \%s",
              mp_error_to_string(result));
       return EXIT_FAILURE;

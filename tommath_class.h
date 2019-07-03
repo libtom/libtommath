@@ -50,8 +50,12 @@
 #   define BN_MP_GET_DOUBLE_C
 #   define BN_MP_GET_I32_C
 #   define BN_MP_GET_I64_C
+#   define BN_MP_GET_L_C
+#   define BN_MP_GET_LL_C
 #   define BN_MP_GET_MAG32_C
 #   define BN_MP_GET_MAG64_C
+#   define BN_MP_GET_MAGL_C
+#   define BN_MP_GET_MAGLL_C
 #   define BN_MP_GROW_C
 #   define BN_MP_ILOGB_C
 #   define BN_MP_IMPORT_C
@@ -60,11 +64,15 @@
 #   define BN_MP_INIT_COPY_C
 #   define BN_MP_INIT_I32_C
 #   define BN_MP_INIT_I64_C
+#   define BN_MP_INIT_L_C
+#   define BN_MP_INIT_LL_C
 #   define BN_MP_INIT_MULTI_C
 #   define BN_MP_INIT_SET_C
 #   define BN_MP_INIT_SIZE_C
 #   define BN_MP_INIT_U32_C
 #   define BN_MP_INIT_U64_C
+#   define BN_MP_INIT_UL_C
+#   define BN_MP_INIT_ULL_C
 #   define BN_MP_INVMOD_C
 #   define BN_MP_IS_SQUARE_C
 #   define BN_MP_ISEVEN_C
@@ -113,8 +121,12 @@
 #   define BN_MP_SET_DOUBLE_C
 #   define BN_MP_SET_I32_C
 #   define BN_MP_SET_I64_C
+#   define BN_MP_SET_L_C
+#   define BN_MP_SET_LL_C
 #   define BN_MP_SET_U32_C
 #   define BN_MP_SET_U64_C
+#   define BN_MP_SET_UL_C
+#   define BN_MP_SET_ULL_C
 #   define BN_MP_SHRINK_C
 #   define BN_MP_SIGNED_BIN_SIZE_C
 #   define BN_MP_SIGNED_RSH_C
@@ -445,10 +457,24 @@
 #   define BN_MP_GET_MAG64_C
 #endif
 
+#if defined(BN_MP_GET_L_C)
+#   define BN_MP_GET_MAGL_C
+#endif
+
+#if defined(BN_MP_GET_LL_C)
+#   define BN_MP_GET_MAGLL_C
+#endif
+
 #if defined(BN_MP_GET_MAG32_C)
 #endif
 
 #if defined(BN_MP_GET_MAG64_C)
+#endif
+
+#if defined(BN_MP_GET_MAGL_C)
+#endif
+
+#if defined(BN_MP_GET_MAGLL_C)
 #endif
 
 #if defined(BN_MP_GROW_C)
@@ -501,6 +527,16 @@
 #   define BN_MP_SET_I64_C
 #endif
 
+#if defined(BN_MP_INIT_L_C)
+#   define BN_MP_INIT_C
+#   define BN_MP_SET_L_C
+#endif
+
+#if defined(BN_MP_INIT_LL_C)
+#   define BN_MP_INIT_C
+#   define BN_MP_SET_LL_C
+#endif
+
 #if defined(BN_MP_INIT_MULTI_C)
 #   define BN_MP_CLEAR_C
 #   define BN_MP_INIT_C
@@ -522,6 +558,16 @@
 #if defined(BN_MP_INIT_U64_C)
 #   define BN_MP_INIT_C
 #   define BN_MP_SET_U64_C
+#endif
+
+#if defined(BN_MP_INIT_UL_C)
+#   define BN_MP_INIT_C
+#   define BN_MP_SET_UL_C
+#endif
+
+#if defined(BN_MP_INIT_ULL_C)
+#   define BN_MP_INIT_C
+#   define BN_MP_SET_ULL_C
 #endif
 
 #if defined(BN_MP_INVMOD_C)
@@ -903,10 +949,24 @@
 #   define BN_MP_SET_U64_C
 #endif
 
+#if defined(BN_MP_SET_L_C)
+#   define BN_MP_SET_UL_C
+#endif
+
+#if defined(BN_MP_SET_LL_C)
+#   define BN_MP_SET_ULL_C
+#endif
+
 #if defined(BN_MP_SET_U32_C)
 #endif
 
 #if defined(BN_MP_SET_U64_C)
+#endif
+
+#if defined(BN_MP_SET_UL_C)
+#endif
+
+#if defined(BN_MP_SET_ULL_C)
 #endif
 
 #if defined(BN_MP_SHRINK_C)
