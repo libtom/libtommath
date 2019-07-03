@@ -515,8 +515,8 @@ mp_err mp_lcm(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
  *
  * returns error if a < 0 and b is even
  */
-mp_err mp_root(const mp_int *a, uint32_t b, mp_int *c) MP_WUR;
-MP_DEPRECATED(mp_root) mp_err mp_n_root(const mp_int *a, mp_digit b, mp_int *c) MP_WUR;
+mp_err mp_root_u32(const mp_int *a, uint32_t b, mp_int *c) MP_WUR;
+MP_DEPRECATED(mp_root_u32) mp_err mp_n_root(const mp_int *a, mp_digit b, mp_int *c) MP_WUR;
 MP_DEPRECATED(mp_n_root_ex) mp_err mp_n_root_ex(const mp_int *a, mp_digit b, mp_int *c, int fast) MP_WUR;
 
 /* special sqrt algo */
@@ -681,8 +681,8 @@ mp_err mp_prime_rand(mp_int *a, int t, int size, int flags) MP_WUR;
 mp_err mp_ilogb(const mp_int *a, uint32_t base, mp_int *c) MP_WUR;
 
 /* c = a**b */
-mp_err mp_expt(const mp_int *a, uint32_t b, mp_int *c) MP_WUR;
-MP_DEPRECATED(mp_exp) mp_err mp_expt_d(const mp_int *a, mp_digit b, mp_int *c) MP_WUR;
+mp_err mp_expt_u32(const mp_int *a, uint32_t b, mp_int *c) MP_WUR;
+MP_DEPRECATED(mp_expt_u32) mp_err mp_expt_d(const mp_int *a, mp_digit b, mp_int *c) MP_WUR;
 MP_DEPRECATED(mp_expt_d) mp_err mp_expt_d_ex(const mp_int *a, mp_digit b, mp_int *c, int fast) MP_WUR;
 
 /* ---> radix conversion <--- */

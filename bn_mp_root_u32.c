@@ -1,5 +1,5 @@
 #include "tommath_private.h"
-#ifdef BN_MP_ROOT_C
+#ifdef BN_MP_ROOT_U32_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
@@ -12,7 +12,7 @@
  * which will find the root in log(N) time where
  * each step involves a fair bit.
  */
-mp_err mp_root(const mp_int *a, uint32_t b, mp_int *c)
+mp_err mp_root_u32(const mp_int *a, uint32_t b, mp_int *c)
 {
    mp_int t1, t2, t3, a_;
    mp_ord cmp;
@@ -75,7 +75,7 @@ mp_err mp_root(const mp_int *a, uint32_t b, mp_int *c)
       /* t2 = t1 - ((t1**b - a) / (b * t1**(b-1))) */
 
       /* t3 = t1**(b-1) */
-      if ((err = mp_expt(&t1, b - 1u, &t3)) != MP_OKAY) {
+      if ((err = mp_expt_u32(&t1, b - 1u, &t3)) != MP_OKAY) {
          goto LBL_ERR;
       }
       /* numerator */
@@ -115,7 +115,7 @@ mp_err mp_root(const mp_int *a, uint32_t b, mp_int *c)
    /* result can be off by a few so check */
    /* Loop beneath can overshoot by one if found root is smaller than actual root */
    for (;;) {
-      if ((err = mp_expt(&t1, b, &t2)) != MP_OKAY) {
+      if ((err = mp_expt_u32(&t1, b, &t2)) != MP_OKAY) {
          goto LBL_ERR;
       }
       cmp = mp_cmp(&t2, &a_);
@@ -133,7 +133,7 @@ mp_err mp_root(const mp_int *a, uint32_t b, mp_int *c)
    }
    /* correct overshoot from above or from recurrence */
    for (;;) {
-      if ((err = mp_expt(&t1, b, &t2)) != MP_OKAY) {
+      if ((err = mp_expt_u32(&t1, b, &t2)) != MP_OKAY) {
          goto LBL_ERR;
       }
       if (mp_cmp(&t2, &a_) == MP_GT) {

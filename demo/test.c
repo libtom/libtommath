@@ -760,7 +760,7 @@ static int test_mp_sqrt(void)
          printf("\nmp_sqrt() error!");
          goto LBL_ERR;
       }
-      mp_root(&a, 2uL, &c);
+      mp_root_u32(&a, 2uL, &c);
       if (mp_cmp_mag(&b, &c) != MP_EQ) {
          printf("mp_sqrt() bad result!\n");
          goto LBL_ERR;
@@ -1475,7 +1475,7 @@ static int test_mp_ilogb(void)
 
    /*Test upper edgecase with base UINT32_MAX and number (UINT32_MAX/2)*UINT32_MAX^10  */
    mp_set(&a, max_base);
-   if (mp_expt(&a, 10uL, &a) != MP_OKAY) {
+   if (mp_expt_u32(&a, 10uL, &a) != MP_OKAY) {
       goto LBL_ERR;
    }
    if (mp_add_d(&a, max_base / 2, &a) != MP_OKAY) {
@@ -1649,7 +1649,7 @@ LTM_ERR:
    All numbers as strings to simplifiy things, especially for the
    low-mp branch.
 */
-static int test_mp_root(void)
+static int test_mp_root_u32(void)
 {
    mp_int a, c, r;
    mp_err e;
@@ -1852,10 +1852,10 @@ static int test_mp_root(void)
 #else
       for (j = 3; j < 100; j++) {
 #endif
-         mp_root(&a, (uint32_t)j, &c);
+         mp_root_u32(&a, (uint32_t)j, &c);
          mp_read_radix(&r, root[i][j-3], 10);
          if (mp_cmp(&r, &c) != MP_EQ) {
-            fprintf(stderr, "mp_root failed at input #%d, root #%d\n", i, j);
+            fprintf(stderr, "mp_root_u32 failed at input #%d, root #%d\n", i, j);
             goto LTM_ERR;
          }
       }
@@ -2065,7 +2065,7 @@ int unit_tests(int argc, char **argv)
       T(mp_is_square),
       T(mp_kronecker),
       T(mp_montgomery_reduce),
-      T(mp_root),
+      T(mp_root_u32),
       T(mp_or),
       T(mp_prime_is_prime),
       T(mp_prime_rand),

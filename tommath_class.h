@@ -41,7 +41,7 @@
 #   define BN_MP_ERROR_TO_STRING_C
 #   define BN_MP_EXCH_C
 #   define BN_MP_EXPORT_C
-#   define BN_MP_EXPT_C
+#   define BN_MP_EXPT_U32_C
 #   define BN_MP_EXPTMOD_C
 #   define BN_MP_EXTEUCLID_C
 #   define BN_MP_FREAD_C
@@ -115,7 +115,7 @@
 #   define BN_MP_REDUCE_IS_2K_C
 #   define BN_MP_REDUCE_IS_2K_L_C
 #   define BN_MP_REDUCE_SETUP_C
-#   define BN_MP_ROOT_C
+#   define BN_MP_ROOT_U32_C
 #   define BN_MP_RSHD_C
 #   define BN_MP_SET_C
 #   define BN_MP_SET_DOUBLE_C
@@ -185,9 +185,9 @@
 #   define BN_MP_BALANCE_MUL_C
 #   define BN_MP_CMP_D_C
 #   define BN_MP_EXPTMOD_FAST_C
-#   define BN_MP_EXPT_C
 #   define BN_MP_EXPT_D_C
 #   define BN_MP_EXPT_D_EX_C
+#   define BN_MP_EXPT_U32_C
 #   define BN_MP_GET_BIT_C
 #   define BN_MP_GET_INT_C
 #   define BN_MP_GET_LONG_C
@@ -208,7 +208,7 @@
 #   define BN_MP_PRIME_IS_DIVISIBLE_C
 #   define BN_MP_PRIME_RANDOM_EX_C
 #   define BN_MP_RAND_DIGIT_C
-#   define BN_MP_ROOT_C
+#   define BN_MP_ROOT_U32_C
 #   define BN_MP_SET_INT_C
 #   define BN_MP_SET_LONG_C
 #   define BN_MP_SET_LONG_LONG_C
@@ -393,7 +393,7 @@
 #   define BN_MP_INIT_COPY_C
 #endif
 
-#if defined(BN_MP_EXPT_C)
+#if defined(BN_MP_EXPT_U32_C)
 #   define BN_MP_CLEAR_C
 #   define BN_MP_INIT_COPY_C
 #   define BN_MP_MUL_C
@@ -490,7 +490,7 @@
 #   define BN_MP_COPY_C
 #   define BN_MP_COUNT_BITS_C
 #   define BN_MP_EXCH_C
-#   define BN_MP_EXPT_C
+#   define BN_MP_EXPT_U32_C
 #   define BN_MP_INIT_MULTI_C
 #   define BN_MP_MUL_C
 #   define BN_MP_SET_C
@@ -913,7 +913,7 @@
 #   define BN_MP_DIV_C
 #endif
 
-#if defined(BN_MP_ROOT_C)
+#if defined(BN_MP_ROOT_U32_C)
 #   define BN_MP_2EXPT_C
 #   define BN_MP_ADD_D_C
 #   define BN_MP_CLEAR_MULTI_C
@@ -922,7 +922,7 @@
 #   define BN_MP_COUNT_BITS_C
 #   define BN_MP_DIV_C
 #   define BN_MP_EXCH_C
-#   define BN_MP_EXPT_C
+#   define BN_MP_EXPT_U32_C
 #   define BN_MP_INIT_MULTI_C
 #   define BN_MP_MUL_C
 #   define BN_MP_MUL_D_C

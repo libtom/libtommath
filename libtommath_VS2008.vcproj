@@ -433,7 +433,7 @@
 			>
 		</File>
 		<File
-			RelativePath="bn_mp_expt.c"
+			RelativePath="bn_mp_expt_u32.c"
 			>
 		</File>
 		<File
@@ -729,7 +729,7 @@
 			>
 		</File>
 		<File
-			RelativePath="bn_mp_root.c"
+			RelativePath="bn_mp_root_u32.c"
 			>
 		</File>
 		<File
