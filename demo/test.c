@@ -90,7 +90,7 @@ static int test_trivial_stuff(void)
    if (mp_get_u32(&b) != (uint32_t)-4) {
       goto LBL_ERR;
    }
-   if (mp_get_mag32(&b) != 4) {
+   if (mp_get_mag_u32(&b) != 4) {
       goto LBL_ERR;
    }
    /* a: -5-> b: 1 */
@@ -139,7 +139,7 @@ static int check_get_set_i32(mp_int *a, int32_t b)
    if (mp_shrink(a) != MP_OKAY) return EXIT_FAILURE;
    if (mp_get_i32(a) != b) return EXIT_FAILURE;
    if (mp_get_u32(a) != (uint32_t)b) return EXIT_FAILURE;
-   if (mp_get_mag32(a) != uabs32(b)) return EXIT_FAILURE;
+   if (mp_get_mag_u32(a) != uabs32(b)) return EXIT_FAILURE;
 
    mp_set_u32(a, (uint32_t)b);
    if (mp_get_u32(a) != (uint32_t)b) return EXIT_FAILURE;
@@ -186,7 +186,7 @@ static int check_get_set_i64(mp_int *a, int64_t b)
    if (mp_shrink(a) != MP_OKAY) return EXIT_FAILURE;
    if (mp_get_i64(a) != b) return EXIT_FAILURE;
    if (mp_get_u64(a) != (uint64_t)b) return EXIT_FAILURE;
-   if (mp_get_mag64(a) != uabs64(b)) return EXIT_FAILURE;
+   if (mp_get_mag_u64(a) != uabs64(b)) return EXIT_FAILURE;
 
    mp_set_u64(a, (uint64_t)b);
    if (mp_get_u64(a) != (uint64_t)b) return EXIT_FAILURE;

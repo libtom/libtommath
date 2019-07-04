@@ -839,10 +839,10 @@ The value can be obtained again by calling the following functions.
 \begin{alltt}
 int32_t mp_get_i32 (mp_int * a);
 uint32_t mp_get_u32 (mp_int * a);
-uint32_t mp_get_mag32 (mp_int * a);
+uint32_t mp_get_mag_u32 (mp_int * a);
 int64_t mp_get_i64 (mp_int * a);
 uint64_t mp_get_u64 (mp_int * a);
-uint64_t mp_get_mag64 (mp_int * a);
+uint64_t mp_get_mag_u64 (mp_int * a);
 \end{alltt}
 
 These functions return the 32 or 64 least significant bits of $a$ respectively. The unsigned functions
@@ -894,7 +894,7 @@ To retrieve the value, the following functions can be used.
 \begin{alltt}
 long mp_get_l (mp_int * a);
 unsigned long mp_get_ul (mp_int * a);
-unsigned long mp_get_magl (mp_int * a);
+unsigned long mp_get_mag_ul (mp_int * a);
 \end{alltt}
 
 This will return the least significant bits of the mp\_int $a$ that fit into a ``long''.
@@ -915,7 +915,7 @@ To retrieve the value, the following functions can be used.
 \begin{alltt}
 long long mp_get_ll (mp_int * a);
 unsigned long long mp_get_ull (mp_int * a);
-unsigned long long mp_get_magll (mp_int * a);
+unsigned long long mp_get_mag_ull (mp_int * a);
 \end{alltt}
 
 This will return the least significant bits of the mp\_int $a$ that fit into a ``long long''.

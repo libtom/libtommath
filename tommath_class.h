@@ -52,10 +52,10 @@
 #   define BN_MP_GET_I64_C
 #   define BN_MP_GET_L_C
 #   define BN_MP_GET_LL_C
-#   define BN_MP_GET_MAG32_C
-#   define BN_MP_GET_MAG64_C
-#   define BN_MP_GET_MAGL_C
-#   define BN_MP_GET_MAGLL_C
+#   define BN_MP_GET_MAG_U32_C
+#   define BN_MP_GET_MAG_U64_C
+#   define BN_MP_GET_MAG_UL_C
+#   define BN_MP_GET_MAG_ULL_C
 #   define BN_MP_GROW_C
 #   define BN_MP_ILOGB_C
 #   define BN_MP_IMPORT_C
@@ -191,8 +191,9 @@
 #   define BN_MP_GET_INT_C
 #   define BN_MP_GET_LONG_C
 #   define BN_MP_GET_LONG_LONG_C
-#   define BN_MP_GET_MAG32_C
-#   define BN_MP_GET_MAG64_C
+#   define BN_MP_GET_MAG_U32_C
+#   define BN_MP_GET_MAG_ULL_C
+#   define BN_MP_GET_MAG_UL_C
 #   define BN_MP_INIT_SET_INT_C
 #   define BN_MP_INIT_U32_C
 #   define BN_MP_INVMOD_SLOW_C
@@ -450,31 +451,31 @@
 #endif
 
 #if defined(BN_MP_GET_I32_C)
-#   define BN_MP_GET_MAG32_C
+#   define BN_MP_GET_MAG_U32_C
 #endif
 
 #if defined(BN_MP_GET_I64_C)
-#   define BN_MP_GET_MAG64_C
+#   define BN_MP_GET_MAG_U64_C
 #endif
 
 #if defined(BN_MP_GET_L_C)
-#   define BN_MP_GET_MAGL_C
+#   define BN_MP_GET_MAG_UL_C
 #endif
 
 #if defined(BN_MP_GET_LL_C)
-#   define BN_MP_GET_MAGLL_C
+#   define BN_MP_GET_MAG_ULL_C
 #endif
 
-#if defined(BN_MP_GET_MAG32_C)
+#if defined(BN_MP_GET_MAG_U32_C)
 #endif
 
-#if defined(BN_MP_GET_MAG64_C)
+#if defined(BN_MP_GET_MAG_U64_C)
 #endif
 
-#if defined(BN_MP_GET_MAGL_C)
+#if defined(BN_MP_GET_MAG_UL_C)
 #endif
 
-#if defined(BN_MP_GET_MAGLL_C)
+#if defined(BN_MP_GET_MAG_ULL_C)
 #endif
 
 #if defined(BN_MP_GROW_C)
