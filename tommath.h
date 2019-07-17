@@ -5,6 +5,7 @@
 #define BN_H_
 
 #include <stdint.h>
+#include <stddef.h>
 #include <limits.h>
 
 #ifdef LTM_NO_FILE
