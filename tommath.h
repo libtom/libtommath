@@ -6,7 +6,6 @@
 
 #include <stdint.h>
 #include <stddef.h>
-#include <limits.h>
 
 #ifdef LTM_NO_FILE
 #  warning LTM_NO_FILE has been deprecated, use MP_NO_FILE.
@@ -175,10 +174,6 @@ TOOM_SQR_CUTOFF;
 #   endif
 #   define MP_PREC (MP_DEPRECATED_PRAGMA("MP_PREC is an internal macro") PRIVATE_MP_PREC)
 #endif
-
-/* size of comba arrays, should be at least 2 * 2**(BITS_PER_WORD - BITS_PER_DIGIT*2) */
-#define PRIVATE_MP_WARRAY (int)(1uLL << (((CHAR_BIT * sizeof(private_mp_word)) - (2 * MP_DIGIT_BIT)) + 1))
-#define MP_WARRAY (MP_DEPRECATED_PRAGMA("MP_WARRAY is an internal macro") PRIVATE_MP_WARRAY)
 
 #if defined(__GNUC__) && __GNUC__ >= 4
 #   define MP_NULL_TERMINATED __attribute__((sentinel))
