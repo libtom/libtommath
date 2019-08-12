@@ -685,7 +685,7 @@ static int test_mp_get_ul(void)
       return EXIT_FAILURE;
    }
 
-   for (i = 0; i < ((int)MP_SIZEOF_BITS(unsigned long) - 1); ++i) {
+   for (i = 0; i < (MP_SIZEOF_BITS(unsigned long) - 1); ++i) {
       t = (1UL << (i+1)) - 1;
       if (!t)
          t = ~0UL;
@@ -718,7 +718,7 @@ static int test_mp_get_u64(void)
       return EXIT_FAILURE;
    }
 
-   for (i = 0; i < (int)(MP_SIZEOF_BITS(unsigned long long) - 1); ++i) {
+   for (i = 0; i < (MP_SIZEOF_BITS(unsigned long long) - 1); ++i) {
       r = (1ULL << (i+1)) - 1;
       if (!r)
          r = ~0ULL;

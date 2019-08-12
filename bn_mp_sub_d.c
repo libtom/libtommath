@@ -59,7 +59,7 @@ mp_err mp_sub_d(const mp_int *a, mp_digit b, mp_int *c)
       /* subtract digits, mu is carry */
       for (ix = 0; ix < a->used; ix++) {
          *tmpc    = *tmpa++ - mu;
-         mu       = *tmpc >> (MP_SIZEOF_BITS(mp_digit) - 1u);
+         mu       = *tmpc >> (MP_SIZEOF_BITS(mp_digit) - 1);
          *tmpc++ &= MP_MASK;
       }
    }

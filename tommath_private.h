@@ -155,8 +155,8 @@ typedef private_mp_word mp_word;
 #define MP_IS_EVEN(a) (((a)->used == 0) || (((a)->dp[0] & 1u) == 0u))
 #define MP_IS_ODD(a)  (((a)->used > 0) && (((a)->dp[0] & 1u) == 1u))
 
-#define MP_SIZEOF_BITS(type)    ((size_t)CHAR_BIT * sizeof(type))
-#define MP_MAXFAST              (int)(1uL << (MP_SIZEOF_BITS(mp_word) - (2u * (size_t)MP_DIGIT_BIT)))
+#define MP_SIZEOF_BITS(type)    (CHAR_BIT * (int)sizeof(type))
+#define MP_MAXFAST              (1 << (MP_SIZEOF_BITS(mp_word) - (2 * MP_DIGIT_BIT)))
 
 /* TODO: Remove PRIVATE_MP_WARRAY as soon as deprecated MP_WARRAY is removed from tommath.h */
 #undef MP_WARRAY
@@ -169,7 +169,7 @@ typedef private_mp_word mp_word;
 #endif
 
 /* Minimum number of available digits in mp_int, MP_PREC >= MP_MIN_PREC */
-#define MP_MIN_PREC ((((int)MP_SIZEOF_BITS(long long) + MP_DIGIT_BIT) - 1) / MP_DIGIT_BIT)
+#define MP_MIN_PREC (((MP_SIZEOF_BITS(long long) + MP_DIGIT_BIT) - 1) / MP_DIGIT_BIT)
 
 MP_STATIC_ASSERT(prec_geq_min_prec, MP_PREC >= MP_MIN_PREC)
 
