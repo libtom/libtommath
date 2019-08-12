@@ -267,9 +267,9 @@ MP_DEPRECATED(s_mp_reverse) void bn_reverse(unsigned char *s, int len);
 #define MP_GET_MAG(name, type)                                                         \
     type name(const mp_int* a)                                                         \
     {                                                                                  \
-        unsigned i = MP_MIN((unsigned)a->used, (unsigned)((MP_SIZEOF_BITS(type) + MP_DIGIT_BIT - 1) / MP_DIGIT_BIT)); \
+        int i = MP_MIN(a->used, ((MP_SIZEOF_BITS(type) + MP_DIGIT_BIT - 1) / MP_DIGIT_BIT)); \
         type res = 0u;                                                                 \
-        while (i --> 0u) {                                                             \
+        while (i --> 0) {                                                              \
             res <<= ((MP_SIZEOF_BITS(type) <= MP_DIGIT_BIT) ? 0 : MP_DIGIT_BIT);       \
             res |= (type)a->dp[i];                                                     \
             if (MP_SIZEOF_BITS(type) <= MP_DIGIT_BIT) { break; }                       \
