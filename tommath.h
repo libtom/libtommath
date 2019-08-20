@@ -703,6 +703,7 @@ MP_DEPRECATED(mp_to_radix) mp_err mp_toradix(const mp_int *a, char *str, int rad
 MP_DEPRECATED(mp_to_radix) mp_err mp_toradix_n(const mp_int *a, char *str, int radix, int maxlen) MP_WUR;
 mp_err mp_to_radix(const mp_int *a, char *str, size_t maxlen, int radix) MP_WUR;
 mp_err mp_radix_size(const mp_int *a, int radix, int *size) MP_WUR;
+mp_err mp_to_decimal(const mp_int *a, char *str, size_t maxlen) MP_WUR;
 
 #ifndef MP_NO_FILE
 mp_err mp_fread(mp_int *a, int radix, FILE *stream) MP_WUR;
@@ -723,7 +724,6 @@ mp_err mp_fwrite(const mp_int *a, int radix, FILE *stream) MP_WUR;
 
 #define mp_to_binary(M, S, N)  mp_to_radix((M), (S), (N), 2)
 #define mp_to_octal(M, S, N)   mp_to_radix((M), (S), (N), 8)
-#define mp_to_decimal(M, S, N) mp_to_radix((M), (S), (N), 10)
 #define mp_to_hex(M, S, N)     mp_to_radix((M), (S), (N), 16)
 
 #ifdef __cplusplus

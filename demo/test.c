@@ -2214,6 +2214,54 @@ LTM_ERR:
    return EXIT_FAILURE;
 }
 
+static int test_mp_to_decimal(void)
+{
+   mp_int a, b;
+   int size, err, strlength;
+   char *str;
+
+   if ((err = mp_init_multi(&a, &b, NULL)) != MP_OKAY) {
+      goto LTM_ERR;
+   }
+   for (size = 1; size < 1000; size += 10) {
+      int times;
+      printf("Testing mp_to_decimal: %5d bits    \r", size);
+      fflush(stdout);
+      for (times = 0; times < 5; times++) {
+         if ((err = mp_rand(&a, size)) != MP_OKAY) {
+            goto LTM_ERR;
+         }
+         if (times % 2) {
+            /* also test some negative numbers */
+            if ((err = mp_neg(&a, &a)) != MP_OKAY) {
+               goto LTM_ERR;
+            }
+         }
+         if ((err = mp_radix_size(&a, 10, &strlength)) != MP_OKAY) {
+            goto LTM_ERR;
+         }
+         str = (char *)malloc((size_t)strlength);
+         if ((err = mp_to_decimal(&a, str, (size_t)strlength)) != MP_OKAY) {
+            goto LTM_ERR;
+         }
+         if ((err = mp_read_radix(&b, str, 10)) != MP_OKAY) {
+            goto LTM_ERR;
+         }
+         free(str);
+         if (mp_cmp(&a, &b) != MP_EQ) {
+            fprintf(stderr, "s_mp_to_decimal_fast failed at size %d\n", size);
+            goto LTM_ERR;
+         }
+      }
+   }
+
+   mp_clear_multi(&a, &b, NULL);
+   return EXIT_SUCCESS;
+LTM_ERR:
+   mp_clear_multi(&a, &b, NULL);
+   return EXIT_FAILURE;
+}
+
 int unit_tests(int argc, char **argv)
 {
    static const struct {
@@ -2264,8 +2312,10 @@ int unit_tests(int argc, char **argv)
       T1(s_mp_karatsuba_sqr, S_MP_KARATSUBA_SQR),
       T1(s_mp_toom_mul, S_MP_TOOM_MUL),
       T1(s_mp_toom_sqr, S_MP_TOOM_SQR),
+      T1(mp_to_decimal, S_MP_TO_DECIMAL_FAST)
 #undef T2
 #undef T1
+#undef T
    };
    unsigned long i, ok, fail, nop;
    uint64_t t;
