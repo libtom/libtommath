@@ -833,6 +833,10 @@
 			>
 		</File>
 		<File
+			RelativePath="bn_mp_todecimal_fast.c"
+			>
+		</File>
+		<File
 			RelativePath="bn_mp_toradix.c"
 			>
 		</File>

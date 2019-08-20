@@ -44,13 +44,13 @@ bn_mp_set.obj bn_mp_set_double.obj bn_mp_set_i32.obj bn_mp_set_i64.obj bn_mp_set
 bn_mp_set_u32.obj bn_mp_set_u64.obj bn_mp_set_ul.obj bn_mp_set_ull.obj bn_mp_shrink.obj bn_mp_signed_bin_size.obj \
 bn_mp_signed_rsh.obj bn_mp_sqr.obj bn_mp_sqrmod.obj bn_mp_sqrt.obj bn_mp_sqrtmod_prime.obj bn_mp_sub.obj bn_mp_sub_d.obj \
 bn_mp_submod.obj bn_mp_to_signed_bin.obj bn_mp_to_signed_bin_n.obj bn_mp_to_unsigned_bin.obj \
-bn_mp_to_unsigned_bin_n.obj bn_mp_toradix.obj bn_mp_toradix_n.obj bn_mp_unsigned_bin_size.obj bn_mp_xor.obj \
-bn_mp_zero.obj bn_prime_tab.obj bn_s_mp_add.obj bn_s_mp_balance_mul.obj bn_s_mp_exptmod.obj bn_s_mp_exptmod_fast.obj \
-bn_s_mp_get_bit.obj bn_s_mp_invmod_fast.obj bn_s_mp_invmod_slow.obj bn_s_mp_karatsuba_mul.obj \
-bn_s_mp_karatsuba_sqr.obj bn_s_mp_montgomery_reduce_fast.obj bn_s_mp_mul_digs.obj bn_s_mp_mul_digs_fast.obj \
-bn_s_mp_mul_high_digs.obj bn_s_mp_mul_high_digs_fast.obj bn_s_mp_prime_is_divisible.obj \
-bn_s_mp_rand_jenkins.obj bn_s_mp_rand_platform.obj bn_s_mp_reverse.obj bn_s_mp_sqr.obj bn_s_mp_sqr_fast.obj \
-bn_s_mp_sub.obj bn_s_mp_toom_mul.obj bn_s_mp_toom_sqr.obj
+bn_mp_to_unsigned_bin_n.obj bn_mp_todecimal_fast.obj bn_mp_toradix.obj bn_mp_toradix_n.obj \
+bn_mp_unsigned_bin_size.obj bn_mp_xor.obj bn_mp_zero.obj bn_prime_tab.obj bn_s_mp_add.obj bn_s_mp_balance_mul.obj \
+bn_s_mp_exptmod.obj bn_s_mp_exptmod_fast.obj bn_s_mp_get_bit.obj bn_s_mp_invmod_fast.obj bn_s_mp_invmod_slow.obj \
+bn_s_mp_karatsuba_mul.obj bn_s_mp_karatsuba_sqr.obj bn_s_mp_montgomery_reduce_fast.obj bn_s_mp_mul_digs.obj \
+bn_s_mp_mul_digs_fast.obj bn_s_mp_mul_high_digs.obj bn_s_mp_mul_high_digs_fast.obj \
+bn_s_mp_prime_is_divisible.obj bn_s_mp_rand_jenkins.obj bn_s_mp_rand_platform.obj bn_s_mp_reverse.obj \
+bn_s_mp_sqr.obj bn_s_mp_sqr_fast.obj bn_s_mp_sub.obj bn_s_mp_toom_mul.obj bn_s_mp_toom_sqr.obj
 
 HEADERS_PUB=tommath.h
 HEADERS=tommath_private.h tommath_class.h tommath_superclass.h $(HEADERS_PUB)
