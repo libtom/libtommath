@@ -1073,16 +1073,12 @@
 #endif
 
 #if defined(BN_MP_TODECIMAL_FAST_C)
-#   define BN_MP_2EXPT_C
 #   define BN_MP_ADD_C
 #   define BN_MP_ADD_D_C
-#   define BN_MP_BARRETT_TODECIMAL_C
-#   define BN_MP_BARRETT_TODECIMAL_REC_C
+#   define BN_MP_CLEAR_MULTI_C
 #   define BN_MP_CMP_C
 #   define BN_MP_DIV_2D_C
-#   define BN_MP_GET_INT_C
-#   define BN_MP_GET_LONG_C
-#   define BN_MP_INIT_C
+#   define BN_MP_GET_I32_C
 #   define BN_MP_INIT_COPY_C
 #   define BN_MP_INIT_MULTI_C
 #   define BN_MP_INIT_SET_C
@@ -1092,6 +1088,7 @@
 #   define BN_MP_SQR_C
 #   define BN_MP_SUB_C
 #   define BN_MP_SUB_D_C
+#   define BN_MP_TODECIMAL_FAST_REC_C
 #endif
 
 #if defined(BN_MP_TORADIX_C)

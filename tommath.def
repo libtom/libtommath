@@ -140,6 +140,7 @@ EXPORTS
     mp_to_signed_bin_n
     mp_to_unsigned_bin
     mp_to_unsigned_bin_n
+    mp_todecimal_fast
     mp_toradix
     mp_toradix_n
     mp_unsigned_bin_size
