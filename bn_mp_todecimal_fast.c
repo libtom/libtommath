@@ -1,6 +1,5 @@
 #include "tommath_private.h"
 #include <string.h>
-#include <stdio.h>
 #ifdef BN_MP_TODECIMAL_FAST_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
@@ -13,12 +12,9 @@ mp_err mp_todecimal_fast_rec(mp_int *number, mp_int *nL, mp_int *shiftL, mp_int 
    mp_err err;
 
    if (precalc_array_index < 0) {
-      char *next_piece = calloc(4, sizeof(char));
-      int s_s = left ? snprintf(next_piece, 4, "%u", mp_get_i32(number)) : snprintf(next_piece, 4, "%03u",
-                mp_get_i32(number));
-      int r_s = (int)strlen(*result);
-      (*result) = realloc(*result, (size_t)(r_s + s_s + 2));
-      strcat(*result, next_piece);
+      int new_pos = left ? snprintf(*result, 4, "%u", mp_get_i32(number)) : snprintf(*result, 4, "%03u",
+                    mp_get_i32(number));
+      *result += new_pos;
       return MP_OKAY;
    }
 
@@ -70,11 +66,12 @@ LBL_ERR:
    return err;
 }
 
-mp_err mp_todecimal_fast(mp_int *number, char **result)
+mp_err mp_todecimal_fast(mp_int *number, char *result)
 {
    mp_int n, shift, M, M2, M22, M4, M44;
    mp_int nL[20], shiftL[20], mL[20];
    mp_err err;
+   char **result_addr = &result;
    int precalc_array_index = 1;
 
    if ((err = mp_init_multi(&M2, &M22, &M4, &M44, NULL)) != MP_OKAY) {
@@ -85,7 +82,8 @@ mp_err mp_todecimal_fast(mp_int *number, char **result)
       if ((err = mp_neg(number, number)) != MP_OKAY) {
          goto LBL_ERR;
       }
-      *result[0] = '-';
+      result[0] = '-';
+      result_addr += 1;
    }
    if ((err = mp_init_set(&n, (mp_digit)1000)) != MP_OKAY) {
       goto LBL_ERR;
@@ -189,7 +187,7 @@ mp_err mp_todecimal_fast(mp_int *number, char **result)
       precalc_array_index++;
    }
 
-   if ((err = mp_todecimal_fast_rec(number, nL, shiftL, mL, precalc_array_index - 1, 1, result)) != MP_OKAY) {
+   if ((err = mp_todecimal_fast_rec(number, nL, shiftL, mL, precalc_array_index - 1, 1, result_addr)) != MP_OKAY) {
       goto LBL_ERR;
    }
 
