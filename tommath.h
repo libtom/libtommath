@@ -702,6 +702,7 @@ mp_err mp_read_radix(mp_int *a, const char *str, int radix) MP_WUR;
 mp_err mp_toradix(const mp_int *a, char *str, int radix) MP_WUR;
 mp_err mp_toradix_n(const mp_int *a, char *str, int radix, int maxlen) MP_WUR;
 mp_err mp_radix_size(const mp_int *a, int radix, int *size) MP_WUR;
+mp_err mp_todecimal(const mp_int *a, char *str) MP_WUR;
 
 #ifndef MP_NO_FILE
 mp_err mp_fread(mp_int *a, int radix, FILE *stream) MP_WUR;
@@ -717,7 +718,6 @@ mp_err mp_fwrite(const mp_int *a, int radix, FILE *stream) MP_WUR;
 
 #define mp_tobinary(M, S)  mp_toradix((M), (S), 2)
 #define mp_tooctal(M, S)   mp_toradix((M), (S), 8)
-#define mp_todecimal(M, S) mp_toradix((M), (S), 10)
 #define mp_tohex(M, S)     mp_toradix((M), (S), 16)
 
 #ifdef __cplusplus

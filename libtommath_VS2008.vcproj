@@ -833,7 +833,7 @@
 			>
 		</File>
 		<File
-			RelativePath="bn_mp_todecimal_fast.c"
+			RelativePath="bn_mp_todecimal.c"
 			>
 		</File>
 		<File
@@ -942,6 +942,10 @@
 		</File>
 		<File
 			RelativePath="bn_s_mp_sub.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_s_mp_todecimal_fast.c"
 			>
 		</File>
 		<File

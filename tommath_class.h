@@ -141,7 +141,7 @@
 #   define BN_MP_TO_SIGNED_BIN_N_C
 #   define BN_MP_TO_UNSIGNED_BIN_C
 #   define BN_MP_TO_UNSIGNED_BIN_N_C
-#   define BN_MP_TODECIMAL_FAST_C
+#   define BN_MP_TODECIMAL_C
 #   define BN_MP_TORADIX_C
 #   define BN_MP_TORADIX_N_C
 #   define BN_MP_UNSIGNED_BIN_SIZE_C
@@ -169,6 +169,7 @@
 #   define BN_S_MP_SQR_C
 #   define BN_S_MP_SQR_FAST_C
 #   define BN_S_MP_SUB_C
+#   define BN_S_MP_TODECIMAL_FAST_C
 #   define BN_S_MP_TOOM_MUL_C
 #   define BN_S_MP_TOOM_SQR_C
 #endif
@@ -1072,23 +1073,9 @@
 #   define BN_MP_UNSIGNED_BIN_SIZE_C
 #endif
 
-#if defined(BN_MP_TODECIMAL_FAST_C)
-#   define BN_MP_ADD_C
-#   define BN_MP_ADD_D_C
-#   define BN_MP_CLEAR_MULTI_C
-#   define BN_MP_CMP_C
-#   define BN_MP_DIV_2D_C
-#   define BN_MP_GET_I32_C
-#   define BN_MP_INIT_COPY_C
-#   define BN_MP_INIT_MULTI_C
-#   define BN_MP_INIT_SET_C
-#   define BN_MP_MUL_2_C
-#   define BN_MP_MUL_C
-#   define BN_MP_NEG_C
-#   define BN_MP_SQR_C
-#   define BN_MP_SUB_C
-#   define BN_MP_SUB_D_C
-#   define BN_MP_TODECIMAL_FAST_REC_C
+#if defined(BN_MP_TODECIMAL_C)
+#   define BN_MP_TORADIX_C
+#   define BN_S_MP_TODECIMAL_FAST_C
 #endif
 
 #if defined(BN_MP_TORADIX_C)
@@ -1284,6 +1271,25 @@
 #if defined(BN_S_MP_SUB_C)
 #   define BN_MP_CLAMP_C
 #   define BN_MP_GROW_C
+#endif
+
+#if defined(BN_S_MP_TODECIMAL_FAST_C)
+#   define BN_MP_ADD_C
+#   define BN_MP_ADD_D_C
+#   define BN_MP_CLEAR_MULTI_C
+#   define BN_MP_CMP_C
+#   define BN_MP_DIV_2D_C
+#   define BN_MP_GET_I32_C
+#   define BN_MP_INIT_COPY_C
+#   define BN_MP_INIT_MULTI_C
+#   define BN_MP_INIT_SET_C
+#   define BN_MP_MUL_2_C
+#   define BN_MP_MUL_C
+#   define BN_MP_NEG_C
+#   define BN_MP_SQR_C
+#   define BN_MP_SUB_C
+#   define BN_MP_SUB_D_C
+#   define BN_S_MP_TODECIMAL_FAST_REC_C
 #endif
 
 #if defined(BN_S_MP_TOOM_MUL_C)

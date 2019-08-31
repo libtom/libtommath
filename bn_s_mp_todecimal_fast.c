@@ -1,12 +1,13 @@
 #include "tommath_private.h"
 #include <string.h>
-#ifdef BN_MP_TODECIMAL_FAST_C
+#ifdef BN_S_MP_TODECIMAL_FAST_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
 /* store a bignum as a decimal ASCII string */
-mp_err mp_todecimal_fast_rec(mp_int *number, mp_int *nL, mp_int *shiftL, mp_int *mL, int precalc_array_index, int left,
-                             char **result)
+mp_err s_mp_todecimal_fast_rec(const mp_int *number, mp_int *nL, mp_int *shiftL, mp_int *mL, int precalc_array_index,
+                               int left,
+                               char **result)
 {
    mp_int q, nLq, r;
    mp_err err;
@@ -47,14 +48,14 @@ mp_err mp_todecimal_fast_rec(mp_int *number, mp_int *nL, mp_int *shiftL, mp_int 
 
    --precalc_array_index;
    if (left && mp_iszero(&q)) {
-      if ((err = mp_todecimal_fast_rec(&r, nL, shiftL, mL, precalc_array_index, 1, result)) != MP_OKAY) {
+      if ((err = s_mp_todecimal_fast_rec(&r, nL, shiftL, mL, precalc_array_index, 1, result)) != MP_OKAY) {
          goto LBL_ERR;
       }
    } else {
-      if ((err = mp_todecimal_fast_rec(&q, nL, shiftL, mL, precalc_array_index, left, result)) != MP_OKAY) {
+      if ((err = s_mp_todecimal_fast_rec(&q, nL, shiftL, mL, precalc_array_index, left, result)) != MP_OKAY) {
          goto LBL_ERR;
       }
-      if ((err = mp_todecimal_fast_rec(&r, nL, shiftL, mL, precalc_array_index, 0, result)) != MP_OKAY) {
+      if ((err = s_mp_todecimal_fast_rec(&r, nL, shiftL, mL, precalc_array_index, 0, result)) != MP_OKAY) {
          goto LBL_ERR;
       }
    }
@@ -66,9 +67,9 @@ LBL_ERR:
    return err;
 }
 
-mp_err mp_todecimal_fast(mp_int *number, char *result)
+mp_err s_mp_todecimal_fast(const mp_int *a, char *result)
 {
-   mp_int n, shift, M, M2, M22, M4, M44;
+   mp_int number, n, shift, M, M2, M22, M4, M44;
    mp_int nL[20], shiftL[20], mL[20];
    mp_err err;
    char **result_addr = &result;
@@ -78,8 +79,11 @@ mp_err mp_todecimal_fast(mp_int *number, char *result)
       goto LBL_ERR;
    }
 
-   if (mp_isneg(number)) {
-      if ((err = mp_neg(number, number)) != MP_OKAY) {
+   if ((err = mp_init_copy(&number, a)) != MP_OKAY) {
+      goto LBL_ERR;
+   }
+   if (mp_isneg(&number)) {
+      if ((err = mp_neg(&number, &number)) != MP_OKAY) {
          goto LBL_ERR;
       }
       result[0] = '-';
@@ -115,7 +119,7 @@ mp_err mp_todecimal_fast(mp_int *number, char *result)
       if ((err = mp_sqr(&n, &n)) != MP_OKAY) {
          goto LBL_ERR;
       }
-      if (mp_cmp(&n, number) == MP_GT) {
+      if (mp_cmp(&n, &number) == MP_GT) {
          break;
       }
 
@@ -187,7 +191,7 @@ mp_err mp_todecimal_fast(mp_int *number, char *result)
       precalc_array_index++;
    }
 
-   if ((err = mp_todecimal_fast_rec(number, nL, shiftL, mL, precalc_array_index - 1, 1, result_addr)) != MP_OKAY) {
+   if ((err = s_mp_todecimal_fast_rec(&number, nL, shiftL, mL, precalc_array_index - 1, 1, result_addr)) != MP_OKAY) {
       goto LBL_ERR;
    }
 
