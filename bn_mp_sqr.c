@@ -8,10 +8,10 @@ mp_err mp_sqr(const mp_int *a, mp_int *b)
 {
    mp_err err;
    if (MP_HAS(S_MP_TOOM_SQR) && /* use Toom-Cook? */
-       a->used >= MP_TOOM_SQR_CUTOFF) {
+       (a->used >= MP_TOOM_SQR_CUTOFF)) {
       err = s_mp_toom_sqr(a, b);
    } else if (MP_HAS(S_MP_KARATSUBA_SQR) &&  /* Karatsuba? */
-              a->used >= MP_KARATSUBA_SQR_CUTOFF) {
+              (a->used >= MP_KARATSUBA_SQR_CUTOFF)) {
       err = s_mp_karatsuba_sqr(a, b);
    } else if (MP_HAS(S_MP_SQR_FAST) && /* can we use the fast comba multiplier? */
               (((a->used * 2) + 1) < MP_WARRAY) &&

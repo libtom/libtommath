@@ -49,15 +49,15 @@ LBL_ERR:
 
    /* modified diminished radix reduction */
    if (MP_HAS(MP_REDUCE_IS_2K_L) && MP_HAS(MP_REDUCE_2K_L) && MP_HAS(S_MP_EXPTMOD) &&
-       mp_reduce_is_2k_l(P) == MP_YES) {
+       (mp_reduce_is_2k_l(P) == MP_YES)) {
       return s_mp_exptmod(G, X, P, Y, 1);
    }
 
    /* is it a DR modulus? default to no */
-   dr = MP_HAS(MP_DR_IS_MODULUS) && mp_dr_is_modulus(P) == MP_YES ? 1 : 0;
+   dr = (MP_HAS(MP_DR_IS_MODULUS) && (mp_dr_is_modulus(P) == MP_YES)) ? 1 : 0;
 
    /* if not, is it a unrestricted DR modulus? */
-   if (MP_HAS(MP_REDUCE_IS_2K) && dr == 0) {
+   if (MP_HAS(MP_REDUCE_IS_2K) && (dr == 0)) {
       dr = (mp_reduce_is_2k(P) == MP_YES) ? 2 : 0;
    }
 

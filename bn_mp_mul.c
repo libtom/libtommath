@@ -21,7 +21,7 @@ mp_err mp_mul(const mp_int *a, const mp_int *b, mp_int *c)
         * was actually slower on the author's machine, but YMMV.
         */
        (min_len >= MP_KARATSUBA_MUL_CUTOFF) &&
-       (max_len / 2 >= MP_KARATSUBA_MUL_CUTOFF) &&
+       ((max_len / 2) >= MP_KARATSUBA_MUL_CUTOFF) &&
        /* Not much effect was observed below a ratio of 1:2, but again: YMMV. */
        (max_len >= (2 * min_len))) {
       err = s_mp_balance_mul(a,b,c);
