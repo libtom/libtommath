@@ -39,6 +39,9 @@ mp_err mp_prime_next_prime(mp_int *a, int t, int bbs_style)
                         return MP_OKAY;
                      }
                   }
+               } else {
+                  mp_set(a, s_mp_prime_tab[x + 1]);
+                  return MP_OKAY;
                }
             } else {
                mp_set(a, s_mp_prime_tab[x + 1]);
