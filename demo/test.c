@@ -1090,10 +1090,10 @@ static int test_mp_montgomery_reduce(void)
             if (mp_cmp(&c, &d) != MP_EQ) {
 /* *INDENT-OFF* */
                printf("d = e mod a, c = e MOD a\n");
-               mp_todecimal(&a, buf); printf("a = %s\n", buf);
-               mp_todecimal(&e, buf); printf("e = %s\n", buf);
-               mp_todecimal(&d, buf); printf("d = %s\n", buf);
-               mp_todecimal(&c, buf); printf("c = %s\n", buf);
+               mp_to_decimal(&a, buf, sizeof(buf)); printf("a = %s\n", buf);
+               mp_to_decimal(&e, buf, sizeof(buf)); printf("e = %s\n", buf);
+               mp_to_decimal(&d, buf, sizeof(buf)); printf("d = %s\n", buf);
+               mp_to_decimal(&c, buf, sizeof(buf)); printf("c = %s\n", buf);
                printf("compare no compare!\n"); goto LBL_ERR;
 /* *INDENT-ON* */
             }
@@ -1126,22 +1126,21 @@ static int test_mp_read_radix(void)
    }
 
    mp_read_radix(&a, "123456", 10);
-   mp_toradix_n(&a, buf, 10, 3);
+   mp_to_radix(&a, buf, 3, 10);
    printf("a == %s\n", buf);
-   mp_toradix_n(&a, buf, 10, 4);
+   mp_to_radix(&a, buf, 4, 10);
    printf("a == %s\n", buf);
-   mp_toradix_n(&a, buf, 10, 30);
+   mp_to_radix(&a, buf, 30, 10);
    printf("a == %s\n", buf);
 
-#if 0
-   for (;;) {
-      fgets(buf, sizeof(buf), stdin);
+   while (0) {
+      char *s = fgets(buf, sizeof(buf), stdin);
+      if (s != buf) break;
       mp_read_radix(&a, buf, 10);
       mp_prime_next_prime(&a, 5, 1);
-      mp_toradix(&a, buf, 10);
-      printf("%s, %lu\n", buf, a.dp[0] & 3);
+      mp_to_radix(&a, buf, sizeof(buf), 10);
+      printf("%s, %lu\n", buf, (unsigned long)a.dp[0] & 3uL);
    }
-#endif
 
    mp_clear_multi(&a, NULL);
    return EXIT_SUCCESS;
@@ -1311,7 +1310,9 @@ LBL_ERR:
 static int test_mp_reduce_2k_l(void)
 {
 #   if LTM_DEMO_TEST_REDUCE_2K_L
-   mp_int a, b;
+   mp_int a, b, c, d;
+   int cnt;
+   char buf[4096];
    if (mp_init_multi(&a, &b, NULL)!= MP_OKAY) {
       return EXIT_FAILURE;
    }
@@ -1332,7 +1333,7 @@ static int test_mp_reduce_2k_l(void)
 #         error oops
 #      endif
 
-   mp_todecimal(&a, buf);
+   mp_to_decimal(&a, buf, sizeof(buf));
    printf("\n\np==%s\n", buf);
    /* now mp_reduce_is_2k_l() should return */
    if (mp_reduce_is_2k_l(&a) != 1) {
@@ -1355,9 +1356,9 @@ static int test_mp_reduce_2k_l(void)
       mp_mod(&c, &a, &c);
       if (mp_cmp(&b, &c) != MP_EQ) {
          printf("mp_reduce_2k_l() failed at step %d\n", cnt);
-         mp_tohex(&b, buf);
+         mp_to_hex(&b, buf, sizeof(buf));
          printf("b == %s\n", buf);
-         mp_tohex(&c, buf);
+         mp_to_hex(&c, buf, sizeof(buf));
          printf("c == %s\n", buf);
          goto LBL_ERR;
       }

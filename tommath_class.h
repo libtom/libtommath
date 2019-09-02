@@ -137,12 +137,11 @@
 #   define BN_MP_SUB_C
 #   define BN_MP_SUB_D_C
 #   define BN_MP_SUBMOD_C
+#   define BN_MP_TO_RADIX_C
 #   define BN_MP_TO_SIGNED_BIN_C
 #   define BN_MP_TO_SIGNED_BIN_N_C
 #   define BN_MP_TO_UNSIGNED_BIN_C
 #   define BN_MP_TO_UNSIGNED_BIN_N_C
-#   define BN_MP_TORADIX_C
-#   define BN_MP_TORADIX_N_C
 #   define BN_MP_UNSIGNED_BIN_SIZE_C
 #   define BN_MP_XOR_C
 #   define BN_MP_ZERO_C
@@ -221,6 +220,9 @@
 #   define BN_MP_TC_XOR_C
 #   define BN_MP_TOOM_MUL_C
 #   define BN_MP_TOOM_SQR_C
+#   define BN_MP_TORADIX_C
+#   define BN_MP_TORADIX_N_C
+#   define BN_MP_TO_RADIX_C
 #   define BN_MP_XOR_C
 #   define BN_S_MP_BALANCE_MUL_C
 #   define BN_S_MP_EXPTMOD_FAST_C
@@ -434,7 +436,7 @@
 
 #if defined(BN_MP_FWRITE_C)
 #   define BN_MP_RADIX_SIZE_C
-#   define BN_MP_TORADIX_C
+#   define BN_MP_TO_RADIX_C
 #endif
 
 #if defined(BN_MP_GCD_C)
@@ -1050,6 +1052,13 @@
 #   define BN_MP_SUB_C
 #endif
 
+#if defined(BN_MP_TO_RADIX_C)
+#   define BN_MP_CLEAR_C
+#   define BN_MP_DIV_D_C
+#   define BN_MP_INIT_COPY_C
+#   define BN_S_MP_REVERSE_C
+#endif
+
 #if defined(BN_MP_TO_SIGNED_BIN_C)
 #   define BN_MP_TO_UNSIGNED_BIN_C
 #endif
@@ -1069,20 +1078,6 @@
 #if defined(BN_MP_TO_UNSIGNED_BIN_N_C)
 #   define BN_MP_TO_UNSIGNED_BIN_C
 #   define BN_MP_UNSIGNED_BIN_SIZE_C
-#endif
-
-#if defined(BN_MP_TORADIX_C)
-#   define BN_MP_CLEAR_C
-#   define BN_MP_DIV_D_C
-#   define BN_MP_INIT_COPY_C
-#   define BN_S_MP_REVERSE_C
-#endif
-
-#if defined(BN_MP_TORADIX_N_C)
-#   define BN_MP_CLEAR_C
-#   define BN_MP_DIV_D_C
-#   define BN_MP_INIT_COPY_C
-#   define BN_S_MP_REVERSE_C
 #endif
 
 #if defined(BN_MP_UNSIGNED_BIN_SIZE_C)

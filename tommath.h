@@ -699,8 +699,9 @@ mp_err mp_to_signed_bin(const mp_int *a,  unsigned char *b) MP_WUR;
 mp_err mp_to_signed_bin_n(const mp_int *a, unsigned char *b, unsigned long *outlen) MP_WUR;
 
 mp_err mp_read_radix(mp_int *a, const char *str, int radix) MP_WUR;
-mp_err mp_toradix(const mp_int *a, char *str, int radix) MP_WUR;
-mp_err mp_toradix_n(const mp_int *a, char *str, int radix, int maxlen) MP_WUR;
+MP_DEPRECATED(mp_to_radix) mp_err mp_toradix(const mp_int *a, char *str, int radix) MP_WUR;
+MP_DEPRECATED(mp_to_radix) mp_err mp_toradix_n(const mp_int *a, char *str, int radix, int maxlen) MP_WUR;
+mp_err mp_to_radix(const mp_int *a, char *str, size_t maxlen, int radix) MP_WUR;
 mp_err mp_radix_size(const mp_int *a, int radix, int *size) MP_WUR;
 
 #ifndef MP_NO_FILE
@@ -715,10 +716,15 @@ mp_err mp_fwrite(const mp_int *a, int radix, FILE *stream) MP_WUR;
 #define mp_mag_size(mp)           (MP_DEPRECATED_PRAGMA("replaced by mp_unsigned_bin_size") mp_unsigned_bin_size(mp))
 #define mp_tomag(mp, str)         (MP_DEPRECATED_PRAGMA("replaced by mp_to_unsigned_bin") mp_to_unsigned_bin((mp), (str)))
 
-#define mp_tobinary(M, S)  mp_toradix((M), (S), 2)
-#define mp_tooctal(M, S)   mp_toradix((M), (S), 8)
-#define mp_todecimal(M, S) mp_toradix((M), (S), 10)
-#define mp_tohex(M, S)     mp_toradix((M), (S), 16)
+#define mp_tobinary(M, S)  (MP_DEPRECATED_PRAGMA("replaced by mp_to_binary")  mp_toradix((M), (S), 2))
+#define mp_tooctal(M, S)   (MP_DEPRECATED_PRAGMA("replaced by mp_to_octal")   mp_toradix((M), (S), 8))
+#define mp_todecimal(M, S) (MP_DEPRECATED_PRAGMA("replaced by mp_to_decimal") mp_toradix((M), (S), 10))
+#define mp_tohex(M, S)     (MP_DEPRECATED_PRAGMA("replaced by mp_to_hex")     mp_toradix((M), (S), 16))
+
+#define mp_to_binary(M, S, N)  mp_to_radix((M), (S), (N), 2)
+#define mp_to_octal(M, S, N)   mp_to_radix((M), (S), (N), 8)
+#define mp_to_decimal(M, S, N) mp_to_radix((M), (S), (N), 10)
+#define mp_to_hex(M, S, N)     mp_to_radix((M), (S), (N), 16)
 
 #ifdef __cplusplus
 }

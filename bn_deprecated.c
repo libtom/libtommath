@@ -229,4 +229,19 @@ mp_err mp_n_root(const mp_int *a, mp_digit b, mp_int *c)
    return mp_root_u32(a, (uint32_t)b, c);
 }
 #endif
+#ifdef BN_MP_TORADIX_N_C
+mp_err mp_toradix_n(const mp_int *a, char *str, int radix, int maxlen)
+{
+   if (maxlen < 0) {
+      return MP_VAL;
+   }
+   return mp_to_radix(a, str, (size_t)maxlen, radix);
+}
+#endif
+#ifdef BN_MP_TORADIX_C
+mp_err mp_toradix(const mp_int *a, char *str, int radix)
+{
+   return mp_to_radix(a, str, SIZE_MAX, radix);
+}
+#endif
 #endif
