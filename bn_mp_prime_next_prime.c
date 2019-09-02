@@ -49,9 +49,13 @@ mp_err mp_prime_next_prime(mp_int *a, int t, int bbs_style)
             }
          }
       }
-      /* at this point a maybe 1 */
-      if (mp_cmp_d(a, 1uL) == MP_EQ) {
-         mp_set(a, 2uL);
+      /* at this point a maybe smaller than the smallest prime in the table */
+      if (mp_cmp_d(a, 2uL) != MP_GT) {
+         if (bbs_style == 1) {
+            mp_set(a, 3uL);
+         } else {
+            mp_set(a, 2uL);
+         }
          return MP_OKAY;
       }
       /* fall through to the sieve */
