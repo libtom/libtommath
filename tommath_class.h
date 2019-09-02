@@ -405,10 +405,9 @@
 
 #if defined(BN_MP_EXPTMOD_C)
 #   define BN_MP_ABS_C
-#   define BN_MP_CLEAR_C
 #   define BN_MP_CLEAR_MULTI_C
 #   define BN_MP_DR_IS_MODULUS_C
-#   define BN_MP_INIT_C
+#   define BN_MP_INIT_MULTI_C
 #   define BN_MP_INVMOD_C
 #   define BN_MP_REDUCE_IS_2K_C
 #   define BN_MP_REDUCE_IS_2K_L_C

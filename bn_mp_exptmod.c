@@ -26,20 +26,17 @@ mp_err mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y)
          return MP_VAL;
       }
 
-      /* first compute 1/G mod P */
-      if ((err = mp_init(&tmpG)) != MP_OKAY) {
+      if ((err = mp_init_multi(&tmpG, &tmpX, NULL)) != MP_OKAY) {
          return err;
       }
+
+      /* first compute 1/G mod P */
       if ((err = mp_invmod(G, P, &tmpG)) != MP_OKAY) {
-         mp_clear(&tmpG);
+         mp_clear_multi(&tmpG, &tmpX, NULL);
          return err;
       }
 
       /* now get |X| */
-      if ((err = mp_init(&tmpX)) != MP_OKAY) {
-         mp_clear(&tmpG);
-         return err;
-      }
       if ((err = mp_abs(X, &tmpX)) != MP_OKAY) {
          mp_clear_multi(&tmpG, &tmpX, NULL);
          return err;
