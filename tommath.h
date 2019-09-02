@@ -206,7 +206,7 @@ TOOM_SQR_CUTOFF;
 #  endif
 #endif
 
-#if defined(__GNUC__) && (__GNUC__ * 100 + __GNUC_MINOR__ >= 301)
+#if defined(__GNUC__) && (__GNUC__ * 100 + __GNUC_MINOR__ >= 405)
 #  define MP_DEPRECATED(x) __attribute__((deprecated("replaced by " #x)))
 #  define PRIVATE_MP_DEPRECATED_PRAGMA(s) _Pragma(#s)
 #  define MP_DEPRECATED_PRAGMA(s) PRIVATE_MP_DEPRECATED_PRAGMA(GCC warning s)

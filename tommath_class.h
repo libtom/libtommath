@@ -860,6 +860,7 @@
 #   define BN_MP_SUB_C
 #   define BN_S_MP_MUL_DIGS_C
 #   define BN_S_MP_MUL_HIGH_DIGS_C
+#   define BN_S_MP_MUL_HIGH_DIGS_FAST_C
 #   define BN_S_MP_SUB_C
 #endif
 

@@ -17,7 +17,7 @@
  *
  * On Win32 a .def file must be used to specify the exported symbols.
  */
-#if defined (MP_PRIVATE_SYMBOLS) && __GNUC__ >= 4
+#if defined (MP_PRIVATE_SYMBOLS) && defined(__GNUC__) && __GNUC__ >= 4
 #   define MP_PRIVATE __attribute__ ((visibility ("hidden")))
 #else
 #   define MP_PRIVATE
@@ -139,6 +139,11 @@ extern void *MP_REALLOC(void *mem, size_t oldsize, size_t newsize);
 extern void *MP_CALLOC(size_t nmemb, size_t size);
 extern void MP_FREE(void *mem, size_t size);
 #endif
+
+/* feature detection macro */
+#define MP_STRINGIZE(x)  MP__STRINGIZE(x)
+#define MP__STRINGIZE(x) ""#x""
+#define MP_HAS(x)        (sizeof(MP_STRINGIZE(BN_##x##_C)) == 1)
 
 /* TODO: Remove private_mp_word as soon as deprecated mp_word is removed from tommath. */
 #undef mp_word

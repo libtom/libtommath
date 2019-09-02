@@ -50,6 +50,49 @@ static uint64_t uabs64(int64_t x)
    return x > 0 ? (uint64_t)x : -(uint64_t)x;
 }
 
+/* This function prototype is needed
+ * to test dead code elimination
+ * which is used for feature detection.
+ *
+ * If the feature detection does not
+ * work as desired we will get a linker error.
+ */
+void does_not_exist(void);
+
+static int test_feature_detection(void)
+{
+#define BN_TEST_FEATURE1_C
+   if (!MP_HAS(TEST_FEATURE1)) {
+      does_not_exist();
+      return EXIT_FAILURE;
+   }
+
+#define BN_TEST_FEATURE2_C 1
+   if (MP_HAS(TEST_FEATURE2)) {
+      does_not_exist();
+      return EXIT_FAILURE;
+   }
+
+#define BN_TEST_FEATURE3_C 0
+   if (MP_HAS(TEST_FEATURE3)) {
+      does_not_exist();
+      return EXIT_FAILURE;
+   }
+
+#define BN_TEST_FEATURE4_C something
+   if (MP_HAS(TEST_FEATURE4)) {
+      does_not_exist();
+      return EXIT_FAILURE;
+   }
+
+   if (MP_HAS(TEST_FEATURE5)) {
+      does_not_exist();
+      return EXIT_FAILURE;
+   }
+
+   return EXIT_SUCCESS;
+}
+
 static int test_trivial_stuff(void)
 {
    mp_int a, b, c, d;
@@ -2046,6 +2089,7 @@ int unit_tests(int argc, char **argv)
       int (*fn)(void);
    } test[] = {
 #define T(n) { #n, test_##n }
+      T(feature_detection),
       T(trivial_stuff),
       T(mp_get_set_i32),
       T(mp_get_set_i64),
