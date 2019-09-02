@@ -48,6 +48,7 @@ mp_err mp_to_radix(const mp_int *a, char *str, size_t maxlen, int radix)
    while (!MP_IS_ZERO(&t)) {
       if (--maxlen < 1) {
          /* no more room */
+         err = MP_VAL;
          break;
       }
       if ((err = mp_div_d(&t, (mp_digit)radix, &t, &d)) != MP_OKAY) {
@@ -67,7 +68,7 @@ mp_err mp_to_radix(const mp_int *a, char *str, size_t maxlen, int radix)
    *str = '\0';
 
    mp_clear(&t);
-   return MP_OKAY;
+   return err;
 }
 
 #endif
