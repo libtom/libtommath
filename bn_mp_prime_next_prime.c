@@ -24,20 +24,17 @@ mp_err mp_prime_next_prime(mp_int *a, int t, int bbs_style)
       /* find which prime it is bigger than */
       for (x = PRIVATE_MP_PRIME_TAB_SIZE - 2; x >= 0; x--) {
          if (mp_cmp_d(a, s_mp_prime_tab[x]) != MP_LT) {
+            /* ok we found a prime smaller or
+             * equal [so the next is larger]
+             */
             if (bbs_style == 1) {
-               /* ok we found a prime smaller or
-                * equal [so the next is larger]
-                *
-                * however, the prime must be
+               /* ... however, the prime must be
                 * congruent to 3 mod 4
-                */
-               if ((s_mp_prime_tab[x + 1] & 3u) != 3u) {
-                  /* scan upwards for a prime congruent to 3 mod 4 */
-                  for (y = x + 1; y < PRIVATE_MP_PRIME_TAB_SIZE; y++) {
-                     if ((s_mp_prime_tab[y] & 3u) == 3u) {
-                        mp_set(a, s_mp_prime_tab[y]);
-                        return MP_OKAY;
-                     }
+                * so do a scan upwards for such a prime */
+               for (y = x + 1; y < PRIVATE_MP_PRIME_TAB_SIZE; y++) {
+                  if ((s_mp_prime_tab[y] & 3u) == 3u) {
+                     mp_set(a, s_mp_prime_tab[y]);
+                     return MP_OKAY;
                   }
                }
             } else {
@@ -46,9 +43,13 @@ mp_err mp_prime_next_prime(mp_int *a, int t, int bbs_style)
             }
          }
       }
-      /* at this point a maybe 1 */
-      if (mp_cmp_d(a, 1uL) == MP_EQ) {
-         mp_set(a, 2uL);
+      /* at this point a maybe smaller than the smallest prime in the table */
+      if (mp_cmp_d(a, 2uL) != MP_GT) {
+         if (bbs_style == 1) {
+            mp_set(a, 3uL);
+         } else {
+            mp_set(a, 2uL);
+         }
          return MP_OKAY;
       }
       /* fall through to the sieve */
