@@ -817,6 +817,10 @@
 			>
 		</File>
 		<File
+			RelativePath="bn_mp_to_radix.c"
+			>
+		</File>
+		<File
 			RelativePath="bn_mp_to_signed_bin.c"
 			>
 		</File>
@@ -830,14 +834,6 @@
 		</File>
 		<File
 			RelativePath="bn_mp_to_unsigned_bin_n.c"
-			>
-		</File>
-		<File
-			RelativePath="bn_mp_toradix.c"
-			>
-		</File>
-		<File
-			RelativePath="bn_mp_toradix_n.c"
 			>
 		</File>
 		<File

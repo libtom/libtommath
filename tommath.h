@@ -699,8 +699,9 @@ mp_err mp_to_signed_bin(const mp_int *a,  unsigned char *b) MP_WUR;
 mp_err mp_to_signed_bin_n(const mp_int *a, unsigned char *b, unsigned long *outlen) MP_WUR;
 
 mp_err mp_read_radix(mp_int *a, const char *str, int radix) MP_WUR;
-mp_err mp_toradix(const mp_int *a, char *str, int radix) MP_WUR;
-mp_err mp_toradix_n(const mp_int *a, char *str, int radix, int maxlen) MP_WUR;
+MP_DEPRECATED(mp_to_radix) mp_err mp_toradix(const mp_int *a, char *str, int radix) MP_WUR;
+MP_DEPRECATED(mp_to_radix) mp_err mp_toradix_n(const mp_int *a, char *str, int radix, int maxlen) MP_WUR;
+mp_err mp_to_radix(const mp_int *a, char *str, size_t maxlen, int radix) MP_WUR;
 mp_err mp_radix_size(const mp_int *a, int radix, int *size) MP_WUR;
 
 #ifndef MP_NO_FILE
