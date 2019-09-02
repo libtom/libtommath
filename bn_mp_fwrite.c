@@ -19,7 +19,7 @@ mp_err mp_fwrite(const mp_int *a, int radix, FILE *stream)
       return MP_MEM;
    }
 
-   if ((err = mp_toradix(a, buf, radix)) != MP_OKAY) {
+   if ((err = mp_to_radix(a, buf, (size_t)len, radix)) != MP_OKAY) {
       MP_FREE_BUFFER(buf, (size_t)len);
       return err;
    }

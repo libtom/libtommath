@@ -16,9 +16,9 @@ void ndraw(mp_int *a, const char *name)
    }
 
    printf("%s: ", name);
-   mp_toradix(a, buf, 10);
+   mp_to_decimal(a, buf, (size_t) size);
    printf("%s\n", buf);
-   mp_toradix(a, buf, 16);
+   mp_to_hex(a, buf, (size_t) size);
    printf("0x%s\n", buf);
 
    free(buf);
