@@ -26,27 +26,23 @@ mp_err mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y)
          return MP_VAL;
       }
 
-      /* first compute 1/G mod P */
-      if ((err = mp_init(&tmpG)) != MP_OKAY) {
-         return err;
-      }
-      if ((err = mp_invmod(G, P, &tmpG)) != MP_OKAY) {
-         mp_clear(&tmpG);
+      if ((err = mp_init_multi(&tmpG, &tmpX, NULL)) != MP_OKAY) {
          return err;
       }
 
-      /* now get |X| */
-      if ((err = mp_init(&tmpX)) != MP_OKAY) {
-         mp_clear(&tmpG);
-         return err;
+      /* first compute 1/G mod P */
+      if ((err = mp_invmod(G, P, &tmpG)) != MP_OKAY) {
+         goto LBL_ERR;
       }
+
+      /* now get |X| */
       if ((err = mp_abs(X, &tmpX)) != MP_OKAY) {
-         mp_clear_multi(&tmpG, &tmpX, NULL);
-         return err;
+         goto LBL_ERR;
       }
 
       /* and now compute (1/G)**|X| instead of G**X [X < 0] */
       err = mp_exptmod(&tmpG, &tmpX, P, Y);
+LBL_ERR:
       mp_clear_multi(&tmpG, &tmpX, NULL);
       return err;
    }

@@ -20,17 +20,18 @@ mp_err mp_fwrite(const mp_int *a, int radix, FILE *stream)
    }
 
    if ((err = mp_to_radix(a, buf, (size_t)len, radix)) != MP_OKAY) {
-      MP_FREE_BUFFER(buf, (size_t)len);
-      return err;
+      goto LBL_ERR;
    }
 
    if (fwrite(buf, (size_t)len, 1uL, stream) != 1uL) {
-      MP_FREE_BUFFER(buf, (size_t)len);
-      return MP_ERR;
+      err = MP_ERR;
+      goto LBL_ERR;
    }
+   err = MP_OKAY;
 
+LBL_ERR:
    MP_FREE_BUFFER(buf, (size_t)len);
-   return MP_OKAY;
+   return err;
 }
 #endif
 
