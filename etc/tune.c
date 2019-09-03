@@ -4,10 +4,8 @@
  */
 #include "../tommath.h"
 #include "../tommath_private.h"
-#include <stdint.h>
 #include <time.h>
 #include <inttypes.h>
-#include <limits.h>
 #include <errno.h>
 
 /*
