@@ -2100,18 +2100,16 @@ The random number generated with these two functions is cryptographically secure
 \subsection{To ASCII}
 \index{mp\_toradix}
 \begin{alltt}
-int mp_toradix (mp_int * a, char *str, int radix);
+int mp_to_radix (mp_int * a, char *str, size_t maxlen, int radix);
 \end{alltt}
-This still store $a$ in ``str'' as a base-``radix'' string of ASCII chars.  This function appends a NUL character
-to terminate the string.  Valid values of ``radix'' line in the range $[2, 64]$.  To determine the size (exact) required
-by the conversion before storing any data use the following function.
+This stores $a$ in ``str'' of maximum length ``maxlen'' as a base-``radix'' string of ASCII chars.
+This function appends a NUL character to terminate the string.
+Valid values of ``radix'' line in the range $[2, 64]$.
 
-\index{mp\_toradix\_n}
-\begin{alltt}
-int mp_toradix_n (mp_int * a, char *str, int radix, int maxlen);
-\end{alltt}
+If ``str'' is not big enough to hold $a$, ``str' will be filled with the least-significant digits
+of length ``maxlen-1'', then ``str' will be NUL terminated and the error \texttt{MP\_VAL} is returned.
 
-Like \texttt{mp\_toradix} but stores upto maxlen-1 chars and always a NULL byte.
+To determine the size (exact) required by the conversion before storing any data use the following function.
 
 \index{mp\_radix\_size}
 \begin{alltt}
@@ -2374,27 +2372,27 @@ Other macros which are either shortcuts to normal functions or just other names 
 
 \subsection{Shortcuts}
 
-\index{mp\_tobinary}
+\index{mp\_to\_binary}
 \begin{alltt}
-#define mp_tobinary(M, S) mp_toradix((M), (S), 2)
+#define mp_to_binary(M, S, N)  mp_to_radix((M), (S), (N), 2)
 \end{alltt}
 
 
-\index{mp\_tooctal}
+\index{mp\_to\_octal}
 \begin{alltt}
-#define mp_tooctal(M, S) mp_toradix((M), (S), 8)
+#define mp_to_octal(M, S, N)   mp_to_radix((M), (S), (N), 8)
 \end{alltt}
 
 
-\index{mp\_todecimal}
+\index{mp\_to\_decimal}
 \begin{alltt}
-#define mp_todecimal(M, S) mp_toradix((M), (S), 10)
+#define mp_to_decimal(M, S, N) mp_to_radix((M), (S), (N), 10)
 \end{alltt}
 
 
-\index{mp\_tohex}
+\index{mp\_to\_hex}
 \begin{alltt}
-#define mp_tohex(M, S)     mp_toradix((M), (S), 16)
+#define mp_to_hex(M, S, N)     mp_to_radix((M), (S), (N), 16)
 \end{alltt}
 
 

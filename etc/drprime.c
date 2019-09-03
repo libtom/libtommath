@@ -50,7 +50,7 @@ top:
             sizes[x] += 1;
             goto top;
          } else {
-            mp_toradix(&a, buf, 10);
+            mp_to_decimal(&a, buf, sizeof(buf));
             printf("\n\np == %s\n\n", buf);
             fprintf(out, "%d-bit prime:\np == %s\n\n", mp_count_bits(&a), buf);
             fflush(out);
