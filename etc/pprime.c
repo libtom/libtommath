@@ -331,11 +331,11 @@ top:
       {
          char buf[4096];
 
-         mp_toradix(&n, buf, 10);
+         mp_to_decimal(&n, buf, sizeof(buf));
          printf("Certificate of primality for:\n%s\n\n", buf);
-         mp_toradix(&a, buf, 10);
+         mp_to_decimal(&a, buf, sizeof(buf));
          printf("A == \n%s\n\n", buf);
-         mp_toradix(&b, buf, 10);
+         mp_to_decimal(&b, buf, sizeof(buf));
          printf("B == \n%s\n\nG == %lu\n", buf, bases[ii]);
          printf("----------------------------------------------------------------\n");
       }
@@ -400,9 +400,9 @@ int main(void)
 
    printf("\n\nTook %d ticks, %d bits\n", t1, mp_count_bits(&p));
 
-   mp_toradix(&p, buf, 10);
+   mp_to_decimal(&p, buf, sizeof(buf));
    printf("P == %s\n", buf);
-   mp_toradix(&q, buf, 10);
+   mp_to_decimal(&q, buf, sizeof(buf));
    printf("Q == %s\n", buf);
 
    return 0;

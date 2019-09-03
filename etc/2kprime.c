@@ -69,7 +69,7 @@ top:
             goto top;
          }
 
-         mp_toradix(&q, buf, 10);
+         mp_to_decimal(&q, buf, sizeof(buf));
          printf("\n\n%d-bits (k = %lu) = %s\n", sizes[x], z, buf);
          fprintf(out, "%d-bits (k = %lu) = %s\n", sizes[x], z, buf);
          fflush(out);
