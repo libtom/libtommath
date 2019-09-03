@@ -2104,8 +2104,12 @@ int mp_to_radix (mp_int * a, char *str, size_t maxlen, int radix);
 \end{alltt}
 This stores $a$ in ``str'' of maximum length ``maxlen'' as a base-``radix'' string of ASCII chars.
 This function appends a NUL character to terminate the string.
-Valid values of ``radix'' line in the range $[2, 64]$.  To determine the size (exact) required
-by the conversion before storing any data use the following function.
+Valid values of ``radix'' line in the range $[2, 64]$.
+
+If ``str'' is not big enough to hold $a$, ``str' will be filled with the least-significant digits
+of length ``maxlen-1'', then ``str' will be NUL terminated and the error \texttt{MP\_VAL} is returned.
+
+To determine the size (exact) required by the conversion before storing any data use the following function.
 
 \index{mp\_radix\_size}
 \begin{alltt}
