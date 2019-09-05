@@ -17,7 +17,7 @@ coverage: LIBNAME:=-Wl,--whole-archive $(LIBNAME)  -Wl,--no-whole-archive
 
 include makefile_include.mk
 
-%.o: %.c
+%.o: %.c $(HEADERS)
 ifneq ($V,1)
 	@echo "   * ${CC} $@"
 endif
@@ -58,8 +58,6 @@ bn_s_mp_sqr.o bn_s_mp_sqr_fast.o bn_s_mp_sub.o bn_s_mp_toom_mul.o bn_s_mp_toom_s
 
 #END_INS
 
-$(OBJECTS): $(HEADERS)
-
 $(LIBNAME):  $(OBJECTS)
 	$(AR) $(ARFLAGS) $@ $(OBJECTS)
 	$(RANLIB) $@
@@ -97,10 +95,7 @@ uninstall:
 	rm $(DESTDIR)$(LIBPATH)/$(LIBNAME)
 	rm $(HEADERS_PUB:%=$(DESTDIR)$(INCPATH)/%)
 
-test: demo/main.o demo/opponent.o demo/test.o $(LIBNAME)
-	$(CC) $(CFLAGS) $^ $(LFLAGS) -o test
-
-test_standalone: demo/main.o demo/opponent.o demo/test.o $(LIBNAME)
+test test_standalone: demo/main.o demo/opponent.o demo/test.o $(LIBNAME)
 	$(CC) $(CFLAGS) $^ $(LFLAGS) -o test
 
 .PHONY: mtest

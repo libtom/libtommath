@@ -57,7 +57,7 @@ bn_s_mp_sqr.o bn_s_mp_sqr_fast.o bn_s_mp_sub.o bn_s_mp_toom_mul.o bn_s_mp_toom_s
 
 objs: $(OBJECTS)
 
-.c.o:
+.c.o: $(HEADERS)
 	$(LTCOMPILE) $(CFLAGS) $(LDFLAGS) -o $@ -c $<
 
 LOBJECTS = $(OBJECTS:.o=.lo)
@@ -79,17 +79,8 @@ uninstall:
 	rm $(HEADERS_PUB:%=$(DESTDIR)$(INCPATH)/%)
 	rm $(DESTDIR)$(LIBPATH)/pkgconfig/libtommath.pc
 
-test: $(LIBNAME)
-	$(LTCOMPILE) $(CFLAGS) -c demo/main.c -o demo/main.o
-	$(LTCOMPILE) $(CFLAGS) -c demo/opponent.c -o demo/opponent.o
-	$(LTCOMPILE) $(CFLAGS) -c demo/test.c -o demo/test.o
-	$(LTLINK) $(LDFLAGS) -o test demo/main.o demo/opponent.o demo/test.o $(LIBNAME)
-
-test_standalone: $(LIBNAME)
-	$(LTCOMPILE) $(CFLAGS) -c demo/main.c -o demo/main.o
-	$(LTCOMPILE) $(CFLAGS) -c demo/opponent.c -o demo/opponent.o
-	$(LTCOMPILE) $(CFLAGS) -c demo/test.c -o demo/test.o
-	$(LTLINK) $(LDFLAGS) -o test demo/main.o demo/opponent.o demo/test.o $(LIBNAME)
+test test_standalone: demo/main.o demo/opponent.o demo/test.o $(LIBNAME)
+	$(LTLINK) $(LDFLAGS) $^ -o test
 
 .PHONY: mtest
 mtest:
