@@ -35,9 +35,11 @@ int mtest_opponent(void)
    div2_n = mul2_n = inv_n = expt_n = lcm_n = gcd_n = add_n =
                                          sub_n = mul_n = div_n = sqr_n = mul2d_n = div2d_n = add_d_n = sub_d_n = 0;
 
+#ifndef MP_FIXED_CUTOFFS
    /* force KARA and TOOM to enable despite cutoffs */
    KARATSUBA_SQR_CUTOFF = KARATSUBA_MUL_CUTOFF = 8;
    TOOM_SQR_CUTOFF = TOOM_MUL_CUTOFF = 16;
+#endif
 
    for (;;) {
       /* randomly clear and re-init one variable, this has the affect of triming the alloc space */
