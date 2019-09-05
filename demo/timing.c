@@ -211,7 +211,7 @@ int main(void)
    old_toom_m = old_kara_m;
    old_toom_s = old_kara_m;
    for (ix = 0; ix < 3; ix++) {
-      printf("With%s Karatsuba, With%s Toom\n", (ix == 0) ? "out" : "", (ix == 1) ? "out" : "");
+      printf("With%s Karatsuba, With%s Toom\n", (ix == 1) ? "" : "out", (ix == 2) ? "" : "out");
 
       KARATSUBA_MUL_CUTOFF = (ix == 1) ? old_kara_m : 9999;
       KARATSUBA_SQR_CUTOFF = (ix == 1) ? old_kara_s : 9999;
