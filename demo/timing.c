@@ -1,9 +1,11 @@
-#include <tommath.h>
 #include <time.h>
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <inttypes.h>
+
+#define MP_WUR
+#include <tommath.h>
 
 #ifdef IOWNANATHLON
 #include <unistd.h>
