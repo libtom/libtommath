@@ -977,7 +977,7 @@ static int test_mp_prime_is_prime(void)
       printf("A certified prime is a prime but mp_prime_is_prime says it is not.\n");
    }
    if ((err != MP_OKAY) || (cnt == MP_NO)) {
-      printf("prime tested was: ");
+      printf("prime tested was: 0x");
       mp_fwrite(&a,16,stdout);
       putchar('\n');
       goto LBL_ERR;
@@ -1011,10 +1011,10 @@ static int test_mp_prime_is_prime(void)
          printf("\nfrobenius-underwood says sub is not prime!\n");
       }
       if ((err != MP_OKAY) || (cnt == MP_NO)) {
-         printf("prime tested was: ");
+         printf("prime tested was: 0x");
          mp_fwrite(&a,16,stdout);
          putchar('\n');
-         printf("sub tested was: ");
+         printf("sub tested was: 0x");
          mp_fwrite(&b,16,stdout);
          putchar('\n');
          goto LBL_ERR;
@@ -1036,7 +1036,7 @@ static int test_mp_prime_is_prime(void)
       printf("\n\nissue #143 - mp_prime_strong_lucas_selfridge FAILED!\n");
    }
    if ((err != MP_OKAY) || (cnt == MP_NO)) {
-      printf("prime tested was: ");
+      printf("prime tested was: 0x");
       mp_fwrite(&a,16,stdout);
       putchar('\n');
       goto LBL_ERR;
