@@ -1,3 +1,4 @@
+#include <inttypes.h>
 #include "shared.h"
 
 static long rand_long(void)
@@ -2264,9 +2265,12 @@ int unit_tests(int argc, char **argv)
 #undef T
    };
    unsigned long i;
+   uint64_t t;
    int res = EXIT_SUCCESS, j;
 
-   s_mp_rand_jenkins_init((uint64_t)time(NULL));
+   t = (uint64_t)time(NULL);
+   printf("SEED: 0x%"PRIx64"\n\n", t);
+   s_mp_rand_jenkins_init(t);
    mp_rand_source(s_mp_rand_jenkins);
 
    for (i = 0; i < sizeof(test) / sizeof(test[0]); ++i) {
