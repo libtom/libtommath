@@ -21,7 +21,7 @@ include makefile_include.mk
 ifneq ($V,1)
 	@echo "   * ${CC} $@"
 endif
-	${silent} ${CC} -c ${CFLAGS} $< -o $@
+	${silent} ${CC} -c ${LTM_CFLAGS} $< -o $@
 
 LCOV_ARGS=--directory .
 
@@ -77,11 +77,11 @@ profiled:
 #make a single object profiled library
 profiled_single:
 	perl gen.pl
-	$(CC) $(CFLAGS) -fprofile-arcs -DTESTING -c mpi.c -o mpi.o
-	$(CC) $(CFLAGS) -DTESTING -DTIMER demo/timing.c mpi.o -lgcov -o timing
+	$(CC) $(LTM_CFLAGS) -fprofile-arcs -DTESTING -c mpi.c -o mpi.o
+	$(CC) $(LTM_CFLAGS) -DTESTING -DTIMER demo/timing.c mpi.o -lgcov -o timing
 	./timing
 	rm -f *.o timing
-	$(CC) $(CFLAGS) -fbranch-probabilities -DTESTING -c mpi.c -o mpi.o
+	$(CC) $(LTM_CFLAGS) -fbranch-probabilities -DTESTING -c mpi.c -o mpi.o
 	$(AR) $(ARFLAGS) $(LIBNAME) mpi.o
 	ranlib $(LIBNAME)
 
@@ -96,17 +96,17 @@ uninstall:
 	rm $(HEADERS_PUB:%=$(DESTDIR)$(INCPATH)/%)
 
 test test_standalone: demo/main.o demo/opponent.o demo/test.o $(LIBNAME)
-	$(CC) $(CFLAGS) $^ $(LFLAGS) -o test
+	$(CC) $(LTM_CFLAGS) $^ $(LTM_LFLAGS) -o test
 
 .PHONY: mtest
 mtest:
-	cd mtest ; $(CC) $(CFLAGS) -O0 mtest.c $(LFLAGS) -o mtest
+	cd mtest ; $(CC) $(LTM_CFLAGS) -O0 mtest.c $(LTM_LFLAGS) -o mtest
 
 timing: $(LIBNAME) demo/timing.c
-	$(CC) $(CFLAGS) -DTIMER demo/timing.c $(LIBNAME) $(LFLAGS) -o timing
+	$(CC) $(LTM_CFLAGS) -DTIMER demo/timing.c $(LIBNAME) $(LTM_LFLAGS) -o timing
 
 tune: $(LIBNAME)
-	$(MAKE) -C etc tune
+	$(MAKE) -C etc tune CFLAGS="$(LTM_CFLAGS)"
 	$(MAKE)
 
 # You have to create a file .coveralls.yml with the content "repo_token: <the token>"

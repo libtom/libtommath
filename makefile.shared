@@ -58,12 +58,12 @@ bn_s_mp_sqr.o bn_s_mp_sqr_fast.o bn_s_mp_sub.o bn_s_mp_toom_mul.o bn_s_mp_toom_s
 objs: $(OBJECTS)
 
 .c.o: $(HEADERS)
-	$(LTCOMPILE) $(CFLAGS) $(LDFLAGS) -o $@ -c $<
+	$(LTCOMPILE) $(LTM_CFLAGS) $(LTM_LDFLAGS) -o $@ -c $<
 
 LOBJECTS = $(OBJECTS:.o=.lo)
 
 $(LIBNAME):  $(OBJECTS)
-	$(LTLINK) $(LDFLAGS) $(LOBJECTS) -o $(LIBNAME) -rpath $(LIBPATH) -version-info $(VERSION_SO) $(LIBTOOLFLAGS)
+	$(LTLINK) $(LTM_LDFLAGS) $(LOBJECTS) -o $(LIBNAME) -rpath $(LIBPATH) -version-info $(VERSION_SO) $(LTM_LIBTOOLFLAGS)
 
 install: $(LIBNAME)
 	install -d $(DESTDIR)$(LIBPATH)
@@ -80,17 +80,17 @@ uninstall:
 	rm $(DESTDIR)$(LIBPATH)/pkgconfig/libtommath.pc
 
 test test_standalone: demo/main.o demo/opponent.o demo/test.o $(LIBNAME)
-	$(LTLINK) $(LDFLAGS) $^ -o test
+	$(LTLINK) $(LTM_LDFLAGS) $^ -o test
 
 .PHONY: mtest
 mtest:
-	cd mtest ; $(CC) $(CFLAGS) -O0 mtest.c $(LDFLAGS) -o mtest
+	cd mtest ; $(CC) $(LTM_CFLAGS) -O0 mtest.c $(LTM_LDFLAGS) -o mtest
 
 timing: $(LIBNAME) demo/timing.c
-	$(LTLINK) $(CFLAGS) $(LDFLAGS) -DTIMER demo/timing.c $(LIBNAME) -o timing
+	$(LTLINK) $(LTM_CFLAGS) $(LTM_LDFLAGS) -DTIMER demo/timing.c $(LIBNAME) -o timing
 
 tune: $(LIBNAME)
-	$(LTCOMPILE) $(CFLAGS) -c etc/tune.c -o etc/tune.o
-	$(LTLINK) $(LDFLAGS) -o etc/tune etc/tune.o $(LIBNAME)
+	$(LTCOMPILE) $(LTM_CFLAGS) -c etc/tune.c -o etc/tune.o
+	$(LTLINK) $(LTM_LDFLAGS) -o etc/tune etc/tune.o $(LIBNAME)
 	cd etc/; /bin/sh tune_it.sh; cd ..
 	$(MAKE) -f makefile.shared
