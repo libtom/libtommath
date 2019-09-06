@@ -19,7 +19,6 @@
 */
 
 #ifdef SC_RSA_1_WITH_TESTS
-#   define BN_CUTOFFS_C
 #   define BN_MP_ERROR_TO_STRING_C
 #   define BN_MP_FREAD_C
 #   define BN_MP_FWRITE_C
@@ -29,7 +28,6 @@
 #   define BN_MP_NEG_C
 #   define BN_MP_PRIME_FROBENIUS_UNDERWOOD_C
 #   define BN_MP_RADIX_SIZE_C
-#   define BN_MP_RADIX_SMAP_C
 #   define BN_MP_RAND_C
 #   define BN_MP_REDUCE_C
 #   define BN_MP_REDUCE_2K_L_C
@@ -46,6 +44,7 @@
 
 /* Works for RSA only, mpi.o is 68KiB */
 #if defined(SC_RSA_1) || defined (SC_RSA_1_WITH_TESTS)
+#   define BN_CUTOFFS_C
 #   define BN_MP_ADDMOD_C
 #   define BN_MP_CLEAR_MULTI_C
 #   define BN_MP_EXPTMOD_C
@@ -59,6 +58,7 @@
 #   define BN_MP_PRIME_IS_PRIME_C
 #   define BN_MP_PRIME_RABIN_MILLER_TRIALS_C
 #   define BN_MP_PRIME_RAND_C
+#   define BN_MP_RADIX_SMAP_C
 #   define BN_MP_SET_INT_C
 #   define BN_MP_SHRINK_C
 #   define BN_MP_TO_UNSIGNED_BIN_C
@@ -83,6 +83,7 @@
 #      undef BN_MP_REDUCE_2K_C
 #      undef BN_MP_REDUCE_IS_2K_C
 #      undef BN_MP_REDUCE_SETUP_C
+#      undef BN_S_MP_BALANCE_MUL_C
 #      undef BN_S_MP_EXPTMOD_C
 #      undef BN_S_MP_INVMOD_FAST_C
 #      undef BN_S_MP_KARATSUBA_MUL_C
