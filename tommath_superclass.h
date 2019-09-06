@@ -46,25 +46,25 @@
 
 /* Works for RSA only, mpi.o is 68KiB */
 #if defined(SC_RSA_1) || defined (SC_RSA_1_WITH_TESTS)
-#   define BN_MP_SHRINK_C
-#   define BN_MP_LCM_C
-#   define BN_MP_PRIME_RAND_C
-#   define BN_MP_PRIME_IS_PRIME_C
-#   define BN_MP_INVMOD_C
-#   define BN_MP_GCD_C
-#   define BN_MP_MOD_C
-#   define BN_MP_MULMOD_C
 #   define BN_MP_ADDMOD_C
-#   define BN_MP_EXPTMOD_C
-#   define BN_MP_SET_INT_C
-#   define BN_MP_INIT_MULTI_C
 #   define BN_MP_CLEAR_MULTI_C
-#   define BN_MP_UNSIGNED_BIN_SIZE_C
-#   define BN_MP_TO_UNSIGNED_BIN_C
+#   define BN_MP_EXPTMOD_C
+#   define BN_MP_GCD_C
+#   define BN_MP_INIT_MULTI_C
+#   define BN_MP_INVMOD_C
+#   define BN_MP_LCM_C
+#   define BN_MP_MOD_C
 #   define BN_MP_MOD_D_C
+#   define BN_MP_MULMOD_C
+#   define BN_MP_PRIME_IS_PRIME_C
 #   define BN_MP_PRIME_RABIN_MILLER_TRIALS_C
-#   define BN_S_MP_REVERSE_C
+#   define BN_MP_PRIME_RAND_C
+#   define BN_MP_SET_INT_C
+#   define BN_MP_SHRINK_C
+#   define BN_MP_TO_UNSIGNED_BIN_C
+#   define BN_MP_UNSIGNED_BIN_SIZE_C
 #   define BN_PRIME_TAB_C
+#   define BN_S_MP_REVERSE_C
 
 /* other modifiers */
 #   define BN_MP_DIV_SMALL                    /* Slower division, not critical */
@@ -75,22 +75,22 @@
  * like removing support for even moduli, etc...
  */
 #   ifdef LTM_LAST
-#      undef BN_S_MP_TOOM_MUL_C
-#      undef BN_S_MP_TOOM_SQR_C
-#      undef BN_S_MP_KARATSUBA_MUL_C
-#      undef BN_S_MP_KARATSUBA_SQR_C
-#      undef BN_MP_REDUCE_SETUP_C
 #      undef BN_MP_DR_IS_MODULUS_C
 #      undef BN_MP_DR_SETUP_C
 #      undef BN_MP_DR_REDUCE_C
-#      undef BN_MP_REDUCE_IS_2K_C
+#      undef BN_MP_DIV_3_C
 #      undef BN_MP_REDUCE_2K_SETUP_C
 #      undef BN_MP_REDUCE_2K_C
+#      undef BN_MP_REDUCE_IS_2K_C
+#      undef BN_MP_REDUCE_SETUP_C
 #      undef BN_S_MP_EXPTMOD_C
-#      undef BN_MP_DIV_3_C
+#      undef BN_S_MP_INVMOD_FAST_C
+#      undef BN_S_MP_KARATSUBA_MUL_C
+#      undef BN_S_MP_KARATSUBA_SQR_C
 #      undef BN_S_MP_MUL_HIGH_DIGS_C
 #      undef BN_S_MP_MUL_HIGH_DIGS_FAST_C
-#      undef BN_S_MP_INVMOD_FAST_C
+#      undef BN_S_MP_TOOM_MUL_C
+#      undef BN_S_MP_TOOM_SQR_C
 
 #      ifndef SC_RSA_1_WITH_TESTS
 #         undef BN_MP_REDUCE_C
@@ -101,9 +101,9 @@
  * which means roughly speaking you can handle upto 2536-bit RSA keys with these defined without
  * trouble.
  */
+#      undef BN_MP_MONTGOMERY_REDUCE_C
 #      undef BN_S_MP_MUL_DIGS_C
 #      undef BN_S_MP_SQR_C
-#      undef BN_MP_MONTGOMERY_REDUCE_C
 #   endif
 
 #endif
