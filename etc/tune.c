@@ -193,6 +193,25 @@ static void s_run(const char *name, uint64_t (*op)(int), int *cutoff)
    *cutoff = x - s_stabilization_extra * args.increment_print;
 }
 
+static long s_strtol(const char *str, char **endptr, const char *err)
+{
+   const int base = 10;
+   char *_endptr;
+   long val;
+   errno = 0;
+   val = strtol(str, &_endptr, base);
+   if ((val > INT_MAX || val < 0) || (errno != 0)) {
+      fprintf(stderr, "Value %s not usable\n", str);
+      exit(EXIT_FAILURE);
+   }
+   if (_endptr == str) {
+      fprintf(stderr, "%s\n", err);
+      exit(EXIT_FAILURE);
+   }
+   if (endptr) *endptr = _endptr;
+   return val;
+}
+
 static void s_usage(char *s)
 {
    fprintf(stderr,"Usage: %s [TvcpGbtrSLFfMmosh]\n",s);
@@ -235,9 +254,7 @@ int main(int argc, char **argv)
 
    int printpreset = 0;
    /*int preset[8];*/
-   int base = 10;
    char *endptr, *str;
-   long val;
 
    uint64_t seed = 0xdeadbeef;
 
@@ -326,71 +343,28 @@ int main(int argc, char **argv)
             }
             str = argv[opt];
             errno = 0;
-            val = strtol(str, &endptr, base);
-            if ((errno == ERANGE && (val == LONG_MAX || val == LONG_MIN))
-                || (errno != 0 && val == 0)) {
-               fprintf(stderr,"Seed %s not usable\n", argv[opt]);
-               exit(EXIT_FAILURE);
-            }
-            if (endptr == str) {
-               fprintf(stderr, "No seed given?\n");
-               exit(EXIT_FAILURE);
-            }
-            seed = (uint64_t)val;
+            seed = (uint64_t)s_strtol(argv[opt], NULL, "No seed given?\n");
             break;
          case 'L':
             opt++;
             if (opt >= argc) {
                s_usage(argv[0]);
             }
-            str = argv[opt];
-            errno = 0;
-            val = strtol(str, &endptr, base);
-            if ((val > INT_MAX || val < 0) || (errno != 0)) {
-               fprintf(stderr,"Value %s not usable\n", argv[opt]);
-               exit(EXIT_FAILURE);
-            }
-            if (endptr == str) {
-               fprintf(stderr, "No value for option \"-L\"given\n");
-               exit(EXIT_FAILURE);
-            }
-            s_stabilization_extra = (int)val;
+            s_stabilization_extra = (int)s_strtol(argv[opt], NULL, "No value for option \"-L\"given");
             break;
          case 'o':
             opt++;
             if (opt >= argc) {
                s_usage(argv[0]);
             }
-            str = argv[opt];
-            errno = 0;
-            val = strtol(str, &endptr, base);
-            if ((val > INT_MAX || val < 0) || (errno != 0)) {
-               fprintf(stderr,"Value %s not usable as an offset\n", argv[opt]);
-               exit(EXIT_FAILURE);
-            }
-            if (endptr == str) {
-               fprintf(stderr, "No value for the offset given\n");
-               exit(EXIT_FAILURE);
-            }
-            s_offset = (int)val;
+            s_offset = (int)s_strtol(argv[opt], NULL, "No value for the offset given");
             break;
          case 'r':
             opt++;
             if (opt >= argc) {
                s_usage(argv[0]);
             }
-            str = argv[opt];
-            errno = 0;
-            val = strtol(str, &endptr, base);
-            if ((val > INT_MAX || val < 0) || (errno != 0)) {
-               fprintf(stderr,"Value %s not usable as the number of rounds for \"-r\"\n", argv[opt]);
-               exit(EXIT_FAILURE);
-            }
-            if (endptr == str) {
-               fprintf(stderr, "No value for the number of rounds given\n");
-               exit(EXIT_FAILURE);
-            }
-            s_number_of_test_loops = (int)val;
+            s_number_of_test_loops = (int)s_strtol(argv[opt], NULL, "No value for the number of rounds given");
             break;
 
          case 'M':
@@ -398,36 +372,14 @@ int main(int argc, char **argv)
             if (opt >= argc) {
                s_usage(argv[0]);
             }
-            str = argv[opt];
-            errno = 0;
-            val = strtol(str, &endptr, base);
-            if ((val > INT_MAX || val < 0) || (errno != 0)) {
-               fprintf(stderr,"Value %s not usable as the upper limit of T-C tests (\"-M\")\n", argv[opt]);
-               exit(EXIT_FAILURE);
-            }
-            if (endptr == str) {
-               fprintf(stderr, "No value for the upper limit of T-C tests given\n");
-               exit(EXIT_FAILURE);
-            }
-            args.upper_limit_print = (int)val;
+            args.upper_limit_print = (int)s_strtol(argv[opt], NULL, "No value for the upper limit of T-C tests given");
             break;
          case 'm':
             opt++;
             if (opt >= argc) {
                s_usage(argv[0]);
             }
-            str = argv[opt];
-            errno = 0;
-            val = strtol(str, &endptr, base);
-            if ((val > INT_MAX || val < 0) || (errno != 0)) {
-               fprintf(stderr,"Value %s not usable as the increment for the T-C tests (\"-m\")\n", argv[opt]);
-               exit(EXIT_FAILURE);
-            }
-            if (endptr == str) {
-               fprintf(stderr, "No value for the increment for the T-C tests given\n");
-               exit(EXIT_FAILURE);
-            }
-            args.increment_print = (int)val;
+            args.increment_print = (int)s_strtol(argv[opt], NULL, "No value for the increment for the T-C tests given");
             break;
          case 's':
             printpreset = 1;
@@ -437,60 +389,13 @@ int main(int argc, char **argv)
                s_usage(argv[0]);
             }
             str = argv[opt];
-            i = 0;
-            /* Only the most basic checks */
-            errno = 0;
-            val = strtol(str, &endptr, base);
-            if ((val > INT_MAX || val < 0) || (errno != 0)) {
-               fprintf(stderr,"input #%d wrong\n", i+1);
-               exit(EXIT_FAILURE);
-            }
-            if (endptr == str) {
-               fprintf(stderr, "No input for #%d?\n", i+1);
-               exit(EXIT_FAILURE);
-            }
-            i++;
+            KARATSUBA_MUL_CUTOFF = (int)s_strtol(str, &endptr, "[1/4] No value for KARATSUBA_MUL_CUTOFF given");
             str = endptr + 1;
-            KARATSUBA_MUL_CUTOFF = (int)val;
-            errno = 0;
-            val = strtol(str, &endptr, base);
-            if ((val > INT_MAX || val < 0) || (errno != 0)) {
-               fprintf(stderr,"input #%d wrong\n", i+1);
-               exit(EXIT_FAILURE);
-            }
-            if (endptr == str) {
-               fprintf(stderr, "No input for #%d?\n", i+1);
-               exit(EXIT_FAILURE);
-            }
-            i++;
+            KARATSUBA_SQR_CUTOFF = (int)s_strtol(str, &endptr, "[2/4] No value for KARATSUBA_SQR_CUTOFF given");
             str = endptr + 1;
-            KARATSUBA_SQR_CUTOFF = (int)val;
-            errno = 0;
-            val = strtol(str, &endptr, base);
-            if ((val > INT_MAX || val < 0) || (errno != 0)) {
-               fprintf(stderr,"input #%d wrong\n", i+1);
-               exit(EXIT_FAILURE);
-            }
-            if (endptr == str) {
-               fprintf(stderr, "No input for #%d?\n", i+1);
-               exit(EXIT_FAILURE);
-            }
-            i++;
+            TOOM_MUL_CUTOFF = (int)s_strtol(str, &endptr, "[3/4] No value for TOOM_MUL_CUTOFF given");
             str = endptr + 1;
-            TOOM_MUL_CUTOFF = (int)val;
-            errno = 0;
-            val = strtol(str, &endptr, base);
-            if ((val > INT_MAX || val < 0) || (errno != 0)) {
-               fprintf(stderr,"input #%d wrong\n", i+1);
-               exit(EXIT_FAILURE);
-            }
-            if (endptr == str) {
-               fprintf(stderr, "No input for #%d?\n", i+1);
-               exit(EXIT_FAILURE);
-            }
-            i++;
-            str = endptr + 1;
-            TOOM_SQR_CUTOFF = (int)val;
+            TOOM_SQR_CUTOFF = (int)s_strtol(str, &endptr, "[4/4] No value for TOOM_SQR_CUTOFF given");
             break;
          case 'h':
          default:
