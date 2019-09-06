@@ -827,6 +827,7 @@
 #   define BN_MP_GROW_C
 #   define BN_MP_RAND_SOURCE_C
 #   define BN_MP_ZERO_C
+#   define BN_S_MP_RAND_PLATFORM_C
 #   define BN_S_MP_RAND_SOURCE_C
 #endif
 
@@ -1118,7 +1119,9 @@
 #   define BN_MP_INIT_C
 #   define BN_MP_MOD_C
 #   define BN_MP_MUL_C
+#   define BN_MP_REDUCE_2K_L_C
 #   define BN_MP_REDUCE_2K_SETUP_L_C
+#   define BN_MP_REDUCE_C
 #   define BN_MP_REDUCE_SETUP_C
 #   define BN_MP_SET_C
 #   define BN_MP_SQR_C
@@ -1128,17 +1131,21 @@
 #   define BN_MP_CLEAR_C
 #   define BN_MP_COPY_C
 #   define BN_MP_COUNT_BITS_C
+#   define BN_MP_DR_REDUCE_C
 #   define BN_MP_DR_SETUP_C
 #   define BN_MP_EXCH_C
 #   define BN_MP_INIT_SIZE_C
 #   define BN_MP_MOD_C
 #   define BN_MP_MONTGOMERY_CALC_NORMALIZATION_C
+#   define BN_MP_MONTGOMERY_REDUCE_C
 #   define BN_MP_MONTGOMERY_SETUP_C
 #   define BN_MP_MULMOD_C
 #   define BN_MP_MUL_C
+#   define BN_MP_REDUCE_2K_C
 #   define BN_MP_REDUCE_2K_SETUP_C
 #   define BN_MP_SET_C
 #   define BN_MP_SQR_C
+#   define BN_S_MP_MONTGOMERY_REDUCE_FAST_C
 #endif
 
 #if defined(BN_S_MP_GET_BIT_C)
