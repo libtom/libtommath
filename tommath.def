@@ -101,6 +101,7 @@ EXPORTS
     mp_prime_rand
     mp_prime_strong_lucas_selfridge
     mp_radix_size
+    mp_radix_size_overestimate
     mp_rand
     mp_read_radix
     mp_reduce

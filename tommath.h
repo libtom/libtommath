@@ -749,9 +749,15 @@ mp_err mp_to_sbin(const mp_int *a, unsigned char *buf, size_t maxlen, size_t *wr
 mp_err mp_read_radix(mp_int *a, const char *str, int radix) MP_WUR;
 MP_DEPRECATED(mp_to_radix) mp_err mp_toradix(const mp_int *a, char *str, int radix) MP_WUR;
 MP_DEPRECATED(mp_to_radix) mp_err mp_toradix_n(const mp_int *a, char *str, int radix, int maxlen) MP_WUR;
+
 mp_err mp_to_radix(const mp_int *a, char *str, size_t maxlen, size_t *written, int radix) MP_WUR;
 mp_err mp_radix_size(const mp_int *a, int radix, int *size) MP_WUR;
-
+/*
+   Can overshoot by one or two characters but is O(1) (table based with a very small overhead)
+   Behaves like the function mp(n|z)_sizeinbase of GMP for all digit-sizes except MP_8BIT
+   and MP_16BIT (if the "int" for MP_16BIT has more than 16 bits) where it can overshoot by two.
+ */
+mp_err mp_radix_size_overestimate(const mp_int *a, const int base, int *size) MP_WUR;
 #ifndef MP_NO_FILE
 mp_err mp_fread(mp_int *a, int radix, FILE *stream) MP_WUR;
 mp_err mp_fwrite(const mp_int *a, int radix, FILE *stream) MP_WUR;

@@ -104,6 +104,7 @@
 #   define BN_MP_PRIME_RAND_C
 #   define BN_MP_PRIME_STRONG_LUCAS_SELFRIDGE_C
 #   define BN_MP_RADIX_SIZE_C
+#   define BN_MP_RADIX_SIZE_OVERESTIMATE_C
 #   define BN_MP_RADIX_SMAP_C
 #   define BN_MP_RAND_C
 #   define BN_MP_READ_RADIX_C
@@ -840,8 +841,20 @@
 #if defined(BN_MP_RADIX_SIZE_C)
 #   define BN_MP_CLEAR_C
 #   define BN_MP_COUNT_BITS_C
-#   define BN_MP_DIV_D_C
-#   define BN_MP_INIT_COPY_C
+#   define BN_MP_GET_L_C
+#   define BN_MP_ILOGB_C
+#   define BN_MP_INIT_C
+#endif
+
+#if defined(BN_MP_RADIX_SIZE_OVERESTIMATE_C)
+#   define BN_MP_CLEAR_MULTI_C
+#   define BN_MP_COUNT_BITS_C
+#   define BN_MP_DIV_C
+#   define BN_MP_GET_L_C
+#   define BN_MP_INIT_MULTI_C
+#   define BN_MP_MUL_2D_C
+#   define BN_MP_SET_L_C
+#   define BN_MP_SET_U64_C
 #endif
 
 #if defined(BN_MP_RADIX_SMAP_C)

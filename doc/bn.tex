@@ -2118,8 +2118,16 @@ Please be aware that this function cannot evaluate the actual size of the buffer
 \begin{alltt}
 int mp_radix_size (mp_int * a, int radix, int *size)
 \end{alltt}
-This stores in ``size'' the number of characters (including space for the NUL terminator) required.  Upon error this
-function returns an error code and ``size'' will be zero.
+This stores in ``size'' the exact number of characters (including space for the NUL terminator) required.  Upon error this function returns an error code and ``size'' will be zero. It uses \texttt{mp\_ilogb} to compute the size in O(log n) with quite a large overhead. This function is deprecated in favor of
+\texttt{mp\_radix\_sizeinbase} described below. If the exact size is still required after the removal of this function use \texttt{mp\_ilogb} directly.
+
+\index{mp\_radix\_overestimate}
+\begin{alltt}
+int mp_radix_size_overestimate (mp_int * a, int radix, int *size)
+\end{alltt}
+This stores in ``size'' the number of characters (including space for the NUL terminator) required.  Upon error this function returns an error code and ``size'' will be zero. This function can overshoot by one (two in case of \texttt{MP\_8BIT} and also for \texttt{MP\_16BIT} if the type \texttt{int} has more than 16 bits). The results for bases that are powers-of-two are exact. It uses tables to compute the result in O(1) with quite a small overhead.
+
+The behavior is similar to the behavior of the function \texttt{mpn\_sizeinbase} in GMP for \texttt{MP\_32BIT}, and \texttt{MP\_64BIT}.
 
 If \texttt{LTM\_NO\_FILE} is not defined a function to write to a file is also available.
 \index{mp\_fwrite}

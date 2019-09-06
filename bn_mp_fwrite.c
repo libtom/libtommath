@@ -33,6 +33,7 @@ mp_err mp_fwrite(const mp_int *a, int radix, FILE *stream)
       err = MP_ERR;
       goto LBL_ERR;
    }
+
    err = MP_OKAY;
 
 
