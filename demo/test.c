@@ -2223,9 +2223,9 @@ static int test_mp_to_decimal(void)
    if ((err = mp_init_multi(&a, &b, NULL)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   for (size = 1; size < 1000; size += 10) {
+   for (size = 1; size <= 1001; size += 10) {
       int times;
-      printf("Testing mp_to_decimal: %5d bits    \r", size);
+      printf("Testing mp_to_decimal: %5d digits    \r", size);
       fflush(stdout);
       for (times = 0; times < 5; times++) {
          if ((err = mp_rand(&a, size)) != MP_OKAY) {
@@ -2249,7 +2249,7 @@ static int test_mp_to_decimal(void)
          }
          free(str);
          if (mp_cmp(&a, &b) != MP_EQ) {
-            fprintf(stderr, "s_mp_to_decimal_fast failed at size %d\n", size);
+            fprintf(stderr, "mp_to_decimal failed at size %d\n", size);
             goto LTM_ERR;
          }
       }

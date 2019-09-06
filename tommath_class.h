@@ -1279,11 +1279,13 @@
 #   define BN_MP_ADD_D_C
 #   define BN_MP_CLEAR_MULTI_C
 #   define BN_MP_CMP_C
+#   define BN_MP_COPY_C
+#   define BN_MP_DECR_C
 #   define BN_MP_DIV_2D_C
 #   define BN_MP_GET_I32_C
+#   define BN_MP_INCR_C
 #   define BN_MP_INIT_COPY_C
 #   define BN_MP_INIT_MULTI_C
-#   define BN_MP_INIT_SET_C
 #   define BN_MP_MUL_2_C
 #   define BN_MP_MUL_C
 #   define BN_MP_NEG_C
