@@ -143,7 +143,7 @@ mp_err s_mp_to_decimal_fast(const mp_int *a, char *result, size_t maxlen)
    /* $M / 8, rounded up */
    mp_set_u32(&mL[0], 1049);
 
-   while (1) {
+   for (precalc_array_index = 1; precalc_array_index < 20; precalc_array_index++) {
       if ((err = mp_sqr(&n, &n)) != MP_OKAY) {
          goto LBL_ERR;
       }
@@ -213,14 +213,13 @@ mp_err s_mp_to_decimal_fast(const mp_int *a, char *result, size_t maxlen)
             goto LBL_ERR;
          }
       }
-      if (precalc_array_index >= 20) {
-         err = MP_VAL;
-         goto LBL_ERR;
-      }
       if ((err = mp_init_copy(&mL[precalc_array_index], &M4)) != MP_OKAY) {
          goto LBL_ERR;
       }
-      precalc_array_index++;
+   }
+   if (precalc_array_index >= 20) {
+      err = MP_VAL;
+      goto LBL_ERR;
    }
 
    if ((err = s_mp_to_decimal_fast_rec(&number, nL, shiftL, mL, precalc_array_index - 1, 1, result_addr,
