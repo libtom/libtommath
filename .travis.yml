@@ -90,6 +90,9 @@ matrix:
             - libc6-dev-i386
             - gcc-multilib
 
+    # RSA superclass with tests (no sanitizer, but debug info)
+    - env: COMPILE_DEBUG=1 BUILDOPTIONS='--with-cc=gcc-5 --with-m64 --cflags=-DLTM_NOTHING --cflags=-DSC_RSA_1_WITH_TESTS --with-travis-valgrind'
+
     # Test "autotuning", the automatic evaluation and setting of the Toom-Cook cut-offs.
     #- env: SANITIZER=1 BUILDOPTIONS='--with-cc=gcc-5 --cflags=-DMP_8BIT  --with-travis-valgrind --make-option=tune'
     #- env: SANITIZER=1 BUILDOPTIONS='--with-cc=gcc-5 --cflags=-DMP_16BIT --with-travis-valgrind --make-option=tune'

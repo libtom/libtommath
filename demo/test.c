@@ -1,3 +1,4 @@
+#include <inttypes.h>
 #include "shared.h"
 
 static long rand_long(void)
@@ -976,7 +977,7 @@ static int test_mp_prime_is_prime(void)
       printf("A certified prime is a prime but mp_prime_is_prime says it is not.\n");
    }
    if ((err != MP_OKAY) || (cnt == MP_NO)) {
-      printf("prime tested was: ");
+      printf("prime tested was: 0x");
       mp_fwrite(&a,16,stdout);
       putchar('\n');
       goto LBL_ERR;
@@ -1010,10 +1011,10 @@ static int test_mp_prime_is_prime(void)
          printf("\nfrobenius-underwood says sub is not prime!\n");
       }
       if ((err != MP_OKAY) || (cnt == MP_NO)) {
-         printf("prime tested was: ");
+         printf("prime tested was: 0x");
          mp_fwrite(&a,16,stdout);
          putchar('\n');
-         printf("sub tested was: ");
+         printf("sub tested was: 0x");
          mp_fwrite(&b,16,stdout);
          putchar('\n');
          goto LBL_ERR;
@@ -1035,7 +1036,7 @@ static int test_mp_prime_is_prime(void)
       printf("\n\nissue #143 - mp_prime_strong_lucas_selfridge FAILED!\n");
    }
    if ((err != MP_OKAY) || (cnt == MP_NO)) {
-      printf("prime tested was: ");
+      printf("prime tested was: 0x");
       mp_fwrite(&a,16,stdout);
       putchar('\n');
       goto LBL_ERR;
@@ -2219,54 +2220,62 @@ int unit_tests(int argc, char **argv)
       const char *name;
       int (*fn)(void);
    } test[] = {
-#define T(n) { #n, test_##n }
-      T(feature_detection),
-      T(trivial_stuff),
-      T(mp_get_set_i32),
-      T(mp_get_set_i64),
-      T(mp_and),
-      T(mp_cnt_lsb),
-      T(mp_complement),
-      T(mp_decr),
-      T(mp_div_3),
-      T(mp_dr_reduce),
-      T(mp_fread_fwrite),
-      T(mp_get_u32),
-      T(mp_get_u64),
-      T(mp_get_ul),
-      T(mp_ilogb),
-      T(mp_incr),
-      T(mp_invmod),
-      T(mp_is_square),
-      T(mp_kronecker),
-      T(mp_montgomery_reduce),
-      T(mp_root_u32),
-      T(mp_or),
-      T(mp_prime_is_prime),
-      T(mp_prime_next_prime),
-      T(mp_prime_rand),
-      T(mp_rand),
-      T(mp_read_radix),
-      T(mp_reduce_2k),
-      T(mp_reduce_2k_l),
+#define T0(n)           { #n, test_##n }
+#define T1(n, o)        { #n, MP_HAS(o) ? test_##n : NULL }
+#define T2(n, o1, o2)   { #n, MP_HAS(o1) && MP_HAS(o2) ? test_##n : NULL }
+      T0(feature_detection),
+      T0(trivial_stuff),
+      T2(mp_get_set_i32, MP_GET_I32, MP_GET_MAG_U32),
+      T2(mp_get_set_i64, MP_GET_I64, MP_GET_MAG_U64),
+      T1(mp_and, MP_AND),
+      T1(mp_cnt_lsb, MP_CNT_LSB),
+      T1(mp_complement, MP_COMPLEMENT),
+      T1(mp_decr, MP_DECR),
+      T1(mp_div_3, MP_DIV_3),
+      T1(mp_dr_reduce, MP_DR_REDUCE),
+      T2(mp_fread_fwrite, MP_FREAD, MP_FWRITE),
+      T1(mp_get_u32, MP_GET_I32),
+      T1(mp_get_u64, MP_GET_I64),
+      T1(mp_get_ul, MP_GET_L),
+      T1(mp_ilogb, MP_ILOGB),
+      T1(mp_incr, MP_INCR),
+      T1(mp_invmod, MP_INVMOD),
+      T1(mp_is_square, MP_IS_SQUARE),
+      T1(mp_kronecker, MP_KRONECKER),
+      T1(mp_montgomery_reduce, MP_MONTGOMERY_REDUCE),
+      T1(mp_root_u32, MP_ROOT_U32),
+      T1(mp_or, MP_OR),
+      T1(mp_prime_is_prime, MP_PRIME_IS_PRIME),
+      T1(mp_prime_next_prime, MP_PRIME_NEXT_PRIME),
+      T1(mp_prime_rand, MP_PRIME_RAND),
+      T1(mp_rand, MP_RAND),
+      T1(mp_read_radix, MP_READ_RADIX),
+      T1(mp_reduce_2k, MP_REDUCE_2K),
+      T1(mp_reduce_2k_l, MP_REDUCE_2K_L),
 #if defined(__STDC_IEC_559__) || defined(__GCC_IEC_559)
-      T(mp_set_double),
+      T1(mp_set_double, MP_SET_DOUBLE),
 #endif
-      T(mp_signed_rsh),
-      T(mp_sqrt),
-      T(mp_sqrtmod_prime),
-      T(mp_xor),
-      T(s_mp_balance_mul),
-      T(s_mp_karatsuba_mul),
-      T(s_mp_karatsuba_sqr),
-      T(s_mp_toom_mul),
-      T(s_mp_toom_sqr)
-#undef T
+      T1(mp_signed_rsh, MP_SIGNED_RSH),
+      T1(mp_sqrt, MP_SQRT),
+      T1(mp_sqrtmod_prime, MP_SQRTMOD_PRIME),
+      T1(mp_xor, MP_XOR),
+      T1(s_mp_balance_mul, S_MP_BALANCE_MUL),
+      T1(s_mp_karatsuba_mul, S_MP_KARATSUBA_MUL),
+      T1(s_mp_karatsuba_sqr, S_MP_KARATSUBA_SQR),
+      T1(s_mp_toom_mul, S_MP_TOOM_MUL),
+      T1(s_mp_toom_sqr, S_MP_TOOM_SQR),
+#undef T2
+#undef T1
    };
-   unsigned long i;
-   int res = EXIT_SUCCESS, j;
+   unsigned long i, ok, fail, nop;
+   uint64_t t;
+   int j;
 
-   s_mp_rand_jenkins_init((uint64_t)time(NULL));
+   ok = fail = nop = 0;
+
+   t = (uint64_t)time(NULL);
+   printf("SEED: 0x%"PRIx64"\n\n", t);
+   s_mp_rand_jenkins_init(t);
    mp_rand_source(s_mp_rand_jenkins);
 
    for (i = 0; i < sizeof(test) / sizeof(test[0]); ++i) {
@@ -2279,13 +2288,19 @@ int unit_tests(int argc, char **argv)
          if (j == argc) continue;
       }
       printf("TEST %s\n\n", test[i].name);
-      if (test[i].fn() != EXIT_SUCCESS) {
+      if (test[i].fn == NULL) {
+         nop++;
+         printf("NOP %s\n\n", test[i].name);
+      } else if (test[i].fn() == EXIT_SUCCESS) {
+         ok++;
+         printf("\n\n");
+      } else {
+         fail++;
          printf("\n\nFAIL %s\n\n", test[i].name);
-         res = EXIT_FAILURE;
-         break;
       }
-      printf("\n\n");
    }
+   printf("Tests OK/NOP/FAIL: %lu/%lu/%lu\n", ok, nop, fail);
 
-   return res;
+   if (fail != 0) return EXIT_FAILURE;
+   else return EXIT_SUCCESS;
 }

@@ -121,7 +121,7 @@ static mp_err s_read_urandom(void *p, size_t n)
 #endif
 
 #if defined(MP_PRNG_ENABLE_LTM_RNG)
-#define B_S_READ_LTM_RNG
+#define BN_S_READ_LTM_RNG
 unsigned long (*ltm_rng)(unsigned char *out, unsigned long outlen, void (*callback)(void));
 void (*ltm_rng_callback)(void);
 
