@@ -2315,7 +2315,7 @@ int unit_tests(int argc, char **argv)
       T1(mp_to_decimal, S_MP_TO_DECIMAL_FAST)
 #undef T2
 #undef T1
-#undef T
+#undef T0
    };
    unsigned long i, ok, fail, nop;
    uint64_t t;
