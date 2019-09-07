@@ -29,7 +29,7 @@ mp_err mp_div_d(const mp_int *a, mp_digit b, mp_int *c, mp_digit *d)
    }
 
    /* power of two ? */
-   if ((b & (b-1)) == 0u) {
+   if ((b & (b - 1u)) == 0u) {
       ix = 1;
       while ((ix < MP_DIGIT_BIT) && (b != (((mp_digit)1)<<ix))) {
          ix++;
