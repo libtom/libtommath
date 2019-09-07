@@ -66,8 +66,6 @@ mp_err mp_to_radix(const mp_int *a, char *str, size_t maxlen, int radix)
    /* append a NULL so the string is properly terminated */
    *str = '\0';
 
-   err = MP_OKAY;
-
 LBL_ERR:
    mp_clear(&t);
    return err;
