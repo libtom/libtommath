@@ -16,7 +16,7 @@ mp_err mp_to_radix(const mp_int *a, char *str, size_t maxlen, int radix)
    char   *_s = str;
 
    /* check range of the maxlen, radix */
-   if ((maxlen < 2) || (radix < 2) || (radix > 64)) {
+   if ((maxlen < 2u) || (radix < 2) || (radix > 64)) {
       return MP_VAL;
    }
 
@@ -46,7 +46,7 @@ mp_err mp_to_radix(const mp_int *a, char *str, size_t maxlen, int radix)
 
    digs = 0;
    while (!MP_IS_ZERO(&t)) {
-      if (--maxlen < 1) {
+      if (--maxlen < 1u) {
          /* no more room */
          err = MP_VAL;
          break;
