@@ -110,6 +110,10 @@ mp_err s_mp_to_decimal_fast(const mp_int *a, char *result, size_t maxlen)
       return MP_VAL;
    }
 
+   MP_ZERO_BUFFER(nL, sizeof(nL));
+   MP_ZERO_BUFFER(shiftL, sizeof(shiftL));
+   MP_ZERO_BUFFER(mL, sizeof(mL));
+
    if ((err = mp_init_multi(&number, &n, &shift, &M, &M2, &M22, &M4, &M44, &nL[0], &shiftL[0], &mL[0], NULL)) != MP_OKAY) {
       goto LBL_ERR;
    }
