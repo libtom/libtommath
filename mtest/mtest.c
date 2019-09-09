@@ -28,11 +28,7 @@ mulmod
 
  */
 
-#ifdef MP_8BIT
-#define THE_MASK 127
-#else
 #define THE_MASK 32767
-#endif
 
 #include <stdio.h>
 #include <stdlib.h>

@@ -9,7 +9,6 @@
  */
 #ifndef LTM_USE_ONLY_MR
 
-#ifdef MP_8BIT
 /*
  * floor of positive solution of
  * (2^16)-1 = (a+4)*(2*a+5)
@@ -19,10 +18,8 @@
  *       But it is still a restriction of the set of available pseudoprimes
  *       which makes this implementation less secure if used stand-alone.
  */
-#define LTM_FROBENIUS_UNDERWOOD_A 177
-#else
 #define LTM_FROBENIUS_UNDERWOOD_A 32764
-#endif
+
 mp_err mp_prime_frobenius_underwood(const mp_int *N, mp_bool *result)
 {
    mp_int T1z, T2z, Np1z, sz, tz;

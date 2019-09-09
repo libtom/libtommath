@@ -23,9 +23,6 @@ void ndraw(mp_int *a, const char *name)
 
 void print_header(void)
 {
-#ifdef MP_8BIT
-   printf("Digit size 8 Bit \n");
-#endif
 #ifdef MP_16BIT
    printf("Digit size 16 Bit \n");
 #endif

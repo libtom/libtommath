@@ -24,10 +24,8 @@ mp_err mp_montgomery_setup(const mp_int *n, mp_digit *rho)
 
    x = (((b + 2u) & 4u) << 1) + b; /* here x*a==1 mod 2**4 */
    x *= 2u - (b * x);              /* here x*a==1 mod 2**8 */
-#if !defined(MP_8BIT)
    x *= 2u - (b * x);              /* here x*a==1 mod 2**16 */
-#endif
-#if defined(MP_64BIT) || !(defined(MP_8BIT) || defined(MP_16BIT))
+#if (defined(MP_64BIT) || defined(MP_16BIT))
    x *= 2u - (b * x);              /* here x*a==1 mod 2**32 */
 #endif
 #ifdef MP_64BIT

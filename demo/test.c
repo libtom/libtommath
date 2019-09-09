@@ -1022,7 +1022,6 @@ static int test_mp_prime_is_prime(void)
 
    }
    /* Check regarding problem #143 */
-#ifndef MP_8BIT
    mp_read_radix(&a,
                  "FFFFFFFFFFFFFFFFC90FDAA22168C234C4C6628B80DC1CD129024E088A67CC74020BBEA63B139B22514A08798E3404DDEF9519B3CD3A431B302B0A6DF25F14374FE1356D6D51C245E485B576625E7EC6F44C42E9A63A3620FFFFFFFFFFFFFFFF",
                  16);
@@ -1041,8 +1040,6 @@ static int test_mp_prime_is_prime(void)
       putchar('\n');
       goto LBL_ERR;
    }
-#endif
-
    printf("\n\n");
 
    mp_clear_multi(&a, &b, NULL);
@@ -2040,17 +2037,9 @@ static int test_mp_root_u32(void)
    if ((e = mp_init_multi(&a, &c, &r, NULL)) != MP_OKAY) {
       return EXIT_FAILURE;
    }
-#ifdef MP_8BIT
-   for (i = 0; i < 1; i++) {
-#else
    for (i = 0; i < 10; i++) {
-#endif
       mp_read_radix(&a, input[i], 64);
-#ifdef MP_8BIT
-      for (j = 3; j < 10; j++) {
-#else
       for (j = 3; j < 100; j++) {
-#endif
          mp_root_u32(&a, (uint32_t)j, &c);
          mp_read_radix(&r, root[i][j-3], 10);
          if (mp_cmp(&r, &c) != MP_EQ) {

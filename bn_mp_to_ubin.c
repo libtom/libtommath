@@ -20,11 +20,7 @@ mp_err mp_to_ubin(const mp_int *a, unsigned char *buf, size_t maxlen, size_t *wr
    }
 
    for (x = count; x --> 0u;) {
-#ifndef MP_8BIT
       buf[x] = (unsigned char)(t.dp[0] & 255u);
-#else
-      buf[x] = (unsigned char)(t.dp[0] | ((t.dp[1] & 1u) << 7));
-#endif
       if ((err = mp_div_2d(&t, 8, &t, NULL)) != MP_OKAY) {
          goto LBL_ERR;
       }

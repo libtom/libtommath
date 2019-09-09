@@ -6,6 +6,10 @@
 
 #include <stdint.h>
 #include <stddef.h>
+#ifdef MP_8BIT
+#  error "Support of 8-bit architectures has been dropped in this version of LTM."
+#endif
+
 
 #ifndef MP_NO_FILE
 #  include <stdio.h>
@@ -35,7 +39,7 @@ extern "C" {
     defined(__sparcv9) || defined(__sparc_v9__) || defined(__sparc64__) || \
     defined(__ia64) || defined(__ia64__) || defined(__itanium__) || defined(_M_IA64) || \
     defined(__LP64__) || defined(_LP64) || defined(__64BIT__)
-#   if !(defined(MP_64BIT) || defined(MP_32BIT) || defined(MP_16BIT) || defined(MP_8BIT))
+#   if !(defined(MP_64BIT) || defined(MP_32BIT) || defined(MP_16BIT))
 #      if defined(__GNUC__) && !defined(__hppa)
 /* we support 128bit integers only via: __attribute__((mode(TI))) */
 #         define MP_64BIT
@@ -47,7 +51,7 @@ extern "C" {
 #endif
 
 #ifdef MP_DIGIT_BIT
-#   error Defining MP_DIGIT_BIT is disallowed, use MP_8/16/31/32/64BIT
+#   error Defining MP_DIGIT_BIT is disallowed, use MP_16/31/32/64BIT
 #endif
 
 /* some default configurations.
@@ -59,11 +63,8 @@ extern "C" {
  * [any size beyond that is ok provided it doesn't overflow the data type]
  */
 
-#ifdef MP_8BIT
-typedef uint8_t              mp_digit;
-typedef uint16_t             private_mp_word;
-#   define MP_DIGIT_BIT 7
-#elif defined(MP_16BIT)
+
+#if defined(MP_16BIT)
 typedef uint16_t             mp_digit;
 typedef uint32_t             private_mp_word;
 #   define MP_DIGIT_BIT 15
