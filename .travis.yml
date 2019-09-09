@@ -13,6 +13,7 @@ dist: xenial
 # Files do not exist in case of success
 after_failure:
   - cat test_*.log
+  - cat valgrind_test.log
   - cat gcc_errors_*.log
 
 # In case of a Travis error a success might get signaled
