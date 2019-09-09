@@ -23,7 +23,7 @@ mp_err mp_from_ubin(mp_int *a, const unsigned char *buf, size_t size)
       if ((err = mp_mul_2d(a, 8, a)) != MP_OKAY) {
          return err;
       }
-      a->dp[0] |= *b++;
+      a->dp[0] |= *buf++;
       a->used += 1;
    }
    mp_clamp(a);
