@@ -17,6 +17,14 @@
 #  include <stdio.h>
 #endif
 
+#ifdef MP_8BIT
+#  ifdef _MSC_VER
+#    pragma message("8-bit (MP_8BIT) support is deprecated and will be dropped completely in the next version.")
+#  else
+#    warning "8-bit (MP_8BIT) support is deprecated and will be dropped completely in the next version."
+#  endif
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
