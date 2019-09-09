@@ -100,7 +100,12 @@ mp_err mp_prime_is_prime(const mp_int *a, int t, mp_bool *result)
     */
 #ifndef LTM_USE_ONLY_MR
    if (t >= 0) {
-#ifdef LTM_USE_FROBENIUS_TEST
+      /*
+       * Use a Frobenius-Underwood test instead of the Lucas-Selfridge test for
+       * MP_8BIT (It is unknown if the Lucas-Selfridge test works with 16-bit
+       * integers but the necesssary analysis is on the todo-list).
+       */
+#ifdef (LTM_USE_FROBENIUS_TEST)
       err = mp_prime_frobenius_underwood(a, &res);
       if ((err != MP_OKAY) && (err != MP_ITER)) {
          goto LBL_B;
@@ -228,7 +233,6 @@ mp_err mp_prime_is_prime(const mp_int *a, int t, mp_bool *result)
           * an unsigned int and "mask" on the other side is most probably not.
           */
          fips_rand = (unsigned int)(b.dp[0] & (mp_digit) mask);
-
          if (fips_rand > (unsigned int)(INT_MAX - MP_DIGIT_BIT)) {
             len = INT_MAX / MP_DIGIT_BIT;
          } else {

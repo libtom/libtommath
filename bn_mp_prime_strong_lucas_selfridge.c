@@ -278,6 +278,5 @@ LBL_LS_ERR:
    mp_clear_multi(&Q2kdz, &T4z, &T3z, &T2z, &T1z, &Qkdz, &Q2mz, &Qmz, &V2mz, &U2mz, &Vz, &Uz, &Np1, &gcd, &Dz, NULL);
    return err;
 }
-
 #endif
 #endif
