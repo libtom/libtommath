@@ -126,8 +126,6 @@ endif
 HEADERS_PUB=tommath.h
 HEADERS=tommath_private.h tommath_class.h tommath_superclass.h $(HEADERS_PUB)
 
-test_standalone: LTM_CFLAGS+=-DLTM_DEMO_TEST_VS_MTEST=0
-
 #LIBPATH  The directory for libtommath to be installed to.
 #INCPATH  The directory to install the header files for libtommath.
 #DATAPATH The directory to install the pdf docs.

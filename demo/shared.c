@@ -1,8 +1,5 @@
 #include "shared.h"
 
-int mtest_opponent(void);
-int unit_tests(int argc, char **argv);
-
 void ndraw(mp_int *a, const char *name)
 {
    char *buf;
@@ -24,7 +21,7 @@ void ndraw(mp_int *a, const char *name)
    free(buf);
 }
 
-int main(int argc, char **argv)
+void print_header(void)
 {
 #ifdef MP_8BIT
    printf("Digit size 8 Bit \n");
@@ -42,9 +39,4 @@ int main(int argc, char **argv)
    printf("Size of mp_word: %u\n", (unsigned int)sizeof(mp_word));
    printf("MP_DIGIT_BIT: %d\n", MP_DIGIT_BIT);
    printf("MP_PREC: %d\n", MP_PREC);
-
-   if (LTM_DEMO_TEST_VS_MTEST) {
-      return mtest_opponent();
-   }
-   return unit_tests(argc, argv);
 }

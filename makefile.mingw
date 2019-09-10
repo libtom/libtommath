@@ -81,14 +81,15 @@ $(LIBMAIN_D) $(LIBMAIN_I): $(OBJECTS)
 	$(CC) -s -shared -o $(LIBMAIN_D) $^ -Wl,--enable-auto-import,--export-all -Wl,--out-implib=$(LIBMAIN_I) $(LTM_LDFLAGS)
 	$(STRIP) -S $(LIBMAIN_D)
 
-#Build test_standalone suite
-test.exe: demo/main.c demo/opponent.c demo/test.c $(LIBMAIN_S)
-	$(CC) $(LTM_CFLAGS) $(LTM_LDFLAGS) $^ -DLTM_DEMO_TEST_VS_MTEST=0 -o $@
+#Build test suite
+test.exe: demo/shared.o demo/test.o $(LIBMAIN_S)
+	$(CC) $(LTM_CFLAGS) $(LTM_LDFLAGS) $^ -o $@
 	@echo NOTICE: start the tests by launching test.exe
 
 test_standalone: test.exe
+	@echo test_standalone is deprecated, please use make-target 'test.exe'
 
-all: $(LIBMAIN_S) test_standalone
+all: $(LIBMAIN_S) test.exe
 
 tune: $(LIBNAME_S)
 	$(MAKE) -C etc tune

@@ -2214,7 +2214,7 @@ LTM_ERR:
    return EXIT_FAILURE;
 }
 
-int unit_tests(int argc, char **argv)
+static int unit_tests(int argc, char **argv)
 {
    static const struct {
       const char *name;
@@ -2303,4 +2303,11 @@ int unit_tests(int argc, char **argv)
 
    if (fail != 0) return EXIT_FAILURE;
    else return EXIT_SUCCESS;
+}
+
+int main(int argc, char **argv)
+{
+   print_header();
+
+   return unit_tests(argc, argv);
 }

@@ -17,7 +17,7 @@ static void draw(mp_int *a)
       if (!ret) { fprintf(stderr, "\n%d: fgets failed\n", __LINE__); goto LBL_ERR; } \
    }
 
-int mtest_opponent(void)
+static int mtest_opponent(void)
 {
    char cmd[4096];
    char buf[4096];
@@ -393,4 +393,11 @@ LBL_ERR:
    mp_clear_multi(&a, &b, &c, &d, &e, &f, NULL);
    printf("\n");
    return EXIT_FAILURE;
+}
+
+int main(void)
+{
+   print_header();
+
+   return mtest_opponent();
 }
