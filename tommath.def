@@ -136,6 +136,7 @@ EXPORTS
     mp_sub
     mp_sub_d
     mp_submod
+    mp_to_decimal
     mp_to_radix
     mp_to_signed_bin
     mp_to_signed_bin_n

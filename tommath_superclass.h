@@ -37,6 +37,7 @@
 #   define BN_MP_SET_UL_C
 #   define BN_MP_SIGNED_BIN_SIZE_C
 #   define BN_MP_TO_RADIX_C
+#   define BN_MP_TO_DECIMAL_C
 #   define BN_MP_TO_SIGNED_BIN_C
 #   define BN_S_MP_RAND_JENKINS_C
 #   define BN_S_MP_RAND_PLATFORM_C
