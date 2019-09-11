@@ -5,10 +5,11 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* store a bignum as a decimal ASCII string */
-mp_err s_mp_to_decimal_fast_rec(const mp_int *number, mp_int *nL, mp_int *shiftL, mp_int *mL, int precalc_array_index,
-                                int left,
-                                char **result,
-                                size_t *maxlen)
+static mp_err s_mp_to_decimal_fast_rec(const mp_int *number, mp_int *nL, mp_int *shiftL, mp_int *mL,
+                                       int precalc_array_index,
+                                       int left,
+                                       char **result,
+                                       size_t *maxlen)
 {
    mp_int q, nLq, r;
    mp_err err;
