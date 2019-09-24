@@ -696,15 +696,24 @@ MP_DEPRECATED(mp_expt_u32) mp_err mp_expt_d_ex(const mp_int *a, mp_digit b, mp_i
 /* ---> radix conversion <--- */
 int mp_count_bits(const mp_int *a) MP_WUR;
 
-int mp_unsigned_bin_size(const mp_int *a) MP_WUR;
-mp_err mp_read_unsigned_bin(mp_int *a, const unsigned char *b, int c) MP_WUR;
-mp_err mp_to_unsigned_bin(const mp_int *a, unsigned char *b) MP_WUR;
-mp_err mp_to_unsigned_bin_n(const mp_int *a, unsigned char *b, unsigned long *outlen) MP_WUR;
 
-int mp_signed_bin_size(const mp_int *a) MP_WUR;
-mp_err mp_read_signed_bin(mp_int *a, const unsigned char *b, int c) MP_WUR;
-mp_err mp_to_signed_bin(const mp_int *a,  unsigned char *b) MP_WUR;
-mp_err mp_to_signed_bin_n(const mp_int *a, unsigned char *b, unsigned long *outlen) MP_WUR;
+MP_DEPRECATED(mp_ubin_size) int mp_unsigned_bin_size(const mp_int *a) MP_WUR;
+MP_DEPRECATED(mp_from_ubin) mp_err mp_read_unsigned_bin(mp_int *a, const unsigned char *b, int c) MP_WUR;
+MP_DEPRECATED(mp_to_ubin) mp_err mp_to_unsigned_bin(const mp_int *a, unsigned char *b) MP_WUR;
+MP_DEPRECATED(mp_to_ubin) mp_err mp_to_unsigned_bin_n(const mp_int *a, unsigned char *b, unsigned long *outlen) MP_WUR;
+
+MP_DEPRECATED(mp_sbin_size) int mp_signed_bin_size(const mp_int *a) MP_WUR;
+MP_DEPRECATED(mp_from_sbin) mp_err mp_read_signed_bin(mp_int *a, const unsigned char *b, int c) MP_WUR;
+MP_DEPRECATED(mp_to_sbin) mp_err mp_to_signed_bin(const mp_int *a,  unsigned char *b) MP_WUR;
+MP_DEPRECATED(mp_to_sbin) mp_err mp_to_signed_bin_n(const mp_int *a, unsigned char *b, unsigned long *outlen) MP_WUR;
+
+size_t mp_ubin_size(const mp_int *a) MP_WUR;
+mp_err mp_from_ubin(mp_int *a, const unsigned char *buf, size_t size) MP_WUR;
+mp_err mp_to_ubin(const mp_int *a, unsigned char *buf, size_t maxlen, size_t *written) MP_WUR;
+
+size_t mp_sbin_size(const mp_int *a) MP_WUR;
+mp_err mp_from_sbin(mp_int *a, const unsigned char *buf, size_t size) MP_WUR;
+mp_err mp_to_sbin(const mp_int *a, unsigned char *buf, size_t maxlen, size_t *written) MP_WUR;
 
 mp_err mp_read_radix(mp_int *a, const char *str, int radix) MP_WUR;
 MP_DEPRECATED(mp_to_radix) mp_err mp_toradix(const mp_int *a, char *str, int radix) MP_WUR;

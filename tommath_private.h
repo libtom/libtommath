@@ -203,7 +203,7 @@ MP_PRIVATE mp_err s_mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_i
 MP_PRIVATE mp_err s_mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y, int redmode) MP_WUR;
 MP_PRIVATE mp_err s_mp_rand_platform(void *p, size_t n) MP_WUR;
 MP_PRIVATE mp_err s_mp_prime_random_ex(mp_int *a, int t, int size, int flags, private_mp_prime_callback cb, void *dat);
-MP_PRIVATE void s_mp_reverse(unsigned char *s, int len);
+MP_PRIVATE void s_mp_reverse(unsigned char *s, size_t len);
 MP_PRIVATE mp_err s_mp_prime_is_divisible(const mp_int *a, mp_bool *result);
 
 /* TODO: jenkins prng is not thread safe as of now */

@@ -2145,41 +2145,32 @@ int mp_fread(mp_int *a, int radix, FILE *stream);
 
 Converting an mp\_int to and from binary is another keen idea.
 
-\index{mp\_unsigned\_bin\_size}
+\index{mp\_ubin\_size}
 \begin{alltt}
-int mp_unsigned_bin_size(mp_int *a);
+size_t mp_ubin_size(mp_int *a);
 \end{alltt}
 
 This will return the number of bytes (octets) required to store the unsigned copy of the integer $a$.
 
-\index{mp\_to\_unsigned\_bin}
+\index{mp\_to\_ubin}
 \begin{alltt}
-int mp_to_unsigned_bin(mp_int *a, unsigned char *b);
+int mp_to_unsigned_bin(mp_int *a, unsigned char *b, size_t maxlen, size_t *len);
 \end{alltt}
-This will store $a$ into the buffer $b$ in big--endian format.  Fortunately this is exactly what DER (or is it ASN?)
-requires.  It does not store the sign of the integer.
+This will store $a$ into the buffer $b$ of size \texttt{maxlen} in big--endian format storing the number of bytes written in \texttt{len}.  Fortunately this is exactly what DER (or is it ASN?) requires.  It does not store the sign of the integer.
 
-\index{mp\_to\_unsigned\_bin\_n}
+\index{mp\_from\_ubin}
 \begin{alltt}
-int mp_to_unsigned_bin_n(const mp_int *a, unsigned char *b, unsigned long *outlen)
+int mp_from_ubin(mp_int *a, unsigned char *b, size_t size);
 \end{alltt}
-Like \texttt{mp\_to\_unsigned\_bin} but checks if the value at \texttt{*outlen} is larger than or equal to the output of \texttt{mp\_unsigned\_bin\_size(a)} and sets \texttt{*outlen} to the output of \texttt{mp\_unsigned\_bin\_size(a)} or returns \texttt{MP\_VAL} if the test failed.
-
-
-\index{mp\_read\_unsigned\_bin}
-\begin{alltt}
-int mp_read_unsigned_bin(mp_int *a, unsigned char *b, int c);
-\end{alltt}
-This will read in an unsigned big--endian array of bytes (octets) from $b$ of length $c$ into $a$.  The resulting
-integer $a$ will always be positive.
+This will read in an unsigned big--endian array of bytes (octets) from $b$ of length \texttt{size} into $a$.  The resulting big-integer $a$ will always be positive.
 
 For those who acknowledge the existence of negative numbers (heretic!) there are ``signed'' versions of the
 previous functions.
 \index{mp\_signed\_bin\_size} \index{mp\_to\_signed\_bin} \index{mp\_read\_signed\_bin}
 \begin{alltt}
-int mp_signed_bin_size(mp_int *a);
-int mp_read_signed_bin(mp_int *a, unsigned char *b, int c);
-int mp_to_signed_bin(mp_int *a, unsigned char *b);
+int mp_sbin_size(mp_int *a);
+int mp_from_sbin(mp_int *a, unsigned char *b, size_t size);
+int mp_to_sbin(mp_int *a, unsigned char *b, size_t maxsize, size_t *len);
 \end{alltt}
 They operate essentially the same as the unsigned copies except they prefix the data with zero or non--zero
 byte depending on the sign.  If the sign is zpos (e.g. not negative) the prefix is zero, otherwise the prefix

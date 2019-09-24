@@ -2214,6 +2214,93 @@ LTM_ERR:
    return EXIT_FAILURE;
 }
 
+static int test_mp_read_write_ubin(void)
+{
+   mp_int a, b, c;
+   int err;
+   size_t size, len;
+   unsigned char *buf = NULL;
+
+   if ((err = mp_init_multi(&a, &b, &c, NULL)) != MP_OKAY) {
+      goto LTM_ERR;
+   }
+
+   if ((err = mp_rand(&a, 15)) != MP_OKAY)                   goto LTM_ERR;
+   if ((err = mp_neg(&a, &b)) != MP_OKAY)                    goto LTM_ERR;
+
+   size = mp_ubin_size(&a);
+   printf("mp_to_ubin_size  %zu\n", size);
+   buf = MP_MALLOC(sizeof(*buf) * size);
+   if (buf == NULL) {
+      fprintf(stderr, "test_read_write_binaries (u) failed to allocate %zu bytes\n",
+              sizeof(*buf) * size);
+      goto LTM_ERR;
+   }
+
+   if ((err = mp_to_ubin(&a, buf, size, &len)) != MP_OKAY)   goto LTM_ERR;
+   printf("mp_to_ubin len = %zu\n", len);
+
+   if ((err = mp_from_ubin(&c, buf, len)) != MP_OKAY)        goto LTM_ERR;
+
+   if (mp_cmp(&a, &c) != MP_EQ) {
+      fprintf(stderr, "to/from ubin cycle failed\n");
+      goto LTM_ERR;
+   }
+   free(buf);
+   mp_clear_multi(&a, &b, &c, NULL);
+   return EXIT_SUCCESS;
+LTM_ERR:
+   if (buf != NULL) {
+      free(buf);
+   }
+   mp_clear_multi(&a, &b, &c, NULL);
+   return EXIT_FAILURE;
+}
+
+static int test_mp_read_write_sbin(void)
+{
+   mp_int a, b, c;
+   int err;
+   size_t size, len;
+   unsigned char *buf = NULL;
+
+   if ((err = mp_init_multi(&a, &b, &c, NULL)) != MP_OKAY) {
+      goto LTM_ERR;
+   }
+
+   if ((err = mp_rand(&a, 15)) != MP_OKAY)                   goto LTM_ERR;
+   if ((err = mp_neg(&a, &b)) != MP_OKAY)                    goto LTM_ERR;
+
+   size = mp_sbin_size(&a);
+   printf("mp_to_sbin_size  %zu\n", size);
+   buf = MP_MALLOC(sizeof(*buf) * size);
+   if (buf == NULL) {
+      fprintf(stderr, "test_read_write_binaries (s) failed to allocate %zu bytes\n",
+              sizeof(*buf) * size);
+      goto LTM_ERR;
+   }
+
+   if ((err = mp_to_sbin(&b, buf, size, &len)) != MP_OKAY)   goto LTM_ERR;
+   printf("mp_to_sbin len = %zu\n", len);
+
+   if ((err = mp_from_sbin(&c, buf, len)) != MP_OKAY)        goto LTM_ERR;
+
+   if (mp_cmp(&b, &c) != MP_EQ) {
+      fprintf(stderr, "to/from ubin cycle failed\n");
+      goto LTM_ERR;
+   }
+
+   free(buf);
+   mp_clear_multi(&a, &b, &c, NULL);
+   return EXIT_SUCCESS;
+LTM_ERR:
+   if (buf != NULL) {
+      free(buf);
+   }
+   mp_clear_multi(&a, &b, &c, NULL);
+   return EXIT_FAILURE;
+}
+
 static int unit_tests(int argc, char **argv)
 {
    static const struct {
@@ -2250,6 +2337,8 @@ static int unit_tests(int argc, char **argv)
       T1(mp_prime_rand, MP_PRIME_RAND),
       T1(mp_rand, MP_RAND),
       T1(mp_read_radix, MP_READ_RADIX),
+      T1(mp_read_write_ubin, MP_TO_UBIN),
+      T1(mp_read_write_sbin, MP_TO_SBIN),
       T1(mp_reduce_2k, MP_REDUCE_2K),
       T1(mp_reduce_2k_l, MP_REDUCE_2K_L),
 #if defined(__STDC_IEC_559__) || defined(__GCC_IEC_559)
@@ -2263,7 +2352,7 @@ static int unit_tests(int argc, char **argv)
       T1(s_mp_karatsuba_mul, S_MP_KARATSUBA_MUL),
       T1(s_mp_karatsuba_sqr, S_MP_KARATSUBA_SQR),
       T1(s_mp_toom_mul, S_MP_TOOM_MUL),
-      T1(s_mp_toom_sqr, S_MP_TOOM_SQR),
+      T1(s_mp_toom_sqr, S_MP_TOOM_SQR)
 #undef T2
 #undef T1
    };
