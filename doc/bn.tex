@@ -2176,12 +2176,38 @@ They operate essentially the same as the unsigned copies except they prefix the 
 byte depending on the sign.  If the sign is zpos (e.g. not negative) the prefix is zero, otherwise the prefix
 is non--zero.
 
-The two functions \texttt{mp\_import} and \texttt{mp\_export} implement the corresponding GMP functions as described at \url{http://gmplib.org/manual/Integer-Import-and-Export.html}.
-\index{mp\_import} \index{mp\_export}
+The two functions \texttt{mp\_unpack} (get your gifts out of the box, import binary data) and \texttt{mp\_pack} (put your gifts into the box, export binary data) implement the similarly working GMP functions as described at \url{http://gmplib.org/manual/Integer-Import-and-Export.html} with the exception that \texttt{mp\_pack} will not allocate memory if \texttt{rop} is \texttt{NULL}.
+\index{mp\_unpack} \index{mp\_pack}
 \begin{alltt}
-int mp_import(mp_int *rop, size_t count, int order, size_t size, int endian, size_t nails, const void *op);
-int mp_export(void *rop, size_t *countp, int order, size_t size, int endian, size_t nails, const mp_int *op);
+int mp_unpack(mp_int *rop, size_t count, mp_order order, size_t size,
+             mp_endian endian, size_t nails, const void *op, size_t maxsize);
+int mp_pack(void *rop, size_t *countp, mp_order order, size_t size,
+             mp_endian endian, size_t nails, const mp_int *op);
 \end{alltt}
+The function \texttt{mp\_pack} has the additional variable \texttt{maxsize} which must hold the size of the buffer \texttt{rop} in bytes. Use
+\begin{alltt}
+/* Parameters "nails" and "size" are the same as in mp_pack */
+size_t mp_pack_size(mp_int *a, size_t nails, size_t size);
+\end{alltt}
+To get the size in bytes necessary to be put in \texttt{maxsize}).
+
+To enhance the readability of your code, the following enums have been wrought for your convenience.
+\begin{alltt}
+#ifdef MP_USE_ENUMS
+typedef enum {
+   MP_LSB_FIRST = -1,
+   MP_MSB_FIRST =  1
+} mp_order;
+typedef enum {
+   MP_LITTLE_ENDIAN  = -1,
+   MP_NATIVE_ENDIAN  =  0,
+   MP_BIG_ENDIAN     =  1
+} mp_endian;
+\end{alltt}
+Also available as preprocessor macros.
+
+
+
 
 \chapter{Algebraic Functions}
 \section{Extended Euclidean Algorithm}

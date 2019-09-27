@@ -313,4 +313,18 @@ mp_err mp_toradix(const mp_int *a, char *str, int radix)
    return mp_to_radix(a, str, SIZE_MAX, radix);
 }
 #endif
+#ifdef BN_MP_IMPORT_C
+mp_err mp_import(mp_int *rop, size_t count, int order, size_t size, int endian, size_t nails,
+                 const void *op)
+{
+   return mp_unpack(rop, count, order, size, endian, nails, op);
+}
+#endif
+#ifdef BN_MP_EXPORT_C
+mp_err mp_export(void *rop, size_t *countp, int order, size_t size,
+                 int endian, size_t nails, const mp_int *op)
+{
+   return mp_pack(rop, countp, order, size, endian, nails, op, SIZE_MAX);
+}
+#endif
 #endif

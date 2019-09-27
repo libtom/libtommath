@@ -2345,6 +2345,53 @@ LTM_ERR:
    return EXIT_FAILURE;
 }
 
+static int test_mp_pack_unpack(void)
+{
+   mp_int a, b;
+   int err;
+   size_t countp, size, bits, bytes;
+   unsigned char *buf = NULL;
+
+   mp_order order = MP_LSB_FIRST;
+   mp_endian endianess = MP_NATIVE_ENDIAN;
+
+   if ((err = mp_init_multi(&a, &b, NULL)) != MP_OKAY)                       goto LTM_ERR;
+   if ((err = mp_rand(&a, 15)) != MP_OKAY)                                   goto LTM_ERR;
+
+   bits = (size_t)mp_count_bits(&a);
+   bytes = (size_t)(((bits + 1u) + (size_t)(CHAR_BIT - 1)) / (size_t)CHAR_BIT);
+   size = bytes * mp_pack_count(&a, 0, 1);
+
+   buf = MP_MALLOC(size);
+   if (buf == NULL) {
+      fprintf(stderr, "test_pack_unpack failed to allocate %zu bytes\n",
+              sizeof(*buf) * size);
+      goto LTM_ERR;
+   }
+
+   if ((err = mp_pack((void *)buf, &countp, order, 1,
+                      endianess, 0, &a, size)) != MP_OKAY)                   goto LTM_ERR;
+   printf("size = %zu, countp = %zu, countp * byte_size = %zu\n",
+          size, countp, countp * bits);
+   if ((err = mp_unpack(&b, countp, order, 1,
+                        endianess, 0, (const void *)buf)) != MP_OKAY)        goto LTM_ERR;
+
+   if (mp_cmp(&a, &b) != MP_EQ) {
+      fprintf(stderr, "pack/unpack cycle failed\n");
+      goto LTM_ERR;
+   }
+
+   MP_FREE(buf, size);
+   mp_clear_multi(&a, &b, NULL);
+   return EXIT_SUCCESS;
+LTM_ERR:
+   if (buf != NULL) {
+      MP_FREE(buf, size);
+   }
+   mp_clear_multi(&a, &b, NULL);
+   return EXIT_FAILURE;
+}
+
 static int unit_tests(int argc, char **argv)
 {
    static const struct {
@@ -2364,6 +2411,7 @@ static int unit_tests(int argc, char **argv)
       T1(mp_decr, MP_DECR),
       T1(mp_div_3, MP_DIV_3),
       T1(mp_dr_reduce, MP_DR_REDUCE),
+      T2(mp_pack_unpack,MP_PACK, MP_UNPACK),
       T2(mp_fread_fwrite, MP_FREAD, MP_FWRITE),
       T1(mp_get_u32, MP_GET_I32),
       T1(mp_get_u64, MP_GET_I64),
