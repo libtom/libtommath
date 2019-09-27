@@ -136,6 +136,15 @@ typedef enum {
    MP_VAL   = -3,
    MP_ITER  = -4
 } mp_err;
+typedef enum {
+   MP_LSB_FIRST = -1,
+   MP_MSB_FIRST =  1
+} mp_order;
+typedef enum {
+   MP_LITTLE_ENDIAN  = -1,
+   MP_NATIVE_ENDIAN  =  0,
+   MP_BIG_ENDIAN     =  1
+} mp_endian;
 #else
 typedef int mp_sign;
 #define MP_ZPOS       0   /* positive integer */
@@ -154,6 +163,13 @@ typedef int mp_err;
 #define MP_VAL        -3  /* invalid input */
 #define MP_RANGE      (MP_DEPRECATED_PRAGMA("MP_RANGE has been deprecated in favor of MP_VAL") MP_VAL)
 #define MP_ITER       -4  /* Max. iterations reached */
+typedef int mp_order;
+#define MP_LSB_FIRST -1
+#define MP_MSB_FIRST  1
+typedef int mp_endian;
+#define MP_LITTLE_ENDIAN  -1
+#define MP_NATIVE_ENDIAN  0
+#define MP_BIG_ENDIAN     1
 #endif
 
 /* tunable cutoffs */
@@ -351,11 +367,24 @@ mp_err mp_init_copy(mp_int *a, const mp_int *b) MP_WUR;
 /* trim unused digits */
 void mp_clamp(mp_int *a);
 
-/* import binary data */
-mp_err mp_import(mp_int *rop, size_t count, int order, size_t size, int endian, size_t nails, const void *op) MP_WUR;
 
 /* export binary data */
-mp_err mp_export(void *rop, size_t *countp, int order, size_t size, int endian, size_t nails, const mp_int *op) MP_WUR;
+MP_DEPRECATED(mp_pack) mp_err mp_export(void *rop, size_t *countp, int order, size_t size,
+                                        int endian, size_t nails, const mp_int *op) MP_WUR;
+
+/* import binary data */
+MP_DEPRECATED(mp_unpack) mp_err mp_import(mp_int *rop, size_t count, int order,
+      size_t size, int endian, size_t nails,
+      const void *op) MP_WUR;
+
+/* unpack binary data */
+mp_err mp_unpack(mp_int *rop, size_t count, mp_order order, size_t size, mp_endian endian,
+                 size_t nails, const void *op) MP_WUR;
+
+/* pack binary data */
+size_t mp_pack_count(mp_int *a, size_t nails, size_t size) MP_WUR;
+mp_err mp_pack(void *rop, size_t maxcount, size_t *writtencount, mp_order order, size_t size, mp_endian endian,
+               size_t nails, const mp_int *op) MP_WUR;
 
 /* ---> digit manipulation <--- */
 

@@ -10,10 +10,6 @@ mp_err mp_to_ubin(const mp_int *a, unsigned char *buf, size_t maxlen, size_t *wr
    mp_err  err;
    mp_int  t;
 
-   if (buf == NULL) {
-      return MP_MEM;
-   }
-
    if (maxlen == 0u) {
       return MP_VAL;
    }
