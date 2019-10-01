@@ -249,6 +249,26 @@ struct cutoffs {
    int tcmul, tcsqr;
 };
 
+const struct cutoffs max_cutoffs =
+{ INT_MAX, INT_MAX, INT_MAX, INT_MAX };
+
+static void set_cutoffs(const struct cutoffs *c)
+{
+   KARATSUBA_MUL_CUTOFF = c->kmul;
+   KARATSUBA_SQR_CUTOFF = c->ksqr;
+   TOOM_MUL_CUTOFF = c->tcmul;
+   TOOM_SQR_CUTOFF = c->tcsqr;
+}
+
+static void get_cutoffs(struct cutoffs *c)
+{
+   c->kmul  = KARATSUBA_MUL_CUTOFF;
+   c->ksqr  = KARATSUBA_SQR_CUTOFF;
+   c->tcmul = TOOM_MUL_CUTOFF;
+   c->tcsqr = TOOM_SQR_CUTOFF;
+
+}
+
 int main(int argc, char **argv)
 {
    uint64_t t1, t2;
@@ -416,17 +436,11 @@ int main(int argc, char **argv)
    s_mp_rand_jenkins_init(seed);
    mp_rand_source(s_mp_rand_jenkins);
 
-   orig.kmul  = KARATSUBA_MUL_CUTOFF;
-   orig.ksqr  = KARATSUBA_SQR_CUTOFF;
-   orig.tcmul = TOOM_MUL_CUTOFF;
-   orig.tcsqr = TOOM_SQR_CUTOFF;
+   get_cutoffs(&orig);
 
    if ((args.bncore == 0) && (printpreset == 0)) {
       /* Turn all limits from bncore.c to the max */
-      KARATSUBA_MUL_CUTOFF = INT_MAX;
-      KARATSUBA_SQR_CUTOFF = INT_MAX;
-      TOOM_MUL_CUTOFF = INT_MAX;
-      TOOM_SQR_CUTOFF = INT_MAX;
+      set_cutoffs(&max_cutoffs);
 #ifdef BN_S_MP_KARATSUBA_MUL_C
       /*
          The influence of the Comba multiplication cannot be
@@ -483,15 +497,9 @@ int main(int argc, char **argv)
       }
 
       for (x = 8; x < args.upper_limit_print; x += args.increment_print) {
-         KARATSUBA_MUL_CUTOFF = INT_MAX;
-         KARATSUBA_SQR_CUTOFF = INT_MAX;
-         TOOM_MUL_CUTOFF = INT_MAX;
-         TOOM_SQR_CUTOFF = INT_MAX;
+         set_cutoffs(&max_cutoffs);
          t1 = s_time_mul(x);
-         KARATSUBA_MUL_CUTOFF = orig.kmul;
-         KARATSUBA_SQR_CUTOFF = orig.ksqr;
-         TOOM_MUL_CUTOFF = orig.tcmul;
-         TOOM_SQR_CUTOFF = orig.tcsqr;
+         set_cutoffs(&orig);
          t2 = s_time_mul(x);
          fprintf(multiplying, "%d: %9"PRIu64" %9"PRIu64", %9"PRIi64"\n", x, t1, t2, (int64_t)t2 - (int64_t)t1);
          fflush(multiplying);
@@ -499,15 +507,9 @@ int main(int argc, char **argv)
             printf("MUL %d: %9"PRIu64" %9"PRIu64", %9"PRIi64"\n", x, t1, t2, (int64_t)t2 - (int64_t)t1);
             fflush(stdout);
          }
-         KARATSUBA_MUL_CUTOFF = INT_MAX;
-         KARATSUBA_SQR_CUTOFF = INT_MAX;
-         TOOM_MUL_CUTOFF = INT_MAX;
-         TOOM_SQR_CUTOFF = INT_MAX;
+         set_cutoffs(&max_cutoffs);
          t1 = s_time_sqr(x);
-         KARATSUBA_MUL_CUTOFF = orig.kmul;
-         KARATSUBA_SQR_CUTOFF = orig.ksqr;
-         TOOM_MUL_CUTOFF = orig.tcmul;
-         TOOM_SQR_CUTOFF = orig.tcsqr;
+         set_cutoffs(&orig);
          t2 = s_time_sqr(x);
          fprintf(squaring,"%d: %9"PRIu64" %9"PRIu64", %9"PRIi64"\n", x, t1, t2, (int64_t)t2 - (int64_t)t1);
          fflush(squaring);
@@ -518,10 +520,7 @@ int main(int argc, char **argv)
       }
       printf("Finished. Data for graphing in \"%s\" and \"%s\"\n",mullog, sqrlog);
       if (args.verbose == 1) {
-         KARATSUBA_MUL_CUTOFF = orig.kmul;
-         KARATSUBA_SQR_CUTOFF = orig.ksqr;
-         TOOM_MUL_CUTOFF = orig.tcmul;
-         TOOM_SQR_CUTOFF = orig.tcsqr;
+         set_cutoffs(&orig);
          if (args.terse == 1) {
             printf("%d %d %d %d\n",
                    KARATSUBA_MUL_CUTOFF,
