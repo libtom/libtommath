@@ -5,10 +5,6 @@
 /*
  * Configuration
  */
-#ifndef LTM_DEMO_TEST_VS_MTEST
-#define LTM_DEMO_TEST_VS_MTEST 1
-#endif
-
 #ifndef LTM_DEMO_TEST_REDUCE_2K_L
 /* This test takes a moment so we disable it by default, but it can be:
  * 0 to disable testing
@@ -22,3 +18,4 @@
 #include "tommath_private.h"
 
 extern void ndraw(mp_int* a, const char* name);
+extern void print_header(void);

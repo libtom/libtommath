@@ -23,6 +23,8 @@ test
 test.exe
 mtest
 mtest.exe
+mtest_opponent
+mtest_opponent.exe
 
 # ignore eclipse project files
 .cproject

@@ -79,8 +79,11 @@ uninstall:
 	rm $(HEADERS_PUB:%=$(DESTDIR)$(INCPATH)/%)
 	rm $(DESTDIR)$(LIBPATH)/pkgconfig/libtommath.pc
 
-test test_standalone: demo/main.o demo/opponent.o demo/test.o $(LIBNAME)
-	$(LTLINK) $(LTM_LDFLAGS) $^ -o test
+test_standalone: test
+	@echo "test_standalone is deprecated, please use make-target 'test'"
+
+test mtest_opponent: demo/shared.o $(LIBNAME) | demo/test.o demo/mtest_opponent.o
+	$(LTLINK) $(LTM_LDFLAGS) demo/$@.o $^ -o $@
 
 .PHONY: mtest
 mtest:

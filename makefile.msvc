@@ -67,14 +67,15 @@ $(OBJECTS): $(HEADERS)
 $(LIBMAIN_S): $(OBJECTS)
 	lib /out:$(LIBMAIN_S) $(OBJECTS)
 
-#Build test_standalone suite
-test.exe: $(LIBMAIN_S) demo/main.c demo/opponent.c demo/test.c
-	cl $(LTM_CFLAGS) $(TOBJECTS) $(LIBMAIN_S) $(LTM_LDFLAGS) demo/main.c demo/opponent.c demo/test.c /DLTM_DEMO_TEST_VS_MTEST=0 /Fe$@
+#Build test suite
+test.exe: $(LIBMAIN_S) demo/shared.obj demo/test.obj
+	cl $(LTM_CFLAGS) $(TOBJECTS) $(LIBMAIN_S) $(LTM_LDFLAGS) demo/shared.c demo/test.c /Fe$@
 	@echo NOTICE: start the tests by launching test.exe
 
 test_standalone: test.exe
+	@echo test_standalone is deprecated, please use make-target 'test.exe'
 
-all: $(LIBMAIN_S) test_standalone
+all: $(LIBMAIN_S) test.exe
 
 tune: $(LIBMAIN_S)
 	$(MAKE) -C etc tune

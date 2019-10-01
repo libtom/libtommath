@@ -130,7 +130,7 @@ _runtest()
     _make "$1" "$2" ""
     $_timeout $TUNE_CMD > test_${suffix}.log || _die "running autotune" $?
   else
-    _make "$1" "$2" "test_standalone"
+    _make "$1" "$2" "test"
     echo -e "\rRun test $1 $2"
     $_timeout ./test > test_${suffix}.log || _die "running tests" $?
   fi
@@ -156,7 +156,7 @@ echo "autotune branch"
     echo -e "\rRun etc/tune $1 $2 once inside valgrind"
     $_timeout $VALGRIND_BIN $VALGRIND_OPTS $TUNE_CMD > test_${suffix}.log || _die "running etc/tune" $?
   else
-    _make "$1" "$2" "test_standalone"
+    _make "$1" "$2" "test"
     echo -e "\rRun test $1 $2 inside valgrind"
     $_timeout $VALGRIND_BIN $VALGRIND_OPTS ./test > test_${suffix}.log || _die "running tests" $?
   fi
@@ -336,14 +336,14 @@ _banner
 if [[ "$TEST_VS_MTEST" != "" ]]
 then
    make clean > /dev/null
-   _make "${compilers[0]} ${archflags[0]}" "$CFLAGS" "test"
+   _make "${compilers[0]} ${archflags[0]}" "$CFLAGS" "mtest_opponent"
    echo
    _make "gcc" "$MTEST_RAND" "mtest"
    echo
    echo "Run test vs. mtest for $TEST_VS_MTEST iterations"
    _timeout=""
    which timeout >/dev/null && _timeout="timeout --foreground 1800"
-   $_timeout ./mtest/mtest $TEST_VS_MTEST | $VALGRIND_BIN $VALGRIND_OPTS  ./test > valgrind_test.log 2> test_vs_mtest_err.log
+   $_timeout ./mtest/mtest $TEST_VS_MTEST | $VALGRIND_BIN $VALGRIND_OPTS  ./mtest_opponent > valgrind_test.log 2> test_vs_mtest_err.log
    retval=$?
    head -n 5 valgrind_test.log
    tail -n 2 valgrind_test.log

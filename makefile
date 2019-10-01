@@ -95,8 +95,11 @@ uninstall:
 	rm $(DESTDIR)$(LIBPATH)/$(LIBNAME)
 	rm $(HEADERS_PUB:%=$(DESTDIR)$(INCPATH)/%)
 
-test test_standalone: demo/main.o demo/opponent.o demo/test.o $(LIBNAME)
-	$(CC) $(LTM_CFLAGS) $^ $(LTM_LFLAGS) -o test
+test_standalone: test
+	@echo "test_standalone is deprecated, please use make-target 'test'"
+
+test mtest_opponent: demo/shared.o $(LIBNAME) | demo/test.o demo/mtest_opponent.o
+	$(CC) $(LTM_CFLAGS) $(LTM_LFLAGS) demo/$@.o $^ -o $@
 
 .PHONY: mtest
 mtest:
