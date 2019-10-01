@@ -438,35 +438,36 @@ int main(int argc, char **argv)
 
    get_cutoffs(&orig);
 
+   updated = max_cutoffs;
    if ((args.bncore == 0) && (printpreset == 0)) {
       /* Turn all limits from bncore.c to the max */
       set_cutoffs(&max_cutoffs);
-#ifdef BN_S_MP_KARATSUBA_MUL_C
-      /*
-         The influence of the Comba multiplication cannot be
-         eradicated programmatically. It depends on the size
-         of the macro MP_WPARRAY in tommath.h which needs to
-         be changed manually (to 0 (zero)).
-       */
-      s_run("Karatsuba multiplication", s_time_mul, &KARATSUBA_MUL_CUTOFF);
-      updated.kmul = KARATSUBA_MUL_CUTOFF;
-      KARATSUBA_MUL_CUTOFF = INT_MAX;
-#endif
-#ifdef BN_S_MP_KARATSUBA_SQR_C
-      s_run("Karatsuba squaring", s_time_sqr, &KARATSUBA_SQR_CUTOFF);
-      updated.ksqr = KARATSUBA_SQR_CUTOFF;
-      KARATSUBA_SQR_CUTOFF = INT_MAX;
-#endif
-#ifdef BN_S_MP_TOOM_MUL_C
-      s_run("Toom-Cook 3-way multiplying", s_time_mul, &TOOM_MUL_CUTOFF);
-      updated.tcmul = TOOM_MUL_CUTOFF;
-      TOOM_MUL_CUTOFF = INT_MAX;
-#endif
-#ifdef BN_S_MP_TOOM_SQR_C
-      s_run("Toom-Cook 3-way squaring", s_time_sqr, &TOOM_SQR_CUTOFF);
-      updated.tcsqr = TOOM_SQR_CUTOFF;
-      TOOM_SQR_CUTOFF = INT_MAX;
-#endif
+      if (MP_HAS(S_MP_KARATSUBA_MUL)) {
+         /*
+            The influence of the Comba multiplication cannot be
+            eradicated programmatically. It depends on the size
+            of the macro MP_WPARRAY in tommath.h which needs to
+            be changed manually (to 0 (zero)).
+          */
+         s_run("Karatsuba multiplication", s_time_mul, &KARATSUBA_MUL_CUTOFF);
+         updated.kmul = KARATSUBA_MUL_CUTOFF;
+         KARATSUBA_MUL_CUTOFF = INT_MAX;
+      }
+      if (MP_HAS(S_MP_KARATSUBA_SQR)) {
+         s_run("Karatsuba squaring", s_time_sqr, &KARATSUBA_SQR_CUTOFF);
+         updated.ksqr = KARATSUBA_SQR_CUTOFF;
+         KARATSUBA_SQR_CUTOFF = INT_MAX;
+      }
+      if (MP_HAS(S_MP_TOOM_MUL)) {
+         s_run("Toom-Cook 3-way multiplying", s_time_mul, &TOOM_MUL_CUTOFF);
+         updated.tcmul = TOOM_MUL_CUTOFF;
+         TOOM_MUL_CUTOFF = INT_MAX;
+      }
+      if (MP_HAS(S_MP_TOOM_SQR)) {
+         s_run("Toom-Cook 3-way squaring", s_time_sqr, &TOOM_SQR_CUTOFF);
+         updated.tcsqr = TOOM_SQR_CUTOFF;
+         TOOM_SQR_CUTOFF = INT_MAX;
+      }
    }
    if (args.terse == 1) {
       printf("%d %d %d %d\n",
