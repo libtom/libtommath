@@ -212,6 +212,7 @@ static long s_strtol(const char *str, char **endptr, const char *err)
    return val;
 }
 
+static int s_exit_code = EXIT_FAILURE;
 static void s_usage(char *s)
 {
    fprintf(stderr,"Usage: %s [TvcpGbtrSLFfMmosh]\n",s);
@@ -240,6 +241,7 @@ static void s_usage(char *s)
    fprintf(stderr,"             tc3s = Toom-Cook 3-way squaring\n");
    fprintf(stderr,"             Implies '-p'\n");
    fprintf(stderr,"          -h this message\n");
+   exit(s_exit_code);
 }
 
 struct cutoffs {
@@ -398,9 +400,10 @@ int main(int argc, char **argv)
             TOOM_SQR_CUTOFF = (int)s_strtol(str, &endptr, "[4/4] No value for TOOM_SQR_CUTOFF given");
             break;
          case 'h':
+            s_exit_code = EXIT_SUCCESS;
+         /* FALLTHROUGH */
          default:
             s_usage(argv[0]);
-            exit(EXIT_FAILURE);
          }
       }
    }
