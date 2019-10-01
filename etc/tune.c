@@ -245,8 +245,8 @@ static void s_usage(char *s)
 }
 
 struct cutoffs {
-   int kmul, ksqr;
-   int tcmul, tcsqr;
+   int KARATSUBA_MUL, KARATSUBA_SQR;
+   int TOOM_MUL, TOOM_SQR;
 };
 
 const struct cutoffs max_cutoffs =
@@ -254,18 +254,18 @@ const struct cutoffs max_cutoffs =
 
 static void set_cutoffs(const struct cutoffs *c)
 {
-   KARATSUBA_MUL_CUTOFF = c->kmul;
-   KARATSUBA_SQR_CUTOFF = c->ksqr;
-   TOOM_MUL_CUTOFF = c->tcmul;
-   TOOM_SQR_CUTOFF = c->tcsqr;
+   KARATSUBA_MUL_CUTOFF = c->KARATSUBA_MUL;
+   KARATSUBA_SQR_CUTOFF = c->KARATSUBA_SQR;
+   TOOM_MUL_CUTOFF = c->TOOM_MUL;
+   TOOM_SQR_CUTOFF = c->TOOM_SQR;
 }
 
 static void get_cutoffs(struct cutoffs *c)
 {
-   c->kmul  = KARATSUBA_MUL_CUTOFF;
-   c->ksqr  = KARATSUBA_SQR_CUTOFF;
-   c->tcmul = TOOM_MUL_CUTOFF;
-   c->tcsqr = TOOM_SQR_CUTOFF;
+   c->KARATSUBA_MUL  = KARATSUBA_MUL_CUTOFF;
+   c->KARATSUBA_SQR  = KARATSUBA_SQR_CUTOFF;
+   c->TOOM_MUL = TOOM_MUL_CUTOFF;
+   c->TOOM_SQR = TOOM_SQR_CUTOFF;
 
 }
 
@@ -273,6 +273,7 @@ int main(int argc, char **argv)
 {
    uint64_t t1, t2;
    int x, i, j;
+   size_t n;
 
    int printpreset = 0;
    /*int preset[8];*/
@@ -440,46 +441,45 @@ int main(int argc, char **argv)
 
    updated = max_cutoffs;
    if ((args.bncore == 0) && (printpreset == 0)) {
-      /* Turn all limits from bncore.c to the max */
-      set_cutoffs(&max_cutoffs);
-      if (MP_HAS(S_MP_KARATSUBA_MUL)) {
+      struct {
+         const char *name;
+         int *cutoff, *update;
+         uint64_t (*fn)(int);
+      } test[] = {
+#define T_MUL_SQR(n, o, f)  { #n, &o##_CUTOFF, &(updated.o), MP_HAS(S_MP_##o) ? f : NULL }
          /*
             The influence of the Comba multiplication cannot be
             eradicated programmatically. It depends on the size
             of the macro MP_WPARRAY in tommath.h which needs to
             be changed manually (to 0 (zero)).
           */
-         s_run("Karatsuba multiplication", s_time_mul, &KARATSUBA_MUL_CUTOFF);
-         updated.kmul = KARATSUBA_MUL_CUTOFF;
-         KARATSUBA_MUL_CUTOFF = INT_MAX;
-      }
-      if (MP_HAS(S_MP_KARATSUBA_SQR)) {
-         s_run("Karatsuba squaring", s_time_sqr, &KARATSUBA_SQR_CUTOFF);
-         updated.ksqr = KARATSUBA_SQR_CUTOFF;
-         KARATSUBA_SQR_CUTOFF = INT_MAX;
-      }
-      if (MP_HAS(S_MP_TOOM_MUL)) {
-         s_run("Toom-Cook 3-way multiplying", s_time_mul, &TOOM_MUL_CUTOFF);
-         updated.tcmul = TOOM_MUL_CUTOFF;
-         TOOM_MUL_CUTOFF = INT_MAX;
-      }
-      if (MP_HAS(S_MP_TOOM_SQR)) {
-         s_run("Toom-Cook 3-way squaring", s_time_sqr, &TOOM_SQR_CUTOFF);
-         updated.tcsqr = TOOM_SQR_CUTOFF;
-         TOOM_SQR_CUTOFF = INT_MAX;
+         T_MUL_SQR("Karatsuba multiplication", KARATSUBA_MUL, s_time_mul),
+         T_MUL_SQR("Karatsuba squaring", KARATSUBA_SQR, s_time_sqr),
+         T_MUL_SQR("Toom-Cook 3-way multiplying", TOOM_MUL, s_time_mul),
+         T_MUL_SQR("Toom-Cook 3-way squaring", TOOM_SQR, s_time_sqr),
+#undef T_MUL_SQR
+      };
+      /* Turn all limits from bncore.c to the max */
+      set_cutoffs(&max_cutoffs);
+      for (n = 0; n < sizeof(test)/sizeof(test[0]); ++n) {
+         if (test[n].fn) {
+            s_run(test[n].name, test[n].fn, test[n].cutoff);
+            *test[n].update = *test[n].cutoff;
+            *test[n].cutoff = INT_MAX;
+         }
       }
    }
    if (args.terse == 1) {
       printf("%d %d %d %d\n",
-             updated.kmul,
-             updated.ksqr,
-             updated.tcmul,
-             updated.tcsqr);
+             updated.KARATSUBA_MUL,
+             updated.KARATSUBA_SQR,
+             updated.TOOM_MUL,
+             updated.TOOM_SQR);
    } else {
-      printf("KARATSUBA_MUL_CUTOFF = %d\n", updated.kmul);
-      printf("KARATSUBA_SQR_CUTOFF = %d\n", updated.ksqr);
-      printf("TOOM_MUL_CUTOFF = %d\n", updated.tcmul);
-      printf("TOOM_SQR_CUTOFF = %d\n", updated.tcsqr);
+      printf("KARATSUBA_MUL_CUTOFF = %d\n", updated.KARATSUBA_MUL);
+      printf("KARATSUBA_SQR_CUTOFF = %d\n", updated.KARATSUBA_SQR);
+      printf("TOOM_MUL_CUTOFF = %d\n", updated.TOOM_MUL);
+      printf("TOOM_SQR_CUTOFF = %d\n", updated.TOOM_SQR);
    }
 
    if (args.print == 1) {
