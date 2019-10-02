@@ -1102,6 +1102,7 @@
 
 #if defined(BN_S_MP_BALANCE_MUL_C)
 #   define BN_MP_ADD_C
+#   define BN_MP_CLAMP_C
 #   define BN_MP_CLEAR_C
 #   define BN_MP_CLEAR_MULTI_C
 #   define BN_MP_EXCH_C
