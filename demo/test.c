@@ -2154,9 +2154,53 @@ static int test_s_mp_toom_mul(void)
    mp_int a, b, c, d;
    int size, err;
 
+#if (MP_DIGIT_BIT == 60)
+   int tc_cutoff;
+#endif
+
    if ((err = mp_init_multi(&a, &b, &c, &d, NULL)) != MP_OKAY) {
       goto LTM_ERR;
    }
+   /* This number construction is limb-size specific */
+#if (MP_DIGIT_BIT == 60)
+   if ((err = mp_rand(&a, 1196)) != MP_OKAY) {
+      goto LTM_ERR;
+   }
+   if ((err = mp_mul_2d(&a,71787  - mp_count_bits(&a), &a)) != MP_OKAY) {
+      goto LTM_ERR;
+   }
+
+   if ((err = mp_rand(&b, 1338)) != MP_OKAY) {
+      goto LTM_ERR;
+   }
+   if ((err = mp_mul_2d(&b, 80318 - mp_count_bits(&b), &b)) != MP_OKAY) {
+      goto LTM_ERR;
+   }
+   if ((err = mp_mul_2d(&b, 6310, &b)) != MP_OKAY) {
+      goto LTM_ERR;
+   }
+   if ((err = mp_2expt(&c, 99000 - 1000)) != MP_OKAY) {
+      goto LTM_ERR;
+   }
+   if ((err = mp_add(&b, &c, &b)) != MP_OKAY) {
+      goto LTM_ERR;
+   }
+
+   tc_cutoff = TOOM_MUL_CUTOFF;
+   TOOM_MUL_CUTOFF = INT_MAX;
+   if ((err = mp_mul(&a, &b, &c)) != MP_OKAY) {
+      goto LTM_ERR;
+   }
+   TOOM_MUL_CUTOFF = tc_cutoff;
+   if ((err = mp_mul(&a, &b, &d)) != MP_OKAY) {
+      goto LTM_ERR;
+   }
+   if (mp_cmp(&c, &d) != MP_EQ) {
+      fprintf(stderr, "Toom-Cook 3-way multiplication failed for edgecase f1 * f2\n");
+      goto LTM_ERR;
+   }
+#endif
+
    for (size = MP_TOOM_MUL_CUTOFF; size < MP_TOOM_MUL_CUTOFF + 20; size++) {
       if ((err = mp_rand(&a, size)) != MP_OKAY) {
          goto LTM_ERR;

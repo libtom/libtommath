@@ -57,6 +57,7 @@ mp_err s_mp_toom_sqr(const mp_int *a, mp_int *b)
    }
    mp_clamp(&a0);
    mp_clamp(&a1);
+   mp_clamp(&a2);
 
    /** S0 = a0^2;  */
    if ((err = mp_sqr(&a0, &S0)) != MP_OKAY)                       goto LBL_ERR;

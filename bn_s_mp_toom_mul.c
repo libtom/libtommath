@@ -61,6 +61,7 @@ mp_err s_mp_toom_mul(const mp_int *a, const mp_int *b, mp_int *c)
       a2.dp[count - (2 * B)] = a->dp[count];
       a2.used++;
    }
+   mp_clamp(&a2);
 
    /** b = b2 * x^2 + b1 * x + b0; */
    if ((err = mp_init_size(&b0, B)) != MP_OKAY)                   goto LBL_ERRb0;
@@ -80,6 +81,7 @@ mp_err s_mp_toom_mul(const mp_int *a, const mp_int *b, mp_int *c)
       b2.dp[count - (2 * B)] = b->dp[count];
       b2.used++;
    }
+   mp_clamp(&b2);
 
    /** \\ S1 = (a2+a1+a0) * (b2+b1+b0); */
    /** T1 = a2 + a1; */
