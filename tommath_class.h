@@ -146,6 +146,9 @@
 #   define MP_ZERO_C
 #   define S_MP_ADD_C
 #   define S_MP_BALANCE_MUL_C
+#   define S_MP_DIV_RECURSIVE_C
+#   define S_MP_DIV_SCHOOL_C
+#   define S_MP_DIV_SMALL_C
 #   define S_MP_EXPTMOD_C
 #   define S_MP_EXPTMOD_FAST_C
 #   define S_MP_GET_BIT_C
@@ -250,24 +253,12 @@
 #endif
 
 #if defined(MP_DIV_C)
-#   define MP_ADD_C
-#   define MP_CLAMP_C
-#   define MP_CLEAR_C
-#   define MP_CMP_C
 #   define MP_CMP_MAG_C
 #   define MP_COPY_C
-#   define MP_COUNT_BITS_C
-#   define MP_DIV_2D_C
-#   define MP_EXCH_C
-#   define MP_INIT_C
-#   define MP_INIT_COPY_C
-#   define MP_INIT_SIZE_C
-#   define MP_LSHD_C
-#   define MP_MUL_2D_C
-#   define MP_MUL_D_C
-#   define MP_RSHD_C
-#   define MP_SUB_C
 #   define MP_ZERO_C
+#   define S_MP_DIV_RECURSIVE_C
+#   define S_MP_DIV_SCHOOL_C
+#   define S_MP_DIV_SMALL_C
 #endif
 
 #if defined(MP_DIV_2_C)
@@ -1020,6 +1011,59 @@
 #   define MP_INIT_SIZE_C
 #   define MP_LSHD_C
 #   define MP_MUL_C
+#endif
+
+#if defined(S_MP_DIV_RECURSIVE_C)
+#   define MP_ADD_C
+#   define MP_CLEAR_MULTI_C
+#   define MP_CMP_D_C
+#   define MP_COPY_C
+#   define MP_DECR_C
+#   define MP_DIV_2D_C
+#   define MP_EXCH_C
+#   define MP_INIT_MULTI_C
+#   define MP_LSHD_C
+#   define MP_MUL_2D_C
+#   define MP_MUL_C
+#   define MP_SUB_C
+#   define MP_ZERO_C
+#   define S_MP_DIV_SCHOOL_C
+#   define S_MP_RECURSION_C
+#endif
+
+#if defined(S_MP_DIV_SCHOOL_C)
+#   define MP_ADD_C
+#   define MP_CLAMP_C
+#   define MP_CLEAR_C
+#   define MP_CMP_C
+#   define MP_CMP_MAG_C
+#   define MP_COPY_C
+#   define MP_COUNT_BITS_C
+#   define MP_DIV_2D_C
+#   define MP_EXCH_C
+#   define MP_INIT_C
+#   define MP_INIT_COPY_C
+#   define MP_INIT_SIZE_C
+#   define MP_LSHD_C
+#   define MP_MUL_2D_C
+#   define MP_MUL_D_C
+#   define MP_RSHD_C
+#   define MP_SUB_C
+#   define MP_ZERO_C
+#endif
+
+#if defined(S_MP_DIV_SMALL_C)
+#   define MP_ABS_C
+#   define MP_ADD_C
+#   define MP_CLEAR_MULTI_C
+#   define MP_CMP_C
+#   define MP_COUNT_BITS_C
+#   define MP_DIV_2D_C
+#   define MP_EXCH_C
+#   define MP_INIT_MULTI_C
+#   define MP_MUL_2D_C
+#   define MP_SET_C
+#   define MP_SUB_C
 #endif
 
 #if defined(S_MP_EXPTMOD_C)

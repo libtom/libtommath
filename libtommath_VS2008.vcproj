@@ -853,6 +853,18 @@
 			>
 		</File>
 		<File
+			RelativePath="s_mp_div_recursive.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_div_school.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_div_small.c"
+			>
+		</File>
+		<File
 			RelativePath="s_mp_exptmod.c"
 			>
 		</File>
