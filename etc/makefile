@@ -40,3 +40,4 @@ clean:
 	rm -f *.log *.o *.obj *.exe pprime tune mersenne drprime mont 2kprime pprime.dat \
         tuning_list multiplying squaring test *.da *.dyn *.dpi *~
 
+.PHONY: tune

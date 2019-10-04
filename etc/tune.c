@@ -144,6 +144,75 @@ LTM_ERR:
    return t1;
 }
 
+struct tune_args {
+   int testmode;
+   int verbose;
+   int print;
+   int bncore;
+   int terse;
+   int upper_limit_print;
+   int increment_print;
+} args;
+
+static void s_run(const char *name, uint64_t (*op)(int), int *cutoff)
+{
+   int x, count = 0;
+   uint64_t t1, t2;
+   if ((args.verbose == 1) || (args.testmode == 1)) {
+      printf("# %s.\n", name);
+   }
+   for (x = 8; x < args.upper_limit_print; x += args.increment_print) {
+      *cutoff = INT_MAX;
+      t1 = op(x);
+      if ((t1 == 0uLL) || (t1 == UINT64_MAX)) {
+         fprintf(stderr,"%s failed at x = INT_MAX (%s)\n", name,
+                 (t1 == 0uLL)?"wrong result":"internal error");
+         exit(EXIT_FAILURE);
+      }
+      *cutoff = x;
+      t2 = op(x);
+      if ((t2 == 0uLL) || (t2 == UINT64_MAX)) {
+         fprintf(stderr,"%s failed (%s)\n", name,
+                 (t2 == 0uLL)?"wrong result":"internal error");
+         exit(EXIT_FAILURE);
+      }
+      if (args.verbose == 1) {
+         printf("%d: %9"PRIu64" %9"PRIu64", %9"PRIi64"\n", x, t1, t2, (int64_t)t2 - (int64_t)t1);
+      }
+      if (t2 < t1) {
+         if (count == s_stabilization_extra) {
+            count = 0;
+            break;
+         } else if (count < s_stabilization_extra) {
+            count++;
+         }
+      } else if (count > 0) {
+         count--;
+      }
+   }
+   *cutoff = x - s_stabilization_extra * args.increment_print;
+}
+
+static long s_strtol(const char *str, char **endptr, const char *err)
+{
+   const int base = 10;
+   char *_endptr;
+   long val;
+   errno = 0;
+   val = strtol(str, &_endptr, base);
+   if ((val > INT_MAX || val < 0) || (errno != 0)) {
+      fprintf(stderr, "Value %s not usable\n", str);
+      exit(EXIT_FAILURE);
+   }
+   if (_endptr == str) {
+      fprintf(stderr, "%s\n", err);
+      exit(EXIT_FAILURE);
+   }
+   if (endptr) *endptr = _endptr;
+   return val;
+}
+
+static int s_exit_code = EXIT_FAILURE;
 static void s_usage(char *s)
 {
    fprintf(stderr,"Usage: %s [TvcpGbtrSLFfMmosh]\n",s);
@@ -172,35 +241,48 @@ static void s_usage(char *s)
    fprintf(stderr,"             tc3s = Toom-Cook 3-way squaring\n");
    fprintf(stderr,"             Implies '-p'\n");
    fprintf(stderr,"          -h this message\n");
+   exit(s_exit_code);
 }
 
+struct cutoffs {
+   int KARATSUBA_MUL, KARATSUBA_SQR;
+   int TOOM_MUL, TOOM_SQR;
+};
 
+const struct cutoffs max_cutoffs =
+{ INT_MAX, INT_MAX, INT_MAX, INT_MAX };
+
+static void set_cutoffs(const struct cutoffs *c)
+{
+   KARATSUBA_MUL_CUTOFF = c->KARATSUBA_MUL;
+   KARATSUBA_SQR_CUTOFF = c->KARATSUBA_SQR;
+   TOOM_MUL_CUTOFF = c->TOOM_MUL;
+   TOOM_SQR_CUTOFF = c->TOOM_SQR;
+}
+
+static void get_cutoffs(struct cutoffs *c)
+{
+   c->KARATSUBA_MUL  = KARATSUBA_MUL_CUTOFF;
+   c->KARATSUBA_SQR  = KARATSUBA_SQR_CUTOFF;
+   c->TOOM_MUL = TOOM_MUL_CUTOFF;
+   c->TOOM_SQR = TOOM_SQR_CUTOFF;
+
+}
 
 int main(int argc, char **argv)
 {
    uint64_t t1, t2;
    int x, i, j;
-   int count = 0;
-
-   int testmode = 0;
-   int verbose = 0;
-   int print = 0;
-   int bncore = 0;
-   int terse = 0;
-
-   int upper_limit_print = 3000;
-   int increment_print = 1;
+   size_t n;
 
    int printpreset = 0;
    /*int preset[8];*/
-   int base = 10;
    char *endptr, *str;
-   long val;
 
    uint64_t seed = 0xdeadbeef;
 
    int opt;
-   int ksm, kss, tc3m, tc3s;
+   struct cutoffs orig, updated;
 
    FILE *squaring, *multiplying;
    char mullog[256] = "multiplying";
@@ -208,30 +290,41 @@ int main(int argc, char **argv)
    s_number_of_test_loops = 64;
    s_stabilization_extra = 3;
 
+   MP_ZERO_BUFFER(&args, sizeof(args));
+
+   args.testmode = 0;
+   args.verbose = 0;
+   args.print = 0;
+   args.bncore = 0;
+   args.terse = 0;
+
+   args.upper_limit_print = 3000;
+   args.increment_print = 1;
+
    /* Very simple option parser, please treat it nicely. */
    if (argc != 1) {
       for (opt = 1; (opt < argc) && (argv[opt][0] == '-'); opt++) {
          switch (argv[opt][1]) {
          case 'T':
-            testmode = 1;
+            args.testmode = 1;
             s_check_result = 1;
-            upper_limit_print = 1000;
-            increment_print = 11;
+            args.upper_limit_print = 1000;
+            args.increment_print = 11;
             s_number_of_test_loops = 1;
             s_stabilization_extra = 1;
             s_offset = 1;
             break;
          case 'v':
-            verbose = 1;
+            args.verbose = 1;
             break;
          case 'c':
             s_check_result = 1;
             break;
          case 'p':
-            print = 1;
+            args.print = 1;
             break;
          case 'G':
-            print = 1;
+            args.print = 1;
             opt++;
             if (opt >= argc) {
                s_usage(argv[0]);
@@ -261,10 +354,10 @@ int main(int argc, char **argv)
             }
             break;
          case 'b':
-            bncore = 1;
+            args.bncore = 1;
             break;
          case 't':
-            terse = 1;
+            args.terse = 1;
             break;
          case 'S':
             opt++;
@@ -273,71 +366,28 @@ int main(int argc, char **argv)
             }
             str = argv[opt];
             errno = 0;
-            val = strtol(str, &endptr, base);
-            if ((errno == ERANGE && (val == LONG_MAX || val == LONG_MIN))
-                || (errno != 0 && val == 0)) {
-               fprintf(stderr,"Seed %s not usable\n", argv[opt]);
-               exit(EXIT_FAILURE);
-            }
-            if (endptr == str) {
-               fprintf(stderr, "No seed given?\n");
-               exit(EXIT_FAILURE);
-            }
-            seed = (uint64_t)val;
+            seed = (uint64_t)s_strtol(argv[opt], NULL, "No seed given?\n");
             break;
          case 'L':
             opt++;
             if (opt >= argc) {
                s_usage(argv[0]);
             }
-            str = argv[opt];
-            errno = 0;
-            val = strtol(str, &endptr, base);
-            if ((val > INT_MAX || val < 0) || (errno != 0)) {
-               fprintf(stderr,"Value %s not usable\n", argv[opt]);
-               exit(EXIT_FAILURE);
-            }
-            if (endptr == str) {
-               fprintf(stderr, "No value for option \"-L\"given\n");
-               exit(EXIT_FAILURE);
-            }
-            s_stabilization_extra = (int)val;
+            s_stabilization_extra = (int)s_strtol(argv[opt], NULL, "No value for option \"-L\"given");
             break;
          case 'o':
             opt++;
             if (opt >= argc) {
                s_usage(argv[0]);
             }
-            str = argv[opt];
-            errno = 0;
-            val = strtol(str, &endptr, base);
-            if ((val > INT_MAX || val < 0) || (errno != 0)) {
-               fprintf(stderr,"Value %s not usable as an offset\n", argv[opt]);
-               exit(EXIT_FAILURE);
-            }
-            if (endptr == str) {
-               fprintf(stderr, "No value for the offset given\n");
-               exit(EXIT_FAILURE);
-            }
-            s_offset = (int)val;
+            s_offset = (int)s_strtol(argv[opt], NULL, "No value for the offset given");
             break;
          case 'r':
             opt++;
             if (opt >= argc) {
                s_usage(argv[0]);
             }
-            str = argv[opt];
-            errno = 0;
-            val = strtol(str, &endptr, base);
-            if ((val > INT_MAX || val < 0) || (errno != 0)) {
-               fprintf(stderr,"Value %s not usable as the number of rounds for \"-r\"\n", argv[opt]);
-               exit(EXIT_FAILURE);
-            }
-            if (endptr == str) {
-               fprintf(stderr, "No value for the number of rounds given\n");
-               exit(EXIT_FAILURE);
-            }
-            s_number_of_test_loops = (int)val;
+            s_number_of_test_loops = (int)s_strtol(argv[opt], NULL, "No value for the number of rounds given");
             break;
 
          case 'M':
@@ -345,104 +395,36 @@ int main(int argc, char **argv)
             if (opt >= argc) {
                s_usage(argv[0]);
             }
-            str = argv[opt];
-            errno = 0;
-            val = strtol(str, &endptr, base);
-            if ((val > INT_MAX || val < 0) || (errno != 0)) {
-               fprintf(stderr,"Value %s not usable as the upper limit of T-C tests (\"-M\")\n", argv[opt]);
-               exit(EXIT_FAILURE);
-            }
-            if (endptr == str) {
-               fprintf(stderr, "No value for the upper limit of T-C tests given\n");
-               exit(EXIT_FAILURE);
-            }
-            upper_limit_print = (int)val;
+            args.upper_limit_print = (int)s_strtol(argv[opt], NULL, "No value for the upper limit of T-C tests given");
             break;
          case 'm':
             opt++;
             if (opt >= argc) {
                s_usage(argv[0]);
             }
-            str = argv[opt];
-            errno = 0;
-            val = strtol(str, &endptr, base);
-            if ((val > INT_MAX || val < 0) || (errno != 0)) {
-               fprintf(stderr,"Value %s not usable as the increment for the T-C tests (\"-m\")\n", argv[opt]);
-               exit(EXIT_FAILURE);
-            }
-            if (endptr == str) {
-               fprintf(stderr, "No value for the increment for the T-C tests given\n");
-               exit(EXIT_FAILURE);
-            }
-            increment_print = (int)val;
+            args.increment_print = (int)s_strtol(argv[opt], NULL, "No value for the increment for the T-C tests given");
             break;
          case 's':
             printpreset = 1;
-            print = 1;
+            args.print = 1;
             opt++;
             if (opt >= argc) {
                s_usage(argv[0]);
             }
             str = argv[opt];
-            i = 0;
-            /* Only the most basic checks */
-            errno = 0;
-            val = strtol(str, &endptr, base);
-            if ((val > INT_MAX || val < 0) || (errno != 0)) {
-               fprintf(stderr,"input #%d wrong\n", i+1);
-               exit(EXIT_FAILURE);
-            }
-            if (endptr == str) {
-               fprintf(stderr, "No input for #%d?\n", i+1);
-               exit(EXIT_FAILURE);
-            }
-            i++;
+            KARATSUBA_MUL_CUTOFF = (int)s_strtol(str, &endptr, "[1/4] No value for KARATSUBA_MUL_CUTOFF given");
             str = endptr + 1;
-            KARATSUBA_MUL_CUTOFF = (int)val;
-            errno = 0;
-            val = strtol(str, &endptr, base);
-            if ((val > INT_MAX || val < 0) || (errno != 0)) {
-               fprintf(stderr,"input #%d wrong\n", i+1);
-               exit(EXIT_FAILURE);
-            }
-            if (endptr == str) {
-               fprintf(stderr, "No input for #%d?\n", i+1);
-               exit(EXIT_FAILURE);
-            }
-            i++;
+            KARATSUBA_SQR_CUTOFF = (int)s_strtol(str, &endptr, "[2/4] No value for KARATSUBA_SQR_CUTOFF given");
             str = endptr + 1;
-            KARATSUBA_SQR_CUTOFF = (int)val;
-            errno = 0;
-            val = strtol(str, &endptr, base);
-            if ((val > INT_MAX || val < 0) || (errno != 0)) {
-               fprintf(stderr,"input #%d wrong\n", i+1);
-               exit(EXIT_FAILURE);
-            }
-            if (endptr == str) {
-               fprintf(stderr, "No input for #%d?\n", i+1);
-               exit(EXIT_FAILURE);
-            }
-            i++;
+            TOOM_MUL_CUTOFF = (int)s_strtol(str, &endptr, "[3/4] No value for TOOM_MUL_CUTOFF given");
             str = endptr + 1;
-            TOOM_MUL_CUTOFF = (int)val;
-            errno = 0;
-            val = strtol(str, &endptr, base);
-            if ((val > INT_MAX || val < 0) || (errno != 0)) {
-               fprintf(stderr,"input #%d wrong\n", i+1);
-               exit(EXIT_FAILURE);
-            }
-            if (endptr == str) {
-               fprintf(stderr, "No input for #%d?\n", i+1);
-               exit(EXIT_FAILURE);
-            }
-            i++;
-            str = endptr + 1;
-            TOOM_SQR_CUTOFF = (int)val;
+            TOOM_SQR_CUTOFF = (int)s_strtol(str, &endptr, "[4/4] No value for TOOM_SQR_CUTOFF given");
             break;
          case 'h':
+            s_exit_code = EXIT_SUCCESS;
+         /* FALLTHROUGH */
          default:
             s_usage(argv[0]);
-            exit(EXIT_FAILURE);
          }
       }
    }
@@ -455,178 +437,52 @@ int main(int argc, char **argv)
    s_mp_rand_jenkins_init(seed);
    mp_rand_source(s_mp_rand_jenkins);
 
-   ksm  = KARATSUBA_MUL_CUTOFF;
-   kss  = KARATSUBA_SQR_CUTOFF;
-   tc3m = TOOM_MUL_CUTOFF;
-   tc3s = TOOM_SQR_CUTOFF;
+   get_cutoffs(&orig);
 
-   if ((bncore == 0) && (printpreset == 0)) {
+   updated = max_cutoffs;
+   if ((args.bncore == 0) && (printpreset == 0)) {
+      struct {
+         const char *name;
+         int *cutoff, *update;
+         uint64_t (*fn)(int);
+      } test[] = {
+#define T_MUL_SQR(n, o, f)  { #n, &o##_CUTOFF, &(updated.o), MP_HAS(S_MP_##o) ? f : NULL }
+         /*
+            The influence of the Comba multiplication cannot be
+            eradicated programmatically. It depends on the size
+            of the macro MP_WPARRAY in tommath.h which needs to
+            be changed manually (to 0 (zero)).
+          */
+         T_MUL_SQR("Karatsuba multiplication", KARATSUBA_MUL, s_time_mul),
+         T_MUL_SQR("Karatsuba squaring", KARATSUBA_SQR, s_time_sqr),
+         T_MUL_SQR("Toom-Cook 3-way multiplying", TOOM_MUL, s_time_mul),
+         T_MUL_SQR("Toom-Cook 3-way squaring", TOOM_SQR, s_time_sqr),
+#undef T_MUL_SQR
+      };
       /* Turn all limits from bncore.c to the max */
-      KARATSUBA_MUL_CUTOFF = INT_MAX;
-      KARATSUBA_SQR_CUTOFF = INT_MAX;
-      TOOM_MUL_CUTOFF = INT_MAX;
-      TOOM_SQR_CUTOFF = INT_MAX;
-#ifdef BN_S_MP_KARATSUBA_MUL_C
-      /*
-         The influence of the Comba multiplication cannot be
-         eradicated programmatically. It depends on the size
-         of the macro MP_WPARRAY in tommath.h which needs to
-         be changed manually (to 0 (zero)).
-       */
-      if ((verbose == 1) || (testmode == 1)) {
-         puts("# Karatsuba multiplication.");
-      }
-      for (x = 8; x < upper_limit_print; x += increment_print) {
-         KARATSUBA_MUL_CUTOFF = INT_MAX;
-         t1 = s_time_mul(x);
-         if ((t1 == 0uLL) || (t1 == UINT64_MAX)) {
-            fprintf(stderr,"Karatsuba multiplication  failed at x = INT_MAX (%s)\n",
-                    (t1 == 0uLL)?"wrong result":"internal error");
-            exit(EXIT_FAILURE);
-         }
-         KARATSUBA_MUL_CUTOFF = x;
-         t2 = s_time_mul(x);
-         if ((t2 == 0uLL) || (t2 == UINT64_MAX)) {
-            fprintf(stderr,"Karatsuba multiplication failed (%s)\n",
-                    (t2 == 0uLL)?"wrong result":"internal error");
-            exit(EXIT_FAILURE);
-         }
-         if (verbose == 1) {
-            printf("%d: %9"PRIu64" %9"PRIu64", %9"PRIi64"\n", x, t1, t2, (int64_t)t2 - (int64_t)t1);
-         }
-         if (t2 < t1) {
-            if (count == s_stabilization_extra) {
-               count = 0;
-               break;
-            } else if (count < s_stabilization_extra) {
-               count++;
-            }
-         } else if (count > 0) {
-            count--;
+      set_cutoffs(&max_cutoffs);
+      for (n = 0; n < sizeof(test)/sizeof(test[0]); ++n) {
+         if (test[n].fn) {
+            s_run(test[n].name, test[n].fn, test[n].cutoff);
+            *test[n].update = *test[n].cutoff;
+            *test[n].cutoff = INT_MAX;
          }
       }
-      KARATSUBA_MUL_CUTOFF = x - s_stabilization_extra * increment_print;
-#endif
-#ifdef BN_S_MP_KARATSUBA_SQR_C
-      if ((verbose == 1) || (testmode == 1)) {
-         puts("# Karatsuba squaring.");
-      }
-      for (x = 8; x < upper_limit_print; x += increment_print) {
-         KARATSUBA_SQR_CUTOFF = INT_MAX;
-         t1 = s_time_sqr(x);
-         if ((t1 == 0uLL) || (t1 == UINT64_MAX)) {
-            fprintf(stderr,"Karatsuba squaring failed at x = INT_MAX (%s)\n",
-                    (t1 == 0uLL)?"wrong result":"internal error");
-            exit(EXIT_FAILURE);
-         }
-         KARATSUBA_SQR_CUTOFF = x;
-         t2 = s_time_sqr(x);
-         if ((t2 == 0uLL) || (t2 == UINT64_MAX)) {
-            fprintf(stderr,"Karatsuba squaring failed (%s)\n",
-                    (t2 == 0uLL)?"wrong result":"internal error");
-            exit(EXIT_FAILURE);
-         }
-         if (verbose == 1) {
-            printf("%d: %9"PRIu64" %9"PRIu64", %9"PRIi64"\n", x, t1, t2, (int64_t)t2 - (int64_t)t1);
-         }
-         if (t2 < t1) {
-            if (count == s_stabilization_extra) {
-               count = 0;
-               break;
-            } else if (count < s_stabilization_extra) {
-               count++;
-            }
-         } else if (count > 0) {
-            count--;
-         }
-      }
-      KARATSUBA_SQR_CUTOFF = x - s_stabilization_extra * increment_print;
-#endif
-#ifdef BN_S_MP_TOOM_MUL_C
-      if ((verbose == 1) || (testmode == 1)) {
-         puts("# Toom-Cook 3-way multiplying.");
-      }
-      for (x = 8; x < upper_limit_print; x += increment_print) {
-         TOOM_MUL_CUTOFF = INT_MAX;
-         t1 = s_time_mul(x);
-         if ((t1 == 0uLL) || (t1 == UINT64_MAX)) {
-            fprintf(stderr,"Toom-Cook 3-way multiplying failed at x = INT_MAX (%s)\n",
-                    (t1 == 0uLL)?"wrong result":"internal error");
-            exit(EXIT_FAILURE);
-         }
-         TOOM_MUL_CUTOFF = x;
-         t2 = s_time_mul(x);
-         if ((t2 == 0uLL) || (t2 == UINT64_MAX)) {
-            fprintf(stderr,"Toom-Cook 3-way multiplication failed (%s)\n",
-                    (t2 == 0uLL)?"wrong result":"internal error");
-            exit(EXIT_FAILURE);
-         }
-         if (verbose == 1) {
-            printf("%d: %9"PRIu64" %9"PRIu64", %9"PRIi64"\n", x, t1, t2, (int64_t)t2 - (int64_t)t1);
-         }
-         if (t2 < t1) {
-            if (count == s_stabilization_extra) {
-               count = 0;
-               break;
-            } else if (count < s_stabilization_extra) {
-               count++;
-            }
-         } else if (count > 0) {
-            count--;
-         }
-      }
-      TOOM_MUL_CUTOFF = x - s_stabilization_extra * increment_print;
-#endif
-#ifdef BN_S_MP_TOOM_SQR_C
-      if ((verbose == 1) || (testmode == 1)) {
-         puts("# Toom-Cook 3-way squaring.");
-      }
-      for (x = 8; x < upper_limit_print; x += increment_print) {
-         TOOM_SQR_CUTOFF = INT_MAX;
-         t1 = s_time_sqr(x);
-         if ((t1 == 0uLL) || (t1 == UINT64_MAX)) {
-            fprintf(stderr,"Toom-Cook 3-way squaring failed at x = INT_MAX (%s)\n",
-                    (t1 == 0uLL)?"wrong result":"internal error");
-            exit(EXIT_FAILURE);
-         }
-         TOOM_SQR_CUTOFF = x;
-         t2 = s_time_sqr(x);
-         if ((t2 == 0uLL) || (t2 == UINT64_MAX)) {
-            fprintf(stderr,"Toom-Cook 3-way squaring failed (%s)\n",
-                    (t2 == 0uLL)?"wrong result":"internal error");
-            exit(EXIT_FAILURE);
-         }
-         if (verbose == 1) {
-            printf("%d: %9"PRIu64" %9"PRIu64", %9"PRIi64"\n", x, t1, t2, (int64_t)t2 - (int64_t)t1);
-         }
-         if (t2 < t1) {
-            if (count == s_stabilization_extra) {
-               count = 0;
-               break;
-            } else if (count < s_stabilization_extra) {
-               count++;
-            }
-         } else if (count > 0) {
-            count--;
-         }
-      }
-      TOOM_SQR_CUTOFF = x - s_stabilization_extra * increment_print;
-#endif
    }
-   if (terse == 1) {
+   if (args.terse == 1) {
       printf("%d %d %d %d\n",
-             KARATSUBA_MUL_CUTOFF,
-             KARATSUBA_SQR_CUTOFF,
-             TOOM_MUL_CUTOFF,
-             TOOM_SQR_CUTOFF);
+             updated.KARATSUBA_MUL,
+             updated.KARATSUBA_SQR,
+             updated.TOOM_MUL,
+             updated.TOOM_SQR);
    } else {
-      printf("KARATSUBA_MUL_CUTOFF = %d\n", KARATSUBA_MUL_CUTOFF);
-      printf("KARATSUBA_SQR_CUTOFF = %d\n", KARATSUBA_SQR_CUTOFF);
-      printf("TOOM_MUL_CUTOFF = %d\n", TOOM_MUL_CUTOFF);
-      printf("TOOM_SQR_CUTOFF = %d\n", TOOM_SQR_CUTOFF);
+      printf("KARATSUBA_MUL_CUTOFF = %d\n", updated.KARATSUBA_MUL);
+      printf("KARATSUBA_SQR_CUTOFF = %d\n", updated.KARATSUBA_SQR);
+      printf("TOOM_MUL_CUTOFF = %d\n", updated.TOOM_MUL);
+      printf("TOOM_SQR_CUTOFF = %d\n", updated.TOOM_SQR);
    }
 
-   if (print == 1) {
+   if (args.print == 1) {
       printf("Printing data for graphing to \"%s\" and \"%s\"\n",mullog, sqrlog);
 
       multiplying = fopen(mullog, "w+");
@@ -641,47 +497,32 @@ int main(int argc, char **argv)
          exit(EXIT_FAILURE);
       }
 
-      for (x = 8; x < upper_limit_print; x += increment_print) {
-         KARATSUBA_MUL_CUTOFF = INT_MAX;
-         KARATSUBA_SQR_CUTOFF = INT_MAX;
-         TOOM_MUL_CUTOFF = INT_MAX;
-         TOOM_SQR_CUTOFF = INT_MAX;
+      for (x = 8; x < args.upper_limit_print; x += args.increment_print) {
+         set_cutoffs(&max_cutoffs);
          t1 = s_time_mul(x);
-         KARATSUBA_MUL_CUTOFF = kss;
-         KARATSUBA_SQR_CUTOFF = ksm;
-         TOOM_MUL_CUTOFF = tc3m;
-         TOOM_SQR_CUTOFF = tc3s;
+         set_cutoffs(&orig);
          t2 = s_time_mul(x);
          fprintf(multiplying, "%d: %9"PRIu64" %9"PRIu64", %9"PRIi64"\n", x, t1, t2, (int64_t)t2 - (int64_t)t1);
          fflush(multiplying);
-         if (verbose == 1) {
+         if (args.verbose == 1) {
             printf("MUL %d: %9"PRIu64" %9"PRIu64", %9"PRIi64"\n", x, t1, t2, (int64_t)t2 - (int64_t)t1);
             fflush(stdout);
          }
-         KARATSUBA_MUL_CUTOFF = INT_MAX;
-         KARATSUBA_SQR_CUTOFF = INT_MAX;
-         TOOM_MUL_CUTOFF = INT_MAX;
-         TOOM_SQR_CUTOFF = INT_MAX;
+         set_cutoffs(&max_cutoffs);
          t1 = s_time_sqr(x);
-         KARATSUBA_MUL_CUTOFF = kss;
-         KARATSUBA_SQR_CUTOFF = ksm;
-         TOOM_MUL_CUTOFF = tc3m;
-         TOOM_SQR_CUTOFF = tc3s;
+         set_cutoffs(&orig);
          t2 = s_time_sqr(x);
          fprintf(squaring,"%d: %9"PRIu64" %9"PRIu64", %9"PRIi64"\n", x, t1, t2, (int64_t)t2 - (int64_t)t1);
          fflush(squaring);
-         if (verbose == 1) {
+         if (args.verbose == 1) {
             printf("SQR %d: %9"PRIu64" %9"PRIu64", %9"PRIi64"\n", x, t1, t2, (int64_t)t2 - (int64_t)t1);
             fflush(stdout);
          }
       }
       printf("Finished. Data for graphing in \"%s\" and \"%s\"\n",mullog, sqrlog);
-      if (verbose == 1) {
-         KARATSUBA_MUL_CUTOFF = kss;
-         KARATSUBA_SQR_CUTOFF = ksm;
-         TOOM_MUL_CUTOFF = tc3m;
-         TOOM_SQR_CUTOFF = tc3s;
-         if (terse == 1) {
+      if (args.verbose == 1) {
+         set_cutoffs(&orig);
+         if (args.terse == 1) {
             printf("%d %d %d %d\n",
                    KARATSUBA_MUL_CUTOFF,
                    KARATSUBA_SQR_CUTOFF,

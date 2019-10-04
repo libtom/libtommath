@@ -60,7 +60,7 @@ bn_s_mp_prime_is_divisible.o bn_s_mp_rand_jenkins.o bn_s_mp_rand_platform.o bn_s
 bn_s_mp_sqr.o bn_s_mp_sqr_fast.o bn_s_mp_sub.o bn_s_mp_toom_mul.o bn_s_mp_toom_sqr.o
 
 HEADERS_PUB=tommath.h
-HEADERS=tommath_private.h tommath_class.h tommath_superclass.h $(HEADERS_PUB)
+HEADERS=tommath_private.h tommath_class.h tommath_superclass.h tommath_cutoffs.h $(HEADERS_PUB)
 
 #The default rule for make builds the libtommath.a library (static)
 default: $(LIBMAIN_S)

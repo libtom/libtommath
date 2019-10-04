@@ -11,28 +11,13 @@ LCG() {
   SEED=$(((1103515245 * $SEED + 12345) % 2147483648))
   echo $SEED
 }
-
 median() {
-  median=0;
-  flag=1;
-  for val in $* ; do
-     if [ $flag -eq 1 ] ; then
-        flag=$((flag + 1))
-        continue
-     elif [ $flag -eq 2 ] ; then
-         median=$val
-         flag=$((flag + 1))
-         continue
-     else
-       if [ $median -lt $val ] ; then
-          median=$((median + 1))
-       fi
-       if [ $median -gt $val ] ; then
-          median=$((median - 1))
-       fi
-     fi
-  done
-  echo $median
+# read everything besides the header from file $1
+#   | cut-out the required column $2
+#     | sort all the entries numerically
+#       | show only the first $3 entries
+#         | show only the last entry
+  tail -n +2 $1 | cut -d' ' -f$2 | sort -n | head -n $3 | tail -n 1
 }
 
 MPWD=$(dirname $(readlink -f "$0"))
@@ -100,27 +85,23 @@ cat << END_OF_INPUT > $TOMMATH_CUTOFFS_H || die "Writing header to $TOMMATH_CUTO
  */
 END_OF_INPUT
 
-# The Posix shell does not offer an array data type
+# The Posix shell does not offer an array data type so we create
+# the median with 'standard tools'^TM
 
-i=1;
-TMP=""
-TMP=$(cat $FILE_NAME | cut -d' ' -f$i )
-TMP=$(median $TMP )
+# read the file (without the first line) and count the lines
+i=$(tail -n +2 $FILE_NAME | wc -l)
+# our median point will be at $i entries
+i=$(( (i / 2) + 1 ))
+TMP=$(median $FILE_NAME 1 $i)
 echo "#define MP_DEFAULT_KARATSUBA_MUL_CUTOFF $TMP"
 echo "#define MP_DEFAULT_KARATSUBA_MUL_CUTOFF $TMP" >> $TOMMATH_CUTOFFS_H || die "(km) Appending to $TOMMATH_CUTOFFS_H" $?
-i=$((i + 1))
-TMP=$(cat $FILE_NAME | cut -d' ' -f$i )
-TMP=$(median $TMP );
+TMP=$(median $FILE_NAME 2 $i)
 echo "#define MP_DEFAULT_KARATSUBA_SQR_CUTOFF $TMP"
 echo "#define MP_DEFAULT_KARATSUBA_SQR_CUTOFF $TMP" >> $TOMMATH_CUTOFFS_H || die "(ks) Appending to $TOMMATH_CUTOFFS_H" $?
-i=$((i + 1))
-TMP=$(cat $FILE_NAME | cut -d' ' -f$i)
-TMP=$(median $TMP );
+TMP=$(median $FILE_NAME 3 $i)
 echo "#define MP_DEFAULT_TOOM_MUL_CUTOFF      $TMP"
 echo "#define MP_DEFAULT_TOOM_MUL_CUTOFF      $TMP" >> $TOMMATH_CUTOFFS_H || die "(tc3m) Appending to $TOMMATH_CUTOFFS_H" $?
-i=$((i + 1))
-TMP=$(cat $FILE_NAME | cut -d' ' -f$i)
-TMP=$(median $TMP );
+TMP=$(median $FILE_NAME 4 $i)
 echo "#define MP_DEFAULT_TOOM_SQR_CUTOFF      $TMP"
 echo "#define MP_DEFAULT_TOOM_SQR_CUTOFF      $TMP" >> $TOMMATH_CUTOFFS_H || die "(tc3s) Appending to $TOMMATH_CUTOFFS_H" $?
 
