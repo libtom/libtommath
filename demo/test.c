@@ -2152,12 +2152,16 @@ LTM_ERR:
 static int test_s_mp_toom_mul(void)
 {
    mp_int a, b, c, d;
-   int size, err, tc_cutoff;
+   int size, err;
+
+#if (MP_DIGIT_BIT == 60)
+   int tc_cutoff;
+#endif
 
    if ((err = mp_init_multi(&a, &b, &c, &d, NULL)) != MP_OKAY) {
       goto LTM_ERR;
    }
-/* This number construction is limb-size specific */
+   /* This number construction is limb-size specific */
 #if (MP_DIGIT_BIT == 60)
    if ((err = mp_rand(&a, 1196)) != MP_OKAY) {
       goto LTM_ERR;
