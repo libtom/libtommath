@@ -26,7 +26,7 @@ mp_err mp_to_ubin(const mp_int *a, unsigned char *buf, size_t maxlen, size_t *wr
    while (!MP_IS_ZERO(&t)) {
       if (maxlen == 0u) {
          err = MP_VAL;
-         break;
+         goto LBL_ERR;
       }
       maxlen--;
 #ifndef MP_8BIT
@@ -39,7 +39,6 @@ mp_err mp_to_ubin(const mp_int *a, unsigned char *buf, size_t maxlen, size_t *wr
       }
    }
    s_mp_reverse(buf, x);
-   err = MP_OKAY;
 
    if (written != NULL) {
       *written = x;
