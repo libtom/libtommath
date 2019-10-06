@@ -4,20 +4,20 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* store in signed [big endian] format */
-mp_err mp_to_sbin(const mp_int *a, unsigned char *b, size_t maxlen, size_t *written)
+mp_err mp_to_sbin(const mp_int *a, unsigned char *buf, size_t maxlen, size_t *written)
 {
    mp_err err;
    if (maxlen == 0u) {
       return MP_VAL;
    }
 
-   if ((err = mp_to_ubin(a, b + 1, maxlen - 1u, written)) != MP_OKAY) {
+   if ((err = mp_to_ubin(a, buf + 1, maxlen - 1u, written)) != MP_OKAY) {
       return err;
    }
    if (written != NULL) {
       (*written)++;
    }
-   b[0] = (a->sign == MP_ZPOS) ? (unsigned char)0 : (unsigned char)1;
+   buf[0] = (a->sign == MP_ZPOS) ? (unsigned char)0 : (unsigned char)1;
    return MP_OKAY;
 }
 #endif

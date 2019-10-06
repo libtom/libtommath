@@ -4,13 +4,13 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* store in unsigned [big endian] format */
-mp_err mp_to_ubin(const mp_int *a, unsigned char *b, size_t maxlen, size_t *written)
+mp_err mp_to_ubin(const mp_int *a, unsigned char *buf, size_t maxlen, size_t *written)
 {
    size_t    x;
    mp_err  err;
    mp_int  t;
 
-   if (b == NULL) {
+   if (buf == NULL) {
       return MP_MEM;
    }
 
@@ -26,20 +26,19 @@ mp_err mp_to_ubin(const mp_int *a, unsigned char *b, size_t maxlen, size_t *writ
    while (!MP_IS_ZERO(&t)) {
       if (maxlen == 0u) {
          err = MP_VAL;
-         break;
+         goto LBL_ERR;
       }
       maxlen--;
 #ifndef MP_8BIT
-      b[x++] = (unsigned char)(t.dp[0] & 255u);
+      buf[x++] = (unsigned char)(t.dp[0] & 255u);
 #else
-      b[x++] = (unsigned char)(t.dp[0] | ((t.dp[1] & 1u) << 7));
+      buf[x++] = (unsigned char)(t.dp[0] | ((t.dp[1] & 1u) << 7));
 #endif
       if ((err = mp_div_2d(&t, 8, &t, NULL)) != MP_OKAY) {
          goto LBL_ERR;
       }
    }
-   s_mp_reverse(b, x);
-   err = MP_OKAY;
+   s_mp_reverse(buf, x);
 
    if (written != NULL) {
       *written = x;
