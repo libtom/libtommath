@@ -154,13 +154,14 @@ mp_err mp_radix_size_overestimate(const mp_int *a, const int base, int *size)
       *size = 0;
       return MP_VAL;
    }
-   /* floor( log_2(a) ) + 1 */
-   bit_count = mp_count_bits(a);
 
-   if (bit_count == 0) {
+   if (a->used == 0) {
       *size = 2;
       return MP_OKAY;
    }
+
+   /* floor( log_2(a) ) + 1 */
+   bit_count = mp_count_bits(a);
 
    /* A small shortcut for powers of two. */
    if (!(base&(base-1))) {
