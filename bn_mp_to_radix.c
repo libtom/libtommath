@@ -9,7 +9,7 @@
  */
 mp_err mp_to_radix(const mp_int *a, char *str, size_t maxlen, int radix)
 {
-   int     digs;
+   size_t  digs;
    mp_err  err;
    mp_int  t;
    mp_digit d;
@@ -44,7 +44,7 @@ mp_err mp_to_radix(const mp_int *a, char *str, size_t maxlen, int radix)
       --maxlen;
    }
 
-   digs = 0;
+   digs = 0u;
    while (!MP_IS_ZERO(&t)) {
       if (--maxlen < 1u) {
          /* no more room */

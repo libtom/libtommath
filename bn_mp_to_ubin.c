@@ -1,21 +1,34 @@
 #include "tommath_private.h"
-#ifdef BN_MP_TO_UNSIGNED_BIN_C
+#ifdef BN_MP_TO_UBIN_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
 /* store in unsigned [big endian] format */
-mp_err mp_to_unsigned_bin(const mp_int *a, unsigned char *b)
+mp_err mp_to_ubin(const mp_int *a, unsigned char *b, size_t maxlen, size_t *written)
 {
-   int     x;
+   size_t    x;
    mp_err  err;
    mp_int  t;
+
+   if (b == NULL) {
+      return MP_MEM;
+   }
+
+   if (maxlen == 0u) {
+      return MP_VAL;
+   }
 
    if ((err = mp_init_copy(&t, a)) != MP_OKAY) {
       return err;
    }
 
-   x = 0;
+   x = 0u;
    while (!MP_IS_ZERO(&t)) {
+      if (maxlen == 0u) {
+         err = MP_VAL;
+         break;
+      }
+      maxlen--;
 #ifndef MP_8BIT
       b[x++] = (unsigned char)(t.dp[0] & 255u);
 #else
@@ -28,6 +41,9 @@ mp_err mp_to_unsigned_bin(const mp_int *a, unsigned char *b)
    s_mp_reverse(b, x);
    err = MP_OKAY;
 
+   if (written != NULL) {
+      *written = x;
+   }
 LBL_ERR:
    mp_clear(&t);
    return err;

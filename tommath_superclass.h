@@ -31,13 +31,13 @@
 #   define BN_MP_RAND_C
 #   define BN_MP_REDUCE_C
 #   define BN_MP_REDUCE_2K_L_C
-#   define BN_MP_READ_SIGNED_BIN_C
+#   define BN_MP_FROM_SBIN_C
 #   define BN_MP_ROOT_U32_C
 #   define BN_MP_SET_L_C
 #   define BN_MP_SET_UL_C
-#   define BN_MP_SIGNED_BIN_SIZE_C
+#   define BN_MP_SBIN_SIZE_C
 #   define BN_MP_TO_RADIX_C
-#   define BN_MP_TO_SIGNED_BIN_C
+#   define BN_MP_TO_SBIN_C
 #   define BN_S_MP_RAND_JENKINS_C
 #   define BN_S_MP_RAND_PLATFORM_C
 #endif

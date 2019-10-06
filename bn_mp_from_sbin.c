@@ -1,15 +1,15 @@
 #include "tommath_private.h"
-#ifdef BN_MP_READ_SIGNED_BIN_C
+#ifdef BN_MP_FROM_SBIN_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
 /* read signed bin, big endian, first byte is 0==positive or 1==negative */
-mp_err mp_read_signed_bin(mp_int *a, const unsigned char *b, int c)
+mp_err mp_from_sbin(mp_int *a, const unsigned char *b, size_t c)
 {
    mp_err err;
 
    /* read magnitude */
-   if ((err = mp_read_unsigned_bin(a, b + 1, c - 1)) != MP_OKAY) {
+   if ((err = mp_from_ubin(a, b + 1, c - 1u)) != MP_OKAY) {
       return err;
    }
 
