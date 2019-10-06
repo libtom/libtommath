@@ -161,10 +161,6 @@ mp_err mp_radix_size_overestimate(const mp_int *a, const int base, int *size)
       *size = 2;
       return MP_OKAY;
    }
-   if (base == 2) {
-      *size = bit_count + 2;
-      return MP_OKAY;
-   }
 
    /* A small shortcut for powers of two. */
    if (!(base&(base-1))) {
