@@ -77,7 +77,7 @@ mp_err mp_to_radix(const mp_int *a, char *str, size_t maxlen, size_t *written, i
    *str = '\0';
    digs++;
    if (written != NULL) {
-      *written = (a->sign == MP_NEG) ? digs + 1u: digs;
+      *written = (a->sign == MP_NEG) ? (digs + 1u): digs;
    }
 
 LBL_ERR:
