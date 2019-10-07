@@ -2332,11 +2332,11 @@ static int test_mp_radix_size(void)
          goto LTM_ERR;
       }
       a.sign = MP_NEG;
-      if ((err = mp_radix_size_overestimate(&a, radix, &size)) != MP_OKAY) {
+      if ((err = mp_radix_size(&a, radix, &size)) != MP_OKAY) {
          goto LTM_ERR;
       }
-      if (size < (results[radix] + 1)) {
-         fprintf(stderr, "mp_radix_size_overestimate: result for base %d was %d instead of %d\n",
+      if (size != (results[radix] + 1)) {
+         fprintf(stderr, "mp_radix_size: result for base %d was %d instead of %d\n",
                  radix, size, results[radix]);
          goto LTM_ERR;
       }
@@ -2386,6 +2386,16 @@ static int test_mp_radix_size_overestimate(void)
                  radix, size, results[radix]);
          goto LTM_ERR;
       }
+      a.sign = MP_NEG;
+      if ((err = mp_radix_size_overestimate(&a, radix, &size)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if (size < results[radix]) {
+         fprintf(stderr, "mp_radix_size_overestimate: result for base %d was %d instead of %d\n",
+                 radix, size, results[radix]);
+         goto LTM_ERR;
+      }
+      a.sign = MP_ZPOS;
    }
 
    mp_clear(&a);

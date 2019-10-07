@@ -455,6 +455,7 @@
 
 #if defined(BN_MP_FWRITE_C)
 #   define BN_MP_RADIX_SIZE_C
+#   define BN_MP_RADIX_SIZE_OVERESTIMATE_C
 #   define BN_MP_TO_RADIX_C
 #endif
 
