@@ -141,17 +141,22 @@ static const mp_word logbases[65] = {
 #endif
 /* *INDENT-ON* */
 
-mp_err mp_radix_size_overestimate(const mp_int *a, const int base, int *size)
+mp_err mp_radix_size_overestimate(const mp_int *a, const int radix, int *size)
 {
    mp_int bi_bit_count, bi_k;
 #if ( (defined MP_8BIT) || (defined MP_16BIT) )
    mp_int bi_k_bis;
 #endif
-   int rem, bit_count;
-   mp_err e = MP_OKAY;
+   int bit_count;
+   mp_err err = MP_OKAY;
 
-   if ((base < 2) || (base > 64)) {
+   if (size == NULL) {
+      return MP_VAL;
+   } else {
       *size = 0;
+   }
+
+   if ((radix < 2) || (radix > 64)) {
       return MP_VAL;
    }
 
@@ -160,74 +165,63 @@ mp_err mp_radix_size_overestimate(const mp_int *a, const int base, int *size)
       return MP_OKAY;
    }
 
-   /* floor( log_2(a) ) + 1 */
    bit_count = mp_count_bits(a);
 
    /* A small shortcut for powers of two. */
-   if (!(base&(base-1))) {
-      unsigned int x = (unsigned int)base;
-      int y;
+   if (!(radix&(radix-1))) {
+      unsigned int x = (unsigned int)radix;
+      int y, rem;
       for (y=0; (y < 7) && !(x & 1u); y++) {
          x >>= 1;
       }
       *size = bit_count/y;
       rem = bit_count - ((*size) * y);
       /* Add 1 for the remainder if any and 1 for "\0". */
-      *size += (rem == 0) ? 1 : 2;
-      /* And one extra character for the minus sign */
-      if (a->sign == MP_NEG) {
-         (*size)++;
-      }
+      *size += ((rem == 0) ? 1 : 2) + (a->sign == MP_NEG);
       return MP_OKAY;
    }
 
-   /* d(bitcount,base) = floor( (bitcount * 2^p) / k(base) ) + 1 */
+   /* d(bitcount,radix) = floor( (bitcount * 2^p) / k(radix) ) + 1 */
 
-   if ((e = mp_init_multi(&bi_bit_count, &bi_k, NULL)) != MP_OKAY) {
-      *size = 0;
-      return e;
+   if ((err = mp_init_multi(&bi_bit_count, &bi_k, NULL)) != MP_OKAY) {
+      return err;
    }
 #if ( (defined MP_8BIT) || (defined MP_16BIT) )
-   if ((e = mp_init(&bi_k_bis)) != MP_OKAY) {
+   if ((err = mp_init(&bi_k_bis)) != MP_OKAY) {
       /* No "goto" to avoid cluttering this code with even more preprocessor branches */
       mp_clear_multi(&bi_bit_count, &bi_k, NULL);
-      *size = 0;
-      return e;
+      return err;
    }
 #endif
    /* "long" is at least as large as "int" according to even the oldest C standards */
    mp_set_l(&bi_bit_count, bit_count);
 #if ( (defined MP_8BIT) || (defined MP_16BIT) )
    /* There is no mp_set_u16 for MP_8BIT */
-   mp_set_u32(&bi_k, logbases_high[base]);
-   if ((e = mp_mul_2d(&bi_k, LTM_RADIX_SIZE_HALF_TABLE_SCALE, &bi_k)) != MP_OKAY) {
-      *size = 0;
-      goto LTM_E1;
+   mp_set_u32(&bi_k, logbases_high[radix]);
+   if ((err = mp_mul_2d(&bi_k, LTM_RADIX_SIZE_HALF_TABLE_SCALE, &bi_k)) != MP_OKAY) {
+      goto LTM_ERR;
    }
-   mp_set_u32(&bi_k_bis, logbases_low[base]);
-   if ((e = mp_add(&bi_k_bis, &bi_k, &bi_k)) != MP_OKAY) {
-      *size = 0;
-      goto LTM_E1;
+   mp_set_u32(&bi_k_bis, logbases_low[radix]);
+   if ((err = mp_add(&bi_k_bis, &bi_k, &bi_k)) != MP_OKAY) {
+      goto LTM_ERR;
    }
 #else
-   mp_set_u64(&bi_k, logbases[base]);
+   mp_set_u64(&bi_k, logbases[radix]);
 #endif
-   if ((e = mp_mul_2d(&bi_bit_count, LTM_RADIX_SIZE_SCALE, &bi_bit_count)) != MP_OKAY) {
-      *size = 0;
-      goto LTM_E1;
+   if ((err = mp_mul_2d(&bi_bit_count, LTM_RADIX_SIZE_SCALE, &bi_bit_count)) != MP_OKAY) {
+      goto LTM_ERR;
    }
-   if ((e = mp_div(&bi_bit_count, &bi_k, &bi_bit_count, NULL)) != MP_OKAY) {
-      *size = 0;
-      goto LTM_E1;
+   if ((err = mp_div(&bi_bit_count, &bi_k, &bi_bit_count, NULL)) != MP_OKAY) {
+      goto LTM_ERR;
    }
    /*
-      The first addition of one is done because of the truncating last division,
-      and the second addition of one is done to make room for NIL ('\0').
+      The first addition of one is done because of the truncating division,
+      and the second addition of one is for NIL ('\0').
 
       Casting from "long" to "int" can be done because "bi_bit_count" fits into an "int"
       by definition.
     */
-   *size = (int)mp_get_l(&bi_bit_count) + 1 + 1 ;
+   *size = (int)mp_get_l(&bi_bit_count) + 1 + 1 + (a->sign == MP_NEG);
 
 #if ( (defined MP_8BIT) && (INT_MAX > 0xFFFF))
    /* TODO: Add a third table? But how likely is it that "int" is 32-bit in
@@ -236,17 +230,13 @@ mp_err mp_radix_size_overestimate(const mp_int *a, const int base, int *size)
    *size += 2;
 #endif
 
-   /* And before we forget it: one extra character for the minus sign */
-   if (a->sign == MP_NEG) {
-      (*size)++;
-   }
 
-LTM_E1:
+LTM_ERR:
    mp_clear_multi(&bi_bit_count, &bi_k, NULL);
 #if ( (defined MP_8BIT) || (defined MP_16BIT) )
    mp_clear(&bi_k_bis);
 #endif
-   return e;
+   return err;
 }
 
 

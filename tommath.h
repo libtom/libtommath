@@ -757,7 +757,7 @@ mp_err mp_radix_size(const mp_int *a, int radix, int *size) MP_WUR;
    Behaves like the function mp(n|z)_sizeinbase of GMP for all digit-sizes except MP_8BIT
    and MP_16BIT (if the "int" for MP_16BIT has more than 16 bits) where it can overshoot by two.
  */
-mp_err mp_radix_size_overestimate(const mp_int *a, const int base, int *size) MP_WUR;
+mp_err mp_radix_size_overestimate(const mp_int *a, const int radix, int *size) MP_WUR;
 #ifndef MP_NO_FILE
 mp_err mp_fread(mp_int *a, int radix, FILE *stream) MP_WUR;
 mp_err mp_fwrite(const mp_int *a, int radix, FILE *stream) MP_WUR;
