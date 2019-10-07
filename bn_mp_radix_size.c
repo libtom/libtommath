@@ -6,14 +6,14 @@
 /* returns size of ASCII representation */
 mp_err mp_radix_size(const mp_int *a, int radix, int *size)
 {
-
    mp_err err;
-   int digs;
-   mp_int   t;
-   mp_digit d;
    mp_int a_, b;
 
-   *size = 0;
+   if (size == NULL) {
+      return MP_VAL;
+   } else {
+      *size = 0;
+   }
 
    /* make sure the radix is in range */
    if ((radix < 2) || (radix > 64)) {
@@ -36,15 +36,9 @@ mp_err mp_radix_size(const mp_int *a, int radix, int *size)
       *size = bit_count/y;
       rem = bit_count - ((*size) * y);
       /* Add 1 for the remainder if any and 1 for "\0". */
-      *size += (rem == 0) ? 1 : 2;
-      /* And one extra character for the minus sign */
-      if (a->sign == MP_NEG) {
-         (*size)++;
-      }
+      *size += ((rem == 0) ? 1 : 2) + (a->sign == MP_NEG);
       return MP_OKAY;
    }
-
-
 
    if ((err = mp_init(&b)) != MP_OKAY) {
       goto LBL_ERR;
@@ -58,16 +52,8 @@ mp_err mp_radix_size(const mp_int *a, int radix, int *size)
 
    *size = (int)mp_get_l(&b);
 
-   /* mp_ilogb truncates to zero, hence we need one extra put on top. */
-   (*size)++;
-
-   /* The sign needs to have a place to live, too*/
-   if (a->sign == MP_NEG) {
-      (*size)++;
-   }
-
-   /* return digs + 1, the 1 is for the NUL byte that would be required. */
-   (*size)++;
+   /* mp_ilogb truncates to zero, hence we need one extra put on top and one for `\0`. */
+   *size += 2 + (a->sign == MP_NEG);
 
 LBL_ERR:
    mp_clear(&b);
