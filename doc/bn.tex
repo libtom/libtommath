@@ -100,7 +100,7 @@ also build in MSVC, Borland C out of the box.  For any other ISO C compiler a ma
 developer. Please consider to commit such a makefile to the LibTomMath developers, currently residing at
 \url{http://github.com/libtom/libtommath}, if successfully done so.
 
-Intel's C-compiler (ICC) is sufficiently compatible with GCC, at least the newer versions, to replace GCC for building the static and the shared library. Editing the makfiles is not needed, just set the shell variable \texttt{CC} as shown below.
+Intel's C-compiler (ICC) is sufficiently compatible with GCC, at least the newer versions, to replace GCC for building the static and the shared library. Editing the makefiles is not needed, just set the shell variable \texttt{CC} as shown below.
 \begin{alltt}
 CC=/home/czurnieden/intel/bin/icc make
 \end{alltt}
@@ -2098,18 +2098,21 @@ The random number generated with these two functions is cryptographically secure
 \chapter{Input and Output}
 \section{ASCII Conversions}
 \subsection{To ASCII}
-\index{mp\_toradix}
+\index{mp\_to\_radix}
 \begin{alltt}
-int mp_to_radix (mp_int * a, char *str, size_t maxlen, int radix);
+int mp_to_radix (mp_int *a, char *str, size_t maxlen, size_t *written, int radix);
 \end{alltt}
-This stores $a$ in ``str'' of maximum length ``maxlen'' as a base-``radix'' string of ASCII chars.
-This function appends a NUL character to terminate the string.
-Valid values of ``radix'' line in the range $[2, 64]$.
+This stores $a$ in \texttt{str} of maximum length \texttt{maxlen} as a base-\texttt{radix} string of ASCII chars and appends a \texttt{NUL} character to terminate the string.
 
-If ``str'' is not big enough to hold $a$, ``str' will be filled with the least-significant digits
-of length ``maxlen-1'', then ``str' will be NUL terminated and the error \texttt{MP\_VAL} is returned.
+Valid values of \texttt{radix} line in the range $[2, 64]$.
 
-To determine the size (exact) required by the conversion before storing any data use the following function.
+The exact number of characters in \texttt{str} plus the \texttt{NUL} will be put in \texttt{written} if that variable is not set to \texttt{NULL}.
+
+If \texttt{str} is not big enough to hold $a$, \texttt{str} will be filled with the least-significant digits
+of length \texttt{maxlen-1}, then \texttt{str} will be \texttt{NUL} terminated and the error \texttt{MP\_VAL} is returned.
+
+Please be aware that this function cannot evaluate the actual size of the buffer, it relies on the correctness of \texttt{maxlen}!
+
 
 \index{mp\_radix\_size}
 \begin{alltt}

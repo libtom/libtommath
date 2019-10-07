@@ -1189,6 +1189,8 @@ static int test_mp_montgomery_reduce(void)
    int ix, i, n;
    char buf[4096];
 
+   /* size_t written; */
+
    mp_int a, b, c, d, e;
    if (mp_init_multi(&a, &b, &c, &d, &e, NULL)!= MP_OKAY) {
       return EXIT_FAILURE;
@@ -1225,6 +1227,7 @@ static int test_mp_montgomery_reduce(void)
                mp_to_decimal(&e, buf, sizeof(buf)); printf("e = %s\n", buf);
                mp_to_decimal(&d, buf, sizeof(buf)); printf("d = %s\n", buf);
                mp_to_decimal(&c, buf, sizeof(buf)); printf("c = %s\n", buf);
+
                printf("compare no compare!\n"); goto LBL_ERR;
 /* *INDENT-ON* */
             }
@@ -1250,31 +1253,67 @@ LBL_ERR:
 static int test_mp_read_radix(void)
 {
    char buf[4096];
+   size_t written;
+   mp_err err;
 
    mp_int a;
-   if (mp_init_multi(&a, NULL)!= MP_OKAY) {
-      return EXIT_FAILURE;
-   }
+   if (mp_init_multi(&a, NULL)!= MP_OKAY)                                       goto LTM_ERR;
 
-   mp_read_radix(&a, "123456", 10);
-   mp_to_radix(&a, buf, 3, 10);
+   if ((err = mp_read_radix(&a, "123456", 10)) != MP_OKAY)                     goto LTM_ERR;
+   /* Must fail */
+   if ((err = mp_to_radix(&a, NULL, SIZE_MAX, NULL, 10)) != MP_VAL)             goto LTM_ERR;
+
+   if ((err = mp_to_radix(&a, buf, SIZE_MAX, &written, 10)) != MP_OKAY)        goto LTM_ERR;
+   printf(" '123456' a == %s, length = %zu\n", buf, written);
+
+   /* See comment in bn_mp_to_radix.c */
+   /*
+      if( (err = mp_to_radix(&a, buf, 3u, &written, 10) ) != MP_OKAY)              goto LTM_ERR;
+      printf(" '56' a == %s, length = %zu\n", buf, written);
+
+      if( (err = mp_to_radix(&a, buf, 4u, &written, 10) ) != MP_OKAY)              goto LTM_ERR;
+      printf(" '456' a == %s, length = %zu\n", buf, written);
+      if( (err = mp_to_radix(&a, buf, 30u, &written, 10) ) != MP_OKAY)             goto LTM_ERR;
+      printf(" '123456' a == %s, length = %zu, error = %s\n",
+             buf, written, mp_error_to_string(err));
+   */
+   if ((err = mp_read_radix(&a, "-123456", 10)) != MP_OKAY)                    goto LTM_ERR;
+   if ((err = mp_to_radix(&a, buf, SIZE_MAX, &written, 10)) != MP_OKAY)        goto LTM_ERR;
+   printf(" '-123456' a == %s, length = %zu\n", buf, written);
+
+   if ((err = mp_read_radix(&a, "0", 10)) != MP_OKAY)                          goto LTM_ERR;
+   if ((err = mp_to_radix(&a, buf, SIZE_MAX, &written, 10)) != MP_OKAY)        goto LTM_ERR;
+   printf(" '0' a == %s, length = %zu\n", buf, written);
+
+
+
+   /* Although deprecated it needs to function as long as it isn't dropped */
+   /*
+   printf("Testing deprecated mp_toradix_n\n");
+   if( (err = mp_read_radix(&a, "-123456", 10) ) != MP_OKAY)                    goto LTM_ERR;
+   if( (err = mp_toradix_n(&a, buf, 10, 3) ) != MP_OKAY)                        goto LTM_ERR;
    printf("a == %s\n", buf);
-   mp_to_radix(&a, buf, 4, 10);
+   if( (err = mp_toradix_n(&a, buf, 10, 4) ) != MP_OKAY)                        goto LTM_ERR;
    printf("a == %s\n", buf);
-   mp_to_radix(&a, buf, 30, 10);
+   if( (err = mp_toradix_n(&a, buf, 10, 30) ) != MP_OKAY)                       goto LTM_ERR;
    printf("a == %s\n", buf);
+   */
+
 
    while (0) {
       char *s = fgets(buf, sizeof(buf), stdin);
       if (s != buf) break;
       mp_read_radix(&a, buf, 10);
       mp_prime_next_prime(&a, 5, 1);
-      mp_to_radix(&a, buf, sizeof(buf), 10);
+      mp_to_radix(&a, buf, sizeof(buf), NULL, 10);
       printf("%s, %lu\n", buf, (unsigned long)a.dp[0] & 3uL);
    }
 
-   mp_clear_multi(&a, NULL);
+   mp_clear(&a);
    return EXIT_SUCCESS;
+LTM_ERR:
+   mp_clear(&a);
+   return EXIT_FAILURE;
 }
 
 static int test_mp_cnt_lsb(void)
@@ -1444,6 +1483,7 @@ static int test_mp_reduce_2k_l(void)
    mp_int a, b, c, d;
    int cnt;
    char buf[4096];
+   size_t length[1];
    if (mp_init_multi(&a, &b, NULL)!= MP_OKAY) {
       return EXIT_FAILURE;
    }
@@ -1463,9 +1503,9 @@ static int test_mp_reduce_2k_l(void)
 #      else
 #         error oops
 #      endif
-
-   mp_to_decimal(&a, buf, sizeof(buf));
-   printf("\n\np==%s\n", buf);
+   *length = sizeof(buf);
+   mp_to_radix(&a, buf, length, 10);
+   printf("\n\np==%s, length = %zu\n", buf, *length);
    /* now mp_reduce_is_2k_l() should return */
    if (mp_reduce_is_2k_l(&a) != 1) {
       printf("mp_reduce_is_2k_l() return 0, should be 1\n");
@@ -1824,6 +1864,7 @@ LTM_ERR:
    All numbers as strings to simplifiy things, especially for the
    low-mp branch.
 */
+
 static int test_mp_root_u32(void)
 {
    mp_int a, c, r;
