@@ -1260,8 +1260,6 @@ static int test_mp_read_radix(void)
    if (mp_init_multi(&a, NULL)!= MP_OKAY)                                       goto LTM_ERR;
 
    if ((err = mp_read_radix(&a, "123456", 10)) != MP_OKAY)                     goto LTM_ERR;
-   /* Must fail */
-   if ((err = mp_to_radix(&a, NULL, SIZE_MAX, NULL, 10)) != MP_VAL)             goto LTM_ERR;
 
    if ((err = mp_to_radix(&a, buf, SIZE_MAX, &written, 10)) != MP_OKAY)        goto LTM_ERR;
    printf(" '123456' a == %s, length = %zu\n", buf, written);

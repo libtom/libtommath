@@ -11,7 +11,7 @@ mp_err mp_to_ubin(const mp_int *a, unsigned char *buf, size_t maxlen, size_t *wr
    mp_int  t;
 
    if (maxlen == 0u) {
-      return MP_VAL;
+      return MP_BUF;
    }
 
    if ((err = mp_init_copy(&t, a)) != MP_OKAY) {
@@ -21,7 +21,7 @@ mp_err mp_to_ubin(const mp_int *a, unsigned char *buf, size_t maxlen, size_t *wr
    x = 0u;
    while (!MP_IS_ZERO(&t)) {
       if (maxlen == 0u) {
-         err = MP_VAL;
+         err = MP_BUF;
          goto LBL_ERR;
       }
       maxlen--;

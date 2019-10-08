@@ -16,7 +16,7 @@ mp_err mp_pack(void *rop, size_t maxcount, size_t *writtencount, mp_order order,
    mp_int t;
 
    if (maxcount == 0u) {
-      return MP_VAL;
+      return MP_BUF;
    }
 
    if ((err = mp_init_copy(&t, op)) != MP_OKAY) {
@@ -38,8 +38,8 @@ mp_err mp_pack(void *rop, size_t maxcount, size_t *writtencount, mp_order order,
 
    for (i = 0u; i < count; ++i) {
       if (i >= maxcount) {
-          err = MP_VAL;
-          break;
+         err = MP_BUF;
+         break;
       }
       for (j = 0u; j < size; ++j) {
          unsigned char *byte = (unsigned char *)rop +
