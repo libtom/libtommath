@@ -2313,7 +2313,7 @@ static int test_mp_read_write_ubin(void)
 
    size = mp_ubin_size(&a);
    printf("mp_to_ubin_size  %zu\n", size);
-   buf = MP_MALLOC(sizeof(*buf) * size);
+   buf = malloc(sizeof(*buf) * size);
    if (buf == NULL) {
       fprintf(stderr, "test_read_write_binaries (u) failed to allocate %zu bytes\n",
               sizeof(*buf) * size);
@@ -2333,9 +2333,7 @@ static int test_mp_read_write_ubin(void)
    mp_clear_multi(&a, &b, &c, NULL);
    return EXIT_SUCCESS;
 LTM_ERR:
-   if (buf != NULL) {
-      free(buf);
-   }
+   free(buf);
    mp_clear_multi(&a, &b, &c, NULL);
    return EXIT_FAILURE;
 }
@@ -2356,7 +2354,7 @@ static int test_mp_read_write_sbin(void)
 
    size = mp_sbin_size(&a);
    printf("mp_to_sbin_size  %zu\n", size);
-   buf = MP_MALLOC(sizeof(*buf) * size);
+   buf = malloc(sizeof(*buf) * size);
    if (buf == NULL) {
       fprintf(stderr, "test_read_write_binaries (s) failed to allocate %zu bytes\n",
               sizeof(*buf) * size);
@@ -2377,9 +2375,7 @@ static int test_mp_read_write_sbin(void)
    mp_clear_multi(&a, &b, &c, NULL);
    return EXIT_SUCCESS;
 LTM_ERR:
-   if (buf != NULL) {
-      free(buf);
-   }
+   free(buf);
    mp_clear_multi(&a, &b, &c, NULL);
    return EXIT_FAILURE;
 }
@@ -2399,7 +2395,7 @@ static int test_mp_pack_unpack(void)
 
    count = mp_pack_count(&a, 0, 1);
 
-   buf = MP_MALLOC(count);
+   buf = malloc(count);
    if (buf == NULL) {
       fprintf(stderr, "test_pack_unpack failed to allocate\n");
       goto LTM_ERR;
@@ -2415,13 +2411,11 @@ static int test_mp_pack_unpack(void)
       goto LTM_ERR;
    }
 
-   MP_FREE(buf, size);
+   free(buf);
    mp_clear_multi(&a, &b, NULL);
    return EXIT_SUCCESS;
 LTM_ERR:
-   if (buf != NULL) {
-      MP_FREE(buf, size);
-   }
+   free(buf);
    mp_clear_multi(&a, &b, NULL);
    return EXIT_FAILURE;
 }
