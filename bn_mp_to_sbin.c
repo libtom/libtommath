@@ -10,7 +10,6 @@ mp_err mp_to_sbin(const mp_int *a, unsigned char *buf, size_t maxlen, size_t *wr
    if (maxlen == 0u) {
       return MP_BUF;
    }
-
    if ((err = mp_to_ubin(a, buf + 1, maxlen - 1u, written)) != MP_OKAY) {
       return err;
    }

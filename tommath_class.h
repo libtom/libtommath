@@ -1080,7 +1080,7 @@
 #   define BN_MP_CLEAR_C
 #   define BN_MP_DIV_2D_C
 #   define BN_MP_INIT_COPY_C
-#   define BN_S_MP_REVERSE_C
+#   define BN_MP_UBIN_SIZE_C
 #endif
 
 #if defined(BN_MP_UBIN_SIZE_C)

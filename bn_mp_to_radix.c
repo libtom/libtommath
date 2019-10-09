@@ -55,7 +55,7 @@ mp_err mp_to_radix(const mp_int *a, char *str, size_t maxlen, size_t *written, i
       if (--maxlen < 1u) {
          /* no more room */
          err = MP_BUF;
-         break;
+         goto LBL_ERR;
       }
       if ((err = mp_div_d(&t, (mp_digit)radix, &t, &d)) != MP_OKAY) {
          goto LBL_ERR;
@@ -71,6 +71,7 @@ mp_err mp_to_radix(const mp_int *a, char *str, size_t maxlen, size_t *written, i
    /* append a NULL so the string is properly terminated */
    *str = '\0';
    digs++;
+
    if (written != NULL) {
       *written = (a->sign == MP_NEG) ? (digs + 1u): digs;
    }

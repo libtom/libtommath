@@ -6,16 +6,18 @@
 /* based on gmp's mpz_export.
  * see http://gmplib.org/manual/Integer-Import-and-Export.html
  */
-mp_err mp_pack(void *rop, size_t maxcount, size_t *writtencount, mp_order order, size_t size,
+mp_err mp_pack(void *rop, size_t maxcount, size_t *written, mp_order order, size_t size,
                mp_endian endian, size_t nails, const mp_int *op)
 {
    mp_err err;
-   size_t odd_nails, nail_bytes, i, j, count, written = 0;
+   size_t odd_nails, nail_bytes, i, j, count;
    unsigned char odd_nail_mask;
 
    mp_int t;
 
-   if (maxcount == 0u) {
+   count = mp_pack_count(op, nails, size);
+
+   if (count > maxcount) {
       return MP_BUF;
    }
 
@@ -34,13 +36,7 @@ mp_err mp_pack(void *rop, size_t maxcount, size_t *writtencount, mp_order order,
    }
    nail_bytes = nails / 8u;
 
-   count = mp_pack_count(&t, nails, size);
-
    for (i = 0u; i < count; ++i) {
-      if (i >= maxcount) {
-         err = MP_BUF;
-         break;
-      }
       for (j = 0u; j < size; ++j) {
          unsigned char *byte = (unsigned char *)rop +
                                (((order == MP_LSB_FIRST) ? i : ((count - 1u) - i)) * size) +
@@ -58,11 +54,10 @@ mp_err mp_pack(void *rop, size_t maxcount, size_t *writtencount, mp_order order,
          }
 
       }
-      written++;
    }
 
-   if (writtencount != NULL) {
-      *writtencount = written;
+   if (written != NULL) {
+      *written = count;
    }
    err = MP_OKAY;
 
