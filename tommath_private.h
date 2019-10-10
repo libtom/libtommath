@@ -240,7 +240,7 @@ MP_DEPRECATED(s_mp_reverse) void bn_reverse(unsigned char *s, int len);
    do{\
       int16_t n = 0x1;                                          \
       char *p = (char *)&n;                                     \
-      x = (p[0] == 1) ? MP_LITTLE_ENDIAN : MP_BIG_ENDIAN;  \
+      x = (p[0] == '\x01') ? MP_LITTLE_ENDIAN : MP_BIG_ENDIAN;  \
    } while (0)
 
 /* code-generating macros */
