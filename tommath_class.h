@@ -855,7 +855,7 @@
 #   define BN_MP_INIT_MULTI_C
 #   define BN_MP_MUL_2D_C
 #   define BN_MP_SET_L_C
-#   define BN_MP_SET_U64_C
+#   define BN_MP_SET_U32_C
 #endif
 
 #if defined(BN_MP_RADIX_SMAP_C)
