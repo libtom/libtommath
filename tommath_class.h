@@ -11,6 +11,7 @@
 #endif
 #define LTM1
 #if defined(LTM_ALL)
+#   define BN_MP_RADIX_SIZE_OVERESTIMATE_C
 #   define MP_2EXPT_C
 #   define MP_ABS_C
 #   define MP_ADD_C
@@ -171,6 +172,17 @@
 #   define S_MP_TOOM_SQR_C
 #endif
 #endif
+#if defined(BN_MP_RADIX_SIZE_OVERESTIMATE_C)
+#   define MP_CLEAR_MULTI_C
+#   define MP_COUNT_BITS_C
+#   define MP_DIV_C
+#   define MP_GET_L_C
+#   define MP_INIT_MULTI_C
+#   define MP_MUL_2D_C
+#   define MP_SET_L_C
+#   define MP_SET_U64_C
+#endif
+
 #if defined(MP_2EXPT_C)
 #   define MP_GROW_C
 #   define MP_ZERO_C
@@ -370,6 +382,7 @@
 
 #if defined(MP_FWRITE_C)
 #   define MP_RADIX_SIZE_C
+#   define MP_RADIX_SIZE_OVERESTIMATE_C
 #   define MP_TO_RADIX_C
 #endif
 
