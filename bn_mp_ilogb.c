@@ -78,9 +78,11 @@ mp_err mp_ilogb(const mp_int *a, uint32_t base, mp_int *c)
    mp_int bracket_low, bracket_high, bracket_mid, t, bi_base;
 
    err = MP_OKAY;
+
    if (a->sign == MP_NEG) {
       return MP_VAL;
    }
+
    if (MP_IS_ZERO(a)) {
       return MP_VAL;
    }
@@ -88,10 +90,19 @@ mp_err mp_ilogb(const mp_int *a, uint32_t base, mp_int *c)
    if (base < 2u) {
       return MP_VAL;
    }
-   if (base == 2u) {
-      mp_set_u32(c, (uint32_t)(mp_count_bits(a) - 1));
-      return err;
+
+   /* A small shortcut for bases that are powers of two. */
+   if (!(base & (base - 1u))) {
+      int x, y, bit_count;
+      for (y=0; (y < 7) && !(base & 1u); y++) {
+         base >>= 1;
+      }
+      bit_count = mp_count_bits(a) - 1;
+      x = bit_count/y;
+      mp_set_u32(c, (uint32_t)(x));
+      return MP_OKAY;
    }
+
    if (a->used == 1) {
       mp_set(c, s_digit_ilogb(base, a->dp[0]));
       return err;
