@@ -6,8 +6,8 @@ void ndraw(const mp_int *a, const char *name)
    size_t size = 0;
    mp_err err;
 
-   if ((err = mp_radix_size(a, 10, &size)) != MP_OKAY) {
-      fprintf(stderr, "\nndraw: mp_radix_size(a, 10, %zu) failed - %s\n", size, mp_error_to_string(err));
+   if ((err = mp_radix_size_overestimate(a, 10, &size)) != MP_OKAY) {
+      fprintf(stderr, "\nndraw: mp_radix_size_overestimate(a, 10, %zu) failed - %s\n", size, mp_error_to_string(err));
       exit(EXIT_FAILURE);
    }
    buf = (char *)malloc(size);

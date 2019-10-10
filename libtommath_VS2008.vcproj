@@ -641,6 +641,10 @@
 			>
 		</File>
 		<File
+			RelativePath="mp_radix_size_overestimate.c"
+			>
+		</File>
+		<File
 			RelativePath="mp_rand.c"
 			>
 		</File>
@@ -882,6 +886,10 @@
 		</File>
 		<File
 			RelativePath="s_mp_radix_map.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_radix_size_overestimate.c"
 			>
 		</File>
 		<File

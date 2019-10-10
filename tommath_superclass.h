@@ -28,6 +28,7 @@
 #   define MP_NEG_C
 #   define MP_PRIME_FROBENIUS_UNDERWOOD_C
 #   define MP_RADIX_SIZE_C
+#   define MP_RADIX_SIZE_OVERESTIMATE_C
 #   define MP_LOG_N_C
 #   define MP_RAND_C
 #   define MP_REDUCE_C
@@ -36,6 +37,8 @@
 #   define MP_ROOT_N_C
 #   define MP_SET_L_C
 #   define MP_SET_UL_C
+#   define MP_SET_U64_C
+#   define MP_SET_I64_C
 #   define MP_SBIN_SIZE_C
 #   define MP_TO_RADIX_C
 #   define MP_TO_SBIN_C

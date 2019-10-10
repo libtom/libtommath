@@ -10,7 +10,7 @@ mp_err mp_fwrite(const mp_int *a, int radix, FILE *stream)
    mp_err err;
    size_t size, written;
 
-   if ((err = mp_radix_size(a, radix, &size)) != MP_OKAY) {
+   if ((err = mp_radix_size_overestimate(a, radix, &size)) != MP_OKAY) {
       return err;
    }
 
