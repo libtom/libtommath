@@ -10,9 +10,14 @@ mp_err mp_fwrite(const mp_int *a, int radix, FILE *stream)
    mp_err err;
    size_t len, written;
 
-   /* TODO: this function is not in this PR */
-   if ((err = mp_radix_size(a, radix, &len)) != MP_OKAY) {
-      return err;
+   if (MP_HAS(MP_RADIX_SIZE_OVERESTIMATE)) {
+      if ((err = mp_radix_size_overestimate(a, radix, &len)) != MP_OKAY) {
+         return err;
+      }
+   } else {
+      if ((err = mp_radix_size(a, radix, &len)) != MP_OKAY) {
+         return err;
+      }
    }
 
    buf = (char *) MP_MALLOC(len);

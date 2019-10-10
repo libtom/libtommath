@@ -41,6 +41,8 @@ EXPORTS
     mp_from_sbin
     mp_from_ubin
     mp_fwrite
+    mp_fwrite
+    mp_fwrite
     mp_gcd
     mp_get_double
     mp_get_i32
@@ -99,6 +101,7 @@ EXPORTS
     mp_prime_strong_lucas_selfridge
     mp_prime_tab
     mp_radix_size
+    mp_radix_size_overestimate
     mp_rand
     mp_read_radix
     mp_reduce

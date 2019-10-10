@@ -2271,6 +2271,7 @@ LBL_ERR:
    return EXIT_FAILURE;
 }
 
+
 static int test_mp_radix_size(void)
 {
    mp_err err;
@@ -2326,8 +2327,62 @@ LBL_ERR:
    return EXIT_FAILURE;
 }
 
+static int test_mp_radix_size_overestimate(void)
+{
 
+   mp_err err;
+   mp_int a;
+   int radix, size;
+/* *INDENT-OFF* */
+   int results[65] = {
+       0, 0, 1627, 1027, 814, 702, 630, 581, 543,
+       514, 491, 471, 455, 441, 428, 418, 408, 399,
+       391, 384, 378, 372, 366, 361, 356, 352, 347,
+       343, 340, 336, 333, 330, 327, 324, 321, 318,
+       316, 314, 311, 309, 307, 305, 303, 301, 299,
+       298, 296, 294, 293, 291, 290, 288, 287, 285,
+       284, 283, 281, 280, 279, 278, 277, 276, 275,
+       273, 272
+   };
+/* *INDENT-ON* */
 
+   mp_init(&a);
+
+   /* number to result in a different size for every base: 67^(4 * 67) */
+   mp_set(&a, 67);
+   if ((err = mp_expt_u32(&a, 268u, &a)) != MP_OKAY) {
+      goto LTM_ERR;
+   }
+
+   for (radix = 2; radix < 65; radix++) {
+      if ((err = mp_radix_size_overestimate(&a, radix, &size)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if (size < results[radix]) {
+         fprintf(stderr, "mp_radix_size_overestimate: result for base %d was %d instead of %d\n",
+                 radix, size, results[radix]);
+         goto LTM_ERR;
+      }
+      a.sign = MP_NEG;
+      if ((err = mp_radix_size_overestimate(&a, radix, &size)) != MP_OKAY) {
+         goto LTM_ERR;
+      }
+      if (size < results[radix]) {
+         fprintf(stderr, "mp_radix_size_overestimate: result for base %d was %d instead of %d\n",
+                 radix, size, results[radix]);
+         goto LTM_ERR;
+      }
+      a.sign = MP_ZPOS;
+   }
+
+   mp_clear(&a);
+   return EXIT_SUCCESS;
+LTM_ERR:
+   mp_clear(&a);
+   return EXIT_FAILURE;
+}
+
+>>>>>>> Minimal version of bn_mp_radix_size_overestimate
 static int test_mp_read_write_ubin(void)
 {
    mp_int a, b, c;
@@ -2493,6 +2548,7 @@ static int unit_tests(int argc, char **argv)
       T1(mp_reduce_2k, MP_REDUCE_2K),
       T1(mp_reduce_2k_l, MP_REDUCE_2K_L),
       T1(mp_radix_size, MP_RADIX_SIZE),
+      T1(mp_radix_size_overestimate, MP_RADIX_SIZE_OVERESTIMATE),
 #if defined(__STDC_IEC_559__) || defined(__GCC_IEC_559)
       T1(mp_set_double, MP_SET_DOUBLE),
 #endif

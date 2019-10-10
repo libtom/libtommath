@@ -313,6 +313,10 @@
 	</References>
 	<Files>
 		<File
+			RelativePath="bn_mp_radix_size_overestimate.c"
+			>
+		</File>
+		<File
 			RelativePath="mp_2expt.c"
 			>
 		</File>
