@@ -19,7 +19,7 @@ mp_err mp_to_ubin(const mp_int *a, unsigned char *buf, size_t maxlen, size_t *wr
       return err;
    }
 
-   for (x = count; x --> 0;) {
+   for (x = count; x --> 0u;) {
 #ifndef MP_8BIT
       buf[x] = (unsigned char)(t.dp[0] & 255u);
 #else
