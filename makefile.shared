@@ -23,13 +23,14 @@ LTLINK = $(LIBTOOL) --mode=link --tag=CC $(CC)
 LCOV_ARGS=--directory .libs --directory .
 
 #START_INS
-OBJECTS=mp_2expt.o mp_abs.o mp_add.o mp_add_d.o mp_addmod.o mp_and.o mp_clamp.o mp_clear.o mp_clear_multi.o \
-mp_cmp.o mp_cmp_d.o mp_cmp_mag.o mp_cnt_lsb.o mp_complement.o mp_copy.o mp_count_bits.o mp_cutoffs.o \
-mp_decr.o mp_div.o mp_div_2.o mp_div_2d.o mp_div_3.o mp_div_d.o mp_dr_is_modulus.o mp_dr_reduce.o \
-mp_dr_setup.o mp_error_to_string.o mp_exch.o mp_expt_u32.o mp_exptmod.o mp_exteuclid.o mp_fread.o \
-mp_from_sbin.o mp_from_ubin.o mp_fwrite.o mp_gcd.o mp_get_double.o mp_get_i32.o mp_get_i64.o mp_get_l.o \
-mp_get_ll.o mp_get_mag_u32.o mp_get_mag_u64.o mp_get_mag_ul.o mp_get_mag_ull.o mp_grow.o mp_incr.o \
-mp_init.o mp_init_copy.o mp_init_i32.o mp_init_i64.o mp_init_l.o mp_init_ll.o mp_init_multi.o mp_init_set.o \
+OBJECTS=bn_mp_log_u32.o bn_s_mp_log_power_of_two.o bn_s_mp_radix_size_radix_10.o mp_2expt.o mp_abs.o \
+mp_add.o mp_add_d.o mp_addmod.o mp_and.o mp_clamp.o mp_clear.o mp_clear_multi.o mp_cmp.o mp_cmp_d.o \
+mp_cmp_mag.o mp_cnt_lsb.o mp_complement.o mp_copy.o mp_count_bits.o mp_cutoffs.o mp_decr.o mp_div.o \
+mp_div_2.o mp_div_2d.o mp_div_3.o mp_div_d.o mp_dr_is_modulus.o mp_dr_reduce.o mp_dr_setup.o \
+mp_error_to_string.o mp_exch.o mp_expt_u32.o mp_exptmod.o mp_exteuclid.o mp_fread.o mp_from_sbin.o \
+mp_from_ubin.o mp_fwrite.o mp_gcd.o mp_get_double.o mp_get_i32.o mp_get_i64.o mp_get_l.o mp_get_ll.o \
+mp_get_mag_u32.o mp_get_mag_u64.o mp_get_mag_ul.o mp_get_mag_ull.o mp_grow.o mp_incr.o mp_init.o \
+mp_init_copy.o mp_init_i32.o mp_init_i64.o mp_init_l.o mp_init_ll.o mp_init_multi.o mp_init_set.o \
 mp_init_size.o mp_init_u32.o mp_init_u64.o mp_init_ul.o mp_init_ull.o mp_invmod.o mp_is_square.o \
 mp_iseven.o mp_isodd.o mp_kronecker.o mp_lcm.o mp_log_u32.o mp_lshd.o mp_mod.o mp_mod_2d.o mp_mod_d.o \
 mp_montgomery_calc_normalization.o mp_montgomery_reduce.o mp_montgomery_setup.o mp_mul.o mp_mul_2.o \

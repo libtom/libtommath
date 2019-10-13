@@ -6,6 +6,7 @@
 /* returns size of ASCII representation */
 mp_err mp_radix_size(const mp_int *a, int radix, size_t *size)
 {
+
    mp_err err;
    mp_int a_;
    uint32_t b;
@@ -20,14 +21,27 @@ mp_err mp_radix_size(const mp_int *a, int radix, size_t *size)
       return MP_OKAY;
    }
 
+   if (radix == 10) {
+      return s_mp_radix_size_radix_10(a, size);
+   }
+
+   if ((err = mp_init(&b)) != MP_OKAY) {
+      goto LBL_ERR;
+   }
+
    a_ = *a;
    a_.sign = MP_ZPOS;
-   if ((err = mp_log_u32(&a_, (uint32_t)radix, &b)) != MP_OKAY) {
+   if ((err = mp_ilogb(&a_, (uint32_t)radix, &b)) != MP_OKAY) {
       goto LBL_ERR;
    }
 
    /* mp_ilogb truncates to zero, hence we need one extra put on top and one for `\0`. */
    *size = (size_t)b + 2U + ((a->sign == MP_NEG) ? 1U : 0U);
+
+   /* This can overflow for e.g.: radix = 2 and bit_count >= 2147483645 with a 32 bit "int" */
+   if (*size > (size_t)(INT_MAX - 3)) {
+      return MP_VAL;
+   }
 
 LBL_ERR:
    return err;

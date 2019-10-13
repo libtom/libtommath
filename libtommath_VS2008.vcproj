@@ -313,6 +313,18 @@
 	</References>
 	<Files>
 		<File
+			RelativePath="bn_mp_log_u32.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_s_mp_log_power_of_two.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_s_mp_radix_size_radix_10.c"
+			>
+		</File>
+		<File
 			RelativePath="mp_2expt.c"
 			>
 		</File>
