@@ -2055,7 +2055,7 @@ int mp_prime_is_prime (mp_int * a, int t, int *result)
 \end{alltt}
 This will perform a trial division followed by two rounds of Miller-Rabin with bases 2 and 3 and a Lucas-Selfridge test. The Lucas-Selfridge test is replaced with a Frobenius-Underwood for \texttt{MP\_8BIT}. The Frobenius-Underwood test for all other sizes is available as a compile-time option with the preprocessor macro \texttt{LTM\_USE\_FROBENIUS\_TEST}. See file
 \texttt{bn\_mp\_prime\_is\_prime.c} for the necessary details. It shall be noted that both functions are much slower than
-the Miller-Rabin test and if speed is an essential issue, the macro \texttt{LTM\_USE\_FIPS\_ONLY} switches both functions, the Frobenius-Underwood test and the Lucas-Selfridge test off and their code will not even be compiled into the library.
+the Miller-Rabin test and if speed is an essential issue, the macro \texttt{LTM\_USE\_ONLY\_MR} switches both functions, the Frobenius-Underwood test and the Lucas-Selfridge test off and their code will not even be compiled into the library.
 
 If $t$ is set to a positive value $t$ additional rounds of the Miller-Rabin test with random bases will be performed to allow for Fips 186.4 (vid.~p.~126ff) compliance. The function \texttt{mp\_prime\_rabin\_miller\_trials} can be used to determine the number of rounds. It is vital that the function \texttt{mp\_rand()} has a cryptographically strong random number generator available.
 
