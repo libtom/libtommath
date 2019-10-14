@@ -385,8 +385,8 @@ mp_err mp_unpack(mp_int *rop, size_t count, mp_order order, size_t size, mp_endi
 
 /* pack binary data */
 size_t mp_pack_count(const mp_int *a, size_t nails, size_t size) MP_WUR;
-mp_err mp_pack(void *rop, size_t maxcount, size_t *writtencount, mp_order order, size_t size, mp_endian endian,
-               size_t nails, const mp_int *op) MP_WUR;
+mp_err mp_pack(void *rop, size_t maxcount, size_t *written, mp_order order, size_t size,
+               mp_endian endian, size_t nails, const mp_int *op) MP_WUR;
 
 /* ---> digit manipulation <--- */
 
