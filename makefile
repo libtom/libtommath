@@ -133,7 +133,7 @@ pre_gen:
 	sed -e 's/[[:blank:]]*$$//' mpi.c > pre_gen/mpi.c
 	rm mpi.c
 
-zipup: clean astyle new_file manual poster docs
+zipup: clean astyle new_file manual poster
 	@# Update the index, so diff-index won't fail in case the pdf has been created.
 	@#   As the pdf creation modifies the tex files, git sometimes detects the
 	@#   modified files, but misses that it's put back to its original version.
@@ -145,12 +145,11 @@ zipup: clean astyle new_file manual poster docs
 	@echo 'fixme check'
 	-@(find libtommath-$(VERSION)/ -type f | xargs grep 'FIXM[E]') && echo '############## BEWARE: the "fixme" marker was found !!! ##############' || true
 	mkdir -p libtommath-$(VERSION)/doc
-	cp doc/bn.pdf doc/tommath.pdf doc/poster.pdf libtommath-$(VERSION)/doc/
+	cp doc/bn.pdf doc/poster.pdf libtommath-$(VERSION)/doc/
 	$(MAKE) -C libtommath-$(VERSION)/ pre_gen
 	tar -c libtommath-$(VERSION)/ | xz -6e -c - > ltm-$(VERSION).tar.xz
 	zip -9rq ltm-$(VERSION).zip libtommath-$(VERSION)
 	cp doc/bn.pdf bn-$(VERSION).pdf
-	cp doc/tommath.pdf tommath-$(VERSION).pdf
 	rm -rf libtommath-$(VERSION)
 	gpg -b -a ltm-$(VERSION).tar.xz
 	gpg -b -a ltm-$(VERSION).zip
