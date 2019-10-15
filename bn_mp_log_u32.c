@@ -1,5 +1,5 @@
 #include "tommath_private.h"
-#ifdef BN_MP_ILOGB_C
+#ifdef BN_MP_LOG_U32_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
@@ -70,7 +70,7 @@ static mp_digit s_digit_ilogb(mp_digit base, mp_digit n)
          as is the output of mp_bitcount.
          With the same problem: max size is INT_MAX * MP_DIGIT not INT_MAX only!
 */
-mp_err mp_ilogb(const mp_int *a, uint32_t base, mp_int *c)
+mp_err mp_log_u32(const mp_int *a, uint32_t base, mp_int *c)
 {
    mp_err err;
    mp_ord cmp;

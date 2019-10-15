@@ -54,7 +54,6 @@ EXPORTS
     mp_get_mag_ul
     mp_get_mag_ull
     mp_grow
-    mp_ilogb
     mp_incr
     mp_init
     mp_init_copy
@@ -76,6 +75,7 @@ EXPORTS
     mp_isodd
     mp_kronecker
     mp_lcm
+    mp_log_u32
     mp_lshd
     mp_mod
     mp_mod_2d
