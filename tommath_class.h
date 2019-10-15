@@ -627,9 +627,7 @@
 #   define BN_MP_INIT_MULTI_C
 #   define BN_MP_MUL_C
 #   define BN_MP_SET_C
-#   define BN_MP_SET_U32_C
 #   define BN_MP_SQR_C
-#   define BN_MP_ZERO_C
 #endif
 
 #if defined(BN_MP_LSHD_C)
