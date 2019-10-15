@@ -4,6 +4,7 @@
  *
  * Tom St Denis, tomstdenis@gmail.com, http://tom.gmail.com
  */
+#include <stdlib.h>
 #include <time.h>
 #include "tommath.h"
 
