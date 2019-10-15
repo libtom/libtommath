@@ -33,10 +33,10 @@ bn_mp_div_2d.o bn_mp_div_3.o bn_mp_div_d.o bn_mp_dr_is_modulus.o bn_mp_dr_reduce
 bn_mp_error_to_string.o bn_mp_exch.o bn_mp_expt_u32.o bn_mp_exptmod.o bn_mp_exteuclid.o bn_mp_fread.o \
 bn_mp_from_sbin.o bn_mp_from_ubin.o bn_mp_fwrite.o bn_mp_gcd.o bn_mp_get_double.o bn_mp_get_i32.o \
 bn_mp_get_i64.o bn_mp_get_l.o bn_mp_get_ll.o bn_mp_get_mag_u32.o bn_mp_get_mag_u64.o bn_mp_get_mag_ul.o \
-bn_mp_get_mag_ull.o bn_mp_grow.o bn_mp_ilogb.o bn_mp_incr.o bn_mp_init.o bn_mp_init_copy.o \
-bn_mp_init_i32.o bn_mp_init_i64.o bn_mp_init_l.o bn_mp_init_ll.o bn_mp_init_multi.o bn_mp_init_set.o \
-bn_mp_init_size.o bn_mp_init_u32.o bn_mp_init_u64.o bn_mp_init_ul.o bn_mp_init_ull.o bn_mp_invmod.o \
-bn_mp_is_square.o bn_mp_iseven.o bn_mp_isodd.o bn_mp_kronecker.o bn_mp_lcm.o bn_mp_lshd.o bn_mp_mod.o \
+bn_mp_get_mag_ull.o bn_mp_grow.o bn_mp_incr.o bn_mp_init.o bn_mp_init_copy.o bn_mp_init_i32.o \
+bn_mp_init_i64.o bn_mp_init_l.o bn_mp_init_ll.o bn_mp_init_multi.o bn_mp_init_set.o bn_mp_init_size.o \
+bn_mp_init_u32.o bn_mp_init_u64.o bn_mp_init_ul.o bn_mp_init_ull.o bn_mp_invmod.o bn_mp_is_square.o \
+bn_mp_iseven.o bn_mp_isodd.o bn_mp_kronecker.o bn_mp_lcm.o bn_mp_log_u32.o bn_mp_lshd.o bn_mp_mod.o \
 bn_mp_mod_2d.o bn_mp_mod_d.o bn_mp_montgomery_calc_normalization.o bn_mp_montgomery_reduce.o \
 bn_mp_montgomery_setup.o bn_mp_mul.o bn_mp_mul_2.o bn_mp_mul_2d.o bn_mp_mul_d.o bn_mp_mulmod.o bn_mp_neg.o \
 bn_mp_or.o bn_mp_pack.o bn_mp_pack_count.o bn_mp_prime_fermat.o bn_mp_prime_frobenius_underwood.o \
@@ -98,8 +98,14 @@ uninstall:
 test_standalone: test
 	@echo "test_standalone is deprecated, please use make-target 'test'"
 
-test mtest_opponent: demo/shared.o $(LIBNAME) | demo/test.o demo/mtest_opponent.o
-	$(CC) $(LTM_CFLAGS) $(LTM_LFLAGS) demo/$@.o $^ -o $@
+DEMOS=test mtest_opponent
+
+define DEMO_template
+$(1): demo/$(1).o demo/shared.o $$(LIBNAME)
+	$$(CC) $$(LTM_CFLAGS) $$(LTM_LFLAGS) $$^ -o $$@
+endef
+
+$(foreach demo, $(strip $(DEMOS)), $(eval $(call DEMO_template,$(demo))))
 
 .PHONY: mtest
 mtest:

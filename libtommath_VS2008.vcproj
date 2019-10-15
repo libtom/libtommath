@@ -501,10 +501,6 @@
 			>
 		</File>
 		<File
-			RelativePath="bn_mp_ilogb.c"
-			>
-		</File>
-		<File
 			RelativePath="bn_mp_incr.c"
 			>
 		</File>
@@ -582,6 +578,10 @@
 		</File>
 		<File
 			RelativePath="bn_mp_lcm.c"
+			>
+		</File>
+		<File
+			RelativePath="bn_mp_log_u32.c"
 			>
 		</File>
 		<File

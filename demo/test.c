@@ -1544,19 +1544,20 @@ LBL_ERR:
 }
 /* stripped down version of mp_radix_size. The faster version can be off by up t
 o +3  */
-static mp_err s_rs(const mp_int *a, int radix, int *size)
+/* TODO: This function should be removed, replaced by mp_radix_size, mp_radix_size_overestimate in 2.0 */
+static mp_err s_rs(const mp_int *a, int radix, uint32_t *size)
 {
    mp_err res;
-   int digs = 0;
+   uint32_t digs = 0u;
    mp_int  t;
    mp_digit d;
-   *size = 0;
+   *size = 0u;
    if (mp_iszero(a) == MP_YES) {
-      *size = 2;
+      *size = 2u;
       return MP_OKAY;
    }
    if (radix == 2) {
-      *size = mp_count_bits(a) + 1;
+      *size = (uint32_t)mp_count_bits(a) + 1u;
       return MP_OKAY;
    }
    if ((res = mp_init_copy(&t, a)) != MP_OKAY) {
@@ -1574,15 +1575,14 @@ static mp_err s_rs(const mp_int *a, int radix, int *size)
    *size = digs + 1;
    return MP_OKAY;
 }
-static int test_mp_ilogb(void)
+static int test_mp_log_u32(void)
 {
-   mp_int a, lb;
+   mp_int a;
    mp_digit d;
-   uint32_t base;
-   int size;
+   uint32_t base, lb, size;
    const uint32_t max_base = MP_MIN(UINT32_MAX, MP_DIGIT_MAX);
 
-   if (mp_init_multi(&a, &lb, NULL) != MP_OKAY) {
+   if (mp_init(&a) != MP_OKAY) {
       goto LBL_ERR;
    }
 
@@ -1593,11 +1593,11 @@ static int test_mp_ilogb(void)
    */
    mp_set(&a, 42uL);
    base = 0u;
-   if (mp_ilogb(&a, base, &lb) != MP_VAL) {
+   if (mp_log_u32(&a, base, &lb) != MP_VAL) {
       goto LBL_ERR;
    }
    base = 1u;
-   if (mp_ilogb(&a, base, &lb) != MP_VAL) {
+   if (mp_log_u32(&a, base, &lb) != MP_VAL) {
       goto LBL_ERR;
    }
    /*
@@ -1609,16 +1609,16 @@ static int test_mp_ilogb(void)
    */
    base = 2u;
    mp_zero(&a);
-   if (mp_ilogb(&a, base, &lb) != MP_VAL) {
+   if (mp_log_u32(&a, base, &lb) != MP_VAL) {
       goto LBL_ERR;
    }
 
    for (d = 1; d < 4; d++) {
       mp_set(&a, d);
-      if (mp_ilogb(&a, base, &lb) != MP_OKAY) {
+      if (mp_log_u32(&a, base, &lb) != MP_OKAY) {
          goto LBL_ERR;
       }
-      if (mp_cmp_d(&lb, (d == 1)?0uL:1uL) != MP_EQ) {
+      if (lb != ((d == 1)?0uL:1uL)) {
          goto LBL_ERR;
       }
    }
@@ -1631,15 +1631,15 @@ static int test_mp_ilogb(void)
    */
    base = 3u;
    mp_zero(&a);
-   if (mp_ilogb(&a, base, &lb) != MP_VAL) {
+   if (mp_log_u32(&a, base, &lb) != MP_VAL) {
       goto LBL_ERR;
    }
    for (d = 1; d < 4; d++) {
       mp_set(&a, d);
-      if (mp_ilogb(&a, base, &lb) != MP_OKAY) {
+      if (mp_log_u32(&a, base, &lb) != MP_OKAY) {
          goto LBL_ERR;
       }
-      if (mp_cmp_d(&lb, (d < base)?0uL:1uL) != MP_EQ) {
+      if (lb != ((d < base)?0uL:1uL)) {
          goto LBL_ERR;
       }
    }
@@ -1653,7 +1653,7 @@ static int test_mp_ilogb(void)
       goto LBL_ERR;
    }
    for (base = 2u; base < 65u; base++) {
-      if (mp_ilogb(&a, base, &lb) != MP_OKAY) {
+      if (mp_log_u32(&a, base, &lb) != MP_OKAY) {
          goto LBL_ERR;
       }
       if (s_rs(&a,(int)base, &size) != MP_OKAY) {
@@ -1661,7 +1661,7 @@ static int test_mp_ilogb(void)
       }
       /* radix_size includes the memory needed for '\0', too*/
       size -= 2;
-      if (mp_cmp_d(&lb, (mp_digit)size) != MP_EQ) {
+      if (lb != size) {
          goto LBL_ERR;
       }
    }
@@ -1674,14 +1674,14 @@ static int test_mp_ilogb(void)
       goto LBL_ERR;
    }
    for (base = 2u; base < 65u; base++) {
-      if (mp_ilogb(&a, base, &lb) != MP_OKAY) {
+      if (mp_log_u32(&a, base, &lb) != MP_OKAY) {
          goto LBL_ERR;
       }
       if (s_rs(&a,(int)base, &size) != MP_OKAY) {
          goto LBL_ERR;
       }
       size -= 2;
-      if (mp_cmp_d(&lb, (mp_digit)size) != MP_EQ) {
+      if (lb != size) {
          goto LBL_ERR;
       }
    }
@@ -1694,17 +1694,17 @@ static int test_mp_ilogb(void)
    if (mp_add_d(&a, max_base / 2, &a) != MP_OKAY) {
       goto LBL_ERR;
    }
-   if (mp_ilogb(&a, max_base, &lb) != MP_OKAY) {
+   if (mp_log_u32(&a, max_base, &lb) != MP_OKAY) {
       goto LBL_ERR;
    }
-   if (mp_cmp_d(&lb, 10uL) != MP_EQ) {
+   if (lb != 10u) {
       goto LBL_ERR;
    }
 
-   mp_clear_multi(&a, &lb, NULL);
+   mp_clear(&a);
    return EXIT_SUCCESS;
 LBL_ERR:
-   mp_clear_multi(&a, &lb, NULL);
+   mp_clear(&a);
    return EXIT_FAILURE;
 }
 
@@ -2444,7 +2444,7 @@ static int unit_tests(int argc, char **argv)
       T1(mp_get_u32, MP_GET_I32),
       T1(mp_get_u64, MP_GET_I64),
       T1(mp_get_ul, MP_GET_L),
-      T1(mp_ilogb, MP_ILOGB),
+      T1(mp_log_u32, MP_LOG_U32),
       T1(mp_incr, MP_INCR),
       T1(mp_invmod, MP_INVMOD),
       T1(mp_is_square, MP_IS_SQUARE),

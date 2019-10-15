@@ -58,7 +58,6 @@
 #   define BN_MP_GET_MAG_UL_C
 #   define BN_MP_GET_MAG_ULL_C
 #   define BN_MP_GROW_C
-#   define BN_MP_ILOGB_C
 #   define BN_MP_INCR_C
 #   define BN_MP_INIT_C
 #   define BN_MP_INIT_COPY_C
@@ -79,6 +78,7 @@
 #   define BN_MP_ISODD_C
 #   define BN_MP_KRONECKER_C
 #   define BN_MP_LCM_C
+#   define BN_MP_LOG_U32_C
 #   define BN_MP_LSHD_C
 #   define BN_MP_MOD_C
 #   define BN_MP_MOD_2D_C
@@ -505,22 +505,6 @@
 #if defined(BN_MP_GROW_C)
 #endif
 
-#if defined(BN_MP_ILOGB_C)
-#   define BN_MP_CLEAR_MULTI_C
-#   define BN_MP_CMP_C
-#   define BN_MP_CMP_D_C
-#   define BN_MP_COPY_C
-#   define BN_MP_COUNT_BITS_C
-#   define BN_MP_EXCH_C
-#   define BN_MP_EXPT_U32_C
-#   define BN_MP_INIT_MULTI_C
-#   define BN_MP_MUL_C
-#   define BN_MP_SET_C
-#   define BN_MP_SET_U32_C
-#   define BN_MP_SQR_C
-#   define BN_MP_ZERO_C
-#endif
-
 #if defined(BN_MP_INCR_C)
 #   define BN_MP_ADD_D_C
 #   define BN_MP_DECR_C
@@ -630,6 +614,20 @@
 #   define BN_MP_GCD_C
 #   define BN_MP_INIT_MULTI_C
 #   define BN_MP_MUL_C
+#endif
+
+#if defined(BN_MP_LOG_U32_C)
+#   define BN_MP_CLEAR_MULTI_C
+#   define BN_MP_CMP_C
+#   define BN_MP_CMP_D_C
+#   define BN_MP_COPY_C
+#   define BN_MP_COUNT_BITS_C
+#   define BN_MP_EXCH_C
+#   define BN_MP_EXPT_U32_C
+#   define BN_MP_INIT_MULTI_C
+#   define BN_MP_MUL_C
+#   define BN_MP_SET_C
+#   define BN_MP_SQR_C
 #endif
 
 #if defined(BN_MP_LSHD_C)

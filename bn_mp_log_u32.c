@@ -1,5 +1,5 @@
 #include "tommath_private.h"
-#ifdef BN_MP_ILOGB_C
+#ifdef BN_MP_LOG_U32_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
@@ -70,11 +70,11 @@ static mp_digit s_digit_ilogb(mp_digit base, mp_digit n)
          as is the output of mp_bitcount.
          With the same problem: max size is INT_MAX * MP_DIGIT not INT_MAX only!
 */
-mp_err mp_ilogb(const mp_int *a, uint32_t base, mp_int *c)
+mp_err mp_log_u32(const mp_int *a, uint32_t base, uint32_t *c)
 {
    mp_err err;
    mp_ord cmp;
-   unsigned int high, low, mid;
+   uint32_t high, low, mid;
    mp_int bracket_low, bracket_high, bracket_mid, t, bi_base;
 
    err = MP_OKAY;
@@ -93,29 +93,23 @@ mp_err mp_ilogb(const mp_int *a, uint32_t base, mp_int *c)
 
    /* A small shortcut for bases that are powers of two. */
    if (!(base & (base - 1u))) {
-      int x, y, bit_count;
+      int y, bit_count;
       for (y=0; (y < 7) && !(base & 1u); y++) {
          base >>= 1;
       }
       bit_count = mp_count_bits(a) - 1;
-      x = bit_count/y;
-      mp_set_u32(c, (uint32_t)(x));
+      *c = (uint32_t)(bit_count/y);
       return MP_OKAY;
    }
 
    if (a->used == 1) {
-      mp_set(c, s_digit_ilogb(base, a->dp[0]));
+      *c = (uint32_t)s_digit_ilogb(base, a->dp[0]);
       return err;
    }
 
    cmp = mp_cmp_d(a, base);
-
-   if (cmp == MP_LT) {
-      mp_zero(c);
-      return err;
-   }
-   if (cmp == MP_EQ) {
-      mp_set(c, 1uL);
+   if (cmp == MP_LT || cmp == MP_EQ) {
+      *c = cmp == MP_EQ;
       return err;
    }
 
@@ -168,16 +162,12 @@ mp_err mp_ilogb(const mp_int *a, uint32_t base, mp_int *c)
          mp_exch(&bracket_mid, &bracket_low);
       }
       if (cmp == MP_EQ) {
-         mp_set_u32(c, mid);
+         *c = mid;
          goto LBL_END;
       }
    }
 
-   if (mp_cmp(&bracket_high, a) == MP_EQ) {
-      mp_set_u32(c, high);
-   } else {
-      mp_set_u32(c, low);
-   }
+   *c = mp_cmp(&bracket_high, a) == MP_EQ ? high : low;
 
 LBL_END:
 LBL_ERR:

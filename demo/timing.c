@@ -26,7 +26,7 @@ static void ndraw(mp_int *a, const char *name)
    char buf[4096];
 
    printf("%s: ", name);
-   mp_to_radix(a, buf, sizeof(buf), 64);
+   mp_to_radix(a, buf, sizeof(buf), NULL, 64);
    printf("%s\n", buf);
 }
 
