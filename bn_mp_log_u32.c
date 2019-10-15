@@ -108,7 +108,7 @@ mp_err mp_log_u32(const mp_int *a, uint32_t base, uint32_t *c)
    }
 
    cmp = mp_cmp_d(a, base);
-   if (cmp == MP_LT || cmp == MP_EQ) {
+   if ((cmp == MP_LT) || (cmp == MP_EQ)) {
       *c = cmp == MP_EQ;
       return err;
    }
@@ -167,7 +167,7 @@ mp_err mp_log_u32(const mp_int *a, uint32_t base, uint32_t *c)
       }
    }
 
-   *c = mp_cmp(&bracket_high, a) == MP_EQ ? high : low;
+   *c = (mp_cmp(&bracket_high, a) == MP_EQ) ? high : low;
 
 LBL_END:
 LBL_ERR:
