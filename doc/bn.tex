@@ -6,6 +6,7 @@
 \usepackage{alltt}
 \usepackage{graphicx}
 \usepackage{layout}
+\usepackage{appendix}
 \def\union{\cup}
 \def\intersect{\cap}
 \def\getsrandom{\stackrel{\rm R}{\gets}}
@@ -1916,13 +1917,40 @@ This is why a simple function has been provided to help out.
 \begin{alltt}
 int mp_prime_rabin_miller_trials(int size)
 \end{alltt}
-This returns the number of trials required for a $2^{-96}$ (or lower) probability of failure for a given ``size'' expressed
-in bits.  This comes in handy specially since larger numbers are slower to test.  For example, a 512-bit number would
-require ten tests whereas a 1024-bit number would only require four tests.
+This returns the number of trials required for a low probability of failure for a given ``size'' expressed in bits.  This comes in handy specially since larger numbers are slower to test. For example, a 512-bit number would require 18 tests for a probability of $2^{-160}$ whereas a 1024-bit number would only require 12 tests for a probability of $2^{-192}$. The exact values as implemented are listed in table \ref{table:millerrabinrunsimpl}.
+
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{c c c}
+\textbf{bits} & \textbf{Rounds} & \textbf{Error}\\
+ 80 & -1  &  Use deterministic algorithm for size <= 80 bits \\
+ 81 & 37  &  $2^{-96}$ \\
+ 96 & 32  & $2^{-96}$ \\
+ 128 & 40  & $2^{-112}$ \\
+ 160 & 35  & $2^{-112}$ \\
+ 256 & 27  & $2^{-128}$ \\
+ 384 & 16  & $2^{-128}$ \\
+ 512 & 18  & $2^{-160}$ \\
+ 768 & 11  & $2^{-160}$ \\
+ 896 & 10  & $2^{-160}$ \\
+ 1024 & 12  & $2^{-192}$ \\
+ 1536 & 8   & $2^{-192}$ \\
+ 2048 & 6   & $2^{-192}$ \\
+ 3072 & 4   & $2^{-192}$ \\
+ 4096 & 5   & $2^{-256}$ \\
+ 5120 & 4   & $2^{-256}$ \\
+ 6144 & 4   & $2^{-256}$ \\
+ 8192 & 3   & $2^{-256}$ \\
+ 9216 & 3   & $2^{-256}$ \\
+ 10240 & 2  & $2^{-256}$
+\end{tabular}
+\caption{ Number of Miller-Rabin rounds as implemented } \label{table:millerrabinrunsimpl}
+\end{center}
+\end{table}
 
 You should always still perform a trial division before a Miller-Rabin test though.
 
-A small table, broke in two for typographical reasons, with the number of rounds of Miller-Rabin tests is shown below.
+A small table, broke in two for typographical reasons, with the number of rounds of Miller-Rabin tests is shown below. The numbers have been compute with a PARI/GP script listed in appendix \ref{app:numberofmrcomp}.
 The first column is the number of bits $b$ in the prime $p = 2^b$, the numbers in the first row represent the
 probability that the number that all of the Miller-Rabin tests deemed a pseudoprime is actually a composite. There is a deterministic test for numbers smaller than $2^{80}$.
 
@@ -1988,6 +2016,11 @@ Determining the probability needed to pick the right column is a bit harder. Fip
 
 If this version of the library has the strong Lucas-Selfridge and/or the Frobenius-Underwood test implemented only one or two rounds of the Miller-Rabin test with a random base is necesssary for numbers larger than or equal to $1024$ bits.
 
+This function is meant for RSA. The number of rounds for DSA is $\lceil -log_2(p)/2\rceil$ with $p$ the probability which is just the half of the absolute value of $p$ if given as a power of two. E.g.: with $p = 2^{-128}$, $\lceil -log_2(p)/2\rceil = 64$.
+
+This function can be used to test a DSA prime directly if these rounds are followed by a Lucas test.
+
+See also table C.1 in FIPS 186-4.
 
 \section{Strong Lucas-Selfridge Test}
 \index{mp\_prime\_strong\_lucas\_selfridge}
@@ -2022,7 +2055,7 @@ int mp_prime_is_prime (mp_int * a, int t, int *result)
 \end{alltt}
 This will perform a trial division followed by two rounds of Miller-Rabin with bases 2 and 3 and a Lucas-Selfridge test. The Lucas-Selfridge test is replaced with a Frobenius-Underwood for \texttt{MP\_8BIT}. The Frobenius-Underwood test for all other sizes is available as a compile-time option with the preprocessor macro \texttt{LTM\_USE\_FROBENIUS\_TEST}. See file
 \texttt{bn\_mp\_prime\_is\_prime.c} for the necessary details. It shall be noted that both functions are much slower than
-the Miller-Rabin test and if speed is an essential issue, the macro \texttt{LTM\_USE\_FIPS\_ONLY} switches both functions, the Frobenius-Underwood test and the Lucas-Selfridge test off and their code will not even be compiled into the library.
+the Miller-Rabin test and if speed is an essential issue, the macro \texttt{LTM\_USE\_ONLY\_MR} switches both functions, the Frobenius-Underwood test and the Lucas-Selfridge test off and their code will not even be compiled into the library.
 
 If $t$ is set to a positive value $t$ additional rounds of the Miller-Rabin test with random bases will be performed to allow for Fips 186.4 (vid.~p.~126ff) compliance. The function \texttt{mp\_prime\_rabin\_miller\_trials} can be used to determine the number of rounds. It is vital that the function \texttt{mp\_rand()} has a cryptographically strong random number generator available.
 
@@ -2410,7 +2443,61 @@ Other macros which are either shortcuts to normal functions or just other names 
 #define mp_to_hex(M, S, N)     mp_to_radix((M), (S), (N), 16)
 \end{alltt}
 
+\begin{appendices}
+\appendixpage
+%\noappendicestocpagenum
+\addappheadtotoc
+\chapter{Computing Number of Miller-Rabin Trials}\label{app:numberofmrcomp}
+The number of Miller-Rabin rounds in the tables \ref{millerrabinrunsimpl}, \ref{millerrabinrunsp1}, and \ref{millerrabinrunsp2} have been calculated with the formula in FIPS 186-4 appendix F.1 (page 117) implemented as a PARI/GP script.
+\begin{alltt}
+log2(x) = log(x)/log(2)
 
+fips_f1_sums(k, M, t) = {
+   local(s = 0);
+   s = sum(m=3,M,
+          2^(m-t*(m-1)) *
+          sum(j=2,m,
+             1/ ( 2^( j + (k-1)/j ) )
+          )
+        );
+   return(s);
+}
+
+fips_f1_2(k, t, M) = {
+   local(common_factor, t1, t2, f1, f2, ds, res);
+
+   common_factor = 2.00743 * log(2) * k * 2^(-k);
+   t1 = 2^(k - 2 - M*t);
+   f1 = (8 * ((Pi^2) - 6))/3;
+   f2 = 2^(k - 2);
+   ds = t1 + f1 * f2 * fips_f1_sums(k, M, t);
+   res = common_factor * ds;
+   return(res);
+}
+
+fips_f1_1(prime_length, ptarget)={
+   local(t, t_end, M, M_end, pkt);
+
+   t_end = ceil(-log2(ptarget)/2);
+   M_end = floor(2 * sqrt(prime_length-1) - 1);
+
+   for(t = 1, t_end,
+      for(M = 3, M_end,
+         pkt = fips_f1_2(prime_length, t, M);
+         if(pkt <= ptarget,
+            return(t);
+         );
+      );
+   );
+}
+\end{alltt}
+
+To get the number of rounds for a $1024$ bit large prime with a probability of $2^{-160}$:
+\begin{alltt}
+? fips_f1_1(1024,2^(-160))
+%1 = 9
+\end{alltt}
+\end{appendices}
 \input{bn.ind}
 
 \end{document}
