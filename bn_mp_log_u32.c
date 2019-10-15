@@ -91,17 +91,6 @@ mp_err mp_log_u32(const mp_int *a, uint32_t base, uint32_t *c)
       return MP_VAL;
    }
 
-   /* A small shortcut for bases that are powers of two. */
-   if ((base & (base - 1u)) == 0u) {
-      int y, bit_count;
-      for (y=0; (y < 7) && ((base & 1u) == 0u); y++) {
-         base >>= 1;
-      }
-      bit_count = mp_count_bits(a) - 1;
-      *c = (uint32_t)(bit_count/y);
-      return MP_OKAY;
-   }
-
    if (a->used == 1) {
       *c = (uint32_t)s_digit_ilogb(base, a->dp[0]);
       return err;
@@ -112,9 +101,9 @@ mp_err mp_log_u32(const mp_int *a, uint32_t base, uint32_t *c)
       *c = cmp == MP_EQ;
       return err;
    }
+
    if (!(base & (base - 1u))) {
-      low = (uint32_t)s_mp_log_power_of_two(a, (int)base);
-      mp_set_u32(c, low);
+      *c = (uint32_t)s_mp_log_power_of_two(a, (int)base);
       return MP_OKAY;
    }
 
