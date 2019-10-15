@@ -232,6 +232,8 @@
 #   define BN_MP_TORADIX_N_C
 #   define BN_MP_TO_RADIX_C
 #   define BN_MP_TO_SBIN_C
+#   define BN_MP_TO_SIGNED_BIN_C
+#   define BN_MP_TO_SIGNED_BIN_N_C
 #   define BN_MP_TO_UBIN_C
 #   define BN_MP_TO_UNSIGNED_BIN_C
 #   define BN_MP_TO_UNSIGNED_BIN_N_C
