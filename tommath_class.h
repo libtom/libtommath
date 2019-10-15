@@ -750,10 +750,7 @@
 #endif
 
 #if defined(BN_MP_RADIX_SIZE_C)
-#   define BN_MP_CLEAR_C
-#   define BN_MP_GET_L_C
-#   define BN_MP_ILOGB_C
-#   define BN_MP_INIT_C
+#   define BN_MP_LOG_U32_C
 #endif
 
 #if defined(BN_MP_RADIX_SMAP_C)

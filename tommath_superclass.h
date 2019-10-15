@@ -28,6 +28,7 @@
 #   define BN_MP_NEG_C
 #   define BN_MP_PRIME_FROBENIUS_UNDERWOOD_C
 #   define BN_MP_RADIX_SIZE_C
+#   define BN_MP_LOG_U32_C
 #   define BN_MP_RAND_C
 #   define BN_MP_REDUCE_C
 #   define BN_MP_REDUCE_2K_L_C
