@@ -98,8 +98,14 @@ uninstall:
 test_standalone: test
 	@echo "test_standalone is deprecated, please use make-target 'test'"
 
-test mtest_opponent: demo/shared.o $(LIBNAME) | demo/test.o demo/mtest_opponent.o
-	$(CC) $(LTM_CFLAGS) $(LTM_LFLAGS) demo/$@.o $^ -o $@
+DEMOS=test mtest_opponent
+
+define DEMO_template
+$(1): demo/$(1).o demo/shared.o $$(LIBNAME)
+	$$(CC) $$(LTM_CFLAGS) $$(LTM_LFLAGS) $$^ -o $$@
+endef
+
+$(foreach demo, $(strip $(DEMOS)), $(eval $(call DEMO_template,$(demo))))
 
 .PHONY: mtest
 mtest:
