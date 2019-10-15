@@ -179,13 +179,11 @@
 #   define MP_CMP_C
 #   define MP_CMP_D_C
 #   define MP_COPY_C
-#   define MP_COUNT_BITS_C
 #   define MP_EXCH_C
 #   define MP_EXPT_U32_C
 #   define MP_INIT_MULTI_C
 #   define MP_MUL_C
 #   define MP_SET_C
-#   define MP_SET_U32_C
 #   define MP_SQR_C
 #   define S_MP_LOG_POWER_OF_TWO_C
 #endif
@@ -781,8 +779,7 @@
 #endif
 
 #if defined(MP_RADIX_SIZE_C)
-#   define MP_ILOGB_C
-#   define MP_INIT_C
+#   define MP_LOG_U32_C
 #   define S_MP_RADIX_SIZE_RADIX_10_C
 #endif
 
