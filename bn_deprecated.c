@@ -281,11 +281,12 @@ mp_err mp_to_signed_bin(const mp_int *a, unsigned char *b)
 #ifdef BN_MP_TO_SIGNED_BIN_N_C
 mp_err mp_to_signed_bin_n(const mp_int *a, unsigned char *b, unsigned long *outlen)
 {
-   if (*outlen < (unsigned long)mp_sbin_size(a)) {
+   size_t n = mp_sbin_size(a);
+   if (*outlen < (unsigned long)n) {
       return MP_VAL;
    }
-   *outlen = (unsigned long)mp_sbin_size(a);
-   return mp_to_sbin(a, b, (size_t)(*outlen), NULL);
+   *outlen = (unsigned long)n;
+   return mp_to_sbin(a, b, n, NULL);
 }
 #endif
 #ifdef BN_MP_TORADIX_N_C
