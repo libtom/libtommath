@@ -7,7 +7,8 @@
 mp_err mp_radix_size(const mp_int *a, int radix, int *size)
 {
    mp_err err;
-   mp_int a_, b;
+   mp_int a_;
+   uint32_t b;
 
    /* make sure the radix is in range */
    if ((radix < 2) || (radix > 64)) {
@@ -19,25 +20,18 @@ mp_err mp_radix_size(const mp_int *a, int radix, int *size)
       return MP_OKAY;
    }
 
-   if ((err = mp_init(&b)) != MP_OKAY) {
-      goto LBL_ERR;
-   }
-
    a_ = *a;
    a_.sign = MP_ZPOS;
-   if ((err = mp_ilogb(&a_, (uint32_t)radix, &b)) != MP_OKAY) {
+   if ((err = mp_log_u32(&a_, (uint32_t)radix, &b)) != MP_OKAY) {
       goto LBL_ERR;
    }
 
-   *size = (int)mp_get_l(&b);
+   *size = (int)b;
 
    /* mp_ilogb truncates to zero, hence we need one extra put on top and one for `\0`. */
    *size += 2 + (a->sign == MP_NEG);
 
 LBL_ERR:
-   mp_clear(&b);
    return err;
 }
-
-
 #endif
