@@ -403,7 +403,7 @@ int main(void)
    pprime(k, li, &p, &q);
    t1 = clock() - t1;
 
-   printf("\n\nTook %d ticks, %d bits\n", t1, mp_count_bits(&p));
+   printf("\n\nTook %lu ticks, %d bits\n", t1, mp_count_bits(&p));
 
    mp_to_decimal(&p, buf, sizeof(buf));
    printf("P == %s\n", buf);
