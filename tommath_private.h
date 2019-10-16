@@ -14,11 +14,9 @@
  *
  * On Unix symbols can be marked as hidden if libtommath is compiled
  * as a shared object. By default, symbols are visible.
- * As of now, this feature is opt-in via the MP_PRIVATE_SYMBOLS define.
- *
  * On Win32 a .def file must be used to specify the exported symbols.
  */
-#if defined (MP_PRIVATE_SYMBOLS) && defined(__GNUC__) && __GNUC__ >= 4
+#if defined(__GNUC__) && __GNUC__ >= 4
 #   define MP_PRIVATE __attribute__ ((visibility ("hidden")))
 #else
 #   define MP_PRIVATE
