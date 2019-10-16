@@ -317,10 +317,6 @@
 			>
 		</File>
 		<File
-			RelativePath="bn_deprecated.c"
-			>
-		</File>
-		<File
 			RelativePath="bn_mp_2expt.c"
 			>
 		</File>

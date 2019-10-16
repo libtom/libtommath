@@ -358,15 +358,9 @@ EOS
     my %depmap;
     foreach my $filename (glob 'bn*.c') {
         my $content;
-        if ($filename =~ "bn_deprecated.c") {
-            open(my $src, '<', $filename) or die "Can't open source file!\n";
-            read $src, $content, -s $src;
-            close $src;
-        } else {
-            my $cc = $ENV{'CC'} || 'gcc';
-            $content = `$cc -E -x c -DLTM_ALL $filename`;
-            $content =~ s/^# 1 "$filename".*?^# 2 "$filename"//ms;
-        }
+        my $cc = $ENV{'CC'} || 'gcc';
+        $content = `$cc -E -x c -DLTM_ALL $filename`;
+        $content =~ s/^# 1 "$filename".*?^# 2 "$filename"//ms;
 
         # convert filename to upper case so we can use it as a define
         $filename =~ tr/[a-z]/[A-Z]/;

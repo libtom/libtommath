@@ -12,7 +12,6 @@
 #define LTM1
 #if defined(LTM_ALL)
 #   define BN_CUTOFFS_C
-#   define BN_DEPRECATED_C
 #   define BN_MP_2EXPT_C
 #   define BN_MP_ABS_C
 #   define BN_MP_ADD_C
@@ -171,9 +170,6 @@
 #endif
 #endif
 #if defined(BN_CUTOFFS_C)
-#endif
-
-#if defined(BN_DEPRECATED_C)
 #endif
 
 #if defined(BN_MP_2EXPT_C)
