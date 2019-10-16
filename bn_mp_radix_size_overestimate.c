@@ -145,11 +145,7 @@ mp_err mp_radix_size_overestimate(const mp_int *a, const int radix, int *size)
    int bit_count;
    mp_err err = MP_OKAY;
 
-   if (size == NULL) {
-      return MP_VAL;
-   } else {
-      *size = 0;
-   }
+   *size = 0;
 
    if ((radix < 2) || (radix > 64)) {
       return MP_VAL;
@@ -165,14 +161,14 @@ mp_err mp_radix_size_overestimate(const mp_int *a, const int radix, int *size)
    /* A small shortcut for powers of two. */
    if (!(radix&(radix-1))) {
       unsigned int x = (unsigned int)radix;
-      int y, rem;
+      int y;
       for (y=0; (y < 7) && !(x & 1u); y++) {
          x >>= 1;
       }
       *size = bit_count/y;
-      rem = bit_count - ((*size) * y);
+      bit_count  = bit_count - ((*size) * y);
       /* Add 1 for the remainder if any and 1 for "\0". */
-      *size += ((rem == 0) ? 1 : 2) + (a->sign == MP_NEG);
+      *size += ((bit_count  == 0) ? 1 : 2) + (a->sign == MP_NEG);
       return MP_OKAY;
    }
 
@@ -219,10 +215,7 @@ mp_err mp_radix_size_overestimate(const mp_int *a, const int radix, int *size)
    *size = (int)mp_get_l(&bi_bit_count) + 1 + 1 + (a->sign == MP_NEG);
 
 #if ( (defined MP_8BIT) && (INT_MAX > 0xFFFF))
-   /* TODO: Add a third table? But how likely is it that "int" is 32-bit in
-            an 8-bit environment? */
-   /* diff. is 3 bits, hence add 2 (two) */
-   *size += 2;
+#error "Table based radix_size not implemented for MP_8BIT and an int type that is larger than 16 bits!"
 #endif
 LTM_ERR:
    mp_clear_multi(&bi_bit_count, &bi_k, NULL);
