@@ -2089,19 +2089,17 @@ The variable $flags$ specifies one of several options available
 The function mp\_prime\_rand() is suitable for generating primes which must be secret (as in the case of RSA) since there
 is no skew on the least significant bits.
 
-\textit{Note:} This function replaces the deprecated mp\_prime\_random and mp\_prime\_random\_ex functions.
-
 \begin{figure}[h]
 \begin{center}
 \begin{small}
 \begin{tabular}{|r|l|}
 \hline \textbf{Flag}         & \textbf{Meaning} \\
-\hline LTM\_PRIME\_BBS       & Make the prime congruent to $3$ modulo $4$ \\
-\hline LTM\_PRIME\_SAFE      & Make a prime $p$ such that $(p - 1)/2$ is also prime. \\
-                             & This option implies LTM\_PRIME\_BBS as well. \\
-\hline LTM\_PRIME\_2MSB\_OFF & Makes sure that the bit adjacent to the most significant bit \\
+\hline MP\_PRIME\_BBS       & Make the prime congruent to $3$ modulo $4$ \\
+\hline MP\_PRIME\_SAFE      & Make a prime $p$ such that $(p - 1)/2$ is also prime. \\
+                             & This option implies MP\_PRIME\_BBS as well. \\
+\hline MP\_PRIME\_2MSB\_OFF & Makes sure that the bit adjacent to the most significant bit \\
                              & Is forced to zero.  \\
-\hline LTM\_PRIME\_2MSB\_ON  & Makes sure that the bit adjacent to the most significant bit \\
+\hline MP\_PRIME\_2MSB\_ON  & Makes sure that the bit adjacent to the most significant bit \\
                              & Is forced to one. \\
 \hline
 \end{tabular}
@@ -2154,7 +2152,7 @@ int mp_radix_size (mp_int * a, int radix, int *size)
 This stores in ``size'' the number of characters (including space for the NUL terminator) required.  Upon error this
 function returns an error code and ``size'' will be zero.
 
-If \texttt{LTM\_NO\_FILE} is not defined a function to write to a file is also available.
+If \texttt{MP\_NO\_FILE} is not defined a function to write to a file is also available.
 \index{mp\_fwrite}
 \begin{alltt}
 int mp_fwrite(const mp_int *a, int radix, FILE *stream);
@@ -2170,7 +2168,7 @@ This will read the base-``radix'' NUL terminated string from ``str'' into $a$.  
 character it does not recognize (which happens to include th NUL char... imagine that...).  A single leading $-$ sign
 can be used to denote a negative number.
 
-If \texttt{LTM\_NO\_FILE} is not defined a function to read from a file is also available.
+If \texttt{MP\_NO\_FILE} is not defined a function to read from a file is also available.
 \index{mp\_fread}
 \begin{alltt}
 int mp_fread(mp_int *a, int radix, FILE *stream);
