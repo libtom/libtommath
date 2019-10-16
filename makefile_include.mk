@@ -62,7 +62,7 @@ endif
 ifdef CONV_WARNINGS
 LTM_CFLAGS += -std=c89 -Wconversion -Wsign-conversion
 ifeq ($(CONV_WARNINGS), strict)
-LTM_CFLAGS += -DMP_USE_ENUMS -Wc++-compat
+LTM_CFLAGS += -Wc++-compat
 endif
 else
 LTM_CFLAGS += -Wsystem-headers

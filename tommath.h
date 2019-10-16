@@ -115,20 +115,22 @@ typedef uint64_t             private_mp_word;
 #define LTM_PRIME_SAFE     (MP_DEPRECATED_PRAGMA("LTM_PRIME_SAFE has been deprecated, use MP_PRIME_SAFE") MP_PRIME_SAFE)
 #define LTM_PRIME_2MSB_ON  (MP_DEPRECATED_PRAGMA("LTM_PRIME_2MSB_ON has been deprecated, use MP_PRIME_2MSB_ON") MP_PRIME_2MSB_ON)
 
-#ifdef MP_USE_ENUMS
 typedef enum {
    MP_ZPOS = 0,   /* positive */
    MP_NEG = 1     /* negative */
 } mp_sign;
+
 typedef enum {
    MP_LT = -1,    /* less than */
    MP_EQ = 0,     /* equal */
    MP_GT = 1      /* greater than */
 } mp_ord;
+
 typedef enum {
    MP_NO = 0,
    MP_YES = 1
 } mp_bool;
+
 typedef enum {
    MP_OKAY  = 0,   /* no error */
    MP_ERR   = -1,  /* unknown error */
@@ -137,42 +139,17 @@ typedef enum {
    MP_ITER  = -4,  /* maximum iterations reached */
    MP_BUF   = -5,  /* buffer overflow, supplied buffer too small */
 } mp_err;
+
 typedef enum {
    MP_LSB_FIRST = -1,
    MP_MSB_FIRST =  1
 } mp_order;
+
 typedef enum {
    MP_LITTLE_ENDIAN  = -1,
    MP_NATIVE_ENDIAN  =  0,
    MP_BIG_ENDIAN     =  1
 } mp_endian;
-#else
-typedef int mp_sign;
-#define MP_ZPOS       0   /* positive integer */
-#define MP_NEG        1   /* negative */
-typedef int mp_ord;
-#define MP_LT        -1   /* less than */
-#define MP_EQ         0   /* equal to */
-#define MP_GT         1   /* greater than */
-typedef int mp_bool;
-#define MP_YES        1
-#define MP_NO         0
-typedef int mp_err;
-#define MP_OKAY       0   /* no error */
-#define MP_ERR        -1  /* unknown error */
-#define MP_MEM        -2  /* out of mem */
-#define MP_VAL        -3  /* invalid input */
-#define MP_RANGE      (MP_DEPRECATED_PRAGMA("MP_RANGE has been deprecated in favor of MP_VAL") MP_VAL)
-#define MP_ITER       -4  /* maximum iterations reached */
-#define MP_BUF        -5  /* buffer overflow, supplied buffer too small */
-typedef int mp_order;
-#define MP_LSB_FIRST -1
-#define MP_MSB_FIRST  1
-typedef int mp_endian;
-#define MP_LITTLE_ENDIAN  -1
-#define MP_NATIVE_ENDIAN  0
-#define MP_BIG_ENDIAN     1
-#endif
 
 /* tunable cutoffs */
 
