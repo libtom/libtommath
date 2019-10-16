@@ -825,7 +825,8 @@ int main(void)
 
 These functions can be used to set a constant with 32 or 64 bits.
 
-\index{mp\_set\_int}
+\index{mp\_set\_i32} \index{mp\_set\_u32}
+\index{mp\_set\_i64} \index{mp\_set\_u64}
 \begin{alltt}
 void mp_set_i32 (mp_int * a, int32_t b);
 void mp_set_u32 (mp_int * a, uint32_t b);
@@ -836,7 +837,8 @@ void mp_set_u64 (mp_int * a, uint64_t b);
 These functions assign the sign and value of the input \texttt{b} to \texttt{mp\_int a}.
 The value can be obtained again by calling the following functions.
 
-\index{mp\_get\_int}
+\index{mp\_get\_i32} \index{mp\_get\_u32} \index{mp\_get\_mag\_u32}
+\index{mp\_get\_i64} \index{mp\_get\_u64} \index{mp\_get\_mag\_u64}
 \begin{alltt}
 int32_t mp_get_i32 (mp_int * a);
 uint32_t mp_get_u32 (mp_int * a);
@@ -881,7 +883,7 @@ number == 654321
 
 \subsection{Long Constants - platform dependant}
 
-\index{mp\_set\_ulong}
+\index{mp\_set\_l} \index{mp\_set\_ul}
 \begin{alltt}
 void mp_set_l (mp_int * a, long b);
 void mp_set_ul (mp_int * a, unsigned long b);
@@ -891,7 +893,7 @@ This will assign the value of the platform-dependent sized variable $b$ to the m
 
 To retrieve the value, the following functions can be used.
 
-\index{mp\_get\_ulong}
+\index{mp\_get\_l} \index{mp\_get\_ul} \index{mp\_get\_mag\_ul}
 \begin{alltt}
 long mp_get_l (mp_int * a);
 unsigned long mp_get_ul (mp_int * a);
@@ -902,7 +904,7 @@ This will return the least significant bits of the mp\_int $a$ that fit into a `
 
 \subsection{Long Long Constants - platform dependant}
 
-\index{mp\_set\_ulonglong}
+\index{mp\_set\_ll} \index{mp\_set\_ull}
 \begin{alltt}
 void mp_set_ll (mp_int * a, long long b);
 void mp_set_ull (mp_int * a, unsigned long long b);
@@ -912,7 +914,9 @@ This will assign the value of the platform-dependent sized variable $b$ to the m
 
 To retrieve the value, the following functions can be used.
 
-\index{mp\_get\_ulonglong}
+\index{mp\_get\_ll}
+\index{mp\_get\_ull}
+\index{mp\_get\_mag\_ull}
 \begin{alltt}
 long long mp_get_ll (mp_int * a);
 unsigned long long mp_get_ull (mp_int * a);
@@ -2075,7 +2079,7 @@ mp\_prime\_is\_prime for details regarding the use of the argument $t$.  Set $bb
 want only the next prime congruent to $3 \mbox{ mod } 4$, otherwise set it to zero to find any next prime.
 
 \section{Random Primes}
-\index{mp\_prime\_random\_ex}
+\index{mp\_prime\_rand}
 \begin{alltt}
 int mp_prime_rand(mp_int *a,    int t,
                   int     size, int flags);
