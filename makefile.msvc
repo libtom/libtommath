@@ -72,9 +72,6 @@ test.exe: $(LIBMAIN_S) demo/shared.obj demo/test.obj
 	cl $(LTM_CFLAGS) $(TOBJECTS) $(LIBMAIN_S) $(LTM_LDFLAGS) demo/shared.c demo/test.c /Fe$@
 	@echo NOTICE: start the tests by launching test.exe
 
-test_standalone: test.exe
-	@echo test_standalone is deprecated, please use make-target 'test.exe'
-
 all: $(LIBMAIN_S) test.exe
 
 tune: $(LIBMAIN_S)

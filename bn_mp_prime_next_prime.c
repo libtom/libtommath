@@ -13,16 +13,16 @@ mp_err mp_prime_next_prime(mp_int *a, int t, int bbs_style)
    int      x, y, cmp;
    mp_err  err;
    mp_bool res = MP_NO;
-   mp_digit res_tab[PRIVATE_MP_PRIME_TAB_SIZE], step, kstep;
+   mp_digit res_tab[MP_PRIME_TAB_SIZE], step, kstep;
    mp_int   b;
 
    /* force positive */
    a->sign = MP_ZPOS;
 
    /* simple algo if a is less than the largest prime in the table */
-   if (mp_cmp_d(a, s_mp_prime_tab[PRIVATE_MP_PRIME_TAB_SIZE-1]) == MP_LT) {
+   if (mp_cmp_d(a, s_mp_prime_tab[MP_PRIME_TAB_SIZE-1]) == MP_LT) {
       /* find which prime it is bigger than "a" */
-      for (x = 0; x < PRIVATE_MP_PRIME_TAB_SIZE; x++) {
+      for (x = 0; x < MP_PRIME_TAB_SIZE; x++) {
          cmp = mp_cmp_d(a, s_mp_prime_tab[x]);
          if (cmp == MP_EQ) {
             continue;
@@ -66,7 +66,7 @@ mp_err mp_prime_next_prime(mp_int *a, int t, int bbs_style)
    }
 
    /* generate the restable */
-   for (x = 1; x < PRIVATE_MP_PRIME_TAB_SIZE; x++) {
+   for (x = 1; x < MP_PRIME_TAB_SIZE; x++) {
       if ((err = mp_mod_d(a, s_mp_prime_tab[x], res_tab + x)) != MP_OKAY) {
          return err;
       }
@@ -88,7 +88,7 @@ mp_err mp_prime_next_prime(mp_int *a, int t, int bbs_style)
          step += kstep;
 
          /* compute the new residue without using division */
-         for (x = 1; x < PRIVATE_MP_PRIME_TAB_SIZE; x++) {
+         for (x = 1; x < MP_PRIME_TAB_SIZE; x++) {
             /* add the step to each residue */
             res_tab[x] += kstep;
 

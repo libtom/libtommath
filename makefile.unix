@@ -84,9 +84,6 @@ test: demo/shared.o demo/test.o $(LIBMAIN_S)
 	$(CC) $(LTM_CFLAGS) $(LTM_LDFLAGS) $^ -o $@
 	@echo "NOTICE: start the tests by: ./test"
 
-test_standalone: test
-	@echo "test_standalone is deprecated, please use make-target 'test'"
-
 all: $(LIBMAIN_S) test
 
 tune: $(LIBMAIN_S)

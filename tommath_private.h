@@ -147,7 +147,6 @@ extern void MP_FREE(void *mem, size_t size);
 #define MP_HAS(x)        (sizeof(MP_STRINGIZE(BN_##x##_C)) == 1u)
 
 /* TODO: Remove private_mp_word as soon as deprecated mp_word is removed from tommath. */
-#undef mp_word
 typedef private_mp_word mp_word;
 
 #define MP_MIN(x, y) (((x) < (y)) ? (x) : (y))
@@ -166,10 +165,16 @@ typedef private_mp_word mp_word;
 
 #define MP_WARRAY (1 << ((MP_SIZEOF_BITS(mp_word) - (2 * MP_DIGIT_BIT)) + 1))
 
-/* TODO: Remove PRIVATE_MP_PREC as soon as deprecated MP_PREC is removed from tommath.h */
-#ifdef PRIVATE_MP_PREC
-#   undef MP_PREC
-#   define MP_PREC PRIVATE_MP_PREC
+
+/* default precision */
+#ifndef MP_PREC
+#   ifndef MP_LOW_MEM
+#      define MP_PREC 32        /* default digits of precision */
+#   elif defined(MP_8BIT)
+#      define MP_PREC 16        /* default digits of precision */
+#   else
+#      define MP_PREC 8         /* default digits of precision */
+#   endif
 #endif
 
 /* Minimum number of available digits in mp_int, MP_PREC >= MP_MIN_PREC */
@@ -201,7 +206,8 @@ MP_PRIVATE mp_err s_mp_montgomery_reduce_fast(mp_int *x, const mp_int *n, mp_dig
 MP_PRIVATE mp_err s_mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y, int redmode) MP_WUR;
 MP_PRIVATE mp_err s_mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y, int redmode) MP_WUR;
 MP_PRIVATE mp_err s_mp_rand_platform(void *p, size_t n) MP_WUR;
-MP_PRIVATE mp_err s_mp_prime_random_ex(mp_int *a, int t, int size, int flags, private_mp_prime_callback cb, void *dat);
+typedef int mp_prime_callback(unsigned char *dst, int len, void *dat);
+MP_PRIVATE mp_err s_mp_prime_random_ex(mp_int *a, int t, int size, int flags, mp_prime_callback cb, void *dat);
 MP_PRIVATE void s_mp_reverse(unsigned char *s, size_t len);
 MP_PRIVATE mp_err s_mp_prime_is_divisible(const mp_int *a, mp_bool *result);
 
@@ -212,28 +218,14 @@ MP_PRIVATE void s_mp_rand_jenkins_init(uint64_t seed);
 extern MP_PRIVATE const char *const mp_s_rmap;
 extern MP_PRIVATE const uint8_t mp_s_rmap_reverse[];
 extern MP_PRIVATE const size_t mp_s_rmap_reverse_sz;
-extern MP_PRIVATE const mp_digit *s_mp_prime_tab;
+extern MP_PRIVATE const mp_digit s_mp_prime_tab[];
 
-/* deprecated functions */
-MP_DEPRECATED(s_mp_invmod_fast) mp_err fast_mp_invmod(const mp_int *a, const mp_int *b, mp_int *c);
-MP_DEPRECATED(s_mp_montgomery_reduce_fast) mp_err fast_mp_montgomery_reduce(mp_int *x, const mp_int *n,
-      mp_digit rho);
-MP_DEPRECATED(s_mp_mul_digs_fast) mp_err fast_s_mp_mul_digs(const mp_int *a, const mp_int *b, mp_int *c,
-      int digs);
-MP_DEPRECATED(s_mp_mul_high_digs_fast) mp_err fast_s_mp_mul_high_digs(const mp_int *a, const mp_int *b,
-      mp_int *c,
-      int digs);
-MP_DEPRECATED(s_mp_sqr_fast) mp_err fast_s_mp_sqr(const mp_int *a, mp_int *b);
-MP_DEPRECATED(s_mp_balance_mul) mp_err mp_balance_mul(const mp_int *a, const mp_int *b, mp_int *c);
-MP_DEPRECATED(s_mp_exptmod_fast) mp_err mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P,
-      mp_int *Y,
-      int redmode);
-MP_DEPRECATED(s_mp_invmod_slow) mp_err mp_invmod_slow(const mp_int *a, const mp_int *b, mp_int *c);
-MP_DEPRECATED(s_mp_karatsuba_mul) mp_err mp_karatsuba_mul(const mp_int *a, const mp_int *b, mp_int *c);
-MP_DEPRECATED(s_mp_karatsuba_sqr) mp_err mp_karatsuba_sqr(const mp_int *a, mp_int *b);
-MP_DEPRECATED(s_mp_toom_mul) mp_err mp_toom_mul(const mp_int *a, const mp_int *b, mp_int *c);
-MP_DEPRECATED(s_mp_toom_sqr) mp_err mp_toom_sqr(const mp_int *a, mp_int *b);
-MP_DEPRECATED(s_mp_reverse) void bn_reverse(unsigned char *s, int len);
+/* number of primes */
+#ifdef MP_8BIT
+#  define MP_PRIME_TAB_SIZE 31
+#else
+#  define MP_PRIME_TAB_SIZE 256
+#endif
 
 #define MP_GET_ENDIANNESS(x) \
    do{\

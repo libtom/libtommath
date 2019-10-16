@@ -95,9 +95,6 @@ uninstall:
 	rm $(DESTDIR)$(LIBPATH)/$(LIBNAME)
 	rm $(HEADERS_PUB:%=$(DESTDIR)$(INCPATH)/%)
 
-test_standalone: test
-	@echo "test_standalone is deprecated, please use make-target 'test'"
-
 DEMOS=test mtest_opponent
 
 define DEMO_template

@@ -17,7 +17,7 @@ mp_err s_mp_prime_is_divisible(const mp_int *a, mp_bool *result)
    /* default to not */
    *result = MP_NO;
 
-   for (ix = 0; ix < PRIVATE_MP_PRIME_TAB_SIZE; ix++) {
+   for (ix = 0; ix < MP_PRIME_TAB_SIZE; ix++) {
       /* what is a mod LBL_prime_tab[ix] */
       if ((err = mp_mod_d(a, s_mp_prime_tab[ix], &res)) != MP_OKAY) {
          return err;

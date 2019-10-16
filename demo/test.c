@@ -1283,21 +1283,6 @@ static int test_mp_read_radix(void)
    if ((err = mp_to_radix(&a, buf, SIZE_MAX, &written, 10)) != MP_OKAY)        goto LTM_ERR;
    printf(" '0' a == %s, length = %zu\n", buf, written);
 
-
-
-   /* Although deprecated it needs to function as long as it isn't dropped */
-   /*
-   printf("Testing deprecated mp_toradix_n\n");
-   if( (err = mp_read_radix(&a, "-123456", 10) ) != MP_OKAY)                    goto LTM_ERR;
-   if( (err = mp_toradix_n(&a, buf, 10, 3) ) != MP_OKAY)                        goto LTM_ERR;
-   printf("a == %s\n", buf);
-   if( (err = mp_toradix_n(&a, buf, 10, 4) ) != MP_OKAY)                        goto LTM_ERR;
-   printf("a == %s\n", buf);
-   if( (err = mp_toradix_n(&a, buf, 10, 30) ) != MP_OKAY)                       goto LTM_ERR;
-   printf("a == %s\n", buf);
-   */
-
-
    while (0) {
       char *s = fgets(buf, sizeof(buf), stdin);
       if (s != buf) break;

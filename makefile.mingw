@@ -86,9 +86,6 @@ test.exe: demo/shared.o demo/test.o $(LIBMAIN_S)
 	$(CC) $(LTM_CFLAGS) $(LTM_LDFLAGS) $^ -o $@
 	@echo NOTICE: start the tests by launching test.exe
 
-test_standalone: test.exe
-	@echo test_standalone is deprecated, please use make-target 'test.exe'
-
 all: $(LIBMAIN_S) test.exe
 
 tune: $(LIBNAME_S)
