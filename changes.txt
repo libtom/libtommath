@@ -19,6 +19,8 @@ v1.2.0
        -- Unified, safer and improved API's
        -- Less magic numbers - return values (where appropriate) and most flags are now enums,
           this was implemented in a backwards compatible way where return values were int.
+       -- API's with return values are now by default marked as "warn on unsused result", this
+          can be disabled if required (which will most likely hide bugs), c.f. MP_WUR in tommath.h
        -- Provide a whole set of setters&getters for different primitive types (long, uint32_t, etc.)
        -- All those primitive setters are now optimized.
        -- It's possible to automatically tune the cutoff values for Karatsuba&Toom-Cook
