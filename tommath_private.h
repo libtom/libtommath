@@ -130,13 +130,11 @@ do {                                                    \
 #   include <stdlib.h>
 #   define MP_MALLOC(size)                   malloc(size)
 #   define MP_REALLOC(mem, oldsize, newsize) realloc((mem), (newsize))
-#   define MP_CALLOC(nmemb, size)            calloc((nmemb), (size))
 #   define MP_FREE(mem, size)                free(mem)
 #else
 /* prototypes for our heap functions */
 extern void *MP_MALLOC(size_t size);
 extern void *MP_REALLOC(void *mem, size_t oldsize, size_t newsize);
-extern void *MP_CALLOC(size_t nmemb, size_t size);
 extern void MP_FREE(void *mem, size_t size);
 #endif
 

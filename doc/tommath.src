@@ -773,10 +773,10 @@ One immediate observation of this initializtion function is that it does not ret
 is assumed that the caller has already allocated memory for the mp\_int structure, typically on the application stack.  The
 call to mp\_init() is used only to initialize the members of the structure to a known default state.
 
-Here we see (line @23,XMALLOC@) the memory allocation is performed first.  This allows us to exit cleanly and quickly
+Here we see (line @23,MP\_MALLOC@) the memory allocation is performed first.  This allows us to exit cleanly and quickly
 if there is an error.  If the allocation fails the routine will return \textbf{MP\_MEM} to the caller to indicate there
-was a memory error.  The function XMALLOC is what actually allocates the memory.  Technically XMALLOC is not a function
-but a macro defined in ``tommath.h``.  By default, XMALLOC will evaluate to malloc() which is the C library's built--in
+was a memory error.  The function MP\_MALLOC is what actually allocates the memory.  Technically MP\_MALLOC is not a function
+but a macro defined in ``tommath.h``.  By default, MP\_MALLOC will evaluate to malloc() which is the C library's built--in
 memory allocation routine.
 
 In order to assure the mp\_int is in a known state the digits must be set to zero.  On most platforms this could have been
@@ -835,7 +835,7 @@ checks to see if the \textbf{dp} member is not \textbf{NULL}.  If the mp\_int is
 The digits of the mp\_int are cleared by the for loop (line @25,for@) which assigns a zero to every digit.  Similar to mp\_init()
 the digits are assigned zero instead of using block memory operations (such as memset()) since this is more portable.
 
-The digits are deallocated off the heap via the XFREE macro.  Similar to XMALLOC the XFREE macro actually evaluates to
+The digits are deallocated off the heap via the MP\_FREE macro.  Similar to MP\_MALLOC the MP\_FREE macro actually evaluates to
 a standard C library function.  In this case the free() function.  Since free() only deallocates the memory the pointer
 still has to be reset to \textbf{NULL} manually (line @33,NULL@).
 
@@ -897,14 +897,14 @@ if the \textbf{alloc} member of the mp\_int is smaller than the requested digit 
 the function skips the re-allocation part thus saving time.
 
 When a re-allocation is performed it is turned into an optimal request to save time in the future.  The requested digit count is
-padded upwards to 2nd multiple of \textbf{MP\_PREC} larger than \textbf{alloc} (line @25, size@).  The XREALLOC function is used
-to re-allocate the memory.  As per the other functions XREALLOC is actually a macro which evaluates to realloc by default.  The realloc
+padded upwards to 2nd multiple of \textbf{MP\_PREC} larger than \textbf{alloc} (line @25, size@).  The MP\_REALLOC function is used
+to re-allocate the memory.  As per the other functions MP\_REALLOC is actually a macro which evaluates to realloc by default.  The realloc
 function leaves the base of the allocation intact which means the first \textbf{alloc} digits of the mp\_int are the same as before
 the re-allocation.  All	that is left is to clear the newly allocated digits and return.
 
 Note that the re-allocation result is actually stored in a temporary pointer $tmp$.  This is to allow this function to return
-an error with a valid pointer.  Earlier releases of the library stored the result of XREALLOC into the mp\_int $a$.  That would
-result in a memory leak if XREALLOC ever failed.
+an error with a valid pointer.  Earlier releases of the library stored the result of MP\_REALLOC into the mp\_int $a$.  That would
+result in a memory leak if MP\_REALLOC ever failed.
 
 \subsection{Initializing Variable Precision mp\_ints}
 Occasionally the number of digits required will be known in advance of an initialization, based on, for example, the size
@@ -950,7 +950,7 @@ EXAM,bn_mp_init_size.c
 If the memory can be successfully allocated the mp\_int is placed in a default state representing the integer zero.  Otherwise, the error code \textbf{MP\_MEM} will be
 returned (line @27,return@).
 
-The digits are allocated with the malloc() function (line @27,XMALLOC@) and set to zero afterwards (line @38,for@).  The
+The digits are allocated with the malloc() function (line @27,MP\_MALLOC@) and set to zero afterwards (line @38,for@).  The
 \textbf{used} count is set to zero, the \textbf{alloc} count set to the padded digit count and the \textbf{sign} flag set
 to \textbf{MP\_ZPOS} to achieve a default valid mp\_int state (lines @29,used@, @30,alloc@ and @31,sign@).  If the function
 returns succesfully then it is correct to assume that the mp\_int structure is in a valid state for the remainder of the
