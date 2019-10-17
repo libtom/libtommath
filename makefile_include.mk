@@ -5,7 +5,7 @@
 #version of library
 VERSION=1.2.0-rc1
 VERSION_PC=1.2.0
-VERSION_SO=3:0:1
+VERSION_SO=3:0:2
 
 PLATFORM := $(shell uname | sed -e 's/_.*//')
 
