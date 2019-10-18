@@ -142,8 +142,8 @@ extern void MP_FREE(void *mem, size_t size);
 
 /* feature detection macro */
 #define MP_STRINGIZE(x)  MP__STRINGIZE(x)
-#define MP__STRINGIZE(x) ""#x""
-#define MP_HAS(x)        (sizeof(MP_STRINGIZE(BN_##x##_C)) == 1u)
+#define MP__STRINGIZE(x) "" #x ""
+#define MP_HAS(x)        (sizeof(MP_STRINGIZE((BN_##x##_C))) == 1u)
 
 /* TODO: Remove private_mp_word as soon as deprecated mp_word is removed from tommath. */
 #undef mp_word
