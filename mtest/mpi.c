@@ -494,7 +494,7 @@ void   mp_set(mp_int *mp, mp_digit d)
 mp_err mp_set_int(mp_int *mp, long z)
 {
   int            ix;
-  unsigned long  v = abs(z);
+  unsigned long  v = labs(z);
   mp_err         res;
 
   ARGCHK(mp != NULL, MP_BADARG);
