@@ -16,7 +16,7 @@
  * as a shared object. By default, symbols are visible.
  * On Win32 a .def file must be used to specify the exported symbols.
  */
-#if defined(__GNUC__) && __GNUC__ >= 4
+#if defined(__GNUC__) && __GNUC__ >= 4 && !defined(_WIN32)
 #   define MP_PRIVATE __attribute__ ((visibility ("hidden")))
 #else
 #   define MP_PRIVATE
