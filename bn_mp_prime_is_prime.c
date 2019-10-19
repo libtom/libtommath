@@ -57,13 +57,6 @@ mp_err mp_prime_is_prime(const mp_int *a, int t, mp_bool *result)
          return MP_OKAY;
       }
    }
-#ifdef MP_8BIT
-   /* The search in the loop above was exhaustive in this case */
-   if ((a->used == 1) && (MP_PRIME_TAB_SIZE >= 31)) {
-      return MP_OKAY;
-   }
-#endif
-
    /* first perform trial division */
    if ((err = s_mp_prime_is_divisible(a, &res)) != MP_OKAY) {
       return err;
@@ -112,7 +105,7 @@ mp_err mp_prime_is_prime(const mp_int *a, int t, mp_bool *result)
        * MP_8BIT (It is unknown if the Lucas-Selfridge test works with 16-bit
        * integers but the necesssary analysis is on the todo-list).
        */
-#if defined (MP_8BIT) || defined (LTM_USE_FROBENIUS_TEST)
+#ifdef LTM_USE_FROBENIUS_TEST
       err = mp_prime_frobenius_underwood(a, &res);
       if ((err != MP_OKAY) && (err != MP_ITER)) {
          goto LBL_B;
@@ -240,20 +233,6 @@ mp_err mp_prime_is_prime(const mp_int *a, int t, mp_bool *result)
           * an unsigned int and "mask" on the other side is most probably not.
           */
          fips_rand = (unsigned int)(b.dp[0] & (mp_digit) mask);
-#ifdef MP_8BIT
-         /*
-          * One 8-bit digit is too small, so concatenate two if the size of
-          * unsigned int allows for it.
-          */
-         if ((MP_SIZEOF_BITS(unsigned int)/2) >= MP_SIZEOF_BITS(mp_digit)) {
-            if ((err = mp_rand(&b, 1)) != MP_OKAY) {
-               goto LBL_B;
-            }
-            fips_rand <<= MP_SIZEOF_BITS(mp_digit);
-            fips_rand |= (unsigned int) b.dp[0];
-            fips_rand &= mask;
-         }
-#endif
          if (fips_rand > (unsigned int)(INT_MAX - MP_DIGIT_BIT)) {
             len = INT_MAX / MP_DIGIT_BIT;
          } else {
@@ -264,18 +243,6 @@ mp_err mp_prime_is_prime(const mp_int *a, int t, mp_bool *result)
             ix--;
             continue;
          }
-         /*
-          * As mentioned above, one 8-bit digit is too small and
-          * although it can only happen in the unlikely case that
-          * an "unsigned int" is smaller than 16 bit a simple test
-          * is cheap and the correction even cheaper.
-          */
-#ifdef MP_8BIT
-         /* All "a" < 2^8 have been caught before */
-         if (len == 1) {
-            len++;
-         }
-#endif
          if ((err = mp_rand(&b, len)) != MP_OKAY) {
             goto LBL_B;
          }

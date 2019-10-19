@@ -10,12 +10,6 @@
 #ifndef LTM_USE_ONLY_MR
 
 /*
- *  8-bit is just too small. You can try the Frobenius test
- *  but that frobenius test can fail, too, for the same reason.
- */
-#ifndef MP_8BIT
-
-/*
  * multiply bigint a with int d and put the result in c
  * Like mp_mul_d() but with a signed long as the small input
  */
@@ -284,6 +278,5 @@ LBL_LS_ERR:
    mp_clear_multi(&Q2kdz, &T4z, &T3z, &T2z, &T1z, &Qkdz, &Q2mz, &Qmz, &V2mz, &U2mz, &Vz, &Uz, &Np1, &gcd, &Dz, NULL);
    return err;
 }
-#endif
 #endif
 #endif

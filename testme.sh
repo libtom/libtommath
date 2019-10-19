@@ -378,13 +378,11 @@ do
     then
       _runvalgrind "$i $a" "$CFLAGS"
       [ "$WITH_LOW_MP" != "1" ] && continue
-      _runvalgrind "$i $a" "-DMP_8BIT $CFLAGS"
       _runvalgrind "$i $a" "-DMP_16BIT $CFLAGS"
       _runvalgrind "$i $a" "-DMP_32BIT $CFLAGS"
     else
       _runtest "$i $a" "$CFLAGS"
       [ "$WITH_LOW_MP" != "1" ] && continue
-      _runtest "$i $a" "-DMP_8BIT $CFLAGS"
       _runtest "$i $a" "-DMP_16BIT $CFLAGS"
       _runtest "$i $a" "-DMP_32BIT $CFLAGS"
     fi
