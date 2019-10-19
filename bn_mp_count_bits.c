@@ -17,7 +17,8 @@ mp_err mp_count_bits(const mp_int *a, size_t *size)
    }
 
    /* get number of digits and add that */
-   r = a->used;
+   /* TODO: cast not necessary once the mp_int struct gets its "int" types changed to "size_t" */
+   r = (size_t)a->used;
    if (r > (SIZE_MAX/MP_DIGIT_BIT)) {
       return MP_BUF;
    }
