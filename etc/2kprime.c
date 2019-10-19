@@ -43,7 +43,7 @@ top:
 
             /* quick test on q */
             mp_prime_is_prime(&q, 1, &y);
-            if (y == 0) {
+            if (y == MP_NO) {
                continue;
             }
 
@@ -51,20 +51,20 @@ top:
             mp_sub_d(&q, 1uL, &p);
             mp_div_2(&p, &p);
             mp_prime_is_prime(&p, 3, &y);
-            if (y == 0) {
+            if (y == MP_NO) {
                continue;
             }
 
             /* test on q */
             mp_prime_is_prime(&q, 3, &y);
-            if (y == 0) {
+            if (y == MP_NO) {
                continue;
             }
 
             break;
          }
 
-         if (y == 0) {
+         if (y == MP_NO) {
             ++sizes[x];
             goto top;
          }

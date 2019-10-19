@@ -11,7 +11,7 @@ static mp_err is_mersenne(long s, mp_bool *pp)
    mp_err  res;
    int     k;
 
-   *pp = 0;
+   *pp = MP_NO;
 
    if ((res = mp_init(&n)) != MP_OKAY) {
       return res;
@@ -56,9 +56,9 @@ static mp_err is_mersenne(long s, mp_bool *pp)
    }
 
    /* if u == 0 then its prime */
-   if (mp_iszero(&u) == 1) {
+   if (mp_iszero(&u) == MP_YES) {
       mp_prime_is_prime(&n, 8, pp);
-      if (*pp != 1) printf("FAILURE\n");
+      if (*pp != MP_YES) printf("FAILURE\n");
    }
 
    res = MP_OKAY;
@@ -119,7 +119,7 @@ int main(void)
          return -1;
       }
 
-      if (pp == 1) {
+      if (pp == MP_YES) {
          /* count time */
          tt = clock() - tt;
 
