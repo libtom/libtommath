@@ -44,11 +44,8 @@ EXPORTS
     mp_get_double
     mp_get_i32
     mp_get_i64
-    mp_get_int
     mp_get_l
     mp_get_ll
-    mp_get_long
-    mp_get_long_long
     mp_get_mag_u32
     mp_get_mag_u64
     mp_get_mag_ul
@@ -63,7 +60,6 @@ EXPORTS
     mp_init_ll
     mp_init_multi
     mp_init_set
-    mp_init_set_int
     mp_init_size
     mp_init_u32
     mp_init_u64
@@ -118,11 +114,8 @@ EXPORTS
     mp_set_double
     mp_set_i32
     mp_set_i64
-    mp_set_int
     mp_set_l
     mp_set_ll
-    mp_set_long
-    mp_set_long_long
     mp_set_u32
     mp_set_u64
     mp_set_ul
