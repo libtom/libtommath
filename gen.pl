@@ -7,7 +7,7 @@ use strict;
 use warnings;
 
 open(my $out, '>', 'mpi.c') or die "Couldn't open mpi.c for writing: $!";
-foreach my $filename (glob 'bn*.c') {
+foreach my $filename (glob '*mp_*.c') {
    open(my $src, '<', $filename) or die "Couldn't open $filename for reading: $!";
    print {$out} "/* Start: $filename */\n";
    print {$out} $_ while <$src>;

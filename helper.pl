@@ -270,7 +270,7 @@ sub draw_func
    my ($deplist, $depmap, $out, $indent, $funcslist) = @_;
    my @funcs = split ',', $funcslist;
    # try this if you want to have a look at a minimized version of the callgraph without all the trivial functions
-   #if ($deplist =~ /$funcs[0]/ || $funcs[0] =~ /BN_MP_(ADD|SUB|CLEAR|CLEAR_\S+|DIV|MUL|COPY|ZERO|GROW|CLAMP|INIT|INIT_\S+|SET|ABS|CMP|CMP_D|EXCH)_C/) {
+   #if ($deplist =~ /$funcs[0]/ || $funcs[0] =~ /MP_(ADD|SUB|CLEAR|CLEAR_\S+|DIV|MUL|COPY|ZERO|GROW|CLAMP|INIT|INIT_\S+|SET|ABS|CMP|CMP_D|EXCH)_C/) {
    if ($deplist =~ /$funcs[0]/) {
       return $deplist;
    } else {
@@ -309,7 +309,7 @@ sub update_dep
 #if defined(LTM_ALL)
 EOS
 
-    foreach my $filename (glob 'bn*.c') {
+    foreach my $filename (glob '*mp_*.c') {
         my $define = $filename;
 
         print "Processing $filename\n";
@@ -356,7 +356,7 @@ EOS
 
     # now do classes
     my %depmap;
-    foreach my $filename (glob 'bn*.c') {
+    foreach my $filename (glob '*mp_*.c') {
         my $content;
         my $cc = $ENV{'CC'} || 'gcc';
         $content = `$cc -E -x c -DLTM_ALL $filename`;
@@ -379,7 +379,7 @@ EOS
                 my $a = $&;
                 next if $a eq "mp_err";
                 $a =~ tr/[a-z]/[A-Z]/;
-                $a = 'BN_' . $a . '_C';
+                $a = $a . '_C';
                 push @deps, $a;
             }
         }

@@ -1,8 +1,8 @@
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
-#ifndef TOMMATH_PRIV_H_
-#define TOMMATH_PRIV_H_
+#ifndef TOMMATH_PRIVATE_H_
+#define TOMMATH_PRIVATE_H_
 
 #include "tommath.h"
 #include "tommath_class.h"
@@ -142,7 +142,7 @@ extern void MP_FREE(void *mem, size_t size);
 /* feature detection macro */
 #define MP_STRINGIZE(x)  MP__STRINGIZE(x)
 #define MP__STRINGIZE(x) ""#x""
-#define MP_HAS(x)        (sizeof(MP_STRINGIZE(BN_##x##_C)) == 1u)
+#define MP_HAS(x)        (sizeof(MP_STRINGIZE(x##_C)) == 1u)
 
 /* TODO: Remove private_mp_word as soon as deprecated mp_word is removed from tommath. */
 typedef private_mp_word mp_word;
