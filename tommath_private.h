@@ -206,6 +206,8 @@ typedef int mp_prime_callback(unsigned char *dst, int len, void *dat);
 MP_PRIVATE mp_err s_mp_prime_random_ex(mp_int *a, int t, int size, int flags, mp_prime_callback cb, void *dat);
 MP_PRIVATE void s_mp_reverse(unsigned char *s, size_t len);
 MP_PRIVATE mp_err s_mp_prime_is_divisible(const mp_int *a, mp_bool *result);
+MP_PRIVATE mp_digit s_mp_log_d(mp_digit base, mp_digit n);
+MP_PRIVATE mp_err s_mp_log(const mp_int *a, uint32_t base, uint32_t *c);
 
 /* TODO: jenkins prng is not thread safe as of now */
 MP_PRIVATE mp_err s_mp_rand_jenkins(void *p, size_t n) MP_WUR;
