@@ -5,7 +5,8 @@ static int sizes[] = { 1+256/MP_DIGIT_BIT, 1+512/MP_DIGIT_BIT, 1+768/MP_DIGIT_BI
 
 int main(void)
 {
-   int res, x, y;
+   mp_bool res;
+   int x, y;
    char buf[4096];
    FILE *out;
    mp_int a, b;

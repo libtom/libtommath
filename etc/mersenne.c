@@ -5,10 +5,11 @@
 #include <time.h>
 #include <tommath.h>
 
-static int is_mersenne(long s, int *pp)
+static mp_err is_mersenne(long s, mp_bool *pp)
 {
    mp_int  n, u;
-   int     res, k;
+   mp_err  res;
+   int     k;
 
    *pp = 0;
 
@@ -102,7 +103,7 @@ static int isprime(long k)
 
 int main(void)
 {
-   int     pp;
+   mp_bool pp;
    long    k;
    clock_t tt;
 

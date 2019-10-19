@@ -179,10 +179,11 @@ static mp_digit prime_digit(void)
 
 
 /* makes a prime of at least k bits */
-static int pprime(int k, int li, mp_int *p, mp_int *q)
+static mp_err pprime(int k, int li, mp_int *p, mp_int *q)
 {
    mp_int  a, b, c, n, x, y, z, v;
-   int     res, ii;
+   mp_err  res;
+   int     ii;
    static const mp_digit bases[] = { 2, 3, 5, 7, 11, 13, 17, 19 };
 
    /* single digit ? */

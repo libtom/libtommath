@@ -8,7 +8,7 @@ int main(void)
 {
    char buf[2000];
    size_t x;
-   int y;
+   mp_bool y;
    mp_int q, p;
    FILE *out;
    clock_t t1;
