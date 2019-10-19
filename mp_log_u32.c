@@ -66,10 +66,6 @@ static mp_digit s_digit_ilogb(mp_digit base, mp_digit n)
    return ret;
 }
 
-/* TODO: output could be "int" because the output of mp_radix_size is int, too,
-         as is the output of mp_bitcount.
-         With the same problem: max size is INT_MAX * MP_DIGIT not INT_MAX only!
-*/
 mp_err mp_log_u32(const mp_int *a, uint32_t base, uint32_t *c)
 {
    mp_err err;
