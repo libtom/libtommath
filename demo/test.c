@@ -2382,7 +2382,7 @@ LTM_ERR:
    return EXIT_FAILURE;
 }
 
->>>>>>> Minimal version of bn_mp_radix_size_overestimate
+
 static int test_mp_read_write_ubin(void)
 {
    mp_int a, b, c;
