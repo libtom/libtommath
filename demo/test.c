@@ -2326,8 +2326,6 @@ LBL_ERR:
    return EXIT_FAILURE;
 }
 
-
-
 static int test_mp_read_write_ubin(void)
 {
    mp_int a, b, c;

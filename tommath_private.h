@@ -217,6 +217,11 @@ MP_PRIVATE mp_err s_mp_log(const mp_int *a, uint32_t base, uint32_t *c);
 MP_PRIVATE mp_err s_mp_rand_jenkins(void *p, size_t n) MP_WUR;
 MP_PRIVATE void s_mp_rand_jenkins_init(uint64_t seed);
 
+/* Expects a power of two as the input "p_of_2" and 2 <= "p_of_2" <= 64*/
+MP_PRIVATE int s_mp_log_power_of_two(const mp_int *a, int p_of_2) MP_WUR;
+/* Like mp_radix_size but for radix 10 only */
+MP_PRIVATE int s_mp_radix_size_radix_10(const mp_int *a, int *size) MP_WUR;
+
 #define MP_RMAP_REVERSE_SIZE 88
 extern MP_PRIVATE const char s_mp_rmap[];
 extern MP_PRIVATE const uint8_t s_mp_rmap_reverse[];
