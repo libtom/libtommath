@@ -9,7 +9,8 @@
 mp_err mp_div(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d)
 {
    mp_int ta, tb, tq, q;
-   int     n, n2;
+   int     n;
+   mp_sign sign;
    mp_err err;
 
    /* is divisor zero ? */
@@ -53,15 +54,14 @@ mp_err mp_div(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d)
    }
 
    /* now q == quotient and ta == remainder */
-   n  = a->sign;
-   n2 = (a->sign == b->sign) ? MP_ZPOS : MP_NEG;
+   sign = (a->sign == b->sign) ? MP_ZPOS : MP_NEG;
    if (c != NULL) {
       mp_exch(c, &q);
-      c->sign  = MP_IS_ZERO(c) ? MP_ZPOS : n2;
+      c->sign  = MP_IS_ZERO(c) ? MP_ZPOS : sign;
    }
    if (d != NULL) {
       mp_exch(d, &ta);
-      d->sign = MP_IS_ZERO(d) ? MP_ZPOS : n;
+      d->sign = MP_IS_ZERO(d) ? MP_ZPOS : a->sign;
    }
 LBL_ERR:
    mp_clear_multi(&ta, &tb, &tq, &q, NULL);
