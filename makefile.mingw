@@ -78,7 +78,7 @@ $(LIBMAIN_S): $(OBJECTS)
 
 #Create DLL + import library libtommath.dll.a
 $(LIBMAIN_D) $(LIBMAIN_I): $(OBJECTS)
-	$(CC) -s -shared -o $(LIBMAIN_D) $^ -Wl,--enable-auto-import,--export-all -Wl,--out-implib=$(LIBMAIN_I) $(LTM_LDFLAGS)
+	$(CC) -s -shared -o $(LIBMAIN_D) $^ tommath.def -Wl,--out-implib=$(LIBMAIN_I) $(LTM_LDFLAGS)
 	$(STRIP) -S $(LIBMAIN_D)
 
 #Build test suite
