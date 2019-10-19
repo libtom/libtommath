@@ -6,12 +6,9 @@
 /* returns size of ASCII representation */
 mp_err mp_radix_size(const mp_int *a, int radix, int *size)
 {
-   mp_err  err;
-   int digs;
-   mp_int   t;
-   mp_digit d;
-
-   *size = 0;
+   mp_err err;
+   mp_int a_;
+   uint32_t b;
 
    /* make sure the radix is in range */
    if ((radix < 2) || (radix > 64)) {
@@ -23,43 +20,18 @@ mp_err mp_radix_size(const mp_int *a, int radix, int *size)
       return MP_OKAY;
    }
 
-   /* special case for binary */
-   if (radix == 2) {
-      *size = (mp_count_bits(a) + ((a->sign == MP_NEG) ? 1 : 0) + 1);
-      return MP_OKAY;
+   a_ = *a;
+   a_.sign = MP_ZPOS;
+   if ((err = mp_log_u32(&a_, (uint32_t)radix, &b)) != MP_OKAY) {
+      goto LBL_ERR;
    }
 
-   /* digs is the digit count */
-   digs = 0;
+   *size = (int)b;
 
-   /* if it's negative add one for the sign */
-   if (a->sign == MP_NEG) {
-      ++digs;
-   }
-
-   /* init a copy of the input */
-   if ((err = mp_init_copy(&t, a)) != MP_OKAY) {
-      return err;
-   }
-
-   /* force temp to positive */
-   t.sign = MP_ZPOS;
-
-   /* fetch out all of the digits */
-   while (!MP_IS_ZERO(&t)) {
-      if ((err = mp_div_d(&t, (mp_digit)radix, &t, &d)) != MP_OKAY) {
-         goto LBL_ERR;
-      }
-      ++digs;
-   }
-
-   /* return digs + 1, the 1 is for the NULL byte that would be required. */
-   *size = digs + 1;
-   err = MP_OKAY;
+   /* mp_ilogb truncates to zero, hence we need one extra put on top and one for `\0`. */
+   *size += 2 + (a->sign == MP_NEG);
 
 LBL_ERR:
-   mp_clear(&t);
    return err;
 }
-
 #endif
