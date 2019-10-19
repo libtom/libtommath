@@ -168,8 +168,6 @@ typedef private_mp_word mp_word;
 #ifndef MP_PREC
 #   ifndef MP_LOW_MEM
 #      define MP_PREC 32        /* default digits of precision */
-#   elif defined(MP_8BIT)
-#      define MP_PREC 16        /* default digits of precision */
 #   else
 #      define MP_PREC 8         /* default digits of precision */
 #   endif
@@ -219,11 +217,7 @@ extern MP_PRIVATE const uint8_t s_mp_rmap_reverse[];
 extern MP_PRIVATE const mp_digit s_mp_prime_tab[];
 
 /* number of primes */
-#ifdef MP_8BIT
-#  define MP_PRIME_TAB_SIZE 31
-#else
-#  define MP_PRIME_TAB_SIZE 256
-#endif
+#define MP_PRIME_TAB_SIZE 256
 
 #define MP_GET_ENDIANNESS(x) \
    do{\
