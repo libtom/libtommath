@@ -10,6 +10,7 @@ mp_err mp_div(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d)
 {
    mp_int ta, tb, tq, q;
    int     n, n2;
+   size_t size_a, size_b;
    mp_err err;
 
    /* is divisor zero ? */
@@ -37,7 +38,15 @@ mp_err mp_div(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d)
 
 
    mp_set(&tq, 1uL);
-   n = mp_count_bits(a) - mp_count_bits(b);
+   if ((err = mp_count_bits(a, &size_a)) != MP_OKAY)             goto LBL_ERR;
+   if ((err = mp_count_bits(b, &size_b)) != MP_OKAY)             goto LBL_ERR;
+
+   size_a = size_a - size_b;
+   /* TODO: can be skipped when all shift functions accept size_t */
+   if (size_a > INT_MAX) {
+      return MP_VAL;
+   }
+   n = (int)size_a;
    if ((err = mp_abs(a, &ta)) != MP_OKAY)                         goto LBL_ERR;
    if ((err = mp_abs(b, &tb)) != MP_OKAY)                         goto LBL_ERR;
    if ((err = mp_mul_2d(&tb, n, &tb)) != MP_OKAY)                 goto LBL_ERR;
@@ -87,6 +96,7 @@ mp_err mp_div(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d)
 {
    mp_int  q, x, y, t1, t2;
    int     n, t, i, norm;
+   size_t size_a;
    mp_sign neg;
    mp_err  err;
 
@@ -126,7 +136,12 @@ mp_err mp_div(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d)
    x.sign = y.sign = MP_ZPOS;
 
    /* normalize both x and y, ensure that y >= b/2, [b == 2**MP_DIGIT_BIT] */
-   norm = mp_count_bits(&y) % MP_DIGIT_BIT;
+   if ((err = mp_count_bits(&y, &size_a)) != MP_OKAY)            goto LBL_Y;
+   /* TODO: can be skipped when all shift functions accept size_t */
+   if (size_a > INT_MAX) {
+      return MP_VAL;
+   }
+   norm = (int)(size_a % MP_DIGIT_BIT);
    if (norm < (MP_DIGIT_BIT - 1)) {
       norm = (MP_DIGIT_BIT - 1) - norm;
       if ((err = mp_mul_2d(&x, norm, &x)) != MP_OKAY)             goto LBL_Y;

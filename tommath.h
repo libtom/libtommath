@@ -588,7 +588,7 @@ mp_err mp_log_u32(const mp_int *a, uint32_t base, uint32_t *c) MP_WUR;
 mp_err mp_expt_u32(const mp_int *a, uint32_t b, mp_int *c) MP_WUR;
 
 /* ---> radix conversion <--- */
-int mp_count_bits(const mp_int *a) MP_WUR;
+mp_err mp_count_bits(const mp_int *a, size_t *size) MP_WUR;
 
 size_t mp_ubin_size(const mp_int *a) MP_WUR;
 mp_err mp_from_ubin(mp_int *a, const unsigned char *buf, size_t size) MP_WUR;

@@ -19,7 +19,20 @@
 #else
 #define LTM_TIMING_RAND_SEED  23
 #endif
-
+/* TODO: temporary replacement */
+static int non_proper_mp_count_bits(const mp_int *a)
+{
+   size_t size_a;
+   mp_err err;
+   if ((err = mp_count_bits(a, &size_a)) != MP_OKAY) {
+      /* just to give trouble if reached */
+      return -1;
+   }
+   if (size_a > INT_MAX) {
+      return -1;
+   }
+   return (int) size_a;
+}
 
 static void ndraw(mp_int *a, const char *name)
 {
@@ -162,7 +175,7 @@ int main(int argc, char **argv)
             mp_mul_2d(&a,1119,&a);
             mp_add_d(&a,53,&a);
          }
-         cnt = mp_prime_rabin_miller_trials(mp_count_bits(&a));
+         cnt = mp_prime_rabin_miller_trials(non_proper_mp_count_bits(&a));
          ix = -cnt;
          for (; cnt >= ix; cnt += ix) {
             rr = 0u;
@@ -201,7 +214,7 @@ int main(int argc, char **argv)
                tt = gg;
          } while (++rr < 100000u);
          printf("Adding\t\t%4d-bit => %9" PRIu64 "/sec, %9" PRIu64 " cycles\n",
-                mp_count_bits(&a), CLK_PER_SEC / tt, tt);
+                non_proper_mp_count_bits(&a), CLK_PER_SEC / tt, tt);
          FPRINTF(log, "%6d %9" PRIu64 "\n", cnt * MP_DIGIT_BIT, tt);
          FFLUSH(log);
       }
@@ -225,7 +238,7 @@ int main(int argc, char **argv)
          } while (++rr < 100000u);
 
          printf("Subtracting\t\t%4d-bit => %9" PRIu64 "/sec, %9" PRIu64 " cycles\n",
-                mp_count_bits(&a), CLK_PER_SEC / tt, tt);
+                non_proper_mp_count_bits(&a), CLK_PER_SEC / tt, tt);
          FPRINTF(log, "%6d %9" PRIu64 "\n", cnt * MP_DIGIT_BIT, tt);
          FFLUSH(log);
       }
@@ -262,8 +275,8 @@ int main(int argc, char **argv)
                   tt = gg;
             } while (++rr < 100u);
             printf("Multiplying\t%4d-bit => %9" PRIu64 "/sec, %9" PRIu64 " cycles\n",
-                   mp_count_bits(&a), CLK_PER_SEC / tt, tt);
-            FPRINTF(log, "%6d %9" PRIu64 "\n", mp_count_bits(&a), tt);
+                   non_proper_mp_count_bits(&a), CLK_PER_SEC / tt, tt);
+            FPRINTF(log, "%6d %9" PRIu64 "\n", non_proper_mp_count_bits(&a), tt);
             FFLUSH(log);
          }
          FCLOSE(log);
@@ -282,8 +295,8 @@ int main(int argc, char **argv)
                   tt = gg;
             } while (++rr < 100u);
             printf("Squaring\t%4d-bit => %9" PRIu64 "/sec, %9" PRIu64 " cycles\n",
-                   mp_count_bits(&a), CLK_PER_SEC / tt, tt);
-            FPRINTF(log, "%6d %9" PRIu64 "\n", mp_count_bits(&a), tt);
+                   non_proper_mp_count_bits(&a), CLK_PER_SEC / tt, tt);
+            FPRINTF(log, "%6d %9" PRIu64 "\n", non_proper_mp_count_bits(&a), tt);
             FFLUSH(log);
          }
          FCLOSE(log);
@@ -332,7 +345,7 @@ int main(int argc, char **argv)
          SLEEP;
          mp_read_radix(&a, primes[n], 10);
          mp_zero(&b);
-         for (rr = 0; rr < (unsigned) mp_count_bits(&a); rr++) {
+         for (rr = 0; rr < (unsigned) non_proper_mp_count_bits(&a); rr++) {
             mp_mul_2(&b, &b);
             b.dp[0] |= lbit();
             b.used += 1;
@@ -354,14 +367,14 @@ int main(int argc, char **argv)
          mp_exptmod(&c, &b, &a, &e);  /* c^(p-1-b) mod a */
          mp_mulmod(&e, &d, &a, &d);   /* c^b * c^(p-1-b) == c^p-1 == 1 */
          if (mp_cmp_d(&d, 1uL) != MP_EQ) {
-            printf("Different (%d)!!!\n", mp_count_bits(&a));
+            printf("Different (%d)!!!\n", non_proper_mp_count_bits(&a));
             draw(&d);
             exit(0);
          }
          printf("Exponentiating\t%4d-bit => %9" PRIu64 "/sec, %9" PRIu64 " cycles\n",
-                mp_count_bits(&a), CLK_PER_SEC / tt, tt);
+                non_proper_mp_count_bits(&a), CLK_PER_SEC / tt, tt);
          FPRINTF((n < 3) ? logd : (n < 9) ? logc : (n < 16) ? logb : log,
-                 "%6d %9" PRIu64 "\n", mp_count_bits(&a), tt);
+                 "%6d %9" PRIu64 "\n", non_proper_mp_count_bits(&a), tt);
       }
       FCLOSE(log);
       FCLOSE(logb);
@@ -396,7 +409,7 @@ int main(int argc, char **argv)
             return 0;
          }
          printf("Inverting mod\t%4d-bit => %9" PRIu64 "/sec, %9" PRIu64 " cycles\n",
-                mp_count_bits(&a), CLK_PER_SEC / tt, tt);
+                non_proper_mp_count_bits(&a), CLK_PER_SEC / tt, tt);
          FPRINTF(log, "%6d %9" PRIu64 "\n", cnt * MP_DIGIT_BIT, tt);
       }
       FCLOSE(log);

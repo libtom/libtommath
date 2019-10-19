@@ -9,12 +9,20 @@ mp_err mp_reduce_2k_setup(const mp_int *a, mp_digit *d)
    mp_err err;
    mp_int tmp;
    int    p;
+   size_t size_a;
 
    if ((err = mp_init(&tmp)) != MP_OKAY) {
       return err;
    }
+   if ((err = mp_count_bits(a, &size_a)) != MP_OKAY) {
+      return err;
+   }
+   /* TODO: can be skipped when all relevant functions accept size_t */
+   if (size_a > INT_MAX) {
+      return MP_VAL;
+   }
+   p = (int)size_a;
 
-   p = mp_count_bits(a);
    if ((err = mp_2expt(&tmp, p)) != MP_OKAY) {
       mp_clear(&tmp);
       return err;

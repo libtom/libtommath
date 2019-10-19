@@ -4,18 +4,24 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* returns the number of bits in an int */
-int mp_count_bits(const mp_int *a)
+mp_err mp_count_bits(const mp_int *a, size_t *size)
 {
-   int     r;
+   size_t   r;
    mp_digit q;
+
+   *size = 0;
 
    /* shortcut */
    if (MP_IS_ZERO(a)) {
-      return 0;
+      return MP_OKAY;
    }
 
    /* get number of digits and add that */
-   r = (a->used - 1) * MP_DIGIT_BIT;
+   r = a->used;
+   if (r > (SIZE_MAX/MP_DIGIT_BIT)) {
+      return MP_BUF;
+   }
+   r = (r - 1u) * MP_DIGIT_BIT;
 
    /* take the last digit and count the bits in it */
    q = a->dp[a->used - 1];
@@ -23,6 +29,9 @@ int mp_count_bits(const mp_int *a)
       ++r;
       q >>= 1u;
    }
-   return r;
+
+   *size = r;
+
+   return MP_OKAY;
 }
 #endif

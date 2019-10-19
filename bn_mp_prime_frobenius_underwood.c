@@ -25,6 +25,7 @@ mp_err mp_prime_frobenius_underwood(const mp_int *N, mp_bool *result)
    mp_int T1z, T2z, Np1z, sz, tz;
 
    int a, ap2, length, i, j;
+   size_t size_N;
    mp_err err;
 
    *result = MP_NO;
@@ -74,7 +75,14 @@ mp_err mp_prime_frobenius_underwood(const mp_int *N, mp_bool *result)
 
    mp_set(&sz, 1uL);
    mp_set(&tz, 2uL);
-   length = mp_count_bits(&Np1z);
+   if ((err = mp_count_bits(&Np1z, &size_N)) != MP_OKAY) {
+      return MP_VAL;
+   }
+   /* TODO: can be skipped when all relevant functions accept size_t */
+   if (size_N > INT_MAX) {
+      return MP_VAL;
+   }
+   length = (int)size_N;
 
    for (i = length - 2; i >= 0; i--) {
       /*

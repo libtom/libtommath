@@ -9,12 +9,20 @@ mp_err mp_reduce_2k(mp_int *a, const mp_int *n, mp_digit d)
    mp_int q;
    mp_err err;
    int    p;
+   size_t size_a;
 
    if ((err = mp_init(&q)) != MP_OKAY) {
       return err;
    }
 
-   p = mp_count_bits(n);
+   if ((err = mp_count_bits(n, &size_a)) != MP_OKAY) {
+      goto LBL_ERR;
+   }
+   /* TODO: can be skipped when all relevant functions accept size_t */
+   if (size_a > INT_MAX) {
+      return MP_VAL;
+   }
+   p = (int)size_a;
 top:
    /* q = a/2**p, a = a mod 2**p */
    if ((err = mp_div_2d(a, p, &q, a)) != MP_OKAY) {

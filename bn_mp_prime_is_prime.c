@@ -4,7 +4,7 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* portable integer log of two with small footprint */
-static unsigned int s_floor_ilog2(int value)
+static unsigned int s_floor_ilog2(size_t value)
 {
    unsigned int r = 0;
    while ((value >>= 1) != 0) {
@@ -17,7 +17,8 @@ static unsigned int s_floor_ilog2(int value)
 mp_err mp_prime_is_prime(const mp_int *a, int t, mp_bool *result)
 {
    mp_int  b;
-   int     ix, p_max = 0, size_a, len;
+   int     ix, p_max = 0, len;
+   size_t size_a, size_b;
    mp_bool res;
    mp_err  err;
    unsigned int fips_rand, mask;
@@ -187,7 +188,9 @@ mp_err mp_prime_is_prime(const mp_int *a, int t, mp_bool *result)
        * have compilers that one cannot call standard compliant by any means.
        * Hence the ugly type-fiddling in the following code.
        */
-      size_a = mp_count_bits(a);
+      if ((err = mp_count_bits(a, &size_a)) != MP_OKAY) {
+         goto LBL_B;
+      }
       mask = (1u << s_floor_ilog2(size_a)) - 1u;
       /*
          Assuming the General Rieman hypothesis (never thought to write that in a
@@ -250,9 +253,15 @@ mp_err mp_prime_is_prime(const mp_int *a, int t, mp_bool *result)
           * That number might got too big and the witness has to be
           * smaller than "a"
           */
-         len = mp_count_bits(&b);
-         if (len >= size_a) {
-            len = (len - size_a) + 1;
+         if ((err = mp_count_bits(&b, &size_b)) != MP_OKAY) {
+            goto LBL_B;
+         }
+         /* TODO: can be skipped when all relevant functions accept size_t */
+         if (size_b > INT_MAX) {
+            return MP_VAL;
+         }
+         if (size_b >= size_a) {
+            len = (int)(size_b - size_a) + 1;
             if ((err = mp_div_2d(&b, len, &b, NULL)) != MP_OKAY) {
                goto LBL_B;
             }

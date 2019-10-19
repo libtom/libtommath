@@ -5,7 +5,12 @@
 
 size_t mp_pack_count(const mp_int *a, size_t nails, size_t size)
 {
-   size_t bits = (size_t)mp_count_bits(a);
+   size_t bits;
+   mp_err err;
+   /* TODO: make this function return an mp_err and put the computed value in e.g. size_t *count */
+   if ((err = mp_count_bits(a, &bits)) != MP_OKAY) {
+      return SIZE_MAX;
+   }
    return ((bits / ((size * 8u) - nails)) + (((bits % ((size * 8u) - nails)) != 0u) ? 1u : 0u));
 }
 

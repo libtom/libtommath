@@ -25,6 +25,7 @@ mp_err s_mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_i
    mp_digit buf, mp;
    int     bitbuf, bitcpy, bitcnt, mode, digidx, x, y, winsize;
    mp_err   err;
+   size_t size_a;
 
    /* use a pointer to the reduction algorithm.  This allows us to use
     * one of many reduction algorithms without modding the guts of
@@ -33,7 +34,15 @@ mp_err s_mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_i
    mp_err(*redux)(mp_int *x, const mp_int *n, mp_digit rho);
 
    /* find window size */
-   x = mp_count_bits(X);
+   if ((err = mp_count_bits(X, &size_a)) != MP_OKAY) {
+      return err;
+   }
+   /* TODO: change type of "x" to size_t and adapt code */
+   if (size_a > INT_MAX) {
+      return MP_VAL;
+   }
+   x = (int)size_a;
+
    if (x <= 7) {
       winsize = 2;
    } else if (x <= 36) {

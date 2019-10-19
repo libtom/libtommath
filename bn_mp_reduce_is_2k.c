@@ -6,15 +6,19 @@
 /* determines if mp_reduce_2k can be used */
 mp_bool mp_reduce_is_2k(const mp_int *a)
 {
-   int ix, iy, iw;
+   size_t ix, iy, iw;
    mp_digit iz;
+   mp_err err;
 
    if (a->used == 0) {
       return MP_NO;
    } else if (a->used == 1) {
       return MP_YES;
    } else if (a->used > 1) {
-      iy = mp_count_bits(a);
+      /* TODO: make this function return an mp_err and put the result in e.g.: mp_bool *can_be_used*/
+      if ((err = mp_count_bits(a, &iy)) != MP_OKAY) {
+         /* Nothing, but see TODO above */
+      }
       iz = 1;
       iw = 1;
 

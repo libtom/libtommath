@@ -75,6 +75,7 @@ mp_err mp_log_u32(const mp_int *a, uint32_t base, uint32_t *c)
    mp_err err;
    mp_ord cmp;
    uint32_t high, low, mid;
+   size_t size_a;
    mp_int bracket_low, bracket_high, bracket_mid, t, bi_base;
 
    err = MP_OKAY;
@@ -97,7 +98,14 @@ mp_err mp_log_u32(const mp_int *a, uint32_t base, uint32_t *c)
       for (y=0; (y < 7) && ((base & 1u) == 0u); y++) {
          base >>= 1;
       }
-      bit_count = mp_count_bits(a) - 1;
+      if ((err = mp_count_bits(a, &size_a)) != MP_OKAY) {
+         return err;
+      }
+      /* TODO: can be skipped when all shift functions accept size_t */
+      if (size_a > INT_MAX) {
+         return MP_VAL;
+      }
+      bit_count = (int)size_a - 1;
       *c = (uint32_t)(bit_count/y);
       return MP_OKAY;
    }

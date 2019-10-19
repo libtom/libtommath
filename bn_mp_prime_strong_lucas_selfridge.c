@@ -54,6 +54,7 @@ mp_err mp_prime_strong_lucas_selfridge(const mp_int *a, mp_bool *result)
    mp_int Dz, gcd, Np1, Uz, Vz, U2mz, V2mz, Qmz, Q2mz, Qkdz, T1z, T2z, T3z, T4z, Q2kdz;
    /* CZ TODO: Some of them need the full 32 bit, hence the (temporary) exclusion of MP_8BIT */
    int32_t D, Ds, J, sign, P, Q, r, s, u, Nbits;
+   size_t size_a;
    mp_err err;
    mp_bool oddness;
 
@@ -169,7 +170,12 @@ mp_err mp_prime_strong_lucas_selfridge(const mp_int *a, mp_bool *result)
    /* Initializes calculation of Q^d */
    mp_set_i32(&Qkdz, Q);
 
-   Nbits = mp_count_bits(&Dz);
+   if ((err = mp_count_bits(&Dz, &size_a)) != MP_OKAY)           goto LBL_LS_ERR;
+   /* TODO: can be skipped when all relevant functions accept size_t */
+   if (size_a > INT_MAX) {
+      return MP_VAL;
+   }
+   Nbits = (int)size_a;
 
    for (u = 1; u < Nbits; u++) { /* zero bit off, already accounted for */
       /* Formulas for doubling of indices (carried out mod N). Note that

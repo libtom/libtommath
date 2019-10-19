@@ -12,10 +12,18 @@
 mp_err mp_montgomery_calc_normalization(mp_int *a, const mp_int *b)
 {
    int    x, bits;
+   size_t size_a;
    mp_err err;
 
    /* how many bits of last digit does b use */
-   bits = mp_count_bits(b) % MP_DIGIT_BIT;
+   if ((err = mp_count_bits(b, &size_a)) != MP_OKAY) {
+      return MP_VAL;
+   }
+   /* TODO: can be skipped when all relevant functions accept size_t */
+   if (size_a > INT_MAX) {
+      return MP_VAL;
+   }
+   bits = (int)(size_a % MP_DIGIT_BIT);
 
    if (b->used > 1) {
       if ((err = mp_2expt(a, ((b->used - 1) * MP_DIGIT_BIT) + bits - 1)) != MP_OKAY) {

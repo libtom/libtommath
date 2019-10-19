@@ -1,6 +1,21 @@
 #include <inttypes.h>
 #include "shared.h"
 
+/* TODO: temporary replacement */
+static int non_proper_mp_count_bits(const mp_int *a)
+{
+   size_t size_a;
+   mp_err err;
+   if ((err = mp_count_bits(a, &size_a)) != MP_OKAY) {
+      /* just to give trouble if reached */
+      return -1;
+   }
+   if (size_a > INT_MAX) {
+      return -1;
+   }
+   return (int) size_a;
+}
+
 static long rand_long(void)
 {
    long x;
@@ -927,8 +942,8 @@ static int test_mp_prime_rand(void)
          printf("\nfailed with error: %s\n", mp_error_to_string(err));
          goto LBL_ERR;
       }
-      if (mp_count_bits(&a) != ix) {
-         printf("Prime is %d not %d bits!!!\n", mp_count_bits(&a), ix);
+      if (non_proper_mp_count_bits(&a) != ix) {
+         printf("Prime is %d not %d bits!!!\n", non_proper_mp_count_bits(&a), ix);
          goto LBL_ERR;
       }
    }
@@ -957,7 +972,7 @@ static int test_mp_prime_is_prime(void)
    mp_read_radix(&a,
                  "91xLNF3roobhzgTzoFIG6P13ZqhOVYSN60Fa7Cj2jVR1g0k89zdahO9/kAiRprpfO1VAp1aBHucLFV/qLKLFb+zonV7R2Vxp1K13ClwUXStpV0oxTNQVjwybmFb5NBEHImZ6V7P6+udRJuH8VbMEnS0H8/pSqQrg82OoQQ2fPpAk6G1hkjqoCv5s/Yr",
                  64);
-   mp_prime_is_prime(&a, mp_prime_rabin_miller_trials(mp_count_bits(&a)), &cnt);
+   mp_prime_is_prime(&a, mp_prime_rabin_miller_trials(non_proper_mp_count_bits(&a)), &cnt);
    if (cnt == MP_YES) {
       printf("Arnault's pseudoprime is not prime but mp_prime_is_prime says it is.\n");
       goto LBL_ERR;
@@ -967,7 +982,7 @@ static int test_mp_prime_is_prime(void)
    mp_set(&a, 1uL);
    mp_mul_2d(&a,1119,&a);
    mp_add_d(&a, 53uL, &a);
-   err = mp_prime_is_prime(&a, mp_prime_rabin_miller_trials(mp_count_bits(&a)), &cnt);
+   err = mp_prime_is_prime(&a, mp_prime_rabin_miller_trials(non_proper_mp_count_bits(&a)), &cnt);
    /* small problem */
    if (err != MP_OKAY) {
       printf("\nfailed with error: %s\n", mp_error_to_string(err));
@@ -990,14 +1005,14 @@ static int test_mp_prime_is_prime(void)
          printf("\nfailed with error: %s\n", mp_error_to_string(err));
          goto LBL_ERR;
       }
-      if (mp_count_bits(&a) != ix) {
-         printf("Prime is %d not %d bits!!!\n", mp_count_bits(&a), ix);
+      if (non_proper_mp_count_bits(&a) != ix) {
+         printf("Prime is %d not %d bits!!!\n", non_proper_mp_count_bits(&a), ix);
          goto LBL_ERR;
       }
       /* let's see if it's really a safe prime */
       mp_sub_d(&a, 1uL, &b);
       mp_div_2(&b, &b);
-      err = mp_prime_is_prime(&b, mp_prime_rabin_miller_trials(mp_count_bits(&b)), &cnt);
+      err = mp_prime_is_prime(&b, mp_prime_rabin_miller_trials(non_proper_mp_count_bits(&b)), &cnt);
       /* small problem */
       if (err != MP_OKAY) {
          printf("\nfailed with error: %s\n", mp_error_to_string(err));
@@ -1539,7 +1554,7 @@ static mp_err s_rs(const mp_int *a, int radix, uint32_t *size)
       return MP_OKAY;
    }
    if (radix == 2) {
-      *size = (uint32_t)mp_count_bits(a) + 1u;
+      *size = (uint32_t)non_proper_mp_count_bits(a) + 1u;
       return MP_OKAY;
    }
    if ((res = mp_init_copy(&t, a)) != MP_OKAY) {
@@ -2179,14 +2194,14 @@ static int test_s_mp_toom_mul(void)
    if ((err = mp_rand(&a, 1196)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   if ((err = mp_mul_2d(&a,71787  - mp_count_bits(&a), &a)) != MP_OKAY) {
+   if ((err = mp_mul_2d(&a,71787  - non_proper_mp_count_bits(&a), &a)) != MP_OKAY) {
       goto LTM_ERR;
    }
 
    if ((err = mp_rand(&b, 1338)) != MP_OKAY) {
       goto LTM_ERR;
    }
-   if ((err = mp_mul_2d(&b, 80318 - mp_count_bits(&b), &b)) != MP_OKAY) {
+   if ((err = mp_mul_2d(&b, 80318 - non_proper_mp_count_bits(&b), &b)) != MP_OKAY) {
       goto LTM_ERR;
    }
    if ((err = mp_mul_2d(&b, 6310, &b)) != MP_OKAY) {

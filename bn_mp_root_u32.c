@@ -17,6 +17,7 @@ mp_err mp_root_u32(const mp_int *a, uint32_t b, mp_int *c)
    mp_int t1, t2, t3, a_;
    mp_ord cmp;
    int    ilog2;
+   size_t size_a;
    mp_err err;
 
    /* input must be positive if b is even */
@@ -33,7 +34,14 @@ mp_err mp_root_u32(const mp_int *a, uint32_t b, mp_int *c)
    a_.sign = MP_ZPOS;
 
    /* Compute seed: 2^(log_2(n)/b + 2)*/
-   ilog2 = mp_count_bits(a);
+   if ((err = mp_count_bits(a, &size_a)) != MP_OKAY) {
+      return err;
+   }
+   /* TODO: can be skipped when all relevant functions accept size_t */
+   if (size_a > INT_MAX) {
+      return MP_VAL;
+   }
+   ilog2 = (int)size_a;
 
    /*
      If "b" is larger than INT_MAX it is also larger than
