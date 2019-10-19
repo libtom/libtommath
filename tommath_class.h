@@ -945,7 +945,6 @@
 #   define MP_MOD_D_C
 #   define MP_MULMOD_C
 #   define MP_SET_C
-#   define MP_SET_U32_C
 #   define MP_SQRMOD_C
 #   define MP_SUB_D_C
 #   define MP_ZERO_C
