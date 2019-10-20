@@ -61,7 +61,8 @@ static int s_offset = 1;
 #define s_mp_mul(a, b, c) s_mp_mul_digs(a, b, c, (a)->used + (b)->used + 1)
 static uint64_t s_time_mul(int size)
 {
-   int x, e;
+   int x;
+   mp_err  e;
    mp_int  a, b, c, d;
    uint64_t t1;
 
@@ -106,7 +107,8 @@ LBL_ERR:
 
 static uint64_t s_time_sqr(int size)
 {
-   int x, e;
+   int x;
+   mp_err  e;
    mp_int  a, b, c;
    uint64_t t1;
 
