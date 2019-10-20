@@ -2,7 +2,7 @@
 
 void ndraw(const mp_int *a, const char *name)
 {
-   char *buf = NULL;
+   char *buf;
    int size;
 
    mp_radix_size(a, 10, &size);
