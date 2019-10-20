@@ -156,7 +156,7 @@ struct tune_args {
    int increment_print;
 } args;
 
-static void s_run(const char *name, uint64_t (*op)(int), int *cutoff)
+static void s_run(const char *name, uint64_t (*op)(int size), int *cutoff)
 {
    int x, count = 0;
    uint64_t t1, t2;
@@ -446,7 +446,7 @@ int main(int argc, char **argv)
       struct {
          const char *name;
          int *cutoff, *update;
-         uint64_t (*fn)(int);
+         uint64_t (*fn)(int size);
       } test[] = {
 #define T_MUL_SQR(n, o, f)  { #n, &o##_CUTOFF, &(updated.o), MP_HAS(S_MP_##o) ? f : NULL }
          /*
