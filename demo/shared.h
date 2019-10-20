@@ -17,5 +17,5 @@
 #define MP_WUR /* TODO: result checks disabled for now */
 #include "tommath_private.h"
 
-extern void ndraw(mp_int* a, const char* name);
+extern void ndraw(const mp_int* a, const char* name);
 extern void print_header(void);

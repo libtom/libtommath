@@ -6,7 +6,7 @@
 #define LTM_MTEST_RAND_SEED  23
 #endif
 
-static void draw(mp_int *a)
+static void draw(const mp_int *a)
 {
    ndraw(a, "");
 }

@@ -1,6 +1,6 @@
 #include "shared.h"
 
-void ndraw(mp_int *a, const char *name)
+void ndraw(const mp_int *a, const char *name)
 {
    char *buf = NULL;
    int size;
