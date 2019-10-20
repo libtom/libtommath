@@ -123,7 +123,7 @@ tune: $(LIBNAME)
 coveralls: lcov
 	coveralls-lcov
 
-docdvi poster docs mandvi manual:
+poster docs manual:
 	$(MAKE) -C doc/ $@ V=$(V)
 
 .PHONY: pre_gen
@@ -133,7 +133,7 @@ pre_gen:
 	sed -e 's/[[:blank:]]*$$//' mpi.c > pre_gen/mpi.c
 	rm mpi.c
 
-zipup: clean astyle new_file manual poster
+zipup: clean astyle new_file docs
 	@# Update the index, so diff-index won't fail in case the pdf has been created.
 	@#   As the pdf creation modifies the tex files, git sometimes detects the
 	@#   modified files, but misses that it's put back to its original version.

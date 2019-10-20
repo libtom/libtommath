@@ -9,19 +9,10 @@ ifeq ($(PLATFORM), Darwin)
 err:
 	$(error Docs can't be built on Mac)
 
-docdvi poster docs mandvi manual: err
+poster docs mandvi manual: err
 endif
 
-# makes the LTM book DVI file, requires tetex, perl and makeindex [part of tetex I think]
-docdvi: tommath.src
-	${MAKE} -C pics/ MAKE=${MAKE}
-	echo "hello" ${silent_stdout}
-	perl booker.pl
-	touch tommath.ind
-	latex tommath ${silent_stdout}
-	latex tommath ${silent_stdout}
-	makeindex tommath
-	latex tommath ${silent_stdout}
+docs: poster manual
 
 # poster, makes the single page PDF poster
 poster: poster.tex
@@ -38,12 +29,6 @@ poster: poster.tex
 	sed -b -i 's,^/ID \[.*\]$$,/ID [<0> <0>],g' poster.pdf
 	mv poster.bak poster.tex
 	rm -f poster.aux poster.log poster.out
-
-# makes the LTM book PDF file, requires tetex, cleans up the LaTeX temp files
-docs: docdvi
-	dvipdf tommath
-	rm -f tommath.log tommath.aux tommath.dvi tommath.idx tommath.toc tommath.lof tommath.ind tommath.ilg
-	${MAKE} -C pics/ clean MAKE=${MAKE}
 
 #LTM user manual
 mandvi: bn.tex
