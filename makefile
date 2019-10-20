@@ -123,7 +123,7 @@ tune: $(LIBNAME)
 coveralls: lcov
 	coveralls-lcov
 
-poster docs manual:
+docs manual:
 	$(MAKE) -C doc/ $@ V=$(V)
 
 .PHONY: pre_gen

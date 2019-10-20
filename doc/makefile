@@ -9,26 +9,10 @@ ifeq ($(PLATFORM), Darwin)
 err:
 	$(error Docs can't be built on Mac)
 
-poster docs mandvi manual: err
+docs mandvi manual: err
 endif
 
-docs: poster manual
-
-# poster, makes the single page PDF poster
-poster: poster.tex
-	cp poster.tex poster.bak
-	touch --reference=poster.tex poster.bak
-	(printf "%s" "\def\fixedpdfdate{"; date +'D:%Y%m%d%H%M%S%:z' -d @$$(stat --format=%Y poster.tex) | sed "s/:\([0-9][0-9]\)$$/'\1'}/g") > poster-deterministic.tex
-	printf "%s\n" "\pdfinfo{" >> poster-deterministic.tex
-	printf "%s\n" "  /CreationDate (\fixedpdfdate)" >> poster-deterministic.tex
-	printf "%s\n}\n" "  /ModDate (\fixedpdfdate)" >> poster-deterministic.tex
-	cat poster.tex >> poster-deterministic.tex
-	mv poster-deterministic.tex poster.tex
-	touch --reference=poster.bak poster.tex
-	pdflatex poster
-	sed -b -i 's,^/ID \[.*\]$$,/ID [<0> <0>],g' poster.pdf
-	mv poster.bak poster.tex
-	rm -f poster.aux poster.log poster.out
+docs: manual
 
 #LTM user manual
 mandvi: bn.tex
