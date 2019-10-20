@@ -62,25 +62,25 @@ void does_not_exist(void);
 
 static int test_feature_detection(void)
 {
-#define BN_TEST_FEATURE1_C
+#define TEST_FEATURE1_C
    if (!MP_HAS(TEST_FEATURE1)) {
       does_not_exist();
       return EXIT_FAILURE;
    }
 
-#define BN_TEST_FEATURE2_C 1
+#define TEST_FEATURE2_C 1
    if (MP_HAS(TEST_FEATURE2)) {
       does_not_exist();
       return EXIT_FAILURE;
    }
 
-#define BN_TEST_FEATURE3_C 0
+#define TEST_FEATURE3_C 0
    if (MP_HAS(TEST_FEATURE3)) {
       does_not_exist();
       return EXIT_FAILURE;
    }
 
-#define BN_TEST_FEATURE4_C something
+#define TEST_FEATURE4_C something
    if (MP_HAS(TEST_FEATURE4)) {
       does_not_exist();
       return EXIT_FAILURE;
@@ -1254,30 +1254,30 @@ static int test_mp_read_radix(void)
    mp_err err;
 
    mp_int a;
-   if (mp_init_multi(&a, NULL)!= MP_OKAY)                                       goto LTM_ERR;
+   if (mp_init_multi(&a, NULL)!= MP_OKAY)                                       goto LBL_ERR;
 
-   if ((err = mp_read_radix(&a, "123456", 10)) != MP_OKAY)                     goto LTM_ERR;
+   if ((err = mp_read_radix(&a, "123456", 10)) != MP_OKAY)                     goto LBL_ERR;
 
-   if ((err = mp_to_radix(&a, buf, SIZE_MAX, &written, 10)) != MP_OKAY)        goto LTM_ERR;
+   if ((err = mp_to_radix(&a, buf, SIZE_MAX, &written, 10)) != MP_OKAY)        goto LBL_ERR;
    printf(" '123456' a == %s, length = %zu\n", buf, written);
 
-   /* See comment in bn_mp_to_radix.c */
+   /* See comment in mp_to_radix.c */
    /*
-      if( (err = mp_to_radix(&a, buf, 3u, &written, 10) ) != MP_OKAY)              goto LTM_ERR;
+      if( (err = mp_to_radix(&a, buf, 3u, &written, 10) ) != MP_OKAY)              goto LBL_ERR;
       printf(" '56' a == %s, length = %zu\n", buf, written);
 
-      if( (err = mp_to_radix(&a, buf, 4u, &written, 10) ) != MP_OKAY)              goto LTM_ERR;
+      if( (err = mp_to_radix(&a, buf, 4u, &written, 10) ) != MP_OKAY)              goto LBL_ERR;
       printf(" '456' a == %s, length = %zu\n", buf, written);
-      if( (err = mp_to_radix(&a, buf, 30u, &written, 10) ) != MP_OKAY)             goto LTM_ERR;
+      if( (err = mp_to_radix(&a, buf, 30u, &written, 10) ) != MP_OKAY)             goto LBL_ERR;
       printf(" '123456' a == %s, length = %zu, error = %s\n",
              buf, written, mp_error_to_string(err));
    */
-   if ((err = mp_read_radix(&a, "-123456", 10)) != MP_OKAY)                    goto LTM_ERR;
-   if ((err = mp_to_radix(&a, buf, SIZE_MAX, &written, 10)) != MP_OKAY)        goto LTM_ERR;
+   if ((err = mp_read_radix(&a, "-123456", 10)) != MP_OKAY)                    goto LBL_ERR;
+   if ((err = mp_to_radix(&a, buf, SIZE_MAX, &written, 10)) != MP_OKAY)        goto LBL_ERR;
    printf(" '-123456' a == %s, length = %zu\n", buf, written);
 
-   if ((err = mp_read_radix(&a, "0", 10)) != MP_OKAY)                          goto LTM_ERR;
-   if ((err = mp_to_radix(&a, buf, SIZE_MAX, &written, 10)) != MP_OKAY)        goto LTM_ERR;
+   if ((err = mp_read_radix(&a, "0", 10)) != MP_OKAY)                          goto LBL_ERR;
+   if ((err = mp_to_radix(&a, buf, SIZE_MAX, &written, 10)) != MP_OKAY)        goto LBL_ERR;
    printf(" '0' a == %s, length = %zu\n", buf, written);
 
    while (0) {
@@ -1291,7 +1291,7 @@ static int test_mp_read_radix(void)
 
    mp_clear(&a);
    return EXIT_SUCCESS;
-LTM_ERR:
+LBL_ERR:
    mp_clear(&a);
    return EXIT_FAILURE;
 }
@@ -1696,61 +1696,61 @@ static int test_mp_incr(void)
    mp_err e = MP_OKAY;
 
    if ((e = mp_init_multi(&a, &b, NULL)) != MP_OKAY) {
-      goto LTM_ERR;
+      goto LBL_ERR;
    }
 
    /* Does it increment inside the limits of a MP_xBIT limb? */
    mp_set(&a, MP_MASK/2);
    if ((e = mp_incr(&a)) != MP_OKAY) {
-      goto LTM_ERR;
+      goto LBL_ERR;
    }
    if (mp_cmp_d(&a, (MP_MASK/2uL) + 1uL) != MP_EQ) {
-      goto LTM_ERR;
+      goto LBL_ERR;
    }
 
    /* Does it increment outside of the limits of a MP_xBIT limb? */
    mp_set(&a, MP_MASK);
    mp_set(&b, MP_MASK);
    if ((e = mp_incr(&a)) != MP_OKAY) {
-      goto LTM_ERR;
+      goto LBL_ERR;
    }
    if ((e = mp_add_d(&b, 1uL, &b)) != MP_OKAY) {
-      goto LTM_ERR;
+      goto LBL_ERR;
    }
    if (mp_cmp(&a, &b) != MP_EQ) {
-      goto LTM_ERR;
+      goto LBL_ERR;
    }
 
    /* Does it increment from -1 to 0? */
    mp_set(&a, 1uL);
    a.sign = MP_NEG;
    if ((e = mp_incr(&a)) != MP_OKAY) {
-      goto LTM_ERR;
+      goto LBL_ERR;
    }
    if (mp_cmp_d(&a, 0uL) != MP_EQ) {
-      goto LTM_ERR;
+      goto LBL_ERR;
    }
 
    /* Does it increment from -(MP_MASK + 1) to -MP_MASK? */
    mp_set(&a, MP_MASK);
    if ((e = mp_add_d(&a, 1uL, &a)) != MP_OKAY) {
-      goto LTM_ERR;
+      goto LBL_ERR;
    }
    a.sign = MP_NEG;
    if ((e = mp_incr(&a)) != MP_OKAY) {
-      goto LTM_ERR;
+      goto LBL_ERR;
    }
    if (a.sign != MP_NEG) {
-      goto LTM_ERR;
+      goto LBL_ERR;
    }
    a.sign = MP_ZPOS;
    if (mp_cmp_d(&a, MP_MASK) != MP_EQ) {
-      goto LTM_ERR;
+      goto LBL_ERR;
    }
 
    mp_clear_multi(&a, &b, NULL);
    return EXIT_SUCCESS;
-LTM_ERR:
+LBL_ERR:
    mp_clear_multi(&a, &b, NULL);
    return EXIT_FAILURE;
 }
@@ -1761,42 +1761,42 @@ static int test_mp_decr(void)
    mp_err e = MP_OKAY;
 
    if ((e = mp_init_multi(&a, &b, NULL)) != MP_OKAY) {
-      goto LTM_ERR;
+      goto LBL_ERR;
    }
 
    /* Does it decrement inside the limits of a MP_xBIT limb? */
    mp_set(&a, MP_MASK/2);
    if ((e = mp_decr(&a)) != MP_OKAY) {
-      goto LTM_ERR;
+      goto LBL_ERR;
    }
    if (mp_cmp_d(&a, (MP_MASK/2uL) - 1uL) != MP_EQ) {
-      goto LTM_ERR;
+      goto LBL_ERR;
    }
 
    /* Does it decrement outside of the limits of a MP_xBIT limb? */
    mp_set(&a, MP_MASK);
    if ((e = mp_add_d(&a, 1uL, &a)) != MP_OKAY) {
-      goto LTM_ERR;
+      goto LBL_ERR;
    }
    if ((e = mp_decr(&a)) != MP_OKAY) {
-      goto LTM_ERR;
+      goto LBL_ERR;
    }
    if (mp_cmp_d(&a, MP_MASK) != MP_EQ) {
-      goto LTM_ERR;
+      goto LBL_ERR;
    }
 
    /* Does it decrement from 0 to -1? */
    mp_zero(&a);
    if ((e = mp_decr(&a)) != MP_OKAY) {
-      goto LTM_ERR;
+      goto LBL_ERR;
    }
    if (a.sign == MP_NEG) {
       a.sign = MP_ZPOS;
       if (mp_cmp_d(&a, 1uL) != MP_EQ) {
-         goto LTM_ERR;
+         goto LBL_ERR;
       }
    } else {
-      goto LTM_ERR;
+      goto LBL_ERR;
    }
 
 
@@ -1806,18 +1806,18 @@ static int test_mp_decr(void)
    mp_set(&b, MP_MASK);
    b.sign = MP_NEG;
    if ((e = mp_sub_d(&b, 1uL, &b)) != MP_OKAY) {
-      goto LTM_ERR;
+      goto LBL_ERR;
    }
    if ((e = mp_decr(&a)) != MP_OKAY) {
-      goto LTM_ERR;
+      goto LBL_ERR;
    }
    if (mp_cmp(&a, &b) != MP_EQ) {
-      goto LTM_ERR;
+      goto LBL_ERR;
    }
 
    mp_clear_multi(&a, &b, NULL);
    return EXIT_SUCCESS;
-LTM_ERR:
+LBL_ERR:
    mp_clear_multi(&a, &b, NULL);
    return EXIT_FAILURE;
 }
@@ -2044,13 +2044,13 @@ static int test_mp_root_u32(void)
          mp_read_radix(&r, root[i][j-3], 10);
          if (mp_cmp(&r, &c) != MP_EQ) {
             fprintf(stderr, "mp_root_u32 failed at input #%d, root #%d\n", i, j);
-            goto LTM_ERR;
+            goto LBL_ERR;
          }
       }
    }
    mp_clear_multi(&a, &c, &r, NULL);
    return EXIT_SUCCESS;
-LTM_ERR:
+LBL_ERR:
    mp_clear_multi(&a, &c, &r, NULL);
    return EXIT_FAILURE;
 }
@@ -2067,31 +2067,31 @@ static int test_s_mp_balance_mul(void)
       "HzrSq9WVt1jDTVlwUxSKqxctu2GVD+N8+SVGaPFRqdxyld6IxDBbj27BPJzYUdR96k3sWpkO8XnDBvupGPnehpQe4KlO/KmN1PjFov/UTZYM+LYzkFcBPyV6hkkL8ePC1rlFLAHzgJMBCXVp4mRqtkQrDsZXXlcqlbTFu69wF6zDEysiX2cAtn/kP9ldblJiwYPCD8hG";
 
    if ((e = mp_init_multi(&a, &b, &c, NULL)) != MP_OKAY) {
-      goto LTM_ERR;
+      goto LBL_ERR;
    }
 
    if ((e = mp_read_radix(&a, na, 64)) != MP_OKAY) {
-      goto LTM_ERR;
+      goto LBL_ERR;
    }
    if ((e = mp_read_radix(&b, nb, 64)) != MP_OKAY) {
-      goto LTM_ERR;
+      goto LBL_ERR;
    }
 
    if ((e = s_mp_balance_mul(&a, &b, &c)) != MP_OKAY) {
-      goto LTM_ERR;
+      goto LBL_ERR;
    }
 
    if ((e = mp_read_radix(&b, nc, 64)) != MP_OKAY) {
-      goto LTM_ERR;
+      goto LBL_ERR;
    }
 
    if (mp_cmp(&b, &c) != MP_EQ) {
-      goto LTM_ERR;
+      goto LBL_ERR;
    }
 
    mp_clear_multi(&a, &b, &c, NULL);
    return EXIT_SUCCESS;
-LTM_ERR:
+LBL_ERR:
    mp_clear_multi(&a, &b, &c, NULL);
    return EXIT_FAILURE;
 }
@@ -2103,30 +2103,30 @@ static int test_s_mp_karatsuba_mul(void)
    int size, err;
 
    if ((err = mp_init_multi(&a, &b, &c, &d, NULL)) != MP_OKAY) {
-      goto LTM_ERR;
+      goto LBL_ERR;
    }
    for (size = MP_KARATSUBA_MUL_CUTOFF; size < MP_KARATSUBA_MUL_CUTOFF + 20; size++) {
       if ((err = mp_rand(&a, size)) != MP_OKAY) {
-         goto LTM_ERR;
+         goto LBL_ERR;
       }
       if ((err = mp_rand(&b, size)) != MP_OKAY) {
-         goto LTM_ERR;
+         goto LBL_ERR;
       }
       if ((err = s_mp_karatsuba_mul(&a, &b, &c)) != MP_OKAY) {
-         goto LTM_ERR;
+         goto LBL_ERR;
       }
       if ((err = s_mp_mul(&a,&b,&d)) != MP_OKAY) {
-         goto LTM_ERR;
+         goto LBL_ERR;
       }
       if (mp_cmp(&c, &d) != MP_EQ) {
          fprintf(stderr, "Karatsuba multiplication failed at size %d\n", size);
-         goto LTM_ERR;
+         goto LBL_ERR;
       }
    }
 
    mp_clear_multi(&a, &b, &c, &d, NULL);
    return EXIT_SUCCESS;
-LTM_ERR:
+LBL_ERR:
    mp_clear_multi(&a, &b, &c, &d, NULL);
    return EXIT_FAILURE;
 }
@@ -2137,27 +2137,27 @@ static int test_s_mp_karatsuba_sqr(void)
    int size, err;
 
    if ((err = mp_init_multi(&a, &b, &c, NULL)) != MP_OKAY) {
-      goto LTM_ERR;
+      goto LBL_ERR;
    }
    for (size = MP_KARATSUBA_SQR_CUTOFF; size < MP_KARATSUBA_SQR_CUTOFF + 20; size++) {
       if ((err = mp_rand(&a, size)) != MP_OKAY) {
-         goto LTM_ERR;
+         goto LBL_ERR;
       }
       if ((err = s_mp_karatsuba_sqr(&a, &b)) != MP_OKAY) {
-         goto LTM_ERR;
+         goto LBL_ERR;
       }
       if ((err = s_mp_sqr(&a, &c)) != MP_OKAY) {
-         goto LTM_ERR;
+         goto LBL_ERR;
       }
       if (mp_cmp(&b, &c) != MP_EQ) {
          fprintf(stderr, "Karatsuba squaring failed at size %d\n", size);
-         goto LTM_ERR;
+         goto LBL_ERR;
       }
    }
 
    mp_clear_multi(&a, &b, &c, NULL);
    return EXIT_SUCCESS;
-LTM_ERR:
+LBL_ERR:
    mp_clear_multi(&a, &b, &c, NULL);
    return EXIT_FAILURE;
 }
@@ -2172,70 +2172,70 @@ static int test_s_mp_toom_mul(void)
 #endif
 
    if ((err = mp_init_multi(&a, &b, &c, &d, NULL)) != MP_OKAY) {
-      goto LTM_ERR;
+      goto LBL_ERR;
    }
    /* This number construction is limb-size specific */
 #if (MP_DIGIT_BIT == 60)
    if ((err = mp_rand(&a, 1196)) != MP_OKAY) {
-      goto LTM_ERR;
+      goto LBL_ERR;
    }
    if ((err = mp_mul_2d(&a,71787  - mp_count_bits(&a), &a)) != MP_OKAY) {
-      goto LTM_ERR;
+      goto LBL_ERR;
    }
 
    if ((err = mp_rand(&b, 1338)) != MP_OKAY) {
-      goto LTM_ERR;
+      goto LBL_ERR;
    }
    if ((err = mp_mul_2d(&b, 80318 - mp_count_bits(&b), &b)) != MP_OKAY) {
-      goto LTM_ERR;
+      goto LBL_ERR;
    }
    if ((err = mp_mul_2d(&b, 6310, &b)) != MP_OKAY) {
-      goto LTM_ERR;
+      goto LBL_ERR;
    }
    if ((err = mp_2expt(&c, 99000 - 1000)) != MP_OKAY) {
-      goto LTM_ERR;
+      goto LBL_ERR;
    }
    if ((err = mp_add(&b, &c, &b)) != MP_OKAY) {
-      goto LTM_ERR;
+      goto LBL_ERR;
    }
 
    tc_cutoff = TOOM_MUL_CUTOFF;
    TOOM_MUL_CUTOFF = INT_MAX;
    if ((err = mp_mul(&a, &b, &c)) != MP_OKAY) {
-      goto LTM_ERR;
+      goto LBL_ERR;
    }
    TOOM_MUL_CUTOFF = tc_cutoff;
    if ((err = mp_mul(&a, &b, &d)) != MP_OKAY) {
-      goto LTM_ERR;
+      goto LBL_ERR;
    }
    if (mp_cmp(&c, &d) != MP_EQ) {
       fprintf(stderr, "Toom-Cook 3-way multiplication failed for edgecase f1 * f2\n");
-      goto LTM_ERR;
+      goto LBL_ERR;
    }
 #endif
 
    for (size = MP_TOOM_MUL_CUTOFF; size < MP_TOOM_MUL_CUTOFF + 20; size++) {
       if ((err = mp_rand(&a, size)) != MP_OKAY) {
-         goto LTM_ERR;
+         goto LBL_ERR;
       }
       if ((err = mp_rand(&b, size)) != MP_OKAY) {
-         goto LTM_ERR;
+         goto LBL_ERR;
       }
       if ((err = s_mp_toom_mul(&a, &b, &c)) != MP_OKAY) {
-         goto LTM_ERR;
+         goto LBL_ERR;
       }
       if ((err = s_mp_mul(&a,&b,&d)) != MP_OKAY) {
-         goto LTM_ERR;
+         goto LBL_ERR;
       }
       if (mp_cmp(&c, &d) != MP_EQ) {
          fprintf(stderr, "Toom-Cook 3-way multiplication failed at size %d\n", size);
-         goto LTM_ERR;
+         goto LBL_ERR;
       }
    }
 
    mp_clear_multi(&a, &b, &c, &d, NULL);
    return EXIT_SUCCESS;
-LTM_ERR:
+LBL_ERR:
    mp_clear_multi(&a, &b, &c, &d, NULL);
    return EXIT_FAILURE;
 }
@@ -2246,27 +2246,27 @@ static int test_s_mp_toom_sqr(void)
    int size, err;
 
    if ((err = mp_init_multi(&a, &b, &c, NULL)) != MP_OKAY) {
-      goto LTM_ERR;
+      goto LBL_ERR;
    }
    for (size = MP_TOOM_SQR_CUTOFF; size < MP_TOOM_SQR_CUTOFF + 20; size++) {
       if ((err = mp_rand(&a, size)) != MP_OKAY) {
-         goto LTM_ERR;
+         goto LBL_ERR;
       }
       if ((err = s_mp_toom_sqr(&a, &b)) != MP_OKAY) {
-         goto LTM_ERR;
+         goto LBL_ERR;
       }
       if ((err = s_mp_sqr(&a, &c)) != MP_OKAY) {
-         goto LTM_ERR;
+         goto LBL_ERR;
       }
       if (mp_cmp(&b, &c) != MP_EQ) {
          fprintf(stderr, "Toom-Cook 3-way squaring failed at size %d\n", size);
-         goto LTM_ERR;
+         goto LBL_ERR;
       }
    }
 
    mp_clear_multi(&a, &b, &c, NULL);
    return EXIT_SUCCESS;
-LTM_ERR:
+LBL_ERR:
    mp_clear_multi(&a, &b, &c, NULL);
    return EXIT_FAILURE;
 }
@@ -2294,33 +2294,33 @@ static int test_mp_radix_size(void)
    /* number to result in a different size for every base: 67^(4 * 67) */
    mp_set(&a, 67);
    if ((err = mp_expt_u32(&a, 268u, &a)) != MP_OKAY) {
-      goto LTM_ERR;
+      goto LBL_ERR;
    }
 
    for (radix = 2; radix < 65; radix++) {
       if ((err = mp_radix_size(&a, radix, &size)) != MP_OKAY) {
-         goto LTM_ERR;
+         goto LBL_ERR;
       }
       if (size != results[radix]) {
          fprintf(stderr, "mp_radix_size: result for base %d was %d instead of %d\n",
                  radix, size, results[radix]);
-         goto LTM_ERR;
+         goto LBL_ERR;
       }
       a.sign = MP_NEG;
       if ((err = mp_radix_size(&a, radix, &size)) != MP_OKAY) {
-         goto LTM_ERR;
+         goto LBL_ERR;
       }
       if (size != (results[radix] + 1)) {
          fprintf(stderr, "mp_radix_size: result for base %d was %d instead of %d\n",
                  radix, size, results[radix]);
-         goto LTM_ERR;
+         goto LBL_ERR;
       }
       a.sign = MP_ZPOS;
    }
 
    mp_clear(&a);
    return EXIT_SUCCESS;
-LTM_ERR:
+LBL_ERR:
    mp_clear(&a);
    return EXIT_FAILURE;
 }
@@ -2335,11 +2335,11 @@ static int test_mp_read_write_ubin(void)
    unsigned char *buf = NULL;
 
    if ((err = mp_init_multi(&a, &b, &c, NULL)) != MP_OKAY) {
-      goto LTM_ERR;
+      goto LBL_ERR;
    }
 
-   if ((err = mp_rand(&a, 15)) != MP_OKAY)                   goto LTM_ERR;
-   if ((err = mp_neg(&a, &b)) != MP_OKAY)                    goto LTM_ERR;
+   if ((err = mp_rand(&a, 15)) != MP_OKAY)                   goto LBL_ERR;
+   if ((err = mp_neg(&a, &b)) != MP_OKAY)                    goto LBL_ERR;
 
    size = mp_ubin_size(&a);
    printf("mp_to_ubin_size  %zu\n", size);
@@ -2347,22 +2347,22 @@ static int test_mp_read_write_ubin(void)
    if (buf == NULL) {
       fprintf(stderr, "test_read_write_binaries (u) failed to allocate %zu bytes\n",
               sizeof(*buf) * size);
-      goto LTM_ERR;
+      goto LBL_ERR;
    }
 
-   if ((err = mp_to_ubin(&a, buf, size, &len)) != MP_OKAY)   goto LTM_ERR;
+   if ((err = mp_to_ubin(&a, buf, size, &len)) != MP_OKAY)   goto LBL_ERR;
    printf("mp_to_ubin len = %zu\n", len);
 
-   if ((err = mp_from_ubin(&c, buf, len)) != MP_OKAY)        goto LTM_ERR;
+   if ((err = mp_from_ubin(&c, buf, len)) != MP_OKAY)        goto LBL_ERR;
 
    if (mp_cmp(&a, &c) != MP_EQ) {
       fprintf(stderr, "to/from ubin cycle failed\n");
-      goto LTM_ERR;
+      goto LBL_ERR;
    }
    free(buf);
    mp_clear_multi(&a, &b, &c, NULL);
    return EXIT_SUCCESS;
-LTM_ERR:
+LBL_ERR:
    free(buf);
    mp_clear_multi(&a, &b, &c, NULL);
    return EXIT_FAILURE;
@@ -2376,11 +2376,11 @@ static int test_mp_read_write_sbin(void)
    unsigned char *buf = NULL;
 
    if ((err = mp_init_multi(&a, &b, &c, NULL)) != MP_OKAY) {
-      goto LTM_ERR;
+      goto LBL_ERR;
    }
 
-   if ((err = mp_rand(&a, 15)) != MP_OKAY)                   goto LTM_ERR;
-   if ((err = mp_neg(&a, &b)) != MP_OKAY)                    goto LTM_ERR;
+   if ((err = mp_rand(&a, 15)) != MP_OKAY)                   goto LBL_ERR;
+   if ((err = mp_neg(&a, &b)) != MP_OKAY)                    goto LBL_ERR;
 
    size = mp_sbin_size(&a);
    printf("mp_to_sbin_size  %zu\n", size);
@@ -2388,23 +2388,23 @@ static int test_mp_read_write_sbin(void)
    if (buf == NULL) {
       fprintf(stderr, "test_read_write_binaries (s) failed to allocate %zu bytes\n",
               sizeof(*buf) * size);
-      goto LTM_ERR;
+      goto LBL_ERR;
    }
 
-   if ((err = mp_to_sbin(&b, buf, size, &len)) != MP_OKAY)   goto LTM_ERR;
+   if ((err = mp_to_sbin(&b, buf, size, &len)) != MP_OKAY)   goto LBL_ERR;
    printf("mp_to_sbin len = %zu\n", len);
 
-   if ((err = mp_from_sbin(&c, buf, len)) != MP_OKAY)        goto LTM_ERR;
+   if ((err = mp_from_sbin(&c, buf, len)) != MP_OKAY)        goto LBL_ERR;
 
    if (mp_cmp(&b, &c) != MP_EQ) {
       fprintf(stderr, "to/from ubin cycle failed\n");
-      goto LTM_ERR;
+      goto LBL_ERR;
    }
 
    free(buf);
    mp_clear_multi(&a, &b, &c, NULL);
    return EXIT_SUCCESS;
-LTM_ERR:
+LBL_ERR:
    free(buf);
    mp_clear_multi(&a, &b, &c, NULL);
    return EXIT_FAILURE;
@@ -2420,31 +2420,31 @@ static int test_mp_pack_unpack(void)
    mp_order order = MP_LSB_FIRST;
    mp_endian endianess = MP_NATIVE_ENDIAN;
 
-   if ((err = mp_init_multi(&a, &b, NULL)) != MP_OKAY)                       goto LTM_ERR;
-   if ((err = mp_rand(&a, 15)) != MP_OKAY)                                   goto LTM_ERR;
+   if ((err = mp_init_multi(&a, &b, NULL)) != MP_OKAY)                       goto LBL_ERR;
+   if ((err = mp_rand(&a, 15)) != MP_OKAY)                                   goto LBL_ERR;
 
    count = mp_pack_count(&a, 0, 1);
 
    buf = malloc(count);
    if (buf == NULL) {
       fprintf(stderr, "test_pack_unpack failed to allocate\n");
-      goto LTM_ERR;
+      goto LBL_ERR;
    }
 
    if ((err = mp_pack((void *)buf, count, &written, order, 1,
-                      endianess, 0, &a)) != MP_OKAY)                   goto LTM_ERR;
+                      endianess, 0, &a)) != MP_OKAY)                   goto LBL_ERR;
    if ((err = mp_unpack(&b, count, order, 1,
-                        endianess, 0, (const void *)buf)) != MP_OKAY)        goto LTM_ERR;
+                        endianess, 0, (const void *)buf)) != MP_OKAY)        goto LBL_ERR;
 
    if (mp_cmp(&a, &b) != MP_EQ) {
       fprintf(stderr, "pack/unpack cycle failed\n");
-      goto LTM_ERR;
+      goto LBL_ERR;
    }
 
    free(buf);
    mp_clear_multi(&a, &b, NULL);
    return EXIT_SUCCESS;
-LTM_ERR:
+LBL_ERR:
    free(buf);
    mp_clear_multi(&a, &b, NULL);
    return EXIT_FAILURE;

@@ -67,39 +67,39 @@ static uint64_t s_time_mul(int size)
 
    if ((e = mp_init_multi(&a, &b, &c, &d, NULL)) != MP_OKAY) {
       t1 = UINT64_MAX;
-      goto LTM_ERR;
+      goto LBL_ERR;
    }
 
    if ((e = mp_rand(&a, size * s_offset)) != MP_OKAY) {
       t1 = UINT64_MAX;
-      goto LTM_ERR;
+      goto LBL_ERR;
    }
    if ((e = mp_rand(&b, size)) != MP_OKAY) {
       t1 = UINT64_MAX;
-      goto LTM_ERR;
+      goto LBL_ERR;
    }
 
    s_timer_start();
    for (x = 0; x < s_number_of_test_loops; x++) {
       if ((e = mp_mul(&a,&b,&c)) != MP_OKAY) {
          t1 = UINT64_MAX;
-         goto LTM_ERR;
+         goto LBL_ERR;
       }
       if (s_check_result == 1) {
          if ((e = s_mp_mul(&a,&b,&d)) != MP_OKAY) {
             t1 = UINT64_MAX;
-            goto LTM_ERR;
+            goto LBL_ERR;
          }
          if (mp_cmp(&c, &d) != MP_EQ) {
             /* Time of 0 cannot happen (famous last words?) */
             t1 = 0uLL;
-            goto LTM_ERR;
+            goto LBL_ERR;
          }
       }
    }
 
    t1 = s_timer_stop();
-LTM_ERR:
+LBL_ERR:
    mp_clear_multi(&a, &b, &c, &d, NULL);
    return t1;
 }
@@ -112,34 +112,34 @@ static uint64_t s_time_sqr(int size)
 
    if ((e = mp_init_multi(&a, &b, &c, NULL)) != MP_OKAY) {
       t1 = UINT64_MAX;
-      goto LTM_ERR;
+      goto LBL_ERR;
    }
 
    if ((e = mp_rand(&a, size)) != MP_OKAY) {
       t1 = UINT64_MAX;
-      goto LTM_ERR;
+      goto LBL_ERR;
    }
 
    s_timer_start();
    for (x = 0; x < s_number_of_test_loops; x++) {
       if ((e = mp_sqr(&a,&b)) != MP_OKAY) {
          t1 = UINT64_MAX;
-         goto LTM_ERR;
+         goto LBL_ERR;
       }
       if (s_check_result == 1) {
          if ((e = s_mp_sqr(&a,&c)) != MP_OKAY) {
             t1 = UINT64_MAX;
-            goto LTM_ERR;
+            goto LBL_ERR;
          }
          if (mp_cmp(&c, &b) != MP_EQ) {
             t1 = 0uLL;
-            goto LTM_ERR;
+            goto LBL_ERR;
          }
       }
    }
 
    t1 = s_timer_stop();
-LTM_ERR:
+LBL_ERR:
    mp_clear_multi(&a, &b, &c, NULL);
    return t1;
 }

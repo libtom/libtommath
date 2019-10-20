@@ -26,35 +26,29 @@ endif
 LCOV_ARGS=--directory .
 
 #START_INS
-OBJECTS=bn_cutoffs.o bn_mp_2expt.o bn_mp_abs.o bn_mp_add.o bn_mp_add_d.o bn_mp_addmod.o bn_mp_and.o \
-bn_mp_clamp.o bn_mp_clear.o bn_mp_clear_multi.o bn_mp_cmp.o bn_mp_cmp_d.o bn_mp_cmp_mag.o bn_mp_cnt_lsb.o \
-bn_mp_complement.o bn_mp_copy.o bn_mp_count_bits.o bn_mp_decr.o bn_mp_div.o bn_mp_div_2.o bn_mp_div_2d.o \
-bn_mp_div_3.o bn_mp_div_d.o bn_mp_dr_is_modulus.o bn_mp_dr_reduce.o bn_mp_dr_setup.o \
-bn_mp_error_to_string.o bn_mp_exch.o bn_mp_expt_u32.o bn_mp_exptmod.o bn_mp_exteuclid.o bn_mp_fread.o \
-bn_mp_from_sbin.o bn_mp_from_ubin.o bn_mp_fwrite.o bn_mp_gcd.o bn_mp_get_double.o bn_mp_get_i32.o \
-bn_mp_get_i64.o bn_mp_get_l.o bn_mp_get_ll.o bn_mp_get_mag_u32.o bn_mp_get_mag_u64.o bn_mp_get_mag_ul.o \
-bn_mp_get_mag_ull.o bn_mp_grow.o bn_mp_incr.o bn_mp_init.o bn_mp_init_copy.o bn_mp_init_i32.o \
-bn_mp_init_i64.o bn_mp_init_l.o bn_mp_init_ll.o bn_mp_init_multi.o bn_mp_init_set.o bn_mp_init_size.o \
-bn_mp_init_u32.o bn_mp_init_u64.o bn_mp_init_ul.o bn_mp_init_ull.o bn_mp_invmod.o bn_mp_is_square.o \
-bn_mp_iseven.o bn_mp_isodd.o bn_mp_kronecker.o bn_mp_lcm.o bn_mp_log_u32.o bn_mp_lshd.o bn_mp_mod.o \
-bn_mp_mod_2d.o bn_mp_mod_d.o bn_mp_montgomery_calc_normalization.o bn_mp_montgomery_reduce.o \
-bn_mp_montgomery_setup.o bn_mp_mul.o bn_mp_mul_2.o bn_mp_mul_2d.o bn_mp_mul_d.o bn_mp_mulmod.o bn_mp_neg.o \
-bn_mp_or.o bn_mp_pack.o bn_mp_pack_count.o bn_mp_prime_fermat.o bn_mp_prime_frobenius_underwood.o \
-bn_mp_prime_is_prime.o bn_mp_prime_miller_rabin.o bn_mp_prime_next_prime.o \
-bn_mp_prime_rabin_miller_trials.o bn_mp_prime_rand.o bn_mp_prime_strong_lucas_selfridge.o \
-bn_mp_radix_size.o bn_mp_radix_smap.o bn_mp_rand.o bn_mp_read_radix.o bn_mp_reduce.o bn_mp_reduce_2k.o \
-bn_mp_reduce_2k_l.o bn_mp_reduce_2k_setup.o bn_mp_reduce_2k_setup_l.o bn_mp_reduce_is_2k.o \
-bn_mp_reduce_is_2k_l.o bn_mp_reduce_setup.o bn_mp_root_u32.o bn_mp_rshd.o bn_mp_sbin_size.o bn_mp_set.o \
-bn_mp_set_double.o bn_mp_set_i32.o bn_mp_set_i64.o bn_mp_set_l.o bn_mp_set_ll.o bn_mp_set_u32.o \
-bn_mp_set_u64.o bn_mp_set_ul.o bn_mp_set_ull.o bn_mp_shrink.o bn_mp_signed_rsh.o bn_mp_sqr.o \
-bn_mp_sqrmod.o bn_mp_sqrt.o bn_mp_sqrtmod_prime.o bn_mp_sub.o bn_mp_sub_d.o bn_mp_submod.o \
-bn_mp_to_radix.o bn_mp_to_sbin.o bn_mp_to_ubin.o bn_mp_ubin_size.o bn_mp_unpack.o bn_mp_xor.o bn_mp_zero.o \
-bn_prime_tab.o bn_s_mp_add.o bn_s_mp_balance_mul.o bn_s_mp_exptmod.o bn_s_mp_exptmod_fast.o \
-bn_s_mp_get_bit.o bn_s_mp_invmod_fast.o bn_s_mp_invmod_slow.o bn_s_mp_karatsuba_mul.o \
-bn_s_mp_karatsuba_sqr.o bn_s_mp_montgomery_reduce_fast.o bn_s_mp_mul_digs.o bn_s_mp_mul_digs_fast.o \
-bn_s_mp_mul_high_digs.o bn_s_mp_mul_high_digs_fast.o bn_s_mp_prime_is_divisible.o \
-bn_s_mp_rand_jenkins.o bn_s_mp_rand_platform.o bn_s_mp_reverse.o bn_s_mp_sqr.o bn_s_mp_sqr_fast.o \
-bn_s_mp_sub.o bn_s_mp_toom_mul.o bn_s_mp_toom_sqr.o
+OBJECTS=mp_2expt.o mp_abs.o mp_add.o mp_add_d.o mp_addmod.o mp_and.o mp_clamp.o mp_clear.o mp_clear_multi.o \
+mp_cmp.o mp_cmp_d.o mp_cmp_mag.o mp_cnt_lsb.o mp_complement.o mp_copy.o mp_count_bits.o mp_cutoffs.o \
+mp_decr.o mp_div.o mp_div_2.o mp_div_2d.o mp_div_3.o mp_div_d.o mp_dr_is_modulus.o mp_dr_reduce.o \
+mp_dr_setup.o mp_error_to_string.o mp_exch.o mp_expt_u32.o mp_exptmod.o mp_exteuclid.o mp_fread.o \
+mp_from_sbin.o mp_from_ubin.o mp_fwrite.o mp_gcd.o mp_get_double.o mp_get_i32.o mp_get_i64.o mp_get_l.o \
+mp_get_ll.o mp_get_mag_u32.o mp_get_mag_u64.o mp_get_mag_ul.o mp_get_mag_ull.o mp_grow.o mp_incr.o \
+mp_init.o mp_init_copy.o mp_init_i32.o mp_init_i64.o mp_init_l.o mp_init_ll.o mp_init_multi.o mp_init_set.o \
+mp_init_size.o mp_init_u32.o mp_init_u64.o mp_init_ul.o mp_init_ull.o mp_invmod.o mp_is_square.o \
+mp_iseven.o mp_isodd.o mp_kronecker.o mp_lcm.o mp_log_u32.o mp_lshd.o mp_mod.o mp_mod_2d.o mp_mod_d.o \
+mp_montgomery_calc_normalization.o mp_montgomery_reduce.o mp_montgomery_setup.o mp_mul.o mp_mul_2.o \
+mp_mul_2d.o mp_mul_d.o mp_mulmod.o mp_neg.o mp_or.o mp_pack.o mp_pack_count.o mp_prime_fermat.o \
+mp_prime_frobenius_underwood.o mp_prime_is_prime.o mp_prime_miller_rabin.o mp_prime_next_prime.o \
+mp_prime_rabin_miller_trials.o mp_prime_rand.o mp_prime_strong_lucas_selfridge.o mp_prime_tab.o \
+mp_radix_size.o mp_radix_smap.o mp_rand.o mp_read_radix.o mp_reduce.o mp_reduce_2k.o mp_reduce_2k_l.o \
+mp_reduce_2k_setup.o mp_reduce_2k_setup_l.o mp_reduce_is_2k.o mp_reduce_is_2k_l.o mp_reduce_setup.o \
+mp_root_u32.o mp_rshd.o mp_sbin_size.o mp_set.o mp_set_double.o mp_set_i32.o mp_set_i64.o mp_set_l.o \
+mp_set_ll.o mp_set_u32.o mp_set_u64.o mp_set_ul.o mp_set_ull.o mp_shrink.o mp_signed_rsh.o mp_sqr.o \
+mp_sqrmod.o mp_sqrt.o mp_sqrtmod_prime.o mp_sub.o mp_sub_d.o mp_submod.o mp_to_radix.o mp_to_sbin.o \
+mp_to_ubin.o mp_ubin_size.o mp_unpack.o mp_xor.o mp_zero.o s_mp_add.o s_mp_balance_mul.o s_mp_exptmod.o \
+s_mp_exptmod_fast.o s_mp_get_bit.o s_mp_invmod_fast.o s_mp_invmod_slow.o s_mp_karatsuba_mul.o \
+s_mp_karatsuba_sqr.o s_mp_montgomery_reduce_fast.o s_mp_mul_digs.o s_mp_mul_digs_fast.o \
+s_mp_mul_high_digs.o s_mp_mul_high_digs_fast.o s_mp_prime_is_divisible.o s_mp_rand_jenkins.o \
+s_mp_rand_platform.o s_mp_reverse.o s_mp_sqr.o s_mp_sqr_fast.o s_mp_sub.o s_mp_toom_mul.o s_mp_toom_sqr.o
 
 #END_INS
 

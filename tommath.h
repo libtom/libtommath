@@ -1,8 +1,8 @@
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
-#ifndef BN_H_
-#define BN_H_
+#ifndef TOMMATH_H_
+#define TOMMATH_H_
 
 #include <stdint.h>
 #include <stddef.h>

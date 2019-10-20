@@ -174,11 +174,11 @@ The wrong \texttt{libtool} will build it all fine but when it comes to the final
 cc -I./ -Wall -Wsign-compare -Wextra -Wshadow -Wsystem-headers -Wdeclaration-afo...
 cc -I./ -Wall -Wsign-compare -Wextra -Wshadow -Wsystem-headers -Wdeclaration-afo...
 cc -I./ -Wall -Wsign-compare -Wextra -Wshadow -Wsystem-headers -Wdeclaration-afo...
-libtool --mode=link --tag=CC cc  bn_error.lo bn_s_mp_invmod_fast.lo bn_fast_mp_mo
-libtool: link: cc bn_error.lo bn_s_mp_invmod_fast.lo bn_s_mp_montgomery_reduce_fast0
-bn_error.lo: file not recognized: File format not recognized
+libtool --mode=link --tag=CC cc  error.lo s_mp_invmod_fast.lo fast_mp_mo
+libtool: link: cc error.lo s_mp_invmod_fast.lo s_mp_montgomery_reduce_fast0
+error.lo: file not recognized: File format not recognized
 cc: error: linker command failed with exit code 1 (use -v to see invocation)
-Error while executing cc bn_error.lo bn_s_mp_invmod_fast.lo bn_fast_mp_montgomery0
+Error while executing cc error.lo s_mp_invmod_fast.lo fast_mp_montgomery0
 gmake: *** [makefile.shared:64: libtommath.la] Error 1
 \end{alltt}
 
@@ -259,7 +259,7 @@ classes can be defined base on the need of the user.
 \subsection{Build Depends}
 In the file tommath\_class.h you will see a large list of C ``defines'' followed by a series of ``ifdefs''
 which further define symbols.  All of the symbols (technically they're macros $\ldots$) represent a given C source
-file.  For instance, BN\_MP\_ADD\_C represents the file ``bn\_mp\_add.c''.  When a define has been enabled the
+file.  For instance, MP\_ADD\_C represents the file ``bn\_mp\_add.c''.  When a define has been enabled the
 function in the respective file will be compiled and linked into the library.  Accordingly when the define
 is absent the file will not be compiled and not contribute any size to the library.
 
@@ -275,7 +275,7 @@ They can be enabled at any pass of the configuration phase.
 \begin{center}
 \begin{tabular}{|l|l|}
 \hline \textbf{Define} & \textbf{Purpose} \\
-\hline BN\_MP\_DIV\_SMALL & Enables a slower, smaller and equally \\
+\hline MP\_DIV\_SMALL & Enables a slower, smaller and equally \\
                           & functional mp\_div() function \\
 \hline
 \end{tabular}
@@ -293,20 +293,20 @@ only if LTM\_LAST has been defined.
 \begin{center}
 \begin{tabular}{|l|l|}
 \hline \textbf{Restriction} & \textbf{Undefine} \\
-\hline Exponentiation with odd moduli only & BN\_S\_MP\_EXPTMOD\_C \\
-                                           & BN\_MP\_REDUCE\_C \\
-                                           & BN\_MP\_REDUCE\_SETUP\_C \\
-                                           & BN\_S\_MP\_MUL\_HIGH\_DIGS\_C \\
-                                           & BN\_FAST\_S\_MP\_MUL\_HIGH\_DIGS\_C \\
+\hline Exponentiation with odd moduli only & S\_MP\_EXPTMOD\_C \\
+                                           & MP\_REDUCE\_C \\
+                                           & MP\_REDUCE\_SETUP\_C \\
+                                           & S\_MP\_MUL\_HIGH\_DIGS\_C \\
+                                           & FAST\_S\_MP\_MUL\_HIGH\_DIGS\_C \\
 \hline Exponentiation with random odd moduli & (The above plus the following) \\
-                                           & BN\_MP\_REDUCE\_2K\_C \\
-                                           & BN\_MP\_REDUCE\_2K\_SETUP\_C \\
-                                           & BN\_MP\_REDUCE\_IS\_2K\_C \\
-                                           & BN\_MP\_DR\_IS\_MODULUS\_C \\
-                                           & BN\_MP\_DR\_REDUCE\_C \\
-                                           & BN\_MP\_DR\_SETUP\_C \\
-\hline Modular inverse odd moduli only     & BN\_MP\_INVMOD\_SLOW\_C \\
-\hline Modular inverse (both, smaller/slower) & BN\_FAST\_MP\_INVMOD\_C \\
+                                           & MP\_REDUCE\_2K\_C \\
+                                           & MP\_REDUCE\_2K\_SETUP\_C \\
+                                           & MP\_REDUCE\_IS\_2K\_C \\
+                                           & MP\_DR\_IS\_MODULUS\_C \\
+                                           & MP\_DR\_REDUCE\_C \\
+                                           & MP\_DR\_SETUP\_C \\
+\hline Modular inverse odd moduli only     & MP\_INVMOD\_SLOW\_C \\
+\hline Modular inverse (both, smaller/slower) & FAST\_MP\_INVMOD\_C \\
 \hline
 \end{tabular}
 \end{center}
@@ -317,14 +317,14 @@ only if LTM\_LAST has been defined.
 \begin{center}
 \begin{tabular}{|l|l|}
 \hline \textbf{Restriction} & \textbf{Undefine} \\
-\hline Moduli $\le 2560$ bits              & BN\_MP\_MONTGOMERY\_REDUCE\_C \\
-                                           & BN\_S\_MP\_MUL\_DIGS\_C \\
-                                           & BN\_S\_MP\_MUL\_HIGH\_DIGS\_C \\
-                                           & BN\_S\_MP\_SQR\_C \\
-\hline Polynomial Schmolynomial            & BN\_MP\_KARATSUBA\_MUL\_C \\
-                                           & BN\_MP\_KARATSUBA\_SQR\_C \\
-                                           & BN\_MP\_TOOM\_MUL\_C \\
-                                           & BN\_MP\_TOOM\_SQR\_C \\
+\hline Moduli $\le 2560$ bits              & MP\_MONTGOMERY\_REDUCE\_C \\
+                                           & S\_MP\_MUL\_DIGS\_C \\
+                                           & S\_MP\_MUL\_HIGH\_DIGS\_C \\
+                                           & S\_MP\_SQR\_C \\
+\hline Polynomial Schmolynomial            & MP\_KARATSUBA\_MUL\_C \\
+                                           & MP\_KARATSUBA\_SQR\_C \\
+                                           & MP\_TOOM\_MUL\_C \\
+                                           & MP\_TOOM\_SQR\_C \\
 
 \hline
 \end{tabular}
