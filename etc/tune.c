@@ -210,7 +210,7 @@ static long s_strtol(const char *str, char **endptr, const char *err)
       fprintf(stderr, "%s\n", err);
       exit(EXIT_FAILURE);
    }
-   if (endptr) *endptr = _endptr;
+   if (endptr != NULL) *endptr = _endptr;
    return val;
 }
 
@@ -464,7 +464,7 @@ int main(int argc, char **argv)
       /* Turn all limits from bncore.c to the max */
       set_cutoffs(&max_cutoffs);
       for (n = 0; n < sizeof(test)/sizeof(test[0]); ++n) {
-         if (test[n].fn) {
+         if (test[n].fn != NULL) {
             s_run(test[n].name, test[n].fn, test[n].cutoff);
             *test[n].update = *test[n].cutoff;
             *test[n].cutoff = INT_MAX;
