@@ -39,12 +39,8 @@ mp_err mp_prime_frobenius_underwood(const mp_int *N, mp_bool *result)
           (a==14) || (a==18) || (a==23) || (a==26) || (a==28)) {
          continue;
       }
-      /* (32764^2 - 4) < 2^31, no bigint for >MP_8BIT needed) */
-      mp_set_u32(&T1z, (uint32_t)a);
 
-      if ((err = mp_sqr(&T1z, &T1z)) != MP_OKAY)                  goto LBL_FU_ERR;
-
-      if ((err = mp_sub_d(&T1z, 4uL, &T1z)) != MP_OKAY)           goto LBL_FU_ERR;
+      mp_set_i32(&T1z, (int32_t)((a * a) - 4));
 
       if ((err = mp_kronecker(&T1z, N, &j)) != MP_OKAY)           goto LBL_FU_ERR;
 

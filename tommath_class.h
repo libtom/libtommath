@@ -659,10 +659,9 @@
 #   define MP_MUL_C
 #   define MP_MUL_D_C
 #   define MP_SET_C
+#   define MP_SET_I32_C
 #   define MP_SET_U32_C
-#   define MP_SQR_C
 #   define MP_SUB_C
-#   define MP_SUB_D_C
 #   define S_MP_GET_BIT_C
 #endif
 
