@@ -21,7 +21,7 @@
 #endif
 
 
-static void ndraw(mp_int *a, const char *name)
+static void ndraw(const mp_int *a, const char *name)
 {
    char buf[4096];
 
@@ -30,7 +30,7 @@ static void ndraw(mp_int *a, const char *name)
    printf("%s\n", buf);
 }
 
-static void draw(mp_int *a)
+static void draw(const mp_int *a)
 {
    ndraw(a, "");
 }
