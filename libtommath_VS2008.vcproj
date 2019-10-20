@@ -881,6 +881,14 @@
 			>
 		</File>
 		<File
+			RelativePath="s_mp_log.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_log_d.c"
+			>
+		</File>
+		<File
 			RelativePath="s_mp_montgomery_reduce_fast.c"
 			>
 		</File>

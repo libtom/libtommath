@@ -41,9 +41,10 @@ mp_set_ll.obj mp_set_u32.obj mp_set_u64.obj mp_set_ul.obj mp_set_ull.obj mp_shri
 mp_sqrmod.obj mp_sqrt.obj mp_sqrtmod_prime.obj mp_sub.obj mp_sub_d.obj mp_submod.obj mp_to_radix.obj mp_to_sbin.obj \
 mp_to_ubin.obj mp_ubin_size.obj mp_unpack.obj mp_xor.obj mp_zero.obj s_mp_add.obj s_mp_balance_mul.obj s_mp_exptmod.obj \
 s_mp_exptmod_fast.obj s_mp_get_bit.obj s_mp_invmod_fast.obj s_mp_invmod_slow.obj s_mp_karatsuba_mul.obj \
-s_mp_karatsuba_sqr.obj s_mp_montgomery_reduce_fast.obj s_mp_mul_digs.obj s_mp_mul_digs_fast.obj \
-s_mp_mul_high_digs.obj s_mp_mul_high_digs_fast.obj s_mp_prime_is_divisible.obj s_mp_rand_jenkins.obj \
-s_mp_rand_platform.obj s_mp_reverse.obj s_mp_sqr.obj s_mp_sqr_fast.obj s_mp_sub.obj s_mp_toom_mul.obj s_mp_toom_sqr.obj
+s_mp_karatsuba_sqr.obj s_mp_log.obj s_mp_log_d.obj s_mp_montgomery_reduce_fast.obj s_mp_mul_digs.obj \
+s_mp_mul_digs_fast.obj s_mp_mul_high_digs.obj s_mp_mul_high_digs_fast.obj s_mp_prime_is_divisible.obj \
+s_mp_rand_jenkins.obj s_mp_rand_platform.obj s_mp_reverse.obj s_mp_sqr.obj s_mp_sqr_fast.obj s_mp_sub.obj \
+s_mp_toom_mul.obj s_mp_toom_sqr.obj
 
 HEADERS_PUB=tommath.h
 HEADERS=tommath_private.h tommath_class.h tommath_superclass.h tommath_cutoffs.h $(HEADERS_PUB)

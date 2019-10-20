@@ -168,8 +168,6 @@ typedef private_mp_word mp_word;
 #ifndef MP_PREC
 #   ifndef MP_LOW_MEM
 #      define MP_PREC 32        /* default digits of precision */
-#   elif defined(MP_8BIT)
-#      define MP_PREC 16        /* default digits of precision */
 #   else
 #      define MP_PREC 8         /* default digits of precision */
 #   endif
@@ -208,6 +206,8 @@ typedef int mp_prime_callback(unsigned char *dst, int len, void *dat);
 MP_PRIVATE mp_err s_mp_prime_random_ex(mp_int *a, int t, int size, int flags, mp_prime_callback cb, void *dat);
 MP_PRIVATE void s_mp_reverse(unsigned char *s, size_t len);
 MP_PRIVATE mp_err s_mp_prime_is_divisible(const mp_int *a, mp_bool *result);
+MP_PRIVATE mp_digit s_mp_log_d(mp_digit base, mp_digit n);
+MP_PRIVATE mp_err s_mp_log(const mp_int *a, uint32_t base, uint32_t *c);
 
 /* TODO: jenkins prng is not thread safe as of now */
 MP_PRIVATE mp_err s_mp_rand_jenkins(void *p, size_t n) MP_WUR;
@@ -219,11 +219,7 @@ extern MP_PRIVATE const uint8_t s_mp_rmap_reverse[];
 extern MP_PRIVATE const mp_digit s_mp_prime_tab[];
 
 /* number of primes */
-#ifdef MP_8BIT
-#  define MP_PRIME_TAB_SIZE 31
-#else
-#  define MP_PRIME_TAB_SIZE 256
-#endif
+#define MP_PRIME_TAB_SIZE 256
 
 #define MP_GET_ENDIANNESS(x) \
    do{\

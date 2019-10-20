@@ -6,21 +6,9 @@
 
 #include <stdint.h>
 #include <stddef.h>
-#ifdef MP_8BIT
-#  error "Support of 8-bit architectures has been dropped in this version of LTM."
-#endif
-
 
 #ifndef MP_NO_FILE
 #  include <stdio.h>
-#endif
-
-#ifdef MP_8BIT
-#  ifdef _MSC_VER
-#    pragma message("8-bit (MP_8BIT) support is deprecated and will be dropped completely in the next version.")
-#  else
-#    warning "8-bit (MP_8BIT) support is deprecated and will be dropped completely in the next version."
-#  endif
 #endif
 
 #ifdef __cplusplus
