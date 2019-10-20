@@ -39,5 +39,4 @@ manual:	mandvi
 	rm -f bn.aux bn.dvi bn.log bn.idx bn.lof bn.out bn.toc
 
 clean:
-	${MAKE} -C pics/ clean MAKE=${MAKE}
 	rm -f *.idx *.toc *.log *.aux *.dvi *.lof *.ind *.ilg *.ps *.log tommath.tex
