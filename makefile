@@ -145,7 +145,7 @@ zipup: clean astyle new_file docs
 	@echo 'fixme check'
 	-@(find libtommath-$(VERSION)/ -type f | xargs grep 'FIXM[E]') && echo '############## BEWARE: the "fixme" marker was found !!! ##############' || true
 	mkdir -p libtommath-$(VERSION)/doc
-	cp doc/bn.pdf doc/poster.pdf libtommath-$(VERSION)/doc/
+	cp doc/bn.pdf libtommath-$(VERSION)/doc/
 	$(MAKE) -C libtommath-$(VERSION)/ pre_gen
 	tar -c libtommath-$(VERSION)/ | xz -6e -c - > ltm-$(VERSION).tar.xz
 	zip -9rq ltm-$(VERSION).zip libtommath-$(VERSION)
