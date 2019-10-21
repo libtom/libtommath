@@ -156,7 +156,7 @@ struct tune_args {
    int increment_print;
 } args;
 
-static void s_run(const char *name, uint64_t (*op)(int), int *cutoff)
+static void s_run(const char *name, uint64_t (*op)(int size), int *cutoff)
 {
    int x, count = 0;
    uint64_t t1, t2;
@@ -210,7 +210,7 @@ static long s_strtol(const char *str, char **endptr, const char *err)
       fprintf(stderr, "%s\n", err);
       exit(EXIT_FAILURE);
    }
-   if (endptr) *endptr = _endptr;
+   if (endptr != NULL) *endptr = _endptr;
    return val;
 }
 
@@ -446,7 +446,7 @@ int main(int argc, char **argv)
       struct {
          const char *name;
          int *cutoff, *update;
-         uint64_t (*fn)(int);
+         uint64_t (*fn)(int size);
       } test[] = {
 #define T_MUL_SQR(n, o, f)  { #n, &o##_CUTOFF, &(updated.o), MP_HAS(S_MP_##o) ? f : NULL }
          /*
@@ -464,7 +464,7 @@ int main(int argc, char **argv)
       /* Turn all limits from bncore.c to the max */
       set_cutoffs(&max_cutoffs);
       for (n = 0; n < sizeof(test)/sizeof(test[0]); ++n) {
-         if (test[n].fn) {
+         if (test[n].fn != NULL) {
             s_run(test[n].name, test[n].fn, test[n].cutoff);
             *test[n].update = *test[n].cutoff;
             *test[n].cutoff = INT_MAX;

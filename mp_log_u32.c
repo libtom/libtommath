@@ -28,7 +28,7 @@ mp_err mp_log_u32(const mp_int *a, uint32_t base, uint32_t *c)
       return MP_OKAY;
    }
 
-   if (MP_HAS(S_MP_LOG_D) && a->used == 1) {
+   if (MP_HAS(S_MP_LOG_D) && (a->used == 1)) {
       *c = (uint32_t)s_mp_log_d(base, a->dp[0]);
       return MP_OKAY;
    }

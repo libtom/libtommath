@@ -21,7 +21,7 @@
 #endif
 
 
-static void ndraw(mp_int *a, const char *name)
+static void ndraw(const mp_int *a, const char *name)
 {
    char buf[4096];
 
@@ -30,7 +30,7 @@ static void ndraw(mp_int *a, const char *name)
    printf("%s\n", buf);
 }
 
-static void draw(mp_int *a)
+static void draw(const mp_int *a)
 {
    ndraw(a, "");
 }
@@ -149,7 +149,7 @@ int main(int argc, char **argv)
    printf("CLK_PER_SEC == %" PRIu64 "\n", CLK_PER_SEC);
 
 #ifdef LTM_TIMING_PRIME_IS_PRIME
-   if (should_test("prime", argc, argv)) {
+   if (should_test("prime", argc, argv) != 0) {
       for (m = 0; m < 2; ++m) {
          if (m == 0) {
             name = "    Arnault";
@@ -185,7 +185,7 @@ int main(int argc, char **argv)
    }
 #endif
 
-   if (should_test("add", argc, argv)) {
+   if (should_test("add", argc, argv) != 0) {
       log = FOPEN("logs/add.log", "w");
       for (cnt = 8; cnt <= 128; cnt += 8) {
          SLEEP;
@@ -208,7 +208,7 @@ int main(int argc, char **argv)
       FCLOSE(log);
    }
 
-   if (should_test("sub", argc, argv)) {
+   if (should_test("sub", argc, argv) != 0) {
       log = FOPEN("logs/sub.log", "w");
       for (cnt = 8; cnt <= 128; cnt += 8) {
          SLEEP;
@@ -232,7 +232,7 @@ int main(int argc, char **argv)
       FCLOSE(log);
    }
 
-   if (should_test("mulsqr", argc, argv)) {
+   if (should_test("mulsqr", argc, argv) != 0) {
       /* do mult/square twice, first without karatsuba and second with */
       old_kara_m = KARATSUBA_MUL_CUTOFF;
       old_kara_s = KARATSUBA_SQR_CUTOFF;
@@ -291,7 +291,7 @@ int main(int argc, char **argv)
       }
    }
 
-   if (should_test("expt", argc, argv)) {
+   if (should_test("expt", argc, argv) != 0) {
       const char *primes[] = {
          /* 2K large moduli */
          "179769313486231590772930519078902473361797697894230657273430081157732675805500963132708477322407536021120113879871393357658789768814416622492847430639474124377767893424865485276302219601246094119453082952085005768838150682342462881473913110540827237163350510684586239334100047359817950870678242457666208137217",
@@ -369,7 +369,7 @@ int main(int argc, char **argv)
       FCLOSE(logd);
    }
 
-   if (should_test("invmod", argc, argv)) {
+   if (should_test("invmod", argc, argv) != 0) {
       log = FOPEN("logs/invmod.log", "w");
       for (cnt = 4; cnt <= 32; cnt += 4) {
          SLEEP;
