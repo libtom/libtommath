@@ -588,7 +588,7 @@ mp_err mp_to_sbin(const mp_int *a, unsigned char *buf, size_t maxlen, size_t *wr
 
 mp_err mp_read_radix(mp_int *a, const char *str, int radix) MP_WUR;
 mp_err mp_to_radix(const mp_int *a, char *str, size_t maxlen, size_t *written, int radix) MP_WUR;
-mp_err mp_radix_size(const mp_int *a, int radix, int *size) MP_WUR;
+mp_err mp_radix_size(const mp_int *a, int radix, size_t *size) MP_WUR;
 
 #ifndef MP_NO_FILE
 mp_err mp_fread(mp_int *a, int radix, FILE *stream) MP_WUR;

@@ -2275,9 +2275,10 @@ static int test_mp_radix_size(void)
 {
    mp_err err;
    mp_int a;
-   int radix, size;
+   int radix;
+   size_t size;
 /* *INDENT-OFF* */
-   int results[65] = {
+   size_t results[65] = {
        0, 0, 1627, 1027, 814, 702, 630, 581, 543,
        514, 491, 471, 455, 441, 428, 418, 408, 399,
        391, 384, 378, 372, 366, 361, 356, 352, 347,
@@ -2302,7 +2303,7 @@ static int test_mp_radix_size(void)
          goto LBL_ERR;
       }
       if (size != results[radix]) {
-         fprintf(stderr, "mp_radix_size: result for base %d was %d instead of %d\n",
+         fprintf(stderr, "mp_radix_size: result for base %d was %zu instead of %zu\n",
                  radix, size, results[radix]);
          goto LBL_ERR;
       }
@@ -2311,7 +2312,7 @@ static int test_mp_radix_size(void)
          goto LBL_ERR;
       }
       if (size != (results[radix] + 1)) {
-         fprintf(stderr, "mp_radix_size: result for base %d was %d instead of %d\n",
+         fprintf(stderr, "mp_radix_size: result for base %d was %zu instead of %zu\n",
                  radix, size, results[radix]);
          goto LBL_ERR;
       }

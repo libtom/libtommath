@@ -4,7 +4,7 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* returns size of ASCII representation */
-mp_err mp_radix_size(const mp_int *a, int radix, int *size)
+mp_err mp_radix_size(const mp_int *a, int radix, size_t *size)
 {
    mp_err err;
    mp_int a_;
@@ -26,10 +26,8 @@ mp_err mp_radix_size(const mp_int *a, int radix, int *size)
       goto LBL_ERR;
    }
 
-   *size = (int)b;
-
    /* mp_ilogb truncates to zero, hence we need one extra put on top and one for `\0`. */
-   *size += 2 + ((a->sign == MP_NEG) ? 1 : 0);
+   *size = (size_t)b + 2U + ((a->sign == MP_NEG) ? 1U : 0U);
 
 LBL_ERR:
    return err;
