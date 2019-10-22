@@ -4,6 +4,7 @@
  *
  * Tom St Denis, tomstdenis@gmail.com, http://tom.gmail.com
  */
+#include <stdlib.h>
 #include <time.h>
 #include "tommath.h"
 
@@ -178,14 +179,15 @@ static mp_digit prime_digit(void)
 
 
 /* makes a prime of at least k bits */
-static int pprime(int k, int li, mp_int *p, mp_int *q)
+static mp_err pprime(int k, int li, mp_int *p, mp_int *q)
 {
    mp_int  a, b, c, n, x, y, z, v;
-   int     res, ii;
+   mp_err  res;
+   int     ii;
    static const mp_digit bases[] = { 2, 3, 5, 7, 11, 13, 17, 19 };
 
    /* single digit ? */
-   if (k <= (int) DIGIT_BIT) {
+   if (k <= (int) MP_DIGIT_BIT) {
       mp_set(p, prime_digit());
       return MP_OKAY;
    }
@@ -331,11 +333,11 @@ top:
       {
          char buf[4096];
 
-         mp_toradix(&n, buf, 10);
+         mp_to_decimal(&n, buf, sizeof(buf));
          printf("Certificate of primality for:\n%s\n\n", buf);
-         mp_toradix(&a, buf, 10);
+         mp_to_decimal(&a, buf, sizeof(buf));
          printf("A == \n%s\n\n", buf);
-         mp_toradix(&b, buf, 10);
+         mp_to_decimal(&b, buf, sizeof(buf));
          printf("B == \n%s\n\nG == %lu\n", buf, bases[ii]);
          printf("----------------------------------------------------------------\n");
       }
@@ -398,16 +400,12 @@ int main(void)
    pprime(k, li, &p, &q);
    t1 = clock() - t1;
 
-   printf("\n\nTook %ld ticks, %d bits\n", t1, mp_count_bits(&p));
+   printf("\n\nTook %d ticks, %d bits\n", t1, mp_count_bits(&p));
 
-   mp_toradix(&p, buf, 10);
+   mp_to_decimal(&p, buf, sizeof(buf));
    printf("P == %s\n", buf);
-   mp_toradix(&q, buf, 10);
+   mp_to_decimal(&q, buf, sizeof(buf));
    printf("Q == %s\n", buf);
 
    return 0;
 }
-
-/* ref:         $Format:%D$ */
-/* git commit:  $Format:%H$ */
-/* commit time: $Format:%ai$ */

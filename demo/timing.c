@@ -1,7 +1,11 @@
-#include <tommath.h>
 #include <time.h>
+#include <string.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include <inttypes.h>
+
+#define MP_WUR
+#include <tommath.h>
 
 #ifdef IOWNANATHLON
 #include <unistd.h>
@@ -22,7 +26,7 @@ static void ndraw(mp_int *a, const char *name)
    char buf[4096];
 
    printf("%s: ", name);
-   mp_toradix(a, buf, 64);
+   mp_to_radix(a, buf, sizeof(buf), NULL, 64);
    printf("%s\n", buf);
 }
 
@@ -81,10 +85,14 @@ static uint64_t TIMFUNC(void)
 #endif
 }
 
+#if 1
 #define DO(x) x; x;
-/*#define DO4(x) DO2(x); DO2(x);*/
-/*#define DO8(x) DO4(x); DO4(x);*/
-/*#define DO(x)  DO8(x); DO8(x);*/
+#else
+#define DO2(x) x; x;
+#define DO4(x) DO2(x); DO2(x);
+#define DO8(x) DO4(x); DO4(x);
+#define DO(x)  DO8(x); DO8(x);
+#endif
 
 #ifdef TIMING_NO_LOGS
 #define FOPEN(a, b)     NULL
@@ -98,7 +106,21 @@ static uint64_t TIMFUNC(void)
 #define FCLOSE(a)        fclose(a)
 #endif
 
-int main(void)
+static int should_test(const char *test, int argc, char **argv)
+{
+   int j;
+   if (argc > 1) {
+      for (j = 1; j < argc; ++j) {
+         if (strstr(test, argv[j]) != NULL) {
+            return 1;
+         }
+      }
+      if (j == argc) return 0;
+   }
+   return 1;
+}
+
+int main(int argc, char **argv)
 {
    uint64_t tt, gg, CLK_PER_SEC;
    FILE *log, *logb, *logc, *logd;
@@ -127,99 +149,45 @@ int main(void)
    printf("CLK_PER_SEC == %" PRIu64 "\n", CLK_PER_SEC);
 
 #ifdef LTM_TIMING_PRIME_IS_PRIME
-   for (m = 0; m < 2; ++m) {
-      if (m == 0) {
-         name = "    Arnault";
-         mp_read_radix(&a,
-                       "91xLNF3roobhzgTzoFIG6P13ZqhOVYSN60Fa7Cj2jVR1g0k89zdahO9/kAiRprpfO1VAp1aBHucLFV/qLKLFb+zonV7R2Vxp1K13ClwUXStpV0oxTNQVjwybmFb5NBEHImZ6V7P6+udRJuH8VbMEnS0H8/pSqQrg82OoQQ2fPpAk6G1hkjqoCv5s/Yr",
-                       64);
-      } else {
-         name = "2^1119 + 53";
-         mp_set(&a,1u);
-         mp_mul_2d(&a,1119,&a);
-         mp_add_d(&a,53,&a);
-      }
-      cnt = mp_prime_rabin_miller_trials(mp_count_bits(&a));
-      ix = -cnt;
-      for (; cnt >= ix; cnt += ix) {
-         rr = 0u;
-         tt = UINT64_MAX;
-         do {
-            gg = TIMFUNC();
-            DO(mp_prime_is_prime(&a, cnt, &n));
-            gg = (TIMFUNC() - gg) >> 1;
-            if (tt > gg)
-               tt = gg;
-            if ((m == 0) && (n == MP_YES)) {
-               printf("Arnault's pseudoprime is not prime but mp_prime_is_prime says it is.\n");
-               return EXIT_FAILURE;
-            }
-         } while (++rr < 100u);
-         printf("Prime-check\t%s(%2d) => %9" PRIu64 "/sec, %9" PRIu64 " cycles\n",
-                name, cnt, CLK_PER_SEC / tt, tt);
+   if (should_test("prime", argc, argv)) {
+      for (m = 0; m < 2; ++m) {
+         if (m == 0) {
+            name = "    Arnault";
+            mp_read_radix(&a,
+                          "91xLNF3roobhzgTzoFIG6P13ZqhOVYSN60Fa7Cj2jVR1g0k89zdahO9/kAiRprpfO1VAp1aBHucLFV/qLKLFb+zonV7R2Vxp1K13ClwUXStpV0oxTNQVjwybmFb5NBEHImZ6V7P6+udRJuH8VbMEnS0H8/pSqQrg82OoQQ2fPpAk6G1hkjqoCv5s/Yr",
+                          64);
+         } else {
+            name = "2^1119 + 53";
+            mp_set(&a,1u);
+            mp_mul_2d(&a,1119,&a);
+            mp_add_d(&a,53,&a);
+         }
+         cnt = mp_prime_rabin_miller_trials(mp_count_bits(&a));
+         ix = -cnt;
+         for (; cnt >= ix; cnt += ix) {
+            rr = 0u;
+            tt = UINT64_MAX;
+            do {
+               gg = TIMFUNC();
+               DO(mp_prime_is_prime(&a, cnt, &n));
+               gg = (TIMFUNC() - gg) >> 1;
+               if (tt > gg)
+                  tt = gg;
+               if ((m == 0) && (n == MP_YES)) {
+                  printf("Arnault's pseudoprime is not prime but mp_prime_is_prime says it is.\n");
+                  return EXIT_FAILURE;
+               }
+            } while (++rr < 100u);
+            printf("Prime-check\t%s(%2d) => %9" PRIu64 "/sec, %9" PRIu64 " cycles\n",
+                   name, cnt, CLK_PER_SEC / tt, tt);
+         }
       }
    }
 #endif
 
-   log = FOPEN("logs/add.log", "w");
-   for (cnt = 8; cnt <= 128; cnt += 8) {
-      SLEEP;
-      mp_rand(&a, cnt);
-      mp_rand(&b, cnt);
-      rr = 0u;
-      tt = UINT64_MAX;
-      do {
-         gg = TIMFUNC();
-         DO(mp_add(&a, &b, &c));
-         gg = (TIMFUNC() - gg) >> 1;
-         if (tt > gg)
-            tt = gg;
-      } while (++rr < 100000u);
-      printf("Adding\t\t%4d-bit => %9" PRIu64 "/sec, %9" PRIu64 " cycles\n",
-             mp_count_bits(&a), CLK_PER_SEC / tt, tt);
-      FPRINTF(log, "%6d %9" PRIu64 "\n", cnt * DIGIT_BIT, tt);
-      FFLUSH(log);
-   }
-   FCLOSE(log);
-
-   log = FOPEN("logs/sub.log", "w");
-   for (cnt = 8; cnt <= 128; cnt += 8) {
-      SLEEP;
-      mp_rand(&a, cnt);
-      mp_rand(&b, cnt);
-      rr = 0u;
-      tt = UINT64_MAX;
-      do {
-         gg = TIMFUNC();
-         DO(mp_sub(&a, &b, &c));
-         gg = (TIMFUNC() - gg) >> 1;
-         if (tt > gg)
-            tt = gg;
-      } while (++rr < 100000u);
-
-      printf("Subtracting\t\t%4d-bit => %9" PRIu64 "/sec, %9" PRIu64 " cycles\n",
-             mp_count_bits(&a), CLK_PER_SEC / tt, tt);
-      FPRINTF(log, "%6d %9" PRIu64 "\n", cnt * DIGIT_BIT, tt);
-      FFLUSH(log);
-   }
-   FCLOSE(log);
-
-   /* do mult/square twice, first without karatsuba and second with */
-   old_kara_m = KARATSUBA_MUL_CUTOFF;
-   old_kara_s = KARATSUBA_SQR_CUTOFF;
-   /* currently toom-cook cut-off is too high to kick in, so we just use the karatsuba values */
-   old_toom_m = old_kara_m;
-   old_toom_s = old_kara_m;
-   for (ix = 0; ix < 3; ix++) {
-      printf("With%s Karatsuba, With%s Toom\n", (ix == 0) ? "out" : "", (ix == 1) ? "out" : "");
-
-      KARATSUBA_MUL_CUTOFF = (ix == 1) ? old_kara_m : 9999;
-      KARATSUBA_SQR_CUTOFF = (ix == 1) ? old_kara_s : 9999;
-      TOOM_MUL_CUTOFF = (ix == 2) ? old_toom_m : 9999;
-      TOOM_SQR_CUTOFF = (ix == 2) ? old_toom_s : 9999;
-
-      log = FOPEN((ix == 0) ? "logs/mult.log" : (ix == 1) ? "logs/mult_kara.log" : "logs/mult_toom.log", "w");
-      for (cnt = 4; cnt <= (10240 / DIGIT_BIT); cnt += 2) {
+   if (should_test("add", argc, argv)) {
+      log = FOPEN("logs/add.log", "w");
+      for (cnt = 8; cnt <= 128; cnt += 8) {
          SLEEP;
          mp_rand(&a, cnt);
          mp_rand(&b, cnt);
@@ -227,41 +195,103 @@ int main(void)
          tt = UINT64_MAX;
          do {
             gg = TIMFUNC();
-            DO(mp_mul(&a, &b, &c));
+            DO(mp_add(&a, &b, &c));
             gg = (TIMFUNC() - gg) >> 1;
             if (tt > gg)
                tt = gg;
-         } while (++rr < 100u);
-         printf("Multiplying\t%4d-bit => %9" PRIu64 "/sec, %9" PRIu64 " cycles\n",
+         } while (++rr < 100000u);
+         printf("Adding\t\t%4d-bit => %9" PRIu64 "/sec, %9" PRIu64 " cycles\n",
                 mp_count_bits(&a), CLK_PER_SEC / tt, tt);
-         FPRINTF(log, "%6d %9" PRIu64 "\n", mp_count_bits(&a), tt);
+         FPRINTF(log, "%6d %9" PRIu64 "\n", cnt * MP_DIGIT_BIT, tt);
          FFLUSH(log);
       }
       FCLOSE(log);
+   }
 
-      log = FOPEN((ix == 0) ? "logs/sqr.log" : (ix == 1) ? "logs/sqr_kara.log" : "logs/sqr_toom.log", "w");
-      for (cnt = 4; cnt <= (10240 / DIGIT_BIT); cnt += 2) {
+   if (should_test("sub", argc, argv)) {
+      log = FOPEN("logs/sub.log", "w");
+      for (cnt = 8; cnt <= 128; cnt += 8) {
          SLEEP;
          mp_rand(&a, cnt);
+         mp_rand(&b, cnt);
          rr = 0u;
          tt = UINT64_MAX;
          do {
             gg = TIMFUNC();
-            DO(mp_sqr(&a, &b));
+            DO(mp_sub(&a, &b, &c));
             gg = (TIMFUNC() - gg) >> 1;
             if (tt > gg)
                tt = gg;
-         } while (++rr < 100u);
-         printf("Squaring\t%4d-bit => %9" PRIu64 "/sec, %9" PRIu64 " cycles\n",
+         } while (++rr < 100000u);
+
+         printf("Subtracting\t\t%4d-bit => %9" PRIu64 "/sec, %9" PRIu64 " cycles\n",
                 mp_count_bits(&a), CLK_PER_SEC / tt, tt);
-         FPRINTF(log, "%6d %9" PRIu64 "\n", mp_count_bits(&a), tt);
+         FPRINTF(log, "%6d %9" PRIu64 "\n", cnt * MP_DIGIT_BIT, tt);
          FFLUSH(log);
       }
       FCLOSE(log);
-
    }
 
-   {
+   if (should_test("mulsqr", argc, argv)) {
+      /* do mult/square twice, first without karatsuba and second with */
+      old_kara_m = KARATSUBA_MUL_CUTOFF;
+      old_kara_s = KARATSUBA_SQR_CUTOFF;
+      /* currently toom-cook cut-off is too high to kick in, so we just use the karatsuba values */
+      old_toom_m = old_kara_m;
+      old_toom_s = old_kara_s;
+      for (ix = 0; ix < 3; ix++) {
+         printf("With%s Karatsuba, With%s Toom\n", (ix == 1) ? "" : "out", (ix == 2) ? "" : "out");
+
+         KARATSUBA_MUL_CUTOFF = (ix == 1) ? old_kara_m : 9999;
+         KARATSUBA_SQR_CUTOFF = (ix == 1) ? old_kara_s : 9999;
+         TOOM_MUL_CUTOFF = (ix == 2) ? old_toom_m : 9999;
+         TOOM_SQR_CUTOFF = (ix == 2) ? old_toom_s : 9999;
+
+         log = FOPEN((ix == 0) ? "logs/mult.log" : (ix == 1) ? "logs/mult_kara.log" : "logs/mult_toom.log", "w");
+         for (cnt = 4; cnt <= (10240 / MP_DIGIT_BIT); cnt += 2) {
+            SLEEP;
+            mp_rand(&a, cnt);
+            mp_rand(&b, cnt);
+            rr = 0u;
+            tt = UINT64_MAX;
+            do {
+               gg = TIMFUNC();
+               DO(mp_mul(&a, &b, &c));
+               gg = (TIMFUNC() - gg) >> 1;
+               if (tt > gg)
+                  tt = gg;
+            } while (++rr < 100u);
+            printf("Multiplying\t%4d-bit => %9" PRIu64 "/sec, %9" PRIu64 " cycles\n",
+                   mp_count_bits(&a), CLK_PER_SEC / tt, tt);
+            FPRINTF(log, "%6d %9" PRIu64 "\n", mp_count_bits(&a), tt);
+            FFLUSH(log);
+         }
+         FCLOSE(log);
+
+         log = FOPEN((ix == 0) ? "logs/sqr.log" : (ix == 1) ? "logs/sqr_kara.log" : "logs/sqr_toom.log", "w");
+         for (cnt = 4; cnt <= (10240 / MP_DIGIT_BIT); cnt += 2) {
+            SLEEP;
+            mp_rand(&a, cnt);
+            rr = 0u;
+            tt = UINT64_MAX;
+            do {
+               gg = TIMFUNC();
+               DO(mp_sqr(&a, &b));
+               gg = (TIMFUNC() - gg) >> 1;
+               if (tt > gg)
+                  tt = gg;
+            } while (++rr < 100u);
+            printf("Squaring\t%4d-bit => %9" PRIu64 "/sec, %9" PRIu64 " cycles\n",
+                   mp_count_bits(&a), CLK_PER_SEC / tt, tt);
+            FPRINTF(log, "%6d %9" PRIu64 "\n", mp_count_bits(&a), tt);
+            FFLUSH(log);
+         }
+         FCLOSE(log);
+
+      }
+   }
+
+   if (should_test("expt", argc, argv)) {
       const char *primes[] = {
          /* 2K large moduli */
          "179769313486231590772930519078902473361797697894230657273430081157732675805500963132708477322407536021120113879871393357658789768814416622492847430639474124377767893424865485276302219601246094119453082952085005768838150682342462881473913110540827237163350510684586239334100047359817950870678242457666208137217",
@@ -333,46 +363,44 @@ int main(void)
          FPRINTF((n < 3) ? logd : (n < 9) ? logc : (n < 16) ? logb : log,
                  "%6d %9" PRIu64 "\n", mp_count_bits(&a), tt);
       }
+      FCLOSE(log);
+      FCLOSE(logb);
+      FCLOSE(logc);
+      FCLOSE(logd);
    }
-   FCLOSE(log);
-   FCLOSE(logb);
-   FCLOSE(logc);
-   FCLOSE(logd);
 
-   log = FOPEN("logs/invmod.log", "w");
-   for (cnt = 4; cnt <= 32; cnt += 4) {
-      SLEEP;
-      mp_rand(&a, cnt);
-      mp_rand(&b, cnt);
+   if (should_test("invmod", argc, argv)) {
+      log = FOPEN("logs/invmod.log", "w");
+      for (cnt = 4; cnt <= 32; cnt += 4) {
+         SLEEP;
+         mp_rand(&a, cnt);
+         mp_rand(&b, cnt);
 
-      do {
-         mp_add_d(&b, 1uL, &b);
-         mp_gcd(&a, &b, &c);
-      } while (mp_cmp_d(&c, 1uL) != MP_EQ);
+         do {
+            mp_add_d(&b, 1uL, &b);
+            mp_gcd(&a, &b, &c);
+         } while (mp_cmp_d(&c, 1uL) != MP_EQ);
 
-      rr = 0u;
-      tt = UINT64_MAX;
-      do {
-         gg = TIMFUNC();
-         DO(mp_invmod(&b, &a, &c));
-         gg = (TIMFUNC() - gg) >> 1;
-         if (tt > gg)
-            tt = gg;
-      } while (++rr < 1000u);
-      mp_mulmod(&b, &c, &a, &d);
-      if (mp_cmp_d(&d, 1uL) != MP_EQ) {
-         printf("Failed to invert\n");
-         return 0;
+         rr = 0u;
+         tt = UINT64_MAX;
+         do {
+            gg = TIMFUNC();
+            DO(mp_invmod(&b, &a, &c));
+            gg = (TIMFUNC() - gg) >> 1;
+            if (tt > gg)
+               tt = gg;
+         } while (++rr < 1000u);
+         mp_mulmod(&b, &c, &a, &d);
+         if (mp_cmp_d(&d, 1uL) != MP_EQ) {
+            printf("Failed to invert\n");
+            return 0;
+         }
+         printf("Inverting mod\t%4d-bit => %9" PRIu64 "/sec, %9" PRIu64 " cycles\n",
+                mp_count_bits(&a), CLK_PER_SEC / tt, tt);
+         FPRINTF(log, "%6d %9" PRIu64 "\n", cnt * MP_DIGIT_BIT, tt);
       }
-      printf("Inverting mod\t%4d-bit => %9" PRIu64 "/sec, %9" PRIu64 " cycles\n",
-             mp_count_bits(&a), CLK_PER_SEC / tt, tt);
-      FPRINTF(log, "%6d %9" PRIu64 "\n", cnt * DIGIT_BIT, tt);
+      FCLOSE(log);
    }
-   FCLOSE(log);
 
    return 0;
 }
-
-/* ref:         $Format:%D$ */
-/* git commit:  $Format:%H$ */
-/* commit time: $Format:%ai$ */

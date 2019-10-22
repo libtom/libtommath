@@ -6,6 +6,7 @@
 \usepackage{alltt}
 \usepackage{graphicx}
 \usepackage{layout}
+\usepackage{appendix}
 \def\union{\cup}
 \def\intersect{\cap}
 \def\getsrandom{\stackrel{\rm R}{\gets}}
@@ -49,7 +50,7 @@
 \begin{document}
 \frontmatter
 \pagestyle{empty}
-\title{LibTomMath User Manual \\ v1.1.0}
+\title{LibTomMath User Manual \\ v1.2.0}
 \author{LibTom Projects \\ www.libtom.net}
 \maketitle
 This text, the library and the accompanying textbook are all hereby placed in the public domain.  This book has been
@@ -97,7 +98,20 @@ public domain everyone is entitled to do with them as they see fit.
 
 LibTomMath is meant to be very ``GCC friendly'' as it comes with a makefile well suited for GCC.  However, the library will
 also build in MSVC, Borland C out of the box.  For any other ISO C compiler a makefile will have to be made by the end
-developer.
+developer. Please consider to commit such a makefile to the LibTomMath developers, currently residing at
+\url{http://github.com/libtom/libtommath}, if successfully done so.
+
+Intel's C-compiler (ICC) is sufficiently compatible with GCC, at least the newer versions, to replace GCC for building the static and the shared library. Editing the makefiles is not needed, just set the shell variable \texttt{CC} as shown below.
+\begin{alltt}
+CC=/home/czurnieden/intel/bin/icc make
+\end{alltt}
+
+ICC does not know all options available for GCC and LibTomMath uses two diagnostics \texttt{-Wbad-function-cast} and \texttt{-Wcast-align} that are not supported by ICC resulting in the warnings:
+\begin{alltt}
+icc: command line warning #10148: option '-Wbad-function-cast' not supported
+icc: command line warning #10148: option '-Wcast-align' not supported
+\end{alltt}
+It is possible to mute this ICC warning with the compiler flag \texttt{-diag-disable=10148}\footnote{It is not recommended to suppress warnings without a very good reason but there is no harm in doing so in this very special case.}.
 
 \subsection{Static Libraries}
 To build as a static library for GCC issue the following
@@ -114,7 +128,14 @@ nmake -f makefile.msvc
 This will build the library and archive the object files in ``tommath.lib''.  This has been tested with MSVC
 version 6.00 with service pack 5.
 
+To run a program to adapt the Toom-Cook cut-off values to your architecture type
+\begin{alltt}
+make tune
+\end{alltt}
+This will take some time.
+
 \subsection{Shared Libraries}
+\subsubsection{GNU based Operating Systems}
 To build as a shared library for GCC issue the following
 \begin{alltt}
 make -f makefile.shared
@@ -124,9 +145,76 @@ and static then install (by default) into /usr/lib as well as install the header
 library (resource) will be called ``libtommath.la'' while the static library called ``libtommath.a''.  Generally
 you use libtool to link your application against the shared object.
 
+To run a program to adapt the Toom-Cook cut-off values to your architecture type
+\begin{alltt}
+make -f makefile.shared tune
+\end{alltt}
+This will take some time.
+
+\subsubsection{Microsoft Windows based Operating Systems}
 There is limited support for making a ``DLL'' in windows via the ``makefile.cygwin\_dll'' makefile.  It requires
 Cygwin to work with since it requires the auto-export/import functionality.  The resulting DLL and import library
 ``libtommath.dll.a'' can be used to link LibTomMath dynamically to any Windows program using Cygwin.
+\subsubsection{OpenBSD}
+OpenBSD replaced some of their GNU-tools, especially \texttt{libtool} with their own, slightly different versions. To ease the workload of LibTomMath's developer team, only a static library can be build with the included \texttt{makefile.unix}.
+
+The wrong \texttt{make} will result in errors like:
+\begin{alltt}
+*** Parse error in /home/user/GITHUB/libtommath: Need an operator in 'LIBNAME' )
+*** Parse error: Need an operator in 'endif' (makefile.shared:8)
+*** Parse error: Need an operator in 'CROSS_COMPILE' (makefile_include.mk:16)
+*** Parse error: Need an operator in 'endif' (makefile_include.mk:18)
+*** Parse error: Missing dependency operator (makefile_include.mk:22)
+*** Parse error: Missing dependency operator (makefile_include.mk:23)
+...
+\end{alltt}
+The wrong \texttt{libtool} will build it all fine but when it comes to the final linking fails with
+\begin{alltt}
+...
+cc -I./ -Wall -Wsign-compare -Wextra -Wshadow -Wsystem-headers -Wdeclaration-afo...
+cc -I./ -Wall -Wsign-compare -Wextra -Wshadow -Wsystem-headers -Wdeclaration-afo...
+cc -I./ -Wall -Wsign-compare -Wextra -Wshadow -Wsystem-headers -Wdeclaration-afo...
+libtool --mode=link --tag=CC cc  bn_error.lo bn_s_mp_invmod_fast.lo bn_fast_mp_mo
+libtool: link: cc bn_error.lo bn_s_mp_invmod_fast.lo bn_s_mp_montgomery_reduce_fast0
+bn_error.lo: file not recognized: File format not recognized
+cc: error: linker command failed with exit code 1 (use -v to see invocation)
+Error while executing cc bn_error.lo bn_s_mp_invmod_fast.lo bn_fast_mp_montgomery0
+gmake: *** [makefile.shared:64: libtommath.la] Error 1
+\end{alltt}
+
+To build a shared library with OpenBSD\footnote{Tested with OpenBSD version 6.4} the GNU versions of \texttt{make} and \texttt{libtool} are needed.
+\begin{alltt}
+$ sudo pkg_add gmake libtool
+\end{alltt}
+At this time two versions of \texttt{libtool} are installed and both are named \texttt{libtool}, unfortunately but GNU \texttt{libtool} has been placed in \texttt{/usr/local/bin/} and the native version in \texttt{/usr/bin/}. The path might be different in other versions of OpenBSD but both programms differ in the output of \texttt{libtool --version}
+\begin{alltt}
+$ /usr/local/bin/libtool --version
+libtool (GNU libtool) 2.4.2
+Written by Gordon Matzigkeit <gord@gnu.ai.mit.edu>, 1996
+
+Copyright (C) 2011 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+$ libtool --version
+libtool (not (GNU libtool)) 1.5.26
+\end{alltt}
+
+The shared library should build now with
+\begin{alltt}
+LIBTOOL="/usr/local/bin/libtool" gmake -f makefile.shared
+\end{alltt}
+You might need to run a \texttt{gmake -f makefile.shared clean} first.
+
+\subsubsection{NetBSD}
+NetBSD is not as strict as OpenBSD but still needs \texttt{gmake} to build the shared library. \texttt{libtool} may also not exist in a fresh install.
+\begin{alltt}
+pkg_add gmake libtool
+\end{alltt}
+Please check with \texttt{libtool --version} that installed libtool is indeed a GNU libtool.
+Build the shared library by typing:
+\begin{alltt}
+gmake -f makefile.shared
+\end{alltt}
 
 \subsection{Testing}
 To build the library and the test harness type
@@ -693,9 +781,9 @@ int mp_count_bits(const mp_int *a);
 
 
 \section{Small Constants}
-Setting mp\_ints to small constants is a relatively common operation.  To accommodate these instances there are two
-small constant assignment functions.  The first function is used to set a single digit constant while the second sets
-an ISO C style ``unsigned long'' constant.  The reason for both functions is efficiency.  Setting a single digit is quick but the
+Setting mp\_ints to small constants is a relatively common operation.  To accommodate these instances there is a
+small constant assignment function.  This function is used to set a single digit constant.
+The reason for this function is efficiency.  Setting a single digit is quick but the
 domain of a digit can change (it's always at least $0 \ldots 127$).
 
 \subsection{Single Digit}
@@ -733,28 +821,35 @@ int main(void)
 \}
 \end{alltt} \end{small}
 
-\subsection{Long Constants}
+\subsection{Int32 and Int64 Constants}
 
-To set a constant that is the size of an ISO C ``unsigned long'' and larger than a single digit the following function
-can be used.
+These functions can be used to set a constant with 32 or 64 bits.
 
-\index{mp\_set\_int}
+\index{mp\_set\_i32} \index{mp\_set\_u32}
+\index{mp\_set\_i64} \index{mp\_set\_u64}
 \begin{alltt}
-int mp_set_int (mp_int * a, unsigned long b);
+void mp_set_i32 (mp_int * a, int32_t b);
+void mp_set_u32 (mp_int * a, uint32_t b);
+void mp_set_i64 (mp_int * a, int64_t b);
+void mp_set_u64 (mp_int * a, uint64_t b);
 \end{alltt}
 
-This will assign the value of the 32-bit variable $b$ to the mp\_int $a$.  Unlike mp\_set() this function will always
-accept a 32-bit input regardless of the size of a single digit.  However, since the value may span several digits
-this function can fail if it runs out of heap memory.
+These functions assign the sign and value of the input \texttt{b} to \texttt{mp\_int a}.
+The value can be obtained again by calling the following functions.
 
-To get the ``unsigned long'' copy of an mp\_int the following function can be used.
-
-\index{mp\_get\_int}
+\index{mp\_get\_i32} \index{mp\_get\_u32} \index{mp\_get\_mag\_u32}
+\index{mp\_get\_i64} \index{mp\_get\_u64} \index{mp\_get\_mag\_u64}
 \begin{alltt}
-unsigned long mp_get_int (mp_int * a);
+int32_t mp_get_i32 (mp_int * a);
+uint32_t mp_get_u32 (mp_int * a);
+uint32_t mp_get_mag_u32 (mp_int * a);
+int64_t mp_get_i64 (mp_int * a);
+uint64_t mp_get_u64 (mp_int * a);
+uint64_t mp_get_mag_u64 (mp_int * a);
 \end{alltt}
 
-This will return the 32 least significant bits of the mp\_int $a$.
+These functions return the 32 or 64 least significant bits of $a$ respectively. The unsigned functions
+return negative values in a twos complement representation. The absolute value or magnitude can be obtained using the mp\_get\_mag functions.
 
 \begin{small} \begin{alltt}
 int main(void)
@@ -769,13 +864,9 @@ int main(void)
    \}
 
    /* set the number to 654321 (note this is bigger than 127) */
-   if ((result = mp_set_int(&number, 654321)) != MP_OKAY) \{
-      printf("Error setting the value of the number.  \%s",
-             mp_error_to_string(result));
-      return EXIT_FAILURE;
-   \}
+   mp_set_u32(&number, 654321);
 
-   printf("number == \%lu", mp_get_int(&number));
+   printf("number == \%" PRIi32, mp_get_i32(&number));
 
    /* we're done with it. */
    mp_clear(&number);
@@ -792,46 +883,61 @@ number == 654321
 
 \subsection{Long Constants - platform dependant}
 
-\index{mp\_set\_long}
+\index{mp\_set\_l} \index{mp\_set\_ul}
 \begin{alltt}
-int mp_set_long (mp_int * a, unsigned long b);
+void mp_set_l (mp_int * a, long b);
+void mp_set_ul (mp_int * a, unsigned long b);
 \end{alltt}
 
 This will assign the value of the platform-dependent sized variable $b$ to the mp\_int $a$.
 
-To get the ``unsigned long'' copy of an mp\_int the following function can be used.
+To retrieve the value, the following functions can be used.
 
-\index{mp\_get\_long}
+\index{mp\_get\_l} \index{mp\_get\_ul} \index{mp\_get\_mag\_ul}
 \begin{alltt}
-unsigned long mp_get_long (mp_int * a);
+long mp_get_l (mp_int * a);
+unsigned long mp_get_ul (mp_int * a);
+unsigned long mp_get_mag_ul (mp_int * a);
 \end{alltt}
 
-This will return the least significant bits of the mp\_int $a$ that fit into an ``unsigned long''.
+This will return the least significant bits of the mp\_int $a$ that fit into a ``long''.
 
-\subsection{Long Long Constants}
+\subsection{Long Long Constants - platform dependant}
 
-\index{mp\_set\_long\_long}
+\index{mp\_set\_ll} \index{mp\_set\_ull}
 \begin{alltt}
-int mp_set_long_long (mp_int * a, unsigned long long b);
+void mp_set_ll (mp_int * a, long long b);
+void mp_set_ull (mp_int * a, unsigned long long b);
 \end{alltt}
 
-This will assign the value of the 64-bit variable $b$ to the mp\_int $a$.
+This will assign the value of the platform-dependent sized variable $b$ to the mp\_int $a$.
 
-To get the ``unsigned long long'' copy of an mp\_int the following function can be used.
+To retrieve the value, the following functions can be used.
 
-\index{mp\_get\_long\_long}
+\index{mp\_get\_ll}
+\index{mp\_get\_ull}
+\index{mp\_get\_mag\_ull}
 \begin{alltt}
-unsigned long long mp_get_long_long (mp_int * a);
+long long mp_get_ll (mp_int * a);
+unsigned long long mp_get_ull (mp_int * a);
+unsigned long long mp_get_mag_ull (mp_int * a);
 \end{alltt}
 
-This will return the 64 least significant bits of the mp\_int $a$.
+This will return the least significant bits of the mp\_int $a$ that fit into a ``long long''.
 
 \subsection{Initialize and Setting Constants}
 To both initialize and set small constants the following two functions are available.
 \index{mp\_init\_set} \index{mp\_init\_set\_int}
 \begin{alltt}
 int mp_init_set (mp_int * a, mp_digit b);
-int mp_init_set_int (mp_int * a, unsigned long b);
+int mp_init_i32 (mp_int * a, int32_t b);
+int mp_init_u32 (mp_int * a, uint32_t b);
+int mp_init_i64 (mp_int * a, int64_t b);
+int mp_init_u64 (mp_int * a, uint64_t b);
+int mp_init_l   (mp_int * a, long b);
+int mp_init_ul  (mp_int * a, unsigned long b);
+int mp_init_ll  (mp_int * a, long long b);
+int mp_init_ull (mp_int * a, unsigned long long b);
 \end{alltt}
 
 Both functions work like the previous counterparts except they first mp\_init $a$ before setting the values.
@@ -850,15 +956,15 @@ int main(void)
    \}
 
    /* initialize and set a long */
-   if ((result = mp_init_set_int(&number2, 1023)) != MP_OKAY) \{
+   if ((result = mp_init_l(&number2, 1023)) != MP_OKAY) \{
       printf("Error setting number2: \%s",
              mp_error_to_string(result));
       return EXIT_FAILURE;
    \}
 
    /* display */
-   printf("Number1, Number2 == \%lu, \%lu",
-          mp_get_int(&number1), mp_get_int(&number2));
+   printf("Number1, Number2 == \%" PRIi32 ", \%" PRIi32,
+          mp_get_i32(&number1), mp_get_i32(&number2));
 
    /* clear */
    mp_clear_multi(&number1, &number2, NULL);
@@ -1155,13 +1261,6 @@ function simply copies $a$ over to ``c'' and zeroes $d$.  The variable $d$ may b
 value to signal that the remainder is not desired.  The division itself is implemented as a left-shift
 operation of $a$ by $b$ bits.
 
-\index{mp\_tc\_div\_2d}\label{arithrightshift}
-\begin{alltt}
-int mp_tc_div_2d (mp_int * a, int b, mp_int * c, mp_int * d);
-\end{alltt}
-The two-co,mplement version of the function above. This can be used to implement arbitrary-precision two-complement integers together with the two-complement bit-wise operations at page \ref{tcbitwiseops}.
-
-
 It is also not very uncommon to need just the power of two $2^b$;  for example the startvalue for the Newton method.
 
 \index{mp\_2expt}
@@ -1197,30 +1296,20 @@ in place and no new digits are required to complete it.
 
 \subsection{AND, OR, XOR and COMPLEMENT Operations}
 
-While AND, OR and XOR operations are not typical ``bignum functions'' they can be useful in several instances.  The
-four functions are prototyped as follows.
+While AND, OR and XOR operations compute arbitrary-precision bitwise operations. Negative numbers
+are treated as if they are in two-complement representation, while internally they are sign-magnitude however.
 
-\index{mp\_or} \index{mp\_and} \index{mp\_xor} \index {mp\_complement}
+\index{mp\_or} \index{mp\_and} \index{mp\_xor} \index{mp\_complement}
 \begin{alltt}
 int mp_or  (mp_int * a, mp_int * b, mp_int * c);
 int mp_and (mp_int * a, mp_int * b, mp_int * c);
 int mp_xor (mp_int * a, mp_int * b, mp_int * c);
 int mp_complement(const mp_int *a, mp_int *b);
+int mp_signed_rsh(mp_int * a, int b, mp_int * c, mp_int * d);
 \end{alltt}
 
-Which compute $c = a \odot b$ where $\odot$ is one of OR, AND or XOR and $ b = \sim a $.
-
-There are also three functions that act as if the ``bignum'' would be a two-complement number.
-
-\index{mp\_tc\_or} \index{mp\_tc\_and} \index{mp\_tc\_xor}\label{tcbitwiseops}
-\begin{alltt}
-int mp_tc_or  (mp_int * a, mp_int * b, mp_int * c);
-int mp_tc_and (mp_int * a, mp_int * b, mp_int * c);
-int mp_tc_xor (mp_int * a, mp_int * b, mp_int * c);
-\end{alltt}
-
-The compute $c = a \odot b$ as above if both $a$ and $b$ are positive, negative values are converted into their two-complement representation first. This can be used to implement arbitrary-precision two-complement integers together with the arithmetic right-shift at page \ref{arithrightshift}.
-
+The function \texttt{mp\_complement} computes a two-complement $b = \sim a$. The function \texttt{mp\_signed\_rsh} performs
+sign extending right shift. For positive numbers it is equivalent to \texttt{mp\_div\_2d}.
 
 \subsection{Bit Picking}
 \index{mp\_get\_bit}
@@ -1292,7 +1381,7 @@ should only be used with very large inputs.  This is followed by the Karatsuba m
 sized inputs.  Then followed by the Comba and baseline multipliers.
 
 Fortunately for the developer you don't really need to know this unless you really want to fine tune the system.  mp\_mul()
-will determine on its own\footnote{Some tweaking may be required.} what routine to use automatically when it is called.
+will determine on its own\footnote{Some tweaking may be required but \texttt{make tune} will put some reasonable values in \texttt{bncore.c}} what routine to use automatically when it is called.
 
 \begin{alltt}
 int main(void)
@@ -1309,17 +1398,8 @@ int main(void)
    \}
 
    /* set the terms */
-   if ((result = mp_set_int(&number, 257)) != MP_OKAY) \{
-      printf("Error setting number1.  \%s",
-             mp_error_to_string(result));
-      return EXIT_FAILURE;
-   \}
-
-   if ((result = mp_set_int(&number2, 1023)) != MP_OKAY) \{
-      printf("Error setting number2.  \%s",
-             mp_error_to_string(result));
-      return EXIT_FAILURE;
-   \}
+   mp_set_i32(&number, 257);
+   mp_set_i32(&number2, 1023);
 
    /* multiply them */
    if ((result = mp_mul(&number1, &number2,
@@ -1330,7 +1410,7 @@ int main(void)
    \}
 
    /* display */
-   printf("number1 * number2 == \%lu", mp_get_int(&number1));
+   printf("number1 * number2 == \%" PRIi32, mp_get_i32(&number1));
 
    /* free terms and return */
    mp_clear_multi(&number1, &number2, NULL);
@@ -1374,34 +1454,17 @@ GCC 3.3.1 and an Athlon XP processor the cutoff point is roughly 110 digits (abo
 Toom-Cook has incredible overhead and is probably only useful for very large inputs.  So far no known cutoff points
 exist and for the most part I just set the cutoff points very high to make sure they're not called.
 
-A demo program in the ``etc/'' directory of the project called ``tune.c'' can be used to find the cutoff points.  This
-can be built with GCC as follows
+To get reasonable values for the cut-off points for your architecture, type
 
 \begin{alltt}
-make XXX
+make tune
 \end{alltt}
-Where ``XXX'' is one of the following entries from the table \ref{fig:tuning}.
 
-\begin{figure}[h]
-\begin{center}
-\begin{small}
-\begin{tabular}{|l|l|}
-\hline \textbf{Value of XXX} & \textbf{Meaning} \\
-\hline tune & Builds portable tuning application \\
-\hline tune86 & Builds x86 (pentium and up) program for COFF \\
-\hline tune86c & Builds x86 program for Cygwin \\
-\hline tune86l & Builds x86 program for Linux (ELF format) \\
-\hline
-\end{tabular}
-\end{small}
-\end{center}
-\caption{Build Names for Tuning Programs}
-\label{fig:tuning}
-\end{figure}
+This will run a benchmark, computes the medians, rewrites \texttt{bncore.c}, and recompiles \texttt{bncore.c} and relinks the library.
 
-When the program is running it will output a series of measurements for different cutoff points.  It will first find
-good Karatsuba squaring and multiplication points.  Then it proceeds to find Toom-Cook points.  Note that the Toom-Cook
-tuning takes a very long time as the cutoff points are likely to be very high.
+The benchmark itself can be fine-tuned in the file \texttt{etc/tune\_it.sh}.
+
+The program \texttt{etc/tune} is also able to print a list of values for printing curves with e.g.: \texttt{gnuplot}. type \texttt{./etc/tune -h} to get a list of all available options.
 
 \chapter{Modular Reduction}
 
@@ -1705,29 +1768,11 @@ int mp_sqrmod(const mp_int *a, const mp_int *b, const mp_int *c, mp_int *d);
 
 \chapter{Exponentiation}
 \section{Single Digit Exponentiation}
-\index{mp\_expt\_d\_ex}
-\begin{alltt}
-int mp_expt_d_ex (mp_int * a, mp_digit b, mp_int * c, int fast)
-\end{alltt}
-This function computes $c = a^b$.
-
-With parameter \textit{fast} set to $0$ the old version of the algorithm is used,
-when \textit{fast} is $1$, a faster but not statically timed version of the algorithm is used.
-
-The old version uses a simple binary left-to-right algorithm.
-It is faster than repeated multiplications by $a$ for all values of $b$ greater than three.
-
-The new version uses a binary right-to-left algorithm.
-
-The difference between the old and the new version is that the old version always
-executes $DIGIT\_BIT$ iterations. The new algorithm executes only $n$ iterations
-where $n$ is equal to the position of the highest bit that is set in $b$.
-
 \index{mp\_expt\_d}
 \begin{alltt}
 int mp_expt_d (mp_int * a, mp_digit b, mp_int * c)
 \end{alltt}
-mp\_expt\_d(a, b, c) is a wrapper function to mp\_expt\_d\_ex(a, b, c, 0).
+This function computes $c = a^b$.
 
 \section{Modular Exponentiation}
 \index{mp\_exptmod}
@@ -1756,18 +1801,11 @@ It calculates $c = a \mod 2^b$.
 \begin{alltt}
 int mp_n_root (mp_int * a, mp_digit b, mp_int * c)
 \end{alltt}
-This computes $c = a^{1/b}$ such that $c^b \le a$ and $(c+1)^b > a$.  The implementation of this function is not
-ideal for values of $b$ greater than three.  It will work but become very slow.  So unless you are working with very small
-numbers (less than 1000 bits) I'd avoid $b > 3$ situations.  Will return a positive root only for even roots and return
+This computes $c = a^{1/b}$ such that $c^b \le a$ and $(c+1)^b > a$. Will return a positive root only for even roots and return
 a root with the sign of the input for odd roots.  For example, performing $4^{1/2}$ will return $2$ whereas $(-8)^{1/3}$
 will return $-2$.
 
-This algorithm uses the ``Newton Approximation'' method and will converge on the correct root fairly quickly.  Since
-the algorithm requires raising $a$ to the power of $b$ it is not ideal to attempt to find roots for large
-values of $b$.  If particularly large roots are required then a factor method could be used instead.  For example,
-$a^{1/16}$ is equivalent to $\left (a^{1/4} \right)^{1/4}$ or simply
-$\left ( \left ( \left ( a^{1/2} \right )^{1/2} \right )^{1/2} \right )^{1/2}$
-
+This algorithm uses the ``Newton Approximation'' method and will converge on the correct root fairly quickly.
 
 The square root  $c = a^{1/2}$ (with the same conditions $c^2 \le a$ and $(c+1)^2 > a$) is implemented with a faster algorithm.
 
@@ -1775,6 +1813,71 @@ The square root  $c = a^{1/2}$ (with the same conditions $c^2 \le a$ and $(c+1)^
 \begin{alltt}
 int mp_sqrt (mp_int * a, mp_digit b, mp_int * c)
 \end{alltt}
+
+
+\chapter{Logarithm}
+\section{Integer Logarithm}
+A logarithm function for positive integer input \texttt{a, base} computing  $\floor{\log_bx}$ such that $(\log_b x)^b \le x$.
+\index{mp\_ilogb}
+\begin{alltt}
+int mp_ilogb(mp_int *a, mp_digit base, mp_int *c)
+\end{alltt}
+\subsection{Example}
+\begin{alltt}
+#include <stdlib.h>
+#include <stdio.h>
+#include <errno.h>
+
+#include <tommath.h>
+
+int main(int argc, char **argv)
+{
+   mp_int x, output;
+   mp_digit base;
+   int e;
+
+   if (argc != 3) {
+      fprintf(stderr,"Usage %s base x\textbackslash{}n", argv[0]);
+      exit(EXIT_FAILURE);
+   }
+   if ((e = mp_init_multi(&x, &output, NULL)) != MP_OKAY) {
+      fprintf(stderr,"mp_init failed: \textbackslash{}"%s\textbackslash{}"\textbackslash{}n",
+                     mp_error_to_string(e));
+              exit(EXIT_FAILURE);
+   }
+   errno = 0;
+#ifdef MP_64BIT
+   base = (mp_digit)strtoull(argv[1], NULL, 10);
+#else
+   base = (mp_digit)strtoul(argv[1], NULL, 10);
+#endif
+   if ((errno == ERANGE) || (base > (base & MP_MASK))) {
+      fprintf(stderr,"strtoul(l) failed: input out of range\textbackslash{}n");
+      exit(EXIT_FAILURE);
+   }
+   if ((e = mp_read_radix(&x, argv[2], 10)) != MP_OKAY) {
+      fprintf(stderr,"mp_read_radix failed: \textbackslash{}"%s\textbackslash{}"\textbackslash{}n",
+                      mp_error_to_string(e));
+      exit(EXIT_FAILURE);
+   }
+   if ((e = mp_ilogb(&x, base, &output)) != MP_OKAY) {
+      fprintf(stderr,"mp_ilogb failed: \textbackslash{}"%s\textbackslash{}"\textbackslash{}n",
+                      mp_error_to_string(e));
+      exit(EXIT_FAILURE);
+   }
+
+   if ((e = mp_fwrite(&output, 10, stdout)) != MP_OKAY) {
+      fprintf(stderr,"mp_fwrite failed: \textbackslash{}"%s\textbackslash{}"\textbackslash{}n",
+                      mp_error_to_string(e));
+      exit(EXIT_FAILURE);
+   }
+   putchar('\textbackslash{}n');
+
+   mp_clear_multi(&x, &output, NULL);
+   exit(EXIT_SUCCESS);
+}
+\end{alltt}
+
 
 
 \chapter{Prime Numbers}
@@ -1818,13 +1921,40 @@ This is why a simple function has been provided to help out.
 \begin{alltt}
 int mp_prime_rabin_miller_trials(int size)
 \end{alltt}
-This returns the number of trials required for a $2^{-96}$ (or lower) probability of failure for a given ``size'' expressed
-in bits.  This comes in handy specially since larger numbers are slower to test.  For example, a 512-bit number would
-require ten tests whereas a 1024-bit number would only require four tests.
+This returns the number of trials required for a low probability of failure for a given ``size'' expressed in bits.  This comes in handy specially since larger numbers are slower to test. For example, a 512-bit number would require 18 tests for a probability of $2^{-160}$ whereas a 1024-bit number would only require 12 tests for a probability of $2^{-192}$. The exact values as implemented are listed in table \ref{table:millerrabinrunsimpl}.
+
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{c c c}
+\textbf{bits} & \textbf{Rounds} & \textbf{Error}\\
+ 80 & -1  &  Use deterministic algorithm for size <= 80 bits \\
+ 81 & 37  &  $2^{-96}$ \\
+ 96 & 32  & $2^{-96}$ \\
+ 128 & 40  & $2^{-112}$ \\
+ 160 & 35  & $2^{-112}$ \\
+ 256 & 27  & $2^{-128}$ \\
+ 384 & 16  & $2^{-128}$ \\
+ 512 & 18  & $2^{-160}$ \\
+ 768 & 11  & $2^{-160}$ \\
+ 896 & 10  & $2^{-160}$ \\
+ 1024 & 12  & $2^{-192}$ \\
+ 1536 & 8   & $2^{-192}$ \\
+ 2048 & 6   & $2^{-192}$ \\
+ 3072 & 4   & $2^{-192}$ \\
+ 4096 & 5   & $2^{-256}$ \\
+ 5120 & 4   & $2^{-256}$ \\
+ 6144 & 4   & $2^{-256}$ \\
+ 8192 & 3   & $2^{-256}$ \\
+ 9216 & 3   & $2^{-256}$ \\
+ 10240 & 2  & $2^{-256}$
+\end{tabular}
+\caption{ Number of Miller-Rabin rounds as implemented } \label{table:millerrabinrunsimpl}
+\end{center}
+\end{table}
 
 You should always still perform a trial division before a Miller-Rabin test though.
 
-A small table, broke in two for typographical reasons, with the number of rounds of Miller-Rabin tests is shown below.
+A small table, broke in two for typographical reasons, with the number of rounds of Miller-Rabin tests is shown below. The numbers have been compute with a PARI/GP script listed in appendix \ref{app:numberofmrcomp}.
 The first column is the number of bits $b$ in the prime $p = 2^b$, the numbers in the first row represent the
 probability that the number that all of the Miller-Rabin tests deemed a pseudoprime is actually a composite. There is a deterministic test for numbers smaller than $2^{80}$.
 
@@ -1890,6 +2020,11 @@ Determining the probability needed to pick the right column is a bit harder. Fip
 
 If this version of the library has the strong Lucas-Selfridge and/or the Frobenius-Underwood test implemented only one or two rounds of the Miller-Rabin test with a random base is necesssary for numbers larger than or equal to $1024$ bits.
 
+This function is meant for RSA. The number of rounds for DSA is $\lceil -log_2(p)/2\rceil$ with $p$ the probability which is just the half of the absolute value of $p$ if given as a power of two. E.g.: with $p = 2^{-128}$, $\lceil -log_2(p)/2\rceil = 64$.
+
+This function can be used to test a DSA prime directly if these rounds are followed by a Lucas test.
+
+See also table C.1 in FIPS 186-4.
 
 \section{Strong Lucas-Selfridge Test}
 \index{mp\_prime\_strong\_lucas\_selfridge}
@@ -1924,17 +2059,13 @@ int mp_prime_is_prime (mp_int * a, int t, int *result)
 \end{alltt}
 This will perform a trial division followed by two rounds of Miller-Rabin with bases 2 and 3 and a Lucas-Selfridge test. The Lucas-Selfridge test is replaced with a Frobenius-Underwood for \texttt{MP\_8BIT}. The Frobenius-Underwood test for all other sizes is available as a compile-time option with the preprocessor macro \texttt{LTM\_USE\_FROBENIUS\_TEST}. See file
 \texttt{bn\_mp\_prime\_is\_prime.c} for the necessary details. It shall be noted that both functions are much slower than
-the Miller-Rabin test and if speed is an essential issue, the macro \texttt{LTM\_USE\_FIPS\_ONLY} switches both functions, the Frobenius-Underwood test and the Lucas-Selfridge test off and their code will not even be compiled into the library.
+the Miller-Rabin test and if speed is an essential issue, the macro \texttt{LTM\_USE\_ONLY\_MR} switches both functions, the Frobenius-Underwood test and the Lucas-Selfridge test off and their code will not even be compiled into the library.
 
 If $t$ is set to a positive value $t$ additional rounds of the Miller-Rabin test with random bases will be performed to allow for Fips 186.4 (vid.~p.~126ff) compliance. The function \texttt{mp\_prime\_rabin\_miller\_trials} can be used to determine the number of rounds. It is vital that the function \texttt{mp\_rand()} has a cryptographically strong random number generator available.
 
 One Miller-Rabin tests with a random base will be run automatically, so by setting $t$ to a positive value this function will run $t + 1$ Miller-Rabin tests with random bases.
 
-If  $t$ is set to a negative value the test will run the deterministic Miller-Rabin test for the primes up to
-$3317044064679887385961981$. That limit has to be checked by the caller. If $-t > 13$ than $-t - 13$ additional rounds of the
-Miller-Rabin test will be performed but note that $-t$ is bounded by $1 \le -t < PRIME\_SIZE$ where $PRIME\_SIZE$ is the number
-of primes in the prime number table (by default this is $256$) and the first 13 primes have already been used. It will return
-\texttt{MP\_VAL} in case of$-t > PRIME\_SIZE$.
+If  $t$ is set to a negative value the test will run the deterministic Miller-Rabin test for the primes up to $3317044064679887385961981$. That limit has to be checked by the caller.
 
 If $a$ passes all of the tests $result$ is set to one, otherwise it is set to zero.
 
@@ -1948,38 +2079,21 @@ mp\_prime\_is\_prime for details regarding the use of the argument $t$.  Set $bb
 want only the next prime congruent to $3 \mbox{ mod } 4$, otherwise set it to zero to find any next prime.
 
 \section{Random Primes}
-\index{mp\_prime\_random}
+\index{mp\_prime\_rand}
 \begin{alltt}
-int mp_prime_random(mp_int *a, int t, int size, int bbs,
-                    ltm_prime_callback cb, void *dat)
+int mp_prime_rand(mp_int *a,    int t,
+                  int     size, int flags);
 \end{alltt}
-This will find a prime greater than $256^{size}$ which can be ``bbs\_style'' or not depending on $bbs$ and must pass
-$t$ rounds of tests but see the documentation for mp\_prime\_is\_prime for details regarding the use of the argument $t$.
-The ``ltm\_prime\_callback'' is a typedef for
+This will generate a prime in $a$ using $t$ tests of the primality testing algorithms.
+See the documentation for mp\_prime\_is\_prime for details regarding the use of the argument $t$.
+The variable $size$ specifies the bit length of the prime desired.
+The variable $flags$ specifies one of several options available
+(see fig. \ref{fig:primeopts}) which can be OR'ed together.
 
-\begin{alltt}
-typedef int ltm_prime_callback(unsigned char *dst, int len, void *dat);
-\end{alltt}
-
-Which is a function that must read $len$ bytes (and return the amount stored) into $dst$.  The $dat$ variable is simply
-copied from the original input.  It can be used to pass RNG context data to the callback.  The function
-mp\_prime\_random() is more suitable for generating primes which must be secret (as in the case of RSA) since there
+The function mp\_prime\_rand() is suitable for generating primes which must be secret (as in the case of RSA) since there
 is no skew on the least significant bits.
 
-\textit{Note:}  As of v0.30 of the LibTomMath library this function has been deprecated.  It is still available
-but users are encouraged to use the new mp\_prime\_random\_ex() function instead.
-
-\subsection{Extended Generation}
-\index{mp\_prime\_random\_ex}
-\begin{alltt}
-int mp_prime_random_ex(mp_int *a,    int t,
-                       int     size, int flags,
-                       ltm_prime_callback cb, void *dat);
-\end{alltt}
-This will generate a prime in $a$ using $t$ tests of the primality testing algorithms.  The variable $size$
-specifies the bit length of the prime desired.  The variable $flags$ specifies one of several options available
-(see fig. \ref{fig:primeopts}) which can be OR'ed together.  The callback parameters are used as in
-mp\_prime\_random().
+\textit{Note:} This function replaces the deprecated mp\_prime\_random and mp\_prime\_random\_ex functions.
 
 \begin{figure}[h]
 \begin{center}
@@ -2021,20 +2135,21 @@ The random number generated with these two functions is cryptographically secure
 \chapter{Input and Output}
 \section{ASCII Conversions}
 \subsection{To ASCII}
-\index{mp\_toradix}
+\index{mp\_to\_radix}
 \begin{alltt}
-int mp_toradix (mp_int * a, char *str, int radix);
+int mp_to_radix (mp_int *a, char *str, size_t maxlen, size_t *written, int radix);
 \end{alltt}
-This still store $a$ in ``str'' as a base-``radix'' string of ASCII chars.  This function appends a NUL character
-to terminate the string.  Valid values of ``radix'' line in the range $[2, 64]$.  To determine the size (exact) required
-by the conversion before storing any data use the following function.
+This stores $a$ in \texttt{str} of maximum length \texttt{maxlen} as a base-\texttt{radix} string of ASCII chars and appends a \texttt{NUL} character to terminate the string.
 
-\index{mp\_toradix\_n}
-\begin{alltt}
-int mp_toradix_n (mp_int * a, char *str, int radix, int maxlen);
-\end{alltt}
+Valid values of \texttt{radix} line in the range $[2, 64]$.
 
-Like \texttt{mp\_toradix} but stores upto maxlen-1 chars and always a NULL byte.
+The exact number of characters in \texttt{str} plus the \texttt{NUL} will be put in \texttt{written} if that variable is not set to \texttt{NULL}.
+
+If \texttt{str} is not big enough to hold $a$, \texttt{str} will be filled with the least-significant digits
+of length \texttt{maxlen-1}, then \texttt{str} will be \texttt{NUL} terminated and the error \texttt{MP\_VAL} is returned.
+
+Please be aware that this function cannot evaluate the actual size of the buffer, it relies on the correctness of \texttt{maxlen}!
+
 
 \index{mp\_radix\_size}
 \begin{alltt}
@@ -2070,51 +2185,63 @@ int mp_fread(mp_int *a, int radix, FILE *stream);
 
 Converting an mp\_int to and from binary is another keen idea.
 
-\index{mp\_unsigned\_bin\_size}
+\index{mp\_ubin\_size}
 \begin{alltt}
-int mp_unsigned_bin_size(mp_int *a);
+size_t mp_ubin_size(mp_int *a);
 \end{alltt}
 
 This will return the number of bytes (octets) required to store the unsigned copy of the integer $a$.
 
-\index{mp\_to\_unsigned\_bin}
+\index{mp\_to\_ubin}
 \begin{alltt}
-int mp_to_unsigned_bin(mp_int *a, unsigned char *b);
+int mp_to_unsigned_bin(mp_int *a, unsigned char *b, size_t maxlen, size_t *len);
 \end{alltt}
-This will store $a$ into the buffer $b$ in big--endian format.  Fortunately this is exactly what DER (or is it ASN?)
-requires.  It does not store the sign of the integer.
+This will store $a$ into the buffer $b$ of size \texttt{maxlen} in big--endian format storing the number of bytes written in \texttt{len}.  Fortunately this is exactly what DER (or is it ASN?) requires.  It does not store the sign of the integer.
 
-\index{mp\_to\_unsigned\_bin\_n}
+\index{mp\_from\_ubin}
 \begin{alltt}
-int mp_to_unsigned_bin_n(const mp_int *a, unsigned char *b, unsigned long *outlen)
+int mp_from_ubin(mp_int *a, unsigned char *b, size_t size);
 \end{alltt}
-Like \texttt{mp\_to\_unsigned\_bin} but checks if the value at \texttt{*outlen} is larger than or equal to the output of \texttt{mp\_unsigned\_bin\_size(a)} and sets \texttt{*outlen} to the output of \texttt{mp\_unsigned\_bin\_size(a)} or returns \texttt{MP\_VAL} if the test failed.
-
-
-\index{mp\_read\_unsigned\_bin}
-\begin{alltt}
-int mp_read_unsigned_bin(mp_int *a, unsigned char *b, int c);
-\end{alltt}
-This will read in an unsigned big--endian array of bytes (octets) from $b$ of length $c$ into $a$.  The resulting
-integer $a$ will always be positive.
+This will read in an unsigned big--endian array of bytes (octets) from $b$ of length \texttt{size} into $a$.  The resulting big-integer $a$ will always be positive.
 
 For those who acknowledge the existence of negative numbers (heretic!) there are ``signed'' versions of the
 previous functions.
 \index{mp\_signed\_bin\_size} \index{mp\_to\_signed\_bin} \index{mp\_read\_signed\_bin}
 \begin{alltt}
-int mp_signed_bin_size(mp_int *a);
-int mp_read_signed_bin(mp_int *a, unsigned char *b, int c);
-int mp_to_signed_bin(mp_int *a, unsigned char *b);
+int mp_sbin_size(mp_int *a);
+int mp_from_sbin(mp_int *a, unsigned char *b, size_t size);
+int mp_to_sbin(mp_int *a, unsigned char *b, size_t maxsize, size_t *len);
 \end{alltt}
 They operate essentially the same as the unsigned copies except they prefix the data with zero or non--zero
 byte depending on the sign.  If the sign is zpos (e.g. not negative) the prefix is zero, otherwise the prefix
 is non--zero.
 
-The two functions \texttt{mp\_import} and \texttt{mp\_export} implement the corresponding GMP functions as described at \url{http://gmplib.org/manual/Integer-Import-and-Export.html}.
-\index{mp\_import} \index{mp\_export}
+The two functions \texttt{mp\_unpack} (get your gifts out of the box, import binary data) and \texttt{mp\_pack} (put your gifts into the box, export binary data) implement the similarly working GMP functions as described at \url{http://gmplib.org/manual/Integer-Import-and-Export.html} with the exception that \texttt{mp\_pack} will not allocate memory if \texttt{rop} is \texttt{NULL}.
+\index{mp\_unpack} \index{mp\_pack}
 \begin{alltt}
-int mp_import(mp_int *rop, size_t count, int order, size_t size, int endian, size_t nails, const void *op);
-int mp_export(void *rop, size_t *countp, int order, size_t size, int endian, size_t nails, const mp_int *op);
+int mp_unpack(mp_int *rop, size_t count, mp_order order, size_t size,
+             mp_endian endian, size_t nails, const void *op, size_t maxsize);
+int mp_pack(void *rop, size_t *countp, mp_order order, size_t size,
+             mp_endian endian, size_t nails, const mp_int *op);
+\end{alltt}
+The function \texttt{mp\_pack} has the additional variable \texttt{maxsize} which must hold the size of the buffer \texttt{rop} in bytes. Use
+\begin{alltt}
+/* Parameters "nails" and "size" are the same as in mp_pack */
+size_t mp_pack_size(mp_int *a, size_t nails, size_t size);
+\end{alltt}
+To get the size in bytes necessary to be put in \texttt{maxsize}).
+
+To enhance the readability of your code, the following enums have been wrought for your convenience.
+\begin{alltt}
+typedef enum {
+   MP_LSB_FIRST = -1,
+   MP_MSB_FIRST =  1
+} mp_order;
+typedef enum {
+   MP_LITTLE_ENDIAN  = -1,
+   MP_NATIVE_ENDIAN  =  0,
+   MP_BIG_ENDIAN     =  1
+} mp_endian;
 \end{alltt}
 
 \chapter{Algebraic Functions}
@@ -2210,6 +2337,12 @@ These work like the full mp\_int capable variants except the second parameter $b
 functions fairly handy if you have to work with relatively small numbers since you will not have to allocate
 an entire mp\_int to store a number like $1$ or $2$.
 
+The functions \texttt{mp\_incr} and \texttt{mp\_decr} mimic the postfix operators \texttt{++} and \texttt{--} respectively, to increment the input by one. They call the full single-digit functions if the addition would carry. Both functions need to be included in a minimized library because they call each other in case of a negative input, These functions change the inputs!
+\begin{alltt}
+int mp_incr(mp_int *a);
+int mp_decr(mp_int *a);
+\end{alltt}
+
 
 The division by three can be made faster by replacing the division with a multiplication by the multiplicative inverse of three.
 
@@ -2291,30 +2424,84 @@ Other macros which are either shortcuts to normal functions or just other names 
 
 \subsection{Shortcuts}
 
-\index{mp\_tobinary}
+\index{mp\_to\_binary}
 \begin{alltt}
-#define mp_tobinary(M, S) mp_toradix((M), (S), 2)
+#define mp_to_binary(M, S, N)  mp_to_radix((M), (S), (N), 2)
 \end{alltt}
 
 
-\index{mp\_tooctal}
+\index{mp\_to\_octal}
 \begin{alltt}
-#define mp_tooctal(M, S) mp_toradix((M), (S), 8)
+#define mp_to_octal(M, S, N)   mp_to_radix((M), (S), (N), 8)
 \end{alltt}
 
 
-\index{mp\_todecimal}
+\index{mp\_to\_decimal}
 \begin{alltt}
-#define mp_todecimal(M, S) mp_toradix((M), (S), 10)
+#define mp_to_decimal(M, S, N) mp_to_radix((M), (S), (N), 10)
 \end{alltt}
 
 
-\index{mp\_tohex}
+\index{mp\_to\_hex}
 \begin{alltt}
-#define mp_tohex(M, S)     mp_toradix((M), (S), 16)
+#define mp_to_hex(M, S, N)     mp_to_radix((M), (S), (N), 16)
 \end{alltt}
 
+\begin{appendices}
+\appendixpage
+%\noappendicestocpagenum
+\addappheadtotoc
+\chapter{Computing Number of Miller-Rabin Trials}\label{app:numberofmrcomp}
+The number of Miller-Rabin rounds in the tables \ref{millerrabinrunsimpl}, \ref{millerrabinrunsp1}, and \ref{millerrabinrunsp2} have been calculated with the formula in FIPS 186-4 appendix F.1 (page 117) implemented as a PARI/GP script.
+\begin{alltt}
+log2(x) = log(x)/log(2)
 
+fips_f1_sums(k, M, t) = {
+   local(s = 0);
+   s = sum(m=3,M,
+          2^(m-t*(m-1)) *
+          sum(j=2,m,
+             1/ ( 2^( j + (k-1)/j ) )
+          )
+        );
+   return(s);
+}
+
+fips_f1_2(k, t, M) = {
+   local(common_factor, t1, t2, f1, f2, ds, res);
+
+   common_factor = 2.00743 * log(2) * k * 2^(-k);
+   t1 = 2^(k - 2 - M*t);
+   f1 = (8 * ((Pi^2) - 6))/3;
+   f2 = 2^(k - 2);
+   ds = t1 + f1 * f2 * fips_f1_sums(k, M, t);
+   res = common_factor * ds;
+   return(res);
+}
+
+fips_f1_1(prime_length, ptarget)={
+   local(t, t_end, M, M_end, pkt);
+
+   t_end = ceil(-log2(ptarget)/2);
+   M_end = floor(2 * sqrt(prime_length-1) - 1);
+
+   for(t = 1, t_end,
+      for(M = 3, M_end,
+         pkt = fips_f1_2(prime_length, t, M);
+         if(pkt <= ptarget,
+            return(t);
+         );
+      );
+   );
+}
+\end{alltt}
+
+To get the number of rounds for a $1024$ bit large prime with a probability of $2^{-160}$:
+\begin{alltt}
+? fips_f1_1(1024,2^(-160))
+%1 = 9
+\end{alltt}
+\end{appendices}
 \input{bn.ind}
 
 \end{document}

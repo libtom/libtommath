@@ -9,9 +9,10 @@ pprime: pprime.obj
 
 mersenne: mersenne.obj
 	cl mersenne.obj ../tommath.lib
-	
+
 tune: tune.obj
 	cl tune.obj ../tommath.lib
+
 
 mont: mont.obj
 	cl mont.obj ../tommath.lib
