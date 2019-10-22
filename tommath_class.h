@@ -1190,16 +1190,14 @@
 #endif
 
 #if defined(S_MP_RADIX_SIZE_RADIX_10_C)
-#   define MP_ADD_C
 #   define MP_CLEAR_MULTI_C
 #   define MP_COUNT_BITS_C
 #   define MP_DIV_2D_C
 #   define MP_GET_L_C
 #   define MP_INIT_MULTI_C
-#   define MP_MUL_2D_C
 #   define MP_MUL_C
 #   define MP_SET_L_C
-#   define MP_SET_U32_C
+#   define MP_SET_U64_C
 #endif
 
 #if defined(S_MP_RAND_JENKINS_C)

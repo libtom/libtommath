@@ -24,20 +24,24 @@ int s_mp_radix_size_radix_10(const mp_int *a, size_t *size)
 #ifdef MP_16BIT
 #define LTM_RADIX_SIZE_CONST_SHIFT 32
    const uint32_t inv_log_2_10[2] = {0x4d104d42UL, 0x7de7fbccUL};
-   int i;
 #endif
    if ((err = mp_init_multi(&bi_bit_count, &bi_k, &t, NULL)) != MP_OKAY) {
       return err;
    }
 #ifdef MP_16BIT
-   for (i = 0; i < (LTM_RADIX_SIZE_SCALE/LTM_RADIX_SIZE_CONST_SHIFT); i++) {
-      mp_set_u32(&t, inv_log_2_10[i]);
-      if ((err = mp_mul_2d(&bi_k, LTM_RADIX_SIZE_CONST_SHIFT, &bi_k)) != MP_OKAY) {
-         goto LTM_E1;
-      }
-      if ((err = mp_add(&bi_k, &t, &bi_k)) != MP_OKAY) {
-         goto LTM_E1;
-      }
+   mp_set_u32(&t, inv_log_2_10[0]);
+   if ((err = mp_mul_2d(&bi_k, LTM_RADIX_SIZE_CONST_SHIFT, &bi_k)) != MP_OKAY) {
+      goto LTM_E1;
+   }
+   if ((err = mp_add(&bi_k, &t, &bi_k)) != MP_OKAY) {
+      goto LTM_E1;
+   }
+   mp_set_u32(&t, inv_log_2_10[1]);
+   if ((err = mp_mul_2d(&bi_k, LTM_RADIX_SIZE_CONST_SHIFT, &bi_k)) != MP_OKAY) {
+      goto LTM_E1;
+   }
+   if ((err = mp_add(&bi_k, &t, &bi_k)) != MP_OKAY) {
+      goto LTM_E1;
    }
 #else
    mp_set_u64(&bi_k, 0x4d104d427de7fbccULL);
