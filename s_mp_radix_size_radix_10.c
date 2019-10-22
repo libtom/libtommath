@@ -3,10 +3,7 @@
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
-
-
 #define LTM_RADIX_SIZE_SCALE 64
-#define LTM_RADIX_SIZE_CONST_SHIFT 32
 int s_mp_radix_size_radix_10(const mp_int *a, size_t *size)
 {
    mp_err err;
@@ -21,13 +18,18 @@ int s_mp_radix_size_radix_10(const mp_int *a, size_t *size)
         Which are more than 16 decimal digits, so with BINARY_64 (C's "double")
         a 'ceil(198096465/log_2(10))' would result wrongly in 59632978.0.
     */
-   /* const uint64_t inv_log_2_10 = {0x4d104d427de7fbccULL}; */
-   const uint32_t inv_log_2_10[2] = {0x4d104d42UL, 0x7de7fbccUL};
    mp_int bi_bit_count, bi_k, t;
-   int i, bit_count;
+   int bit_count;
+
+#ifdef MP_16BIT
+#define LTM_RADIX_SIZE_CONST_SHIFT 32
+   const uint32_t inv_log_2_10[2] = {0x4d104d42UL, 0x7de7fbccUL};
+   int i;
+#endif
    if ((err = mp_init_multi(&bi_bit_count, &bi_k, &t, NULL)) != MP_OKAY) {
       return err;
    }
+#ifdef MP_16BIT
    for (i = 0; i < (LTM_RADIX_SIZE_SCALE/LTM_RADIX_SIZE_CONST_SHIFT); i++) {
       mp_set_u32(&t, inv_log_2_10[i]);
       if ((err = mp_mul_2d(&bi_k, LTM_RADIX_SIZE_CONST_SHIFT, &bi_k)) != MP_OKAY) {
@@ -37,6 +39,9 @@ int s_mp_radix_size_radix_10(const mp_int *a, size_t *size)
          goto LTM_E1;
       }
    }
+#else
+   mp_set_u64(&bi_k, 0x4d104d427de7fbccULL);
+#endif
    bit_count = mp_count_bits(a) + 1;
    mp_set_l(&bi_bit_count, bit_count);
    if ((err = mp_mul(&bi_bit_count, &bi_k, &bi_k)) != MP_OKAY) {
