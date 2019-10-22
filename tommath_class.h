@@ -11,7 +11,6 @@
 #endif
 #define LTM1
 #if defined(LTM_ALL)
-#   define BN_MP_LOG_U32_C
 #   define MP_2EXPT_C
 #   define MP_ABS_C
 #   define MP_ADD_C
@@ -174,20 +173,6 @@
 #   define S_MP_TOOM_SQR_C
 #endif
 #endif
-#if defined(BN_MP_LOG_U32_C)
-#   define MP_CLEAR_MULTI_C
-#   define MP_CMP_C
-#   define MP_CMP_D_C
-#   define MP_COPY_C
-#   define MP_EXCH_C
-#   define MP_EXPT_U32_C
-#   define MP_INIT_MULTI_C
-#   define MP_MUL_C
-#   define MP_SET_C
-#   define MP_SQR_C
-#   define S_MP_LOG_POWER_OF_TWO_C
-#endif
-
 #if defined(MP_2EXPT_C)
 #   define MP_GROW_C
 #   define MP_ZERO_C

@@ -21,17 +21,17 @@ LTM_LDFLAGS = advapi32.lib
 LIBMAIN_S =tommath.lib
 
 #List of objects to compile (all goes to tommath.lib)
-OBJECTS=bn_mp_log_u32.obj mp_2expt.obj mp_abs.obj mp_add.obj mp_add_d.obj mp_addmod.obj mp_and.obj mp_clamp.obj mp_clear.obj \
-mp_clear_multi.obj mp_cmp.obj mp_cmp_d.obj mp_cmp_mag.obj mp_cnt_lsb.obj mp_complement.obj mp_copy.obj mp_count_bits.obj \
-mp_cutoffs.obj mp_decr.obj mp_div.obj mp_div_2.obj mp_div_2d.obj mp_div_3.obj mp_div_d.obj mp_dr_is_modulus.obj \
-mp_dr_reduce.obj mp_dr_setup.obj mp_error_to_string.obj mp_exch.obj mp_expt_u32.obj mp_exptmod.obj mp_exteuclid.obj \
-mp_fread.obj mp_from_sbin.obj mp_from_ubin.obj mp_fwrite.obj mp_gcd.obj mp_get_double.obj mp_get_i32.obj mp_get_i64.obj \
-mp_get_l.obj mp_get_ll.obj mp_get_mag_u32.obj mp_get_mag_u64.obj mp_get_mag_ul.obj mp_get_mag_ull.obj mp_grow.obj \
-mp_incr.obj mp_init.obj mp_init_copy.obj mp_init_i32.obj mp_init_i64.obj mp_init_l.obj mp_init_ll.obj mp_init_multi.obj \
-mp_init_set.obj mp_init_size.obj mp_init_u32.obj mp_init_u64.obj mp_init_ul.obj mp_init_ull.obj mp_invmod.obj \
-mp_is_square.obj mp_iseven.obj mp_isodd.obj mp_kronecker.obj mp_lcm.obj mp_log_u32.obj mp_lshd.obj mp_mod.obj mp_mod_2d.obj \
-mp_mod_d.obj mp_montgomery_calc_normalization.obj mp_montgomery_reduce.obj mp_montgomery_setup.obj mp_mul.obj \
-mp_mul_2.obj mp_mul_2d.obj mp_mul_d.obj mp_mulmod.obj mp_neg.obj mp_or.obj mp_pack.obj mp_pack_count.obj mp_prime_fermat.obj \
+OBJECTS=mp_2expt.obj mp_abs.obj mp_add.obj mp_add_d.obj mp_addmod.obj mp_and.obj mp_clamp.obj mp_clear.obj mp_clear_multi.obj \
+mp_cmp.obj mp_cmp_d.obj mp_cmp_mag.obj mp_cnt_lsb.obj mp_complement.obj mp_copy.obj mp_count_bits.obj mp_cutoffs.obj \
+mp_decr.obj mp_div.obj mp_div_2.obj mp_div_2d.obj mp_div_3.obj mp_div_d.obj mp_dr_is_modulus.obj mp_dr_reduce.obj \
+mp_dr_setup.obj mp_error_to_string.obj mp_exch.obj mp_expt_u32.obj mp_exptmod.obj mp_exteuclid.obj mp_fread.obj \
+mp_from_sbin.obj mp_from_ubin.obj mp_fwrite.obj mp_gcd.obj mp_get_double.obj mp_get_i32.obj mp_get_i64.obj mp_get_l.obj \
+mp_get_ll.obj mp_get_mag_u32.obj mp_get_mag_u64.obj mp_get_mag_ul.obj mp_get_mag_ull.obj mp_grow.obj mp_incr.obj \
+mp_init.obj mp_init_copy.obj mp_init_i32.obj mp_init_i64.obj mp_init_l.obj mp_init_ll.obj mp_init_multi.obj mp_init_set.obj \
+mp_init_size.obj mp_init_u32.obj mp_init_u64.obj mp_init_ul.obj mp_init_ull.obj mp_invmod.obj mp_is_square.obj \
+mp_iseven.obj mp_isodd.obj mp_kronecker.obj mp_lcm.obj mp_log_u32.obj mp_lshd.obj mp_mod.obj mp_mod_2d.obj mp_mod_d.obj \
+mp_montgomery_calc_normalization.obj mp_montgomery_reduce.obj mp_montgomery_setup.obj mp_mul.obj mp_mul_2.obj \
+mp_mul_2d.obj mp_mul_d.obj mp_mulmod.obj mp_neg.obj mp_or.obj mp_pack.obj mp_pack_count.obj mp_prime_fermat.obj \
 mp_prime_frobenius_underwood.obj mp_prime_is_prime.obj mp_prime_miller_rabin.obj mp_prime_next_prime.obj \
 mp_prime_rabin_miller_trials.obj mp_prime_rand.obj mp_prime_strong_lucas_selfridge.obj mp_prime_tab.obj \
 mp_radix_size.obj mp_radix_smap.obj mp_rand.obj mp_read_radix.obj mp_reduce.obj mp_reduce_2k.obj mp_reduce_2k_l.obj \
