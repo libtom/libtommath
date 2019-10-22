@@ -17,14 +17,12 @@ mp_err mp_log_u32(const mp_int *a, uint32_t base, uint32_t *c)
       return MP_VAL;
    }
 
-   /* A small shortcut for bases that are powers of two. */
-   if ((base & (base - 1u)) == 0u) {
-      int y, bit_count;
-      for (y=0; (y < 7) && ((base & 1u) == 0u); y++) {
-         base >>= 1;
-      }
-      bit_count = mp_count_bits(a) - 1;
-      *c = (uint32_t)(bit_count/y);
+   if (MP_HAS(S_MP_LOG10) && (base == 10u)) {
+      return s_mp_log10(a, c);
+   }
+
+   if (MP_HAS(S_MP_LOG_POW2) && (base & (base - 1u)) == 0u) {
+      *c = s_mp_log_pow2(a, base);
       return MP_OKAY;
    }
 

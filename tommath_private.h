@@ -212,6 +212,8 @@ MP_PRIVATE void s_mp_reverse(unsigned char *s, size_t len);
 MP_PRIVATE mp_err s_mp_prime_is_divisible(const mp_int *a, mp_bool *result);
 MP_PRIVATE mp_digit s_mp_log_d(mp_digit base, mp_digit n);
 MP_PRIVATE mp_err s_mp_log(const mp_int *a, uint32_t base, uint32_t *c);
+MP_PRIVATE mp_err s_mp_log10(const mp_int *a, uint32_t *c);
+MP_PRIVATE uint32_t s_mp_log_pow2(const mp_int *a, uint32_t base);
 
 /* TODO: jenkins prng is not thread safe as of now */
 MP_PRIVATE mp_err s_mp_rand_jenkins(void *p, size_t n) MP_WUR;

@@ -1524,8 +1524,8 @@ LBL_ERR:
    return EXIT_SUCCESS;
 #   endif /* LTM_DEMO_TEST_REDUCE_2K_L */
 }
-/* stripped down version of mp_radix_size. The faster version can be off by up t
-o +3  */
+
+/* stripped down version of mp_radix_size. The faster version can be off by up to +3  */
 /* TODO: This function should be removed, replaced by mp_radix_size, mp_radix_size_overestimate in 2.0 */
 static mp_err s_rs(const mp_int *a, int radix, uint32_t *size)
 {
@@ -1559,6 +1559,8 @@ static mp_err s_rs(const mp_int *a, int radix, uint32_t *size)
 }
 static int test_mp_log_u32(void)
 {
+        int z;
+        for (z = 0; z < 100; ++z) {
    mp_int a;
    mp_digit d;
    uint32_t base, lb, size;
@@ -1644,6 +1646,7 @@ static int test_mp_log_u32(void)
       /* radix_size includes the memory needed for '\0', too*/
       size -= 2;
       if (lb != size) {
+              printf("NE1 %d\n", base);
          goto LBL_ERR;
       }
    }
@@ -1664,6 +1667,7 @@ static int test_mp_log_u32(void)
       }
       size -= 2;
       if (lb != size) {
+              printf("NE2 %d %d %d\n", base, lb, size);
          goto LBL_ERR;
       }
    }
@@ -1684,10 +1688,12 @@ static int test_mp_log_u32(void)
    }
 
    mp_clear(&a);
-   return EXIT_SUCCESS;
+   continue;
 LBL_ERR:
    mp_clear(&a);
    return EXIT_FAILURE;
+        }
+        return EXIT_SUCCESS;
 }
 
 static int test_mp_incr(void)
@@ -2279,14 +2285,14 @@ static int test_mp_radix_size(void)
    size_t size;
 /* *INDENT-OFF* */
    size_t results[65] = {
-       0, 0, 1627, 1027, 814, 702, 630, 581, 543,
-       514, 491, 471, 455, 441, 428, 418, 408, 399,
-       391, 384, 378, 372, 366, 361, 356, 352, 347,
-       343, 340, 336, 333, 330, 327, 324, 321, 318,
-       316, 314, 311, 309, 307, 305, 303, 301, 299,
-       298, 296, 294, 293, 291, 290, 288, 287, 285,
-       284, 283, 281, 280, 279, 278, 277, 276, 275,
-       273, 272
+       0u, 0u, 1627u, 1027u, 814u, 702u, 630u, 581u, 543u,
+       514u, 491u, 471u, 455u, 441u, 428u, 418u, 408u, 399u,
+       391u, 384u, 378u, 372u, 366u, 361u, 356u, 352u, 347u,
+       343u, 340u, 336u, 333u, 330u, 327u, 324u, 321u, 318u,
+       316u, 314u, 311u, 309u, 307u, 305u, 303u, 301u, 299u,
+       298u, 296u, 294u, 293u, 291u, 290u, 288u, 287u, 285u,
+       284u, 283u, 281u, 280u, 279u, 278u, 277u, 276u, 275u,
+       273u, 272u
    };
 /* *INDENT-ON* */
 
@@ -2325,8 +2331,6 @@ LBL_ERR:
    mp_clear(&a);
    return EXIT_FAILURE;
 }
-
-
 
 static int test_mp_read_write_ubin(void)
 {
