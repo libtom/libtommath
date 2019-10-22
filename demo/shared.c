@@ -3,19 +3,19 @@
 void ndraw(const mp_int *a, const char *name)
 {
    char *buf;
-   int size;
+   size_t size;
 
    mp_radix_size(a, 10, &size);
-   buf = (char *)malloc((size_t) size);
+   buf = (char *)malloc(size);
    if (buf == NULL) {
-      fprintf(stderr, "\nndraw: malloc(%d) failed\n", size);
+      fprintf(stderr, "\nndraw: malloc(%zu) failed\n", size);
       exit(EXIT_FAILURE);
    }
 
    printf("%s: ", name);
-   mp_to_decimal(a, buf, (size_t) size);
+   mp_to_decimal(a, buf, size);
    printf("%s\n", buf);
-   mp_to_hex(a, buf, (size_t) size);
+   mp_to_hex(a, buf, size);
    printf("0x%s\n", buf);
 
    free(buf);

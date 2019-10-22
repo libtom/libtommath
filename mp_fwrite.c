@@ -8,24 +8,19 @@ mp_err mp_fwrite(const mp_int *a, int radix, FILE *stream)
 {
    char *buf;
    mp_err err;
-   int len;
-   size_t written;
+   size_t len, written;
 
    /* TODO: this function is not in this PR */
-   if (MP_HAS(MP_RADIX_SIZE_OVERESTIMATE)) {
-      /* if ((err = mp_radix_size_overestimate(&t, base, &len)) != MP_OKAY)      goto LBL_ERR; */
-   } else {
-      if ((err = mp_radix_size(a, radix, &len)) != MP_OKAY) {
-         return err;
-      }
+   if ((err = mp_radix_size(a, radix, &len)) != MP_OKAY) {
+      return err;
    }
 
-   buf = (char *) MP_MALLOC((size_t)len);
+   buf = (char *) MP_MALLOC(len);
    if (buf == NULL) {
       return MP_MEM;
    }
 
-   if ((err = mp_to_radix(a, buf, (size_t)len, &written, radix)) != MP_OKAY) {
+   if ((err = mp_to_radix(a, buf, len, &written, radix)) != MP_OKAY) {
       goto LBL_ERR;
    }
 
@@ -37,7 +32,7 @@ mp_err mp_fwrite(const mp_int *a, int radix, FILE *stream)
 
 
 LBL_ERR:
-   MP_FREE_BUFFER(buf, (size_t)len);
+   MP_FREE_BUFFER(buf, len);
    return err;
 }
 #endif
