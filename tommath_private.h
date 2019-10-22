@@ -140,6 +140,10 @@ extern void MP_FREE(void *mem, size_t size);
 #endif
 
 /* feature detection macro */
+#ifdef _MSC_VER
+/* Prevent false positive: not enough arguments for function-like macro invocation */
+#pragma warning(disable: 4003)
+#endif
 #define MP_STRINGIZE(x)  MP__STRINGIZE(x)
 #define MP__STRINGIZE(x) ""#x""
 #define MP_HAS(x)        (sizeof(MP_STRINGIZE(x##_C)) == 1u)
