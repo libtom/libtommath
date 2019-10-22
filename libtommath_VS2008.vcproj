@@ -317,14 +317,6 @@
 			>
 		</File>
 		<File
-			RelativePath="bn_s_mp_log_power_of_two.c"
-			>
-		</File>
-		<File
-			RelativePath="bn_s_mp_radix_size_radix_10.c"
-			>
-		</File>
-		<File
 			RelativePath="mp_2expt.c"
 			>
 		</File>
@@ -901,6 +893,10 @@
 			>
 		</File>
 		<File
+			RelativePath="s_mp_log_power_of_two.c"
+			>
+		</File>
+		<File
 			RelativePath="s_mp_montgomery_reduce_fast.c"
 			>
 		</File>
@@ -922,6 +918,10 @@
 		</File>
 		<File
 			RelativePath="s_mp_prime_is_divisible.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_radix_size_radix_10.c"
 			>
 		</File>
 		<File

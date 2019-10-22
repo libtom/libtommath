@@ -12,8 +12,6 @@
 #define LTM1
 #if defined(LTM_ALL)
 #   define BN_MP_LOG_U32_C
-#   define BN_S_MP_LOG_POWER_OF_TWO_C
-#   define BN_S_MP_RADIX_SIZE_RADIX_10_C
 #   define MP_2EXPT_C
 #   define MP_ABS_C
 #   define MP_ADD_C
@@ -158,12 +156,14 @@
 #   define S_MP_KARATSUBA_SQR_C
 #   define S_MP_LOG_C
 #   define S_MP_LOG_D_C
+#   define S_MP_LOG_POWER_OF_TWO_C
 #   define S_MP_MONTGOMERY_REDUCE_FAST_C
 #   define S_MP_MUL_DIGS_C
 #   define S_MP_MUL_DIGS_FAST_C
 #   define S_MP_MUL_HIGH_DIGS_C
 #   define S_MP_MUL_HIGH_DIGS_FAST_C
 #   define S_MP_PRIME_IS_DIVISIBLE_C
+#   define S_MP_RADIX_SIZE_RADIX_10_C
 #   define S_MP_RAND_JENKINS_C
 #   define S_MP_RAND_PLATFORM_C
 #   define S_MP_REVERSE_C
@@ -186,22 +186,6 @@
 #   define MP_SET_C
 #   define MP_SQR_C
 #   define S_MP_LOG_POWER_OF_TWO_C
-#endif
-
-#if defined(BN_S_MP_LOG_POWER_OF_TWO_C)
-#   define MP_COUNT_BITS_C
-#endif
-
-#if defined(BN_S_MP_RADIX_SIZE_RADIX_10_C)
-#   define MP_ADD_C
-#   define MP_CLEAR_MULTI_C
-#   define MP_COUNT_BITS_C
-#   define MP_DIV_2D_C
-#   define MP_GET_L_C
-#   define MP_INIT_MULTI_C
-#   define MP_MUL_2D_C
-#   define MP_MUL_C
-#   define MP_SET_L_C
 #endif
 
 #if defined(MP_2EXPT_C)
@@ -1164,6 +1148,10 @@
 #if defined(S_MP_LOG_D_C)
 #endif
 
+#if defined(S_MP_LOG_POWER_OF_TWO_C)
+#   define MP_COUNT_BITS_C
+#endif
+
 #if defined(S_MP_MONTGOMERY_REDUCE_FAST_C)
 #   define MP_CLAMP_C
 #   define MP_CMP_MAG_C
@@ -1199,6 +1187,19 @@
 
 #if defined(S_MP_PRIME_IS_DIVISIBLE_C)
 #   define MP_MOD_D_C
+#endif
+
+#if defined(S_MP_RADIX_SIZE_RADIX_10_C)
+#   define MP_ADD_C
+#   define MP_CLEAR_MULTI_C
+#   define MP_COUNT_BITS_C
+#   define MP_DIV_2D_C
+#   define MP_GET_L_C
+#   define MP_INIT_MULTI_C
+#   define MP_MUL_2D_C
+#   define MP_MUL_C
+#   define MP_SET_L_C
+#   define MP_SET_U32_C
 #endif
 
 #if defined(S_MP_RAND_JENKINS_C)
