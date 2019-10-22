@@ -550,9 +550,9 @@ mp_err mp_prime_is_prime(const mp_int *a, int t, mp_bool *result) MP_WUR;
 /* finds the next prime after the number "a" using "t" trials
  * of Miller-Rabin.
  *
- * bbs_style = 1 means the prime must be congruent to 3 mod 4
+ * bbs_style = MP_YES means the prime must be congruent to 3 mod 4
  */
-mp_err mp_prime_next_prime(mp_int *a, int t, int bbs_style) MP_WUR;
+mp_err mp_prime_next_prime(mp_int *a, int t, mp_bool bbs_style) MP_WUR;
 
 /* makes a truly random prime of a given size (bits),
  *
