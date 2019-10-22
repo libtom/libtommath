@@ -4,7 +4,7 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* shift left by a certain bit count */
-mp_err mp_mul_2d(const mp_int *a, int b, mp_int *c)
+mp_err mp_mul_2d(const mp_int *a, unsigned long b, mp_int *c)
 {
    mp_digit d;
    mp_err   err;
@@ -16,7 +16,7 @@ mp_err mp_mul_2d(const mp_int *a, int b, mp_int *c)
       }
    }
 
-   if (c->alloc < (c->used + (b / MP_DIGIT_BIT) + 1)) {
+   if ((size_t)c->alloc < (c->used + (b / MP_DIGIT_BIT) + 1)) {
       if ((err = mp_grow(c, c->used + (b / MP_DIGIT_BIT) + 1)) != MP_OKAY) {
          return err;
       }

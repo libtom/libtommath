@@ -4,10 +4,10 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* portable integer log of two with small footprint */
-static unsigned int s_floor_ilog2(int value)
+static unsigned int s_floor_ilog2(unsigned long value)
 {
    unsigned int r = 0;
-   while ((value >>= 1) != 0) {
+   while ((value >>= 1uL) != 0) {
       r++;
    }
    return r;
@@ -17,7 +17,8 @@ static unsigned int s_floor_ilog2(int value)
 mp_err mp_prime_is_prime(const mp_int *a, int t, mp_bool *result)
 {
    mp_int  b;
-   int     ix, p_max = 0, size_a, len;
+   int     ix, p_max = 0;
+   unsigned long size_a, len;
    mp_bool res;
    mp_err  err;
    unsigned int fips_rand, mask;
@@ -231,10 +232,10 @@ mp_err mp_prime_is_prime(const mp_int *a, int t, mp_bool *result)
          if (fips_rand > (unsigned int)(INT_MAX - MP_DIGIT_BIT)) {
             len = INT_MAX / MP_DIGIT_BIT;
          } else {
-            len = (((int)fips_rand + MP_DIGIT_BIT) / MP_DIGIT_BIT);
+            len = (((unsigned int)fips_rand + MP_DIGIT_BIT) / MP_DIGIT_BIT);
          }
          /*  Unlikely. */
-         if (len < 0) {
+         if (len == 0) {
             ix--;
             continue;
          }

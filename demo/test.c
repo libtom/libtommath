@@ -911,7 +911,7 @@ LBL_ERR:
 
 static int test_mp_prime_rand(void)
 {
-   int ix;
+   unsigned long ix;
    mp_err err;
    mp_int a, b;
    if (mp_init_multi(&a, &b, NULL)!= MP_OKAY) {
@@ -920,7 +920,7 @@ static int test_mp_prime_rand(void)
 
    /* test for size */
    for (ix = 10; ix < 128; ix++) {
-      printf("Testing (not safe-prime): %9d bits    \r", ix);
+      printf("Testing (not safe-prime): %9lu bits    \r", ix);
       fflush(stdout);
       err = mp_prime_rand(&a, 8, ix, (rand_int() & 1) ? 0 : MP_PRIME_2MSB_ON);
       if (err != MP_OKAY) {
@@ -928,7 +928,7 @@ static int test_mp_prime_rand(void)
          goto LBL_ERR;
       }
       if (mp_count_bits(&a) != ix) {
-         printf("Prime is %d not %d bits!!!\n", mp_count_bits(&a), ix);
+         printf("Prime is %lu not %lu bits!!!\n", mp_count_bits(&a), ix);
          goto LBL_ERR;
       }
    }
@@ -943,7 +943,7 @@ LBL_ERR:
 
 static int test_mp_prime_is_prime(void)
 {
-   int ix;
+   unsigned long ix;
    mp_err err;
    mp_bool cnt, fu;
 
@@ -983,7 +983,7 @@ static int test_mp_prime_is_prime(void)
       goto LBL_ERR;
    }
    for (ix = 16; ix < 128; ix++) {
-      printf("Testing (    safe-prime): %9d bits    \r", ix);
+      printf("Testing (    safe-prime): %9lu bits    \r", ix);
       fflush(stdout);
       err = mp_prime_rand(&a, 8, ix, ((rand_int() & 1) ? 0 : MP_PRIME_2MSB_ON) | MP_PRIME_SAFE);
       if (err != MP_OKAY) {
@@ -991,7 +991,7 @@ static int test_mp_prime_is_prime(void)
          goto LBL_ERR;
       }
       if (mp_count_bits(&a) != ix) {
-         printf("Prime is %d not %d bits!!!\n", mp_count_bits(&a), ix);
+         printf("Prime is %lu not %lu bits!!!\n", mp_count_bits(&a), ix);
          goto LBL_ERR;
       }
       /* let's see if it's really a safe prime */
@@ -1298,7 +1298,7 @@ LBL_ERR:
 
 static int test_mp_cnt_lsb(void)
 {
-   int ix;
+   unsigned long ix;
 
    mp_int a, b;
    if (mp_init_multi(&a, &b, NULL)!= MP_OKAY) {
@@ -1308,7 +1308,7 @@ static int test_mp_cnt_lsb(void)
    mp_set(&a, 1uL);
    for (ix = 0; ix < 1024; ix++) {
       if (mp_cnt_lsb(&a) != ix) {
-         printf("Failed at %d, %d\n", ix, mp_cnt_lsb(&a));
+         printf("Failed at %lu, %lu\n", ix, mp_cnt_lsb(&a));
          goto LBL_ERR;
       }
       mp_mul_2(&a, &a);

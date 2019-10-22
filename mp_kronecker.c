@@ -21,7 +21,8 @@ mp_err mp_kronecker(const mp_int *a, const mp_int *p, int *c)
 {
    mp_int a1, p1, r;
    mp_err err;
-   int v, k;
+   unsigned long v;
+   int k;
 
    static const int table[8] = {0, 1, 0, -1, 0, -1, 0, 1};
 

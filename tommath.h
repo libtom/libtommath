@@ -304,7 +304,7 @@ void mp_rshd(mp_int *a, int b);
 mp_err mp_lshd(mp_int *a, int b) MP_WUR;
 
 /* c = a / 2**b, implemented as c = a >> b */
-mp_err mp_div_2d(const mp_int *a, int b, mp_int *c, mp_int *d) MP_WUR;
+mp_err mp_div_2d(const mp_int *a, unsigned long b, mp_int *c, mp_int *d) MP_WUR;
 
 /* b = a/2 */
 mp_err mp_div_2(const mp_int *a, mp_int *b) MP_WUR;
@@ -313,19 +313,19 @@ mp_err mp_div_2(const mp_int *a, mp_int *b) MP_WUR;
 mp_err mp_div_3(const mp_int *a, mp_int *c, mp_digit *d) MP_WUR;
 
 /* c = a * 2**b, implemented as c = a << b */
-mp_err mp_mul_2d(const mp_int *a, int b, mp_int *c) MP_WUR;
+mp_err mp_mul_2d(const mp_int *a, unsigned long b, mp_int *c) MP_WUR;
 
 /* b = a*2 */
 mp_err mp_mul_2(const mp_int *a, mp_int *b) MP_WUR;
 
 /* c = a mod 2**b */
-mp_err mp_mod_2d(const mp_int *a, int b, mp_int *c) MP_WUR;
+mp_err mp_mod_2d(const mp_int *a, unsigned long b, mp_int *c) MP_WUR;
 
 /* computes a = 2**b */
-mp_err mp_2expt(mp_int *a, int b) MP_WUR;
+mp_err mp_2expt(mp_int *a, unsigned long b) MP_WUR;
 
 /* Counts the number of lsbs which are zero before the first zero bit */
-int mp_cnt_lsb(const mp_int *a) MP_WUR;
+unsigned long mp_cnt_lsb(const mp_int *a) MP_WUR;
 
 /* I Love Earth! */
 
@@ -519,7 +519,7 @@ mp_err mp_prime_miller_rabin(const mp_int *a, const mp_int *b, mp_bool *result) 
 /* This gives [for a given bit size] the number of trials required
  * such that Miller-Rabin gives a prob of failure lower than 2^-96
  */
-int mp_prime_rabin_miller_trials(int size) MP_WUR;
+int mp_prime_rabin_miller_trials(unsigned long size) MP_WUR;
 
 /* performs one strong Lucas-Selfridge test of "a".
  * Sets result to 0 if composite or 1 if probable prime
@@ -576,7 +576,7 @@ mp_err mp_log_u32(const mp_int *a, uint32_t base, uint32_t *c) MP_WUR;
 mp_err mp_expt_u32(const mp_int *a, uint32_t b, mp_int *c) MP_WUR;
 
 /* ---> radix conversion <--- */
-int mp_count_bits(const mp_int *a) MP_WUR;
+unsigned long mp_count_bits(const mp_int *a) MP_WUR;
 
 size_t mp_ubin_size(const mp_int *a) MP_WUR;
 mp_err mp_from_ubin(mp_int *a, const unsigned char *buf, size_t size) MP_WUR;

@@ -23,7 +23,9 @@ mp_err s_mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_i
 {
    mp_int  M[TAB_SIZE], res;
    mp_digit buf, mp;
-   int     bitbuf, bitcpy, bitcnt, mode, digidx, x, y, winsize;
+   int     bitbuf, bitcnt, mode, digidx;
+   unsigned int winsize, bitcpy;
+   unsigned long x, y;
    mp_err   err;
 
    /* use a pointer to the reduction algorithm.  This allows us to use
@@ -59,9 +61,9 @@ mp_err s_mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_i
    }
 
    /* now init the second half of the array */
-   for (x = 1<<(winsize-1); x < (1 << winsize); x++) {
+   for (x = 1uL<<(winsize-1); x < (1uL << winsize); x++) {
       if ((err = mp_init_size(&M[x], P->alloc)) != MP_OKAY) {
-         for (y = 1<<(winsize-1); y < x; y++) {
+         for (y = 1uL<<(winsize-1); y < x; y++) {
             mp_clear(&M[y]);
          }
          mp_clear(&M[1]);
@@ -135,7 +137,7 @@ mp_err s_mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_i
       if ((err = mp_mod(G, P, &M[1])) != MP_OKAY)                 goto LBL_RES;
    }
 
-   /* compute the value at M[1<<(winsize-1)] by squaring M[1] (winsize-1) times */
+   /* compute the value at M[1uL<<(winsize-1)] by squaring M[1] (winsize-1) times */
    if ((err = mp_copy(&M[1], &M[(size_t)1 << (winsize - 1)])) != MP_OKAY) goto LBL_RES;
 
    for (x = 0; x < (winsize - 1); x++) {
@@ -144,7 +146,7 @@ mp_err s_mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_i
    }
 
    /* create upper table */
-   for (x = (1 << (winsize - 1)) + 1; x < (1 << winsize); x++) {
+   for (x = (1uL << (winsize - 1)) + 1; x < (1uL << winsize); x++) {
       if ((err = mp_mul(&M[x - 1], &M[1], &M[x])) != MP_OKAY)     goto LBL_RES;
       if ((err = redux(&M[x], P, mp)) != MP_OKAY)                 goto LBL_RES;
    }
@@ -246,7 +248,7 @@ LBL_RES:
    mp_clear(&res);
 LBL_M:
    mp_clear(&M[1]);
-   for (x = 1<<(winsize-1); x < (1 << winsize); x++) {
+   for (x = 1uL<<(winsize-1); x < (1uL << winsize); x++) {
       mp_clear(&M[x]);
    }
    return err;

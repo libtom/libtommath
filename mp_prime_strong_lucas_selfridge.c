@@ -52,7 +52,8 @@ mp_err mp_prime_strong_lucas_selfridge(const mp_int *a, mp_bool *result)
 {
    /* CZ TODO: choose better variable names! */
    mp_int Dz, gcd, Np1, Uz, Vz, U2mz, V2mz, Qmz, Q2mz, Qkdz, T1z, T2z, T3z, T4z, Q2kdz;
-   int32_t D, Ds, J, sign, P, Q, r, s, u, Nbits;
+   int32_t D, Ds, J, sign, P, Q;
+   unsigned long r, s, u, Nbits;
    mp_err err;
    mp_bool oddness;
 
@@ -192,7 +193,7 @@ mp_err mp_prime_strong_lucas_selfridge(const mp_int *a, mp_bool *result)
       if ((err = mp_mod(&Qmz, a, &Qmz)) != MP_OKAY)               goto LBL_LS_ERR;
       if ((err = mp_mul_2(&Qmz, &Q2mz)) != MP_OKAY)               goto LBL_LS_ERR;
 
-      if (s_mp_get_bit(&Dz, (unsigned int)u) == MP_YES) {
+      if (s_mp_get_bit(&Dz, u) == MP_YES) {
          /* Formulas for addition of indices (carried out mod N);
           *
           * U_(m+n) = (U_m*V_n + U_n*V_m)/2

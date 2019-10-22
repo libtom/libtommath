@@ -3,14 +3,14 @@
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
-static const int lnz[16] = {
+static const unsigned char lnz[16] = {
    4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0
 };
 
 /* Counts the number of lsbs which are zero before the first zero bit */
-int mp_cnt_lsb(const mp_int *a)
+unsigned long mp_cnt_lsb(const mp_int *a)
 {
-   int x;
+   unsigned long x;
    mp_digit q, qq;
 
    /* easy out */
@@ -19,7 +19,7 @@ int mp_cnt_lsb(const mp_int *a)
    }
 
    /* scan lower digits until non-zero */
-   for (x = 0; (x < a->used) && (a->dp[x] == 0u); x++) {}
+   for (x = 0; (x < (size_t)a->used) && (a->dp[x] == 0u); x++) {}
    q = a->dp[x];
    x *= MP_DIGIT_BIT;
 

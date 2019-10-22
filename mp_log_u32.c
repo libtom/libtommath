@@ -19,7 +19,8 @@ mp_err mp_log_u32(const mp_int *a, uint32_t base, uint32_t *c)
 
    /* A small shortcut for bases that are powers of two. */
    if ((base & (base - 1u)) == 0u) {
-      int y, bit_count;
+      int y;
+      unsigned long bit_count;
       for (y=0; (y < 7) && ((base & 1u) == 0u); y++) {
          base >>= 1;
       }

@@ -4,19 +4,19 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* calc a value mod 2**b */
-mp_err mp_mod_2d(const mp_int *a, int b, mp_int *c)
+mp_err mp_mod_2d(const mp_int *a, unsigned long b, mp_int *c)
 {
    int x;
    mp_err err;
 
    /* if b is <= 0 then zero the int */
-   if (b <= 0) {
+   if (b == 0) {
       mp_zero(c);
       return MP_OKAY;
    }
 
    /* if the modulus is larger than the value than return */
-   if (b >= (a->used * MP_DIGIT_BIT)) {
+   if (b >= (a->used * (unsigned long)MP_DIGIT_BIT)) {
       return mp_copy(a, c);
    }
 

@@ -6,7 +6,7 @@
 /* determines if mp_reduce_2k can be used */
 mp_bool mp_reduce_is_2k(const mp_int *a)
 {
-   int ix, iy, iw;
+   unsigned long ix, iy, iw;
    mp_digit iz;
 
    if (a->used == 0) {

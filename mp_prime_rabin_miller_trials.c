@@ -4,7 +4,8 @@
 /* SPDX-License-Identifier: Unlicense */
 
 static const struct {
-   int k, t;
+   unsigned int k;
+   int t;
 } sizes[] = {
    {    80, -1 }, /* Use deterministic algorithm for size <= 80 bits */
    {    81, 37 }, /* max. error = 2^(-96)*/
@@ -29,7 +30,7 @@ static const struct {
 };
 
 /* returns # of RM trials required for a given bit size */
-int mp_prime_rabin_miller_trials(int size)
+int mp_prime_rabin_miller_trials(unsigned long size)
 {
    int x;
 

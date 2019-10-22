@@ -16,7 +16,7 @@
  * as a shared object. By default, symbols are visible.
  * On Win32 a .def file must be used to specify the exported symbols.
  */
-#if defined(__GNUC__) && __GNUC__ >= 4 && !defined(_WIN32)
+#if defined(__GNUC__) && __GNUC__ >= 4 && !defined(_WIN32) && !defined(__CYGWIN__)
 #   define MP_PRIVATE __attribute__ ((visibility ("hidden")))
 #else
 #   define MP_PRIVATE
@@ -186,7 +186,7 @@ MP_STATIC_ASSERT(prec_geq_min_prec, MP_PREC >= MP_MIN_PREC)
 extern MP_PRIVATE mp_err(*s_mp_rand_source)(void *out, size_t size);
 
 /* lowlevel functions, do not call! */
-MP_PRIVATE mp_bool s_mp_get_bit(const mp_int *a, unsigned int b);
+MP_PRIVATE mp_bool s_mp_get_bit(const mp_int *a, unsigned long b);
 MP_PRIVATE mp_err s_mp_add(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
 MP_PRIVATE mp_err s_mp_sub(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
 MP_PRIVATE mp_err s_mp_mul_digs_fast(const mp_int *a, const mp_int *b, mp_int *c, int digs) MP_WUR;

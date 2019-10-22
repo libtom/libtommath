@@ -16,7 +16,7 @@ mp_err mp_root_u32(const mp_int *a, uint32_t b, mp_int *c)
 {
    mp_int t1, t2, t3, a_;
    mp_ord cmp;
-   int    ilog2;
+   unsigned long ilog2;
    mp_err err;
 
    /* input must be positive if b is even */
@@ -48,13 +48,13 @@ mp_err mp_root_u32(const mp_int *a, uint32_t b, mp_int *c)
    }
 
    /* "b" is smaller than INT_MAX, we can cast safely */
-   if (ilog2 < (int)b) {
+   if (ilog2 < b) {
       mp_set(c, 1uL);
       c->sign = a->sign;
       err = MP_OKAY;
       goto LBL_ERR;
    }
-   ilog2 =  ilog2 / ((int)b);
+   ilog2 =  ilog2 / b;
    if (ilog2 == 0) {
       mp_set(c, 1uL);
       c->sign = a->sign;

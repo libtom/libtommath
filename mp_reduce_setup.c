@@ -9,7 +9,7 @@
 mp_err mp_reduce_setup(mp_int *a, const mp_int *b)
 {
    mp_err err;
-   if ((err = mp_2expt(a, b->used * 2 * MP_DIGIT_BIT)) != MP_OKAY) {
+   if ((err = mp_2expt(a, b->used * 2uL * MP_DIGIT_BIT)) != MP_OKAY) {
       return err;
    }
    return mp_div(a, b, a, NULL);

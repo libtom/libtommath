@@ -7,7 +7,7 @@
 mp_err mp_gcd(const mp_int *a, const mp_int *b, mp_int *c)
 {
    mp_int  u, v;
-   int     k, u_lsb, v_lsb;
+   unsigned long k, u_lsb, v_lsb;
    mp_err err;
 
    /* either zero than gcd is the largest */

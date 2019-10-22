@@ -14,7 +14,7 @@ mp_err mp_prime_miller_rabin(const mp_int *a, const mp_int *b, mp_bool *result)
 {
    mp_int  n1, y, r;
    mp_err  err;
-   int     s, j;
+   unsigned long j, s;
 
    /* default */
    *result = MP_NO;

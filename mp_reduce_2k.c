@@ -8,7 +8,7 @@ mp_err mp_reduce_2k(mp_int *a, const mp_int *n, mp_digit d)
 {
    mp_int q;
    mp_err err;
-   int    p;
+   unsigned long p;
 
    if ((err = mp_init(&q)) != MP_OKAY) {
       return err;

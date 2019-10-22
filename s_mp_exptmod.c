@@ -16,7 +16,9 @@ mp_err s_mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y
    mp_int  M[TAB_SIZE], res, mu;
    mp_digit buf;
    mp_err   err;
-   int      bitbuf, bitcpy, bitcnt, mode, digidx, x, y, winsize;
+   int      bitbuf, bitcnt, mode, digidx;
+   unsigned int winsize, bitcpy;
+   unsigned long x, y;
    mp_err(*redux)(mp_int *x, const mp_int *m, const mp_int *mu);
 
    /* find window size */
@@ -46,9 +48,9 @@ mp_err s_mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y
    }
 
    /* now init the second half of the array */
-   for (x = 1<<(winsize-1); x < (1 << winsize); x++) {
+   for (x = 1uL<<(winsize-1); x < (1uL << winsize); x++) {
       if ((err = mp_init(&M[x])) != MP_OKAY) {
-         for (y = 1<<(winsize-1); y < x; y++) {
+         for (y = 1uL<<(winsize-1); y < x; y++) {
             mp_clear(&M[y]);
          }
          mp_clear(&M[1]);
@@ -77,7 +79,7 @@ mp_err s_mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y
     */
    if ((err = mp_mod(G, P, &M[1])) != MP_OKAY)                    goto LBL_MU;
 
-   /* compute the value at M[1<<(winsize-1)] by squaring
+   /* compute the value at M[1uL<<(winsize-1)] by squaring
     * M[1] (winsize-1) times
     */
    if ((err = mp_copy(&M[1], &M[(size_t)1 << (winsize - 1)])) != MP_OKAY) goto LBL_MU;
@@ -94,7 +96,7 @@ mp_err s_mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y
    /* create upper table, that is M[x] = M[x-1] * M[1] (mod P)
     * for x = (2**(winsize - 1) + 1) to (2**winsize - 1)
     */
-   for (x = (1 << (winsize - 1)) + 1; x < (1 << winsize); x++) {
+   for (x = (1uL << (winsize - 1)) + 1; x < (1uL << winsize); x++) {
       if ((err = mp_mul(&M[x - 1], &M[1], &M[x])) != MP_OKAY)     goto LBL_MU;
       if ((err = redux(&M[x], P, &mu)) != MP_OKAY)                goto LBL_MU;
    }
@@ -190,7 +192,7 @@ LBL_MU:
    mp_clear(&mu);
 LBL_M:
    mp_clear(&M[1]);
-   for (x = 1<<(winsize-1); x < (1 << winsize); x++) {
+   for (x = 1uL<<(winsize-1); x < (1uL << winsize); x++) {
       mp_clear(&M[x]);
    }
    return err;

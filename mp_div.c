@@ -9,7 +9,8 @@
 mp_err mp_div(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d)
 {
    mp_int ta, tb, tq, q;
-   int     n, n2;
+   int     n2;
+   unsigned long n;
    mp_err err;
 
    /* is divisor zero ? */
