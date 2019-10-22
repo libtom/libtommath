@@ -1,9 +1,7 @@
 #include "tommath_private.h"
-#ifdef BN_MP_RADIX_SIZE_OVERESTIMATE_C
+#ifdef MP_RADIX_SIZE_OVERESTIMATE_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
-
-
 
 /*
    Table of {0, log_2([1..64])} times 2^p where p is the scale
@@ -27,13 +25,13 @@ static const uint16_t logbases[65] = {
    48389u, 48584u, 48776u, 48965u, 49152u
 };
 /* *INDENT-ON* */
-mp_err mp_radix_size_overestimate(const mp_int *a, const int radix, int *size)
+mp_err mp_radix_size_overestimate(const mp_int *a, const int radix, size_t *size)
 {
    mp_int bi_bit_count, bi_k;
    int bit_count;
    mp_err err = MP_OKAY;
 
-   *size = 0;
+   *size = 0u;
 
    if ((radix < 2) || (radix > 64)) {
       return MP_VAL;
@@ -42,7 +40,7 @@ mp_err mp_radix_size_overestimate(const mp_int *a, const int radix, int *size)
    bit_count = mp_count_bits(a) + 1;
 
    if (bit_count == 0) {
-      *size = 2;
+      *size = 2u;
       return MP_OKAY;
    }
 
@@ -55,10 +53,8 @@ mp_err mp_radix_size_overestimate(const mp_int *a, const int radix, int *size)
    if ((err = mp_mul_2d(&bi_bit_count, LTM_RADIX_SIZE_SCALE, &bi_bit_count)) != MP_OKAY)  goto LTM_ERR;
    if ((err = mp_div(&bi_bit_count, &bi_k, &bi_bit_count, NULL)) != MP_OKAY)              goto LTM_ERR;
 
-   *size = (int)mp_get_l(&bi_bit_count) + 4;
-#if ( (defined MP_8BIT) && (INT_MAX > 0xFFFF))
-   *size += 3;
-#endif
+   *size = (size_t)(mp_get_l(&bi_bit_count) + 4);
+
 
 LTM_ERR:
    mp_clear_multi(&bi_bit_count, &bi_k, NULL);

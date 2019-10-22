@@ -41,8 +41,6 @@ EXPORTS
     mp_from_sbin
     mp_from_ubin
     mp_fwrite
-    mp_fwrite
-    mp_fwrite
     mp_gcd
     mp_get_double
     mp_get_i32
