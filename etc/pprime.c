@@ -8,9 +8,6 @@
 #include <time.h>
 #include "tommath.h"
 
-/* TODO: Remove private_mp_word as soon as deprecated mp_word is removed from tommath. */
-typedef private_mp_word mp_word;
-
 static int   n_prime;
 static FILE *primes;
 

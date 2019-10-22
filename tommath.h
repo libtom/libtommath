@@ -51,21 +51,14 @@ extern "C" {
  * [any size beyond that is ok provided it doesn't overflow the data type]
  */
 
-
 #if defined(MP_16BIT)
 typedef uint16_t             mp_digit;
-typedef uint32_t             private_mp_word;
 #   define MP_DIGIT_BIT 15
 #elif defined(MP_64BIT)
-/* for GCC only on supported platforms */
 typedef uint64_t mp_digit;
-#if defined(__GNUC__)
-typedef unsigned long        private_mp_word __attribute__((mode(TI)));
-#endif
 #   define MP_DIGIT_BIT 60
 #else
 typedef uint32_t             mp_digit;
-typedef uint64_t             private_mp_word;
 #   ifdef MP_31BIT
 /*
  * This is an extension that uses 31-bit digits.
