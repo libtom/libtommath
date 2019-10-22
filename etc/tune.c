@@ -256,18 +256,18 @@ const struct cutoffs max_cutoffs =
 
 static void set_cutoffs(const struct cutoffs *c)
 {
-   KARATSUBA_MUL_CUTOFF = c->KARATSUBA_MUL;
-   KARATSUBA_SQR_CUTOFF = c->KARATSUBA_SQR;
-   TOOM_MUL_CUTOFF = c->TOOM_MUL;
-   TOOM_SQR_CUTOFF = c->TOOM_SQR;
+   MP_KARATSUBA_MUL_CUTOFF = c->KARATSUBA_MUL;
+   MP_KARATSUBA_SQR_CUTOFF = c->KARATSUBA_SQR;
+   MP_TOOM_MUL_CUTOFF = c->TOOM_MUL;
+   MP_TOOM_SQR_CUTOFF = c->TOOM_SQR;
 }
 
 static void get_cutoffs(struct cutoffs *c)
 {
-   c->KARATSUBA_MUL  = KARATSUBA_MUL_CUTOFF;
-   c->KARATSUBA_SQR  = KARATSUBA_SQR_CUTOFF;
-   c->TOOM_MUL = TOOM_MUL_CUTOFF;
-   c->TOOM_SQR = TOOM_SQR_CUTOFF;
+   c->KARATSUBA_MUL  = MP_KARATSUBA_MUL_CUTOFF;
+   c->KARATSUBA_SQR  = MP_KARATSUBA_SQR_CUTOFF;
+   c->TOOM_MUL = MP_TOOM_MUL_CUTOFF;
+   c->TOOM_SQR = MP_TOOM_SQR_CUTOFF;
 
 }
 
@@ -414,13 +414,13 @@ int main(int argc, char **argv)
                s_usage(argv[0]);
             }
             str = argv[opt];
-            KARATSUBA_MUL_CUTOFF = (int)s_strtol(str, &endptr, "[1/4] No value for KARATSUBA_MUL_CUTOFF given");
+            MP_KARATSUBA_MUL_CUTOFF = (int)s_strtol(str, &endptr, "[1/4] No value for MP_KARATSUBA_MUL_CUTOFF given");
             str = endptr + 1;
-            KARATSUBA_SQR_CUTOFF = (int)s_strtol(str, &endptr, "[2/4] No value for KARATSUBA_SQR_CUTOFF given");
+            MP_KARATSUBA_SQR_CUTOFF = (int)s_strtol(str, &endptr, "[2/4] No value for MP_KARATSUBA_SQR_CUTOFF given");
             str = endptr + 1;
-            TOOM_MUL_CUTOFF = (int)s_strtol(str, &endptr, "[3/4] No value for TOOM_MUL_CUTOFF given");
+            MP_TOOM_MUL_CUTOFF = (int)s_strtol(str, &endptr, "[3/4] No value for MP_TOOM_MUL_CUTOFF given");
             str = endptr + 1;
-            TOOM_SQR_CUTOFF = (int)s_strtol(str, &endptr, "[4/4] No value for TOOM_SQR_CUTOFF given");
+            MP_TOOM_SQR_CUTOFF = (int)s_strtol(str, &endptr, "[4/4] No value for MP_TOOM_SQR_CUTOFF given");
             break;
          case 'h':
             s_exit_code = EXIT_SUCCESS;
@@ -448,7 +448,7 @@ int main(int argc, char **argv)
          int *cutoff, *update;
          uint64_t (*fn)(int size);
       } test[] = {
-#define T_MUL_SQR(n, o, f)  { #n, &o##_CUTOFF, &(updated.o), MP_HAS(S_MP_##o) ? f : NULL }
+#define T_MUL_SQR(n, o, f)  { #n, &MP_##o##_CUTOFF, &(updated.o), MP_HAS(S_MP_##o) ? f : NULL }
          /*
             The influence of the Comba multiplication cannot be
             eradicated programmatically. It depends on the size
@@ -526,15 +526,15 @@ int main(int argc, char **argv)
          set_cutoffs(&orig);
          if (args.terse == 1) {
             printf("%d %d %d %d\n",
-                   KARATSUBA_MUL_CUTOFF,
-                   KARATSUBA_SQR_CUTOFF,
-                   TOOM_MUL_CUTOFF,
-                   TOOM_SQR_CUTOFF);
+                   MP_KARATSUBA_MUL_CUTOFF,
+                   MP_KARATSUBA_SQR_CUTOFF,
+                   MP_TOOM_MUL_CUTOFF,
+                   MP_TOOM_SQR_CUTOFF);
          } else {
-            printf("KARATSUBA_MUL_CUTOFF = %d\n", KARATSUBA_MUL_CUTOFF);
-            printf("KARATSUBA_SQR_CUTOFF = %d\n", KARATSUBA_SQR_CUTOFF);
-            printf("TOOM_MUL_CUTOFF = %d\n", TOOM_MUL_CUTOFF);
-            printf("TOOM_SQR_CUTOFF = %d\n", TOOM_SQR_CUTOFF);
+            printf("KARATSUBA_MUL_CUTOFF = %d\n", MP_KARATSUBA_MUL_CUTOFF);
+            printf("KARATSUBA_SQR_CUTOFF = %d\n", MP_KARATSUBA_SQR_CUTOFF);
+            printf("TOOM_MUL_CUTOFF = %d\n", MP_TOOM_MUL_CUTOFF);
+            printf("TOOM_SQR_CUTOFF = %d\n", MP_TOOM_SQR_CUTOFF);
          }
       }
    }
