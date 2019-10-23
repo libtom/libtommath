@@ -6,9 +6,9 @@
 /* finds the next prime after the number "a" using "t" trials
  * of Miller-Rabin.
  *
- * bbs_style = 1 means the prime must be congruent to 3 mod 4
+ * bbs_style = MP_YES means the prime must be congruent to 3 mod 4
  */
-mp_err mp_prime_next_prime(mp_int *a, int t, int bbs_style)
+mp_err mp_prime_next_prime(mp_int *a, int t, mp_bool bbs_style)
 {
    int      x, y;
    mp_ord   cmp;
@@ -29,7 +29,7 @@ mp_err mp_prime_next_prime(mp_int *a, int t, int bbs_style)
             continue;
          }
          if (cmp != MP_GT) {
-            if ((bbs_style == 1) && ((s_mp_prime_tab[x] & 3u) != 3u)) {
+            if ((bbs_style == MP_YES) && ((s_mp_prime_tab[x] & 3u) != 3u)) {
                /* try again until we get a prime congruent to 3 mod 4 */
                continue;
             } else {
@@ -42,7 +42,7 @@ mp_err mp_prime_next_prime(mp_int *a, int t, int bbs_style)
    }
 
    /* generate a prime congruent to 3 mod 4 or 1/3 mod 4? */
-   if (bbs_style == 1) {
+   if (bbs_style == MP_YES) {
       kstep   = 4;
    } else {
       kstep   = 2;
@@ -50,7 +50,7 @@ mp_err mp_prime_next_prime(mp_int *a, int t, int bbs_style)
 
    /* at this point we will use a combination of a sieve and Miller-Rabin */
 
-   if (bbs_style == 1) {
+   if (bbs_style == MP_YES) {
       /* if a mod 4 != 3 subtract the correct value to make it so */
       if ((a->dp[0] & 3u) != 3u) {
          if ((err = mp_sub_d(a, (a->dp[0] & 3u) + 1u, a)) != MP_OKAY) {
