@@ -148,9 +148,6 @@ extern void MP_FREE(void *mem, size_t size);
 #define MP__STRINGIZE(x) ""#x""
 #define MP_HAS(x)        (sizeof(MP_STRINGIZE(x##_C)) == 1u)
 
-/* TODO: Remove private_mp_word as soon as deprecated mp_word is removed from tommath. */
-typedef private_mp_word mp_word;
-
 #define MP_MIN(x, y) (((x) < (y)) ? (x) : (y))
 #define MP_MAX(x, y) (((x) > (y)) ? (x) : (y))
 
@@ -167,6 +164,15 @@ typedef private_mp_word mp_word;
 
 #define MP_WARRAY (1 << ((MP_SIZEOF_BITS(mp_word) - (2 * MP_DIGIT_BIT)) + 1))
 
+#if defined(MP_16BIT)
+typedef uint32_t mp_word;
+#elif defined(MP_64BIT)
+typedef unsigned long mp_word __attribute__((mode(TI)));
+#else
+typedef uint64_t mp_word;
+#endif
+
+MP_STATIC_ASSERT(correct_word_size, sizeof(mp_word) == 2 * sizeof(mp_digit))
 
 /* default precision */
 #ifndef MP_PREC
