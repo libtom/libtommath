@@ -2327,6 +2327,139 @@ LBL_ERR:
 }
 
 
+/* Some larger values to test the fast division algorithm */
+static int test_s_mp_div_recursive(void)
+{
+   mp_int a, b, c_q, c_r, d_q, d_r;
+   int size, err;
+
+   if ((err = mp_init_multi(&a, &b, &c_q, &c_r, &d_q, &d_r, NULL)) != MP_OKAY) {
+      goto LBL_ERR;
+   }
+
+   for (size = MP_KARATSUBA_MUL_CUTOFF; size < 3 * MP_KARATSUBA_MUL_CUTOFF; size += 10) {
+      fprintf(stderr,"sizes = %d / %d\n", 10 * size, size);
+      /* Relation 10:1 */
+      if ((err = mp_rand(&a, 10 * size)) != MP_OKAY) {
+         goto LBL_ERR;
+      }
+      if ((err = mp_rand(&b, size)) != MP_OKAY) {
+         goto LBL_ERR;
+      }
+      if ((err = s_mp_div_recursive(&a, &b, &c_q, &c_r)) != MP_OKAY) {
+         goto LBL_ERR;
+      }
+      if ((err = s_mp_div_school(&a, &b, &d_q, &d_r)) != MP_OKAY) {
+         goto LBL_ERR;
+      }
+      if (mp_cmp(&c_q, &d_q) != MP_EQ) {
+         fprintf(stderr, "1. Recursive division failed at sizes %d / %d, wrong quotient\n",
+                 10 * size, size);
+         goto LBL_ERR;
+      }
+      if (mp_cmp(&c_r, &d_r) != MP_EQ) {
+         fprintf(stderr, "1. Recursive division failed at sizes %d / %d, wrong remainder\n",
+                 10 * size, size);
+         goto LBL_ERR;
+      }
+      fprintf(stderr,"sizes = %d / %d\n", 2 * size, size);
+      /* Relation 2:1 */
+      if ((err = mp_rand(&a, 2 * size)) != MP_OKAY) {
+         goto LBL_ERR;
+      }
+      if ((err = mp_rand(&b, size)) != MP_OKAY) {
+         goto LBL_ERR;
+      }
+      if ((err = s_mp_div_recursive(&a, &b, &c_q, &c_r)) != MP_OKAY) {
+         goto LBL_ERR;
+      }
+      if ((err = s_mp_div_school(&a, &b, &d_q, &d_r)) != MP_OKAY) {
+         goto LBL_ERR;
+      }
+      if (mp_cmp(&c_q, &d_q) != MP_EQ) {
+         fprintf(stderr, "2. Recursive division failed at sizes %d / %d, wrong quotient\n",
+                 2 * size, size);
+         goto LBL_ERR;
+      }
+      if (mp_cmp(&c_r, &d_r) != MP_EQ) {
+         fprintf(stderr, "2. Recursive division failed at sizes %d / %d, wrong remainder\n",
+                 2 * size, size);
+         goto LBL_ERR;
+      }
+      fprintf(stderr,"sizes = %d / %d\n", 3 * size, 2 * size);
+      /* Upper limit 3:2 */
+      if ((err = mp_rand(&a, 3 * size)) != MP_OKAY) {
+         goto LBL_ERR;
+      }
+      if ((err = mp_rand(&b, 2 * size)) != MP_OKAY) {
+         goto LBL_ERR;
+      }
+      if ((err = s_mp_div_recursive(&a, &b, &c_q, &c_r)) != MP_OKAY) {
+         goto LBL_ERR;
+      }
+      if ((err = s_mp_div_school(&a, &b, &d_q, &d_r)) != MP_OKAY) {
+         goto LBL_ERR;
+      }
+      if (mp_cmp(&c_q, &d_q) != MP_EQ) {
+         fprintf(stderr, "3. Recursive division failed at sizes %d / %d, wrong quotient\n",
+                 3 * size, 2 * size);
+         goto LBL_ERR;
+      }
+      if (mp_cmp(&c_r, &d_r) != MP_EQ) {
+         fprintf(stderr, "3. Recursive division failed at sizes %d / %d, wrong remainder\n",
+                 3 * size, 2 * size);
+         goto LBL_ERR;
+      }
+   }
+
+   mp_clear_multi(&a, &b, &c_q, &c_r, &d_q, &d_r, NULL);
+   return EXIT_SUCCESS;
+LBL_ERR:
+   mp_clear_multi(&a, &b, &c_q, &c_r, &d_q, &d_r, NULL);
+   return EXIT_FAILURE;
+}
+
+static int test_s_mp_div_small(void)
+{
+   mp_int a, b, c_q, c_r, d_q, d_r;
+   int size, err;
+
+   if ((err = mp_init_multi(&a, &b, &c_q, &c_r, &d_q, &d_r, NULL)) != MP_OKAY) {
+      goto LBL_ERR;
+   }
+   for (size = 1; size < MP_KARATSUBA_MUL_CUTOFF; size += 10) {
+      fprintf(stderr,"sizes = %d / %d\n", 2 * size, size);
+      /* Relation 10:1 */
+      if ((err = mp_rand(&a, 2 * size)) != MP_OKAY) {
+         goto LBL_ERR;
+      }
+      if ((err = mp_rand(&b, size)) != MP_OKAY) {
+         goto LBL_ERR;
+      }
+      if ((err = s_mp_div_small(&a, &b, &c_q, &c_r)) != MP_OKAY) {
+         goto LBL_ERR;
+      }
+      if ((err = s_mp_div_school(&a, &b, &d_q, &d_r)) != MP_OKAY) {
+         goto LBL_ERR;
+      }
+      if (mp_cmp(&c_q, &d_q) != MP_EQ) {
+         fprintf(stderr, "1. Small division failed at sizes %d / %d, wrong quotient\n",
+                 2 * size, size);
+         goto LBL_ERR;
+      }
+      if (mp_cmp(&c_r, &d_r) != MP_EQ) {
+         fprintf(stderr, "1. Small division failed at sizes %d / %d, wrong remainder\n",
+                 2 * size, size);
+         goto LBL_ERR;
+      }
+   }
+   mp_clear_multi(&a, &b, &c_q, &c_r, &d_q, &d_r, NULL);
+   return EXIT_SUCCESS;
+LBL_ERR:
+   mp_clear_multi(&a, &b, &c_q, &c_r, &d_q, &d_r, NULL);
+   return EXIT_FAILURE;
+}
+
 
 static int test_mp_read_write_ubin(void)
 {
@@ -2500,6 +2633,8 @@ static int unit_tests(int argc, char **argv)
       T1(mp_sqrt, MP_SQRT),
       T1(mp_sqrtmod_prime, MP_SQRTMOD_PRIME),
       T1(mp_xor, MP_XOR),
+      T2(s_mp_div_recursive, S_MP_DIV_RECURSIVE, S_MP_DIV_SCHOOL),
+      T2(s_mp_div_small, S_MP_DIV_SMALL, S_MP_DIV_SCHOOL),
       T1(s_mp_balance_mul, S_MP_BALANCE_MUL),
       T1(s_mp_karatsuba_mul, S_MP_KARATSUBA_MUL),
       T1(s_mp_karatsuba_sqr, S_MP_KARATSUBA_SQR),
