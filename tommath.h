@@ -122,10 +122,10 @@ typedef enum {
 
 #ifndef MP_FIXED_CUTOFFS
 extern int
-KARATSUBA_MUL_CUTOFF,
-KARATSUBA_SQR_CUTOFF,
-TOOM_MUL_CUTOFF,
-TOOM_SQR_CUTOFF;
+MP_KARATSUBA_MUL_CUTOFF,
+MP_KARATSUBA_SQR_CUTOFF,
+MP_TOOM_MUL_CUTOFF,
+MP_TOOM_SQR_CUTOFF;
 #endif
 
 /* define this to use lower memory usage routines (exptmods mostly) */

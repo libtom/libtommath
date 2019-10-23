@@ -2199,12 +2199,12 @@ static int test_s_mp_toom_mul(void)
       goto LBL_ERR;
    }
 
-   tc_cutoff = TOOM_MUL_CUTOFF;
-   TOOM_MUL_CUTOFF = INT_MAX;
+   tc_cutoff = MP_TOOM_MUL_CUTOFF;
+   MP_TOOM_MUL_CUTOFF = INT_MAX;
    if ((err = mp_mul(&a, &b, &c)) != MP_OKAY) {
       goto LBL_ERR;
    }
-   TOOM_MUL_CUTOFF = tc_cutoff;
+   MP_TOOM_MUL_CUTOFF = tc_cutoff;
    if ((err = mp_mul(&a, &b, &d)) != MP_OKAY) {
       goto LBL_ERR;
    }

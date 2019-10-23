@@ -37,8 +37,8 @@ static int mtest_opponent(void)
 
 #ifndef MP_FIXED_CUTOFFS
    /* force KARA and TOOM to enable despite cutoffs */
-   KARATSUBA_SQR_CUTOFF = KARATSUBA_MUL_CUTOFF = 8;
-   TOOM_SQR_CUTOFF = TOOM_MUL_CUTOFF = 16;
+   MP_KARATSUBA_SQR_CUTOFF = MP_KARATSUBA_MUL_CUTOFF = 8;
+   MP_TOOM_SQR_CUTOFF = MP_TOOM_MUL_CUTOFF = 16;
 #endif
 
    for (;;) {
