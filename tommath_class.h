@@ -158,6 +158,7 @@
 #   define S_MP_KARATSUBA_SQR_C
 #   define S_MP_LOG_C
 #   define S_MP_LOG_D_C
+#   define S_MP_LOG_POW2_C
 #   define S_MP_MONTGOMERY_REDUCE_FAST_C
 #   define S_MP_MUL_DIGS_C
 #   define S_MP_MUL_DIGS_FAST_C
@@ -522,9 +523,9 @@
 #endif
 
 #if defined(MP_LOG_U32_C)
-#   define MP_COUNT_BITS_C
 #   define S_MP_LOG_C
 #   define S_MP_LOG_D_C
+#   define S_MP_LOG_POW2_C
 #endif
 
 #if defined(MP_LSHD_C)
@@ -1172,6 +1173,10 @@
 #endif
 
 #if defined(S_MP_LOG_D_C)
+#endif
+
+#if defined(S_MP_LOG_POW2_C)
+#   define MP_COUNT_BITS_C
 #endif
 
 #if defined(S_MP_MONTGOMERY_REDUCE_FAST_C)

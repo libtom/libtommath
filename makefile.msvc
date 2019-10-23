@@ -42,7 +42,7 @@ mp_sqrmod.obj mp_sqrt.obj mp_sqrtmod_prime.obj mp_sub.obj mp_sub_d.obj mp_submod
 mp_to_ubin.obj mp_ubin_size.obj mp_unpack.obj mp_xor.obj mp_zero.obj s_mp_add.obj s_mp_balance_mul.obj \
 s_mp_div_recursive.obj s_mp_div_school.obj s_mp_div_small.obj s_mp_exptmod.obj s_mp_exptmod_fast.obj s_mp_get_bit.obj \
 s_mp_invmod_fast.obj s_mp_invmod_slow.obj s_mp_karatsuba_mul.obj s_mp_karatsuba_sqr.obj s_mp_log.obj s_mp_log_d.obj \
-s_mp_montgomery_reduce_fast.obj s_mp_mul_digs.obj s_mp_mul_digs_fast.obj s_mp_mul_high_digs.obj \
+s_mp_log_pow2.obj s_mp_montgomery_reduce_fast.obj s_mp_mul_digs.obj s_mp_mul_digs_fast.obj s_mp_mul_high_digs.obj \
 s_mp_mul_high_digs_fast.obj s_mp_prime_is_divisible.obj s_mp_rand_jenkins.obj s_mp_rand_platform.obj \
 s_mp_reverse.obj s_mp_sqr.obj s_mp_sqr_fast.obj s_mp_sub.obj s_mp_toom_mul.obj s_mp_toom_sqr.obj
 

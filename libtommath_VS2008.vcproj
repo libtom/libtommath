@@ -901,6 +901,10 @@
 			>
 		</File>
 		<File
+			RelativePath="s_mp_log_pow2.c"
+			>
+		</File>
+		<File
 			RelativePath="s_mp_montgomery_reduce_fast.c"
 			>
 		</File>
