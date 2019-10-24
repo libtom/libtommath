@@ -28,7 +28,6 @@
 #   define MP_COPY_C
 #   define MP_COUNT_BITS_C
 #   define MP_CUTOFFS_C
-#   define MP_DECR_C
 #   define MP_DIV_C
 #   define MP_DIV_2_C
 #   define MP_DIV_2D_C
@@ -57,7 +56,6 @@
 #   define MP_GET_MAG_UL_C
 #   define MP_GET_MAG_ULL_C
 #   define MP_GROW_C
-#   define MP_INCR_C
 #   define MP_INIT_C
 #   define MP_INIT_COPY_C
 #   define MP_INIT_I32_C
@@ -73,8 +71,6 @@
 #   define MP_INIT_ULL_C
 #   define MP_INVMOD_C
 #   define MP_IS_SQUARE_C
-#   define MP_ISEVEN_C
-#   define MP_ISODD_C
 #   define MP_KRONECKER_C
 #   define MP_LCM_C
 #   define MP_LOG_U32_C
@@ -167,7 +163,6 @@
 #   define S_MP_PRIME_IS_DIVISIBLE_C
 #   define S_MP_RAND_JENKINS_C
 #   define S_MP_RAND_PLATFORM_C
-#   define S_MP_REVERSE_C
 #   define S_MP_SQR_C
 #   define S_MP_SQR_FAST_C
 #   define S_MP_SUB_C
@@ -244,13 +239,6 @@
 #endif
 
 #if defined(MP_CUTOFFS_C)
-#endif
-
-#if defined(MP_DECR_C)
-#   define MP_INCR_C
-#   define MP_SET_C
-#   define MP_SUB_D_C
-#   define MP_ZERO_C
 #endif
 
 #if defined(MP_DIV_C)
@@ -411,12 +399,6 @@
 #if defined(MP_GROW_C)
 #endif
 
-#if defined(MP_INCR_C)
-#   define MP_ADD_D_C
-#   define MP_DECR_C
-#   define MP_SET_C
-#endif
-
 #if defined(MP_INIT_C)
 #endif
 
@@ -494,12 +476,6 @@
 #   define MP_MOD_D_C
 #   define MP_SQRT_C
 #   define MP_SQR_C
-#endif
-
-#if defined(MP_ISEVEN_C)
-#endif
-
-#if defined(MP_ISODD_C)
 #endif
 
 #if defined(MP_KRONECKER_C)
@@ -701,8 +677,6 @@
 #   define MP_MUL_2_C
 #   define MP_PRIME_IS_PRIME_C
 #   define MP_SUB_D_C
-#   define S_MP_PRIME_RANDOM_EX_C
-#   define S_MP_RAND_CB_C
 #   define S_MP_RAND_SOURCE_C
 #endif
 
@@ -1019,7 +993,6 @@
 #   define MP_CLEAR_MULTI_C
 #   define MP_CMP_D_C
 #   define MP_COPY_C
-#   define MP_DECR_C
 #   define MP_DIV_2D_C
 #   define MP_EXCH_C
 #   define MP_INIT_MULTI_C
@@ -1027,6 +1000,7 @@
 #   define MP_MUL_2D_C
 #   define MP_MUL_C
 #   define MP_SUB_C
+#   define MP_SUB_D_C
 #   define MP_ZERO_C
 #   define S_MP_DIV_SCHOOL_C
 #   define S_MP_RECURSION_C
@@ -1221,9 +1195,6 @@
 #endif
 
 #if defined(S_MP_RAND_PLATFORM_C)
-#endif
-
-#if defined(S_MP_REVERSE_C)
 #endif
 
 #if defined(S_MP_SQR_C)

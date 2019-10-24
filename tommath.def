@@ -23,7 +23,6 @@ EXPORTS
     mp_copy
     mp_count_bits
     mp_cutoffs
-    mp_decr
     mp_div
     mp_div_2
     mp_div_2d
@@ -52,7 +51,6 @@ EXPORTS
     mp_get_mag_ul
     mp_get_mag_ull
     mp_grow
-    mp_incr
     mp_init
     mp_init_copy
     mp_init_i32
@@ -68,8 +66,6 @@ EXPORTS
     mp_init_ull
     mp_invmod
     mp_is_square
-    mp_iseven
-    mp_isodd
     mp_kronecker
     mp_lcm
     mp_log_u32
