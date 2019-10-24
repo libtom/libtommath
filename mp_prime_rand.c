@@ -18,7 +18,7 @@
  */
 
 /* This is possibly the mother of all prime generation functions, muahahahahaha! */
-mp_err s_mp_prime_random_ex(mp_int *a, int t, int size, int flags, mp_prime_callback cb, void *dat)
+mp_err mp_prime_rand(mp_int *a, int t, int size, int flags)
 {
    unsigned char *tmp, maskAND, maskOR_msb, maskOR_lsb;
    int bsize, maskOR_msb_offset;
@@ -62,9 +62,8 @@ mp_err s_mp_prime_random_ex(mp_int *a, int t, int size, int flags, mp_prime_call
 
    do {
       /* read the bytes */
-      if (cb(tmp, bsize, dat) != bsize) {
-         err = MP_VAL;
-         goto error;
+      if ((err = s_mp_rand_source(tmp, (size_t)bsize)) != MP_OKAY) {
+         goto LBL_ERR;
       }
 
       /* work over the MSbyte */
@@ -78,12 +77,12 @@ mp_err s_mp_prime_random_ex(mp_int *a, int t, int size, int flags, mp_prime_call
       /* read it in */
       /* TODO: casting only for now until all lengths have been changed to the type "size_t"*/
       if ((err = mp_from_ubin(a, tmp, (size_t)bsize)) != MP_OKAY) {
-         goto error;
+         goto LBL_ERR;
       }
 
       /* is it prime? */
       if ((err = mp_prime_is_prime(a, t, &res)) != MP_OKAY) {
-         goto error;
+         goto LBL_ERR;
       }
       if (!res) {
          continue;
@@ -92,15 +91,15 @@ mp_err s_mp_prime_random_ex(mp_int *a, int t, int size, int flags, mp_prime_call
       if ((flags & MP_PRIME_SAFE) != 0) {
          /* see if (a-1)/2 is prime */
          if ((err = mp_sub_d(a, 1uL, a)) != MP_OKAY) {
-            goto error;
+            goto LBL_ERR;
          }
          if ((err = mp_div_2(a, a)) != MP_OKAY) {
-            goto error;
+            goto LBL_ERR;
          }
 
          /* is it prime? */
          if ((err = mp_prime_is_prime(a, t, &res)) != MP_OKAY) {
-            goto error;
+            goto LBL_ERR;
          }
       }
    } while (!res);
@@ -108,34 +107,17 @@ mp_err s_mp_prime_random_ex(mp_int *a, int t, int size, int flags, mp_prime_call
    if ((flags & MP_PRIME_SAFE) != 0) {
       /* restore a to the original value */
       if ((err = mp_mul_2(a, a)) != MP_OKAY) {
-         goto error;
+         goto LBL_ERR;
       }
       if ((err = mp_add_d(a, 1uL, a)) != MP_OKAY) {
-         goto error;
+         goto LBL_ERR;
       }
    }
 
    err = MP_OKAY;
-error:
+LBL_ERR:
    MP_FREE_BUFFER(tmp, (size_t)bsize);
    return err;
-}
-
-static int s_mp_rand_cb(unsigned char *dst, int len, void *dat)
-{
-   (void)dat;
-   if (len <= 0) {
-      return len;
-   }
-   if (s_mp_rand_source(dst, (size_t)len) != MP_OKAY) {
-      return 0;
-   }
-   return len;
-}
-
-mp_err mp_prime_rand(mp_int *a, int t, int size, int flags)
-{
-   return s_mp_prime_random_ex(a, t, size, flags, s_mp_rand_cb, NULL);
 }
 
 #endif
