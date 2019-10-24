@@ -6,6 +6,7 @@
 
 #include <stdint.h>
 #include <stddef.h>
+#include <stdbool.h>
 
 #ifndef MP_NO_FILE
 #  include <stdio.h>
@@ -94,11 +95,6 @@ typedef enum {
 } mp_ord;
 
 typedef enum {
-   MP_NO = 0,
-   MP_YES = 1
-} mp_bool;
-
-typedef enum {
    MP_OKAY  = 0,   /* no error */
    MP_ERR   = -1,  /* unknown error */
    MP_MEM   = -2,  /* out of mem */
@@ -119,7 +115,6 @@ typedef enum {
 } mp_endian;
 
 /* tunable cutoffs */
-
 #ifndef MP_FIXED_CUTOFFS
 extern int
 MP_KARATSUBA_MUL_CUTOFF,
@@ -441,7 +436,7 @@ mp_err mp_sqrt(const mp_int *arg, mp_int *ret) MP_WUR;
 mp_err mp_sqrtmod_prime(const mp_int *n, const mp_int *prime, mp_int *ret) MP_WUR;
 
 /* is number a square? */
-mp_err mp_is_square(const mp_int *arg, mp_bool *ret) MP_WUR;
+mp_err mp_is_square(const mp_int *arg, bool *ret) MP_WUR;
 
 /* computes the Kronecker symbol c = (a | p) (like jacobi() but with {a,p} in Z */
 mp_err mp_kronecker(const mp_int *a, const mp_int *p, int *c) MP_WUR;
@@ -468,7 +463,7 @@ mp_err mp_montgomery_calc_normalization(mp_int *a, const mp_int *b) MP_WUR;
 mp_err mp_montgomery_reduce(mp_int *x, const mp_int *n, mp_digit rho) MP_WUR;
 
 /* returns 1 if a is a valid DR modulus */
-mp_bool mp_dr_is_modulus(const mp_int *a) MP_WUR;
+bool mp_dr_is_modulus(const mp_int *a) MP_WUR;
 
 /* sets the value of "d" required for mp_dr_reduce */
 void mp_dr_setup(const mp_int *a, mp_digit *d);
@@ -477,7 +472,7 @@ void mp_dr_setup(const mp_int *a, mp_digit *d);
 mp_err mp_dr_reduce(mp_int *x, const mp_int *n, mp_digit k) MP_WUR;
 
 /* returns true if a can be reduced with mp_reduce_2k */
-mp_bool mp_reduce_is_2k(const mp_int *a) MP_WUR;
+bool mp_reduce_is_2k(const mp_int *a) MP_WUR;
 
 /* determines k value for 2k reduction */
 mp_err mp_reduce_2k_setup(const mp_int *a, mp_digit *d) MP_WUR;
@@ -486,7 +481,7 @@ mp_err mp_reduce_2k_setup(const mp_int *a, mp_digit *d) MP_WUR;
 mp_err mp_reduce_2k(mp_int *a, const mp_int *n, mp_digit d) MP_WUR;
 
 /* returns true if a can be reduced with mp_reduce_2k_l */
-mp_bool mp_reduce_is_2k_l(const mp_int *a) MP_WUR;
+bool mp_reduce_is_2k_l(const mp_int *a) MP_WUR;
 
 /* determines k value for 2k reduction */
 mp_err mp_reduce_2k_setup_l(const mp_int *a, mp_int *d) MP_WUR;
@@ -502,12 +497,12 @@ mp_err mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y) 
 /* performs one Fermat test of "a" using base "b".
  * Sets result to 0 if composite or 1 if probable prime
  */
-mp_err mp_prime_fermat(const mp_int *a, const mp_int *b, mp_bool *result) MP_WUR;
+mp_err mp_prime_fermat(const mp_int *a, const mp_int *b, bool *result) MP_WUR;
 
 /* performs one Miller-Rabin test of "a" using base "b".
  * Sets result to 0 if composite or 1 if probable prime
  */
-mp_err mp_prime_miller_rabin(const mp_int *a, const mp_int *b, mp_bool *result) MP_WUR;
+mp_err mp_prime_miller_rabin(const mp_int *a, const mp_int *b, bool *result) MP_WUR;
 
 /* This gives [for a given bit size] the number of trials required
  * such that Miller-Rabin gives a prob of failure lower than 2^-96
@@ -517,12 +512,12 @@ int mp_prime_rabin_miller_trials(int size) MP_WUR;
 /* performs one strong Lucas-Selfridge test of "a".
  * Sets result to 0 if composite or 1 if probable prime
  */
-mp_err mp_prime_strong_lucas_selfridge(const mp_int *a, mp_bool *result) MP_WUR;
+mp_err mp_prime_strong_lucas_selfridge(const mp_int *a, bool *result) MP_WUR;
 
 /* performs one Frobenius test of "a" as described by Paul Underwood.
  * Sets result to 0 if composite or 1 if probable prime
  */
-mp_err mp_prime_frobenius_underwood(const mp_int *N, mp_bool *result) MP_WUR;
+mp_err mp_prime_frobenius_underwood(const mp_int *N, bool *result) MP_WUR;
 
 /* performs t random rounds of Miller-Rabin on "a" additional to
  * bases 2 and 3.  Also performs an initial sieve of trial
@@ -538,14 +533,14 @@ mp_err mp_prime_frobenius_underwood(const mp_int *N, mp_bool *result) MP_WUR;
  *
  * Sets result to 1 if probably prime, 0 otherwise
  */
-mp_err mp_prime_is_prime(const mp_int *a, int t, mp_bool *result) MP_WUR;
+mp_err mp_prime_is_prime(const mp_int *a, int t, bool *result) MP_WUR;
 
 /* finds the next prime after the number "a" using "t" trials
  * of Miller-Rabin.
  *
- * bbs_style = MP_YES means the prime must be congruent to 3 mod 4
+ * bbs_style = true means the prime must be congruent to 3 mod 4
  */
-mp_err mp_prime_next_prime(mp_int *a, int t, mp_bool bbs_style) MP_WUR;
+mp_err mp_prime_next_prime(mp_int *a, int t, bool bbs_style) MP_WUR;
 
 /* makes a truly random prime of a given size (bits),
  *

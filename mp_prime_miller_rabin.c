@@ -10,14 +10,14 @@
  * Randomly the chance of error is no more than 1/4 and often
  * very much lower.
  */
-mp_err mp_prime_miller_rabin(const mp_int *a, const mp_int *b, mp_bool *result)
+mp_err mp_prime_miller_rabin(const mp_int *a, const mp_int *b, bool *result)
 {
    mp_int  n1, y, r;
    mp_err  err;
    int     s, j;
 
    /* default */
-   *result = MP_NO;
+   *result = false;
 
    /* ensure b > 1 */
    if (mp_cmp_d(b, 1uL) != MP_GT) {
@@ -79,7 +79,7 @@ mp_err mp_prime_miller_rabin(const mp_int *a, const mp_int *b, mp_bool *result)
    }
 
    /* probably prime now */
-   *result = MP_YES;
+   *result = true;
 LBL_Y:
    mp_clear(&y);
 LBL_R:

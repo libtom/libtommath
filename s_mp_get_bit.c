@@ -4,14 +4,14 @@
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
-/* Get bit at position b and return MP_YES if the bit is 1, MP_NO if it is 0 */
-mp_bool s_mp_get_bit(const mp_int *a, unsigned int b)
+/* Get bit at position b and return true if the bit is 1, false if it is 0 */
+bool s_mp_get_bit(const mp_int *a, unsigned int b)
 {
    mp_digit bit;
    int limb = (int)(b / MP_DIGIT_BIT);
 
    if (limb >= a->used) {
-      return MP_NO;
+      return false;
    }
 
    bit = (mp_digit)1 << (b % MP_DIGIT_BIT);

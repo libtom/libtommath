@@ -33,7 +33,7 @@ static mp_err s_mp_mul_si(const mp_int *a, int32_t d, mp_int *c)
 }
 /*
     Strong Lucas-Selfridge test.
-    returns MP_YES if it is a strong L-S prime, MP_NO if it is composite
+    returns true if it is a strong L-S prime, false if it is composite
 
     Code ported from  Thomas Ray Nicely's implementation of the BPSW test
     at http://www.trnicely.net/misc/bpsw.html
@@ -48,15 +48,15 @@ static mp_err s_mp_mul_si(const mp_int *a, int32_t d, mp_int *c)
     (If that name sounds familiar, he is the guy who found the fdiv bug in the
      Pentium (P5x, I think) Intel processor)
 */
-mp_err mp_prime_strong_lucas_selfridge(const mp_int *a, mp_bool *result)
+mp_err mp_prime_strong_lucas_selfridge(const mp_int *a, bool *result)
 {
    /* CZ TODO: choose better variable names! */
    mp_int Dz, gcd, Np1, Uz, Vz, U2mz, V2mz, Qmz, Q2mz, Qkdz, T1z, T2z, T3z, T4z, Q2kdz;
    int32_t D, Ds, J, sign, P, Q, r, s, u, Nbits;
    mp_err err;
-   mp_bool oddness;
+   bool oddness;
 
-   *result = MP_NO;
+   *result = false;
    /*
    Find the first element D in the sequence {5, -7, 9, -11, 13, ...}
    such that Jacobi(D,N) = -1 (Selfridge's algorithm). Theory
@@ -240,7 +240,7 @@ mp_err mp_prime_strong_lucas_selfridge(const mp_int *a, mp_bool *result)
    /* If U_d or V_d is congruent to 0 mod N, then N is a prime or a
       strong Lucas pseudoprime. */
    if (mp_iszero(&Uz) || mp_iszero(&Vz)) {
-      *result = MP_YES;
+      *result = true;
       goto LBL_LS_ERR;
    }
 
@@ -263,7 +263,7 @@ mp_err mp_prime_strong_lucas_selfridge(const mp_int *a, mp_bool *result)
       if ((err = mp_sub(&Vz, &Q2kdz, &Vz)) != MP_OKAY)            goto LBL_LS_ERR;
       if ((err = mp_mod(&Vz, a, &Vz)) != MP_OKAY)                 goto LBL_LS_ERR;
       if (mp_iszero(&Vz)) {
-         *result = MP_YES;
+         *result = true;
          goto LBL_LS_ERR;
       }
       /* Calculate Q^{d*2^r} for next r (final iteration irrelevant). */

@@ -5,7 +5,7 @@ static int sizes[] = { 1+256/MP_DIGIT_BIT, 1+512/MP_DIGIT_BIT, 1+768/MP_DIGIT_BI
 
 int main(void)
 {
-   mp_bool res;
+   bool res;
    int x, y;
    char buf[4096];
    FILE *out;
@@ -30,7 +30,7 @@ top:
          a.used = sizes[x];
 
          /* now loop */
-         res = MP_NO;
+         res = false;
          for (;;) {
             a.dp[0] += 4uL;
             if (a.dp[0] >= MP_MASK) break;

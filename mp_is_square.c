@@ -26,7 +26,7 @@ static const char rem_105[105] = {
 };
 
 /* Store non-zero to ret if arg is square, and zero if not */
-mp_err mp_is_square(const mp_int *arg, mp_bool *ret)
+mp_err mp_is_square(const mp_int *arg, bool *ret)
 {
    mp_err        err;
    mp_digit      c;
@@ -34,7 +34,7 @@ mp_err mp_is_square(const mp_int *arg, mp_bool *ret)
    unsigned long r;
 
    /* Default to Non-square :) */
-   *ret = MP_NO;
+   *ret = false;
 
    if (arg->sign == MP_NEG) {
       return MP_VAL;

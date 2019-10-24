@@ -20,14 +20,14 @@
  */
 #define LTM_FROBENIUS_UNDERWOOD_A 32764
 
-mp_err mp_prime_frobenius_underwood(const mp_int *N, mp_bool *result)
+mp_err mp_prime_frobenius_underwood(const mp_int *N, bool *result)
 {
    mp_int T1z, T2z, Np1z, sz, tz;
 
    int a, ap2, length, i, j;
    mp_err err;
 
-   *result = MP_NO;
+   *result = false;
 
    if ((err = mp_init_multi(&T1z, &T2z, &Np1z, &sz, &tz, NULL)) != MP_OKAY) {
       return err;
@@ -113,7 +113,7 @@ mp_err mp_prime_frobenius_underwood(const mp_int *N, mp_bool *result)
    mp_set_u32(&T1z, (uint32_t)((2 * a) + 5));
    if ((err = mp_mod(&T1z, N, &T1z)) != MP_OKAY)                  goto LBL_FU_ERR;
    if (mp_iszero(&sz) && (mp_cmp(&tz, &T1z) == MP_EQ)) {
-      *result = MP_YES;
+      *result = true;
    }
 
 LBL_FU_ERR:

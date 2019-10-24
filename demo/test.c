@@ -823,7 +823,7 @@ static int test_mp_is_square(void)
    int i, n;
 
    mp_int a, b;
-   mp_bool res;
+   bool res;
 
    if (mp_init_multi(&a, &b, NULL)!= MP_OKAY) {
       return EXIT_FAILURE;
@@ -945,7 +945,7 @@ static int test_mp_prime_is_prime(void)
 {
    int ix;
    mp_err err;
-   mp_bool cnt, fu;
+   bool cnt, fu;
 
    mp_int a, b;
    if (mp_init_multi(&a, &b, NULL)!= MP_OKAY) {
@@ -1061,7 +1061,7 @@ static int test_mp_prime_next_prime(void)
 
    /* edge cases */
    mp_set(&a, 0u);
-   if ((err = mp_prime_next_prime(&a, 5, MP_NO)) != MP_OKAY) {
+   if ((err = mp_prime_next_prime(&a, 5, false)) != MP_OKAY) {
       goto LBL_ERR;
    }
    if (mp_cmp_d(&a, 2u) != MP_EQ) {
@@ -1072,7 +1072,7 @@ static int test_mp_prime_next_prime(void)
    }
 
    mp_set(&a, 0u);
-   if ((err = mp_prime_next_prime(&a, 5, MP_YES)) != MP_OKAY) {
+   if ((err = mp_prime_next_prime(&a, 5, true)) != MP_OKAY) {
       goto LBL_ERR;
    }
    if (mp_cmp_d(&a, 3u) != MP_EQ) {
@@ -1083,7 +1083,7 @@ static int test_mp_prime_next_prime(void)
    }
 
    mp_set(&a, 2u);
-   if ((err = mp_prime_next_prime(&a, 5, MP_NO)) != MP_OKAY) {
+   if ((err = mp_prime_next_prime(&a, 5, false)) != MP_OKAY) {
       goto LBL_ERR;
    }
    if (mp_cmp_d(&a, 3u) != MP_EQ) {
@@ -1094,7 +1094,7 @@ static int test_mp_prime_next_prime(void)
    }
 
    mp_set(&a, 2u);
-   if ((err = mp_prime_next_prime(&a, 5, MP_YES)) != MP_OKAY) {
+   if ((err = mp_prime_next_prime(&a, 5, true)) != MP_OKAY) {
       goto LBL_ERR;
    }
    if (mp_cmp_d(&a, 3u) != MP_EQ) {
@@ -1104,7 +1104,7 @@ static int test_mp_prime_next_prime(void)
       goto LBL_ERR;
    }
    mp_set(&a, 8);
-   if ((err = mp_prime_next_prime(&a, 5, MP_YES)) != MP_OKAY) {
+   if ((err = mp_prime_next_prime(&a, 5, true)) != MP_OKAY) {
       goto LBL_ERR;
    }
    if (mp_cmp_d(&a, 11u) != MP_EQ) {
@@ -1130,7 +1130,7 @@ static int test_mp_prime_next_prime(void)
    if ((err = mp_add(&b, &c, &b)) != MP_OKAY) {
       goto LBL_ERR;
    }
-   if ((err = mp_prime_next_prime(&a, 5, MP_NO)) != MP_OKAY) {
+   if ((err = mp_prime_next_prime(&a, 5, false)) != MP_OKAY) {
       goto LBL_ERR;
    }
    if (mp_cmp(&a, &b) != MP_EQ) {
@@ -1160,7 +1160,7 @@ static int test_mp_prime_next_prime(void)
    if ((err = mp_add(&b, &c, &b)) != MP_OKAY) {
       goto LBL_ERR;
    }
-   if ((err = mp_prime_next_prime(&a, 5, MP_YES)) != MP_OKAY) {
+   if ((err = mp_prime_next_prime(&a, 5, true)) != MP_OKAY) {
       goto LBL_ERR;
    }
    if (mp_cmp(&a, &b) != MP_EQ) {
@@ -1284,7 +1284,7 @@ static int test_mp_read_radix(void)
       char *s = fgets(buf, sizeof(buf), stdin);
       if (s != buf) break;
       mp_read_radix(&a, buf, 10);
-      mp_prime_next_prime(&a, 5, MP_YES);
+      mp_prime_next_prime(&a, 5, true);
       mp_to_radix(&a, buf, sizeof(buf), NULL, 10);
       printf("%s, %lu\n", buf, (unsigned long)a.dp[0] & 3uL);
    }

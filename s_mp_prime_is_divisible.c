@@ -8,14 +8,14 @@
  *
  * sets result to 0 if not, 1 if yes
  */
-mp_err s_mp_prime_is_divisible(const mp_int *a, mp_bool *result)
+mp_err s_mp_prime_is_divisible(const mp_int *a, bool *result)
 {
    int      ix;
    mp_err   err;
    mp_digit res;
 
    /* default to not */
-   *result = MP_NO;
+   *result = false;
 
    for (ix = 0; ix < MP_PRIME_TAB_SIZE; ix++) {
       /* what is a mod LBL_prime_tab[ix] */
@@ -25,7 +25,7 @@ mp_err s_mp_prime_is_divisible(const mp_int *a, mp_bool *result)
 
       /* is the residue zero? */
       if (res == 0u) {
-         *result = MP_YES;
+         *result = true;
          return MP_OKAY;
       }
    }

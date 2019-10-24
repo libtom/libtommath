@@ -22,7 +22,7 @@ mp_err mp_prime_rand(mp_int *a, int t, int size, int flags)
 {
    unsigned char *tmp, maskAND, maskOR_msb, maskOR_lsb;
    int bsize, maskOR_msb_offset;
-   mp_bool res;
+   bool res;
    mp_err err;
 
    /* sanity check the input */

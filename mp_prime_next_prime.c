@@ -6,14 +6,14 @@
 /* finds the next prime after the number "a" using "t" trials
  * of Miller-Rabin.
  *
- * bbs_style = MP_YES means the prime must be congruent to 3 mod 4
+ * bbs_style = true means the prime must be congruent to 3 mod 4
  */
-mp_err mp_prime_next_prime(mp_int *a, int t, mp_bool bbs_style)
+mp_err mp_prime_next_prime(mp_int *a, int t, bool bbs_style)
 {
    int      x, y;
    mp_ord   cmp;
    mp_err   err;
-   mp_bool  res = MP_NO;
+   bool  res = false;
    mp_digit res_tab[MP_PRIME_TAB_SIZE], step, kstep;
    mp_int   b;
 
