@@ -48,7 +48,7 @@ static mp_err s_mp_recursion(const mp_int *a, const mp_int *b, mp_int *q, mp_int
 
    /* while A1 < 0 do Q1 = Q1 - 1, A1 = A1 + (beta^k * B) */
    if ((err = mp_mul_2d(b, k * MP_DIGIT_BIT, &t)) != MP_OKAY)              goto LBL_ERR;
-   while (mp_cmp_d(&A1, 0) == MP_LT) {
+   while (mp_cmp_d(&A1, 0uL) == MP_LT) {
       if ((err = mp_decr(&Q1)) != MP_OKAY)                                 goto LBL_ERR;
       if ((err = mp_add(&A1, &t, &A1)) != MP_OKAY)                         goto LBL_ERR;
    }
@@ -64,7 +64,7 @@ static mp_err s_mp_recursion(const mp_int *a, const mp_int *b, mp_int *q, mp_int
    if ((err = mp_sub(&A2, &t, &A2)) != MP_OKAY)                            goto LBL_ERR;
 
    /* while A2 < 0 do Q0 = Q0 - 1, A2 = A2 + B */
-   while (mp_cmp_d(&A2, 0) == MP_LT) {
+   while (mp_cmp_d(&A2, 0uL) == MP_LT) {
       if ((err = mp_decr(&Q0)) != MP_OKAY)                                 goto LBL_ERR;
       if ((err = mp_add(&A2, b, &A2)) != MP_OKAY)                          goto LBL_ERR;
    }
