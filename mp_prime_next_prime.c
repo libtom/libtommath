@@ -58,7 +58,7 @@ mp_err mp_prime_next_prime(mp_int *a, int t, mp_bool bbs_style)
          }
       }
    } else {
-      if (MP_IS_EVEN(a)) {
+      if (mp_iseven(a)) {
          /* force odd */
          if ((err = mp_sub_d(a, 1uL, a)) != MP_OKAY) {
             return err;

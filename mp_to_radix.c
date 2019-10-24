@@ -42,7 +42,7 @@ mp_err mp_to_radix(const mp_int *a, char *str, size_t maxlen, size_t *written, i
    }
 
    /* quick out if its zero */
-   if (MP_IS_ZERO(a)) {
+   if (mp_iszero(a)) {
       *str++ = '0';
       *str = '\0';
       if (written != NULL) {
@@ -68,7 +68,7 @@ mp_err mp_to_radix(const mp_int *a, char *str, size_t maxlen, size_t *written, i
       --maxlen;
    }
    digs = 0u;
-   while (!MP_IS_ZERO(&t)) {
+   while (!mp_iszero(&t)) {
       if (--maxlen < 1u) {
          /* no more room */
          err = MP_BUF;

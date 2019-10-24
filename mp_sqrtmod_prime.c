@@ -51,7 +51,7 @@ mp_err mp_sqrtmod_prime(const mp_int *n, const mp_int *prime, mp_int *ret)
    /* Q = prime - 1 */
    mp_zero(&S);
    /* S = 0 */
-   while (MP_IS_EVEN(&Q)) {
+   while (mp_iseven(&Q)) {
       if ((err = mp_div_2(&Q, &Q)) != MP_OKAY)                    goto cleanup;
       /* Q = Q / 2 */
       if ((err = mp_add_d(&S, 1uL, &S)) != MP_OKAY)               goto cleanup;

@@ -1,3 +1,4 @@
+
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
@@ -148,11 +149,6 @@ extern void MP_FREE(void *mem, size_t size);
 
 /* Static assertion */
 #define MP_STATIC_ASSERT(msg, cond) typedef char mp_static_assert_##msg[(cond) ? 1 : -1];
-
-/* ---> Basic Manipulations <--- */
-#define MP_IS_ZERO(a) ((a)->used == 0)
-#define MP_IS_EVEN(a) (((a)->used == 0) || (((a)->dp[0] & 1u) == 0u))
-#define MP_IS_ODD(a)  (((a)->used > 0) && (((a)->dp[0] & 1u) == 1u))
 
 #define MP_SIZEOF_BITS(type)    ((size_t)CHAR_BIT * sizeof(type))
 #define MP_MAXFAST              (int)(1uL << (MP_SIZEOF_BITS(mp_word) - (2u * (size_t)MP_DIGIT_BIT)))

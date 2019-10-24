@@ -39,7 +39,7 @@ mp_err mp_prime_is_prime(const mp_int *a, int t, mp_bool *result)
    }
 
    /* N must be odd */
-   if (MP_IS_EVEN(a)) {
+   if (mp_iseven(a)) {
       return MP_OKAY;
    }
    /* N is not a perfect square: floor(sqrt(N))^2 != N */

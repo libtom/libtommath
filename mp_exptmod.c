@@ -62,7 +62,7 @@ LBL_ERR:
    }
 
    /* if the modulus is odd or dr != 0 use the montgomery method */
-   if (MP_HAS(S_MP_EXPTMOD_FAST) && (MP_IS_ODD(P) || (dr != 0))) {
+   if (MP_HAS(S_MP_EXPTMOD_FAST) && (mp_isodd(P) || (dr != 0))) {
       return s_mp_exptmod_fast(G, X, P, Y, dr);
    } else if (MP_HAS(S_MP_EXPTMOD)) {
       /* otherwise use the generic Barrett reduction technique */

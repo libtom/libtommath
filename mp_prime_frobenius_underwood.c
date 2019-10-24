@@ -112,7 +112,7 @@ mp_err mp_prime_frobenius_underwood(const mp_int *N, mp_bool *result)
 
    mp_set_u32(&T1z, (uint32_t)((2 * a) + 5));
    if ((err = mp_mod(&T1z, N, &T1z)) != MP_OKAY)                  goto LBL_FU_ERR;
-   if (MP_IS_ZERO(&sz) && (mp_cmp(&tz, &T1z) == MP_EQ)) {
+   if (mp_iszero(&sz) && (mp_cmp(&tz, &T1z) == MP_EQ)) {
       *result = MP_YES;
    }
 

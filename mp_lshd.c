@@ -15,7 +15,7 @@ mp_err mp_lshd(mp_int *a, int b)
       return MP_OKAY;
    }
    /* no need to shift 0 around */
-   if (MP_IS_ZERO(a)) {
+   if (mp_iszero(a)) {
       return MP_OKAY;
    }
 

@@ -12,7 +12,7 @@ mp_err mp_sub_d(const mp_int *a, mp_digit b, mp_int *c)
 
    /* fast path for a == c */
    if (a == c &&
-       !MP_IS_ZERO(c) &&
+       !mp_iszero(c) &&
        c->sign == MP_ZPOS &&
        c->dp[0] > b) {
       c->dp[0] -= b;

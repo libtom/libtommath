@@ -30,7 +30,7 @@ mp_err mp_set_double(mp_int *a, double b)
       return err;
    }
 
-   if (((cast.bits >> 63) != 0uLL) && !MP_IS_ZERO(a)) {
+   if (((cast.bits >> 63) != 0uLL) && !mp_iszero(a)) {
       a->sign = MP_NEG;
    }
 
