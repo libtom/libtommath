@@ -16,15 +16,14 @@ static mp_err s_read_arc4random(void *p, size_t n)
 }
 #endif
 
-#if defined(_WIN32) || defined(_WIN32_WCE)
+#if defined(_WIN32)
 #define S_READ_WINCSP_C
 
-#ifndef _WIN32_WINNT
-#define _WIN32_WINNT 0x0400
+#ifndef WINVER
+#   define WINVER 0x0501
 #endif
-#ifdef _WIN32_WCE
-#define UNDER_CE
-#define ARM
+#ifndef _WIN32_WINNT
+#   define _WIN32_WINNT 0x0501
 #endif
 
 #define WIN32_LEAN_AND_MEAN
@@ -36,9 +35,9 @@ static mp_err s_read_wincsp(void *p, size_t n)
    static HCRYPTPROV hProv = 0;
    if (hProv == 0) {
       HCRYPTPROV h = 0;
-      if (!CryptAcquireContext(&h, NULL, MS_DEF_PROV, PROV_RSA_FULL,
+      if (!CryptAcquireContextW(&h, NULL, MS_DEF_PROV_W, PROV_RSA_FULL,
                                (CRYPT_VERIFYCONTEXT | CRYPT_MACHINE_KEYSET)) &&
-          !CryptAcquireContext(&h, NULL, MS_DEF_PROV, PROV_RSA_FULL,
+          !CryptAcquireContextW(&h, NULL, MS_DEF_PROV_W, PROV_RSA_FULL,
                                CRYPT_VERIFYCONTEXT | CRYPT_MACHINE_KEYSET | CRYPT_NEWKEYSET)) {
          return MP_ERR;
       }
