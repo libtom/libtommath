@@ -36,9 +36,9 @@ static mp_err s_read_wincsp(void *p, size_t n)
    if (hProv == 0) {
       HCRYPTPROV h = 0;
       if (!CryptAcquireContextW(&h, NULL, MS_DEF_PROV_W, PROV_RSA_FULL,
-                               (CRYPT_VERIFYCONTEXT | CRYPT_MACHINE_KEYSET)) &&
+                                (CRYPT_VERIFYCONTEXT | CRYPT_MACHINE_KEYSET)) &&
           !CryptAcquireContextW(&h, NULL, MS_DEF_PROV_W, PROV_RSA_FULL,
-                               CRYPT_VERIFYCONTEXT | CRYPT_MACHINE_KEYSET | CRYPT_NEWKEYSET)) {
+                                CRYPT_VERIFYCONTEXT | CRYPT_MACHINE_KEYSET | CRYPT_NEWKEYSET)) {
          return MP_ERR;
       }
       hProv = h;
