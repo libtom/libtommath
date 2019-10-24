@@ -20,10 +20,10 @@ static mp_err s_read_arc4random(void *p, size_t n)
 #define S_READ_WINCSP_C
 
 #ifndef WINVER
-#   define WINVER 0x0501
+#define WINVER 0x0501
 #endif
 #ifndef _WIN32_WINNT
-#   define _WIN32_WINNT 0x0501
+#define _WIN32_WINNT 0x0501
 #endif
 
 #define WIN32_LEAN_AND_MEAN
