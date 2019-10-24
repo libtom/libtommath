@@ -11,12 +11,18 @@ mp_err mp_add_d(const mp_int *a, mp_digit b, mp_int *c)
    mp_digit *tmpa, *tmpc;
 
    /* fast path for a == c */
-   if (a == c &&
-       !mp_iszero(c) &&
-       c->sign == MP_ZPOS &&
-       c->dp[0] + b < MP_DIGIT_MAX) {
-      c->dp[0] += b;
-      return MP_OKAY;
+   if (a == c) {
+      if ((c->sign == MP_ZPOS) &&
+          !mp_iszero(c) &&
+          ((c->dp[0] + b) < MP_DIGIT_MAX)) {
+         c->dp[0] += b;
+         return MP_OKAY;
+      }
+      if ((c->sign == MP_NEG) &&
+          (c->dp[0] > b)) {
+         c->dp[0] -= b;
+         return MP_OKAY;
+      }
    }
 
    /* grow c as required */
