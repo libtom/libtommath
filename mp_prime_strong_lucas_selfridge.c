@@ -192,7 +192,7 @@ mp_err mp_prime_strong_lucas_selfridge(const mp_int *a, mp_bool *result)
       if ((err = mp_mod(&Qmz, a, &Qmz)) != MP_OKAY)               goto LBL_LS_ERR;
       if ((err = mp_mul_2(&Qmz, &Q2mz)) != MP_OKAY)               goto LBL_LS_ERR;
 
-      if (s_mp_get_bit(&Dz, (unsigned int)u) == MP_YES) {
+      if (s_mp_get_bit(&Dz, (unsigned int)u)) {
          /* Formulas for addition of indices (carried out mod N);
           *
           * U_(m+n) = (U_m*V_n + U_n*V_m)/2
@@ -214,18 +214,18 @@ mp_err mp_prime_strong_lucas_selfridge(const mp_int *a, mp_bool *result)
           * Thomas R. Nicely used GMP's mpz_fdiv_q_2exp().
           * But mp_div_2() does not do so, it is truncating instead.
           */
-         oddness = mp_isodd(&Uz) ? MP_YES : MP_NO;
+         oddness = mp_isodd(&Uz);
          if ((err = mp_div_2(&Uz, &Uz)) != MP_OKAY)               goto LBL_LS_ERR;
-         if ((Uz.sign == MP_NEG) && (oddness != MP_NO)) {
+         if ((Uz.sign == MP_NEG) && oddness) {
             if ((err = mp_sub_d(&Uz, 1uL, &Uz)) != MP_OKAY)       goto LBL_LS_ERR;
          }
          if ((err = mp_add(&T3z, &T4z, &Vz)) != MP_OKAY)          goto LBL_LS_ERR;
          if (mp_isodd(&Vz)) {
             if ((err = mp_add(&Vz, a, &Vz)) != MP_OKAY)           goto LBL_LS_ERR;
          }
-         oddness = mp_isodd(&Vz) ? MP_YES : MP_NO;
+         oddness = mp_isodd(&Vz);
          if ((err = mp_div_2(&Vz, &Vz)) != MP_OKAY)               goto LBL_LS_ERR;
-         if ((Vz.sign == MP_NEG) && (oddness != MP_NO)) {
+         if ((Vz.sign == MP_NEG) && oddness) {
             if ((err = mp_sub_d(&Vz, 1uL, &Vz)) != MP_OKAY)       goto LBL_LS_ERR;
          }
          if ((err = mp_mod(&Uz, a, &Uz)) != MP_OKAY)              goto LBL_LS_ERR;

@@ -120,12 +120,12 @@ static int test_trivial_stuff(void)
    }
    /* a: -5-> b: 5 */
    mp_abs(&a, &b);
-   if (mp_isneg(&b) != MP_NO) {
+   if (mp_isneg(&b)) {
       goto LBL_ERR;
    }
    /* a: -5-> b: -4 */
    mp_add_d(&a, 1uL, &b);
-   if (mp_isneg(&b) != MP_YES) {
+   if (!mp_isneg(&b)) {
       goto LBL_ERR;
    }
    if (mp_get_i32(&b) != -4) {
@@ -841,7 +841,7 @@ static int test_mp_is_square(void)
          printf("\nfn:mp_is_square() error!");
          goto LBL_ERR;
       }
-      if (res == MP_NO) {
+      if (!res) {
          printf("\nfn:mp_is_square() bad result!");
          goto LBL_ERR;
       }
@@ -852,7 +852,7 @@ static int test_mp_is_square(void)
          printf("\nfp:mp_is_square() error!");
          goto LBL_ERR;
       }
-      if (res == MP_YES) {
+      if (res) {
          printf("\nfp:mp_is_square() bad result!");
          goto LBL_ERR;
       }
@@ -958,7 +958,7 @@ static int test_mp_prime_is_prime(void)
                  "91xLNF3roobhzgTzoFIG6P13ZqhOVYSN60Fa7Cj2jVR1g0k89zdahO9/kAiRprpfO1VAp1aBHucLFV/qLKLFb+zonV7R2Vxp1K13ClwUXStpV0oxTNQVjwybmFb5NBEHImZ6V7P6+udRJuH8VbMEnS0H8/pSqQrg82OoQQ2fPpAk6G1hkjqoCv5s/Yr",
                  64);
    mp_prime_is_prime(&a, mp_prime_rabin_miller_trials(mp_count_bits(&a)), &cnt);
-   if (cnt == MP_YES) {
+   if (cnt) {
       printf("Arnault's pseudoprime is not prime but mp_prime_is_prime says it is.\n");
       goto LBL_ERR;
    }
@@ -973,10 +973,10 @@ static int test_mp_prime_is_prime(void)
       printf("\nfailed with error: %s\n", mp_error_to_string(err));
    }
    /* large problem */
-   if (cnt == MP_NO) {
+   if (!cnt) {
       printf("A certified prime is a prime but mp_prime_is_prime says it is not.\n");
    }
-   if ((err != MP_OKAY) || (cnt == MP_NO)) {
+   if ((err != MP_OKAY) || !cnt) {
       printf("prime tested was: 0x");
       mp_fwrite(&a,16,stdout);
       putchar('\n');
@@ -1003,14 +1003,14 @@ static int test_mp_prime_is_prime(void)
          printf("\nfailed with error: %s\n", mp_error_to_string(err));
       }
       /* large problem */
-      if (cnt == MP_NO) {
+      if (!cnt) {
          printf("\nsub is not prime!\n");
       }
       mp_prime_frobenius_underwood(&b, &fu);
-      if (fu == MP_NO) {
+      if (!fu) {
          printf("\nfrobenius-underwood says sub is not prime!\n");
       }
-      if ((err != MP_OKAY) || (cnt == MP_NO)) {
+      if ((err != MP_OKAY) || !cnt) {
          printf("prime tested was: 0x");
          mp_fwrite(&a,16,stdout);
          putchar('\n');
@@ -1031,10 +1031,10 @@ static int test_mp_prime_is_prime(void)
       printf("\nmp_prime_strong_lucas_selfridge failed with error: %s\n", mp_error_to_string(err));
    }
    /* large problem */
-   if (cnt == MP_NO) {
+   if (!cnt) {
       printf("\n\nissue #143 - mp_prime_strong_lucas_selfridge FAILED!\n");
    }
-   if ((err != MP_OKAY) || (cnt == MP_NO)) {
+   if ((err != MP_OKAY) || !cnt) {
       printf("prime tested was: 0x");
       mp_fwrite(&a,16,stdout);
       putchar('\n');
@@ -1534,7 +1534,7 @@ static mp_err s_rs(const mp_int *a, int radix, uint32_t *size)
    mp_int  t;
    mp_digit d;
    *size = 0u;
-   if (mp_iszero(a) == MP_YES) {
+   if (mp_iszero(a)) {
       *size = 2u;
       return MP_OKAY;
    }
@@ -1546,7 +1546,7 @@ static mp_err s_rs(const mp_int *a, int radix, uint32_t *size)
       return res;
    }
    t.sign = MP_ZPOS;
-   while (mp_iszero(&t) == MP_NO) {
+   while (!mp_iszero(&t)) {
       if ((res = mp_div_d(&t, (mp_digit)radix, &t, &d)) != MP_OKAY) {
          mp_clear(&t);
          return res;

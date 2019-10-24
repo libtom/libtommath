@@ -85,7 +85,7 @@ mp_err s_mp_prime_random_ex(mp_int *a, int t, int size, int flags, mp_prime_call
       if ((err = mp_prime_is_prime(a, t, &res)) != MP_OKAY) {
          goto error;
       }
-      if (res == MP_NO) {
+      if (!res) {
          continue;
       }
 
@@ -103,7 +103,7 @@ mp_err s_mp_prime_random_ex(mp_int *a, int t, int size, int flags, mp_prime_call
             goto error;
          }
       }
-   } while (res == MP_NO);
+   } while (!res);
 
    if ((flags & MP_PRIME_SAFE) != 0) {
       /* restore a to the original value */

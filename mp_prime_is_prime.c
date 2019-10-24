@@ -46,7 +46,7 @@ mp_err mp_prime_is_prime(const mp_int *a, int t, mp_bool *result)
    if ((err = mp_is_square(a, &res)) != MP_OKAY) {
       return err;
    }
-   if (res != MP_NO) {
+   if (res) {
       return MP_OKAY;
    }
 
@@ -63,7 +63,7 @@ mp_err mp_prime_is_prime(const mp_int *a, int t, mp_bool *result)
    }
 
    /* return if it was trivially divisible */
-   if (res == MP_YES) {
+   if (res) {
       return MP_OKAY;
    }
 
@@ -77,7 +77,7 @@ mp_err mp_prime_is_prime(const mp_int *a, int t, mp_bool *result)
    if ((err = mp_prime_miller_rabin(a, &b, &res)) != MP_OKAY) {
       goto LBL_B;
    }
-   if (res == MP_NO) {
+   if (!res) {
       goto LBL_B;
    }
    /*
@@ -89,7 +89,7 @@ mp_err mp_prime_is_prime(const mp_int *a, int t, mp_bool *result)
    if ((err = mp_prime_miller_rabin(a, &b, &res)) != MP_OKAY) {
       goto LBL_B;
    }
-   if (res == MP_NO) {
+   if (!res) {
       goto LBL_B;
    }
 
@@ -105,14 +105,14 @@ mp_err mp_prime_is_prime(const mp_int *a, int t, mp_bool *result)
       if ((err != MP_OKAY) && (err != MP_ITER)) {
          goto LBL_B;
       }
-      if (res == MP_NO) {
+      if (!res) {
          goto LBL_B;
       }
 #else
       if ((err = mp_prime_strong_lucas_selfridge(a, &res)) != MP_OKAY) {
          goto LBL_B;
       }
-      if (res == MP_NO) {
+      if (!res) {
          goto LBL_B;
       }
 #endif
@@ -164,7 +164,7 @@ mp_err mp_prime_is_prime(const mp_int *a, int t, mp_bool *result)
          if ((err = mp_prime_miller_rabin(a, &b, &res)) != MP_OKAY) {
             goto LBL_B;
          }
-         if (res == MP_NO) {
+         if (!res) {
             goto LBL_B;
          }
       }
@@ -260,7 +260,7 @@ mp_err mp_prime_is_prime(const mp_int *a, int t, mp_bool *result)
          if ((err = mp_prime_miller_rabin(a, &b, &res)) != MP_OKAY) {
             goto LBL_B;
          }
-         if (res == MP_NO) {
+         if (!res) {
             goto LBL_B;
          }
       }

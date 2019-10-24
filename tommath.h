@@ -208,10 +208,10 @@ mp_err mp_grow(mp_int *a, int size) MP_WUR;
 mp_err mp_init_size(mp_int *a, int size) MP_WUR;
 
 /* ---> Basic Manipulations <--- */
-#define mp_iszero(a) (((a)->used == 0) ? MP_YES : MP_NO)
-#define mp_isneg(a)  (((a)->sign != MP_ZPOS) ? MP_YES : MP_NO)
-#define mp_iseven(a) (((a)->used == 0) || (((a)->dp[0] & 1u) == 0u) ? MP_YES : MP_NO)
-#define mp_isodd(a)  (((a)->used > 0) && (((a)->dp[0] & 1u) == 1u) ? MP_YES : MP_NO)
+#define mp_iszero(a) ((a)->used == 0)
+#define mp_isneg(a)  ((a)->sign != MP_ZPOS)
+#define mp_iseven(a) (((a)->used == 0) || (((a)->dp[0] & 1u) == 0u))
+#define mp_isodd(a)  (((a)->used > 0) && (((a)->dp[0] & 1u) == 1u))
 
 /* set to zero */
 void mp_zero(mp_int *a);

@@ -92,7 +92,7 @@ mp_err mp_prime_frobenius_underwood(const mp_int *N, mp_bool *result)
       if ((err = mp_mul(&sz, &T2z, &tz)) != MP_OKAY)              goto LBL_FU_ERR;
       if ((err = mp_mod(&tz, N, &tz)) != MP_OKAY)                 goto LBL_FU_ERR;
       if ((err = mp_mod(&T1z, N, &sz)) != MP_OKAY)                goto LBL_FU_ERR;
-      if (s_mp_get_bit(&Np1z, (unsigned int)i) == MP_YES) {
+      if (s_mp_get_bit(&Np1z, (unsigned int)i)) {
          /*
           *  temp = (a+2) * sz + tz
           *  tz   = 2 * tz - sz

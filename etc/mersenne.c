@@ -56,9 +56,9 @@ static mp_err is_mersenne(long s, mp_bool *pp)
    }
 
    /* if u == 0 then its prime */
-   if (mp_iszero(&u) == MP_YES) {
+   if (mp_iszero(&u)) {
       mp_prime_is_prime(&n, 8, pp);
-      if (*pp != MP_YES) printf("FAILURE\n");
+      if (!*pp) printf("FAILURE\n");
    }
 
    res = MP_OKAY;
@@ -119,7 +119,7 @@ int main(void)
          return -1;
       }
 
-      if (pp == MP_YES) {
+      if (pp) {
          /* count time */
          tt = clock() - tt;
 

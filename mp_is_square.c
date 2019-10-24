@@ -85,7 +85,7 @@ mp_err mp_is_square(const mp_int *arg, mp_bool *ret)
       goto LBL_ERR;
    }
 
-   *ret = (mp_cmp_mag(&t, arg) == MP_EQ) ? MP_YES : MP_NO;
+   *ret = (mp_cmp_mag(&t, arg) == MP_EQ);
 LBL_ERR:
    mp_clear(&t);
    return err;
