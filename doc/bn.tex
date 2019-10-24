@@ -352,9 +352,10 @@ are the pros and cons of LibTomMath by comparing it to the math routines from Gn
 \newpage\begin{figure}[h]
 \begin{small}
 \begin{center}
-\begin{tabular}{|l|c|c|l|}
+\begin{tabular}{|p{4.5cm}|c|c|p{4.5cm}|}
 \hline \textbf{Criteria} & \textbf{Pro} & \textbf{Con} & \textbf{Notes} \\
-\hline Few lines of code per file & X & & GnuPG $ = 300.9$, LibTomMath  $ = 71.97$ \\
+\hline Few lines of code per file & X & & GnuPG $ = 300.9$\\
+&&& LibTomMath  $ = 71.97$\hfill \\
 \hline Commented function prototypes & X && GnuPG function names are cryptic. \\
 \hline Speed && X & LibTomMath is slower.  \\
 \hline Totally free & X & & GPL has unfavourable restrictions.\\
@@ -380,7 +381,7 @@ exponentiations.  It depends largely on the processor, compiler and the moduli b
 Essentially the only time you wouldn't use LibTomMath is when blazing speed is the primary concern.  However,
 on the other side of the coin LibTomMath offers you a totally free (public domain) well structured math library
 that is very flexible, complete and performs well in resource constrained environments.  Fast RSA for example can
-be performed with as little as 8KB of ram for data (again depending on build options).
+be performed with as little as 8 Kibibytes of RAM for data (again depending on build options).
 
 \chapter{Getting Started with LibTomMath}
 \section{Building Programs}
