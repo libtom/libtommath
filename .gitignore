@@ -29,6 +29,7 @@ mtest_opponent.exe
 # ignore eclipse project files
 .cproject
 .project
+.settings
 
 # special MS Visual Studio section
 # ignore non-compressed browse file (holds information for ClassView, IntelliSense and WizardBar)
