@@ -46,6 +46,7 @@
 \newcommand{\emailaddr}[1]{\mbox{$<${#1}$>$}}
 \def\twiddle{\raisebox{0.3ex}{\mbox{\tiny $\sim$}}}
 \def\gap{\vspace{0.5ex}}
+
 \makeindex
 \begin{document}
 \frontmatter
@@ -53,21 +54,22 @@
 \title{LibTomMath User Manual \\ v1.2.0}
 \author{LibTom Projects \\ www.libtom.net}
 \maketitle
-This text, the library and the accompanying textbook are all hereby placed in the public domain.  This book has been
+This text, the library and the accompanying textbook are all hereby placed in the public domain.
+This book has been
 formatted for B5 [176x250] paper using the \LaTeX{} {\em book} macro package.
 
 \vspace{10cm}
 
-\begin{flushright}Open Source.  Open Academia.  Open Minds.
+\begin{flushright}Open Source.	Open Academia.	Open Minds.
 
-\mbox{ }
-LibTom Projects
+  \mbox{ }
+  LibTom Projects
 
-\& originally
+  \& originally
 
-Tom St Denis,
+  Tom St Denis,
 
-Ontario, Canada
+  Ontario, Canada
 \end{flushright}
 
 \tableofcontents
@@ -76,42 +78,54 @@ Ontario, Canada
 \pagestyle{headings}
 \chapter{Introduction}
 \section{What is LibTomMath?}
-LibTomMath is a library of source code which provides a series of efficient and carefully written functions for manipulating
-large integer numbers.  It was written in portable ISO C source code so that it will build on any platform with a conforming
-C compiler.
+LibTomMath is a library of source code which provides a series of efficient and carefully written
+functions for manipulating large integer numbers. It was written in portable ISO C source code so
+that it will build on any platform with a conforming C compiler.
 
-In a nutshell the library was written from scratch with verbose comments to help instruct computer science students how
-to implement ``bignum'' math.  However, the resulting code has proven to be very useful.  It has been used by numerous
-universities, commercial and open source software developers.  It has been used on a variety of platforms ranging from
-Linux and Windows based x86 to ARM based Gameboys and PPC based MacOS machines.
+In a nutshell the library was written from scratch with verbose comments to help instruct computer
+science students how to implement ``bignum'' math.  However, the resulting code has proven to be
+very useful.  It has been used by numerous universities, commercial and open source software
+developers.  It has been used on a variety of platforms ranging from Linux and Windows based x86 to
+ARM based Gameboys and PPC based MacOS machines.
 
 \section{License}
-As of the v0.25 the library source code has been placed in the public domain with every new release.  As of the v0.28
-release the textbook ``Implementing Multiple Precision Arithmetic'' has been placed in the public domain with every new
-release as well.  This textbook is meant to compliment the project by providing a more solid walkthrough of the development
-algorithms used in the library.
+As of the v0.25 the library source code has been placed in the public domain with every new
+release. As of the v0.28 release the textbook ``Implementing Multiple Precision Arithmetic'' has
+been placed in the public domain with every new release as well.  This textbook is meant to
+compliment the project by providing a more solid walkthrough of the development algorithms used in
+the library.
 
-Since both\footnote{Note that the MPI files under \texttt{mtest/} are copyrighted by Michael Fromberger.  They are not required to use LibTomMath.} are in the
-public domain everyone is entitled to do with them as they see fit.
+Since both\footnote{Note that the MPI files under \texttt{mtest/} are copyrighted by Michael
+  Fromberger. They are not required to use LibTomMath.} are in the public domain everyone is
+entitled
+to do with them as they see fit.
 
 \section{Building LibTomMath}
 
-LibTomMath is meant to be very ``GCC friendly'' as it comes with a makefile well suited for GCC.  However, the library will
-also build in MSVC, Borland C out of the box.  For any other ISO C compiler a makefile will have to be made by the end
-developer. Please consider to commit such a makefile to the LibTomMath developers, currently residing at
+LibTomMath is meant to be very ``GCC friendly'' as it comes with a makefile well suited for GCC.
+However, the library will also build in MSVC, Borland C out of the box.  For any other ISO C
+compiler a makefile will have to be made by the end
+developer. Please consider to commit such a makefile to the LibTomMath developers, currently
+residing at
 \url{http://github.com/libtom/libtommath}, if successfully done so.
 
-Intel's C-compiler (ICC) is sufficiently compatible with GCC, at least the newer versions, to replace GCC for building the static and the shared library. Editing the makefiles is not needed, just set the shell variable \texttt{CC} as shown below.
+Intel's C-compiler (ICC) is sufficiently compatible with GCC, at least the newer versions, to
+replace GCC for building the static and the shared library. Editing the makefiles is not needed,
+just set the shell variable \texttt{CC} as shown below.
 \begin{alltt}
 CC=/home/czurnieden/intel/bin/icc make
 \end{alltt}
 
-ICC does not know all options available for GCC and LibTomMath uses two diagnostics \texttt{-Wbad-function-cast} and \texttt{-Wcast-align} that are not supported by ICC resulting in the warnings:
+ICC does not know all options available for GCC and LibTomMath uses two diagnostics
+\texttt{-Wbad-function-cast} and \texttt{-Wcast-align} that are not supported by ICC resulting in
+the warnings:
 \begin{alltt}
 icc: command line warning #10148: option '-Wbad-function-cast' not supported
 icc: command line warning #10148: option '-Wcast-align' not supported
 \end{alltt}
-It is possible to mute this ICC warning with the compiler flag \texttt{-diag-disable=10148}\footnote{It is not recommended to suppress warnings without a very good reason but there is no harm in doing so in this very special case.}.
+It is possible to mute this ICC warning with the compiler flag
+\texttt{-diag-disable=10148}\footnote{It is not recommended to suppress warnings without a very
+  good reason but there is no harm in doing so in this very special case.}.
 
 \subsection{Static Libraries}
 To build as a static library for GCC issue the following
@@ -119,16 +133,17 @@ To build as a static library for GCC issue the following
 make
 \end{alltt}
 
-command.  This will build the library and archive the object files in ``libtommath.a''.  Now you link against
-that and include ``tommath.h'' within your programs.  Alternatively to build with MSVC issue the following
+command.  This will build the library and archive the object files in ``libtommath.a''.  Now you
+link against that and include ``tommath.h'' within your programs.  Alternatively to build with MSVC
+issue the following
 \begin{alltt}
 nmake -f makefile.msvc
 \end{alltt}
 
-This will build the library and archive the object files in ``tommath.lib''.  This has been tested with MSVC
-version 6.00 with service pack 5.
+This will build the library and archive the object files in ``tommath.lib''.  This has been tested
+with MSVC version 6.00 with service pack 5.
 
-To run a program to adapt the Toom-Cook cut-off values to your architecture type
+To run a program to adapt the Toom--Cook cut--off values to your architecture type
 \begin{alltt}
 make tune
 \end{alltt}
@@ -140,23 +155,28 @@ To build as a shared library for GCC issue the following
 \begin{alltt}
 make -f makefile.shared
 \end{alltt}
-This requires the ``libtool'' package (common on most Linux/BSD systems).  It will build LibTomMath as both shared
-and static then install (by default) into /usr/lib as well as install the header files in /usr/include.  The shared
-library (resource) will be called \texttt{libtommath.la} while the static library called \texttt{libtommath.a}.  Generally
-you use libtool to link your application against the shared object.
+This requires the ``libtool'' package (common on most Linux/BSD systems).  It will build LibTomMath
+as both shared and static then install (by default) into /usr/lib as well as install the header
+files in \texttt{/usr/include}.  The shared library (resource) will be called
+\texttt{libtommath.la} while the static library called \texttt{libtommath.a}. Generally you use
+libtool to link your application against the shared object.
 
-To run a program to adapt the Toom-Cook cut-off values to your architecture type
+To run a program to adapt the Toom--Cook cut--off values to your architecture type
 \begin{alltt}
 make -f makefile.shared tune
 \end{alltt}
 This will take some time.
 
 \subsubsection{Microsoft Windows based Operating Systems}
-There is limited support for making a ``DLL'' in windows via the \texttt{makefile.cygwin\_dll} makefile.  It requires
-Cygwin to work with since it requires the auto-export/import functionality.  The resulting DLL and import library
-\texttt{libtommath.dll.a} can be used to link LibTomMath dynamically to any Windows program using Cygwin.
+There is limited support for making a ``DLL'' in windows via the \texttt{makefile.cygwin\_dll}
+makefile.  It requires Cygwin to work with since it requires the auto-export/import functionality.
+The resulting DLL and import library \texttt{libtommath.dll.a} can be used to link LibTomMath
+dynamically to any Windows program using Cygwin.
+
 \subsubsection{OpenBSD}
-OpenBSD replaced some of their GNU-tools, especially \texttt{libtool} with their own, slightly different versions. To ease the workload of LibTomMath's developer team, only a static library can be build with the included \texttt{makefile.unix}.
+OpenBSD replaced some of their GNU-tools, especially \texttt{libtool} with their own, slightly
+different versions. To ease the workload of LibTomMath's developer team, only a static library can
+be build with the included \texttt{makefile.unix}.
 
 The wrong \texttt{make} will result in errors like:
 \begin{alltt}
@@ -182,11 +202,15 @@ Error while executing cc error.lo s_mp_invmod_fast.lo fast_mp_montgomery0
 gmake: *** [makefile.shared:64: libtommath.la] Error 1
 \end{alltt}
 
-To build a shared library with OpenBSD\footnote{Tested with OpenBSD version 6.4} the GNU versions of \texttt{make} and \texttt{libtool} are needed.
+To build a shared library with OpenBSD\footnote{Tested with OpenBSD version 6.4} the GNU versions
+of \texttt{make} and \texttt{libtool} are needed.
 \begin{alltt}
 $ sudo pkg_add gmake libtool
 \end{alltt}
-At this time two versions of \texttt{libtool} are installed and both are named \texttt{libtool}, unfortunately but GNU \texttt{libtool} has been placed in \texttt{/usr/local/bin/} and the native version in \texttt{/usr/bin/}. The path might be different in other versions of OpenBSD but both programms differ in the output of \texttt{libtool --version}
+At this time two versions of \texttt{libtool} are installed and both are named \texttt{libtool},
+unfortunately but GNU \texttt{libtool} has been placed in \texttt{/usr/local/bin/} and the native
+version in \texttt{/usr/bin/}. The path might be different in other versions of OpenBSD but both
+programms differ in the output of \texttt{libtool --version}
 \begin{alltt}
 $ /usr/local/bin/libtool --version
 libtool (GNU libtool) 2.4.2
@@ -206,7 +230,8 @@ LIBTOOL="/usr/local/bin/libtool" gmake -f makefile.shared
 You might need to run a \texttt{gmake -f makefile.shared clean} first.
 
 \subsubsection{NetBSD}
-NetBSD is not as strict as OpenBSD but still needs \texttt{gmake} to build the shared library. \texttt{libtool} may also not exist in a fresh install.
+NetBSD is not as strict as OpenBSD but still needs \texttt{gmake} to build the shared library.
+\texttt{libtool} may also not exist in a fresh install.
 \begin{alltt}
 pkg_add gmake libtool
 \end{alltt}
@@ -223,212 +248,244 @@ To build the library and the test harness type
 make test
 \end{alltt}
 
-This will build the library, \texttt{test} and \texttt{mtest/mtest}.  The \texttt{test} program will accept test vectors and verify the
-results.  \texttt{mtest/mtest} will generate test vectors using the MPI library by Michael Fromberger\footnote{A copy of MPI
-is included in the package}.  Simply pipe \texttt{mtest} into \texttt{test} using
+This will build the library, \texttt{test} and \texttt{mtest/mtest}.  The \texttt{test} program
+will accept test vectors and verify the results.  \texttt{mtest/mtest} will generate test vectors
+using the MPI library by Michael Fromberger\footnote{A copy of MPI is included in the package}.
+Simply pipe \texttt{mtest} into \texttt{test} using
 
 \begin{alltt}
 mtest/mtest | test
 \end{alltt}
 
-If you do not have a \texttt{/dev/urandom} style RNG source you will have to write your own PRNG and simply pipe that into
-\texttt{mtest}.  For example, if your PRNG program is called \texttt{myprng} simply invoke
+If you do not have a \texttt{/dev/urandom} style RNG source you will have to write your own PRNG
+and simply pipe that into \texttt{mtest}.  For example, if your PRNG program is called
+\texttt{myprng} simply invoke
 
 \begin{alltt}
 myprng | mtest/mtest | test
 \end{alltt}
 
-This will output a row of numbers that are increasing.  Each column is a different test (such as addition, multiplication, etc)
-that is being performed.  The numbers represent how many times the test was invoked.  If an error is detected the program
-will exit with a dump of the relevant numbers it was working with.
+This will output a row of numbers that are increasing.	Each column is a different test (such as
+addition, multiplication, etc) that is being performed.  The numbers represent how many times the
+test was invoked.  If an error is detected the program will exit with a dump of the relevant
+numbers it was working with.
 
 \section{Build Configuration}
-LibTomMath can configured at build time in three phases we shall call ``depends'', ``tweaks'' and ``trims''.
-Each phase changes how the library is built and they are applied one after another respectively.
+LibTomMath can configured at build time in three phases we shall call ``depends'', ``tweaks'' and
+``trims''. Each phase changes how the library is built and they are applied one after another
+respectively.
 
 To make the system more powerful you can tweak the build process.  Classes are defined in the file
-\texttt{tommath\_superclass.h}.  By default, the symbol \texttt{LTM\_ALL} shall be defined which simply
-instructs the system to build all of the functions.  This is how LibTomMath used to be packaged.  This will give you
-access to every function LibTomMath offers.
+\texttt{tommath\_superclass.h}.  By default, the symbol \texttt{LTM\_ALL} shall be defined which
+simply instructs the system to build all of the functions.  This is how LibTomMath used to be
+packaged. This will give you access to every function LibTomMath offers.
 
-However, there are cases where such a build is not optional.  For instance, you want to perform RSA operations.  You
-don't need the vast majority of the library to perform these operations.  Aside from \texttt{LTM\_ALL} there is
-another pre--defined class \texttt{SC\_RSA\_1} which works in conjunction with the RSA from LibTomCrypt.  Additional
-classes can be defined base on the need of the user.
+However, there are cases where such a build is not optional.  For instance, you want to perform RSA
+operations.  You don't need the vast majority of the library to perform these operations.  Aside
+from \texttt{LTM\_ALL} there is another pre--defined class \texttt{SC\_RSA\_1} which works in
+conjunction with the RSA from LibTomCrypt.  Additional classes can be defined base on the need of
+the user.
 
 \subsection{Build Depends}
-In the file \texttt{tommath\_class.h} you will see a large list of C ``defines'' followed by a series of ``ifdefs''
-which further define symbols.  All of the symbols (technically they're macros $\ldots$) represent a given C source
-file.  For instance, \texttt{MP\_ADD\_C} represents the file \texttt{mp\_add.c}.  When a define has been enabled the
-function in the respective file will be compiled and linked into the library.  Accordingly when the define
-is absent the file will not be compiled and not contribute any size to the library.
+In the file \texttt{tommath\_class.h} you will see a large list of C ``defines'' followed by a
+series of ``ifdefs'' which further define symbols.  All of the symbols (technically they're macros
+$\ldots$) represent a given C source file.  For instance, \texttt{MP\_ADD\_C} represents the file
+\texttt{mp\_add.c}.  When a define has been enabled the function in the respective file will be
+compiled and linked into the library.  Accordingly when the define is absent the file will not be
+compiled and not contribute any size to the library.
 
-You will also note that the header \texttt{tommath\_class.h} is actually recursively included (it includes itself twice).
-This is to help resolve as many dependencies as possible.  In the last pass the symbol \texttt{LTM\_LAST} will be defined.
-This is useful for ``trims''.
+You will also note that the header \texttt{tommath\_class.h} is actually recursively included (it
+includes itself twice). This is to help resolve as many dependencies as possible.  In the last pass
+the symbol \texttt{LTM\_LAST} will be defined. This is useful for ``trims''.
 
 \subsection{Build Tweaks}
-A tweak is an algorithm ``alternative''.  For example, to provide tradeoffs (usually between size and space).
+A tweak is an algorithm ``alternative''.  For example, to provide tradeoffs (usually between size
+and space).
 They can be enabled at any pass of the configuration phase.
 
 \begin{small}
-\begin{center}
-\begin{tabular}{|l|l|}
-\hline \textbf{Define} & \textbf{Purpose} \\
-\hline MP\_DIV\_SMALL & Enables a slower, smaller and equally \\
-                          & functional mp\_div() function \\
-\hline
-\end{tabular}
-\end{center}
+  \begin{center}
+    \begin{tabular}{|l|l|}
+      \hline \textbf{Define} & \textbf{Purpose}                      \\
+      \hline MP\_DIV\_SMALL  & Enables a slower, smaller and equally \\
+                             & functional mp\_div() function         \\
+      \hline
+    \end{tabular}
+  \end{center}
 \end{small}
 
 \subsection{Build Trims}
-A trim is a manner of removing functionality from a function that is not required.  For instance, to perform
-RSA cryptography you only require exponentiation with odd moduli so even moduli support can be safely removed.
-Build trims are meant to be defined on the last pass of the configuration which means they are to be defined
-only if \texttt{LTM\_LAST} has been defined.
+A trim is a manner of removing functionality from a function that is not required.  For instance,
+to perform RSA cryptography you only require exponentiation with odd moduli so even moduli support
+can be safely removed. Build trims are meant to be defined on the last pass of the configuration
+which means they are to be defined only if \texttt{LTM\_LAST} has been defined.
 
 \subsubsection{Moduli Related}
 \begin{small}
-\begin{center}
-\begin{tabular}{|l|l|}
-\hline \textbf{Restriction} & \textbf{Undefine} \\
-\hline Exponentiation with odd moduli only & S\_MP\_EXPTMOD\_C \\
-                                           & MP\_REDUCE\_C \\
-                                           & MP\_REDUCE\_SETUP\_C \\
-                                           & S\_MP\_MUL\_HIGH\_DIGS\_C \\
-                                           & FAST\_S\_MP\_MUL\_HIGH\_DIGS\_C \\
-\hline Exponentiation with random odd moduli & (The above plus the following) \\
-                                           & MP\_REDUCE\_2K\_C \\
-                                           & MP\_REDUCE\_2K\_SETUP\_C \\
-                                           & MP\_REDUCE\_IS\_2K\_C \\
-                                           & MP\_DR\_IS\_MODULUS\_C \\
-                                           & MP\_DR\_REDUCE\_C \\
-                                           & MP\_DR\_SETUP\_C \\
-\hline Modular inverse odd moduli only     & MP\_INVMOD\_SLOW\_C \\
-\hline Modular inverse (both, smaller/slower) & FAST\_MP\_INVMOD\_C \\
-\hline
-\end{tabular}
-\end{center}
+  \begin{center}
+    \begin{tabular}{|l|l|}
+      \hline \textbf{Restriction}                   & \textbf{Undefine}               \\
+      \hline Exponentiation with odd moduli only    & S\_MP\_EXPTMOD\_C               \\
+                                                    & MP\_REDUCE\_C                   \\
+                                                    & MP\_REDUCE\_SETUP\_C            \\
+                                                    & S\_MP\_MUL\_HIGH\_DIGS\_C       \\
+                                                    & FAST\_S\_MP\_MUL\_HIGH\_DIGS\_C \\
+      \hline Exponentiation with random odd moduli  & (The above plus the following)  \\
+                                                    & MP\_REDUCE\_2K\_C               \\
+                                                    & MP\_REDUCE\_2K\_SETUP\_C        \\
+                                                    & MP\_REDUCE\_IS\_2K\_C           \\
+                                                    & MP\_DR\_IS\_MODULUS\_C          \\
+                                                    & MP\_DR\_REDUCE\_C               \\
+                                                    & MP\_DR\_SETUP\_C                \\
+      \hline Modular inverse odd moduli only        & MP\_INVMOD\_SLOW\_C             \\
+      \hline Modular inverse (both, smaller/slower) & FAST\_MP\_INVMOD\_C             \\
+      \hline
+    \end{tabular}
+  \end{center}
 \end{small}
 
 \subsubsection{Operand Size Related}
 \begin{small}
-\begin{center}
-\begin{tabular}{|l|l|}
-\hline \textbf{Restriction} & \textbf{Undefine} \\
-\hline Moduli $\le 2560$ bits              & MP\_MONTGOMERY\_REDUCE\_C \\
-                                           & S\_MP\_MUL\_DIGS\_C \\
-                                           & S\_MP\_MUL\_HIGH\_DIGS\_C \\
-                                           & S\_MP\_SQR\_C \\
-\hline Polynomial Schmolynomial            & MP\_KARATSUBA\_MUL\_C \\
-                                           & MP\_KARATSUBA\_SQR\_C \\
-                                           & MP\_TOOM\_MUL\_C \\
-                                           & MP\_TOOM\_SQR\_C \\
+  \begin{center}
+    \begin{tabular}{|l|l|}
+      \hline \textbf{Restriction}     & \textbf{Undefine}         \\
+      \hline Moduli $\le 2560$ bits   & MP\_MONTGOMERY\_REDUCE\_C \\
+                                      & S\_MP\_MUL\_DIGS\_C       \\
+                                      & S\_MP\_MUL\_HIGH\_DIGS\_C \\
+                                      & S\_MP\_SQR\_C             \\
+      \hline Polynomial Schmolynomial & MP\_KARATSUBA\_MUL\_C     \\
+                                      & MP\_KARATSUBA\_SQR\_C     \\
+                                      & MP\_TOOM\_MUL\_C          \\
+                                      & MP\_TOOM\_SQR\_C          \\
 
-\hline
-\end{tabular}
-\end{center}
+      \hline
+    \end{tabular}
+  \end{center}
 \end{small}
-
 
 \section{Purpose of LibTomMath}
-Unlike  GNU MP (GMP) Library, LIP, OpenSSL or various other commercial kits (Miracl), LibTomMath was not written with
-bleeding edge performance in mind.  First and foremost LibTomMath was written to be entirely open.  Not only is the
-source code public domain (unlike various other GPL/etc licensed code), not only is the code freely downloadable but the
-source code is also accessible for computer science students attempting to learn ``BigNum'' or multiple precision
-arithmetic techniques.
+Unlike	GNU MP (GMP) Library, LIP, OpenSSL or various other commercial kits (Miracl), LibTomMath
+was not written with bleeding edge performance in mind.  First and foremost LibTomMath was written
+to be entirely open. Not only is the source code public domain (unlike various other GPL/etc
+licensed code), not only is the code freely downloadable but the source code is also accessible for
+computer science students attempting to learn ``BigNum'' or multiple precision arithmetic
+techniques.
 
-LibTomMath was written to be an instructive collection of source code.  This is why there are many comments, only one
-function per source file and often I use a ``middle-road'' approach where I don't cut corners for an extra 2\% speed
-increase.
+LibTomMath was written to be an instructive collection of source code.	This is why there are many
+comments, only one function per source file and often I use a ``middle-road'' approach where I
+don't cut corners for an extra 2\% speed increase.
 
-Source code alone cannot really teach how the algorithms work which is why I also wrote a textbook that accompanies
-the library (beat that!).
+Source code alone cannot really teach how the algorithms work which is why I also wrote a textbook
+that accompanies the library (beat that!).
 
-So you may be thinking ``should I use LibTomMath?'' and the answer is a definite maybe.  Let me tabulate what I think
-are the pros and cons of LibTomMath by comparing it to the math routines from GnuPG\footnote{GnuPG v1.2.3 versus LibTomMath v0.28}.
+So you may be thinking ``should I use LibTomMath?'' and the answer is a definite maybe.  Let me
+tabulate what I think are the pros and cons of LibTomMath by comparing it to the math routines from
+GnuPG\footnote{GnuPG v1.2.3 versus LibTomMath v0.28}.
 
 \newpage\begin{figure}[h]
-\begin{small}
-\begin{center}
-\begin{tabular}{|p{4.5cm}|c|c|p{4.5cm}|}
-\hline \textbf{Criteria} & \textbf{Pro} & \textbf{Con} & \textbf{Notes} \\
-\hline Few lines of code per file & X & & GnuPG $ = 300.9$\\
-&&& LibTomMath  $ = 71.97$\hfill \\
-\hline Commented function prototypes & X && GnuPG function names are cryptic. \\
-\hline Speed && X & LibTomMath is slower.  \\
-\hline Totally free & X & & GPL has unfavourable restrictions.\\
-\hline Large function base & X & & GnuPG is barebones. \\
-\hline Five modular reduction algorithms & X & & Faster modular exponentiation for a variety of moduli. \\
-\hline Portable & X & & GnuPG requires configuration to build. \\
-\hline
-\end{tabular}
-\end{center}
-\end{small}
-\caption{LibTomMath Valuation}
+  \begin{small}
+    \begin{center}
+      \begin{tabular}{|p{4.5cm}|c|c|p{4.5cm}|}
+        \hline \textbf{Criteria}                 & \textbf{Pro} & \textbf{Con} & \textbf{Notes}
+        \\
+        \hline Few lines of code per file        & X            &              & GnuPG $ = 300.9$
+        \\
+                                                 &              &              & LibTomMath	$ =
+          71.97$\hfill
+        \\
+        \hline Commented function prototypes     & X            &              & GnuPG function
+        names are cryptic.
+        \\
+        \hline Speed                             &              & X            & LibTomMath is
+        slower.
+        \\
+        \hline Totally free                      & X            &              & GPL has
+        unfavourable restrictions.
+        \\
+        \hline Large function base               & X            &              & GnuPG is
+        barebones.
+        \\
+        \hline Five modular reduction algorithms & X            &              & Faster modular
+        exponentiation for a variety of
+        moduli.
+        \\
+        \hline Portable                          & X            &              & GnuPG requires
+        configuration to build.
+        \\
+        \hline
+      \end{tabular}
+    \end{center}
+  \end{small}
+  \caption{LibTomMath Valuation}
 \end{figure}
 
-It may seem odd to compare LibTomMath to GnuPG since the math in GnuPG is only a small portion of the entire application.
-However, LibTomMath was written with cryptography in mind.  It provides essentially all of the functions a cryptosystem
-would require when working with large integers.
+It may seem odd to compare LibTomMath to GnuPG since the math in GnuPG is only a small portion of
+the entire application. However, LibTomMath was written with cryptography in mind.  It provides
+essentially all of the functions a cryptosystem would require when working with large integers.
 
-So it may feel tempting to just rip the math code out of GnuPG (or GnuMP where it was taken from originally) in your
-own application but I think there are reasons not to.  While LibTomMath is slower than libraries such as GnuMP it is
-not normally significantly slower.  On x86 machines the difference is normally a factor of two when performing modular
-exponentiations.  It depends largely on the processor, compiler and the moduli being used.
+So it may feel tempting to just rip the math code out of GnuPG (or GnuMP where it was taken from
+originally) in your own application but I think there are reasons not to.  While LibTomMath is
+slower than libraries such as GnuMP it is not normally significantly slower.  On x86 machines the
+difference is normally a factor of two when performing modular exponentiations.  It depends largely
+on the processor, compiler and the moduli being used.
 
-Essentially the only time you wouldn't use LibTomMath is when blazing speed is the primary concern.  However,
-on the other side of the coin LibTomMath offers you a totally free (public domain) well structured math library
-that is very flexible, complete and performs well in resource constrained environments.  Fast RSA for example can
-be performed with as little as 8 Kibibytes of RAM for data (again depending on build options).
+Essentially the only time you wouldn't use LibTomMath is when blazing speed is the primary concern.
+However, on the other side of the coin LibTomMath offers you a totally free (public domain) well
+structured math library that is very flexible, complete and performs well in resource constrained
+environments.  Fast RSA for example can be performed with as little as 8 Kibibytes of RAM for data
+(again depending on build options).
 
 \chapter{Getting Started with LibTomMath}
 \section{Building Programs}
-In order to use LibTomMath you must include ``tommath.h'' and link against the appropriate library file (typically
-libtommath.a).  There is no library initialization required and the entire library is thread safe.
+In order to use LibTomMath you must include ``tommath.h'' and link against the appropriate library
+file (typically
+libtommath.a).	There is no library initialization required and the entire library is thread safe.
 
 \section{Return Codes}
 There are five possible return codes a function may return.
 
-\index{MP\_OKAY}\index{MP\_YES}\index{MP\_NO}\index{MP\_VAL}\index{MP\_MEM}\index{MP\_ITER}\index{MP\_BUF}
+\index{MP\_OKAY}\index{MP\_YES}\index{MP\_NO}\index{MP\_VAL}\index{MP\_MEM}\index{MP\_ITER}\index{M
+  P\_BUF}
 \begin{figure}[h!]
-\begin{center}
-\begin{small}
-\begin{tabular}{|l|l|}
-\hline \textbf{Code} & \textbf{Meaning} \\
-\hline MP\_OKAY & The function succeeded. \\
-\hline MP\_VAL  & The function input was invalid. \\
-\hline MP\_MEM  & Heap memory exhausted. \\
-\hline MP\_ITER  & Maximum iterations reached. \\
-\hline MP\_BUF  & Buffer overflow, supplied buffer too small.\\
-\hline &\\
-\hline MP\_YES  & Response is yes. \\
-\hline MP\_NO   & Response is no. \\
-\hline
-\end{tabular}
-\end{small}
-\end{center}
-\caption{Return Codes}
+  \begin{center}
+    \begin{small}
+      \begin{tabular}{|l|l|}
+        \hline \textbf{Code} & \textbf{Meaning}                            \\
+        \hline MP\_OKAY      & The function succeeded.                     \\
+        \hline MP\_VAL       & The function input was invalid.             \\
+        \hline MP\_MEM       & Heap memory exhausted.                      \\
+        \hline MP\_ITER      & Maximum iterations reached.                 \\
+        \hline MP\_BUF       & Buffer overflow, supplied buffer too small. \\
+        \hline               &                                             \\
+        \hline MP\_YES       & Response is yes.                            \\
+        \hline MP\_NO        & Response is no.                             \\
+        \hline
+      \end{tabular}
+    \end{small}
+  \end{center}
+  \caption{Return Codes}
 \end{figure}
 
-The error codes \texttt{MP\_OKAY},\texttt{MP\_VAL}, \texttt{MP\_MEM}, \texttt{MP\_ITER}, and \texttt{MP\_BUF} are of the type \texttt{mp\_err}, the codes \texttt{MP\_YES} and \texttt{MP\_NO} are of type \texttt{mp\_bool}.
+The error codes \texttt{MP\_OKAY},\texttt{MP\_VAL}, \texttt{MP\_MEM}, \texttt{MP\_ITER}, and
+\texttt{MP\_BUF} are of the type \texttt{mp\_err}, the codes \texttt{MP\_YES} and \texttt{MP\_NO}
+are of type \texttt{mp\_bool}.
 
-The last two codes listed are not actually ``return'ed'' by a function.  They are placed in an integer (the caller must
-provide the address of an integer it can store to) which the caller can access.  To convert one of the three return codes
-to a string use the following function.
+The last two codes listed are not actually ``return'ed'' by a function.  They are placed in an
+integer (the caller must provide the address of an integer it can store to) which the caller can
+access.  To convert one of the three return codes to a string use the following function.
 
 \index{mp\_error\_to\_string}
 \begin{alltt}
 char *mp_error_to_string(int code);
 \end{alltt}
 
-This will return a pointer to a string which describes the given error code.  It will not work for the return codes \texttt{MP\_YES} and \texttt{MP\_NO}.
+This will return a pointer to a string which describes the given error code.  It will not work for
+the return codes \texttt{MP\_YES} and \texttt{MP\_NO}.
 
 \section{Data Types}
-The basic ``multiple precision integer'' type is known as the \texttt{mp\_int} within LibTomMath. This data type is used to
-organize all of the data required to manipulate the integer it represents.  Within LibTomMath it has been prototyped
-as the following.
+The basic ``multiple precision integer'' type is known as the \texttt{mp\_int} within LibTomMath.
+This data type is used to organize all of the data required to manipulate the integer it
+represents.  Within LibTomMath it has been prototyped as the following.
 
 \index{mp\_int}
 \begin{alltt}
@@ -439,34 +496,35 @@ typedef struct  \{
 \} mp_int;
 \end{alltt}
 
-Where \texttt{mp\_digit} is a data type that represents individual digits of the integer.  By default, an \texttt{mp\_digit} is the
-ISO C \texttt{unsigned long} data type and each digit is $28-$bits long.  The \texttt{mp\_digit} type can be configured to suit other
-platforms by defining the appropriate macros.
+Where \texttt{mp\_digit} is a data type that represents individual digits of the integer.  By
+default, an \texttt{mp\_digit} is the ISO C \texttt{unsigned long} data type and each digit is
+$28-$bits long.  The \texttt{mp\_digit} type can be configured to suit other platforms by defining
+the appropriate macros.
 
-All LTM functions that use the \texttt{mp\_int} type will expect a pointer to \texttt{mp\_int} structure.  You must allocate memory to
-hold the structure itself by yourself (whether off stack or heap it doesn't matter).  The very first thing that must be
-done to use an \texttt{mp\_int} is that it must be initialized.
+All LTM functions that use the \texttt{mp\_int} type will expect a pointer to \texttt{mp\_int}
+structure.  You must allocate memory to hold the structure itself by yourself (whether off stack or
+heap it doesn't matter).  The very first thing that must be done to use an \texttt{mp\_int} is that
+it must be initialized.
 
 \section{Function Organization}
 
-The arithmetic functions of the library are all organized to have the same style prototype.  That is source operands
-are passed on the left and the destination is on the right.  For instance,
-
+The arithmetic functions of the library are all organized to have the same style prototype.  That
+is source operands are passed on the left and the destination is on the right.	For instance,
 \begin{alltt}
 mp_add(&a, &b, &c);       /* c = a + b */
 mp_mul(&a, &a, &c);       /* c = a * a */
 mp_div(&a, &b, &c, &d);   /* c = [a/b], d = a mod b */
 \end{alltt}
 
-Another feature of the way the functions have been implemented is that source operands can be destination operands as well.
-For instance,
+Another feature of the way the functions have been implemented is that source operands can be
+destination operands as well. For instance,
 
 \begin{alltt}
 mp_add(&a, &b, &b);       /* b = a + b */
 mp_div(&a, &b, &a, &c);   /* a = [a/b], c = a mod b */
 \end{alltt}
 
-This allows operands to be re-used which can make programming simpler.
+This allows operands to be re--used which can make programming simpler.
 
 \section{Initialization}
 \subsection{Single Initialization}
@@ -477,12 +535,13 @@ A single \texttt{mp\_int} can be initialized with the \texttt{mp\_init} function
 mp_err mp_init (mp_int *a);
 \end{alltt}
 
-This function expects a pointer to an \texttt{mp\_int} structure and will initialize the members of the structure so the \texttt{mp\_int}
-represents the default integer which is zero.  If the functions returns \texttt{MP\_OKAY} then the \texttt{mp\_int} is ready to be used
-by the other LibTomMath functions.
+This function expects a pointer to an \texttt{mp\_int} structure and will initialize the members
+ofthe structure so the \texttt{mp\_int} represents the default integer which is zero.  If the
+functions returns \texttt{MP\_OKAY} then the \texttt{mp\_int} is ready to be used by the other
+LibTomMath functions.
 
 \begin{small}
-\begin{alltt}
+  \begin{alltt}
 int main(void)
 \{
    mp_int number;
@@ -498,24 +557,24 @@ int main(void)
 
    return EXIT_SUCCESS;
 \}
-\end{alltt}
+  \end{alltt}
 \end{small}
 
 \subsection{Single Free}
-When you are finished with an \texttt{mp\_int} it is ideal to return the heap it used back to the system.  The following function
-provides this functionality.
-
+When you are finished with an \texttt{mp\_int} it is ideal to return the heap it used back to the
+system.  The following function provides this functionality.
 \index{mp\_clear}
 \begin{alltt}
 void mp_clear (mp_int *a);
 \end{alltt}
 
-The function expects a pointer to a previously initialized \texttt{mp\_int} structure and frees the heap it uses.  It sets the
-pointer\footnote{The \texttt{dp} member.} within the \texttt{mp\_int} to \texttt{NULL} which is used to prevent double free situations.
-Is is legal to call \texttt{mp\_clear} twice on the same \texttt{mp\_int} in a row.
+The function expects a pointer to a previously initialized \texttt{mp\_int} structure and frees the
+heap it uses.  It sets the pointer\footnote{The \texttt{dp} member.} within the \texttt{mp\_int} to
+\texttt{NULL} which is used to prevent double free situations. Is is legal to call
+\texttt{mp\_clear} twice on the same \texttt{mp\_int} in a row.
 
 \begin{small}
-\begin{alltt}
+  \begin{alltt}
 int main(void)
 \{
    mp_int number;
@@ -534,13 +593,13 @@ int main(void)
 
    return EXIT_SUCCESS;
 \}
-\end{alltt}
+  \end{alltt}
 \end{small}
 
 \subsection{Multiple Initializations}
-Certain algorithms require more than one large integer.  In these instances it is ideal to initialize all of the \texttt{mp\_int}
-variables in an ``all or nothing'' fashion.  That is, they are either all initialized successfully or they are all
-not initialized.
+Certain algorithms require more than one large integer.  In these instances it is ideal to
+initialize all of the \texttt{mp\_int} variables in an ``all or nothing'' fashion.  That is, they
+are either all initialized successfully or they are all not initialized.
 
 The  \texttt{mp\_init\_multi} function provides this functionality.
 
@@ -549,13 +608,16 @@ The  \texttt{mp\_init\_multi} function provides this functionality.
 mp_err mp_init_multi(mp_int *mp, ...);
 \end{alltt}
 
-It accepts a \texttt{NULL} terminated list of pointers to \texttt{mp\_int} structures.  It will attempt to initialize them all
-at once.  If the function returns \texttt{MP\_OKAY} then all of the \texttt{mp\_int} variables are ready to use, otherwise none of them
-are available for use.  A complementary \texttt{mp\_clear\_multi} function allows multiple \texttt{mp\_int} variables to be free'd
+It accepts a \texttt{NULL} terminated list of pointers to \texttt{mp\_int} structures.	It will
+attempt to initialize them all at once.  If the function returns \texttt{MP\_OKAY} then all of the
+\texttt{mp\_int} variables are ready to use, otherwise none of them are available for use.
+
+A complementary \texttt{mp\_clear\_multi} function allows multiple \texttt{mp\_int} variables to be
+free'd
 from the heap at the same time.
 
 \begin{small}
-\begin{alltt}
+  \begin{alltt}
 int main(void)
 \{
    mp_int num1, num2, num3;
@@ -580,7 +642,8 @@ int main(void)
 \end{small}
 
 \subsection{Other Initializers}
-To initialized and make a copy of an \texttt{mp\_int} the \texttt{mp\_init\_copy} function has been provided.
+To initialized and make a copy of an \texttt{mp\_int} the \texttt{mp\_init\_copy} function has been
+provided.
 
 \index{mp\_init\_copy}
 \begin{alltt}
@@ -590,7 +653,7 @@ mp_err mp_init_copy (mp_int *a, mp_int *b);
 This function will initialize $a$ and make it a copy of $b$ if all goes well.
 
 \begin{small}
-\begin{alltt}
+  \begin{alltt}
 int main(void)
 \{
    mp_int num1, num2;
@@ -615,20 +678,20 @@ int main(void)
 \end{alltt}
 \end{small}
 
-Another less common initializer is \texttt{mp\_init\_size} which allows the user to initialize an \texttt{mp\_int} with a given
-default number of digits.  By default, all initializers allocate \texttt{MP\_PREC} digits.  This function lets
-you override this behaviour.
+Another less common initializer is \texttt{mp\_init\_size} which allows the user to initialize an
+\texttt{mp\_int} with a given default number of digits. By default, all initializers allocate
+\texttt{MP\_PREC} digits. This function lets you override this behaviour.
 
 \index{mp\_init\_size}
 \begin{alltt}
 mp_err mp_init_size (mp_int *a, int size);
 \end{alltt}
 
-The $size$ parameter must be greater than zero.  If the function succeeds the \texttt{mp\_int} $a$ will be initialized
-to have $size$ digits (which are all initially zero).
+The $size$ parameter must be greater than zero.  If the function succeeds the \texttt{mp\_int} $a$
+will be initialized to have $size$ digits (which are all initially zero).
 
 \begin{small}
-\begin{alltt}
+  \begin{alltt}
 int main(void)
 \{
    mp_int number;
@@ -651,8 +714,8 @@ int main(void)
 \section{Maintenance Functions}
 \subsection{Clear Leading Zeros}
 
-This is used to ensure that leading zero digits are trimmed and the leading "used" digit will be non-zero.
-It also fixes the sign if there are no more leading digits.
+This is used to ensure that leading zero digits are trimmed and the leading "used" digit will be
+non--zero. It also fixes the sign if there are no more leading digits.
 
 \index{mp\_clamp}
 \begin{alltt}
@@ -668,23 +731,24 @@ This function will set the ``bigint'' to zeros without changing the amount of al
 void mp_zero(mp_int *a);
 \end{alltt}
 
-
 \subsection{Reducing Memory Usage}
-When an \texttt{mp\_int} is in a state where it won't be changed again\footnote{A Diffie-Hellman modulus for instance.} excess
-digits can be removed to return memory to the heap with the \texttt{mp\_shrink} function.
+When an \texttt{mp\_int} is in a state where it won't be changed again\footnote{A Diffie--Hellman
+  modulus for instance.} excess digits can be removed to return memory to the heap with the
+\texttt{mp\_shrink} function.
 
 \index{mp\_shrink}
 \begin{alltt}
 mp_err mp_shrink (mp_int *a);
 \end{alltt}
 
-This will remove excess digits of the \texttt{mp\_int} $a$.  If the operation fails the \texttt{mp\_int} should be intact without the
-excess digits being removed.  Note that you can use a shrunk \texttt{mp\_int} in further computations, however, such operations
-will require heap operations which can be slow.  It is not ideal to shrink \texttt{mp\_int} variables that you will further
-modify in the system (unless you are seriously low on memory).
+This will remove excess digits of the \texttt{mp\_int} $a$.  If the operation fails the
+\texttt{mp\_int} should be intact without the excess digits being removed.  Note that you can use a
+shrunk \texttt{mp\_int} in further computations, however, such operations will require heap
+operations which can be slow.  It is not ideal to shrink \texttt{mp\_int} variables that you will
+further modify in the system (unless you are seriously low on memory).
 
 \begin{small}
- \begin{alltt}
+  \begin{alltt}
 int main(void)
 \{
    mp_int number;
@@ -714,26 +778,27 @@ int main(void)
    return EXIT_SUCCESS;
 \}
 \end{alltt}
- \end{small}
+\end{small}
 
 \subsection{Adding additional digits}
 
-Within the mp\_int structure are two parameters which control the limitations of the array of digits that represent
-the integer the mp\_int is meant to equal.   The \texttt{used} parameter dictates how many digits are significant, that is,
-contribute to the value of the mp\_int.  The \texttt{alloc} parameter dictates how many digits are currently available in
-the array.  If you need to perform an operation that requires more digits you will have to mp\_grow() the mp\_int to
-your desired size.
+Within the mp\_int structure are two parameters which control the limitations of the array of
+digits that represent the integer the mp\_int is meant to equal. The \texttt{used} parameter
+dictates how many digits are significant, that is, contribute to the value of the mp\_int.  The
+\texttt{alloc} parameter dictates how many digits are currently available in the array.  If you
+need to perform an operation that requires more digits you will have to \texttt{mp\_grow} the
+\texttt{mp\_int} to your desired size.
 
 \index{mp\_grow}
 \begin{alltt}
 mp_err mp_grow (mp_int *a, int size);
 \end{alltt}
 
-This will grow the array of digits of $a$ to $size$.  If the \texttt{alloc} parameter is already bigger than
-$size$ the function will not do anything.
+This will grow the array of digits of $a$ to $size$.  If the \texttt{alloc} parameter is already
+bigger than $size$ the function will not do anything.
 
 \begin{small}
-\begin{alltt}
+  \begin{alltt}
 int main(void)
 \{
    mp_int number;
@@ -768,14 +833,16 @@ int main(void)
 \chapter{Basic Operations}
 \section{Copying}
 
-A so called ``deep copy'', where new memory is allocated and all contents of $a$ are copied verbatim into $b$ such that $b = a$ at the end.
+A so called ``deep copy'', where new memory is allocated and all contents of $a$ are copied
+verbatim into $b$ such that $b = a$ at the end.
 
 \index{mp\_copy}
 \begin{alltt}
 mp_err mp_copy (const mp_int *a, mp_int *b);
 \end{alltt}
 
-You can also just swap $a$ and $b$. It does the normal pointer changing with a temporary pointer variable, just that you do not have to.
+You can also just swap $a$ and $b$. It does the normal pointer changing with a temporary pointer
+variable, just that you do not have to.
 
 \index{mp\_exch}
 \begin{alltt}
@@ -784,26 +851,27 @@ void mp_exch (mp_int *a, mp_int *b);
 
 \section{Bit Counting}
 
-To get the position of the lowest bit set (LSB, the Lowest Significant Bit; the number of bits which are zero before the first zero bit )
+To get the position of the lowest bit set (LSB, the Lowest Significant Bit; the number of bits
+which are zero before the first zero bit )
 
 \index{mp\_cnt\_lsb}
 \begin{alltt}
 int mp_cnt_lsb(const mp_int *a);
 \end{alltt}
 
-To get the position of the highest bit set (MSB, the Most Significant Bit; the number of bits in the ``bignum'')
+To get the position of the highest bit set (MSB, the Most Significant Bit; the number of bits in
+the ``bignum'')
 
 \index{mp\_count\_bits}
 \begin{alltt}
 int mp_count_bits(const mp_int *a);
 \end{alltt}
 
-
 \section{Small Constants}
-Setting an \texttt{mp\_int} to a small constant is a relatively common operation.  To accommodate these instances there is a
-small constant assignment function.  This function is used to set a single digit constant.
-The reason for this function is efficiency.  Setting a single digit is quick but the
-domain of a digit can change (it's always at least $0 \ldots 127$).
+Setting an \texttt{mp\_int} to a small constant is a relatively common operation.  To accommodate
+these instances there is a small constant assignment function.	This function is used to set a
+single digit constant. The reason for this function is efficiency.  Setting a single digit is quick
+but the domain of a digit can change (it's always at least $0 \ldots 127$).
 
 \subsection{Single Digit}
 
@@ -814,12 +882,12 @@ Setting a single digit can be accomplished with the following function.
 void mp_set (mp_int *a, mp_digit b);
 \end{alltt}
 
-This will zero the contents of $a$ and make it represent an integer equal to the value of $b$.  Note that this
-function has a return type of \texttt{void}.  It cannot cause an error so it is safe to assume the function
-succeeded.
+This will zero the contents of $a$ and make it represent an integer equal to the value of $b$. Note
+that this function has a return type of \texttt{void}.	It cannot cause an error so it is safe to
+assume the function succeeded.
 
 \begin{small}
-\begin{alltt}
+  \begin{alltt}
 int main(void)
 \{
    mp_int number;
@@ -869,11 +937,12 @@ uint64_t mp_get_u64 (const mp_int *a);
 uint64_t mp_get_mag_u64 (const mp_int *a);
 \end{alltt}
 
-These functions return the 32 or 64 least significant bits of $a$ respectively. The unsigned functions
-return negative values in a twos complement representation. The absolute value or magnitude can be obtained using the \texttt{mp\_get\_mag*} functions.
+These functions return the 32 or 64 least significant bits of $a$ respectively. The unsigned
+functions return negative values in a twos complement representation. The absolute value or
+magnitude can be obtained using the \texttt{mp\_get\_mag*} functions.
 
 \begin{small}
-\begin{alltt}
+  \begin{alltt}
 int main(void)
 \{
    mp_int number;
@@ -912,7 +981,7 @@ void mp_set_l (mp_int *a, long b);
 void mp_set_ul (mp_int *a, unsigned long b);
 \end{alltt}
 
-This will assign the value of the platform-dependent sized variable $b$ to the big integer $a$.
+This will assign the value of the platform--dependent sized variable $b$ to the big integer $a$.
 
 To retrieve the value, the following functions can be used.
 
@@ -923,7 +992,8 @@ unsigned long mp_get_ul (const mp_int *a);
 unsigned long mp_get_mag_ul (const mp_int *a);
 \end{alltt}
 
-This will return the least significant bits of the big integer $a$ that fit into the native data type \texttt{long}.
+This will return the least significant bits of the big integer $a$ that fit into the native data
+type \texttt{long}.
 
 \subsection{Long Long Constants - platform dependant}
 
@@ -933,7 +1003,7 @@ void mp_set_ll (mp_int *a, long long b);
 void mp_set_ull (mp_int *a, unsigned long long b);
 \end{alltt}
 
-This will assign the value of the platform-dependent sized variable $b$ to the big integer $a$.
+This will assign the value of the platform--dependent sized variable $b$ to the big integer $a$.
 
 To retrieve the value, the following functions can be used.
 
@@ -946,7 +1016,8 @@ unsigned long long mp_get_ull (const mp_int *a);
 unsigned long long mp_get_mag_ull (const mp_int *a);
 \end{alltt}
 
-This will return the least significant bits of $a$ that fit into the native data type \texttt{long long}.
+This will return the least significant bits of $a$ that fit into the native data type \texttt{long
+  long}.
 
 \subsection{Floating Point Constants - platform dependant}
 
@@ -955,7 +1026,9 @@ This will return the least significant bits of $a$ that fit into the native data
 mp_err mp_set_double(mp_int *a, double b);
 \end{alltt}
 
-If the platform supports the floating point data type \texttt{double} (binary64) this function will assign the integer part of \texttt{b} to the big integer $a$. This function will return \texttt{MP\_VAL} if \texttt{b} is \texttt{+/-inf} or \texttt{NaN}. 
+If the platform supports the floating point data type \texttt{double} (binary64) this function will
+assign the integer part of \texttt{b} to the big integer $a$. This function will return
+\texttt{MP\_VAL} if \texttt{b} is \texttt{+/-inf} or \texttt{NaN}.
 
 To convert a big integer to a \texttt{double} use
 
@@ -963,7 +1036,6 @@ To convert a big integer to a \texttt{double} use
 \begin{alltt}
 double mp_get_double(const mp_int *a);
 \end{alltt}
-
 
 \subsection{Initialize and Setting Constants}
 To both initialize and set small constants the following nine functions are available.
@@ -980,9 +1052,10 @@ mp_err mp_init_ll  (mp_int *a, long long b);
 mp_err mp_init_ull (mp_int *a, unsigned long long b);
 \end{alltt}
 
-Both functions work like the previous counterparts except they first initialize $a$ with the function \texttt{mp\_init} before setting the values.
-
-\begin{alltt}
+Both functions work like the previous counterparts except they first initialize $a$ with the
+function \texttt{mp\_init} before setting the values.
+\begin{small}
+  \begin{alltt}
 int main(void)
 \{
    mp_int number1, number2;
@@ -1012,52 +1085,52 @@ int main(void)
    return EXIT_SUCCESS;
 \}
 \end{alltt}
+\end{small}
 
 If this program succeeds it shall output.
 \begin{alltt}
 Number1, Number2 == 100, 1023
 \end{alltt}
 
-
-
 \section{Comparisons}
 
-Comparisons in LibTomMath are always performed in a ``left to right'' fashion.  There are three possible return codes
-for any comparison.
+Comparisons in LibTomMath are always performed in a ``left to right'' fashion.	There are three
+possible return codes for any comparison.
 
 \index{MP\_GT} \index{MP\_EQ} \index{MP\_LT}
 \begin{figure}[h]
-\begin{center}
-\begin{tabular}{|c|c|}
-\hline \textbf{Result Code} & \textbf{Meaning} \\
-\hline MP\_GT & $a > b$ \\
-\hline MP\_EQ & $a = b$ \\
-\hline MP\_LT & $a < b$ \\
-\hline
-\end{tabular}
-\end{center}
-\caption{Comparison Codes for $a, b$}
-\label{fig:CMP}
+  \begin{center}
+    \begin{tabular}{|c|c|}
+      \hline \textbf{Result Code} & \textbf{Meaning} \\
+      \hline MP\_GT               & $a > b$          \\
+      \hline MP\_EQ               & $a = b$          \\
+      \hline MP\_LT               & $a < b$          \\
+      \hline
+    \end{tabular}
+  \end{center}
+  \caption{Comparison Codes for $a, b$}
+  \label{fig:CMP}
 \end{figure}
 
-In figure \ref{fig:CMP} two integers $a$ and $b$ are being compared.  In this case $a$ is said to be ``to the left'' of
-$b$. The return codes are of type \texttt{mp\_ord}.
+In figure \ref{fig:CMP} two integers $a$ and $b$ are being compared.  In this case $a$ is said to
+be ``to the left'' of $b$. The return codes are of type \texttt{mp\_ord}.
 
 \subsection{Unsigned comparison}
 
-An unsigned comparison considers only the digits themselves and not the associated \texttt{sign} flag of the
-\texttt{mp\_int} structures.  This is analogous to an absolute comparison.  The function \texttt{mp\_cmp\_mag} will compare two
-\texttt{mp\_int} variables based on their digits only.
+An unsigned comparison considers only the digits themselves and not the associated \texttt{sign}
+flag of the \texttt{mp\_int} structures.  This is analogous to an absolute comparison.	The
+function \texttt{mp\_cmp\_mag} will compare two \texttt{mp\_int} variables based on their digits
+only.
 
 \index{mp\_cmp\_mag}
 \begin{alltt}
 mp_ord mp_cmp_mag(mp_int *a, mp_int *b);
 \end{alltt}
-This will compare $a$ to $b$ placing $a$ to the left of $b$.  This function cannot fail and will return one of the
-three compare codes listed in figure \ref{fig:CMP}.
+This will compare $a$ to $b$ placing $a$ to the left of $b$.  This function cannot fail and will
+return one of the three compare codes listed in figure \ref{fig:CMP}.
 
 \begin{small}
-\begin{alltt}
+  \begin{alltt}
 int main(void)
 \{
    mp_int number1, number2;
@@ -1094,8 +1167,8 @@ int main(void)
 \end{alltt}
 \end{small}
 
-If this program\footnote{This function uses the \texttt{mp\_neg} function which is discussed in section \ref{sec:NEG}.} completes
-successfully it should print the following.
+If this program\footnote{This function uses the \texttt{mp\_neg} function which is discussed in
+  section \ref{sec:NEG}.} completes successfully it should print the following.
 
 \begin{alltt}
 |number1| < |number2|
@@ -1105,19 +1178,21 @@ This is because $\vert -6 \vert = 6$ and obviously $5 < 6$.
 
 \subsection{Signed comparison}
 
-To compare two \texttt{mp\_int} variables based on their signed value the \texttt{mp\_cmp} function is provided.
+To compare two \texttt{mp\_int} variables based on their signed value the \texttt{mp\_cmp} function
+is provided.
 
 \index{mp\_cmp}
 \begin{alltt}
 mp_ord mp_cmp(mp_int *a, mp_int *b);
 \end{alltt}
 
-This will compare $a$ to the left of $b$.  It will first compare the signs of the two \texttt{mp\_int} variables.  If they
-differ it will return immediately based on their signs.  If the signs are equal then it will compare the digits
-individually.  This function will return one of the compare conditions codes listed in figure \ref{fig:CMP}.
+This will compare $a$ to the left of $b$.  It will first compare the signs of the two
+\texttt{mp\_int} variables.  If they differ it will return immediately based on their signs.  If
+the signs are equal then it will compare the digits individually.  This function will return one of
+the compare conditions codes listed in figure \ref{fig:CMP}.
 
 \begin{small}
-\begin{alltt}
+  \begin{alltt}
 int main(void)
 \{
    mp_int number1, number2;
@@ -1154,8 +1229,8 @@ int main(void)
 \end{alltt}
 \end{small}
 
-If this program\footnote{This function uses the \texttt{mp\_neg} function which is discussed in section \ref{sec:NEG}.} completes
-successfully it should print the following.
+If this program\footnote{This function uses the \texttt{mp\_neg} function which is discussed in
+  section \ref{sec:NEG}.} completes successfully it should print the following.
 
 \begin{alltt}
 number1 > number2
@@ -1170,14 +1245,13 @@ To compare a single digit against an \texttt{mp\_int} the following function has
 mp_ord mp_cmp_d(mp_int *a, mp_digit b);
 \end{alltt}
 
-This will compare $a$ to the left of $b$ using a signed comparison.  Note that it will always treat $b$ as
-positive.  This function is rather handy when you have to compare against small values such as $1$ (which often
-comes up in cryptography).  The function cannot fail and will return one of the tree compare condition codes
-listed in figure \ref{fig:CMP}.
-
+This will compare $a$ to the left of $b$ using a signed comparison.  Note that it will always
+treat$b$ as positive.  This function is rather handy when you have to compare against small values
+such as $1$ (which often comes up in cryptography).  The function cannot fail and will return one
+of the tree compare condition codes listed in figure \ref{fig:CMP}.
 
 \begin{small}
-\begin{alltt}
+  \begin{alltt}
 int main(void)
 \{
    mp_int number;
@@ -1214,13 +1288,13 @@ number < 7
 
 \section{Logical Operations}
 
-Logical operations are operations that can be performed either with simple shifts or boolean operators such as
-AND, XOR and OR directly.  These operations are very quick.
+Logical operations are operations that can be performed either with simple shifts or boolean
+operators such as AND, XOR and OR directly.  These operations are very quick.
 
 \subsection{Multiplication by two}
 
-Multiplications and divisions by any power of two can be performed with quick logical shifts either left or
-right depending on the operation.
+Multiplications and divisions by any power of two can be performed with quick logical shifts either
+left or right depending on the operation.
 
 When multiplying or dividing by two a special case routine can be used which are as follows.
 \index{mp\_mul\_2} \index{mp\_div\_2}
@@ -1229,11 +1303,11 @@ mp_err mp_mul_2(const mp_int *a, mp_int *b);
 mp_err mp_div_2(const mp_int *a, mp_int *b);
 \end{alltt}
 
-The former will assign twice $a$ to $b$ while the latter will assign half $a$ to $b$.  These functions are fast
-since the shift counts and maskes are hardcoded into the routines.
+The former will assign twice $a$ to $b$ while the latter will assign half $a$ to $b$.  These
+functions are fast since the shift counts and masks are hardcoded into the routines.
 
 \begin{small}
-\begin{alltt}
+  \begin{alltt}
 int main(void)
 \{
    mp_int number;
@@ -1296,22 +1370,23 @@ To multiply by a power of two the following function can be used.
 mp_err mp_mul_2d(const mp_int *a, int b, mp_int *c);
 \end{alltt}
 
-This will multiply $a$ by $2^b$ and store the result in $c$.  If the value of $b$ is less than or equal to
-zero the function will copy $a$ to $c$ without performing any further actions.  The multiplication itself
-is implemented as a right-shift operation of $a$ by $b$ bits.
-
-To divide by a power of two use the following.
+This will multiply $a$ by $2^b$ and store the result in $c$.  If the value of $b$ is less than or
+equal to zero the function will copy $a$ to $c$ without performing any further actions.       The
+multiplication itself is implemented as a right--shift operation of $a$ by $b$ bits. To divide by a
+power of two use the following.
 
 \index{mp\_div\_2d}
 \begin{alltt}
 mp_err mp_div_2d (const mp_int *a, int b, mp_int *c, mp_int *d);
 \end{alltt}
-Which will divide $a$ by $2^b$, store the quotient in $c$ and the remainder in $d$.  If $b \le 0$ then the
-function simply copies $a$ over to $c$ and zeroes $d$.  The variable $d$ may be passed as a \texttt{NULL}
-value to signal that the remainder is not desired.  The division itself is implemented as a left-shift
-operation of $a$ by $b$ bits.
+Which will divide $a$ by $2^b$, store the quotient in $c$ and the remainder in $d$.  If $b \le 0$
+then the function simply copies $a$ over to $c$ and zeroes $d$. The variable $d$ may be
+passed as a \texttt{NULL} value to signal that the remainder is not desired.  The division itself
+is implemented as a left--shift operation of $a$ by $b$ bits.
 
-It is also not very uncommon to need just the power of two $2^b$;  for example as a start-value for the Newton method.
+It is also not very uncommon to need just the power of two $2^b$;  for example as a start--value
+for
+the Newton method.
 
 \index{mp\_2expt}
 \begin{alltt}
@@ -1321,33 +1396,36 @@ It is faster than doing it by shifting $1$ with \texttt{mp\_mul\_2d}.
 
 \subsection{Polynomial Basis Operations}
 
-Strictly speaking the organization of the integers within the mp\_int structures is what is known as a
-``polynomial basis''.  This simply means a field element is stored by divisions of a radix.  For example, if
-$f(x) = \sum_{i=0}^{k} y_ix^k$ for any vector $\vec y$ then the array of digits in $\vec y$ are said to be
-the polynomial basis representation of $z$ if $f(\beta) = z$ for a given radix $\beta$.
+Strictly speaking the organization of the integers within the mp\_int structures is what is known
+as a ``polynomial basis''.  This simply  means a field element is stored by divisions of a radix.
+For example, if $f(x) = \sum_{i=0}^{k} y_ix^k$ for any vector $\vec y$ then the array of digits in
+$\vec y$ are said to be the polynomial basis representation of $z$ if $f(\beta) = z$ for a given
+radix $\beta$.
 
-To multiply by the polynomial $g(x) = x$ all you have todo is shift the digits of the basis left one place.  The
-following function provides this operation.
+To multiply by the polynomial $g(x) = x$ all you have todo is shift the digits of the basis left
+one place.  The following function provides this operation.
 
 \index{mp\_lshd}
 \begin{alltt}
 mp_err mp_lshd (mp_int *a, int b);
 \end{alltt}
 
-This will multiply $a$ in place by $x^b$ which is equivalent to shifting the digits left $b$ places and inserting zeroes
-in the least significant digits.  Similarly to divide by a power of $x$ the following function is provided.
+This will multiply $a$ in place by $x^b$ which is equivalent to shifting the digits left $b$ places
+and inserting zeroes in the least significant digits.  Similarly to divide by a power of $x$ the
+following function is provided.
 
 \index{mp\_rshd}
 \begin{alltt}
 void mp_rshd (mp_int *a, int b)
 \end{alltt}
-This will divide $a$ in place by $x^b$ and discard the remainder.  This function cannot fail as it performs the operations
-in place and no new digits are required to complete it.
+This will divide $a$ in place by $x^b$ and discard the remainder.  This function cannot fail as it
+performs the operations in place and no new digits are required to complete it.
 
 \subsection{AND, OR, XOR and COMPLEMENT Operations}
 
-While AND, OR and XOR operations compute arbitrary-precision bitwise operations. Negative numbers
-are treated as if they are in two-complement representation, while internally they are sign-magnitude however.
+While AND, OR and XOR operations compute arbitrary--precision bitwise operations. Negative numbers
+are treated as if they are in two--complement representation, while internally they are
+sign--magnitude however.
 
 \index{mp\_or} \index{mp\_and} \index{mp\_xor} \index{mp\_complement}
 \begin{alltt}
@@ -1358,9 +1436,9 @@ mp_err mp_complement(const mp_int *a, mp_int *b);
 mp_err mp_signed_rsh(const mp_int *a, int b, mp_int *c, mp_int *d);
 \end{alltt}
 
-The function \texttt{mp\_complement} computes a two-complement $b = \sim a$. The function \texttt{mp\_signed\_rsh} performs
-sign extending right shift. For positive numbers it is equivalent to \texttt{mp\_div\_2d}.
-
+The function \texttt{mp\_complement} computes a two--complement $b = \sim a$. The function
+\texttt{mp\_signed\_rsh} performs sign extending right shift. For positive numbers it is equivalent
+to \texttt{mp\_div\_2d}.
 \section{Addition and Subtraction}
 
 To compute an addition or subtraction the following two functions can be used.
@@ -1371,8 +1449,8 @@ mp_err mp_add (const mp_int *a, const mp_int *b, mp_int *c);
 mp_err mp_sub (const mp_int *a, const mp_int *b, mp_int *c)
 \end{alltt}
 
-Which perform $c = a \odot b$ where $\odot$ is one of signed addition or subtraction.  The operations are fully sign
-aware.
+Which perform $c = a \odot b$ where $\odot$ is one of signed addition or subtraction.  The
+operations are fully sign aware.
 
 \section{Sign Manipulation}
 \subsection{Negation}
@@ -1404,10 +1482,9 @@ To perform a complete and general integer division with remainder use the follow
 mp_err mp_div (const mp_int *a, const mp_int *b, mp_int *c, mp_int *d);
 \end{alltt}
 
-This divides $a$ by $b$ and stores the quotient in $c$ and $d$.  The signed quotient is computed such that
-$bc + d = a$.  Note that either of $c$ or $d$ can be set to \texttt{NULL} if their value is not required.  If
-$b$ is zero the function returns \texttt{MP\_VAL}.
-
+This divides $a$ by $b$ and stores the quotient in $c$ and $d$.  The signed quotient is computed
+such that $bc + d = a$.  Note that either of $c$ or $d$ can be set to \texttt{NULL} if their value
+is not required.  If $b$ is zero the function returns \texttt{MP\_VAL}.
 
 \chapter{Multiplication and Squaring}
 \section{Multiplication}
@@ -1416,15 +1493,19 @@ A full signed integer multiplication can be performed with the following.
 \begin{alltt}
 mp_err mp_mul (const mp_int *a, const mp_int *b, mp_int *c);
 \end{alltt}
-Which assigns the full signed product $ab$ to $c$.  This function actually breaks into one of four cases which are
-specific multiplication routines optimized for given parameters.  First there are the Toom-Cook multiplications which
-should only be used with very large inputs.  This is followed by the Karatsuba multiplications which are for moderate
-sized inputs.  Then followed by the Comba and baseline multipliers.
+Which assigns the full signed product $ab$ to $c$.  This function actually breaks into one of four
+cases which are specific multiplication routines optimized for given parameters.  First there are
+the Toom--Cook multiplications which should only be used with very large inputs.  This is followed
+by the Karatsuba multiplications which are for moderate sized inputs.  Then followed by the Comba
+and baseline multipliers.
 
-Fortunately for the developer you don't really need to know this unless you really want to fine tune the system.  mp\_mul()
-will determine on its own\footnote{Some tweaking may be required but \texttt{make tune} will put some reasonable values in \texttt{bncore.c}} what routine to use automatically when it is called.
+Fortunately for the developer you don't really need to know this unless you really want to fine
+tune the system. The function \texttt{mp\_mul} will determine on its own\footnote{Some tweaking may
+  be required but \texttt{make tune} will put some reasonable values in \texttt{bncore.c}} what
+routine to use automatically when it is called.
 
-\begin{alltt}
+\begin{small}
+  \begin{alltt}
 int main(void)
 \{
    mp_int number1, number2;
@@ -1459,6 +1540,7 @@ int main(void)
    return EXIT_SUCCESS;
 \}
 \end{alltt}
+\end{small}
 
 If this program succeeds it shall output the following.
 
@@ -1467,7 +1549,8 @@ number1 * number2 == 262911
 \end{alltt}
 
 \section{Squaring}
-Since squaring can be performed faster than multiplication it is performed it's own function instead of just using
+Since squaring can be performed faster than multiplication it is performed it's own function
+instead of just using
 \texttt{mp\_mul}.
 
 \index{mp\_sqr}
@@ -1475,34 +1558,38 @@ Since squaring can be performed faster than multiplication it is performed it's 
 mp_err mp_sqr (const mp_int *a, mp_int *b);
 \end{alltt}
 
-Will square $a$ and store it in $b$.  Like the case of multiplication there are four different squaring
-algorithms all which can be called from the function \texttt{mp\_sqr}.  It is ideal to use \texttt{mp\_sqr} over \texttt{mp\_mul} when squaring terms because
-of the speed difference.
+Will square $a$ and store it in $b$.  Like the case of multiplication there are four different
+squaring algorithms all which can be called from the function \texttt{mp\_sqr}. It is ideal to use
+\texttt{mp\_sqr} over \texttt{mp\_mul} when squaring terms because of the speed difference.
 
 \section{Tuning Polynomial Basis Routines}
 
-Both of the Toom-Cook and Karatsuba multiplication algorithms are faster than the traditional $O(n^2)$ approach that
-the Comba and baseline algorithms use.  At $O(n^{1.464973})$ and $O(n^{1.584962})$ running times respectively they require
-considerably less work.  For example, a $10\,000$-digit multiplication would take roughly $724\,000$ single precision
-multiplications with Toom-Cook or $100\,000\,000$ single precision multiplications with the standard Comba (a factor
-of 138).
+Both of the Toom--Cook and Karatsuba multiplication algorithms are faster than the traditional
+$O(n^2)$ approach that the Comba and baseline algorithms use.	  At $O(n^{1.464973})$ and
+$O(n^{1.584962})$ running times respectively they require considerably less work.  For example, a
+$10\,000$-digit multiplication would take roughly $724\,000$ single precision multiplications with
+Toom--Cook or $100\,000\,000$ single precision multiplications with the standard Comba (a factor of
+$138$).
 
-So why not always use Karatsuba or Toom-Cook?   The simple answer is that they have so much overhead that they're not
-actually faster than Comba until you hit distinct  ``cutoff'' points.  For Karatsuba with the default configuration,
-GCC 3.3.1 and an Athlon XP processor the cutoff point is roughly 110 digits (about 70 for the Intel P4).  That is, at
-110 digits Karatsuba and Comba multiplications just about break even and for 110+ digits Karatsuba is faster.
+So why not always use Karatsuba or Toom--Cook?	The simple answer is that they have so much
+overhead that they're not actually faster than Comba until you hit distinct  ``cutoff'' points.
+For Karatsuba with the default configuration, GCC 3.3.1 and an Athlon XP processor the cutoff point
+is roughly 110 digits (about 70 for the Intel P4).  That is, at 110 digits Karatsuba and Comba
+multiplications just about break even and for 110+ digits Karatsuba is faster.
 
-To get reasonable values for the cut-off points for your architecture, type
+To get reasonable values for the cut--off points for your architecture, type
 
 \begin{alltt}
 make tune
 \end{alltt}
 
-This will run a benchmark, computes the medians, rewrites \texttt{bncore.c}, and recompiles \texttt{bncore.c} and relinks the library.
+This will run a benchmark, computes the medians, rewrites \texttt{bncore.c}, and recompiles
+\texttt{bncore.c} and relinks the library.
 
-The benchmark itself can be fine-tuned in the file \texttt{etc/tune\_it.sh}.
+The benchmark itself can be fine--tuned in the file \texttt{etc/tune\_it.sh}.
 
-The program \texttt{etc/tune} is also able to print a list of values for printing curves with e.g.: \texttt{gnuplot}. type \texttt{./etc/tune -h} to get a list of all available options.
+The program \texttt{etc/tune} is also able to print a list of values for printing curves with e.g.:
+\texttt{gnuplot}. type \texttt{./etc/tune -h} to get a list of all available options.
 
 \chapter{Modular Reduction}
 
@@ -1510,15 +1597,15 @@ Modular reduction is process of taking the remainder of one quantity divided by 
 as (\ref{eqn:mod}) the modular reduction is equivalent to the remainder of $b$ divided by $c$.
 
 \begin{equation}
-a \equiv b \mbox{ (mod }c\mbox{)}
-\label{eqn:mod}
+  a \equiv b \mbox{ (mod }c\mbox{)}
+  \label{eqn:mod}
 \end{equation}
 
-Of particular interest to cryptography are reductions where $b$ is limited to the range $0 \le b < c^2$ since particularly
-fast reduction algorithms can be written for the limited range.
+Of particular interest to cryptography are reductions where $b$ is limited to the range $0 \le b <
+  c^2$ since particularly fast reduction algorithms can be written for the limited range.
 
-Note that one of the four optimized reduction algorithms are automatically chosen in the modular exponentiation
-algorithm \texttt{mp\_exptmod} when an appropriate modulus is detected.
+Note that one of the four optimized reduction algorithms are automatically chosen in the modular
+exponentiation algorithm \texttt{mp\_exptmod} when an appropriate modulus is detected.
 
 \section{Straight Division}
 In order to effect an arbitrary modular reduction the following algorithm is provided.
@@ -1528,31 +1615,35 @@ In order to effect an arbitrary modular reduction the following algorithm is pro
 mp_err mp_mod(const mp_int *a,const  mp_int *b, mp_int *c);
 \end{alltt}
 
-This reduces $a$ modulo $b$ and stores the result in $c$.  The sign of $c$ shall agree with the sign
-of $b$.  This algorithm accepts an input $a$ of any range and is not limited by $0 \le a < b^2$.
+This reduces $a$ modulo $b$ and stores the result in $c$.  The sign of $c$ shall agree with the
+sign of $b$.  This algorithm accepts an input $a$ of any range and is not limited by $0 \le a <
+  b^2$.
 
 \section{Barrett Reduction}
 
-Barrett reduction is a generic optimized reduction algorithm that requires pre--computation to achieve
-a decent speedup over straight division.  First a $\mu$ value must be precomputed with the following function.
+Barrett reduction is a generic optimized reduction algorithm that requires pre--computation to
+achieve a decent speedup over straight division.  First a $\mu$ value must be precomputed with the
+following function.
 
 \index{mp\_reduce\_setup}
 \begin{alltt}
 mp_err mp_reduce_setup(const mp_int *a, mp_int *b);
 \end{alltt}
 
-Given a modulus in $b$ this produces the required $\mu$ value in $a$.  For any given modulus this only has to
-be computed once.  Modular reduction can now be performed with the following.
+Given a modulus in $b$ this produces the required $\mu$ value in $a$.  For any given modulus this
+only has to be computed once.  Modular reduction can now be performed with the following.
 
 \index{mp\_reduce}
 \begin{alltt}
 mp_err mp_reduce(const mp_int *a, const mp_int *b, mp_int *c);
 \end{alltt}
 
-This will reduce $a$ in place modulo $b$ with the precomputed $\mu$ value in $c$.  $a$ must be in the range
+This will reduce $a$ in place modulo $b$ with the precomputed $\mu$ value in $c$.  $a$ must be in
+the range
 $0 \le a < b^2$.
 
-\begin{alltt}
+\begin{small}
+  \begin{alltt}
 int main(void)
 \{
    mp_int   a, b, c, mu;
@@ -1602,21 +1693,22 @@ int main(void)
    return EXIT_SUCCESS;
 \}
 \end{alltt}
+\end{small}
 
 This program will calculate $a^3 \mbox{ mod }b$ if all the functions succeed.
 
 \section{Montgomery Reduction}
 
-Montgomery is a specialized reduction algorithm for any odd moduli.  Like Barrett reduction a pre--computation
-step is required.  This is accomplished with the following.
+Montgomery is a specialized reduction algorithm for any odd moduli.  Like Barrett reduction a
+pre--computation step is required.  This isaccomplished with the following.
 
 \index{mp\_montgomery\_setup}
 \begin{alltt}
 mp_err mp_montgomery_setup(const mp_int *a, mp_digit *mp);
 \end{alltt}
 
-For the given odd moduli $a$ the precomputation value is placed in $mp$.  The reduction is computed with the
-following.
+For the given odd moduli $a$ the precomputation value is placed in $mp$.  The reduction is computed
+with the following.
 
 \index{mp\_montgomery\_reduce}
 \begin{alltt}
@@ -1625,12 +1717,14 @@ mp_err mp_montgomery_reduce(mp_int *a, mp_int *m, mp_digit mp);
 This reduces $a$ in place modulo $m$ with the pre--computed value $mp$.   $a$ must be in the range
 $0 \le a < b^2$.
 
-Montgomery reduction is faster than Barrett reduction for moduli smaller than the ``Comba'' limit.  With the default
-setup for instance, the limit is $127$ digits ($3556$--bits).   Note that this function is not limited to
-$127$ digits just that it falls back to a baseline algorithm after that point.
+Montgomery reduction is faster than Barrett reduction for moduli smaller than the ``Comba'' limit.
+With the default setup for instance, the limit is $127$ digits ($3556$--bits). Note that this
+function is not limited to $127$ digits just that it falls back to a baseline algorithm after that
+point.
 
-An important observation is that this reduction does not return $a \mbox{ mod }m$ but $aR^{-1} \mbox{ mod }m$
-where $R = \beta^n$, $n$ is the n number of digits in $m$ and $\beta$ is the radix used (default is $2^{28}$).
+An important observation is that this reduction does not return $a \mbox{ mod }m$ but $aR^{-1}
+  \mbox{ mod }m$ where $R = \beta^n$, $n$ is the n number of digits in $m$ and $\beta$ is the radix
+used (default is $2^{28}$).
 
 To quickly calculate $R$ the following function was provided.
 
@@ -1640,11 +1734,12 @@ mp_err mp_montgomery_calc_normalization(mp_int *a, mp_int *b);
 \end{alltt}
 Which calculates $a = R$ for the odd moduli $b$ without using multiplication or division.
 
-The normal modus operandi for Montgomery reductions is to normalize the integers before entering the system.  For
-example, to calculate $a^3 \mbox { mod }b$ using Montgomery reduction the value of $a$ can be normalized by
-multiplying it by $R$.  Consider the following code snippet.
+The normal modus operandi for Montgomery reductions is to normalize the integers before entering
+the system.  For example, to calculate $a^3 \mbox { mod }b$ using Montgomery reduction the value of
+$a$ can be normalized by multiplying it by $R$. Consider the following code snippet.
 
-\begin{alltt}
+\begin{small}
+  \begin{alltt}
 int main(void)
 \{
    mp_int   a, b, c, R;
@@ -1716,28 +1811,32 @@ int main(void)
    return EXIT_SUCCESS;
 \}
 \end{alltt}
+\end{small}
 
-This particular example does not look too efficient but it demonstrates the point of the algorithm.  By
-normalizing the inputs the reduced results are always of the form $aR$ for some variable $a$.  This allows
-a single final reduction to correct for the normalization and the fast reduction used within the algorithm.
+This particular example does not look too efficient but it demonstrates the point of the algorithm.
+By normalizing the inputs the reduced results are always of the form $aR$ for some variable $a$.
+This allows a single final reduction to correct for the normalization and the fast reduction used
+within the algorithm.
 
 For more details consider examining the file \texttt{bn\_mp\_exptmod\_fast.c}.
 
 \section{Restricted Diminished Radix}
 
-``Diminished Radix'' reduction refers to reduction with respect to moduli that are amenable to simple
-digit shifting and small multiplications.  In this case the ``restricted'' variant refers to moduli of the
-form $\beta^k - p$ for some $k \ge 0$ and $0 < p < \beta$ where $\beta$ is the radix (default to $2^{28}$).
+``Diminished Radix'' reduction refers to reduction with respect to moduli that are amenable to
+simple digit shifting and small multiplications.  In this case the ``restricted'' variant refers to
+moduli of the form $\beta^k - p$ for some $k \ge 0$ and $0 < p < \beta$ where $\beta$ is the radix
+(default to $2^{28}$).
 
-As in the case of Montgomery reduction there is a pre--computation phase required for a given modulus.
+As in the case of Montgomery reduction there is a pre--computation phase required for a given
+modulus.
 
 \index{mp\_dr\_setup}
 \begin{alltt}
 void mp_dr_setup(const mp_int *a, mp_digit *d);
 \end{alltt}
 
-This computes the value required for the modulus $a$ and stores it in $d$.  This function cannot fail
-and does not return any error codes.
+This computes the value required for the modulus $a$ and stores it in $d$.  This function cannot
+fail and does not return any error codes.
 
 To determine if $a$ is a valid DR modulus:
 \index{mp\_dr\_is\_modulus}
@@ -1752,22 +1851,23 @@ After the pre--computation a reduction can be performed with the following.
 mp_err mp_dr_reduce(mp_int *a, const mp_int *b, mp_digit mp);
 \end{alltt}
 
-This reduces $a$ in place modulo $b$ with the pre--computed value $mp$.  $b$ must be of a restricted
-diminished radix form and $a$ must be in the range $0 \le a < b^2$.  Diminished radix reductions are
-much faster than both Barrett and Montgomery reductions as they have a much lower asymptotic running time.
+This reduces $a$ in place modulo $b$ with the pre--computed value $mp$. $b$ must be of a restricted
+diminished radix form and $a$ must be in the range $0 \le a < b^2$.  Diminished radix reductions
+are much faster than both Barrett and Montgomery reductions as they have a much lower asymptotic
+running time.
 
-Since the moduli are restricted this algorithm is not particularly useful for something like Rabin, RSA or
-BBS cryptographic purposes.  This reduction algorithm is useful for Diffie-Hellman and ECC where fixed
-primes are acceptable.
+Since the moduli are restricted this algorithm is not particularly useful for something like Rabin,
+RSA or BBS cryptographic purposes.  This reduction algorithm is useful for Diffie--Hellman and ECC
+where fixed primes are acceptable.
 
-Note that unlike Montgomery reduction there is no normalization process.  The result of this function is
-equal to the correct residue.
+Note that unlike Montgomery reduction there is no normalization process.  The result of this
+function is equal to the correct residue.
 
 \section{Unrestricted Diminished Radix}
 
-Unrestricted reductions work much like the restricted counterparts except in this case the moduli is of the
-form $2^k - p$ for $0 < p < \beta$.  In this sense the unrestricted reductions are more flexible as they
-can be applied to a wider range of numbers.
+Unrestricted reductions work much like the restricted counterparts except in this case the moduli
+is of the form $2^k - p$ for $0 < p < \beta$. In this sense the unrestricted reductions are more
+flexible as they can be applied to a wider range of numbers.
 
 \index{mp\_reduce\_2k\_setup}\index{mp\_reduce\_2k\_setup\_l}
 \begin{alltt}
@@ -1783,10 +1883,12 @@ mp_err mp_reduce_2k(mp_int *a, const mp_int *n, mp_digit d);
 mp_err mp_reduce_2k_l(mp_int *a, const mp_int *n, const mp_int *d);
 \end{alltt}
 
-This will reduce $a$ in place modulo $n$ with the pre--computed value $d$.  From my experience this routine is
-slower than the function \texttt{mp\_dr\_reduce} but faster for most moduli sizes than the Montgomery reduction.
+This will reduce $a$ in place modulo $n$ with the pre--computed value $d$.  From my experience this
+routine is slower than the function \texttt{mp\_dr\_reduce} but faster for most moduli sizes than
+the Montgomery reduction.
 
-To determine if \texttt{mp\_reduce\_2k} can be used at all, ask the function \texttt{mp\_reduce\_is\_2k}.
+To determine if \texttt{mp\_reduce\_2k} can be used at all, ask the function
+\texttt{mp\_reduce\_is\_2k}.
 
 \index{mp\_reduce\_is\_2k}\index{mp\_reduce\_is\_2k\_l}
 \begin{alltt}
@@ -1796,7 +1898,8 @@ mp_bool mp_reduce_is_2k_l(const mp_int *a);
 
 \section{Combined Modular Reduction}
 
-Some of the combinations of an arithmetic operations followed by a modular reduction can be done in a faster way. The ones implemented are:
+Some of the combinations of an arithmetic operations followed by a modular reduction can be done in
+a faster way. The ones implemented are:
 
 Addition $d = (a + b) \mod c$
 \index{mp\_addmod}
@@ -1819,8 +1922,6 @@ Squaring  $d = (a^2) \mod c$
 mp_err mp_sqrmod(const mp_int *a, const mp_int *b, const mp_int *c, mp_int *d);
 \end{alltt}
 
-
-
 \chapter{Exponentiation}
 \section{Single Digit Exponentiation}
 \index{mp\_expt\_u32}
@@ -1834,15 +1935,15 @@ This function computes $c = a^b$.
 \begin{alltt}
 mp_err mp_exptmod (const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y)
 \end{alltt}
-This computes $Y \equiv G^X \mbox{ (mod }P\mbox{)}$ using a variable width sliding window algorithm.  This function
-will automatically detect the fastest modular reduction technique to use during the operation.  For negative values of
-$X$ the operation is performed as $Y \equiv (G^{-1} \mbox{ mod }P)^{\vert X \vert} \mbox{ (mod }P\mbox{)}$ provided that
-$gcd(G, P) = 1$.
+This computes $Y \equiv G^X \mbox{ (mod }P\mbox{)}$ using a variable width sliding window
+algorithm.  This function will automatically detect the fastest modular reduction technique to use
+during the operation. For negative values of $X$ the operation is performed as $Y \equiv (G^{-1}
+  \mbox{ mod }P)^{\vert X \vert} \mbox{ (mod }P\mbox{)}$ provided that $gcd(G, P) = 1$.
 
-This function is actually a shell around the two internal exponentiation functions.  This routine will automatically
-detect when Barrett, Montgomery, Restricted and Unrestricted Diminished Radix based exponentiation can be used.  Generally
-moduli of the a ``restricted diminished radix'' form lead to the fastest modular exponentiations.  Followed by Montgomery
-and the other two algorithms.
+This function is actually a shell around the two internal exponentiation functions.  This routine
+will automatically detect when Barrett, Montgomery, Restricted and Unrestricted Diminished Radix
+based exponentiation can be used.  Generally moduli of the a ``restricted diminished radix'' form
+lead to the fastest modular exponentiations. Followed by Montgomery and the other two algorithms.
 
 \section{Modulus a Power of Two}
 \index{mp\_mod\_2d}
@@ -1856,29 +1957,34 @@ It calculates $c = a \mod 2^b$.
 \begin{alltt}
 mp_err mp_root_u32(const mp_int *a, uint32_t b, mp_int *c)
 \end{alltt}
-This computes $c = a^{1/b}$ such that $c^b \le a$ and $(c+1)^b > a$. Will return a positive root only for even roots and return
-a root with the sign of the input for odd roots.  For example, performing $4^{1/2}$ will return $2$ whereas $(-8)^{1/3}$
-will return $-2$.
+This computes $c = a^{1/b}$ such that $c^b \le a$ and $(c+1)^b > a$. Will return a positive root
+only for even roots and return a root with the sign of the input for odd roots.  For example,
+performing $4^{1/2}$ will return $2$ whereas $(-8)^{1/3}$ will return $-2$.
 
-This algorithm uses the ``Newton Approximation'' method and will converge on the correct root fairly quickly.
+This algorithm uses the ``Newton Approximation'' method and will converge on the correct root
+fairly quickly.
 
-The square root  $c = a^{1/2}$ (with the same conditions $c^2 \le a$ and $(c+1)^2 > a$) is implemented with a faster algorithm.
+The square root  $c = a^{1/2}$ (with the same conditions $c^2 \le a$ and $(c+1)^2 > a$) is
+implemented with a faster algorithm.
 
 \index{mp\_sqrt}
 \begin{alltt}
 mp_err mp_sqrt(const mp_int *arg, mp_int *ret)
 \end{alltt}
 
-
 \chapter{Logarithm}
 \section{Integer Logarithm}
-A logarithm function for positive integer input \texttt{a, base} computing  $\floor{\log_bx}$ such that $(\log_b x)^b \le x$.
-\index{mp\_ilogb}
+A logarithm function for positive integer input \texttt{a, base} computing  $\floor{\log_bx}$ such
+that $(\log_b x)^b \le x$.
+
+\index{mp\_log\_u32}
 \begin{alltt}
 mp_err mp_log_u32(const mp_int *a, uint32_t base, uint32_t *c)
 \end{alltt}
+
 \subsection{Example}
-\begin{alltt}
+\begin{small}
+  \begin{alltt}
 #include <stdlib.h>
 #include <stdio.h>
 #include <errno.h>
@@ -1933,6 +2039,7 @@ int main(int argc, char **argv)
    exit(EXIT_SUCCESS);
 }
 \end{alltt}
+\end{small}
 
 \chapter{Prime Numbers}
 
@@ -1941,217 +2048,332 @@ int main(int argc, char **argv)
 \begin{alltt}
 mp_err mp_prime_fermat (const mp_int *a, const mp_int *b, int *result)
 \end{alltt}
-Performs a Fermat primality test to the base $b$.  That is it computes $b^a \mbox{ mod }a$ and tests whether the value is
-equal to $b$ or not.  If the values are equal then $a$ is probably prime and $result$ is set to one.  Otherwise $result$
-is set to zero.
+Performs a Fermat primality test to the base $b$.  That is it computes $b^a \mbox{ mod }a$ and
+tests whether the value is equal to $b$ or not.  If the values are equal then $a$ is probably prime
+and $result$ is set to one. Otherwise $result$ is set to zero.
 
-\section{Miller-Rabin Test}
+\section{Miller--Rabin Test}
 \index{mp\_prime\_miller\_rabin}
 \begin{alltt}
 mp_err mp_prime_miller_rabin (const mp_int *a, const mp_int *b, int *result)
 \end{alltt}
-Performs a Miller-Rabin test to the base $b$ of $a$.  This test is much stronger than the Fermat test and is very hard to
-fool (besides with Carmichael numbers).  If $a$ passes the test (therefore is probably prime) $result$ is set to one.
-Otherwise $result$ is set to zero.
+Performs a Miller--Rabin test to the base $b$ of $a$.  This test is much stronger than the Fermat
+test and is very hard to fool (besides with Carmichael numbers).  If $a$ passes the test (therefore
+is probably prime) $result$ is set to one. Otherwise $result$ is set to zero.
 
-Note that it is suggested that you use the Miller-Rabin test instead of the Fermat test since all of the failures of
-Miller-Rabin are a subset of the failures of the Fermat test.
+Note that it is suggested that you use the Miller--Rabin test instead of the Fermat test since all
+of the failures of Miller--Rabin are a subset of the failures of the Fermat test.
 
 \subsection{Required Number of Tests}
-Generally to ensure a number is very likely to be prime you have to perform the Miller-Rabin with at least a half-dozen
-or so unique bases.  However, it has been proven that the probability of failure goes down as the size of the input goes up.
-This is why a simple function has been provided to help out.
+Generally to ensure a number is very likely to be prime you have to perform the Miller--Rabin with
+at least a half--dozen or so unique bases.  However, it has been proven that the probability of
+failure goes down as the size of the input goes up. This is why a simple function has been provided
+to help out.
 
 \index{mp\_prime\_rabin\_miller\_trials}
 \begin{alltt}
 mp_err mp_prime_rabin_miller_trials(int size)
 \end{alltt}
-This returns the number of trials required for a low probability of failure for a given \texttt{size} expressed in bits.  This comes in handy specially since larger numbers are slower to test. For example, a 512-bit number would require 18 tests for a probability of $2^{-160}$ whereas a 1024-bit number would only require 12 tests for a probability of $2^{-192}$. The exact values as implemented are listed in table \ref{table:millerrabinrunsimpl}.
+This returns the number of trials required for a low probability of failure for a given
+\texttt{size} expressed in bits.  This comes in handy specially since larger numbers are slower to
+test. For example, a 512--bit number would require 18 tests for a probability of $2^{-160}$ whereas
+a 1024--bit number would only require 12 tests for a probability of $2^{-192}$. The exact values as
+implemented are listed in table \ref{table:millerrabinrunsimpl}.
 
 \begin{table}[h]
-\begin{center}
-\begin{tabular}{c c c}
-\textbf{bits} & \textbf{Rounds} & \textbf{Error}\\
- 80 & -1  &  Use deterministic algorithm for size <= 80 bits \\
- 81 & 37  &  $2^{-96}$ \\
- 96 & 32  & $2^{-96}$ \\
- 128 & 40  & $2^{-112}$ \\
- 160 & 35  & $2^{-112}$ \\
- 256 & 27  & $2^{-128}$ \\
- 384 & 16  & $2^{-128}$ \\
- 512 & 18  & $2^{-160}$ \\
- 768 & 11  & $2^{-160}$ \\
- 896 & 10  & $2^{-160}$ \\
- 1024 & 12  & $2^{-192}$ \\
- 1536 & 8   & $2^{-192}$ \\
- 2048 & 6   & $2^{-192}$ \\
- 3072 & 4   & $2^{-192}$ \\
- 4096 & 5   & $2^{-256}$ \\
- 5120 & 4   & $2^{-256}$ \\
- 6144 & 4   & $2^{-256}$ \\
- 8192 & 3   & $2^{-256}$ \\
- 9216 & 3   & $2^{-256}$ \\
- 10240 & 2  & $2^{-256}$
-\end{tabular}
-\caption{ Number of Miller-Rabin rounds as implemented } \label{table:millerrabinrunsimpl}
-\end{center}
+  \begin{center}
+    \begin{tabular}{c c c}
+      \textbf{bits} & \textbf{Rounds} & \textbf{Error}                                  \\
+      80            & -1              & Use deterministic algorithm for size <= 80 bits \\
+      81            & 37              & $2^{-96}$                                       \\
+      96            & 32              & $2^{-96}$                                       \\
+      128           & 40              & $2^{-112}$                                      \\
+      160           & 35              & $2^{-112}$                                      \\
+      256           & 27              & $2^{-128}$                                      \\
+      384           & 16              & $2^{-128}$                                      \\
+      512           & 18              & $2^{-160}$                                      \\
+      768           & 11              & $2^{-160}$                                      \\
+      896           & 10              & $2^{-160}$                                      \\
+      1024          & 12              & $2^{-192}$                                      \\
+      1536          & 8               & $2^{-192}$                                      \\
+      2048          & 6               & $2^{-192}$                                      \\
+      3072          & 4               & $2^{-192}$                                      \\
+      4096          & 5               & $2^{-256}$                                      \\
+      5120          & 4               & $2^{-256}$                                      \\
+      6144          & 4               & $2^{-256}$                                      \\
+      8192          & 3               & $2^{-256}$                                      \\
+      9216          & 3               & $2^{-256}$                                      \\
+      10240         & 2               & $2^{-256}$
+    \end{tabular}
+    \caption{ Number of Miller-Rabin rounds as implemented } \label{table:millerrabinrunsimpl}
+  \end{center}
 \end{table}
 
-A small table, broke in two for typographical reasons, with the number of rounds of Miller-Rabin tests is shown below. The numbers have been computed with a PARI/GP script listed in appendix \ref{app:numberofmrcomp}.
+A small table, broke in two for typographical reasons, with the number of rounds of Miller--Rabin
+tests is shown below. The numbers have been computed with a PARI/GP script listed in appendix
+\ref{app:numberofmrcomp}.
 
-The first column is the number of bits $b$ in the prime $p = 2^b$, the numbers in the first row represent the
-probability that the number that all of the Miller-Rabin tests deemed a pseudoprime is actually a composite. There is a deterministic test for numbers smaller than $2^{80}$.
+The first column is the number of bits $b$ in the prime $p = 2^b$, the numbers in the first row
+represent the probability that the number that all of the Miller--Rabin tests deemed a pseudoprime
+is actually a composite. There is a deterministic test for numbers smaller than $2^{80}$.
 
 \begin{table}[h]
-\begin{center}
-\begin{tabular}{c c c c c c c}
-\textbf{bits} & $\mathbf{2^{-80}}$ & $\mathbf{2^{-96}}$ & $\mathbf{2^{-112}}$ & $\mathbf{2^{-128}}$ & $\mathbf{2^{-160}}$ & $\mathbf{2^{-192}}$ \\
-80    & 31 & 39 & 47 & 55 & 71 & 87  \\
-96    & 29 & 37 & 45 & 53 & 69 & 85  \\
-128   & 24 & 32 & 40 & 48 & 64 & 80  \\
-160   & 19 & 27 & 35 & 43 & 59 & 75  \\
-192   & 15 & 21 & 29 & 37 & 53 & 69  \\
-256   & 10 & 15 & 20 & 27 & 43 & 59  \\
-384   & 7  & 9  & 12 & 16 & 25 & 38  \\
-512   & 5  & 7  & 9  & 12 & 18 & 26  \\
-768   & 4  & 5  & 6  & 8  & 11 & 16  \\
-1024  & 3  & 4  & 5  & 6  & 9  & 12  \\
-1536  & 2  & 3  & 3  & 4  & 6  & 8   \\
-2048  & 2  & 2  & 3  & 3  & 4  & 6   \\
-3072  & 1  & 2  & 2  & 2  & 3  & 4   \\
-4096  & 1  & 1  & 2  & 2  & 2  & 3   \\
-6144  & 1  & 1  & 1  & 1  & 2  & 2   \\
-8192  & 1  & 1  & 1  & 1  & 2  & 2   \\
-12288 & 1  & 1  & 1  & 1  & 1  & 1   \\
-16384 & 1  & 1  & 1  & 1  & 1  & 1   \\
-24576 & 1  & 1  & 1  & 1  & 1  & 1   \\
-32768 & 1  & 1  & 1  & 1  & 1  & 1
-\end{tabular}
-\caption{ Number of Miller-Rabin rounds. Part I } \label{table:millerrabinrunsp1}
-\end{center}
+  \begin{center}
+    \begin{tabular}{c c c c c c c}
+      \textbf{bits} & $\mathbf{2^{-80}}$  & $\mathbf{2^{-96}}$  & $\mathbf{2^{-112}}$ &
+      $\mathbf{2^{-128}}$
+                    & $\mathbf{2^{-160}}$ & $\mathbf{2^{-192}}$
+      \\
+      80            & 31                  & 39                  & 47                  & 55
+                    & 71                  & 87                                             \\
+      96            & 29                  & 37                  & 45                  & 53
+                    & 69                  & 85                                             \\
+      128           & 24                  & 32                  & 40                  & 48
+                    & 64                  & 80                                             \\
+      160           & 19                  & 27                  & 35                  & 43
+                    & 59                  & 75                                             \\
+      192           & 15                  & 21                  & 29                  & 37
+                    & 53                  & 69                                             \\
+      256           & 10                  & 15                  & 20                  & 27
+                    & 43                  & 59                                             \\
+      384           & 7                   & 9                   & 12                  & 16
+                    & 25                  & 38                                             \\
+      512           & 5                   & 7                   & 9                   & 12
+                    & 18                  & 26                                             \\
+      768           & 4                   & 5                   & 6                   & 8
+                    & 11                  & 16                                             \\
+      1024          & 3                   & 4                   & 5                   & 6
+                    & 9                   & 12                                             \\
+      1536          & 2                   & 3                   & 3                   & 4
+                    & 6                   & 8                                              \\
+      2048          & 2                   & 2                   & 3                   & 3
+                    & 4                   & 6                                              \\
+      3072          & 1                   & 2                   & 2                   & 2
+                    & 3                   & 4                                              \\
+      4096          & 1                   & 1                   & 2                   & 2
+                    & 2                   & 3                                              \\
+      6144          & 1                   & 1                   & 1                   & 1
+                    & 2                   & 2                                              \\
+      8192          & 1                   & 1                   & 1                   & 1
+                    & 2                   & 2                                              \\
+      12288         & 1                   & 1                   & 1                   & 1
+                    & 1                   & 1                                              \\
+      16384         & 1                   & 1                   & 1                   & 1
+                    & 1                   & 1                                              \\
+      24576         & 1                   & 1                   & 1                   & 1
+                    & 1                   & 1                                              \\
+      32768         & 1                   & 1                   & 1                   & 1
+                    & 1                   & 1
+    \end{tabular}
+    \caption{ Number of Miller-Rabin rounds. Part I } \label{table:millerrabinrunsp1}
+  \end{center}
 \end{table}
 \newpage
 \begin{table}[h]
-\begin{center}
-\begin{tabular}{c c c c c c c c}
-\textbf{bits} &$\mathbf{2^{-224}}$ & $\mathbf{2^{-256}}$ & $\mathbf{2^{-288}}$ & $\mathbf{2^{-320}}$ & $\mathbf{2^{-352}}$ & $\mathbf{2^{-384}}$ & $\mathbf{2^{-416}}$\\
-80    & 103 & 119 & 135 & 151 & 167 & 183 & 199 \\
-96    & 101 & 117 & 133 & 149 & 165 & 181 & 197 \\
-128   & 96  & 112 & 128 & 144 & 160 & 176 & 192 \\
-160   & 91  & 107 & 123 & 139 & 155 & 171 & 187 \\
-192   & 85  & 101 & 117 & 133 & 149 & 165 & 181 \\
-256   & 75  & 91  & 107 & 123 & 139 & 155 & 171 \\
-384   & 54  & 70  & 86  & 102 & 118 & 134 & 150 \\
-512   & 36  & 49  & 65  & 81  & 97  & 113 & 129 \\
-768   & 22  & 29  & 37  & 47  & 58  & 70  & 86  \\
-1024  & 16  & 21  & 26  & 33  & 40  & 48  & 58  \\
-1536  & 10  & 13  & 17  & 21  & 25  & 30  & 35  \\
-2048  & 8   & 10  & 13  & 15  & 18  & 22  & 26  \\
-3072  & 5   & 7   & 8	& 10  & 12  & 14  & 17  \\
-4096  & 4   & 5   & 6	& 8   & 9   & 11  & 12  \\
-6144  & 3   & 4   & 4	& 5   & 6   & 7   & 8	\\
-8192  & 2   & 3   & 3	& 4   & 5   & 6   & 6	\\
-12288 & 2   & 2   & 2	& 3   & 3   & 4   & 4	\\
-16384 & 1   & 2   & 2	& 2   & 3   & 3   & 3	\\
-24576 & 1   & 1   & 2	& 2   & 2   & 2   & 2	\\
-32768 & 1   & 1   & 1	& 1   & 2   & 2   & 2
-\end{tabular}
-\caption{ Number of Miller-Rabin rounds. Part II } \label{table:millerrabinrunsp2}
-\end{center}
+  \begin{center}
+    \begin{tabular}{c c c c c c c c}
+      \textbf{bits}       & $\mathbf{2^{-224}}$ & $\mathbf{2^{-256}}$ & $\mathbf{2^{-288}}$ &
+      $\mathbf{2^{-320}}$ & $\mathbf{2^{-352}}$ & $\mathbf{2^{-384}}$ & $\mathbf{2^{-416}}$
+      \\
+      80                  & 103                 & 119                 & 135                 & 151 &
+      167                 & 183                 & 199
+      \\
+      96                  & 101                 & 117                 & 133                 & 149 &
+      165                 & 181                 & 197
+      \\
+      128                 & 96                  & 112                 & 128                 & 144 &
+      160                 & 176                 & 192
+      \\
+      160                 & 91                  & 107                 & 123                 & 139 &
+      155                 & 171                 & 187
+      \\
+      192                 & 85                  & 101                 & 117                 & 133 &
+      149                 & 165                 & 181
+      \\
+      256                 & 75                  & 91                  & 107                 & 123 &
+      139                 & 155                 & 171
+      \\
+      384                 & 54                  & 70                  & 86                  & 102 &
+      118                 & 134                 & 150
+      \\
+      512                 & 36                  & 49                  & 65                  & 81  &
+      97                  & 113                 & 129
+      \\
+      768                 & 22                  & 29                  & 37                  & 47  &
+      58                  & 70                  & 86
+      \\
+      1024                & 16                  & 21                  & 26                  & 33  &
+      40                  & 48                  & 58
+      \\
+      1536                & 10                  & 13                  & 17                  & 21  &
+      25                  & 30                  & 35
+      \\
+      2048                & 8                   & 10                  & 13                  & 15  &
+      18                  & 22                  & 26
+      \\
+      3072                & 5                   & 7                   & 8                   & 10  &
+      12                  & 14                  & 17
+      \\
+      4096                & 4                   & 5                   & 6                   & 8   &
+      9                   & 11                  & 12
+      \\
+      6144                & 3                   & 4                   & 4                   & 5   &
+      6                   & 7                   & 8
+      \\
+      8192                & 2                   & 3                   & 3                   & 4   &
+      5                   & 6                   & 6
+      \\
+      12288               & 2                   & 2                   & 2                   & 3   &
+      3                   & 4                   & 4
+      \\
+      16384               & 1                   & 2                   & 2                   & 2   &
+      3                   & 3                   & 3
+      \\
+      24576               & 1                   & 1                   & 2                   & 2   &
+      2                   & 2                   & 2
+      \\
+      32768               & 1                   & 1                   & 1                   & 1   &
+      2                   & 2                   & 2
+    \end{tabular}
+    \caption{ Number of Miller-Rabin rounds. Part II } \label{table:millerrabinrunsp2}
+  \end{center}
 \end{table}
 
-Determining the probability needed to pick the right column is a bit harder. Fips 186.4, for example has $2^{-80}$ for $512$ bit large numbers, $2^{-112}$ for $1024$ bits, and $2^{128}$ for $1536$ bits. It can be seen in table \ref{table:millerrabinrunsp1} that those combinations follow the diagonal from $(512,2^{-80})$ downwards and to the right to gain a lower probabilty of getting a composite declared a pseudoprime for the same amount of work or less.
+Determining the probability needed to pick the right column is a bit harder. Fips 186.4, for
+example has $2^{-80}$ for $512$ bit large numbers, $2^{-112}$ for $1024$ bits, and $2^{128}$ for
+$1536$ bits. It can be seen in table \ref{table:millerrabinrunsp1} that those combinations follow
+the diagonal from $(512,2^{-80})$ downwards and to the right to gain a lower probabilty of getting
+a composite declared a pseudoprime for the same amount of work or less.
 
-If this version of the library has the strong Lucas-Selfridge and/or the Frobenius-Underwood test implemented only one or two rounds of the Miller-Rabin test with a random base is necesssary for numbers larger than or equal to $1024$ bits.
+If this version of the library has the strong Lucas--Selfridge and/or the Frobenius--Underwood test
+implemented only one or two rounds of the Miller--Rabin test with a random base is necessary for
+numbers larger than or equal to $1024$ bits.
 
-This function is meant for RSA. The number of rounds for DSA is $\lceil -log_2(p)/2\rceil$ with $p$ the probability which is just the half of the absolute value of $p$ if given as a power of two. E.g.: with $p = 2^{-128}$, $\lceil -log_2(p)/2\rceil = 64$.
+This function is meant for RSA. The number of rounds for DSA is $\lceil -log_2(p)/2\rceil$ with $p$
+the probability which is just the half of the absolute value of $p$ if given as a power of two.
+E.g.: with $p = 2^{-128}$, $\lceil -log_2(p)/2\rceil = 64$.
 
-This function can be used to test a DSA prime directly if these rounds are followed by a Lucas test.
+This function can be used to test a DSA prime directly if these rounds are followed by a Lucas
+test.
 
 See also table C.1 in FIPS 186-4.
 
-\section{Strong Lucas-Selfridge Test}
+\section{Strong Lucas--Selfridge Test}
 \index{mp\_prime\_strong\_lucas\_selfridge}
 \begin{alltt}
 mp_err mp_prime_strong_lucas_selfridge(const mp_int *a, mp_bool *result)
 \end{alltt}
-Performs a strong Lucas-Selfridge test. The strong Lucas-Selfridge test together with the Rabin-Miler test with bases $2$ and $3$ resemble the BPSW test. The single internal use is a compile-time option in \texttt{mp\_prime\_is\_prime} and can be excluded
-from the Libtommath build if not needed.
+Performs a strong Lucas--Selfridge test. The strong Lucas--Selfridge test together with the
+Rabin--Miller test with bases $2$ and $3$ resemble the BPSW test. The single internal use is a
+compile--time option in \texttt{mp\_prime\_is\_prime} and can be excluded from the Libtommath build
+if not needed.
 
-\section{Frobenius (Underwood)  Test}
+\section{Frobenius (Underwood)	Test}
 \index{mp\_prime\_frobenius\_underwood}
 \begin{alltt}
 mp_err mp_prime_frobenius_underwood(const mp_int *N, mp_bool *result)
 \end{alltt}
-Performs the variant of the Frobenius test as described by Paul Underwood. It can be included at build-time if the preprocessor macro \texttt{LTM\_USE\_FROBENIUS\_TEST} is defined and will be used instead of the Lucas-Selfridge test.
+Performs the variant of the Frobenius test as described by Paul Underwood. It can be included at
+build--time if the preprocessor macro \texttt{LTM\_USE\_FROBENIUS\_TEST} is defined and will be
+used
+instead of the Lucas--Selfridge test.
 
-It returns \texttt{MP\_ITER} if the number of iterations is exhausted, assumes a composite as the input and sets \texttt{result} accordingly. This will reduce the set of available pseudoprimes by a very small amount: test with large datasets (more than $10^{10}$ numbers, both randomly chosen and sequences of odd numbers with a random start point) found only 31 (thirty-one) numbers with $a > 120$ and none at all with just an additional simple check for divisors $d < 2^8$.
+It returns \texttt{MP\_ITER} if the number of iterations is exhausted, assumes a composite as the
+input and sets \texttt{result} accordingly. This will reduce the set of available pseudoprimes by a
+very small amount: test with large datasets (more than $10^{10}$ numbers, both randomly chosen and
+sequences of odd numbers with a random start point) found only 31 (thirty--one) numbers with $a >
+  120$ and none at all with just an additional simple check for divisors $d < 2^8$.
 
 \section{Primality Testing}
-Testing if a number is a square can be done a bit faster than just by calculating the square root. It is used by the primality testing function described below.
+Testing if a number is a square can be done a bit faster than just by calculating the square root.
+It is used by the primality testing function described below.
 \index{mp\_is\_square}
 \begin{alltt}
 mp_err mp_is_square(const mp_int *arg, mp_bool *ret);
 \end{alltt}
 
-
 \index{mp\_prime\_is\_prime}
 \begin{alltt}
 mp_err mp_prime_is_prime(const mp_int *a, int t, mp_bool *result)
 \end{alltt}
-This will perform a trial division followed by two rounds of Miller-Rabin with bases 2 and 3 and a Lucas-Selfridge test. The Frobenius-Underwood is available as a compile-time option with the preprocessor macro \texttt{LTM\_USE\_FROBENIUS\_TEST}. See file
-\texttt{bn\_mp\_prime\_is\_prime.c} for the necessary details. It shall be noted that both functions are much slower than
-the Miller-Rabin test and if speed is an essential issue, the macro \texttt{LTM\_USE\_ONLY\_MR} switches the Frobenius-Underwood test and the Lucas-Selfridge test off and their code will not even be compiled into the library.
+This will perform a trial division followed by two rounds of Miller--Rabin with bases 2 and 3 and a
+Lucas--Selfridge test. The Frobenius--Underwood is available as a compile--time option with the
+preprocessor macro \texttt{LTM\_USE\_FROBENIUS\_TEST}. See file \texttt{bn\_mp\_prime\_is\_prime.c}
+for the necessary details. It shall be noted that both functions are much slower than the
+Miller--Rabin test and if speed is an essential issue, the macro \texttt{LTM\_USE\_ONLY\_MR}
+switches the Frobenius--Underwood test and the Lucas--Selfridge test off and their code will not
+even be compiled into the library.
 
-If $t$ is set to a positive value $t$ additional rounds of the Miller-Rabin test with random bases will be performed to allow for Fips 186.4 (vid.~p.~126ff) compliance. The function \texttt{mp\_prime\_rabin\_miller\_trials} can be used to determine the number of rounds. It is vital that the function \texttt{mp\_rand} has a cryptographically strong random number generator available.
+If $t$ is set to a positive value $t$ additional rounds of the Miller--Rabin test with random bases
+will be performed to allow for Fips 186.4 (vid.~p.~126ff) compliance. The function
+\texttt{mp\_prime\_rabin\_miller\_trials} can be used to determine the number of rounds. It is
+vital that the function \texttt{mp\_rand} has a cryptographically strong random number generator
+available.
 
-One Miller-Rabin tests with a random base will be run automatically, so by setting $t$ to a positive value this function will run $t + 1$ Miller-Rabin tests with random bases.
+One Miller--Rabin tests with a random base will be run automatically, so by setting $t$ to a
+positive value this function will run $t + 1$ Miller--Rabin tests with random bases.
 
-If  $t$ is set to a negative value the test will run the deterministic Miller-Rabin test for the primes up to $3\,317\,044\,064\,679\,887\,385\,961\,981$\footnote{The semiprime $1287836182261\cdot 2575672364521$ with both factors smaller than $2^64$. An alternative with all factors smaller than $2^32$ is $4290067842\cdot 262853\cdot 1206721\cdot 2134439 + 3$}. That limit has to be checked by the caller.
+If  $t$ is set to a negative value the test will run the deterministic Miller--Rabin test for the
+primes up to $3\,317\,044\,064\,679\,887\ 385\,961\,981$\footnote{The semiprime $1287836182261\cdot
+    2575672364521$ with both factors smaller than $2^64$. An alternative with all factors smaller
+  than
+  $2^32$ is $4290067842\cdot 262853\cdot 1206721\cdot 2134439 + 3$}. That limit has to be checked
+by
+the caller.
 
-If $a$ passes all of the tests $result$ is set to \texttt{MP\_YES}, otherwise it is set to \texttt{MP\_NO}.
+If $a$ passes all of the tests $result$ is set to \texttt{MP\_YES}, otherwise it is set to
+\texttt{MP\_NO}.
 
 \section{Next Prime}
 \index{mp\_prime\_next\_prime}
 \begin{alltt}
 mp_err mp_prime_next_prime(mp_int *a, int t, mp_bool bbs_style)
 \end{alltt}
-This finds the next prime after $a$ that passes the function \texttt{mp\_prime\_is\_prime} with $t$ tests but see the documentation for
-\texttt{mp\_prime\_is\_prime} for details regarding the use of the argument $t$.  Set $bbs\_style$ to \texttt{MP\_YES} if you
-want only the next prime congruent to $3 \mbox{ mod } 4$, otherwise set it to \texttt{MP\_NO} to find any next prime.
+This finds the next prime after $a$ that passes the function \texttt{mp\_prime\_is\_prime} with $t$
+tests but see the documentation for \texttt{mp\_prime\_is\_prime} for details regarding the use of
+the argument $t$.  Set $bbs\_style$ to \texttt{MP\_YES} if you want only the next prime congruent
+to $3 \mbox{ mod } 4$, otherwise set it to \texttt{MP\_NO} to find any next prime.
 
 \section{Random Primes}
 \index{mp\_prime\_rand}
 \begin{alltt}
 mp_err mp_prime_rand(mp_int *a, int t, int size, int flags);
 \end{alltt}
-This will generate a prime in $a$ using $t$ tests of the primality testing algorithms.
-See the documentation for mp\_prime\_is\_prime for details regarding the use of the argument $t$.
-The variable $size$ specifies the bit length of the prime desired.
-The variable $flags$ specifies one of several options available
-(see fig. \ref{fig:primeopts}) which can be OR'ed together.
+This will generate a prime in $a$ using $t$ tests of the primality testing algorithms. See the
+documentation for the function \texttt{mp\_prime\_is\_prime} for details regarding the use of the
+argument \texttt{t}. The parameter \texttt{size} specifies the bit--length of the prime desired.
+The parameter \texttt{flags} specifies one of several options available (see fig.
+\ref{fig:primeopts}) which can be OR'ed together.
 
-The function mp\_prime\_rand() is suitable for generating primes which must be secret (as in the case of RSA) since there
-is no skew on the least significant bits.
+The function \texttt{mp\_prime\_rand} is suitable for generating primes which must be secret (as in
+the case of RSA) since there is no skew on the least significant bits.
 
 \begin{figure}[h]
-\begin{center}
-\begin{small}
-\begin{tabular}{|r|l|}
-\hline \textbf{Flag}         & \textbf{Meaning} \\
-\hline MP\_PRIME\_BBS       & Make the prime congruent to $3$ modulo $4$ \\
-\hline MP\_PRIME\_SAFE      & Make a prime $p$ such that $(p - 1)/2$ is also prime. \\
-                             & This option implies MP\_PRIME\_BBS as well. \\
-\hline MP\_PRIME\_2MSB\_OFF & Makes sure that the bit adjacent to the most significant bit \\
-                             & Is forced to zero.  \\
-\hline MP\_PRIME\_2MSB\_ON  & Makes sure that the bit adjacent to the most significant bit \\
-                             & Is forced to one. \\
-\hline
-\end{tabular}
-\end{small}
-\end{center}
-\caption{Primality Generation Options}
-\label{fig:primeopts}
+  \begin{center}
+    \begin{small}
+      \begin{tabular}{|r|l|}
+        \hline \textbf{Flag}        & \textbf{Meaning}
+        \\
+        \hline MP\_PRIME\_BBS       & Make the prime congruent to $3$ modulo $4$
+        \\
+        \hline MP\_PRIME\_SAFE      & Make a prime $p$ such that $(p - 1)/2$ is also prime.
+        \\
+                                    & This option implies MP\_PRIME\_BBS as well.
+        \\
+        \hline MP\_PRIME\_2MSB\_OFF & Makes sure that the bit adjacent to the most significant bit
+        \\
+                                    & Is forced to zero.
+        \\
+        \hline MP\_PRIME\_2MSB\_ON  & Makes sure that the bit adjacent to the most significant bit
+        \\
+                                    & Is forced to one.
+        \\
+        \hline
+      \end{tabular}
+    \end{small}
+  \end{center}
+  \caption{Primality Generation Options}
+  \label{fig:primeopts}
 \end{figure}
 
 \chapter{Random Number Generation}
@@ -2160,7 +2382,8 @@ is no skew on the least significant bits.
 \begin{alltt}
 mp_err mp_rand_digit(mp_digit *r)
 \end{alltt}
-This function generates a random number in \texttt{r} of the size given in \texttt{r} (that is, the variable is used for in- and output) but not more than \texttt{MP\_DIGIT\_MAX} bits.
+This function generates a random number in \texttt{r} of the size given in \texttt{r} (that is, the
+variable is used for in-- and output) but not more than \texttt{MP\_DIGIT\_MAX} bits.
 
 \index{mp\_rand}
 \begin{alltt}
@@ -2168,14 +2391,16 @@ mp_err mp_rand(mp_int *a, int digits)
 \end{alltt}
 This function generates a random number of \texttt{digits} bits.
 
-The random number generated with these two functions is cryptographically secure if the source of random numbers the operating systems offers is cryptographically secure. It will use \texttt{arc4random()} if the OS is a BSD flavor, Wincrypt on Windows, or \texttt{/dev/urandom} on all operating systems that have it.
+The random number generated with these two functions is cryptographically secure if the source of
+random numbers the operating systems offers is cryptographically secure. It will use
+\texttt{arc4random()} if the OS is a BSD flavor, Wincrypt on Windows, or \texttt{/dev urandom} on
+all operating systems that have it.
 
 If you have a custom random source you might find the function \texttt(mp\_rand\_source) useful.
 \index{mp\_rand\_source}
 \begin{alltt}
 void mp_rand_source(mp_err(*source)(void *out, size_t size));
 \end{alltt}
-
 
 \chapter{Input and Output}
 \section{ASCII Conversions}
@@ -2184,48 +2409,51 @@ void mp_rand_source(mp_err(*source)(void *out, size_t size));
 \begin{alltt}
 mp_err mp_to_radix (const mp_int *a, char *str, size_t maxlen, size_t *written, int radix);
 \end{alltt}
-This stores $a$ in \texttt{str} of maximum length \texttt{maxlen} as a base-\texttt{radix} string of ASCII chars and appends a \texttt{NUL} character to terminate the string.
+This stores $a$ in \texttt{str} of maximum length \texttt{maxlen} as a base-\texttt{radix} string
+of ASCII chars and appends a \texttt{NUL} character to terminate the string.
 
 Valid values of \texttt{radix} are in the range $[2, 64]$.
 
-The exact number of characters in \texttt{str} plus the \texttt{NUL} will be put in \texttt{written} if that variable is not set to \texttt{NULL}.
+The exact number of characters in \texttt{str} plus the \texttt{NUL} will be put in
+\texttt{written} if that variable is not set to \texttt{NULL}.
 
-If \texttt{str} is not big enough to hold $a$, \texttt{str} will be filled with the least-significant digits
-of length \texttt{maxlen-1}, then \texttt{str} will be \texttt{NUL} terminated and the error \texttt{MP\_BUF} is returned.
+If \texttt{str} is not big enough to hold $a$, \texttt{str} will be filled with the least
+significant digits of length \texttt{maxlen-1}, then \texttt{str} will be \texttt{NUL} terminated
+and the error \texttt{MP\_BUF} is returned.
 
-Please be aware that this function cannot evaluate the actual size of the buffer, it relies on the correctness of \texttt{maxlen}!
-
+Please be aware that this function cannot evaluate the actual size of the buffer, it relies on the
+correctness of \texttt{maxlen}!
 
 \index{mp\_radix\_size}
 \begin{alltt}
 mp_err mp_radix_size (const mp_int *a, int radix, int *size)
 \end{alltt}
-This stores in \texttt{size} the number of characters (including space for the NUL terminator) required.  Upon error this
-function returns an error code and \texttt{size} will be zero.
+This stores in \texttt{size} the number of characters (including space for the \texttt{NUL}
+terminator) required. Upon error this function returns an error code and \texttt{size} will be
+zero.
 
 If \texttt{MP\_NO\_FILE} is not defined a function to write to a file is also available.
+
 \index{mp\_fwrite}
 \begin{alltt}
 mp_err mp_fwrite(const mp_int *a, int radix, FILE *stream);
 \end{alltt}
-
 
 \subsection{From ASCII}
 \index{mp\_read\_radix}
 \begin{alltt}
 mp_err mp_read_radix (mp_int *a, const char *str, int radix);
 \end{alltt}
-This will read a \texttt{NUL} terminated string in base \texttt{radix} from \texttt{str} into $a$.  It will stop reading when it reads a
-character it does not recognize (which happens to include the \texttt{NUL} char... imagine that...).  A single leading $-$ sign
-can be used to denote a negative number.
-The input encoding is currently restricted to ASCII only.
+This will read a \texttt{NUL} terminated string in base \texttt{radix} from \texttt{str} into $a$.
+It will stop reading when it reads a character it does not recognize (which happens to include the
+\texttt{NUL} char\dots imagine that\dots).  A single leading $-$ (ASCII \texttt{0x20}) sign can be
+used to denote a negative number. The input encoding is currently restricted to ASCII only.
 
 If \texttt{MP\_NO\_FILE} is not defined a function to read from a file is also available.
 \index{mp\_fread}
 \begin{alltt}
 mp_err mp_fread(mp_int *a, int radix, FILE *stream);
 \end{alltt}
-
 
 \section{Binary Conversions}
 
@@ -2236,33 +2464,40 @@ Converting an \texttt{mp\_int} to and from binary is another keen idea.
 size_t mp_ubin_size(const mp_int *a);
 \end{alltt}
 
-This will return the number of bytes (octets) required to store the unsigned copy of the integer $a$.
+This will return the number of bytes (octets) required to store the unsigned copy of the integer
+$a$.
 
 \index{mp\_to\_ubin}
 \begin{alltt}
 mp_err mp_to_ubin(const mp_int *a, unsigned char *buf, size_t maxlen, size_t *written)
 \end{alltt}
-This will store $a$ into the buffer $b$ of size \texttt{maxlen} in big--endian format storing the number of bytes written in \texttt{len}.  Fortunately this is exactly what DER (or is it ASN?) requires.  It does not store the sign of the integer.
+This will store $a$ into the buffer \texttt{buf} of size \texttt{maxlen} in big--endian format
+storing the number of bytes written in \texttt{len}.  Fortunately this is exactly what DER (or is
+it ASN?) requires.  It does not store the sign of the integer.
 
 \index{mp\_from\_ubin}
 \begin{alltt}
 mp_err mp_from_ubin(mp_int *a, unsigned char *b, size_t size);
 \end{alltt}
-This will read in an unsigned big--endian array of bytes (octets) from $b$ of length \texttt{size} into $a$.  The resulting big-integer $a$ will always be positive.
+This will read in an unsigned big--endian array of bytes (octets) from \texttt{b} of length
+\texttt{size} into $a$.  The resulting big--integer $a$ will always be positive.
 
-For those who acknowledge the existence of negative numbers (heretic!) there are ``signed'' versions of the
-previous functions.
+For those who acknowledge the existence of negative numbers (heretic!) there are ``signed''
+versions of the previous functions.
 \index{mp\_signed\_bin\_size} \index{mp\_to\_signed\_bin} \index{mp\_read\_signed\_bin}
 \begin{alltt}
 size_t mp_sbin_size(const mp_int *a);
 mp_err mp_from_sbin(mp_int *a, const unsigned char *b, size_t size);
 mp_err mp_to_sbin(const mp_int *a, unsigned char *b, size_t maxsize, size_t *len);
 \end{alltt}
-They operate essentially the same as the unsigned copies except they prefix the data with zero or non--zero
-byte depending on the sign.  If the sign is \texttt{MP\_ZPOS} (e.g. not negative) the prefix is zero, otherwise the prefix
-is non--zero.
+They operate essentially the same as the unsigned copies except they prefix the data with zero or
+non--zero byte depending on the sign. If the sign is \texttt{MP\_ZPOS} (e.g. not negative) the
+prefix is zero, otherwise the prefix is non--zero.
 
-The two functions \texttt{mp\_unpack} (get your gifts out of the box, import binary data) and \texttt{mp\_pack} (put your gifts into the box, export binary data) implement the similarly working GMP functions as described at \url{http://gmplib.org/manual/Integer-Import-and-Export.html} with the exception that \texttt{mp\_pack} will not allocate memory if \texttt{rop} is \texttt{NULL}.
+The two functions \texttt{mp\_unpack} (get your gifts out of the box, import binary data) and
+\texttt{mp\_pack} (put your gifts into the box, export binary data) implement the similarly working
+GMP functions as described at \url{http://gmplib.org/manual/Integer-Import-and-Export.html} with
+the exception that \texttt{mp\_pack} will not allocate memory if \texttt{rop} is \texttt{NULL}.
 \index{mp\_unpack} \index{mp\_pack}
 \begin{alltt}
 mp_err mp_unpack(mp_int *rop, size_t count, mp_order order, size_t size,
@@ -2270,14 +2505,16 @@ mp_err mp_unpack(mp_int *rop, size_t count, mp_order order, size_t size,
 mp_err mp_pack(void *rop, size_t *countp, mp_order order, size_t size,
              mp_endian endian, size_t nails, const mp_int *op);
 \end{alltt}
-The function \texttt{mp\_pack} has the additional variable \texttt{maxsize} which must hold the size of the buffer \texttt{rop} in bytes. Use
+The function \texttt{mp\_pack} has the additional variable \texttt{maxsize} which must hold the
+size of the buffer \texttt{rop} in bytes. Use
 \begin{alltt}
 /* Parameters "nails" and "size" are the same as in mp_pack */
 size_t mp_pack_count(const mp_int *a, size_t nails, size_t size);
 \end{alltt}
 To get the size in bytes necessary to be put in \texttt{maxsize}).
 
-To enhance the readability of your code, the following enums have been wrought for your convenience.
+To enhance the readability of your code, the following enums have been wrought for your
+convenience.
 \begin{alltt}
 typedef enum {
    MP_LSB_FIRST = -1,
@@ -2298,13 +2535,15 @@ mp_err mp_exteuclid(const mp_int *a, const mp_int *b,
                  mp_int *U1, mp_int *U2, mp_int *U3);
 \end{alltt}
 
-This finds the triple $U_1$/$U_2$/$U_3$ using the Extended Euclidean algorithm such that the following equation holds.
+This finds the triple $U_1$/$U_2$/$U_3$ using the Extended Euclidean algorithm such that the
+following equation holds.
 
 \begin{equation}
-a \cdot U_1 + b \cdot U_2 = U_3
+  a \cdot U_1 + b \cdot U_2 = U_3
 \end{equation}
 
-Any of the \texttt{U1}/\texttt{U2}/\texttt{U3} parameters can be set to \textbf{NULL} if they are not desired.
+Any of the \texttt{U1}/\texttt{U2}/\texttt{U3} parameters can be set to \textbf{NULL} if they are
+not desired.
 
 \section{Greatest Common Divisor}
 \index{mp\_gcd}
@@ -2320,17 +2559,18 @@ mp_err mp_lcm (const mp_int *a, const mp_int *b, mp_int *c)
 \end{alltt}
 This will compute the least common multiple of $a$ and $b$ and store it in $c$.
 
-
 \section{Kronecker Symbol}
 \index{mp\_kronecker}
 \begin{alltt}
 mp_err mp_kronecker (const mp_int *a, const mp_int *p, int *c)
 \end{alltt}
-This will compute the Kronecker symbol (an extension of the Jacobi symbol) for $a$ with respect to $p$ with $\lbrace a, p \rbrace \in \mathbb{Z}$.  If $p$ is prime this essentially computes the Legendre
-symbol.  The result is stored in $c$ and can take on one of three values $\lbrace -1, 0, 1 \rbrace$.  If $p$ is prime
-then the result will be $-1$ when $a$ is not a quadratic residue modulo $p$.  The result will be $0$ if $a$ divides $p$
-and the result will be $1$ if $a$ is a quadratic residue modulo $p$.
-
+This will compute the Kronecker symbol (an extension of the Jacobi symbol) for $a$ with respect to
+$p$ with $\lbrace a, p \rbrace \in \mathbb{Z}$.  If $p$ is prime this essentially computes the
+Legendre symbol. The result is stored in $c$ and can take on one of three values $\lbrace -1, 0, 1
+  \rbrace$.  If $p$ is prime then the result will be $-1$ when $a$ is not a quadratic residue
+modulo
+$p$.  The result will be $0$ if $a$ divides $p$ and the result will be $1$ if $a$ is a quadratic
+residue modulo $p$.
 
 \section{Modular square root}
 \index{mp\_sqrtmod\_prime}
@@ -2338,27 +2578,29 @@ and the result will be $1$ if $a$ is a quadratic residue modulo $p$.
 mp_err mp_sqrtmod_prime(const mp_int *n, const mp_int *p, mp_int *r)
 \end{alltt}
 
-This will solve the modular equation $r^2 = n \mod p$ where $p$ is a prime number greater than 2 (odd prime).
-The result is returned in the third argument $r$, the function returns \texttt{MP\_OKAY} on success,
-other return values indicate failure.
+This will solve the modular equation $r^2 = n \mod p$ where $p$ is a prime number greater than 2
+(odd prime). The result is returned in the third argument $r$, the function returns
+\texttt{MP\_OKAY} on success, other return values indicate failure.
 
 The implementation is split for two different cases:
 
-1. if $p \mod 4 == 3$ we apply \href{http://cacr.uwaterloo.ca/hac/}{Handbook of Applied Cryptography algorithm 3.36} and compute $r$ directly as
-$r = n^{(p+1)/4} \mod p$
+1. if $p \mod 4 == 3$ we apply \href{http://cacr.uwaterloo.ca/hac/}{Handbook of Applied
+  Cryptography algorithm 3.36} and compute $r$ directly as $r = n^{(p+1)/4} \mod p$
 
-2. otherwise we use \href{https://en.wikipedia.org/wiki/Tonelli-Shanks_algorithm}{Tonelli-Shanks algorithm}
+2. otherwise we use \href{https://en.wikipedia.org/wiki/Tonelli-Shanks_algorithm}{Tonelli--Shanks
+  algorithm}
 
-The function does not check the primality of parameter $p$ thus it is up to the caller to assure that this parameter
-is a prime number. When $p$ is a composite the function behaviour is undefined, it may even return a false-positive
-\texttt{MP\_OKAY}.
+The function does not check the primality of parameter $p$ thus it is up to the caller to assure
+that this parameter is a prime number. When $p$ is a composite the function behaviour is undefined,
+it may even return a false--positive \texttt{MP\_OKAY}.
 
 \section{Modular Inverse}
 \index{mp\_invmod}
 \begin{alltt}
 mp_err mp_invmod (const mp_int *a, const mp_int *b, mp_int *c)
 \end{alltt}
-Computes the multiplicative inverse of $a$ modulo $b$ and stores the result in $c$ such that $ac \equiv 1 \mbox{ (mod }b\mbox{)}$.
+Computes the multiplicative inverse of $a$ modulo $b$ and stores the result in $c$ such that
+$ac \equiv 1 \mbox{ (mod }b\mbox{)}$.
 
 \section{Single Digit Functions}
 
@@ -2373,18 +2615,21 @@ mp_err mp_div_d(const mp_int *a, mp_digit b, mp_int *c, mp_digit *d);
 mp_err mp_mod_d(const mp_int *a, mp_digit b, mp_digit *c);
 \end{alltt}
 
-These work like the full \texttt{mp\_int} capable variants except the second parameter $b$ is a \texttt{mp\_digit}.  These
-functions fairly handy if you have to work with relatively small numbers since you will not have to allocate
-an entire \texttt{mp\_int} to store a number like $1$ or $2$.
+These work like the full \texttt{mp\_int} capable variants except the second parameter $b$ is a
+\texttt{mp\_digit}.  These functions fairly handy if you have to work with relatively small numbers
+since you will not have to allocate an entire \texttt{mp\_int} to store a number like $1$ or $2$.
 
-The functions \texttt{mp\_incr} and \texttt{mp\_decr} mimic the postfix operators \texttt{++} and \texttt{--} respectively, to increment the input by one. They call the full single-digit functions if the addition would carry. Both functions need to be included in a minimized library because they call each other in case of a negative input, These functions change the inputs!
+The functions \texttt{mp\_incr} and \texttt{mp\_decr} mimic the postfix operators \texttt{++} and
+\texttt{--} respectively, to increment the input by one. They call the full single--digit functions
+if the addition would carry. Both functions need to be included in a minimized library because they
+call each other in case of a negative input, These functions change the inputs!
 \begin{alltt}
 mp_err mp_incr(mp_int *a);
 mp_err mp_decr(mp_int *a);
 \end{alltt}
 
-
-The division by three can be made faster by replacing the division with a multiplication by the multiplicative inverse of three.
+The division by three can be made faster by replacing the division with a multiplication by the
+multiplicative inverse of three.
 
 \index{mp\_div\_3}
 \begin{alltt}
@@ -2394,7 +2639,8 @@ mp_err mp_div_3(const mp_int *a, mp_int *c, mp_digit *d);
 \chapter{Little Helpers}
 It is never wrong to have some useful little shortcuts at hand.
 \section{Function Macros}
-To make this overview simpler the macros are given as function prototypes. The return of logic macros is \texttt{MP\_NO} or \texttt{MP\_YES} respectively.
+To make this overview simpler the macros are given as function prototypes. The return of logic
+macros is \texttt{MP\_NO} or \texttt{MP\_YES} respectively.
 
 \index{mp\_iseven}
 \begin{alltt}
@@ -2414,15 +2660,14 @@ mp_bool mp_isneg(mp_int *a)
 \end{alltt}
 Checks if $a < 0$
 
-
 \index{mp\_iszero}
 \begin{alltt}
 mp_bool mp_iszero(mp_int *a)
 \end{alltt}
 Checks if $a = 0$. It does not check if the amount of memory allocated for $a$ is also minimal.
 
-
-Other macros which are either shortcuts to normal functions or just other names for them do have their place in a programmer's life, too!
+Other macros which are either shortcuts to normal functions or just other names for them do have
+their place in a programmer's life, too!
 
 \subsection{Renamings}
 \index{mp\_mag\_size}
@@ -2430,37 +2675,30 @@ Other macros which are either shortcuts to normal functions or just other names 
 #define mp_mag_size(mp) mp_unsigned_bin_size(mp)
 \end{alltt}
 
-
 \index{mp\_raw\_size}
 \begin{alltt}
 #define mp_raw_size(mp) mp_signed_bin_size(mp)
 \end{alltt}
-
 
 \index{mp\_read\_mag}
 \begin{alltt}
 #define mp_read_mag(mp, str, len) mp_read_unsigned_bin((mp), (str), (len))
 \end{alltt}
 
-
 \index{mp\_read\_raw}
 \begin{alltt}
  #define mp_read_raw(mp, str, len) mp_read_signed_bin((mp), (str), (len))
 \end{alltt}
-
 
 \index{mp\_tomag}
 \begin{alltt}
 #define mp_tomag(mp, str) mp_to_unsigned_bin((mp), (str))
 \end{alltt}
 
-
 \index{mp\_toraw}
 \begin{alltt}
 #define mp_toraw(mp, str)         mp_to_signed_bin((mp), (str))
 \end{alltt}
-
-
 
 \subsection{Shortcuts}
 
@@ -2469,18 +2707,15 @@ Other macros which are either shortcuts to normal functions or just other names 
 #define mp_to_binary(M, S, N)  mp_to_radix((M), (S), (N), 2)
 \end{alltt}
 
-
 \index{mp\_to\_octal}
 \begin{alltt}
 #define mp_to_octal(M, S, N)   mp_to_radix((M), (S), (N), 8)
 \end{alltt}
 
-
 \index{mp\_to\_decimal}
 \begin{alltt}
 #define mp_to_decimal(M, S, N) mp_to_radix((M), (S), (N), 10)
 \end{alltt}
-
 
 \index{mp\_to\_hex}
 \begin{alltt}
@@ -2488,12 +2723,17 @@ Other macros which are either shortcuts to normal functions or just other names 
 \end{alltt}
 
 \begin{appendices}
-\appendixpage
-%\noappendicestocpagenum
-\addappheadtotoc
-\chapter{Computing Number of Miller-Rabin Trials}\label{app:numberofmrcomp}
-The number of Miller-Rabin rounds in the tables \ref{millerrabinrunsimpl}, \ref{millerrabinrunsp1}, and \ref{millerrabinrunsp2} have been calculated with the formula in FIPS 186-4 appendix F.1 (page 117) implemented as a PARI/GP script.
-\begin{alltt}
+  \appendixpage
+  %\noappendicestocpagenum
+  \addappheadtotoc
+  \chapter{Computing Number of Miller--Rabin Trials}\label{app:numberofmrcomp}
+  The number of Miller--Rabin rounds in the tables \ref{millerrabinrunsimpl},
+  \ref{millerrabinrunsp1}, and \ref{millerrabinrunsp2} have been calculated with the formula in
+  FIPS
+  186--4 appendix F.1 (page 117) implemented as a PARI/GP script.
+
+  \begin{small}
+    \begin{alltt}
 log2(x) = log(x)/log(2)
 
 fips_f1_sums(k, M, t) = {
@@ -2535,9 +2775,10 @@ fips_f1_1(prime_length, ptarget)={
    );
 }
 \end{alltt}
+  \end{small}
 
-To get the number of rounds for a $1024$ bit large prime with a probability of $2^{-160}$:
-\begin{alltt}
+  To get the number of rounds for a $1024$ bit large prime with a probability of $2^{-160}$:
+  \begin{alltt}
 ? fips_f1_1(1024,2^(-160))
 %1 = 9
 \end{alltt}
