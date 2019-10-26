@@ -195,6 +195,7 @@ VALGRIND_OPTS=" --leak-check=full --show-leak-kinds=all --error-exitcode=1 "
 #VALGRIND_OPTS=""
 VALGRIND_BIN=""
 CHECK_FORMAT=""
+C89=""
 TUNE_CMD="./etc/tune -t -r 10 -L 3"
 
 alive_pid=0
@@ -216,6 +217,9 @@ do
   case $1 in
     "--with-m64" | "--with-m32" | "--with-mx32")
       ARCHFLAGS="$ARCHFLAGS ${1:6}"
+    ;;
+    --c89)
+      C89="1"
     ;;
     --with-cc=*)
       COMPILERS="$COMPILERS ${1#*=}"
@@ -290,6 +294,8 @@ function _check_git() {
   git update-index --refresh >/dev/null || true
   git diff-index --quiet HEAD -- . || ( echo "FAILURE: $*" && exit 1 )
 }
+
+[[ "$C89" == "1" ]] && make c89
 
 if [[ "$CHECK_FORMAT" == "1" ]]
 then

@@ -140,6 +140,7 @@ matrix:
     # clang for x86-64 architecture (64-bit longs and 64-bit pointers)
     - env: SANITIZER=1 CONV_WARNINGS=relaxed BUILDOPTIONS='--with-cc=clang-7 --with-m64 --with-travis-valgrind'
     - env: SANITIZER=1 CONV_WARNINGS=strict BUILDOPTIONS='--with-cc=clang-7 --with-m64 --with-travis-valgrind'
+    - env: SANITIZER=1 CONV_WARNINGS=strict BUILDOPTIONS='--with-cc=clang-7 --c89 --with-m64 --with-travis-valgrind'
     - env: SANITIZER=1 BUILDOPTIONS='--with-cc=clang-6.0 --with-m64 --with-travis-valgrind'
       addons:
         apt:

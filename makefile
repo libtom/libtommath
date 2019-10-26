@@ -152,6 +152,29 @@ new_file:
 perlcritic:
 	perlcritic *.pl doc/*.pl
 
+c89:
+	@echo "Applying substitutions for c89 compatibility..."
+	@sed -i \
+	-e 's/#include <stdbool.h>//g' \
+	-e 's/#include <stdint.h>/#include "tommath_c89.h"/g' \
+	-e 's/bool/mp_bool/g' \
+	-e 's/true/MP_YES/g' \
+	-e 's/false/MP_NO/g' \
+	-e 's/uint\([0-9][0-9]*\)_t/mp_u\1/g' \
+	-e 's/int\([0-9][0-9]*\)_t/mp_i\1/g' \
+	*.c *.h demo/*.c demo/*.h etc/*.c
+	@echo "/* please adapt this header to your needs */" > tommath_c89.h
+	@echo "typedef enum { MP_NO, MP_YES } mp_bool;" >> tommath_c89.h
+	@echo "typedef __INT8_TYPE__   mp_i8;"          >> tommath_c89.h
+	@echo "typedef __INT16_TYPE__  mp_i16;"         >> tommath_c89.h
+	@echo "typedef __INT32_TYPE__  mp_i32;"         >> tommath_c89.h
+	@echo "typedef __INT64_TYPE__  mp_i64;"         >> tommath_c89.h
+	@echo "typedef __UINT8_TYPE__  mp_u8;"          >> tommath_c89.h
+	@echo "typedef __UINT16_TYPE__ mp_u16;"         >> tommath_c89.h
+	@echo "typedef __UINT32_TYPE__ mp_u32;"         >> tommath_c89.h
+	@echo "typedef __UINT64_TYPE__ mp_u64;"         >> tommath_c89.h
+
+
 astyle:
 	@echo "   * run astyle on all sources"
 	@astyle --options=astylerc --formatted $(OBJECTS:.o=.c) tommath*.h demo/*.c etc/*.c mtest/mtest.c
