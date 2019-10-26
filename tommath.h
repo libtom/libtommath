@@ -4,8 +4,8 @@
 #ifndef TOMMATH_H_
 #define TOMMATH_H_
 
-#include <stdint.h>
 #include <stddef.h>
+#include <stdint.h>
 #include <stdbool.h>
 
 #ifndef MP_NO_FILE

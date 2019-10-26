@@ -196,6 +196,7 @@ VALGRIND_OPTS=" --leak-check=full --show-leak-kinds=all --error-exitcode=1 "
 VALGRIND_BIN=""
 CHECK_FORMAT=""
 C89=""
+C89_C99_ROUNDTRIP=""
 TUNE_CMD="./etc/tune -t -r 10 -L 3"
 
 alive_pid=0
@@ -220,6 +221,9 @@ do
     ;;
     --c89)
       C89="1"
+    ;;
+    --c89-c99-roundtrip)
+      C89_C99_ROUNDTRIP="1"
     ;;
     --with-cc=*)
       COMPILERS="$COMPILERS ${1#*=}"
@@ -296,6 +300,14 @@ function _check_git() {
 }
 
 [[ "$C89" == "1" ]] && make c89
+
+if [[ "$C89_C99_ROUNDTRIP" == "1" ]]
+then
+  make c89
+  make c99
+  _check_git "make c89; make c99"
+  exit $?
+fi
 
 if [[ "$CHECK_FORMAT" == "1" ]]
 then

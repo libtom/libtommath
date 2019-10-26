@@ -154,8 +154,9 @@ perlcritic:
 
 c89:
 	@echo "Applying substitutions for c89 compatibility..."
+	@if grep mp_bool tommath.h > /dev/null; then echo "Already applied"; exit 1; fi
 	@sed -i \
-	-e 's/#include <stdbool.h>//g' \
+	-e '/#include <stdbool.h>/d' \
 	-e 's/#include <stdint.h>/#include "tommath_c89.h"/g' \
 	-e 's/bool/mp_bool/g' \
 	-e 's/true/MP_YES/g' \
@@ -173,6 +174,21 @@ c89:
 	@echo "typedef __UINT16_TYPE__ mp_u16;"         >> tommath_c89.h
 	@echo "typedef __UINT32_TYPE__ mp_u32;"         >> tommath_c89.h
 	@echo "typedef __UINT64_TYPE__ mp_u64;"         >> tommath_c89.h
+
+
+c99:
+	@echo "Applying substitutions for c99 compatibility..."
+	@if ! grep mp_bool tommath.h > /dev/null; then echo "Already applied"; exit 1; fi
+	@sed -i \
+	-e 's/#include "tommath_c89.h"/#include <stdint.h>\n#include <stdbool.h>/g' \
+	-e 's/mp_bool/bool/g' \
+	-e 's/MP_YES/true/g' \
+	-e 's/MP_NO/false/g' \
+	-e 's/false_/MP_NO_/g' \
+	-e 's/mp_u\([0-9][0-9]*\)/uint\1_t/g' \
+	-e 's/mp_i\([0-9][0-9]*\)/int\1_t/g' \
+	*.c *.h demo/*.c demo/*.h etc/*.c
+	@rm -f tommath_c89.h
 
 
 astyle:
