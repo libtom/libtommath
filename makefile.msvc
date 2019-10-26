@@ -39,7 +39,7 @@ mp_reduce_2k_setup.obj mp_reduce_2k_setup_l.obj mp_reduce_is_2k.obj mp_reduce_is
 mp_root_u32.obj mp_rshd.obj mp_sbin_size.obj mp_set.obj mp_set_double.obj mp_set_i32.obj mp_set_i64.obj mp_set_l.obj \
 mp_set_ll.obj mp_set_u32.obj mp_set_u64.obj mp_set_ul.obj mp_set_ull.obj mp_shrink.obj mp_signed_rsh.obj mp_sqr.obj \
 mp_sqrmod.obj mp_sqrt.obj mp_sqrtmod_prime.obj mp_sub.obj mp_sub_d.obj mp_submod.obj mp_to_radix.obj mp_to_sbin.obj \
-mp_to_ubin.obj mp_ubin_size.obj mp_unpack.obj mp_xor.obj mp_zero.obj mpi.obj s_mp_add.obj s_mp_balance_mul.obj \
+mp_to_ubin.obj mp_ubin_size.obj mp_unpack.obj mp_xor.obj mp_zero.obj s_mp_add.obj s_mp_balance_mul.obj \
 s_mp_div_recursive.obj s_mp_div_school.obj s_mp_div_small.obj s_mp_exptmod.obj s_mp_exptmod_fast.obj s_mp_get_bit.obj \
 s_mp_invmod_fast.obj s_mp_invmod_slow.obj s_mp_karatsuba_mul.obj s_mp_karatsuba_sqr.obj s_mp_log.obj s_mp_log_d.obj \
 s_mp_log_pow2.obj s_mp_montgomery_reduce_fast.obj s_mp_mul_digs.obj s_mp_mul_digs_fast.obj s_mp_mul_high_digs.obj \

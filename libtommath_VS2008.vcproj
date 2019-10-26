@@ -841,10 +841,6 @@
 			>
 		</File>
 		<File
-			RelativePath="mpi.c"
-			>
-		</File>
-		<File
 			RelativePath="s_mp_add.c"
 			>
 		</File>
