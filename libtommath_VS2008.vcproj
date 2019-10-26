@@ -561,10 +561,6 @@
 			>
 		</File>
 		<File
-			RelativePath="mp_iseven.c"
-			>
-		</File>
-		<File
 			RelativePath="mp_isodd.c"
 			>
 		</File>
@@ -842,6 +838,10 @@
 		</File>
 		<File
 			RelativePath="mp_zero.c"
+			>
+		</File>
+		<File
+			RelativePath="mpi.c"
 			>
 		</File>
 		<File

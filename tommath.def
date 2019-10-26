@@ -68,7 +68,6 @@ EXPORTS
     mp_init_ull
     mp_invmod
     mp_is_square
-    mp_iseven
     mp_isodd
     mp_kronecker
     mp_lcm

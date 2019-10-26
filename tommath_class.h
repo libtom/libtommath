@@ -73,7 +73,6 @@
 #   define MP_INIT_ULL_C
 #   define MP_INVMOD_C
 #   define MP_IS_SQUARE_C
-#   define MP_ISEVEN_C
 #   define MP_ISODD_C
 #   define MP_KRONECKER_C
 #   define MP_LCM_C
@@ -496,9 +495,6 @@
 #   define MP_SQR_C
 #endif
 
-#if defined(MP_ISEVEN_C)
-#endif
-
 #if defined(MP_ISODD_C)
 #endif
 
@@ -856,9 +852,6 @@
 #endif
 
 #if defined(MP_SET_DOUBLE_C)
-#   define MP_DIV_2D_C
-#   define MP_MUL_2D_C
-#   define MP_SET_U64_C
 #endif
 
 #if defined(MP_SET_I32_C)
@@ -1221,6 +1214,7 @@
 #endif
 
 #if defined(S_MP_RAND_PLATFORM_C)
+#   define MP_DPROTECTED_NP_C
 #endif
 
 #if defined(S_MP_REVERSE_C)
