@@ -158,6 +158,7 @@ c89:
 	@sed -i \
 	-e '/#include <stdbool.h>/d' \
 	-e 's/#include <stdint.h>/#include "tommath_c89.h"/g' \
+	-e 's/#include <inttypes.h>/\/*#include <inttypes.h>*\//g' \
 	-e 's/bool/mp_bool/g' \
 	-e 's/true/MP_YES/g' \
 	-e 's/false/MP_NO/g' \
@@ -171,6 +172,7 @@ c99:
 	@if ! grep mp_bool tommath.h > /dev/null; then echo "Already applied"; exit 1; fi
 	@sed -i \
 	-e 's/#include "tommath_c89.h"/#include <stdint.h>\n#include <stdbool.h>/g' \
+	-e 's/\/\*#include <inttypes.h>\*\//#include <inttypes.h>/g' \
 	-e 's/mp_bool/bool/g' \
 	-e 's/MP_YES/true/g' \
 	-e 's/MP_NO/false/g' \
