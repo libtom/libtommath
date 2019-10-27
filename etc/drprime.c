@@ -5,7 +5,7 @@ static int sizes[] = { 1+256/MP_DIGIT_BIT, 1+512/MP_DIGIT_BIT, 1+768/MP_DIGIT_BI
 
 int main(void)
 {
-   mp_bool res;
+   bool res;
    int x, y;
    char buf[4096];
    FILE *out;
@@ -30,23 +30,23 @@ top:
          a.used = sizes[x];
 
          /* now loop */
-         res = MP_NO;
+         res = false;
          for (;;) {
             a.dp[0] += 4uL;
             if (a.dp[0] >= MP_MASK) break;
             mp_prime_is_prime(&a, 1, &res);
-            if (res == MP_NO) continue;
+            if (!res) continue;
             printf(".");
             fflush(stdout);
             mp_sub_d(&a, 1uL, &b);
             mp_div_2(&b, &b);
             mp_prime_is_prime(&b, 3, &res);
-            if (res == MP_NO) continue;
+            if (!res) continue;
             mp_prime_is_prime(&a, 3, &res);
-            if (res == MP_YES) break;
+            if (res) break;
          }
 
-         if (res != MP_YES) {
+         if (!res) {
             printf("Error not DR modulus\n");
             sizes[x] += 1;
             goto top;

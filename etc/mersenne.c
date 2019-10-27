@@ -5,13 +5,13 @@
 #include <time.h>
 #include <tommath.h>
 
-static mp_err is_mersenne(long s, mp_bool *pp)
+static mp_err is_mersenne(long s, bool *pp)
 {
    mp_int  n, u;
    mp_err  res;
    int     k;
 
-   *pp = MP_NO;
+   *pp = false;
 
    if ((res = mp_init(&n)) != MP_OKAY) {
       return res;
@@ -56,9 +56,9 @@ static mp_err is_mersenne(long s, mp_bool *pp)
    }
 
    /* if u == 0 then its prime */
-   if (mp_iszero(&u) == MP_YES) {
+   if (mp_iszero(&u)) {
       mp_prime_is_prime(&n, 8, pp);
-      if (*pp != MP_YES) printf("FAILURE\n");
+      if (!*pp) printf("FAILURE\n");
    }
 
    res = MP_OKAY;
@@ -103,7 +103,7 @@ static int isprime(long k)
 
 int main(void)
 {
-   mp_bool pp;
+   bool pp;
    long    k;
    clock_t tt;
 
@@ -119,7 +119,7 @@ int main(void)
          return -1;
       }
 
-      if (pp == MP_YES) {
+      if (pp) {
          /* count time */
          tt = clock() - tt;
 

@@ -37,11 +37,11 @@ mp_err s_mp_div_small(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d)
    sign = (a->sign == b->sign) ? MP_ZPOS : MP_NEG;
    if (c != NULL) {
       mp_exch(c, &q);
-      c->sign  = MP_IS_ZERO(c) ? MP_ZPOS : sign;
+      c->sign  = mp_iszero(c) ? MP_ZPOS : sign;
    }
    if (d != NULL) {
       mp_exch(d, &ta);
-      d->sign = MP_IS_ZERO(d) ? MP_ZPOS : a->sign;
+      d->sign = mp_iszero(d) ? MP_ZPOS : a->sign;
    }
 LBL_ERR:
    mp_clear_multi(&ta, &tb, &tq, &q, NULL);

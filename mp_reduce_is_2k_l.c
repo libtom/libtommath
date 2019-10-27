@@ -4,14 +4,14 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* determines if reduce_2k_l can be used */
-mp_bool mp_reduce_is_2k_l(const mp_int *a)
+bool mp_reduce_is_2k_l(const mp_int *a)
 {
    int ix, iy;
 
    if (a->used == 0) {
-      return MP_NO;
+      return false;
    } else if (a->used == 1) {
-      return MP_YES;
+      return true;
    } else if (a->used > 1) {
       /* if more than half of the digits are -1 we're sold */
       for (iy = ix = 0; ix < a->used; ix++) {
@@ -19,9 +19,9 @@ mp_bool mp_reduce_is_2k_l(const mp_int *a)
             ++iy;
          }
       }
-      return (iy >= (a->used/2)) ? MP_YES : MP_NO;
+      return (iy >= (a->used/2));
    } else {
-      return MP_NO;
+      return false;
    }
 }
 

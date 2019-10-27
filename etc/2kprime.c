@@ -8,7 +8,7 @@ int main(void)
 {
    char buf[2000];
    size_t x;
-   mp_bool y;
+   bool y;
    mp_int q, p;
    FILE *out;
    clock_t t1;
@@ -43,7 +43,7 @@ top:
 
             /* quick test on q */
             mp_prime_is_prime(&q, 1, &y);
-            if (y == MP_NO) {
+            if (!y) {
                continue;
             }
 
@@ -51,20 +51,20 @@ top:
             mp_sub_d(&q, 1uL, &p);
             mp_div_2(&p, &p);
             mp_prime_is_prime(&p, 3, &y);
-            if (y == MP_NO) {
+            if (!y) {
                continue;
             }
 
             /* test on q */
             mp_prime_is_prime(&q, 3, &y);
-            if (y == MP_NO) {
+            if (!y) {
                continue;
             }
 
             break;
          }
 
-         if (y == MP_NO) {
+         if (!y) {
             ++sizes[x];
             goto top;
          }

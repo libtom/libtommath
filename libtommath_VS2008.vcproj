@@ -381,10 +381,6 @@
 			>
 		</File>
 		<File
-			RelativePath="mp_decr.c"
-			>
-		</File>
-		<File
 			RelativePath="mp_div.c"
 			>
 		</File>
@@ -497,10 +493,6 @@
 			>
 		</File>
 		<File
-			RelativePath="mp_incr.c"
-			>
-		</File>
-		<File
 			RelativePath="mp_init.c"
 			>
 		</File>
@@ -558,14 +550,6 @@
 		</File>
 		<File
 			RelativePath="mp_is_square.c"
-			>
-		</File>
-		<File
-			RelativePath="mp_iseven.c"
-			>
-		</File>
-		<File
-			RelativePath="mp_isodd.c"
 			>
 		</File>
 		<File
@@ -937,10 +921,6 @@
 			>
 		</File>
 		<File
-			RelativePath="s_mp_reverse.c"
-			>
-		</File>
-		<File
 			RelativePath="s_mp_sqr.c"
 			>
 		</File>
@@ -962,6 +942,10 @@
 		</File>
 		<File
 			RelativePath="tommath.h"
+			>
+		</File>
+		<File
+			RelativePath="tommath_c89.h"
 			>
 		</File>
 		<File

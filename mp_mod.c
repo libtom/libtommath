@@ -17,7 +17,7 @@ mp_err mp_mod(const mp_int *a, const mp_int *b, mp_int *c)
       goto LBL_ERR;
    }
 
-   if (MP_IS_ZERO(&t) || (t.sign == b->sign)) {
+   if (mp_iszero(&t) || (t.sign == b->sign)) {
       err = MP_OKAY;
       mp_exch(&t, c);
    } else {

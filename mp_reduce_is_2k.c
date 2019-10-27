@@ -4,15 +4,15 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* determines if mp_reduce_2k can be used */
-mp_bool mp_reduce_is_2k(const mp_int *a)
+bool mp_reduce_is_2k(const mp_int *a)
 {
    int ix, iy, iw;
    mp_digit iz;
 
    if (a->used == 0) {
-      return MP_NO;
+      return false;
    } else if (a->used == 1) {
-      return MP_YES;
+      return true;
    } else if (a->used > 1) {
       iy = mp_count_bits(a);
       iz = 1;
@@ -21,7 +21,7 @@ mp_bool mp_reduce_is_2k(const mp_int *a)
       /* Test every bit from the second digit up, must be 1 */
       for (ix = MP_DIGIT_BIT; ix < iy; ix++) {
          if ((a->dp[iw] & iz) == 0u) {
-            return MP_NO;
+            return false;
          }
          iz <<= 1;
          if (iz > MP_DIGIT_MAX) {
@@ -29,9 +29,9 @@ mp_bool mp_reduce_is_2k(const mp_int *a)
             iz = 1;
          }
       }
-      return MP_YES;
+      return true;
    } else {
-      return MP_YES;
+      return true;
    }
 }
 

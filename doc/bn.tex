@@ -444,8 +444,7 @@ libtommath.a).	There is no library initialization required and the entire librar
 \section{Return Codes}
 There are five possible return codes a function may return.
 
-\index{MP\_OKAY}\index{MP\_YES}\index{MP\_NO}\index{MP\_VAL}\index{MP\_MEM}\index{MP\_ITER}\index{M
-  P\_BUF}
+\index{MP\_OKAY}\index{MP\_VAL}\index{MP\_MEM}\index{MP\_ITER}\index{MP\_BUF}
 \begin{figure}[h!]
   \begin{center}
     \begin{small}
@@ -456,9 +455,6 @@ There are five possible return codes a function may return.
         \hline MP\_MEM       & Heap memory exhausted.                      \\
         \hline MP\_ITER      & Maximum iterations reached.                 \\
         \hline MP\_BUF       & Buffer overflow, supplied buffer too small. \\
-        \hline               &                                             \\
-        \hline MP\_YES       & Response is yes.                            \\
-        \hline MP\_NO        & Response is no.                             \\
         \hline
       \end{tabular}
     \end{small}
@@ -467,8 +463,7 @@ There are five possible return codes a function may return.
 \end{figure}
 
 The error codes \texttt{MP\_OKAY},\texttt{MP\_VAL}, \texttt{MP\_MEM}, \texttt{MP\_ITER}, and
-\texttt{MP\_BUF} are of the type \texttt{mp\_err}, the codes \texttt{MP\_YES} and \texttt{MP\_NO}
-are of type \texttt{mp\_bool}.
+\texttt{MP\_BUF} are of the type \texttt{mp\_err}.
 
 The last two codes listed are not actually ``return'ed'' by a function.  They are placed in an
 integer (the caller must provide the address of an integer it can store to) which the caller can
@@ -476,11 +471,10 @@ access.  To convert one of the three return codes to a string use the following 
 
 \index{mp\_error\_to\_string}
 \begin{alltt}
-char *mp_error_to_string(int code);
+char *mp_error_to_string(mp_err code);
 \end{alltt}
 
-This will return a pointer to a string which describes the given error code.  It will not work for
-the return codes \texttt{MP\_YES} and \texttt{MP\_NO}.
+This will return a pointer to a string which describes the given error code.
 
 \section{Data Types}
 The basic ``multiple precision integer'' type is known as the \texttt{mp\_int} within LibTomMath.
@@ -1842,7 +1836,7 @@ fail and does not return any error codes.
 To determine if $a$ is a valid DR modulus:
 \index{mp\_dr\_is\_modulus}
 \begin{alltt}
-mp_bool mp_dr_is_modulus(const mp_int *a);
+bool mp_dr_is_modulus(const mp_int *a);
 \end{alltt}
 
 After the pre--computation a reduction can be performed with the following.
@@ -1893,8 +1887,8 @@ To determine if \texttt{mp\_reduce\_2k} can be used at all, ask the function
 
 \index{mp\_reduce\_is\_2k}\index{mp\_reduce\_is\_2k\_l}
 \begin{alltt}
-mp_bool mp_reduce_is_2k(const mp_int *a);
-mp_bool mp_reduce_is_2k_l(const mp_int *a);
+bool mp_reduce_is_2k(const mp_int *a);
+bool mp_reduce_is_2k_l(const mp_int *a);
 \end{alltt}
 
 \section{Combined Modular Reduction}
@@ -2265,7 +2259,7 @@ See also table C.1 in FIPS 186-4.
 \section{Strong Lucas--Selfridge Test}
 \index{mp\_prime\_strong\_lucas\_selfridge}
 \begin{alltt}
-mp_err mp_prime_strong_lucas_selfridge(const mp_int *a, mp_bool *result)
+mp_err mp_prime_strong_lucas_selfridge(const mp_int *a, bool *result)
 \end{alltt}
 Performs a strong Lucas--Selfridge test. The strong Lucas--Selfridge test together with the
 Rabin--Miller test with bases $2$ and $3$ resemble the BPSW test. The single internal use is a
@@ -2275,7 +2269,7 @@ if not needed.
 \section{Frobenius (Underwood)	Test}
 \index{mp\_prime\_frobenius\_underwood}
 \begin{alltt}
-mp_err mp_prime_frobenius_underwood(const mp_int *N, mp_bool *result)
+mp_err mp_prime_frobenius_underwood(const mp_int *N, bool *result)
 \end{alltt}
 Performs the variant of the Frobenius test as described by Paul Underwood. It can be included at
 build--time if the preprocessor macro \texttt{LTM\_USE\_FROBENIUS\_TEST} is defined and will be
@@ -2293,12 +2287,12 @@ Testing if a number is a square can be done a bit faster than just by calculatin
 It is used by the primality testing function described below.
 \index{mp\_is\_square}
 \begin{alltt}
-mp_err mp_is_square(const mp_int *arg, mp_bool *ret);
+mp_err mp_is_square(const mp_int *arg, bool *ret);
 \end{alltt}
 
 \index{mp\_prime\_is\_prime}
 \begin{alltt}
-mp_err mp_prime_is_prime(const mp_int *a, int t, mp_bool *result)
+mp_err mp_prime_is_prime(const mp_int *a, int t, bool *result)
 \end{alltt}
 This will perform a trial division followed by two rounds of Miller--Rabin with bases 2 and 3 and a
 Lucas--Selfridge test. The Frobenius--Underwood is available as a compile--time option with the
@@ -2325,18 +2319,18 @@ primes up to $3\,317\,044\,064\,679\,887\ 385\,961\,981$\footnote{The semiprime 
 by
 the caller.
 
-If $a$ passes all of the tests $result$ is set to \texttt{MP\_YES}, otherwise it is set to
-\texttt{MP\_NO}.
+If $a$ passes all of the tests $result$ is set to \texttt{true}, otherwise it is set to
+\texttt{false}.
 
 \section{Next Prime}
 \index{mp\_prime\_next\_prime}
 \begin{alltt}
-mp_err mp_prime_next_prime(mp_int *a, int t, mp_bool bbs_style)
+mp_err mp_prime_next_prime(mp_int *a, int t, bool bbs_style)
 \end{alltt}
 This finds the next prime after $a$ that passes the function \texttt{mp\_prime\_is\_prime} with $t$
 tests but see the documentation for \texttt{mp\_prime\_is\_prime} for details regarding the use of
-the argument $t$.  Set $bbs\_style$ to \texttt{MP\_YES} if you want only the next prime congruent
-to $3 \mbox{ mod } 4$, otherwise set it to \texttt{MP\_NO} to find any next prime.
+the argument $t$.  Set $bbs\_style$ to \texttt{true} if you want only the next prime congruent
+to $3 \mbox{ mod } 4$, otherwise set it to \texttt{false} to find any next prime.
 
 \section{Random Primes}
 \index{mp\_prime\_rand}
@@ -2639,29 +2633,29 @@ mp_err mp_div_3(const mp_int *a, mp_int *c, mp_digit *d);
 It is never wrong to have some useful little shortcuts at hand.
 \section{Function Macros}
 To make this overview simpler the macros are given as function prototypes. The return of logic
-macros is \texttt{MP\_NO} or \texttt{MP\_YES} respectively.
+macros is \texttt{false} or \texttt{true} respectively.
 
 \index{mp\_iseven}
 \begin{alltt}
-mp_bool mp_iseven(const mp_int *a)
+bool mp_iseven(const mp_int *a)
 \end{alltt}
 Checks if $a = 0 mod 2$
 
 \index{mp\_isodd}
 \begin{alltt}
-mp_bool mp_isodd(const mp_int *a)
+bool mp_isodd(const mp_int *a)
 \end{alltt}
 Checks if $a = 1 mod 2$
 
 \index{mp\_isneg}
 \begin{alltt}
-mp_bool mp_isneg(mp_int *a)
+bool mp_isneg(mp_int *a)
 \end{alltt}
 Checks if $a < 0$
 
 \index{mp\_iszero}
 \begin{alltt}
-mp_bool mp_iszero(mp_int *a)
+bool mp_iszero(mp_int *a)
 \end{alltt}
 Checks if $a = 0$. It does not check if the amount of memory allocated for $a$ is also minimal.
 

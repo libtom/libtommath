@@ -14,46 +14,46 @@ static unsigned int s_floor_ilog2(int value)
 }
 
 
-mp_err mp_prime_is_prime(const mp_int *a, int t, mp_bool *result)
+mp_err mp_prime_is_prime(const mp_int *a, int t, bool *result)
 {
    mp_int  b;
    int     ix, p_max = 0, size_a, len;
-   mp_bool res;
+   bool res;
    mp_err  err;
    unsigned int fips_rand, mask;
 
    /* default to no */
-   *result = MP_NO;
+   *result = false;
 
    /* Some shortcuts */
    /* N > 3 */
    if (a->used == 1) {
       if ((a->dp[0] == 0u) || (a->dp[0] == 1u)) {
-         *result = MP_NO;
+         *result = false;
          return MP_OKAY;
       }
       if (a->dp[0] == 2u) {
-         *result = MP_YES;
+         *result = true;
          return MP_OKAY;
       }
    }
 
    /* N must be odd */
-   if (MP_IS_EVEN(a)) {
+   if (mp_iseven(a)) {
       return MP_OKAY;
    }
    /* N is not a perfect square: floor(sqrt(N))^2 != N */
    if ((err = mp_is_square(a, &res)) != MP_OKAY) {
       return err;
    }
-   if (res != MP_NO) {
+   if (res) {
       return MP_OKAY;
    }
 
    /* is the input equal to one of the primes in the table? */
    for (ix = 0; ix < MP_PRIME_TAB_SIZE; ix++) {
       if (mp_cmp_d(a, s_mp_prime_tab[ix]) == MP_EQ) {
-         *result = MP_YES;
+         *result = true;
          return MP_OKAY;
       }
    }
@@ -63,7 +63,7 @@ mp_err mp_prime_is_prime(const mp_int *a, int t, mp_bool *result)
    }
 
    /* return if it was trivially divisible */
-   if (res == MP_YES) {
+   if (res) {
       return MP_OKAY;
    }
 
@@ -77,7 +77,7 @@ mp_err mp_prime_is_prime(const mp_int *a, int t, mp_bool *result)
    if ((err = mp_prime_miller_rabin(a, &b, &res)) != MP_OKAY) {
       goto LBL_B;
    }
-   if (res == MP_NO) {
+   if (!res) {
       goto LBL_B;
    }
    /*
@@ -89,7 +89,7 @@ mp_err mp_prime_is_prime(const mp_int *a, int t, mp_bool *result)
    if ((err = mp_prime_miller_rabin(a, &b, &res)) != MP_OKAY) {
       goto LBL_B;
    }
-   if (res == MP_NO) {
+   if (!res) {
       goto LBL_B;
    }
 
@@ -105,14 +105,14 @@ mp_err mp_prime_is_prime(const mp_int *a, int t, mp_bool *result)
       if ((err != MP_OKAY) && (err != MP_ITER)) {
          goto LBL_B;
       }
-      if (res == MP_NO) {
+      if (!res) {
          goto LBL_B;
       }
 #else
       if ((err = mp_prime_strong_lucas_selfridge(a, &res)) != MP_OKAY) {
          goto LBL_B;
       }
-      if (res == MP_NO) {
+      if (!res) {
          goto LBL_B;
       }
 #endif
@@ -164,7 +164,7 @@ mp_err mp_prime_is_prime(const mp_int *a, int t, mp_bool *result)
          if ((err = mp_prime_miller_rabin(a, &b, &res)) != MP_OKAY) {
             goto LBL_B;
          }
-         if (res == MP_NO) {
+         if (!res) {
             goto LBL_B;
          }
       }
@@ -260,14 +260,14 @@ mp_err mp_prime_is_prime(const mp_int *a, int t, mp_bool *result)
          if ((err = mp_prime_miller_rabin(a, &b, &res)) != MP_OKAY) {
             goto LBL_B;
          }
-         if (res == MP_NO) {
+         if (!res) {
             goto LBL_B;
          }
       }
    }
 
    /* passed the test */
-   *result = MP_YES;
+   *result = true;
 LBL_B:
    mp_clear(&b);
    return err;

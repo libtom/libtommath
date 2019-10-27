@@ -95,5 +95,6 @@ test_*.txt
 *.zip
 
 doc/pics/*.ps
+doc/*.bak*
 
 callgraph.txt

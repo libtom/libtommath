@@ -15,7 +15,7 @@ mp_err mp_sqrt(const mp_int *arg, mp_int *ret)
    }
 
    /* easy out */
-   if (MP_IS_ZERO(arg)) {
+   if (mp_iszero(arg)) {
       mp_zero(ret);
       return MP_OKAY;
    }

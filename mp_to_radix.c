@@ -3,6 +3,23 @@
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
+/* reverse an array, used for radix code */
+static void s_mp_reverse(unsigned char *s, size_t len)
+{
+   size_t   ix, iy;
+   unsigned char t;
+
+   ix = 0u;
+   iy = len - 1u;
+   while (ix < iy) {
+      t     = s[ix];
+      s[ix] = s[iy];
+      s[iy] = t;
+      ++ix;
+      --iy;
+   }
+}
+
 /* stores a bignum as a ASCII string in a given radix (2..64)
  *
  * Stores upto "size - 1" chars and always a NULL byte, puts the number of characters
@@ -25,7 +42,7 @@ mp_err mp_to_radix(const mp_int *a, char *str, size_t maxlen, size_t *written, i
    }
 
    /* quick out if its zero */
-   if (MP_IS_ZERO(a)) {
+   if (mp_iszero(a)) {
       *str++ = '0';
       *str = '\0';
       if (written != NULL) {
@@ -51,7 +68,7 @@ mp_err mp_to_radix(const mp_int *a, char *str, size_t maxlen, size_t *written, i
       --maxlen;
    }
    digs = 0u;
-   while (!MP_IS_ZERO(&t)) {
+   while (!mp_iszero(&t)) {
       if (--maxlen < 1u) {
          /* no more room */
          err = MP_BUF;

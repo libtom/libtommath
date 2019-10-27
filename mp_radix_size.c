@@ -15,7 +15,7 @@ mp_err mp_radix_size(const mp_int *a, int radix, size_t *size)
       return MP_VAL;
    }
 
-   if (MP_IS_ZERO(a)) {
+   if (mp_iszero(a)) {
       *size = 2;
       return MP_OKAY;
    }

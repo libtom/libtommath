@@ -10,6 +10,20 @@ mp_err mp_sub_d(const mp_int *a, mp_digit b, mp_int *c)
    mp_err    err;
    int       ix, oldused;
 
+   /* fast path for a == c */
+   if (a == c) {
+      if ((c->sign == MP_NEG) &&
+          ((c->dp[0] + b) < MP_DIGIT_MAX)) {
+         c->dp[0] += b;
+         return MP_OKAY;
+      }
+      if ((c->sign == MP_ZPOS) &&
+          (c->dp[0] > b)) {
+         c->dp[0] -= b;
+         return MP_OKAY;
+      }
+   }
+
    /* grow c as required */
    if (c->alloc < (a->used + 1)) {
       if ((err = mp_grow(c, a->used + 1)) != MP_OKAY) {

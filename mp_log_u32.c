@@ -9,7 +9,7 @@ mp_err mp_log_u32(const mp_int *a, uint32_t base, uint32_t *c)
       return MP_VAL;
    }
 
-   if (MP_IS_ZERO(a)) {
+   if (mp_iszero(a)) {
       return MP_VAL;
    }
 

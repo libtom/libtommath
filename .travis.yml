@@ -61,6 +61,9 @@ matrix:
     # We have only one program and the variable $BUILDOPTIONS
     # has only the options to that program: testme.sh
 
+    # Check c89 <-> c99 roundtrip
+    - env: BUILDOPTIONS='--c89-c99-roundtrip'
+
     # Check source code format
     - env: BUILDOPTIONS='--format'
       addons:
@@ -140,6 +143,7 @@ matrix:
     # clang for x86-64 architecture (64-bit longs and 64-bit pointers)
     - env: SANITIZER=1 CONV_WARNINGS=relaxed BUILDOPTIONS='--with-cc=clang-7 --with-m64 --with-travis-valgrind'
     - env: SANITIZER=1 CONV_WARNINGS=strict BUILDOPTIONS='--with-cc=clang-7 --with-m64 --with-travis-valgrind'
+    - env: SANITIZER=1 CONV_WARNINGS=strict BUILDOPTIONS='--with-cc=clang-7 --c89 --with-m64 --with-travis-valgrind'
     - env: SANITIZER=1 BUILDOPTIONS='--with-cc=clang-6.0 --with-m64 --with-travis-valgrind'
       addons:
         apt:

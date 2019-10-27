@@ -11,13 +11,13 @@
  *
  * Sets result to 1 if the congruence holds, or zero otherwise.
  */
-mp_err mp_prime_fermat(const mp_int *a, const mp_int *b, mp_bool *result)
+mp_err mp_prime_fermat(const mp_int *a, const mp_int *b, bool *result)
 {
    mp_int  t;
    mp_err  err;
 
    /* default to composite  */
-   *result = MP_NO;
+   *result = false;
 
    /* ensure b > 1 */
    if (mp_cmp_d(b, 1uL) != MP_GT) {
@@ -36,7 +36,7 @@ mp_err mp_prime_fermat(const mp_int *a, const mp_int *b, mp_bool *result)
 
    /* is it equal to b? */
    if (mp_cmp(&t, b) == MP_EQ) {
-      *result = MP_YES;
+      *result = true;
    }
 
    err = MP_OKAY;

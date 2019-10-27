@@ -43,7 +43,7 @@ manual:	mandvi
 # Its configuraion is well documented
 # http://mirrors.ctan.org/support/latexindent/documentation/latexindent.pdf
 pretty:
-	latexindent -w -m -l=.latexindent.yaml bn.tex
+	latexindent -s -w -m -l=.latexindent.yaml bn.tex
 
 clean:
 	rm -f *.idx *.toc *.log *.aux *.dvi *.lof *.ind *.ilg *.ps *.log tommath.tex

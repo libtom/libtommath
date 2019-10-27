@@ -173,7 +173,7 @@ int main(int argc, char **argv)
                gg = (TIMFUNC() - gg) >> 1;
                if (tt > gg)
                   tt = gg;
-               if ((m == 0) && (n == MP_YES)) {
+               if ((m == 0) && n) {
                   printf("Arnault's pseudoprime is not prime but mp_prime_is_prime says it is.\n");
                   return EXIT_FAILURE;
                }

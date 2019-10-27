@@ -10,6 +10,21 @@ mp_err mp_add_d(const mp_int *a, mp_digit b, mp_int *c)
    int ix, oldused;
    mp_digit *tmpa, *tmpc;
 
+   /* fast path for a == c */
+   if (a == c) {
+      if ((c->sign == MP_ZPOS) &&
+          !mp_iszero(c) &&
+          ((c->dp[0] + b) < MP_DIGIT_MAX)) {
+         c->dp[0] += b;
+         return MP_OKAY;
+      }
+      if ((c->sign == MP_NEG) &&
+          (c->dp[0] > b)) {
+         c->dp[0] -= b;
+         return MP_OKAY;
+      }
+   }
+
    /* grow c as required */
    if (c->alloc < (a->used + 1)) {
       if ((err = mp_grow(c, a->used + 1)) != MP_OKAY) {
