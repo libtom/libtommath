@@ -359,7 +359,7 @@ EOS
     foreach my $filename (glob '*mp_*.c') {
         my $content;
         my $cc = $ENV{'CC'} || 'gcc';
-        $content = `$cc -E -x c -DLTM_ALL $filename`;
+        $content = `$cc -D'MP_HAS(x)=MP_HAS(x)' -E -x c -DLTM_ALL $filename`;
         $content =~ s/^# 1 "$filename".*?^# 2 "$filename"//ms;
 
         # convert filename to upper case so we can use it as a define
@@ -374,6 +374,7 @@ EOS
 
         # scan for mp_* and make classes
         my @deps = ();
+        my %opt_deps = ();
         foreach my $line (split /\n/, $content) {
             while ($line =~ /(fast_)?(s_)?mp\_[a-z_0-9]*((?=\;)|(?=\())|(?<=\()mp\_[a-z_0-9]*(?=\()/g) {
                 my $a = $&;
@@ -382,10 +383,13 @@ EOS
                 $a = $a . '_C';
                 push @deps, $a;
             }
+            while ($line =~ /MP_HAS\(([^\)]+)\)/g) {
+                $opt_deps{"$1_C"} = 1;
+            }
         }
         @deps = sort(@deps);
         foreach my $a (@deps) {
-            if ($list !~ /$a/) {
+            if ($list !~ /$a/ && !$opt_deps{$a}) {
                 print {$class} "#   define $a\n";
             }
             $list = $list . ',' . $a;

@@ -245,8 +245,6 @@
 #   define MP_CMP_MAG_C
 #   define MP_COPY_C
 #   define MP_ZERO_C
-#   define S_MP_DIV_RECURSIVE_C
-#   define S_MP_DIV_SCHOOL_C
 #   define S_MP_DIV_SMALL_C
 #endif
 
@@ -275,7 +273,6 @@
 #   define MP_CLEAR_C
 #   define MP_COPY_C
 #   define MP_DIV_2D_C
-#   define MP_DIV_3_C
 #   define MP_EXCH_C
 #   define MP_INIT_SIZE_C
 #endif
@@ -310,13 +307,7 @@
 #if defined(MP_EXPTMOD_C)
 #   define MP_ABS_C
 #   define MP_CLEAR_MULTI_C
-#   define MP_DR_IS_MODULUS_C
 #   define MP_INIT_MULTI_C
-#   define MP_INVMOD_C
-#   define MP_REDUCE_IS_2K_C
-#   define MP_REDUCE_IS_2K_L_C
-#   define S_MP_EXPTMOD_C
-#   define S_MP_EXPTMOD_FAST_C
 #endif
 
 #if defined(MP_EXTEUCLID_C)
@@ -463,8 +454,6 @@
 
 #if defined(MP_INVMOD_C)
 #   define MP_CMP_D_C
-#   define S_MP_INVMOD_FAST_C
-#   define S_MP_INVMOD_SLOW_C
 #endif
 
 #if defined(MP_IS_SQUARE_C)
@@ -499,9 +488,6 @@
 #endif
 
 #if defined(MP_LOG_U32_C)
-#   define S_MP_LOG_C
-#   define S_MP_LOG_D_C
-#   define S_MP_LOG_POW2_C
 #endif
 
 #if defined(MP_LSHD_C)
@@ -548,11 +534,6 @@
 #endif
 
 #if defined(MP_MUL_C)
-#   define S_MP_BALANCE_MUL_C
-#   define S_MP_KARATSUBA_MUL_C
-#   define S_MP_MUL_DIGS_C
-#   define S_MP_MUL_DIGS_FAST_C
-#   define S_MP_TOOM_MUL_C
 #endif
 
 #if defined(MP_MUL_2_C)
@@ -745,8 +726,6 @@
 #   define MP_SET_C
 #   define MP_SUB_C
 #   define S_MP_MUL_DIGS_C
-#   define S_MP_MUL_HIGH_DIGS_C
-#   define S_MP_MUL_HIGH_DIGS_FAST_C
 #   define S_MP_SUB_C
 #endif
 
@@ -873,10 +852,6 @@
 #endif
 
 #if defined(MP_SQR_C)
-#   define S_MP_KARATSUBA_SQR_C
-#   define S_MP_SQR_C
-#   define S_MP_SQR_FAST_C
-#   define S_MP_TOOM_SQR_C
 #endif
 
 #if defined(MP_SQRMOD_C)
@@ -1061,21 +1036,13 @@
 #   define MP_CLEAR_C
 #   define MP_COPY_C
 #   define MP_COUNT_BITS_C
-#   define MP_DR_REDUCE_C
-#   define MP_DR_SETUP_C
 #   define MP_EXCH_C
 #   define MP_INIT_SIZE_C
 #   define MP_MOD_C
-#   define MP_MONTGOMERY_CALC_NORMALIZATION_C
-#   define MP_MONTGOMERY_REDUCE_C
-#   define MP_MONTGOMERY_SETUP_C
 #   define MP_MULMOD_C
 #   define MP_MUL_C
-#   define MP_REDUCE_2K_C
-#   define MP_REDUCE_2K_SETUP_C
 #   define MP_SET_C
 #   define MP_SQR_C
-#   define S_MP_MONTGOMERY_REDUCE_FAST_C
 #endif
 
 #if defined(S_MP_GET_BIT_C)
@@ -1178,7 +1145,6 @@
 #   define MP_CLEAR_C
 #   define MP_EXCH_C
 #   define MP_INIT_SIZE_C
-#   define S_MP_MUL_HIGH_DIGS_FAST_C
 #endif
 
 #if defined(S_MP_MUL_HIGH_DIGS_FAST_C)
