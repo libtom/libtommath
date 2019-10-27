@@ -447,6 +447,7 @@ sub die_usage {
 usage: $0 -s   OR   $0 --check-source
        $0 -o   OR   $0 --check-comments
        $0 -m   OR   $0 --check-makefiles
+       $0 -d   OR   $0 --check-doc
        $0 -a   OR   $0 --check-all
        $0 -u   OR   $0 --update-files
 MARKER
@@ -464,7 +465,7 @@ GetOptions( "s|check-source"        => \my $check_source,
 my $failure;
 $failure ||= check_source()       if $check_all || $check_source;
 $failure ||= check_comments()     if $check_all || $check_comments;
-$failure ||= check_doc()          if $check_doc; # temporarily excluded from --check-all
+$failure ||= check_doc()          if $check_all || $check_doc;
 $failure ||= process_makefiles(0) if $check_all || $check_makefiles;
 $failure ||= process_makefiles(1) if $update_files;
 $failure ||= update_dep()         if $update_files;
