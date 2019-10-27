@@ -161,20 +161,10 @@ c89:
 	-e 's/bool/mp_bool/g' \
 	-e 's/true/MP_YES/g' \
 	-e 's/false/MP_NO/g' \
+	-e 's/\(PRI[iux]64\)/MP_\1/g' \
 	-e 's/uint\([0-9][0-9]*\)_t/mp_u\1/g' \
 	-e 's/int\([0-9][0-9]*\)_t/mp_i\1/g' \
-	*.c *.h demo/*.c demo/*.h etc/*.c
-	@echo "/* please adapt this header to your needs */" > tommath_c89.h
-	@echo "typedef enum { MP_NO, MP_YES } mp_bool;" >> tommath_c89.h
-	@echo "typedef __INT8_TYPE__   mp_i8;"          >> tommath_c89.h
-	@echo "typedef __INT16_TYPE__  mp_i16;"         >> tommath_c89.h
-	@echo "typedef __INT32_TYPE__  mp_i32;"         >> tommath_c89.h
-	@echo "typedef __INT64_TYPE__  mp_i64;"         >> tommath_c89.h
-	@echo "typedef __UINT8_TYPE__  mp_u8;"          >> tommath_c89.h
-	@echo "typedef __UINT16_TYPE__ mp_u16;"         >> tommath_c89.h
-	@echo "typedef __UINT32_TYPE__ mp_u32;"         >> tommath_c89.h
-	@echo "typedef __UINT64_TYPE__ mp_u64;"         >> tommath_c89.h
-
+	*.c tommath.h tommath_private.h demo/*.c demo/*.h etc/*.c
 
 c99:
 	@echo "Applying substitutions for c99 compatibility..."
@@ -185,11 +175,10 @@ c99:
 	-e 's/MP_YES/true/g' \
 	-e 's/MP_NO/false/g' \
 	-e 's/false_/MP_NO_/g' \
+	-e 's/MP_\(PRI[iux]64\)/\1/g' \
 	-e 's/mp_u\([0-9][0-9]*\)/uint\1_t/g' \
 	-e 's/mp_i\([0-9][0-9]*\)/int\1_t/g' \
-	*.c *.h demo/*.c demo/*.h etc/*.c
-	@rm -f tommath_c89.h
-
+	*.c tommath.h tommath_private.h demo/*.c demo/*.h etc/*.c
 
 astyle:
 	@echo "   * run astyle on all sources"
