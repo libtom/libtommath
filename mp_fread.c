@@ -8,15 +8,19 @@
 mp_err mp_fread(mp_int *a, int radix, FILE *stream)
 {
    mp_err err;
-   mp_sign neg;
+   mp_sign neg = MP_ZPOS;
+   int ch;
+
+   /* make sure the radix is ok */
+   if ((radix < 2) || (radix > 64)) {
+      return MP_VAL;
+   }
 
    /* if first digit is - then set negative */
-   int ch = fgetc(stream);
+   ch = fgetc(stream);
    if (ch == (int)'-') {
       neg = MP_NEG;
       ch = fgetc(stream);
-   } else {
-      neg = MP_ZPOS;
    }
 
    /* no digits, return error */
@@ -29,7 +33,9 @@ mp_err mp_fread(mp_int *a, int radix, FILE *stream)
 
    do {
       int y;
-      unsigned pos = (unsigned)(ch - (int)'(');
+      unsigned pos;
+      ch = (radix <= 36) ? MP_TOUPPER(ch) : ch;
+      pos = (unsigned)(ch - (int)'(');
       if (MP_RMAP_REVERSE_SIZE < pos) {
          break;
       }
@@ -49,7 +55,7 @@ mp_err mp_fread(mp_int *a, int radix, FILE *stream)
       }
    } while ((ch = fgetc(stream)) != EOF);
 
-   if (a->used != 0) {
+   if (!mp_iszero(a)) {
       a->sign = neg;
    }
 

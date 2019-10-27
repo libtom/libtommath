@@ -146,6 +146,8 @@ extern void MP_FREE(void *mem, size_t size);
 #define MP_MIN(x, y) (((x) < (y)) ? (x) : (y))
 #define MP_MAX(x, y) (((x) > (y)) ? (x) : (y))
 
+#define MP_TOUPPER(c) ((((c) >= 'a') && ((c) <= 'z')) ? (((c) + 'A') - 'a') : (c))
+
 /* Static assertion */
 #define MP_STATIC_ASSERT(msg, cond) typedef char mp_static_assert_##msg[(cond) ? 1 : -1];
 

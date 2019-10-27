@@ -3,19 +3,11 @@
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
-#define MP_TOUPPER(c) ((((c) >= 'a') && ((c) <= 'z')) ? (((c) + 'A') - 'a') : (c))
-
 /* read a string [ASCII] in a given radix */
 mp_err mp_read_radix(mp_int *a, const char *str, int radix)
 {
    mp_err   err;
-   int      y;
-   mp_sign  neg;
-   unsigned pos;
-   char     ch;
-
-   /* zero the digit bignum */
-   mp_zero(a);
+   mp_sign  neg = MP_ZPOS;
 
    /* make sure the radix is ok */
    if ((radix < 2) || (radix > 64)) {
@@ -28,8 +20,6 @@ mp_err mp_read_radix(mp_int *a, const char *str, int radix)
    if (*str == '-') {
       ++str;
       neg = MP_NEG;
-   } else {
-      neg = MP_ZPOS;
    }
 
    /* set the integer to the default of zero */
@@ -41,8 +31,9 @@ mp_err mp_read_radix(mp_int *a, const char *str, int radix)
        * this allows numbers like 1AB and 1ab to represent the same  value
        * [e.g. in hex]
        */
-      ch = (radix <= 36) ? (char)MP_TOUPPER((int)*str) : *str;
-      pos = (unsigned)(ch - '(');
+      int y;
+      char ch = (radix <= 36) ? (char)MP_TOUPPER((int)*str) : *str;
+      unsigned pos = (unsigned)(ch - '(');
       if (MP_RMAP_REVERSE_SIZE < pos) {
          break;
       }
@@ -66,7 +57,6 @@ mp_err mp_read_radix(mp_int *a, const char *str, int radix)
 
    /* if an illegal character was found, fail. */
    if (!((*str == '\0') || (*str == '\r') || (*str == '\n'))) {
-      mp_zero(a);
       return MP_VAL;
    }
 
