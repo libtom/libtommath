@@ -206,7 +206,7 @@ mp_err mp_init_size(mp_int *a, int size) MP_WUR;
 #define mp_iszero(a) ((a)->used == 0)
 #define mp_isneg(a)  ((a)->sign != MP_ZPOS)
 #define mp_iseven(a) (((a)->used == 0) || (((a)->dp[0] & 1u) == 0u))
-#define mp_isodd(a)  (((a)->used > 0) && (((a)->dp[0] & 1u) == 1u))
+#define mp_isodd(a)  (!mp_iseven(a))
 
 /* set to zero */
 void mp_zero(mp_int *a);
