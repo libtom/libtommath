@@ -1039,7 +1039,8 @@ double mp_get_double(const mp_int *a);
 
 \subsection{Initialize and Setting Constants}
 To both initialize and set small constants the following nine functions are available.
-\index{mp\_init\_set} \index{mp\_init\_set\_int}
+\index{mp\_init\_set} \index{mp\_init\_i32} \index{mp\_init\_i64} \index{mp\_init\_u32} \index{mp\_init\_u64}
+\index{mp\_init\_l} \index{mp\_init\_ll} \index{mp\_init\_ul} \index{mp\_init\_ull}
 \begin{alltt}
 mp_err mp_init_set (mp_int *a, mp_digit b);
 mp_err mp_init_i32 (mp_int *a, int32_t b);
@@ -1427,7 +1428,7 @@ While AND, OR and XOR operations compute arbitrary--precision bitwise operations
 are treated as if they are in two--complement representation, while internally they are
 sign--magnitude however.
 
-\index{mp\_or} \index{mp\_and} \index{mp\_xor} \index{mp\_complement}
+\index{mp\_or} \index{mp\_and} \index{mp\_xor} \index{mp\_complement} \index{mp\_signed\_rsh}
 \begin{alltt}
 mp_err mp_or  (const mp_int *a, mp_int *b, mp_int *c);
 mp_err mp_and (const mp_int *a, mp_int *b, mp_int *c);
@@ -1908,16 +1909,19 @@ mp_err mp_addmod(const mp_int *a, const mp_int *b, const mp_int *c, mp_int *d);
 \end{alltt}
 
 Subtraction  $d = (a - b) \mod c$
+\index{mp\_submod}
 \begin{alltt}
 mp_err mp_submod(const mp_int *a, const mp_int *b, const mp_int *c, mp_int *d);
 \end{alltt}
 
 Multiplication $d = (ab) \mod c$
+\index{mp\_mulmod}
 \begin{alltt}
 mp_err mp_mulmod(const mp_int *a, const mp_int *b, const mp_int *c, mp_int *d);
 \end{alltt}
 
 Squaring  $d = (a^2) \mod c$
+\index{mp\_sqrmod}
 \begin{alltt}
 mp_err mp_sqrmod(const mp_int *a, const mp_int *b, const mp_int *c, mp_int *d);
 \end{alltt}
@@ -1953,7 +1957,7 @@ mp_err mp_mod_2d(const mp_int *a, int b, mp_int *c)
 It calculates $c = a \mod 2^b$.
 
 \section{Root Finding}
-\index{mp\_n\_root}
+\index{mp\_root\_u32}
 \begin{alltt}
 mp_err mp_root_u32(const mp_int *a, uint32_t b, mp_int *c)
 \end{alltt}
@@ -2378,13 +2382,6 @@ the case of RSA) since there is no skew on the least significant bits.
 
 \chapter{Random Number Generation}
 \section{PRNG}
-\index{mp\_rand\_digit}
-\begin{alltt}
-mp_err mp_rand_digit(mp_digit *r)
-\end{alltt}
-This function generates a random number in \texttt{r} of the size given in \texttt{r} (that is, the
-variable is used for in-- and output) but not more than \texttt{MP\_DIGIT\_MAX} bits.
-
 \index{mp\_rand}
 \begin{alltt}
 mp_err mp_rand(mp_int *a, int digits)
@@ -2484,7 +2481,7 @@ This will read in an unsigned big--endian array of bytes (octets) from \texttt{b
 
 For those who acknowledge the existence of negative numbers (heretic!) there are ``signed''
 versions of the previous functions.
-\index{mp\_signed\_bin\_size} \index{mp\_to\_signed\_bin} \index{mp\_read\_signed\_bin}
+\index{mp\_sbin\_size} \index{mp\_from\_sbin} \index{mp\_to\_sbin}
 \begin{alltt}
 size_t mp_sbin_size(const mp_int *a);
 mp_err mp_from_sbin(mp_int *a, const unsigned char *b, size_t size);
@@ -2507,6 +2504,7 @@ mp_err mp_pack(void *rop, size_t *countp, mp_order order, size_t size,
 \end{alltt}
 The function \texttt{mp\_pack} has the additional variable \texttt{maxsize} which must hold the
 size of the buffer \texttt{rop} in bytes. Use
+\index{mp\_pack\_count}
 \begin{alltt}
 /* Parameters "nails" and "size" are the same as in mp_pack */
 size_t mp_pack_count(const mp_int *a, size_t nails, size_t size);
@@ -2623,6 +2621,7 @@ The functions \texttt{mp\_incr} and \texttt{mp\_decr} mimic the postfix operator
 \texttt{--} respectively, to increment the input by one. They call the full single--digit functions
 if the addition would carry. Both functions need to be included in a minimized library because they
 call each other in case of a negative input, These functions change the inputs!
+\index{mp\_incr} \index{mp\_decr}
 \begin{alltt}
 mp_err mp_incr(mp_int *a);
 mp_err mp_decr(mp_int *a);
@@ -2668,37 +2667,6 @@ Checks if $a = 0$. It does not check if the amount of memory allocated for $a$ i
 
 Other macros which are either shortcuts to normal functions or just other names for them do have
 their place in a programmer's life, too!
-
-\subsection{Renamings}
-\index{mp\_mag\_size}
-\begin{alltt}
-#define mp_mag_size(mp) mp_unsigned_bin_size(mp)
-\end{alltt}
-
-\index{mp\_raw\_size}
-\begin{alltt}
-#define mp_raw_size(mp) mp_signed_bin_size(mp)
-\end{alltt}
-
-\index{mp\_read\_mag}
-\begin{alltt}
-#define mp_read_mag(mp, str, len) mp_read_unsigned_bin((mp), (str), (len))
-\end{alltt}
-
-\index{mp\_read\_raw}
-\begin{alltt}
- #define mp_read_raw(mp, str, len) mp_read_signed_bin((mp), (str), (len))
-\end{alltt}
-
-\index{mp\_tomag}
-\begin{alltt}
-#define mp_tomag(mp, str) mp_to_unsigned_bin((mp), (str))
-\end{alltt}
-
-\index{mp\_toraw}
-\begin{alltt}
-#define mp_toraw(mp, str)         mp_to_signed_bin((mp), (str))
-\end{alltt}
 
 \subsection{Shortcuts}
 
