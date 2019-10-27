@@ -71,13 +71,13 @@ profiled:
 
 #make a single object profiled library
 profiled_single:
-	perl gen.pl
-	$(CC) $(LTM_CFLAGS) -fprofile-arcs -DTESTING -c mpi.c -o mpi.o
-	$(CC) $(LTM_CFLAGS) -DTESTING -DTIMER demo/timing.c mpi.o -lgcov -o timing
+	cat *mp_*.c > mp_all.c
+	$(CC) $(LTM_CFLAGS) -fprofile-arcs -DTESTING -c mp_all.c -o mp_all.o
+	$(CC) $(LTM_CFLAGS) -DTESTING -DTIMER demo/timing.c mp_all.o -lgcov -o timing
 	./timing
 	rm -f *.o timing
-	$(CC) $(LTM_CFLAGS) -fbranch-probabilities -DTESTING -c mpi.c -o mpi.o
-	$(AR) $(ARFLAGS) $(LIBNAME) mpi.o
+	$(CC) $(LTM_CFLAGS) -fbranch-probabilities -DTESTING -c mp_all.c -o mp_all.o
+	$(AR) $(ARFLAGS) $(LIBNAME) mp_all.o
 	ranlib $(LIBNAME)
 
 install: $(LIBNAME)
@@ -121,9 +121,9 @@ docs manual:
 .PHONY: pre_gen
 pre_gen:
 	mkdir -p pre_gen
-	perl gen.pl
-	sed -e 's/[[:blank:]]*$$//' mpi.c > pre_gen/mpi.c
-	rm mpi.c
+	cat *mp_*.c > mp_all.c
+	sed -e 's/[[:blank:]]*$$//' mp_all.c > pre_gen/mp_all.c
+	rm mp_all.c
 
 zipup: clean astyle new_file docs
 	@# Update the index, so diff-index won't fail in case the pdf has been created.
