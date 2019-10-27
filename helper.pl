@@ -108,7 +108,7 @@ sub check_doc {
   my $fails = 0;
   my $tex = read_file('doc/bn.tex');
   my $tmh = read_file('tommath.h');
-  my @functions = $tmh =~ /\n\s*[a-zA-Z0-9_* ]+?(mp_[a-z0-9_]+)\s*\([^\)]+\)\s*;/sg;
+  my @functions = $tmh =~ /\n\s*[a-zA-Z0-9_* ]+?(mp_[a-z0-9_]+)\s*\([^\)]+\)\s*[MP_WUR]+?;/sg;
   my @macros    = $tmh =~ /\n\s*#define\s+([a-z0-9_]+)\s*\([^\)]+\)/sg;
   for my $n (sort @functions) {
     (my $nn = $n) =~ s/_/\\_/g; # mp_sub_d >> mp\_sub\_d
