@@ -108,7 +108,7 @@ sub check_doc {
   my $fails = 0;
   my $tex = read_file('doc/bn.tex');
   my $tmh = read_file('tommath.h');
-  my @functions = $tmh =~ /\n\s*[a-zA-Z0-9_* ]+?(mp_[a-z0-9_]+)\s*\([^\)]+\)\s*;/sg;
+  my @functions = $tmh =~ /\n\s*[a-zA-Z0-9_* ]+?(mp_[a-z0-9_]+)\s*\([^\)]+\)\s*[MP_WUR]+?;/sg;
   my @macros    = $tmh =~ /\n\s*#define\s+([a-z0-9_]+)\s*\([^\)]+\)/sg;
   for my $n (sort @functions) {
     (my $nn = $n) =~ s/_/\\_/g; # mp_sub_d >> mp\_sub\_d
@@ -447,6 +447,7 @@ sub die_usage {
 usage: $0 -s   OR   $0 --check-source
        $0 -o   OR   $0 --check-comments
        $0 -m   OR   $0 --check-makefiles
+       $0 -d   OR   $0 --check-doc
        $0 -a   OR   $0 --check-all
        $0 -u   OR   $0 --update-files
 MARKER
@@ -464,7 +465,7 @@ GetOptions( "s|check-source"        => \my $check_source,
 my $failure;
 $failure ||= check_source()       if $check_all || $check_source;
 $failure ||= check_comments()     if $check_all || $check_comments;
-$failure ||= check_doc()          if $check_doc; # temporarily excluded from --check-all
+$failure ||= check_doc()          if $check_all || $check_doc;
 $failure ||= process_makefiles(0) if $check_all || $check_makefiles;
 $failure ||= process_makefiles(1) if $update_files;
 $failure ||= update_dep()         if $update_files;

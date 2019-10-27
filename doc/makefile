@@ -38,5 +38,12 @@ manual:	mandvi
 	mv bn.bak bn.tex
 	rm -f bn.aux bn.dvi bn.log bn.idx bn.lof bn.out bn.toc
 
+# The file latexindent.pl is in several LaTeX distributions, if not:
+# https://ctan.org/pkg/latexindent
+# Its configuraion is well documented
+# http://mirrors.ctan.org/support/latexindent/documentation/latexindent.pdf
+pretty:
+	latexindent -w -m -l=.latexindent.yaml bn.tex
+
 clean:
 	rm -f *.idx *.toc *.log *.aux *.dvi *.lof *.ind *.ilg *.ps *.log tommath.tex

@@ -1,0 +1,35 @@
+# 2 spaces
+defaultIndent: "  "
+# verbatim environments- environments specified 
+# in this hash table will not be changed at all!
+verbatimEnvironments:
+    verbatim: 1
+    alltt: 1
+# verbatim commands such as \verb! body !, \lstinline$something else$
+verbatimCommands:
+    verb: 1
+
+#  no indent blocks (not necessarily verbatim 
+#  environments) which are marked as %\begin{noindent}
+#  or anything else that the user puts in this hash
+#  table
+noIndentBlock:
+    noindent: 1
+
+# remove trailing whitespace from all lines 
+removeTrailingWhitespace:
+    beforeProcessing: 0
+    afterProcessing: 1
+
+indentAfterItems:
+    itemize: 1
+    enumerate: 1
+    description: 1
+    list: 1
+
+onlyOneBackUp: 1
+
+modifyLineBreaks:
+    textWrapOptions:
+        columns: 100
+
