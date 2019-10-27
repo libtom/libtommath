@@ -6,7 +6,7 @@
  */
 #include <stdlib.h>
 #include <time.h>
-#include "tommath.h"
+#include "tommath_private.h"
 
 static int   n_prime;
 static FILE *primes;

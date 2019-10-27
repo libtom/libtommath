@@ -167,7 +167,7 @@ typedef unsigned long mp_word __attribute__((mode(TI)));
 typedef uint64_t mp_word;
 #endif
 
-MP_STATIC_ASSERT(correct_word_size, sizeof(mp_word) == 2 * sizeof(mp_digit))
+MP_STATIC_ASSERT(correct_word_size, sizeof(mp_word) == (2u * sizeof(mp_digit)))
 
 /* default precision */
 #ifndef MP_PREC
