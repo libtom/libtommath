@@ -157,7 +157,7 @@ extern void MP_FREE(void *mem, size_t size);
 #define MP_SIZEOF_BITS(type)    ((size_t)CHAR_BIT * sizeof(type))
 #define MP_MAXFAST              (int)(1uL << (MP_SIZEOF_BITS(mp_word) - (2u * (size_t)MP_DIGIT_BIT)))
 
-#define MP_WARRAY (1 << ((MP_SIZEOF_BITS(mp_word) - (2 * MP_DIGIT_BIT)) + 1))
+#define MP_WARRAY               (int)(1uL << ((MP_SIZEOF_BITS(mp_word) - (2u * (size_t)MP_DIGIT_BIT)) + 1u))
 
 #if defined(MP_16BIT)
 typedef uint32_t mp_word;
@@ -224,7 +224,7 @@ MP_PRIVATE mp_err s_mp_div_small(const mp_int *a, const mp_int *b, mp_int *c, mp
 MP_PRIVATE mp_err s_mp_rand_jenkins(void *p, size_t n) MP_WUR;
 MP_PRIVATE void s_mp_rand_jenkins_init(uint64_t seed);
 
-#define MP_RMAP_REVERSE_SIZE 88
+#define MP_RMAP_REVERSE_SIZE 88u
 extern MP_PRIVATE const char s_mp_rmap[];
 extern MP_PRIVATE const uint8_t s_mp_rmap_reverse[];
 extern MP_PRIVATE const mp_digit s_mp_prime_tab[];
