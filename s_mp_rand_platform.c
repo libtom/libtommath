@@ -112,26 +112,10 @@ static mp_err s_read_urandom(void *p, size_t n)
 }
 #endif
 
-#if defined(MP_PRNG_ENABLE_LTM_RNG)
-#define BN_S_READ_LTM_RNG
-unsigned long (*ltm_rng)(unsigned char *out, unsigned long outlen, void (*callback)(void));
-void (*ltm_rng_callback)(void);
-
-static mp_err s_read_ltm_rng(void *p, size_t n)
-{
-   unsigned long res;
-   if (ltm_rng == NULL) return MP_ERR;
-   res = ltm_rng(p, n, ltm_rng_callback);
-   if (res != n) return MP_ERR;
-   return MP_OKAY;
-}
-#endif
-
 mp_err s_read_arc4random(void *p, size_t n);
 mp_err s_read_wincsp(void *p, size_t n);
 mp_err s_read_getrandom(void *p, size_t n);
 mp_err s_read_urandom(void *p, size_t n);
-mp_err s_read_ltm_rng(void *p, size_t n);
 
 mp_err s_mp_rand_platform(void *p, size_t n)
 {
@@ -140,7 +124,6 @@ mp_err s_mp_rand_platform(void *p, size_t n)
    if ((err != MP_OKAY) && MP_HAS(S_READ_WINCSP))     err = s_read_wincsp(p, n);
    if ((err != MP_OKAY) && MP_HAS(S_READ_GETRANDOM))  err = s_read_getrandom(p, n);
    if ((err != MP_OKAY) && MP_HAS(S_READ_URANDOM))    err = s_read_urandom(p, n);
-   if ((err != MP_OKAY) && MP_HAS(S_READ_LTM_RNG))    err = s_read_ltm_rng(p, n);
    return err;
 }
 
