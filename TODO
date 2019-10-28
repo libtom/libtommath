@@ -87,7 +87,6 @@ DONE mp_sqrt.c
 DONE s_mp_get_bit.c
 DONE mp_mod_2d.c
 DONE mp_submod.c
-DONE s_mp_karatsuba_mul.c
 DONE s_mp_karatsuba_sqr.c
 DONE mp_mulmod.c
 DONE mp_prime_tab.c
@@ -113,7 +112,10 @@ DONE s_mp_sub.c
 DONE mp_reduce_2k_setup.c
 DONE mp_reduce_2k_setup_l.c
 DONE mp_dr_setup.c
+DONE mp_mul_2d.c
+DONE s_mp_karatsuba_mul.c
 
+s_mp_div_school.c
 s_mp_toom_sqr.c
 mp_div_2.c
 mp_div_2d.c
@@ -129,7 +131,6 @@ mp_montgomery_calc_normalization.c
 mp_montgomery_reduce.c
 mp_montgomery_setup.c
 mp_mul_2.c
-mp_mul_2d.c
 mp_mul_d.c
 mp_prime_frobenius_underwood.c
 mp_prime_is_prime.c
@@ -142,7 +143,6 @@ mp_reduce_is_2k.c
 mp_reduce_is_2k_l.c
 mp_reduce_setup.c
 mp_root_u32.c
-s_mp_div_school.c
 s_mp_exptmod.c
 s_mp_exptmod_fast.c
 s_mp_log.c

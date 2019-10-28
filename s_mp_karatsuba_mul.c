@@ -35,7 +35,7 @@
 mp_err s_mp_karatsuba_mul(const mp_int *a, const mp_int *b, mp_int *c)
 {
    mp_int  x0, x1, y0, y1, t1, x0y0, x1y1;
-   size_t  B;
+   size_t  B, i;
    mp_err  err;
 
    /* min # of digits */
@@ -74,32 +74,18 @@ mp_err s_mp_karatsuba_mul(const mp_int *a, const mp_int *b, mp_int *c)
    x1.used = a->used - B;
    y1.used = b->used - B;
 
-   {
-      int x;
-      mp_digit *tmpa, *tmpb, *tmpx, *tmpy;
-
-      /* we copy the digits directly instead of using higher level functions
-       * since we also need to shift the digits
-       */
-      tmpa = a->dp;
-      tmpb = b->dp;
-
-      tmpx = x0.dp;
-      tmpy = y0.dp;
-      for (x = 0; x < B; x++) {
-         *tmpx++ = *tmpa++;
-         *tmpy++ = *tmpb++;
-      }
-
-      tmpx = x1.dp;
-      for (x = B; x < a->used; x++) {
-         *tmpx++ = *tmpa++;
-      }
-
-      tmpy = y1.dp;
-      for (x = B; x < b->used; x++) {
-         *tmpy++ = *tmpb++;
-      }
+   /* we copy the digits directly instead of using higher level functions
+    * since we also need to shift the digits
+    */
+   for (i = 0; i < B; i++) {
+      x0.dp[i] = a->dp[i];
+      y0.dp[i] = b->dp[i];
+   }
+   for (i = B; i < a->used; i++) {
+      x1.dp[i - B] = a->dp[i];
+   }
+   for (i = B; i < b->used; i++) {
+      y1.dp[i - B] = b->dp[i];
    }
 
    /* only need to clamp the lower words since by definition the
