@@ -64,19 +64,18 @@ $(LIBNAME):  $(OBJECTS)
 #
 # So far I've seen improvements in the MP math
 profiled:
-	make CFLAGS="$(CFLAGS) -fprofile-arcs -DTESTING" timing
+	make CFLAGS="$(CFLAGS) -fprofile-arcs" timing
 	./timing
 	rm -f *.a *.o timing
 	make CFLAGS="$(CFLAGS) -fbranch-probabilities"
 
 #make a single object profiled library
-profiled_single:
-	cat *mp_*.c > mp_all.c
-	$(CC) $(LTM_CFLAGS) -fprofile-arcs -DTESTING -c mp_all.c -o mp_all.o
-	$(CC) $(LTM_CFLAGS) -DTESTING -DTIMER demo/timing.c mp_all.o -lgcov -o timing
+profiled_single: pre_gen
+	$(CC) $(LTM_CFLAGS) -fprofile-arcs -c pre_gen/mp_all.c -o mp_all.o
+	$(CC) $(LTM_CFLAGS) demo/timing.c mp_all.o -lgcov -o timing
 	./timing
 	rm -f *.o timing
-	$(CC) $(LTM_CFLAGS) -fbranch-probabilities -DTESTING -c mp_all.c -o mp_all.o
+	$(CC) $(LTM_CFLAGS) -fbranch-probabilities -c pre_gen/mp_all.c -o mp_all.o
 	$(AR) $(ARFLAGS) $(LIBNAME) mp_all.o
 	ranlib $(LIBNAME)
 
@@ -103,8 +102,8 @@ $(foreach demo, $(strip $(DEMOS)), $(eval $(call DEMO_template,$(demo))))
 mtest:
 	cd mtest ; $(CC) $(LTM_CFLAGS) -O0 mtest.c $(LTM_LFLAGS) -o mtest
 
-timing: $(LIBNAME) demo/timing.c
-	$(CC) $(LTM_CFLAGS) -DTIMER demo/timing.c $(LIBNAME) $(LTM_LFLAGS) -o timing
+timing: demo/timing.c $(LIBNAME)
+	$(CC) $(LTM_CFLAGS) $^ $(LTM_LFLAGS) -o timing
 
 tune: $(LIBNAME)
 	$(MAKE) -C etc tune CFLAGS="$(LTM_CFLAGS)"
