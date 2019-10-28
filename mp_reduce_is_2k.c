@@ -6,14 +6,13 @@
 /* determines if mp_reduce_2k can be used */
 bool mp_reduce_is_2k(const mp_int *a)
 {
-   int ix, iy, iw;
-   mp_digit iz;
-
    if (a->used == 0) {
       return false;
    } else if (a->used == 1) {
       return true;
    } else if (a->used > 1) {
+      size_t ix, iy, iw;
+      mp_digit iz;
       iy = mp_count_bits(a);
       iz = 1;
       iw = 1;

@@ -6,8 +6,6 @@
 /* shift right by a certain bit count (store quotient in c, optional remainder in d) */
 mp_err mp_div_2d(const mp_int *a, size_t b, mp_int *c, mp_int *d)
 {
-   mp_digit D, r, rr;
-   int     x;
    mp_err err;
 
    if ((err = mp_copy(a, c)) != MP_OKAY) {
@@ -29,28 +27,25 @@ mp_err mp_div_2d(const mp_int *a, size_t b, mp_int *c, mp_int *d)
    }
 
    /* shift any bit count < MP_DIGIT_BIT */
-   D = (mp_digit)(b % MP_DIGIT_BIT);
-   if (D != 0u) {
-      mp_digit *tmpc, mask, shift;
+   b %= MP_DIGIT_BIT;
+   if (b != 0u) {
+      size_t x;
+      mp_digit r, mask, shift;
 
       /* mask */
-      mask = ((mp_digit)1 << D) - 1uL;
+      mask = ((mp_digit)1 << b) - 1uL;
 
       /* shift for lsb */
-      shift = (mp_digit)MP_DIGIT_BIT - D;
-
-      /* alias */
-      tmpc = c->dp + (c->used - 1);
+      shift = (mp_digit)MP_DIGIT_BIT - b;
 
       /* carry */
       r = 0;
-      for (x = c->used - 1; x >= 0; x--) {
+      for (x = c->used; x --> 0;) {
          /* get the lower  bits of this word in a temp */
-         rr = *tmpc & mask;
+         mp_digit rr = c->dp[x] & mask;
 
          /* shift the current word and mix in the carry bits from the previous word */
-         *tmpc = (*tmpc >> D) | (r << shift);
-         --tmpc;
+         c->dp[x] = (c->dp[x] >> b) | (r << shift);
 
          /* set the carry to the carry bits of the current word found above */
          r = rr;
