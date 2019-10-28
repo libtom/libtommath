@@ -97,4 +97,7 @@ test_*.txt
 doc/pics/*.ps
 doc/*.bak*
 
+logs/*.png
+logs/*-*.dem
+
 callgraph.txt
