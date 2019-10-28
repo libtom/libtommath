@@ -71,12 +71,12 @@ profiled:
 
 #make a single object profiled library
 profiled_single: pre_gen
-	$(CC) $(LTM_CFLAGS) -fprofile-arcs -c pre_gen/mp_all.c -o mp_all.o
-	$(CC) $(LTM_CFLAGS) -DMP_VERSION=\"before\" demo/timing.c mp_all.o -lgcov -o timing
+	$(CC) $(LTM_CFLAGS) -fprofile-arcs -c pre_gen/tommath_amalgam.c -o tommath_amalgam.o
+	$(CC) $(LTM_CFLAGS) -DMP_VERSION=\"before\" demo/timing.c tommath_amalgam.o -lgcov -o timing
 	./timing
 	rm -f *.o timing
-	$(CC) $(LTM_CFLAGS) -fbranch-probabilities -c pre_gen/mp_all.c -o mp_all.o
-	$(AR) $(ARFLAGS) $(LIBNAME) mp_all.o
+	$(CC) $(LTM_CFLAGS) -fbranch-probabilities -c pre_gen/tommath_amalgam.c -o tommath_amalgam.o
+	$(AR) $(ARFLAGS) $(LIBNAME) tommath_amalgam.o
 	ranlib $(LIBNAME)
 
 install: $(LIBNAME)
@@ -120,9 +120,7 @@ docs manual:
 .PHONY: pre_gen cmp
 pre_gen:
 	mkdir -p pre_gen
-	cat *mp_*.c > mp_all.c
-	sed -e 's/[[:blank:]]*$$//' mp_all.c > pre_gen/mp_all.c
-	rm mp_all.c
+	cat *mp_*.c > pre_gen/tommath_amalgam.c
 
 cmp: profiled_single
 	$(CC) $(LTM_CFLAGS) -DMP_VERSION=\"after\" demo/timing.c $(LIBNAME) -lgcov -o timing
