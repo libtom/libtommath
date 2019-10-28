@@ -164,7 +164,8 @@ cleancov: cleancov-clean clean
 clean:
 	rm -f *.gcda *.gcno *.gcov *.bat *.o *.a *.obj *.lib *.exe *.dll etclib/*.o \
 				demo/*.o test timing mtest_opponent mtest/mtest mtest/mtest.exe tuning_list \
-				*.s mp_all.c *.da *.dyn *.dpi tommath.tex `find . -type f | grep [~] | xargs` *.lo *.la
+				*.s tommath_amalgam.c pre_gen/tommath_amalgam.c *.da *.dyn *.dpi tommath.tex \
+				`find . -type f | grep [~] | xargs` *.lo *.la
 	rm -rf .libs/ demo/.libs
 	${MAKE} -C etc/ clean MAKE=${MAKE}
 	${MAKE} -C doc/ clean MAKE=${MAKE}
