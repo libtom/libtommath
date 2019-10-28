@@ -13,7 +13,7 @@
 */
 mp_err s_mp_montgomery_reduce_fast(mp_int *x, const mp_int *n, mp_digit rho)
 {
-   int     ix, olduse;
+   size_t  ix, olduse;
    mp_err  err;
    mp_word W[MP_WARRAY];
 
@@ -83,7 +83,7 @@ mp_err s_mp_montgomery_reduce_fast(mp_int *x, const mp_int *n, mp_digit rho)
        * first m->used words of W[] have the carries fixed
        */
       {
-         int iy;
+         size_t iy;
          mp_digit *tmpn;
          mp_word *_W;
 

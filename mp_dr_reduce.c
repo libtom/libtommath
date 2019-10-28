@@ -20,7 +20,7 @@
 mp_err mp_dr_reduce(mp_int *x, const mp_int *n, mp_digit k)
 {
    mp_err      err;
-   int i, m;
+   size_t i, m;
    mp_word  r;
    mp_digit mu, *tmpx1, *tmpx2;
 

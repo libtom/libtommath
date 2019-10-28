@@ -6,7 +6,7 @@
 /* determines if a number is a valid DR modulus */
 bool mp_dr_is_modulus(const mp_int *a)
 {
-   int ix;
+   size_t ix;
 
    /* must be at least two digits */
    if (a->used < 2) {

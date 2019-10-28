@@ -9,7 +9,7 @@
 mp_err s_mp_mul_high_digs(const mp_int *a, const mp_int *b, mp_int *c, int digs)
 {
    mp_int   t;
-   int      pa, pb, ix, iy;
+   size_t   pa, pb, ix, iy;
    mp_err   err;
    mp_digit u;
    mp_word  r;

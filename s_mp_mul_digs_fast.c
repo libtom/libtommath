@@ -19,9 +19,9 @@
  * Based on Algorithm 14.12 on pp.595 of HAC.
  *
  */
-mp_err s_mp_mul_digs_fast(const mp_int *a, const mp_int *b, mp_int *c, int digs)
+mp_err s_mp_mul_digs_fast(const mp_int *a, const mp_int *b, mp_int *c, size_t digs)
 {
-   int      olduse, pa, ix, iz;
+   size_t  olduse, pa, ix, iz;
    mp_err   err;
    mp_digit W[MP_WARRAY];
    mp_word  _W;
@@ -39,8 +39,7 @@ mp_err s_mp_mul_digs_fast(const mp_int *a, const mp_int *b, mp_int *c, int digs)
    /* clear the carry */
    _W = 0;
    for (ix = 0; ix < pa; ix++) {
-      int      tx, ty;
-      int      iy;
+      size_t   tx, ty, iy;
       mp_digit *tmpx, *tmpy;
 
       /* get offsets into the two bignums */

@@ -14,7 +14,7 @@
  */
 mp_err s_mp_mul_high_digs_fast(const mp_int *a, const mp_int *b, mp_int *c, int digs)
 {
-   int     olduse, pa, ix, iz;
+   size_t   olduse, pa, ix, iz;
    mp_err   err;
    mp_digit W[MP_WARRAY];
    mp_word  _W;
@@ -31,7 +31,7 @@ mp_err s_mp_mul_high_digs_fast(const mp_int *a, const mp_int *b, mp_int *c, int 
    pa = a->used + b->used;
    _W = 0;
    for (ix = digs; ix < pa; ix++) {
-      int      tx, ty, iy;
+      size_t   tx, ty, iy;
       mp_digit *tmpx, *tmpy;
 
       /* get offsets into the two bignums */

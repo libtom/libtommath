@@ -19,7 +19,7 @@
 mp_err s_mp_div_school(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d)
 {
    mp_int  q, x, y, t1, t2;
-   int     n, t, i, norm;
+   size_t  n, t, i, norm;
    mp_sign neg;
    mp_err  err;
 
@@ -95,13 +95,13 @@ mp_err s_mp_div_school(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d)
 
          /* find left hand */
          mp_zero(&t1);
-         t1.dp[0] = ((t - 1) < 0) ? 0u : y.dp[t - 1];
+         t1.dp[0] = (t < 1) ? 0u : y.dp[t - 1];
          t1.dp[1] = y.dp[t];
          t1.used = 2;
          if ((err = mp_mul_d(&t1, q.dp[(i - t) - 1], &t1)) != MP_OKAY)   goto LBL_Y;
 
          /* find right hand */
-         t2.dp[0] = ((i - 2) < 0) ? 0u : x.dp[i - 2];
+         t2.dp[0] = (i < 2) ? 0u : x.dp[i - 2];
          t2.dp[1] = x.dp[i - 1]; /* i >= 1 always holds */
          t2.dp[2] = x.dp[i];
          t2.used = 3;
@@ -139,8 +139,6 @@ mp_err s_mp_div_school(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d)
       if ((err = mp_div_2d(&x, norm, &x, NULL)) != MP_OKAY)       goto LBL_Y;
       mp_exch(&x, d);
    }
-
-   err = MP_OKAY;
 
 LBL_Y:
    mp_clear(&y);

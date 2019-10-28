@@ -7,11 +7,11 @@
  * HAC pp. 595, Algorithm 14.12  Modified so you can control how
  * many digits of output are created.
  */
-mp_err s_mp_mul_digs(const mp_int *a, const mp_int *b, mp_int *c, int digs)
+mp_err s_mp_mul_digs(const mp_int *a, const mp_int *b, mp_int *c, size_t digs)
 {
    mp_int  t;
    mp_err  err;
-   int     pa, pb, ix, iy;
+   size_t  pa, pb, ix, iy;
    mp_digit u;
    mp_word r;
    mp_digit tmpx, *tmpt, *tmpy;

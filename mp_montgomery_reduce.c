@@ -6,7 +6,7 @@
 /* computes xR**-1 == x (mod N) via Montgomery Reduction */
 mp_err mp_montgomery_reduce(mp_int *x, const mp_int *n, mp_digit rho)
 {
-   int      ix, digs;
+   size_t   ix, digs;
    mp_err   err;
    mp_digit mu;
 
@@ -44,7 +44,7 @@ mp_err mp_montgomery_reduce(mp_int *x, const mp_int *n, mp_digit rho)
 
       /* a = a + mu * m * b**i */
       {
-         int iy;
+         size_t iy;
          mp_digit *tmpn, *tmpx, u;
          mp_word r;
 

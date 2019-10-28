@@ -39,7 +39,7 @@ mp_err s_mp_karatsuba_sqr(const mp_int *a, mp_int *b)
       goto X0X0;
 
    {
-      int x;
+      size_t x;
       mp_digit *dst, *src;
 
       src = a->dp;
