@@ -118,10 +118,10 @@ DONE mp_reduce_setup.c
 DONE mp_reduce_is_2k.c
 DONE mp_reduce_is_2k_l.c
 DONE mp_div_2d.c
+DONE mp_div_2.c
 
 s_mp_div_school.c
 s_mp_toom_sqr.c
-mp_div_2.c
 mp_div_3.c
 mp_div_d.c
 mp_dr_is_modulus.c
