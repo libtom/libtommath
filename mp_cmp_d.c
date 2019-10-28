@@ -17,12 +17,10 @@ mp_ord mp_cmp_d(const mp_int *a, mp_digit b)
    }
 
    /* compare the only digit of a to b */
-   if (a->dp[0] > b) {
-      return MP_GT;
-   } else if (a->dp[0] < b) {
-      return MP_LT;
-   } else {
-      return MP_EQ;
+   if (a->dp[0] != b) {
+      return a->dp[0] > b ? MP_GT : MP_LT;
    }
+
+   return MP_EQ;
 }
 #endif

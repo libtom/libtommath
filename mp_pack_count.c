@@ -5,7 +5,7 @@
 
 size_t mp_pack_count(const mp_int *a, size_t nails, size_t size)
 {
-   size_t bits = (size_t)mp_count_bits(a);
+   size_t bits = mp_count_bits(a);
    return ((bits / ((size * 8u) - nails)) + (((bits % ((size * 8u) - nails)) != 0u) ? 1u : 0u));
 }
 

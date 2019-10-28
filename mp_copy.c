@@ -6,9 +6,7 @@
 /* copy, b = a */
 mp_err mp_copy(const mp_int *a, mp_int *b)
 {
-   int n;
-   mp_digit *tmpa, *tmpb;
-   mp_err err;
+   size_t n;
 
    /* if dst == src do nothing */
    if (a == b) {
@@ -17,27 +15,21 @@ mp_err mp_copy(const mp_int *a, mp_int *b)
 
    /* grow dest */
    if (b->alloc < a->used) {
+      mp_err err;
       if ((err = mp_grow(b, a->used)) != MP_OKAY) {
          return err;
       }
    }
 
    /* zero b and copy the parameters over */
-   /* pointer aliases */
-
-   /* source */
-   tmpa = a->dp;
-
-   /* destination */
-   tmpb = b->dp;
 
    /* copy all the digits */
    for (n = 0; n < a->used; n++) {
-      *tmpb++ = *tmpa++;
+      b->dp[n] = a->dp[n];
    }
 
    /* clear high digits */
-   MP_ZERO_DIGITS(tmpb, b->used - n);
+   MP_ZERO_DIGITS_NEW(b->dp + a->used, b->dp + b->alloc);
 
    /* copy used count and sign */
    b->used = a->used;

@@ -109,7 +109,6 @@ top:
 
    mp_exch(&D, c);
    c->sign = neg;
-   err = MP_OKAY;
 
 LBL_ERR:
    mp_clear_multi(&x, &y, &u, &v, &B, &D, NULL);

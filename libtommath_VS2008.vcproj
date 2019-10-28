@@ -577,10 +577,6 @@
 			>
 		</File>
 		<File
-			RelativePath="mp_mod_d.c"
-			>
-		</File>
-		<File
 			RelativePath="mp_montgomery_calc_normalization.c"
 			>
 		</File>

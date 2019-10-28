@@ -77,7 +77,6 @@
 #   define MP_LSHD_C
 #   define MP_MOD_C
 #   define MP_MOD_2D_C
-#   define MP_MOD_D_C
 #   define MP_MONTGOMERY_CALC_NORMALIZATION_C
 #   define MP_MONTGOMERY_REDUCE_C
 #   define MP_MONTGOMERY_SETUP_C
@@ -260,7 +259,6 @@
 #   define MP_COPY_C
 #   define MP_MOD_2D_C
 #   define MP_RSHD_C
-#   define MP_ZERO_C
 #endif
 
 #if defined(MP_DIV_3_C)
@@ -470,10 +468,10 @@
 #if defined(MP_IS_SQUARE_C)
 #   define MP_CLEAR_C
 #   define MP_CMP_MAG_C
+#   define MP_DIV_D_C
 #   define MP_GET_I32_C
 #   define MP_INIT_U32_C
 #   define MP_MOD_C
-#   define MP_MOD_D_C
 #   define MP_SQRT_C
 #   define MP_SQR_C
 #endif
@@ -519,11 +517,6 @@
 #if defined(MP_MOD_2D_C)
 #   define MP_CLAMP_C
 #   define MP_COPY_C
-#   define MP_ZERO_C
-#endif
-
-#if defined(MP_MOD_D_C)
-#   define MP_DIV_D_C
 #endif
 
 #if defined(MP_MONTGOMERY_CALC_NORMALIZATION_C)
@@ -660,8 +653,8 @@
 #   define MP_ADD_D_C
 #   define MP_CLEAR_C
 #   define MP_CMP_D_C
+#   define MP_DIV_D_C
 #   define MP_INIT_C
-#   define MP_MOD_D_C
 #   define MP_PRIME_IS_PRIME_C
 #   define MP_SET_C
 #   define MP_SUB_D_C
@@ -905,10 +898,10 @@
 #   define MP_CMP_D_C
 #   define MP_COPY_C
 #   define MP_DIV_2_C
+#   define MP_DIV_D_C
 #   define MP_EXPTMOD_C
 #   define MP_INIT_MULTI_C
 #   define MP_KRONECKER_C
-#   define MP_MOD_D_C
 #   define MP_MULMOD_C
 #   define MP_SET_C
 #   define MP_SQRMOD_C
@@ -1187,7 +1180,7 @@
 #endif
 
 #if defined(S_MP_PRIME_IS_DIVISIBLE_C)
-#   define MP_MOD_D_C
+#   define MP_DIV_D_C
 #endif
 
 #if defined(S_MP_RAND_JENKINS_C)

@@ -21,9 +21,10 @@ mp_err mp_kronecker(const mp_int *a, const mp_int *p, int *c)
 {
    mp_int a1, p1, r;
    mp_err err;
-   int v, k;
+   size_t v;
+   int k;
 
-   static const int table[8] = {0, 1, 0, -1, 0, -1, 0, 1};
+   static const char table[] = {0, 1, 0, -1, 0, -1, 0, 1};
 
    if (mp_iszero(p)) {
       if ((a->used == 1) && (a->dp[0] == 1u)) {

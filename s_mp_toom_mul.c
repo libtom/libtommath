@@ -32,7 +32,7 @@
 mp_err s_mp_toom_mul(const mp_int *a, const mp_int *b, mp_int *c)
 {
    mp_int S1, S2, T1, a0, a1, a2, b0, b1, b2;
-   int B, count;
+   size_t B, count;
    mp_err err;
 
    /* init temps */

@@ -76,6 +76,13 @@ do {                                                    \
       memset((mem), 0, sizeof(mp_digit) * (size_t)zd_); \
    }                                                    \
 } while (0)
+#  define MP_ZERO_DIGITS_NEW(begin, end)                \
+do {                                                    \
+   mp_digit *begin_ = (begin), *end_ = (end);           \
+   if (end_ > begin_) {                                 \
+      memset(begin_, 0, sizeof(mp_digit) * (size_t)(end_ - begin_)); \
+   }                                                    \
+} while (0)
 #else
 #  define MP_ZERO_BUFFER(mem, size)                     \
 do {                                                    \
@@ -91,6 +98,13 @@ do {                                                    \
    mp_digit* zm_ = (mem);                               \
    while (zd_-- > 0) {                                  \
       *zm_++ = 0;                                       \
+   }                                                    \
+} while (0)
+#  define MP_ZERO_DIGITS_NEW(begin, end)                \
+do {                                                    \
+   mp_digit *begin_ = (begin), *end_ = (end);           \
+   while (begin_ < end_) {                              \
+      *begin_++ = 0;                                    \
    }                                                    \
 } while (0)
 #endif
@@ -148,13 +162,14 @@ extern void MP_FREE(void *mem, size_t size);
 
 #define MP_TOUPPER(c) ((((c) >= 'a') && ((c) <= 'z')) ? (((c) + 'A') - 'a') : (c))
 
+#define MP_EXCH(t, a, b) do { t _c = a; a = b; b = _c; } while (0)
+
 /* Static assertion */
 #define MP_STATIC_ASSERT(msg, cond) typedef char mp_static_assert_##msg[(cond) ? 1 : -1];
 
 #define MP_SIZEOF_BITS(type)    ((size_t)CHAR_BIT * sizeof(type))
-#define MP_MAXFAST              (int)(1uL << (MP_SIZEOF_BITS(mp_word) - (2u * (size_t)MP_DIGIT_BIT)))
-
-#define MP_WARRAY               (int)(1uL << ((MP_SIZEOF_BITS(mp_word) - (2u * (size_t)MP_DIGIT_BIT)) + 1u))
+#define MP_MAXFAST              (1uL << (MP_SIZEOF_BITS(mp_word) - (2u * MP_DIGIT_BIT)))
+#define MP_WARRAY               (1uL << ((MP_SIZEOF_BITS(mp_word) - (2u * MP_DIGIT_BIT)) + 1u))
 
 #if defined(MP_16BIT)
 typedef uint32_t mp_word;
@@ -184,7 +199,7 @@ MP_STATIC_ASSERT(prec_geq_min_prec, MP_PREC >= MP_MIN_PREC)
 extern MP_PRIVATE mp_err(*s_mp_rand_source)(void *out, size_t size);
 
 /* lowlevel functions, do not call! */
-MP_PRIVATE bool s_mp_get_bit(const mp_int *a, unsigned int b);
+MP_PRIVATE bool s_mp_get_bit(const mp_int *a, size_t b);
 MP_PRIVATE mp_err s_mp_add(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
 MP_PRIVATE mp_err s_mp_sub(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
 MP_PRIVATE mp_err s_mp_mul_digs_fast(const mp_int *a, const mp_int *b, mp_int *c, int digs) MP_WUR;
@@ -207,7 +222,7 @@ MP_PRIVATE mp_err s_mp_rand_platform(void *p, size_t n) MP_WUR;
 MP_PRIVATE mp_err s_mp_prime_is_divisible(const mp_int *a, bool *result);
 MP_PRIVATE mp_digit s_mp_log_d(mp_digit base, mp_digit n);
 MP_PRIVATE mp_err s_mp_log(const mp_int *a, uint32_t base, uint32_t *c);
-MP_PRIVATE uint32_t s_mp_log_pow2(const mp_int *a, uint32_t base);
+MP_PRIVATE size_t s_mp_log_pow2(const mp_int *a, uint32_t base);
 MP_PRIVATE mp_err s_mp_div_recursive(const mp_int *a, const mp_int *b, mp_int *q, mp_int *r);
 MP_PRIVATE mp_err s_mp_div_school(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d);
 MP_PRIVATE mp_err s_mp_div_small(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d);
@@ -235,7 +250,7 @@ extern MP_PRIVATE const mp_digit s_mp_prime_tab[];
 #define MP_SET_UNSIGNED(name, type)                                                    \
     void name(mp_int * a, type b)                                                      \
     {                                                                                  \
-        int i = 0;                                                                     \
+        size_t i = 0;                                                                  \
         while (b != 0u) {                                                              \
             a->dp[i++] = ((mp_digit)b & MP_MASK);                                      \
             if (MP_SIZEOF_BITS(type) <= MP_DIGIT_BIT) { break; }                       \
@@ -267,7 +282,7 @@ extern MP_PRIVATE const mp_digit s_mp_prime_tab[];
 #define MP_GET_MAG(name, type)                                                         \
     type name(const mp_int* a)                                                         \
     {                                                                                  \
-        unsigned i = MP_MIN((unsigned)a->used, (unsigned)((MP_SIZEOF_BITS(type) + MP_DIGIT_BIT - 1) / MP_DIGIT_BIT)); \
+        size_t i = MP_MIN(a->used, (MP_SIZEOF_BITS(type) + MP_DIGIT_BIT - 1) / MP_DIGIT_BIT); \
         type res = 0u;                                                                 \
         while (i --> 0u) {                                                             \
             res <<= ((MP_SIZEOF_BITS(type) <= MP_DIGIT_BIT) ? 0 : MP_DIGIT_BIT);       \

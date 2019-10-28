@@ -5,7 +5,7 @@
 
 mp_err mp_div(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d)
 {
-   mp_err err;
+   mp_err err = MP_OKAY;
 
    /* is divisor zero ? */
    if (mp_iszero(b)) {
@@ -16,8 +16,6 @@ mp_err mp_div(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d)
    if (mp_cmp_mag(a, b) == MP_LT) {
       if (d != NULL) {
          err = mp_copy(a, d);
-      } else {
-         err = MP_OKAY;
       }
       if (c != NULL) {
          mp_zero(c);
@@ -38,4 +36,3 @@ mp_err mp_div(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d)
    return err;
 }
 #endif
-

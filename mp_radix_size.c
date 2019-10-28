@@ -23,13 +23,11 @@ mp_err mp_radix_size(const mp_int *a, int radix, size_t *size)
    a_ = *a;
    a_.sign = MP_ZPOS;
    if ((err = mp_log_u32(&a_, (uint32_t)radix, &b)) != MP_OKAY) {
-      goto LBL_ERR;
+      return err;
    }
 
    /* mp_ilogb truncates to zero, hence we need one extra put on top and one for `\0`. */
    *size = (size_t)b + 2U + ((a->sign == MP_NEG) ? 1U : 0U);
-
-LBL_ERR:
-   return err;
+   return MP_OKAY;
 }
 #endif

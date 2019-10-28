@@ -67,6 +67,7 @@ endif
 else
 LTM_CFLAGS += -Wsystem-headers
 endif
+LTM_CFLAGS += -Wno-sign-compare
 
 ifdef COMPILE_DEBUG
 #debug

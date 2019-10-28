@@ -4,9 +4,9 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* returns the number of bits in an int */
-int mp_count_bits(const mp_int *a)
+size_t mp_count_bits(const mp_int *a)
 {
-   int     r;
+   size_t   r;
    mp_digit q;
 
    /* shortcut */

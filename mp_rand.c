@@ -10,22 +10,18 @@ void mp_rand_source(mp_err(*source)(void *out, size_t size))
    s_mp_rand_source = (source == NULL) ? s_mp_rand_platform : source;
 }
 
-mp_err mp_rand(mp_int *a, int digits)
+mp_err mp_rand(mp_int *a, size_t digits)
 {
-   int i;
    mp_err err;
+   size_t i;
 
    mp_zero(a);
-
-   if (digits <= 0) {
-      return MP_OKAY;
-   }
 
    if ((err = mp_grow(a, digits)) != MP_OKAY) {
       return err;
    }
 
-   if ((err = s_mp_rand_source(a->dp, (size_t)digits * sizeof(mp_digit))) != MP_OKAY) {
+   if ((err = s_mp_rand_source(a->dp, digits * sizeof(mp_digit))) != MP_OKAY) {
       return err;
    }
 

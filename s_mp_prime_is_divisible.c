@@ -10,16 +10,12 @@
  */
 mp_err s_mp_prime_is_divisible(const mp_int *a, bool *result)
 {
-   int      ix;
-   mp_err   err;
-   mp_digit res;
-
-   /* default to not */
-   *result = false;
-
-   for (ix = 0; ix < MP_PRIME_TAB_SIZE; ix++) {
-      /* what is a mod LBL_prime_tab[ix] */
-      if ((err = mp_mod_d(a, s_mp_prime_tab[ix], &res)) != MP_OKAY) {
+   size_t i;
+   for (i = 0; i < MP_PRIME_TAB_SIZE; i++) {
+      /* what is a mod LBL_prime_tab[i] */
+      mp_err err;
+      mp_digit res;
+      if ((err = mp_mod_d(a, s_mp_prime_tab[i], &res)) != MP_OKAY) {
          return err;
       }
 
@@ -30,6 +26,8 @@ mp_err s_mp_prime_is_divisible(const mp_int *a, bool *result)
       }
    }
 
+   /* default to not */
+   *result = false;
    return MP_OKAY;
 }
 #endif

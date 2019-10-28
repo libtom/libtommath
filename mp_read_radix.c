@@ -31,13 +31,13 @@ mp_err mp_read_radix(mp_int *a, const char *str, int radix)
        * this allows numbers like 1AB and 1ab to represent the same  value
        * [e.g. in hex]
        */
-      int y;
+      uint8_t y;
       char ch = (radix <= 36) ? (char)MP_TOUPPER((int)*str) : *str;
       unsigned pos = (unsigned)(ch - '(');
       if (MP_RMAP_REVERSE_SIZE < pos) {
          break;
       }
-      y = (int)s_mp_rmap_reverse[pos];
+      y = s_mp_rmap_reverse[pos];
 
       /* if the char was found in the map
        * and is less than the given radix add it
@@ -49,14 +49,14 @@ mp_err mp_read_radix(mp_int *a, const char *str, int radix)
       if ((err = mp_mul_d(a, (mp_digit)radix, a)) != MP_OKAY) {
          return err;
       }
-      if ((err = mp_add_d(a, (mp_digit)y, a)) != MP_OKAY) {
+      if ((err = mp_add_d(a, y, a)) != MP_OKAY) {
          return err;
       }
       ++str;
    }
 
    /* if an illegal character was found, fail. */
-   if (!((*str == '\0') || (*str == '\r') || (*str == '\n'))) {
+   if ((*str != '\0') && (*str != '\r') && (*str != '\n')) {
       return MP_VAL;
    }
 

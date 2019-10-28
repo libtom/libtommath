@@ -6,35 +6,34 @@
 /* high level subtraction (handles signs) */
 mp_err mp_sub(const mp_int *a, const mp_int *b, mp_int *c)
 {
-   mp_sign sa = a->sign, sb = b->sign;
-   mp_err err;
-
-   if (sa != sb) {
+   if (a->sign != b->sign) {
       /* subtract a negative from a positive, OR */
       /* subtract a positive from a negative. */
       /* In either case, ADD their magnitudes, */
       /* and use the sign of the first number. */
-      c->sign = sa;
-      err = s_mp_add(a, b, c);
-   } else {
-      /* subtract a positive from a positive, OR */
-      /* subtract a negative from a negative. */
-      /* First, take the difference between their */
-      /* magnitudes, then... */
-      if (mp_cmp_mag(a, b) != MP_LT) {
-         /* Copy the sign from the first */
-         c->sign = sa;
-         /* The first has a larger or equal magnitude */
-         err = s_mp_sub(a, b, c);
-      } else {
-         /* The result has the *opposite* sign from */
-         /* the first number. */
-         c->sign = (sa == MP_ZPOS) ? MP_NEG : MP_ZPOS;
-         /* The second has a larger magnitude */
-         err = s_mp_sub(b, a, c);
-      }
+      c->sign = a->sign;
+      return s_mp_add(a, b, c);
    }
-   return err;
+
+   /* subtract a positive from a positive, OR */
+   /* subtract a negative from a negative. */
+   /* First, take the difference between their */
+   /* magnitudes, then... */
+   if (mp_cmp_mag(a, b) == MP_LT) {
+      const mp_int *t;
+      /* The second has a larger magnitude */
+      /* The result has the *opposite* sign from */
+      /* the first number. */
+      c->sign = (a->sign == MP_ZPOS) ? MP_NEG : MP_ZPOS;
+      t = a;
+      a = b;
+      b = t;
+   } else {
+      /* The first has a larger or equal magnitude */
+      /* Copy the sign from the first */
+      c->sign = a->sign;
+   }
+   return s_mp_sub(a, b, c);
 }
 
 #endif

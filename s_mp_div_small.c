@@ -7,7 +7,7 @@
 mp_err s_mp_div_small(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d)
 {
    mp_int ta, tb, tq, q;
-   int n;
+   size_t n;
    mp_sign sign;
    mp_err err;
 
@@ -23,14 +23,14 @@ mp_err s_mp_div_small(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d)
    if ((err = mp_mul_2d(&tb, n, &tb)) != MP_OKAY)                 goto LBL_ERR;
    if ((err = mp_mul_2d(&tq, n, &tq)) != MP_OKAY)                 goto LBL_ERR;
 
-   while (n-- >= 0) {
+   do {
       if (mp_cmp(&tb, &ta) != MP_GT) {
          if ((err = mp_sub(&ta, &tb, &ta)) != MP_OKAY)            goto LBL_ERR;
          if ((err = mp_add(&q, &tq, &q)) != MP_OKAY)              goto LBL_ERR;
       }
       if ((err = mp_div_2d(&tb, 1, &tb, NULL)) != MP_OKAY)        goto LBL_ERR;
       if ((err = mp_div_2d(&tq, 1, &tq, NULL)) != MP_OKAY)        goto LBL_ERR;
-   }
+   } while (n-- > 0);
 
    /* now q == quotient and ta == remainder */
 

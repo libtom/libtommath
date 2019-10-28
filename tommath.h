@@ -116,7 +116,7 @@ typedef enum {
 
 /* tunable cutoffs */
 #ifndef MP_FIXED_CUTOFFS
-extern int
+extern size_t
 MP_KARATSUBA_MUL_CUTOFF,
 MP_KARATSUBA_SQR_CUTOFF,
 MP_TOOM_MUL_CUTOFF,
@@ -169,7 +169,7 @@ MP_TOOM_SQR_CUTOFF;
 
 /* the infamous mp_int structure */
 typedef struct  {
-   int used, alloc;
+   size_t used, alloc;
    mp_sign sign;
    mp_digit *dp;
 } mp_int;
@@ -197,10 +197,10 @@ void mp_exch(mp_int *a, mp_int *b);
 mp_err mp_shrink(mp_int *a) MP_WUR;
 
 /* grow an int to a given size */
-mp_err mp_grow(mp_int *a, int size) MP_WUR;
+mp_err mp_grow(mp_int *a, size_t size) MP_WUR;
 
 /* init to a given number of digits */
-mp_err mp_init_size(mp_int *a, int size) MP_WUR;
+mp_err mp_init_size(mp_int *a, size_t size) MP_WUR;
 
 /* ---> Basic Manipulations <--- */
 #define mp_iszero(a) ((a)->used == 0)
@@ -286,13 +286,13 @@ mp_err mp_pack(void *rop, size_t maxcount, size_t *written, mp_order order, size
 /* ---> digit manipulation <--- */
 
 /* right shift by "b" digits */
-void mp_rshd(mp_int *a, int b);
+void mp_rshd(mp_int *a, size_t b);
 
 /* left shift by "b" digits */
-mp_err mp_lshd(mp_int *a, int b) MP_WUR;
+mp_err mp_lshd(mp_int *a, size_t b) MP_WUR;
 
 /* c = a / 2**b, implemented as c = a >> b */
-mp_err mp_div_2d(const mp_int *a, int b, mp_int *c, mp_int *d) MP_WUR;
+mp_err mp_div_2d(const mp_int *a, size_t b, mp_int *c, mp_int *d) MP_WUR;
 
 /* b = a/2 */
 mp_err mp_div_2(const mp_int *a, mp_int *b) MP_WUR;
@@ -307,18 +307,18 @@ mp_err mp_mul_2d(const mp_int *a, int b, mp_int *c) MP_WUR;
 mp_err mp_mul_2(const mp_int *a, mp_int *b) MP_WUR;
 
 /* c = a mod 2**b */
-mp_err mp_mod_2d(const mp_int *a, int b, mp_int *c) MP_WUR;
+mp_err mp_mod_2d(const mp_int *a, size_t b, mp_int *c) MP_WUR;
 
 /* computes a = 2**b */
-mp_err mp_2expt(mp_int *a, int b) MP_WUR;
+mp_err mp_2expt(mp_int *a, size_t b) MP_WUR;
 
 /* Counts the number of lsbs which are zero before the first zero bit */
-int mp_cnt_lsb(const mp_int *a) MP_WUR;
+size_t mp_cnt_lsb(const mp_int *a) MP_WUR;
 
 /* I Love Earth! */
 
 /* makes a pseudo-random mp_int of a given size */
-mp_err mp_rand(mp_int *a, int digits) MP_WUR;
+mp_err mp_rand(mp_int *a, size_t digits) MP_WUR;
 /* use custom random data source instead of source provided the platform */
 void mp_rand_source(mp_err(*source)(void *out, size_t size));
 
@@ -337,7 +337,7 @@ mp_err mp_and(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
 mp_err mp_complement(const mp_int *a, mp_int *b) MP_WUR;
 
 /* right shift with sign extension */
-mp_err mp_signed_rsh(const mp_int *a, int b, mp_int *c) MP_WUR;
+mp_err mp_signed_rsh(const mp_int *a, size_t b, mp_int *c) MP_WUR;
 
 /* ---> Basic arithmetic <--- */
 
@@ -395,7 +395,7 @@ mp_err mp_mul_d(const mp_int *a, mp_digit b, mp_int *c) MP_WUR;
 mp_err mp_div_d(const mp_int *a, mp_digit b, mp_int *c, mp_digit *d) MP_WUR;
 
 /* c = a mod b, 0 <= c < b  */
-mp_err mp_mod_d(const mp_int *a, mp_digit b, mp_digit *c) MP_WUR;
+#define mp_mod_d(a, b, c) mp_div_d((a), (b), NULL, (c))
 
 /* ---> number theory <--- */
 
@@ -507,7 +507,7 @@ mp_err mp_prime_miller_rabin(const mp_int *a, const mp_int *b, bool *result) MP_
 /* This gives [for a given bit size] the number of trials required
  * such that Miller-Rabin gives a prob of failure lower than 2^-96
  */
-int mp_prime_rabin_miller_trials(int size) MP_WUR;
+int mp_prime_rabin_miller_trials(size_t size) MP_WUR;
 
 /* performs one strong Lucas-Selfridge test of "a".
  * Sets result to 0 if composite or 1 if probable prime
@@ -564,7 +564,7 @@ mp_err mp_log_u32(const mp_int *a, uint32_t base, uint32_t *c) MP_WUR;
 mp_err mp_expt_u32(const mp_int *a, uint32_t b, mp_int *c) MP_WUR;
 
 /* ---> radix conversion <--- */
-int mp_count_bits(const mp_int *a) MP_WUR;
+size_t mp_count_bits(const mp_int *a) MP_WUR;
 
 size_t mp_ubin_size(const mp_int *a) MP_WUR;
 mp_err mp_from_ubin(mp_int *a, const unsigned char *buf, size_t size) MP_WUR;

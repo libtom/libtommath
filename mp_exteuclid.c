@@ -65,7 +65,6 @@ mp_err mp_exteuclid(const mp_int *a, const mp_int *b, mp_int *U1, mp_int *U2, mp
       mp_exch(U3, &u3);
    }
 
-   err = MP_OKAY;
 LBL_ERR:
    mp_clear_multi(&u1, &u2, &u3, &v1, &v2, &v3, &t1, &t2, &t3, &q, &tmp, NULL);
    return err;

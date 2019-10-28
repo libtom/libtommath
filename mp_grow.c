@@ -4,11 +4,8 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* grow as required */
-mp_err mp_grow(mp_int *a, int size)
+mp_err mp_grow(mp_int *a, size_t size)
 {
-   int     i;
-   mp_digit *tmp;
-
    /* if the alloc size is smaller alloc more ram */
    if (a->alloc < size) {
       /* reallocate the array a->dp
@@ -17,21 +14,20 @@ mp_err mp_grow(mp_int *a, int size)
        * in case the operation failed we don't want
        * to overwrite the dp member of a.
        */
-      tmp = (mp_digit *) MP_REALLOC(a->dp,
-                                    (size_t)a->alloc * sizeof(mp_digit),
-                                    (size_t)size * sizeof(mp_digit));
-      if (tmp == NULL) {
+      mp_digit *dp = (mp_digit *) MP_REALLOC(a->dp,
+                                             a->alloc * sizeof(mp_digit),
+                                             size * sizeof(mp_digit));
+      if (dp == NULL) {
          /* reallocation failed but "a" is still valid [can be freed] */
          return MP_MEM;
       }
 
       /* reallocation succeeded so set a->dp */
-      a->dp = tmp;
+      a->dp = dp;
 
       /* zero excess digits */
-      i        = a->alloc;
+      MP_ZERO_DIGITS_NEW(a->dp + a->alloc, a->dp + size);
       a->alloc = size;
-      MP_ZERO_DIGITS(a->dp + i, a->alloc - i);
    }
    return MP_OKAY;
 }

@@ -8,7 +8,7 @@
  * Simple algorithm which zeroes the int, grows it then just sets one bit
  * as required.
  */
-mp_err mp_2expt(mp_int *a, int b)
+mp_err mp_2expt(mp_int *a, size_t b)
 {
    mp_err    err;
 

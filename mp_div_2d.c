@@ -4,25 +4,16 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* shift right by a certain bit count (store quotient in c, optional remainder in d) */
-mp_err mp_div_2d(const mp_int *a, int b, mp_int *c, mp_int *d)
+mp_err mp_div_2d(const mp_int *a, size_t b, mp_int *c, mp_int *d)
 {
    mp_digit D, r, rr;
    int     x;
    mp_err err;
 
-   /* if the shift count is <= 0 then we do no work */
-   if (b <= 0) {
-      err = mp_copy(a, c);
-      if (d != NULL) {
-         mp_zero(d);
-      }
-      return err;
-   }
-
-   /* copy */
    if ((err = mp_copy(a, c)) != MP_OKAY) {
       return err;
    }
+
    /* 'a' should not be used after here - it might be the same as d */
 
    /* get the remainder */

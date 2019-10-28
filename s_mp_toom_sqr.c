@@ -22,7 +22,7 @@ mp_err s_mp_toom_sqr(const mp_int *a, mp_int *b)
 {
    mp_int S0, a0, a1, a2;
    mp_digit *tmpa, *tmpc;
-   int B, count;
+   size_t B, count;
    mp_err err;
 
 

@@ -25,7 +25,7 @@ mp_err mp_sqrt(const mp_int *arg, mp_int *ret)
    }
 
    if ((err = mp_init(&t2)) != MP_OKAY) {
-      goto E2;
+      goto LBL_ERR2;
    }
 
    /* First approx. (not very bad for large arg) */
@@ -33,33 +33,33 @@ mp_err mp_sqrt(const mp_int *arg, mp_int *ret)
 
    /* t1 > 0  */
    if ((err = mp_div(arg, &t1, &t2, NULL)) != MP_OKAY) {
-      goto E1;
+      goto LBL_ERR1;
    }
    if ((err = mp_add(&t1, &t2, &t1)) != MP_OKAY) {
-      goto E1;
+      goto LBL_ERR1;
    }
    if ((err = mp_div_2(&t1, &t1)) != MP_OKAY) {
-      goto E1;
+      goto LBL_ERR1;
    }
    /* And now t1 > sqrt(arg) */
    do {
       if ((err = mp_div(arg, &t1, &t2, NULL)) != MP_OKAY) {
-         goto E1;
+         goto LBL_ERR1;
       }
       if ((err = mp_add(&t1, &t2, &t1)) != MP_OKAY) {
-         goto E1;
+         goto LBL_ERR1;
       }
       if ((err = mp_div_2(&t1, &t1)) != MP_OKAY) {
-         goto E1;
+         goto LBL_ERR1;
       }
       /* t1 >= sqrt(arg) >= t2 at this point */
    } while (mp_cmp_mag(&t1, &t2) == MP_GT);
 
    mp_exch(&t1, ret);
 
-E1:
+LBL_ERR1:
    mp_clear(&t2);
-E2:
+LBL_ERR2:
    mp_clear(&t1);
    return err;
 }
