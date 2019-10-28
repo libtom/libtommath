@@ -121,8 +121,8 @@ DONE mp_div_2d.c
 DONE mp_div_2.c
 DONE mp_div_3.c
 DONE mp_mul_2.c
+DONE mp_div_d.c
 
-mp_div_d.c
 mp_mul_d.c
 
 s_mp_div_school.c
