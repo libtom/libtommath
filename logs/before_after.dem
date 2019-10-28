@@ -1,0 +1,36 @@
+set terminal png
+set ylabel "Cycles per Operation"
+set xlabel "Operand size (bits)"
+
+set output "addsub-ba.png"
+plot 'add-before.log' smooth bezier title "Addition (before)", \
+      'add-after.log' smooth bezier title "Addition (after)", \
+      'sub-before.log' smooth bezier title "Subtraction (before)", \
+      'sub-after.log' smooth bezier title "Subtraction (after)"
+
+set output "mult-ba.png"
+plot 'mult-before.log' smooth bezier title "Multiplication (without Karatsuba) (before)", \
+      'mult-after.log' smooth bezier title "Multiplication (without Karatsuba) (after)", \
+      'mult_kara-before.log' smooth bezier title "Multiplication (Karatsuba) (before)", \
+      'mult_kara-after.log' smooth bezier title "Multiplication (Karatsuba) (after)"
+
+set output "sqr-ba.png"
+plot 'sqr-before.log' smooth bezier title "Squaring (without Karatsuba) (before)", \
+      'sqr-after.log' smooth bezier title "Squaring (without Karatsuba) (after)", \
+      'sqr_kara-before.log' smooth bezier title "Squaring (Karatsuba) (before)", \
+      'sqr_kara-after.log' smooth bezier title "Squaring (Karatsuba) (after)"
+
+set output "expt-ba.png"
+plot 'expt-before.log' smooth bezier title "Exptmod (Montgomery) (before)", \
+      'expt-after.log' smooth bezier title "Exptmod (Montgomery) (after)", \
+      'expt_dr-before.log' smooth bezier title "Exptmod (Dimminished Radix) (before)", \
+      'expt_dr-after.log' smooth bezier title "Exptmod (Dimminished Radix) (after)", \
+      'expt_2k-before.log' smooth bezier title "Exptmod (2k Reduction) (before)", \
+      'expt_2k-after.log' smooth bezier title "Exptmod (2k Reduction) (after)", \
+      'expt_2kl-before.log' smooth bezier title "Exptmod (2k-l Reduction) (before)", \
+      'expt_2kl-after.log' smooth bezier title "Exptmod (2k-l Reduction) (after)"
+
+set output "invmod-ba.png"
+plot 'invmod-before.log' smooth bezier title "Modular Inverse (before)", \
+      'invmod-after.log' smooth bezier title "Modular Inverse (after)"
+

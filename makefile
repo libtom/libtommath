@@ -72,7 +72,7 @@ profiled:
 #make a single object profiled library
 profiled_single: pre_gen
 	$(CC) $(LTM_CFLAGS) -fprofile-arcs -c pre_gen/mp_all.c -o mp_all.o
-	$(CC) $(LTM_CFLAGS) demo/timing.c mp_all.o -lgcov -o timing
+	$(CC) $(LTM_CFLAGS) -DMP_VERSION=\"before\" demo/timing.c mp_all.o -lgcov -o timing
 	./timing
 	rm -f *.o timing
 	$(CC) $(LTM_CFLAGS) -fbranch-probabilities -c pre_gen/mp_all.c -o mp_all.o
@@ -117,12 +117,17 @@ coveralls: lcov
 docs manual:
 	$(MAKE) -C doc/ $@ V=$(V)
 
-.PHONY: pre_gen
+.PHONY: pre_gen cmp
 pre_gen:
 	mkdir -p pre_gen
 	cat *mp_*.c > mp_all.c
 	sed -e 's/[[:blank:]]*$$//' mp_all.c > pre_gen/mp_all.c
 	rm mp_all.c
+
+cmp: profiled_single
+	$(CC) $(LTM_CFLAGS) -DMP_VERSION=\"after\" demo/timing.c $(LIBNAME) -lgcov -o timing
+	./timing
+	$(MAKE) -C logs/ cmp
 
 zipup: clean astyle new_file docs
 	@# Update the index, so diff-index won't fail in case the pdf has been created.
