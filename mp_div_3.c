@@ -10,7 +10,7 @@ mp_err mp_div_3(const mp_int *a, mp_int *c, mp_digit *d)
    mp_word  w, t;
    mp_digit b;
    mp_err   err;
-   int      ix;
+   size_t   ix;
 
    /* b = 2**MP_DIGIT_BIT / 3 */
    b = ((mp_word)1 << (mp_word)MP_DIGIT_BIT) / (mp_word)3;
@@ -22,7 +22,7 @@ mp_err mp_div_3(const mp_int *a, mp_int *c, mp_digit *d)
    q.used = a->used;
    q.sign = a->sign;
    w = 0;
-   for (ix = a->used - 1; ix >= 0; ix--) {
+   for (ix = a->used; ix --> 0;) {
       w = (w << (mp_word)MP_DIGIT_BIT) | (mp_word)a->dp[ix];
 
       if (w >= 3u) {
@@ -57,7 +57,7 @@ mp_err mp_div_3(const mp_int *a, mp_int *c, mp_digit *d)
    }
    mp_clear(&q);
 
-   return err;
+   return MP_OKAY;
 }
 
 #endif
