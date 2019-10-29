@@ -36,60 +36,58 @@ mp_err s_mp_invmod_slow(const mp_int *a, const mp_int *b, mp_int *c)
    mp_set(&A, 1uL);
    mp_set(&D, 1uL);
 
-top:
-   /* 4.  while u is even do */
-   while (mp_iseven(&u)) {
-      /* 4.1 u = u/2 */
-      if ((err = mp_div_2(&u, &u)) != MP_OKAY)                    goto LBL_ERR;
+   do {
+      /* 4.  while u is even do */
+      while (mp_iseven(&u)) {
+         /* 4.1 u = u/2 */
+         if ((err = mp_div_2(&u, &u)) != MP_OKAY)                    goto LBL_ERR;
 
-      /* 4.2 if A or B is odd then */
-      if (mp_isodd(&A) || mp_isodd(&B)) {
-         /* A = (A+y)/2, B = (B-x)/2 */
-         if ((err = mp_add(&A, &y, &A)) != MP_OKAY)               goto LBL_ERR;
-         if ((err = mp_sub(&B, &x, &B)) != MP_OKAY)               goto LBL_ERR;
+         /* 4.2 if A or B is odd then */
+         if (mp_isodd(&A) || mp_isodd(&B)) {
+            /* A = (A+y)/2, B = (B-x)/2 */
+            if ((err = mp_add(&A, &y, &A)) != MP_OKAY)               goto LBL_ERR;
+            if ((err = mp_sub(&B, &x, &B)) != MP_OKAY)               goto LBL_ERR;
+         }
+         /* A = A/2, B = B/2 */
+         if ((err = mp_div_2(&A, &A)) != MP_OKAY)                    goto LBL_ERR;
+         if ((err = mp_div_2(&B, &B)) != MP_OKAY)                    goto LBL_ERR;
       }
-      /* A = A/2, B = B/2 */
-      if ((err = mp_div_2(&A, &A)) != MP_OKAY)                    goto LBL_ERR;
-      if ((err = mp_div_2(&B, &B)) != MP_OKAY)                    goto LBL_ERR;
-   }
 
-   /* 5.  while v is even do */
-   while (mp_iseven(&v)) {
-      /* 5.1 v = v/2 */
-      if ((err = mp_div_2(&v, &v)) != MP_OKAY)                    goto LBL_ERR;
+      /* 5.  while v is even do */
+      while (mp_iseven(&v)) {
+         /* 5.1 v = v/2 */
+         if ((err = mp_div_2(&v, &v)) != MP_OKAY)                    goto LBL_ERR;
 
-      /* 5.2 if C or D is odd then */
-      if (mp_isodd(&C) || mp_isodd(&D)) {
-         /* C = (C+y)/2, D = (D-x)/2 */
-         if ((err = mp_add(&C, &y, &C)) != MP_OKAY)               goto LBL_ERR;
-         if ((err = mp_sub(&D, &x, &D)) != MP_OKAY)               goto LBL_ERR;
+         /* 5.2 if C or D is odd then */
+         if (mp_isodd(&C) || mp_isodd(&D)) {
+            /* C = (C+y)/2, D = (D-x)/2 */
+            if ((err = mp_add(&C, &y, &C)) != MP_OKAY)               goto LBL_ERR;
+            if ((err = mp_sub(&D, &x, &D)) != MP_OKAY)               goto LBL_ERR;
+         }
+         /* C = C/2, D = D/2 */
+         if ((err = mp_div_2(&C, &C)) != MP_OKAY)                    goto LBL_ERR;
+         if ((err = mp_div_2(&D, &D)) != MP_OKAY)                    goto LBL_ERR;
       }
-      /* C = C/2, D = D/2 */
-      if ((err = mp_div_2(&C, &C)) != MP_OKAY)                    goto LBL_ERR;
-      if ((err = mp_div_2(&D, &D)) != MP_OKAY)                    goto LBL_ERR;
-   }
 
-   /* 6.  if u >= v then */
-   if (mp_cmp(&u, &v) != MP_LT) {
-      /* u = u - v, A = A - C, B = B - D */
-      if ((err = mp_sub(&u, &v, &u)) != MP_OKAY)                  goto LBL_ERR;
+      /* 6.  if u >= v then */
+      if (mp_cmp(&u, &v) != MP_LT) {
+         /* u = u - v, A = A - C, B = B - D */
+         if ((err = mp_sub(&u, &v, &u)) != MP_OKAY)                  goto LBL_ERR;
 
-      if ((err = mp_sub(&A, &C, &A)) != MP_OKAY)                  goto LBL_ERR;
+         if ((err = mp_sub(&A, &C, &A)) != MP_OKAY)                  goto LBL_ERR;
 
-      if ((err = mp_sub(&B, &D, &B)) != MP_OKAY)                  goto LBL_ERR;
-   } else {
-      /* v - v - u, C = C - A, D = D - B */
-      if ((err = mp_sub(&v, &u, &v)) != MP_OKAY)                  goto LBL_ERR;
+         if ((err = mp_sub(&B, &D, &B)) != MP_OKAY)                  goto LBL_ERR;
+      } else {
+         /* v - v - u, C = C - A, D = D - B */
+         if ((err = mp_sub(&v, &u, &v)) != MP_OKAY)                  goto LBL_ERR;
 
-      if ((err = mp_sub(&C, &A, &C)) != MP_OKAY)                  goto LBL_ERR;
+         if ((err = mp_sub(&C, &A, &C)) != MP_OKAY)                  goto LBL_ERR;
 
-      if ((err = mp_sub(&D, &B, &D)) != MP_OKAY)                  goto LBL_ERR;
-   }
+         if ((err = mp_sub(&D, &B, &D)) != MP_OKAY)                  goto LBL_ERR;
+      }
 
-   /* if not zero goto step 4 */
-   if (!mp_iszero(&u)) {
-      goto top;
-   }
+      /* if not zero goto step 4 */
+   } while (!mp_iszero(&u));
 
    /* now a = C, b = D, gcd == g*v */
 
@@ -111,7 +109,7 @@ top:
 
    /* C is now the inverse */
    mp_exch(&C, c);
-   err = MP_OKAY;
+
 LBL_ERR:
    mp_clear_multi(&x, &y, &u, &v, &A, &B, &C, &D, NULL);
    return err;
