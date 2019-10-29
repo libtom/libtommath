@@ -130,11 +130,12 @@ DONE mp_is_square.c
 DONE mp_montgomery_setup.c
 DONE s_mp_mul_digs.c
 DONE s_mp_mul_digs_fast.c
+DONE mp_prime_next_prime.c
+DONE mp_exptmod.c
 
 s_mp_div_school.c
 mp_dr_is_modulus.c
 mp_dr_reduce.c
-mp_exptmod.c
 mp_expt_u32.c
 mp_log_u32.c
 mp_montgomery_calc_normalization.c
@@ -142,7 +143,6 @@ mp_montgomery_reduce.c
 mp_prime_frobenius_underwood.c
 mp_prime_is_prime.c
 mp_prime_miller_rabin.c
-mp_prime_next_prime.c
 mp_prime_strong_lucas_selfridge.c
 mp_root_u32.c
 s_mp_exptmod.c
