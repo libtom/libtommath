@@ -4,7 +4,6 @@
 #include <unistd.h>
 #include <inttypes.h>
 
-#define MP_WUR
 #include <tommath.h>
 
 #ifdef IOWNANATHLON
@@ -26,12 +25,14 @@
 #define MP_TIMING_VERSION "-" MP_VERSION
 #endif
 
+#define CHECK_OK(x) do { mp_err err; if ((err = (x)) != MP_OKAY) { fprintf(stderr, "%d: CHECK_OK(%s) failed: %s\n", __LINE__, #x, mp_error_to_string(err)); exit(EXIT_FAILURE); } }while(0)
+
 static void ndraw(const mp_int *a, const char *name)
 {
    char buf[4096];
 
    printf("%s: ", name);
-   mp_to_radix(a, buf, sizeof(buf), NULL, 64);
+   CHECK_OK(mp_to_radix(a, buf, sizeof(buf), NULL, 64));
    printf("%s\n", buf);
 }
 
@@ -90,7 +91,7 @@ static uint64_t TIMFUNC(void)
 #endif
 }
 
-#define DO2(x) x; x
+#define DO2(x) do { mp_err err = x; err = x; (void)err; }while(0)
 #define DO4(x) DO2(x); DO2(x)
 #define DO8(x) DO4(x); DO4(x)
 
@@ -140,12 +141,12 @@ int main(int argc, char **argv)
    int n, cnt, ix, old_kara_m, old_kara_s, old_toom_m, old_toom_s;
    unsigned rr;
 
-   mp_init(&a);
-   mp_init(&b);
-   mp_init(&c);
-   mp_init(&d);
-   mp_init(&e);
-   mp_init(&f);
+   CHECK_OK(mp_init(&a));
+   CHECK_OK(mp_init(&b));
+   CHECK_OK(mp_init(&c));
+   CHECK_OK(mp_init(&d));
+   CHECK_OK(mp_init(&e));
+   CHECK_OK(mp_init(&f));
 
    srand(LTM_TIMING_RAND_SEED);
 
@@ -161,14 +162,14 @@ int main(int argc, char **argv)
       for (m = 0; m < 2; ++m) {
          if (m == 0) {
             name = "    Arnault";
-            mp_read_radix(&a,
-                          "91xLNF3roobhzgTzoFIG6P13ZqhOVYSN60Fa7Cj2jVR1g0k89zdahO9/kAiRprpfO1VAp1aBHucLFV/qLKLFb+zonV7R2Vxp1K13ClwUXStpV0oxTNQVjwybmFb5NBEHImZ6V7P6+udRJuH8VbMEnS0H8/pSqQrg82OoQQ2fPpAk6G1hkjqoCv5s/Yr",
-                          64);
+            CHECK_OK(mp_read_radix(&a,
+                                   "91xLNF3roobhzgTzoFIG6P13ZqhOVYSN60Fa7Cj2jVR1g0k89zdahO9/kAiRprpfO1VAp1aBHucLFV/qLKLFb+zonV7R2Vxp1K13ClwUXStpV0oxTNQVjwybmFb5NBEHImZ6V7P6+udRJuH8VbMEnS0H8/pSqQrg82OoQQ2fPpAk6G1hkjqoCv5s/Yr",
+                                   64));
          } else {
             name = "2^1119 + 53";
             mp_set(&a,1u);
-            mp_mul_2d(&a,1119,&a);
-            mp_add_d(&a,53,&a);
+            CHECK_OK(mp_mul_2d(&a,1119,&a));
+            CHECK_OK(mp_add_d(&a,53,&a));
          }
          cnt = mp_prime_rabin_miller_trials(mp_count_bits(&a));
          ix = -cnt;
@@ -197,8 +198,8 @@ int main(int argc, char **argv)
       log = FOPEN("logs/add" MP_TIMING_VERSION ".log", "w");
       for (cnt = 8; cnt <= 128; cnt += 8) {
          SLEEP;
-         mp_rand(&a, cnt);
-         mp_rand(&b, cnt);
+         CHECK_OK(mp_rand(&a, cnt));
+         CHECK_OK(mp_rand(&b, cnt));
          DO8(mp_add(&a, &b, &c));
          rr = 0u;
          tt = UINT64_MAX;
@@ -222,8 +223,8 @@ int main(int argc, char **argv)
       log = FOPEN("logs/sub" MP_TIMING_VERSION ".log", "w");
       for (cnt = 8; cnt <= 128; cnt += 8) {
          SLEEP;
-         mp_rand(&a, cnt);
-         mp_rand(&b, cnt);
+         CHECK_OK(mp_rand(&a, cnt));
+         CHECK_OK(mp_rand(&b, cnt));
          DO8(mp_sub(&a, &b, &c));
          rr = 0u;
          tt = UINT64_MAX;
@@ -263,8 +264,8 @@ int main(int argc, char **argv)
                      "logs/mult_toom" MP_TIMING_VERSION ".log", "w");
          for (cnt = 4; cnt <= (10240 / MP_DIGIT_BIT); cnt += 2) {
             SLEEP;
-            mp_rand(&a, cnt);
-            mp_rand(&b, cnt);
+            CHECK_OK(mp_rand(&a, cnt));
+            CHECK_OK(mp_rand(&b, cnt));
             DO8(mp_mul(&a, &b, &c));
             rr = 0u;
             tt = UINT64_MAX;
@@ -287,7 +288,7 @@ int main(int argc, char **argv)
                      "logs/sqr_toom" MP_TIMING_VERSION ".log", "w");
          for (cnt = 4; cnt <= (10240 / MP_DIGIT_BIT); cnt += 2) {
             SLEEP;
-            mp_rand(&a, cnt);
+            CHECK_OK(mp_rand(&a, cnt));
             DO8(mp_sqr(&a, &b));
             rr = 0u;
             tt = UINT64_MAX;
@@ -348,15 +349,15 @@ int main(int argc, char **argv)
       logd = FOPEN("logs/expt_2kl" MP_TIMING_VERSION ".log", "w");
       for (n = 0; primes[n] != NULL; n++) {
          SLEEP;
-         mp_read_radix(&a, primes[n], 10);
+         CHECK_OK(mp_read_radix(&a, primes[n], 10));
          mp_zero(&b);
          for (rr = 0; rr < (unsigned) mp_count_bits(&a); rr++) {
-            mp_mul_2(&b, &b);
+            CHECK_OK(mp_mul_2(&b, &b));
             b.dp[0] |= lbit();
             b.used += 1;
          }
-         mp_sub_d(&a, 1uL, &c);
-         mp_mod(&b, &c, &b);
+         CHECK_OK(mp_sub_d(&a, 1uL, &c));
+         CHECK_OK(mp_mod(&b, &c, &b));
          mp_set(&c, 3uL);
          DO8(mp_exptmod(&c, &b, &a, &d));
          rr = 0u;
@@ -368,10 +369,10 @@ int main(int argc, char **argv)
             if (tt > gg)
                tt = gg;
          } while (++rr < 10u);
-         mp_sub_d(&a, 1uL, &e);
-         mp_sub(&e, &b, &b);
-         mp_exptmod(&c, &b, &a, &e);  /* c^(p-1-b) mod a */
-         mp_mulmod(&e, &d, &a, &d);   /* c^b * c^(p-1-b) == c^p-1 == 1 */
+         CHECK_OK(mp_sub_d(&a, 1uL, &e));
+         CHECK_OK(mp_sub(&e, &b, &b));
+         CHECK_OK(mp_exptmod(&c, &b, &a, &e));  /* c^(p-1-b) mod a */
+         CHECK_OK(mp_mulmod(&e, &d, &a, &d));   /* c^b * c^(p-1-b) == c^p-1 == 1 */
          if (mp_cmp_d(&d, 1uL) != MP_EQ) {
             printf("Different (%d)!!!\n", mp_count_bits(&a));
             draw(&d);
@@ -393,12 +394,12 @@ int main(int argc, char **argv)
       log = FOPEN("logs/invmod" MP_TIMING_VERSION ".log", "w");
       for (cnt = 4; cnt <= 32; cnt += 4) {
          SLEEP;
-         mp_rand(&a, cnt);
-         mp_rand(&b, cnt);
+         CHECK_OK(mp_rand(&a, cnt));
+         CHECK_OK(mp_rand(&b, cnt));
 
          do {
-            mp_add_d(&b, 1uL, &b);
-            mp_gcd(&a, &b, &c);
+            CHECK_OK(mp_add_d(&b, 1uL, &b));
+            CHECK_OK(mp_gcd(&a, &b, &c));
          } while (mp_cmp_d(&c, 1uL) != MP_EQ);
 
          DO2(mp_invmod(&b, &a, &c));
@@ -411,7 +412,7 @@ int main(int argc, char **argv)
             if (tt > gg)
                tt = gg;
          } while (++rr < 1000u);
-         mp_mulmod(&b, &c, &a, &d);
+         CHECK_OK(mp_mulmod(&b, &c, &a, &d));
          if (mp_cmp_d(&d, 1uL) != MP_EQ) {
             printf("Failed to invert\n");
             return 0;
