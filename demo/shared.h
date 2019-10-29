@@ -14,8 +14,14 @@
 #define LTM_DEMO_TEST_REDUCE_2K_L 0
 #endif
 
-#define MP_WUR /* TODO: result checks disabled for now */
 #include "tommath_private.h"
+
+
+#define EXPECT(a) do { if (!(a)) { fprintf(stderr, "%d: EXPECT(%s) failed\n", __LINE__, #a); goto LBL_ERR; } } while(0)
+#define DO_WHAT(a, what) do { mp_err err; if ((err = (a)) != MP_OKAY) { fprintf(stderr, "%d: DO(%s) failed: %s\n", __LINE__, #a, mp_error_to_string(err)); what; } } while(0)
+#define DO(a) DO_WHAT(a, goto LBL_ERR)
+#define DOR(a) DO_WHAT(a, return EXIT_FAILURE)
+
 
 extern void ndraw(const mp_int* a, const char* name);
 extern void print_header(void);
