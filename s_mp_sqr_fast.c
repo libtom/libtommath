@@ -18,14 +18,12 @@ mp_err s_mp_sqr_fast(const mp_int *a, mp_int *b)
    int       oldused, pa, ix;
    mp_digit  W[MP_WARRAY];
    mp_word   W1;
+   mp_err err;
 
    /* grow the destination as required */
    pa = a->used + a->used;
-   if (b->alloc < pa) {
-      mp_err err;
-      if ((err = mp_grow(b, pa)) != MP_OKAY) {
-         return err;
-      }
+   if ((err = mp_grow(b, pa)) != MP_OKAY) {
+      return err;
    }
 
    /* number of output digits to produce */

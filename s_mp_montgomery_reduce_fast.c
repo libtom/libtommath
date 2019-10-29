@@ -25,10 +25,8 @@ mp_err s_mp_montgomery_reduce_fast(mp_int *x, const mp_int *n, mp_digit rho)
    oldused = x->used;
 
    /* grow a as required */
-   if (x->alloc < (n->used + 1)) {
-      if ((err = mp_grow(x, n->used + 1)) != MP_OKAY) {
-         return err;
-      }
+   if ((err = mp_grow(x, n->used + 1)) != MP_OKAY) {
+      return err;
    }
 
    /* first we have to get the digits of the input into

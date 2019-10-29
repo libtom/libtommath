@@ -11,10 +11,8 @@ mp_err mp_or(const mp_int *a, const mp_int *b, mp_int *c)
    mp_digit ac = 1, bc = 1, cc = 1;
    mp_sign csign = ((a->sign == MP_NEG) || (b->sign == MP_NEG)) ? MP_NEG : MP_ZPOS;
 
-   if (c->alloc < used) {
-      if ((err = mp_grow(c, used)) != MP_OKAY) {
-         return err;
-      }
+   if ((err = mp_grow(c, used)) != MP_OKAY) {
+      return err;
    }
 
    for (i = 0; i < used; i++) {

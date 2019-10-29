@@ -6,15 +6,13 @@
 /* b = a*2 */
 mp_err mp_mul_2(const mp_int *a, mp_int *b)
 {
+   mp_err err;
    int x, oldused;
    mp_digit r;
 
    /* grow to accomodate result */
-   if (b->alloc < (a->used + 1)) {
-      mp_err err;
-      if ((err = mp_grow(b, a->used + 1)) != MP_OKAY) {
-         return err;
-      }
+   if ((err = mp_grow(b, a->used + 1)) != MP_OKAY) {
+      return err;
    }
 
    oldused = b->used;

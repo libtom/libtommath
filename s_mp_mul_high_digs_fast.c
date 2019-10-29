@@ -21,10 +21,8 @@ mp_err s_mp_mul_high_digs_fast(const mp_int *a, const mp_int *b, mp_int *c, int 
 
    /* grow the destination as required */
    pa = a->used + b->used;
-   if (c->alloc < pa) {
-      if ((err = mp_grow(c, pa)) != MP_OKAY) {
-         return err;
-      }
+   if ((err = mp_grow(c, pa)) != MP_OKAY) {
+      return err;
    }
 
    /* number of output digits to produce */

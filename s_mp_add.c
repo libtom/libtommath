@@ -8,6 +8,7 @@ mp_err s_mp_add(const mp_int *a, const mp_int *b, mp_int *c)
 {
    int oldused, min, max, i;
    mp_digit u;
+   mp_err err;
 
    /* find sizes, we let |a| <= |b| which means we have to sort
     * them.  "x" will point to the input with the most digits
@@ -20,11 +21,8 @@ mp_err s_mp_add(const mp_int *a, const mp_int *b, mp_int *c)
    max = a->used;
 
    /* init result */
-   if (c->alloc < (max + 1)) {
-      mp_err err;
-      if ((err = mp_grow(c, max + 1)) != MP_OKAY) {
-         return err;
-      }
+   if ((err = mp_grow(c, max + 1)) != MP_OKAY) {
+      return err;
    }
 
    /* get old used digit count and set new one */

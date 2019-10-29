@@ -19,22 +19,20 @@
  */
 mp_err mp_dr_reduce(mp_int *x, const mp_int *n, mp_digit k)
 {
+   mp_err err;
+
    /* m = digits in modulus */
    int m = n->used;
 
    /* ensure that "x" has at least 2m digits */
-   if (x->alloc < (m + m)) {
-      mp_err err;
-      if ((err = mp_grow(x, m + m)) != MP_OKAY) {
-         return err;
-      }
+   if ((err = mp_grow(x, m + m)) != MP_OKAY) {
+      return err;
    }
 
    /* top of loop, this is where the code resumes if
     * another reduction pass is required.
     */
    for (;;) {
-      mp_err err;
       int i;
       mp_digit mu = 0;
 

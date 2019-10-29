@@ -6,6 +6,7 @@
 /* computes xR**-1 == x (mod N) via Montgomery Reduction */
 mp_err mp_montgomery_reduce(mp_int *x, const mp_int *n, mp_digit rho)
 {
+   mp_err err;
    int ix, digs;
 
    /* can the fast reduction [comba] method be used?
@@ -22,11 +23,8 @@ mp_err mp_montgomery_reduce(mp_int *x, const mp_int *n, mp_digit rho)
    }
 
    /* grow the input as required */
-   if (x->alloc < digs) {
-      mp_err err;
-      if ((err = mp_grow(x, digs)) != MP_OKAY) {
-         return err;
-      }
+   if ((err = mp_grow(x, digs)) != MP_OKAY) {
+      return err;
    }
    x->used = digs;
 
