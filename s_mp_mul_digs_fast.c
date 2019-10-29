@@ -21,7 +21,7 @@
  */
 mp_err s_mp_mul_digs_fast(const mp_int *a, const mp_int *b, mp_int *c, size_t digs)
 {
-   size_t  oldused, pa, ix, iz;
+   size_t  olduse, pa, ix, iz;
    mp_err   err;
    mp_digit W[MP_WARRAY];
    mp_word  _W;
@@ -40,10 +40,15 @@ mp_err s_mp_mul_digs_fast(const mp_int *a, const mp_int *b, mp_int *c, size_t di
    _W = 0;
    for (ix = 0; ix < pa; ix++) {
       size_t   tx, ty, iy;
+      mp_digit *tmpx, *tmpy;
 
       /* get offsets into the two bignums */
       ty = MP_MIN(b->used-1, ix);
       tx = ix - ty;
+
+      /* setup temp aliases */
+      tmpx = a->dp + tx;
+      tmpy = b->dp + ty;
 
       /* this is the number of times the loop will iterrate, essentially
          while (tx++ < a->used && ty-- >= 0) { ... }
@@ -52,7 +57,8 @@ mp_err s_mp_mul_digs_fast(const mp_int *a, const mp_int *b, mp_int *c, size_t di
 
       /* execute loop */
       for (iz = 0; iz < iy; ++iz) {
-         _W += (mp_word)a->dp[tx + iz] * (mp_word)b->dp[ty - iz];
+         _W += (mp_word)*tmpx++ * (mp_word)*tmpy--;
+
       }
 
       /* store term */
@@ -63,17 +69,20 @@ mp_err s_mp_mul_digs_fast(const mp_int *a, const mp_int *b, mp_int *c, size_t di
    }
 
    /* setup dest */
-   oldused  = c->used;
+   olduse  = c->used;
    c->used = pa;
 
-   for (ix = 0; ix < pa; ix++) {
-      /* now extract the previous digit [below the carry] */
-      c->dp[ix] = W[ix];
+   {
+      mp_digit *tmpc;
+      tmpc = c->dp;
+      for (ix = 0; ix < pa; ix++) {
+         /* now extract the previous digit [below the carry] */
+         *tmpc++ = W[ix];
+      }
+
+      /* clear unused digits [that existed in the old copy of c] */
+      MP_ZERO_DIGITS(tmpc, olduse - ix);
    }
-
-   /* clear unused digits [that existed in the old copy of c] */
-   MP_ZERO_DIGITS_NEW(c->dp + c->used, c->dp + oldused);
-
    mp_clamp(c);
    return MP_OKAY;
 }

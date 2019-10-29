@@ -12,6 +12,9 @@ mp_err s_mp_mul_digs(const mp_int *a, const mp_int *b, mp_int *c, size_t digs)
    mp_int  t;
    mp_err  err;
    size_t  pa, pb, ix, iy;
+   mp_digit u;
+   mp_word r;
+   mp_digit tmpx, *tmpt, *tmpy;
 
    /* can we use the fast multiplier? */
    if ((digs < MP_WARRAY) &&
@@ -28,28 +31,37 @@ mp_err s_mp_mul_digs(const mp_int *a, const mp_int *b, mp_int *c, size_t digs)
    pa = a->used;
    for (ix = 0; ix < pa; ix++) {
       /* set the carry to zero */
-      mp_digit u = 0;
+      u = 0;
 
       /* limit ourselves to making digs digits of output */
-      pb = digs < ix ? 0 : digs - ix;
-      pb = MP_MIN(b->used, pb);
+      pb = MP_MIN(b->used, digs - ix);
+
+      /* setup some aliases */
+      /* copy of the digit from a used within the nested loop */
+      tmpx = a->dp[ix];
+
+      /* an alias for the destination shifted ix places */
+      tmpt = t.dp + ix;
+
+      /* an alias for the digits of b */
+      tmpy = b->dp;
 
       /* compute the columns of the output and propagate the carry */
       for (iy = 0; iy < pb; iy++) {
          /* compute the column as a mp_word */
-         mp_word r       = (mp_word)t.dp[ix + iy] +
-                           ((mp_word)a->dp[ix] * (mp_word)b->dp[iy]) +
-                           (mp_word)u;
+         r       = (mp_word)*tmpt +
+                   ((mp_word)tmpx * (mp_word)*tmpy++) +
+                   (mp_word)u;
 
          /* the new column is the lower part of the result */
-         t.dp[ix + iy] = (mp_digit)(r & (mp_word)MP_MASK);
+         *tmpt++ = (mp_digit)(r & (mp_word)MP_MASK);
 
          /* get the carry word from the result */
          u       = (mp_digit)(r >> (mp_word)MP_DIGIT_BIT);
       }
       /* set carry if it is placed below digs */
       if ((ix + iy) < digs) {
-         t.dp[ix + iy] = u;
+         *tmpt = u;
       }
    }
 
