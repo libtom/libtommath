@@ -77,7 +77,6 @@
 #   define MP_LSHD_C
 #   define MP_MOD_C
 #   define MP_MOD_2D_C
-#   define MP_MOD_D_C
 #   define MP_MONTGOMERY_CALC_NORMALIZATION_C
 #   define MP_MONTGOMERY_REDUCE_C
 #   define MP_MONTGOMERY_SETUP_C
@@ -142,6 +141,7 @@
 #   define MP_ZERO_C
 #   define S_MP_ADD_C
 #   define S_MP_BALANCE_MUL_C
+#   define S_MP_COPY_DIGS_C
 #   define S_MP_DIV_RECURSIVE_C
 #   define S_MP_DIV_SCHOOL_C
 #   define S_MP_DIV_SMALL_C
@@ -168,6 +168,8 @@
 #   define S_MP_SUB_C
 #   define S_MP_TOOM_MUL_C
 #   define S_MP_TOOM_SQR_C
+#   define S_MP_ZERO_BUF_C
+#   define S_MP_ZERO_DIGS_C
 #endif
 #endif
 #if defined(MP_2EXPT_C)
@@ -189,6 +191,7 @@
 #   define MP_CLAMP_C
 #   define MP_GROW_C
 #   define MP_SUB_D_C
+#   define S_MP_ZERO_DIGS_C
 #endif
 
 #if defined(MP_ADDMOD_C)
@@ -207,6 +210,7 @@
 #endif
 
 #if defined(MP_CLEAR_C)
+#   define S_MP_ZERO_DIGS_C
 #endif
 
 #if defined(MP_CLEAR_MULTI_C)
@@ -233,6 +237,8 @@
 
 #if defined(MP_COPY_C)
 #   define MP_GROW_C
+#   define S_MP_COPY_DIGS_C
+#   define S_MP_ZERO_DIGS_C
 #endif
 
 #if defined(MP_COUNT_BITS_C)
@@ -253,6 +259,7 @@
 #if defined(MP_DIV_2_C)
 #   define MP_CLAMP_C
 #   define MP_GROW_C
+#   define S_MP_ZERO_DIGS_C
 #endif
 
 #if defined(MP_DIV_2D_C)
@@ -260,7 +267,6 @@
 #   define MP_COPY_C
 #   define MP_MOD_2D_C
 #   define MP_RSHD_C
-#   define MP_ZERO_C
 #endif
 
 #if defined(MP_DIV_3_C)
@@ -288,6 +294,7 @@
 #   define MP_CMP_MAG_C
 #   define MP_GROW_C
 #   define S_MP_SUB_C
+#   define S_MP_ZERO_DIGS_C
 #endif
 
 #if defined(MP_DR_SETUP_C)
@@ -351,6 +358,7 @@
 #if defined(MP_FWRITE_C)
 #   define MP_RADIX_SIZE_C
 #   define MP_TO_RADIX_C
+#   define S_MP_ZERO_BUF_C
 #endif
 
 #if defined(MP_GCD_C)
@@ -397,6 +405,7 @@
 #endif
 
 #if defined(MP_GROW_C)
+#   define S_MP_ZERO_DIGS_C
 #endif
 
 #if defined(MP_INIT_C)
@@ -470,10 +479,10 @@
 #if defined(MP_IS_SQUARE_C)
 #   define MP_CLEAR_C
 #   define MP_CMP_MAG_C
+#   define MP_DIV_D_C
 #   define MP_GET_I32_C
 #   define MP_INIT_U32_C
 #   define MP_MOD_C
-#   define MP_MOD_D_C
 #   define MP_SQRT_C
 #   define MP_SQR_C
 #endif
@@ -506,6 +515,7 @@
 
 #if defined(MP_LSHD_C)
 #   define MP_GROW_C
+#   define S_MP_ZERO_DIGS_C
 #endif
 
 #if defined(MP_MOD_C)
@@ -520,10 +530,7 @@
 #   define MP_CLAMP_C
 #   define MP_COPY_C
 #   define MP_ZERO_C
-#endif
-
-#if defined(MP_MOD_D_C)
-#   define MP_DIV_D_C
+#   define S_MP_ZERO_DIGS_C
 #endif
 
 #if defined(MP_MONTGOMERY_CALC_NORMALIZATION_C)
@@ -557,6 +564,7 @@
 
 #if defined(MP_MUL_2_C)
 #   define MP_GROW_C
+#   define S_MP_ZERO_DIGS_C
 #endif
 
 #if defined(MP_MUL_2D_C)
@@ -569,6 +577,7 @@
 #if defined(MP_MUL_D_C)
 #   define MP_CLAMP_C
 #   define MP_GROW_C
+#   define S_MP_ZERO_DIGS_C
 #endif
 
 #if defined(MP_MULMOD_C)
@@ -660,8 +669,8 @@
 #   define MP_ADD_D_C
 #   define MP_CLEAR_C
 #   define MP_CMP_D_C
+#   define MP_DIV_D_C
 #   define MP_INIT_C
-#   define MP_MOD_D_C
 #   define MP_PRIME_IS_PRIME_C
 #   define MP_SET_C
 #   define MP_SUB_D_C
@@ -678,6 +687,7 @@
 #   define MP_PRIME_IS_PRIME_C
 #   define MP_SUB_D_C
 #   define S_MP_RAND_SOURCE_C
+#   define S_MP_ZERO_BUF_C
 #endif
 
 #if defined(MP_PRIME_STRONG_LUCAS_SELFRIDGE_C)
@@ -820,6 +830,7 @@
 
 #if defined(MP_RSHD_C)
 #   define MP_ZERO_C
+#   define S_MP_ZERO_DIGS_C
 #endif
 
 #if defined(MP_SBIN_SIZE_C)
@@ -827,6 +838,7 @@
 #endif
 
 #if defined(MP_SET_C)
+#   define S_MP_ZERO_DIGS_C
 #endif
 
 #if defined(MP_SET_DOUBLE_C)
@@ -852,15 +864,19 @@
 #endif
 
 #if defined(MP_SET_U32_C)
+#   define S_MP_ZERO_DIGS_C
 #endif
 
 #if defined(MP_SET_U64_C)
+#   define S_MP_ZERO_DIGS_C
 #endif
 
 #if defined(MP_SET_UL_C)
+#   define S_MP_ZERO_DIGS_C
 #endif
 
 #if defined(MP_SET_ULL_C)
+#   define S_MP_ZERO_DIGS_C
 #endif
 
 #if defined(MP_SHRINK_C)
@@ -905,10 +921,10 @@
 #   define MP_CMP_D_C
 #   define MP_COPY_C
 #   define MP_DIV_2_C
+#   define MP_DIV_D_C
 #   define MP_EXPTMOD_C
 #   define MP_INIT_MULTI_C
 #   define MP_KRONECKER_C
-#   define MP_MOD_D_C
 #   define MP_MULMOD_C
 #   define MP_SET_C
 #   define MP_SQRMOD_C
@@ -926,6 +942,7 @@
 #   define MP_ADD_D_C
 #   define MP_CLAMP_C
 #   define MP_GROW_C
+#   define S_MP_ZERO_DIGS_C
 #endif
 
 #if defined(MP_SUBMOD_C)
@@ -969,11 +986,13 @@
 #endif
 
 #if defined(MP_ZERO_C)
+#   define S_MP_ZERO_DIGS_C
 #endif
 
 #if defined(S_MP_ADD_C)
 #   define MP_CLAMP_C
 #   define MP_GROW_C
+#   define S_MP_ZERO_DIGS_C
 #endif
 
 #if defined(S_MP_BALANCE_MUL_C)
@@ -986,6 +1005,10 @@
 #   define MP_INIT_SIZE_C
 #   define MP_LSHD_C
 #   define MP_MUL_C
+#   define S_MP_COPY_DIGS_C
+#endif
+
+#if defined(S_MP_COPY_DIGS_C)
 #endif
 
 #if defined(S_MP_DIV_RECURSIVE_C)
@@ -1119,6 +1142,7 @@
 #   define MP_LSHD_C
 #   define MP_MUL_C
 #   define S_MP_ADD_C
+#   define S_MP_COPY_DIGS_C
 #   define S_MP_SUB_C
 #endif
 
@@ -1130,6 +1154,7 @@
 #   define MP_LSHD_C
 #   define MP_SQR_C
 #   define S_MP_ADD_C
+#   define S_MP_COPY_DIGS_C
 #   define S_MP_SUB_C
 #endif
 
@@ -1158,6 +1183,8 @@
 #   define MP_CMP_MAG_C
 #   define MP_GROW_C
 #   define S_MP_SUB_C
+#   define S_MP_ZERO_BUF_C
+#   define S_MP_ZERO_DIGS_C
 #endif
 
 #if defined(S_MP_MUL_DIGS_C)
@@ -1171,6 +1198,7 @@
 #if defined(S_MP_MUL_DIGS_FAST_C)
 #   define MP_CLAMP_C
 #   define MP_GROW_C
+#   define S_MP_ZERO_DIGS_C
 #endif
 
 #if defined(S_MP_MUL_HIGH_DIGS_C)
@@ -1184,10 +1212,11 @@
 #if defined(S_MP_MUL_HIGH_DIGS_FAST_C)
 #   define MP_CLAMP_C
 #   define MP_GROW_C
+#   define S_MP_ZERO_DIGS_C
 #endif
 
 #if defined(S_MP_PRIME_IS_DIVISIBLE_C)
-#   define MP_MOD_D_C
+#   define MP_DIV_D_C
 #endif
 
 #if defined(S_MP_RAND_JENKINS_C)
@@ -1207,11 +1236,13 @@
 #if defined(S_MP_SQR_FAST_C)
 #   define MP_CLAMP_C
 #   define MP_GROW_C
+#   define S_MP_ZERO_DIGS_C
 #endif
 
 #if defined(S_MP_SUB_C)
 #   define MP_CLAMP_C
 #   define MP_GROW_C
+#   define S_MP_ZERO_DIGS_C
 #endif
 
 #if defined(S_MP_TOOM_MUL_C)
@@ -1227,6 +1258,7 @@
 #   define MP_MUL_2_C
 #   define MP_MUL_C
 #   define MP_SUB_C
+#   define S_MP_COPY_DIGS_C
 #endif
 
 #if defined(S_MP_TOOM_SQR_C)
@@ -1241,6 +1273,13 @@
 #   define MP_MUL_C
 #   define MP_SQR_C
 #   define MP_SUB_C
+#   define S_MP_COPY_DIGS_C
+#endif
+
+#if defined(S_MP_ZERO_BUF_C)
+#endif
+
+#if defined(S_MP_ZERO_DIGS_C)
 #endif
 
 #ifdef LTM_INSIDE
