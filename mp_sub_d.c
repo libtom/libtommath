@@ -6,6 +6,7 @@
 /* single digit subtraction */
 mp_err mp_sub_d(const mp_int *a, mp_digit b, mp_int *c)
 {
+   mp_err err;
    int oldused;
 
    /* fast path for a == c */
@@ -23,18 +24,14 @@ mp_err mp_sub_d(const mp_int *a, mp_digit b, mp_int *c)
    }
 
    /* grow c as required */
-   if (c->alloc < (a->used + 1)) {
-      mp_err err;
-      if ((err = mp_grow(c, a->used + 1)) != MP_OKAY) {
-         return err;
-      }
+   if ((err = mp_grow(c, a->used + 1)) != MP_OKAY) {
+      return err;
    }
 
    /* if a is negative just do an unsigned
     * addition [with fudged signs]
     */
    if (a->sign == MP_NEG) {
-      mp_err err;
       mp_int a_ = *a;
       a_.sign = MP_ZPOS;
       err     = mp_add_d(&a_, b, c);

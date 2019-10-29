@@ -8,13 +8,11 @@ mp_err s_mp_sub(const mp_int *a, const mp_int *b, mp_int *c)
 {
    int oldused = c->used, min = b->used, max = a->used, i;
    mp_digit u;
+   mp_err err;
 
    /* init result */
-   if (c->alloc < max) {
-      mp_err err;
-      if ((err = mp_grow(c, max)) != MP_OKAY) {
-         return err;
-      }
+   if ((err = mp_grow(c, max)) != MP_OKAY) {
+      return err;
    }
 
    c->used = max;

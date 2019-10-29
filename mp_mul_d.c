@@ -11,10 +11,8 @@ mp_err mp_mul_d(const mp_int *a, mp_digit b, mp_int *c)
    int   ix, oldused;
 
    /* make sure c is big enough to hold a*b */
-   if (c->alloc < (a->used + 1)) {
-      if ((err = mp_grow(c, a->used + 1)) != MP_OKAY) {
-         return err;
-      }
+   if ((err = mp_grow(c, a->used + 1)) != MP_OKAY) {
+      return err;
    }
 
    /* get the original destinations used count */

@@ -9,10 +9,8 @@ mp_err mp_from_ubin(mp_int *a, const uint8_t *buf, size_t size)
    mp_err err;
 
    /* make sure there are at least two digits */
-   if (a->alloc < 2) {
-      if ((err = mp_grow(a, 2)) != MP_OKAY) {
-         return err;
-      }
+   if ((err = mp_grow(a, 2)) != MP_OKAY) {
+      return err;
    }
 
    /* zero the int */

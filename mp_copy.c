@@ -6,17 +6,16 @@
 /* copy, b = a */
 mp_err mp_copy(const mp_int *a, mp_int *b)
 {
+   mp_err err;
+
    /* if dst == src do nothing */
    if (a == b) {
       return MP_OKAY;
    }
 
    /* grow dest */
-   if (b->alloc < a->used) {
-      mp_err err;
-      if ((err = mp_grow(b, a->used)) != MP_OKAY) {
-         return err;
-      }
+   if ((err = mp_grow(b, a->used)) != MP_OKAY) {
+      return err;
    }
 
    /* copy everything over and zero high digits */

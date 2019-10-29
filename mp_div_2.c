@@ -6,14 +6,12 @@
 /* b = a/2 */
 mp_err mp_div_2(const mp_int *a, mp_int *b)
 {
+   mp_err err;
    int x, oldused;
    mp_digit r;
 
-   if (b->alloc < a->used) {
-      mp_err err;
-      if ((err = mp_grow(b, a->used)) != MP_OKAY) {
-         return err;
-      }
+   if ((err = mp_grow(b, a->used)) != MP_OKAY) {
+      return err;
    }
 
    oldused = b->used;

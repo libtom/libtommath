@@ -6,27 +6,22 @@
 /* shift left by a certain bit count */
 mp_err mp_mul_2d(const mp_int *a, int b, mp_int *c)
 {
+   mp_err err;
+
    if (b < 0) {
       return MP_VAL;
    }
 
-   if (a != c) {
-      mp_err err;
-      if ((err = mp_copy(a, c)) != MP_OKAY) {
-         return err;
-      }
+   if ((err = mp_copy(a, c)) != MP_OKAY) {
+      return err;
    }
 
-   if (c->alloc < (c->used + (b / MP_DIGIT_BIT) + 1)) {
-      mp_err err;
-      if ((err = mp_grow(c, c->used + (b / MP_DIGIT_BIT) + 1)) != MP_OKAY) {
-         return err;
-      }
+   if ((err = mp_grow(c, c->used + (b / MP_DIGIT_BIT) + 1)) != MP_OKAY) {
+      return err;
    }
 
    /* shift by as many digits in the bit count */
    if (b >= MP_DIGIT_BIT) {
-      mp_err err;
       if ((err = mp_lshd(c, b / MP_DIGIT_BIT)) != MP_OKAY) {
          return err;
       }
