@@ -28,12 +28,12 @@
 #   define MP_NEG_C
 #   define MP_PRIME_FROBENIUS_UNDERWOOD_C
 #   define MP_RADIX_SIZE_C
-#   define MP_LOG_U32_C
+#   define MP_LOG_N_C
 #   define MP_RAND_C
 #   define MP_REDUCE_C
 #   define MP_REDUCE_2K_L_C
 #   define MP_FROM_SBIN_C
-#   define MP_ROOT_U32_C
+#   define MP_ROOT_N_C
 #   define MP_SET_L_C
 #   define MP_SET_UL_C
 #   define MP_SBIN_SIZE_C

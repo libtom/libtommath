@@ -423,11 +423,17 @@ mp_err mp_exteuclid(const mp_int *a, const mp_int *b, mp_int *U1, mp_int *U2, mp
 /* c = [a, b] or (a*b)/(a, b) */
 mp_err mp_lcm(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
 
+/* Integer logarithm to integer base */
+mp_err mp_log_n(const mp_int *a, int base, int *c) MP_WUR;
+
+/* c = a**b */
+mp_err mp_expt_n(const mp_int *a, int b, mp_int *c) MP_WUR;
+
 /* finds one of the b'th root of a, such that |c|**b <= |a|
  *
  * returns error if a < 0 and b is even
  */
-mp_err mp_root_u32(const mp_int *a, uint32_t b, mp_int *c) MP_WUR;
+mp_err mp_root_n(const mp_int *a, int b, mp_int *c) MP_WUR;
 
 /* special sqrt algo */
 mp_err mp_sqrt(const mp_int *arg, mp_int *ret) MP_WUR;
@@ -556,12 +562,6 @@ mp_err mp_prime_next_prime(mp_int *a, int t, bool bbs_style) MP_WUR;
  *
  */
 mp_err mp_prime_rand(mp_int *a, int t, int size, int flags) MP_WUR;
-
-/* Integer logarithm to integer base */
-mp_err mp_log_u32(const mp_int *a, uint32_t base, uint32_t *c) MP_WUR;
-
-/* c = a**b */
-mp_err mp_expt_u32(const mp_int *a, uint32_t b, mp_int *c) MP_WUR;
 
 /* ---> radix conversion <--- */
 int mp_count_bits(const mp_int *a) MP_WUR;
