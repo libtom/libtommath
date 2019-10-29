@@ -127,6 +127,9 @@ DONE mp_reduce.c
 DONE s_mp_toom_sqr.c
 DONE mp_prime_rand.c
 DONE mp_is_square.c
+DONE mp_montgomery_setup.c
+DONE s_mp_mul_digs.c
+DONE s_mp_mul_digs_fast.c
 
 s_mp_div_school.c
 mp_dr_is_modulus.c
@@ -136,7 +139,6 @@ mp_expt_u32.c
 mp_log_u32.c
 mp_montgomery_calc_normalization.c
 mp_montgomery_reduce.c
-mp_montgomery_setup.c
 mp_prime_frobenius_underwood.c
 mp_prime_is_prime.c
 mp_prime_miller_rabin.c
@@ -148,8 +150,6 @@ s_mp_exptmod_fast.c
 s_mp_log.c
 s_mp_log_d.c
 s_mp_montgomery_reduce_fast.c
-s_mp_mul_digs.c
-s_mp_mul_digs_fast.c
 s_mp_mul_high_digs.c
 s_mp_mul_high_digs_fast.c
 s_mp_sqr.c
