@@ -21,7 +21,6 @@
 mp_err s_mp_toom_sqr(const mp_int *a, mp_int *b)
 {
    mp_int S0, a0, a1, a2;
-   mp_digit *tmpa, *tmpc;
    size_t B, count;
    mp_err err;
 
@@ -42,18 +41,14 @@ mp_err s_mp_toom_sqr(const mp_int *a, mp_int *b)
    a1.used = B;
    if ((err = mp_init_size(&a2, B + (a->used - (3 * B)))) != MP_OKAY) goto LBL_ERRa2;
 
-   tmpa = a->dp;
-   tmpc = a0.dp;
    for (count = 0; count < B; count++) {
-      *tmpc++ = *tmpa++;
+      a0.dp[count] = a->dp[count];
    }
-   tmpc = a1.dp;
    for (; count < (2 * B); count++) {
-      *tmpc++ = *tmpa++;
+      a1.dp[count - B] = a->dp[count];
    }
-   tmpc = a2.dp;
    for (; count < a->used; count++) {
-      *tmpc++ = *tmpa++;
+      a2.dp[count - 2 * B] = a->dp[count];
       a2.used++;
    }
    mp_clamp(&a0);

@@ -124,9 +124,10 @@ DONE mp_mul_2.c
 DONE mp_div_d.c
 DONE mp_mul_d.c
 DONE mp_reduce.c
+DONE s_mp_toom_sqr.c
+DONE mp_prime_rand.c
 
 s_mp_div_school.c
-s_mp_toom_sqr.c
 mp_dr_is_modulus.c
 mp_dr_reduce.c
 mp_exptmod.c
@@ -140,7 +141,6 @@ mp_prime_frobenius_underwood.c
 mp_prime_is_prime.c
 mp_prime_miller_rabin.c
 mp_prime_next_prime.c
-mp_prime_rand.c
 mp_prime_strong_lucas_selfridge.c
 mp_root_u32.c
 s_mp_exptmod.c

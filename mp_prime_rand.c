@@ -18,10 +18,10 @@
  */
 
 /* This is possibly the mother of all prime generation functions, muahahahahaha! */
-mp_err mp_prime_rand(mp_int *a, int t, int size, int flags)
+mp_err mp_prime_rand(mp_int *a, int t, size_t size, int flags)
 {
    unsigned char *tmp, maskAND, maskOR_msb, maskOR_lsb;
-   int bsize, maskOR_msb_offset;
+   size_t bsize, maskOR_msb_offset;
    bool res;
    mp_err err;
 
@@ -39,7 +39,7 @@ mp_err mp_prime_rand(mp_int *a, int t, int size, int flags)
    bsize = (size>>3) + ((size&7)?1:0);
 
    /* we need a buffer of bsize bytes */
-   tmp = (unsigned char *) MP_MALLOC((size_t)bsize);
+   tmp = (unsigned char *) MP_MALLOC(bsize);
    if (tmp == NULL) {
       return MP_MEM;
    }
@@ -62,7 +62,7 @@ mp_err mp_prime_rand(mp_int *a, int t, int size, int flags)
 
    do {
       /* read the bytes */
-      if ((err = s_mp_rand_source(tmp, (size_t)bsize)) != MP_OKAY) {
+      if ((err = s_mp_rand_source(tmp, bsize)) != MP_OKAY) {
          goto LBL_ERR;
       }
 
@@ -76,7 +76,7 @@ mp_err mp_prime_rand(mp_int *a, int t, int size, int flags)
 
       /* read it in */
       /* TODO: casting only for now until all lengths have been changed to the type "size_t"*/
-      if ((err = mp_from_ubin(a, tmp, (size_t)bsize)) != MP_OKAY) {
+      if ((err = mp_from_ubin(a, tmp, bsize)) != MP_OKAY) {
          goto LBL_ERR;
       }
 
@@ -114,9 +114,8 @@ mp_err mp_prime_rand(mp_int *a, int t, int size, int flags)
       }
    }
 
-   err = MP_OKAY;
 LBL_ERR:
-   MP_FREE_BUFFER(tmp, (size_t)bsize);
+   MP_FREE_BUFFER(tmp, bsize);
    return err;
 }
 

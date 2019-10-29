@@ -555,7 +555,7 @@ mp_err mp_prime_next_prime(mp_int *a, int t, bool bbs_style) MP_WUR;
  * so it can be NULL
  *
  */
-mp_err mp_prime_rand(mp_int *a, int t, int size, int flags) MP_WUR;
+mp_err mp_prime_rand(mp_int *a, int t, size_t size, int flags) MP_WUR;
 
 /* Integer logarithm to integer base */
 mp_err mp_log_u32(const mp_int *a, uint32_t base, uint32_t *c) MP_WUR;
