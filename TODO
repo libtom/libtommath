@@ -128,8 +128,6 @@ DONE s_mp_toom_sqr.c
 DONE mp_prime_rand.c
 DONE mp_is_square.c
 DONE mp_montgomery_setup.c
-DONE s_mp_mul_digs.c
-DONE s_mp_mul_digs_fast.c
 DONE mp_prime_next_prime.c
 DONE mp_exptmod.c
 
@@ -154,3 +152,5 @@ s_mp_mul_high_digs.c
 s_mp_mul_high_digs_fast.c
 s_mp_sqr.c
 s_mp_sqr_fast.c
+s_mp_mul_digs.c
+s_mp_mul_digs_fast.c
