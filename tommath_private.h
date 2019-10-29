@@ -187,6 +187,8 @@ extern MP_PRIVATE mp_err(*s_mp_rand_source)(void *out, size_t size);
 
 /* lowlevel functions, do not call! */
 MP_PRIVATE mp_bool s_mp_get_bit(const mp_int *a, unsigned int b);
+MP_PRIVATE int s_mp_log_2expt(const mp_int *a, mp_digit base) MP_WUR;
+MP_PRIVATE int s_mp_log_d(mp_digit base, mp_digit n) MP_WUR;
 MP_PRIVATE mp_err s_mp_add(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
 MP_PRIVATE mp_err s_mp_sub(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
 MP_PRIVATE mp_err s_mp_mul_digs_fast(const mp_int *a, const mp_int *b, mp_int *c, int digs) MP_WUR;
@@ -205,6 +207,7 @@ MP_PRIVATE mp_err s_mp_invmod_slow(const mp_int *a, const mp_int *b, mp_int *c) 
 MP_PRIVATE mp_err s_mp_montgomery_reduce_fast(mp_int *x, const mp_int *n, mp_digit rho) MP_WUR;
 MP_PRIVATE mp_err s_mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y, int redmode) MP_WUR;
 MP_PRIVATE mp_err s_mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y, int redmode) MP_WUR;
+MP_PRIVATE mp_err s_mp_log(const mp_int *a, mp_digit base, int *c) MP_WUR;
 MP_PRIVATE mp_err s_mp_rand_platform(void *p, size_t n) MP_WUR;
 MP_PRIVATE mp_err s_mp_prime_random_ex(mp_int *a, int t, int size, int flags, private_mp_prime_callback cb, void *dat);
 MP_PRIVATE void s_mp_reverse(unsigned char *s, size_t len);
