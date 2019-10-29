@@ -1,3 +1,4 @@
+#define MP_WUR /* TODO: result checks disabled for now, T.b.d. if it should even be done here */
 #include "shared.h"
 
 #ifdef LTM_MTEST_REAL_RAND

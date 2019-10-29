@@ -14,7 +14,6 @@
 #define LTM_DEMO_TEST_REDUCE_2K_L 0
 #endif
 
-#define MP_WUR /* TODO: result checks disabled for now */
 #include "tommath_private.h"
 
 extern void ndraw(const mp_int* a, const char* name);

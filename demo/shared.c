@@ -4,8 +4,12 @@ void ndraw(const mp_int *a, const char *name)
 {
    char *buf;
    size_t size;
+   mp_err err;
 
-   mp_radix_size(a, 10, &size);
+   if ((err = mp_radix_size(a, 10, &size)) != MP_OKAY) {
+      fprintf(stderr, "\nndraw: mp_radix_size(a, 10, %zu) failed - %s\n", size, mp_error_to_string(err));
+      exit(EXIT_FAILURE);
+   }
    buf = (char *)malloc(size);
    if (buf == NULL) {
       fprintf(stderr, "\nndraw: malloc(%zu) failed\n", size);
@@ -13,9 +17,15 @@ void ndraw(const mp_int *a, const char *name)
    }
 
    printf("%s: ", name);
-   mp_to_decimal(a, buf, size);
+   if ((err = mp_to_decimal(a, buf, size)) != MP_OKAY) {
+      fprintf(stderr, "\nndraw: mp_to_decimal(a, buf, %zu) failed - %s\n", size, mp_error_to_string(err));
+      exit(EXIT_FAILURE);
+   }
    printf("%s\n", buf);
-   mp_to_hex(a, buf, size);
+   if ((err = mp_to_hex(a, buf, size)) != MP_OKAY) {
+      fprintf(stderr, "\nndraw: mp_to_hex(a, buf, %zu) failed - %s\n", size, mp_error_to_string(err));
+      exit(EXIT_FAILURE);
+   }
    printf("0x%s\n", buf);
 
    free(buf);
