@@ -139,9 +139,9 @@ static int mtest_opponent(void)
          /* test the sign/unsigned storage functions */
 
          rr = (unsigned)mp_sbin_size(&c);
-         DO(mp_to_sbin(&c, (unsigned char *) cmd, (size_t)rr, NULL));
+         DO(mp_to_sbin(&c, (uint8_t *) cmd, (size_t)rr, NULL));
          memset(cmd + rr, rand() & 0xFF, sizeof(cmd) - rr);
-         DO(mp_from_sbin(&d, (unsigned char *) cmd, (size_t)rr));
+         DO(mp_from_sbin(&d, (uint8_t *) cmd, (size_t)rr));
          if (mp_cmp(&c, &d) != MP_EQ) {
             printf("mp_signed_bin failure!\n");
             draw(&c);
@@ -150,9 +150,9 @@ static int mtest_opponent(void)
          }
 
          rr = (unsigned)mp_ubin_size(&c);
-         DO(mp_to_ubin(&c, (unsigned char *) cmd, (size_t)rr, NULL));
+         DO(mp_to_ubin(&c, (uint8_t *) cmd, (size_t)rr, NULL));
          memset(cmd + rr, rand() & 0xFF, sizeof(cmd) - rr);
-         DO(mp_from_ubin(&d, (unsigned char *) cmd, (size_t)rr));
+         DO(mp_from_ubin(&d, (uint8_t *) cmd, (size_t)rr));
          if (mp_cmp_mag(&c, &d) != MP_EQ) {
             printf("mp_unsigned_bin failure!\n");
             draw(&c);

@@ -4,7 +4,7 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* store in unsigned [big endian] format */
-mp_err mp_to_ubin(const mp_int *a, unsigned char *buf, size_t maxlen, size_t *written)
+mp_err mp_to_ubin(const mp_int *a, uint8_t *buf, size_t maxlen, size_t *written)
 {
    size_t  x, count;
    mp_err  err;
@@ -20,7 +20,7 @@ mp_err mp_to_ubin(const mp_int *a, unsigned char *buf, size_t maxlen, size_t *wr
    }
 
    for (x = count; x --> 0u;) {
-      buf[x] = (unsigned char)(t.dp[0] & 255u);
+      buf[x] = (uint8_t)(t.dp[0] & 255u);
       if ((err = mp_div_2d(&t, 8, &t, NULL)) != MP_OKAY) {
          goto LBL_ERR;
       }

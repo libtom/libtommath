@@ -2444,7 +2444,7 @@ $a$.
 
 \index{mp\_to\_ubin}
 \begin{alltt}
-mp_err mp_to_ubin(const mp_int *a, unsigned char *buf, size_t maxlen, size_t *written)
+mp_err mp_to_ubin(const mp_int *a, uint8_t *buf, size_t maxlen, size_t *written)
 \end{alltt}
 This will store $a$ into the buffer \texttt{buf} of size \texttt{maxlen} in big--endian format
 storing the number of bytes written in \texttt{len}.  Fortunately this is exactly what DER (or is
@@ -2452,7 +2452,7 @@ it ASN?) requires.  It does not store the sign of the integer.
 
 \index{mp\_from\_ubin}
 \begin{alltt}
-mp_err mp_from_ubin(mp_int *a, unsigned char *b, size_t size);
+mp_err mp_from_ubin(mp_int *a, uint8_t *b, size_t size);
 \end{alltt}
 This will read in an unsigned big--endian array of bytes (octets) from \texttt{b} of length
 \texttt{size} into $a$.  The resulting big--integer $a$ will always be positive.
@@ -2462,8 +2462,8 @@ versions of the previous functions.
 \index{mp\_sbin\_size} \index{mp\_from\_sbin} \index{mp\_to\_sbin}
 \begin{alltt}
 size_t mp_sbin_size(const mp_int *a);
-mp_err mp_from_sbin(mp_int *a, const unsigned char *b, size_t size);
-mp_err mp_to_sbin(const mp_int *a, unsigned char *b, size_t maxsize, size_t *len);
+mp_err mp_from_sbin(mp_int *a, const uint8_t *b, size_t size);
+mp_err mp_to_sbin(const mp_int *a, uint8_t *b, size_t maxsize, size_t *len);
 \end{alltt}
 They operate essentially the same as the unsigned copies except they prefix the data with zero or
 non--zero byte depending on the sign. If the sign is \texttt{MP\_ZPOS} (e.g. not negative) the

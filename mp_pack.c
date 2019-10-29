@@ -11,7 +11,7 @@ mp_err mp_pack(void *rop, size_t maxcount, size_t *written, mp_order order, size
 {
    mp_err err;
    size_t odd_nails, nail_bytes, i, j, count;
-   unsigned char odd_nail_mask;
+   uint8_t odd_nail_mask;
 
    mp_int t;
 
@@ -32,22 +32,22 @@ mp_err mp_pack(void *rop, size_t maxcount, size_t *written, mp_order order, size
    odd_nails = (nails % 8u);
    odd_nail_mask = 0xff;
    for (i = 0u; i < odd_nails; ++i) {
-      odd_nail_mask ^= (unsigned char)(1u << (7u - i));
+      odd_nail_mask ^= (uint8_t)(1u << (7u - i));
    }
    nail_bytes = nails / 8u;
 
    for (i = 0u; i < count; ++i) {
       for (j = 0u; j < size; ++j) {
-         unsigned char *byte = (unsigned char *)rop +
-                               (((order == MP_LSB_FIRST) ? i : ((count - 1u) - i)) * size) +
-                               ((endian == MP_LITTLE_ENDIAN) ? j : ((size - 1u) - j));
+         uint8_t *byte = (uint8_t *)rop +
+                         (((order == MP_LSB_FIRST) ? i : ((count - 1u) - i)) * size) +
+                         ((endian == MP_LITTLE_ENDIAN) ? j : ((size - 1u) - j));
 
          if (j >= (size - nail_bytes)) {
             *byte = 0;
             continue;
          }
 
-         *byte = (unsigned char)((j == ((size - nail_bytes) - 1u)) ? (t.dp[0] & odd_nail_mask) : (t.dp[0] & 0xFFuL));
+         *byte = (uint8_t)((j == ((size - nail_bytes) - 1u)) ? (t.dp[0] & odd_nail_mask) : (t.dp[0] & 0xFFuL));
 
          if ((err = mp_div_2d(&t, (j == ((size - nail_bytes) - 1u)) ? (int)(8u - odd_nails) : 8, &t, NULL)) != MP_OKAY) {
             goto LBL_ERR;
