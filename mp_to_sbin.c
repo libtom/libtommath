@@ -4,7 +4,7 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* store in signed [big endian] format */
-mp_err mp_to_sbin(const mp_int *a, unsigned char *buf, size_t maxlen, size_t *written)
+mp_err mp_to_sbin(const mp_int *a, uint8_t *buf, size_t maxlen, size_t *written)
 {
    mp_err err;
    if (maxlen == 0u) {
@@ -16,7 +16,7 @@ mp_err mp_to_sbin(const mp_int *a, unsigned char *buf, size_t maxlen, size_t *wr
    if (written != NULL) {
       (*written)++;
    }
-   buf[0] = (a->sign == MP_ZPOS) ? (unsigned char)0 : (unsigned char)1;
+   buf[0] = (a->sign == MP_ZPOS) ? (uint8_t)0 : (uint8_t)1;
    return MP_OKAY;
 }
 #endif

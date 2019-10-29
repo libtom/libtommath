@@ -567,12 +567,12 @@ mp_err mp_expt_u32(const mp_int *a, uint32_t b, mp_int *c) MP_WUR;
 size_t mp_count_bits(const mp_int *a) MP_WUR;
 
 size_t mp_ubin_size(const mp_int *a) MP_WUR;
-mp_err mp_from_ubin(mp_int *a, const unsigned char *buf, size_t size) MP_WUR;
-mp_err mp_to_ubin(const mp_int *a, unsigned char *buf, size_t maxlen, size_t *written) MP_WUR;
+mp_err mp_from_ubin(mp_int *a, const uint8_t *buf, size_t size) MP_WUR;
+mp_err mp_to_ubin(const mp_int *a, uint8_t *buf, size_t maxlen, size_t *written) MP_WUR;
 
 size_t mp_sbin_size(const mp_int *a) MP_WUR;
-mp_err mp_from_sbin(mp_int *a, const unsigned char *buf, size_t size) MP_WUR;
-mp_err mp_to_sbin(const mp_int *a, unsigned char *buf, size_t maxlen, size_t *written) MP_WUR;
+mp_err mp_from_sbin(mp_int *a, const uint8_t *buf, size_t size) MP_WUR;
+mp_err mp_to_sbin(const mp_int *a, uint8_t *buf, size_t maxlen, size_t *written) MP_WUR;
 
 mp_err mp_read_radix(mp_int *a, const char *str, int radix) MP_WUR;
 mp_err mp_to_radix(const mp_int *a, char *str, size_t maxlen, size_t *written, int radix) MP_WUR;

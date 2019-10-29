@@ -11,7 +11,7 @@ mp_err mp_unpack(mp_int *rop, size_t count, mp_order order, size_t size,
 {
    mp_err err;
    size_t odd_nails, nail_bytes, i, j;
-   unsigned char odd_nail_mask;
+   uint8_t odd_nail_mask;
 
    mp_zero(rop);
 
@@ -22,13 +22,13 @@ mp_err mp_unpack(mp_int *rop, size_t count, mp_order order, size_t size,
    odd_nails = (nails % 8u);
    odd_nail_mask = 0xff;
    for (i = 0; i < odd_nails; ++i) {
-      odd_nail_mask ^= (unsigned char)(1u << (7u - i));
+      odd_nail_mask ^= (uint8_t)(1u << (7u - i));
    }
    nail_bytes = nails / 8u;
 
    for (i = 0; i < count; ++i) {
       for (j = 0; j < (size - nail_bytes); ++j) {
-         unsigned char byte = *((const unsigned char *)op +
+         uint8_t byte = *((const uint8_t *)op +
                                 (((order == MP_MSB_FIRST) ? i : ((count - 1u) - i)) * size) +
                                 ((endian == MP_BIG_ENDIAN) ? (j + nail_bytes) : (((size - 1u) - j) - nail_bytes)));
 
