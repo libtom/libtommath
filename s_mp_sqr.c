@@ -7,13 +7,13 @@
 mp_err s_mp_sqr(const mp_int *a, mp_int *b)
 {
    mp_int   t;
-   int      ix, iy, pa;
+   size_t   ix, iy, pa;
    mp_err   err;
    mp_word  r;
    mp_digit u, tmpx, *tmpt;
 
    pa = a->used;
-   if ((err = mp_init_size(&t, (2 * pa) + 1)) != MP_OKAY) {
+   if ((err = mp_init_size(&t, (2u * pa) + 1u)) != MP_OKAY) {
       return err;
    }
 

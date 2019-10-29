@@ -12,7 +12,7 @@
  *
  * Based on Algorithm 14.12 on pp.595 of HAC.
  */
-mp_err s_mp_mul_high_digs_fast(const mp_int *a, const mp_int *b, mp_int *c, int digs)
+mp_err s_mp_mul_high_digs_fast(const mp_int *a, const mp_int *b, mp_int *c, size_t digs)
 {
    size_t   olduse, pa, ix, iz;
    mp_err   err;

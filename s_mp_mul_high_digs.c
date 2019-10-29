@@ -6,7 +6,7 @@
 /* multiplies |a| * |b| and does not compute the lower digs digits
  * [meant to get the higher part of the product]
  */
-mp_err s_mp_mul_high_digs(const mp_int *a, const mp_int *b, mp_int *c, int digs)
+mp_err s_mp_mul_high_digs(const mp_int *a, const mp_int *b, mp_int *c, size_t digs)
 {
    mp_int   t;
    size_t   pa, pb, ix, iy;

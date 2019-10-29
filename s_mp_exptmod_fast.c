@@ -21,9 +21,9 @@
 
 mp_err s_mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y, int redmode)
 {
-   mp_int  M[TAB_SIZE], res;
+   mp_int   M[TAB_SIZE], res;
    mp_digit buf, mp;
-   int     bitbuf, bitcpy, bitcnt, mode, digidx, x, y, winsize;
+   size_t   bitbuf, bitcpy, bitcnt, mode, digidx, x, y, winsize;
    mp_err   err;
 
    /* use a pointer to the reduction algorithm.  This allows us to use
@@ -166,7 +166,7 @@ mp_err s_mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_i
          }
          /* read next digit and reset bitcnt */
          buf    = X->dp[digidx--];
-         bitcnt = (int)MP_DIGIT_BIT;
+         bitcnt = MP_DIGIT_BIT;
       }
 
       /* grab the next msb from the exponent */

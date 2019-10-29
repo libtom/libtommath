@@ -145,12 +145,13 @@ mp_prime_strong_lucas_selfridge.c
 mp_root_u32.c
 s_mp_exptmod.c
 s_mp_exptmod_fast.c
-s_mp_log.c
-s_mp_log_d.c
-s_mp_montgomery_reduce_fast.c
-s_mp_mul_high_digs.c
-s_mp_mul_high_digs_fast.c
-s_mp_sqr.c
-s_mp_sqr_fast.c
-s_mp_mul_digs.c
-s_mp_mul_digs_fast.c
+
+DONE! s_mp_log.c
+DONE! s_mp_log_d.c
+DONE!? s_mp_montgomery_reduce_fast.c
+DONE! s_mp_mul_high_digs.c
+DONE! s_mp_mul_high_digs_fast.c
+DONE! s_mp_sqr.c
+DONE!? s_mp_sqr_fast.c
+DONE!? s_mp_mul_digs.c
+DONE!? s_mp_mul_digs_fast.c

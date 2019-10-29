@@ -16,7 +16,7 @@ mp_err s_mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y
    mp_int  M[TAB_SIZE], res, mu;
    mp_digit buf;
    mp_err   err;
-   int      bitbuf, bitcpy, bitcnt, mode, digidx, x, y, winsize;
+   size_t   bitbuf, bitcpy, bitcnt, mode, digidx, x, y, winsize;
    mp_err(*redux)(mp_int *x, const mp_int *m, const mp_int *mu);
 
    /* find window size */
@@ -46,9 +46,9 @@ mp_err s_mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y
    }
 
    /* now init the second half of the array */
-   for (x = 1<<(winsize-1); x < (1 << winsize); x++) {
+   for (x = 1u<<(winsize-1u); x < (1u << winsize); x++) {
       if ((err = mp_init(&M[x])) != MP_OKAY) {
-         for (y = 1<<(winsize-1); y < x; y++) {
+         for (y = 1u<<(winsize-1u); y < x; y++) {
             mp_clear(&M[y]);
          }
          mp_clear(&M[1]);
@@ -80,21 +80,21 @@ mp_err s_mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y
    /* compute the value at M[1<<(winsize-1)] by squaring
     * M[1] (winsize-1) times
     */
-   if ((err = mp_copy(&M[1], &M[(size_t)1 << (winsize - 1)])) != MP_OKAY) goto LBL_MU;
+   if ((err = mp_copy(&M[1], &M[1u << (winsize - 1u)])) != MP_OKAY) goto LBL_MU;
 
-   for (x = 0; x < (winsize - 1); x++) {
+   for (x = 0; x < (winsize - 1u); x++) {
       /* square it */
-      if ((err = mp_sqr(&M[(size_t)1 << (winsize - 1)],
-                        &M[(size_t)1 << (winsize - 1)])) != MP_OKAY) goto LBL_MU;
+      if ((err = mp_sqr(&M[1u << (winsize - 1u)],
+                        &M[1u << (winsize - 1u)])) != MP_OKAY) goto LBL_MU;
 
       /* reduce modulo P */
-      if ((err = redux(&M[(size_t)1 << (winsize - 1)], P, &mu)) != MP_OKAY) goto LBL_MU;
+      if ((err = redux(&M[1u << (winsize - 1u)], P, &mu)) != MP_OKAY) goto LBL_MU;
    }
 
    /* create upper table, that is M[x] = M[x-1] * M[1] (mod P)
     * for x = (2**(winsize - 1) + 1) to (2**winsize - 1)
     */
-   for (x = (1 << (winsize - 1)) + 1; x < (1 << winsize); x++) {
+   for (x = (1u << (winsize - 1u)) + 1u; x < (1u << winsize); x++) {
       if ((err = mp_mul(&M[x - 1], &M[1], &M[x])) != MP_OKAY)     goto LBL_MU;
       if ((err = redux(&M[x], P, &mu)) != MP_OKAY)                goto LBL_MU;
    }
@@ -120,7 +120,7 @@ mp_err s_mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y
          }
          /* read next digit and reset the bitcnt */
          buf    = X->dp[digidx--];
-         bitcnt = (int)MP_DIGIT_BIT;
+         bitcnt = MP_DIGIT_BIT;
       }
 
       /* grab the next msb from the exponent */
