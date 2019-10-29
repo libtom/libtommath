@@ -72,7 +72,6 @@ EXPORTS
     mp_lshd
     mp_mod
     mp_mod_2d
-    mp_mod_d
     mp_montgomery_calc_normalization
     mp_montgomery_reduce
     mp_montgomery_setup
