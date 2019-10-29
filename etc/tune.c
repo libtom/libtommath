@@ -247,12 +247,11 @@ static void s_usage(char *s)
 }
 
 struct cutoffs {
-   int KARATSUBA_MUL, KARATSUBA_SQR;
-   int TOOM_MUL, TOOM_SQR;
+   size_t KARATSUBA_MUL, KARATSUBA_SQR, TOOM_MUL, TOOM_SQR;
 };
 
 const struct cutoffs max_cutoffs =
-{ INT_MAX, INT_MAX, INT_MAX, INT_MAX };
+{ SIZE_MAX, SIZE_MAX, SIZE_MAX, SIZE_MAX };
 
 static void set_cutoffs(const struct cutoffs *c)
 {
