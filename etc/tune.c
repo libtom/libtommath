@@ -292,7 +292,7 @@ int main(int argc, char **argv)
    s_number_of_test_loops = 64;
    s_stabilization_extra = 3;
 
-   MP_ZERO_BUFFER(&args, sizeof(args));
+   s_mp_zero_buf(&args, sizeof(args));
 
    args.testmode = 0;
    args.verbose = 0;

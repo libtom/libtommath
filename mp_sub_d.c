@@ -72,7 +72,7 @@ mp_err mp_sub_d(const mp_int *a, mp_digit b, mp_int *c)
    }
 
    /* zero excess digits */
-   MP_ZERO_DIGITS(c->dp + c->used, oldused - c->used);
+   s_mp_zero_digs(c->dp + c->used, oldused - c->used);
 
    mp_clamp(c);
    return MP_OKAY;

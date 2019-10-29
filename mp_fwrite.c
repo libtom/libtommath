@@ -25,7 +25,7 @@ mp_err mp_fwrite(const mp_int *a, int radix, FILE *stream)
       }
    }
 
-   MP_FREE_BUFFER(buf, size);
+   MP_FREE_BUF(buf, size);
    return err;
 }
 #endif

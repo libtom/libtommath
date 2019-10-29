@@ -33,7 +33,7 @@ mp_err mp_div_2(const mp_int *a, mp_int *b)
    }
 
    /* zero excess digits */
-   MP_ZERO_DIGITS(b->dp + b->used, oldused - b->used);
+   s_mp_zero_digs(b->dp + b->used, oldused - b->used);
 
    b->sign = a->sign;
    mp_clamp(b);

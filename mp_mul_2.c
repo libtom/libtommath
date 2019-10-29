@@ -47,7 +47,7 @@ mp_err mp_mul_2(const mp_int *a, mp_int *b)
    /* now zero any excess digits on the destination
     * that we didn't write to
     */
-   MP_ZERO_DIGITS(b->dp + b->used, oldused - b->used);
+   s_mp_zero_digs(b->dp + b->used, oldused - b->used);
 
    b->sign = a->sign;
    return MP_OKAY;

@@ -42,7 +42,7 @@ mp_err s_mp_montgomery_reduce_fast(mp_int *x, const mp_int *n, mp_digit rho)
 
    /* zero the high words of W[a->used..m->used*2] */
    if (ix < ((n->used * 2) + 1)) {
-      MP_ZERO_BUFFER(W + x->used, sizeof(mp_word) * (size_t)(((n->used * 2) + 1) - ix));
+      s_mp_zero_buf(W + x->used, sizeof(mp_word) * (size_t)(((n->used * 2) + 1) - ix));
    }
 
    /* now we proceed to zero successive digits
@@ -108,7 +108,7 @@ mp_err s_mp_montgomery_reduce_fast(mp_int *x, const mp_int *n, mp_digit rho)
    /* zero oldused digits, if the input a was larger than
     * m->used+1 we'll have to clear the digits
     */
-   MP_ZERO_DIGITS(x->dp + x->used, oldused - x->used);
+   s_mp_zero_digs(x->dp + x->used, oldused - x->used);
 
    mp_clamp(x);
 

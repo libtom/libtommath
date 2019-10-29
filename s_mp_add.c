@@ -64,7 +64,7 @@ mp_err s_mp_add(const mp_int *a, const mp_int *b, mp_int *c)
    c->dp[i] = u;
 
    /* clear digits above oldused */
-   MP_ZERO_DIGITS(c->dp + c->used, oldused - c->used);
+   s_mp_zero_digs(c->dp + c->used, oldused - c->used);
 
    mp_clamp(c);
    return MP_OKAY;

@@ -9,7 +9,7 @@ void mp_clear(mp_int *a)
    /* only do anything if a hasn't been freed previously */
    if (a->dp != NULL) {
       /* free ram */
-      MP_FREE_DIGITS(a->dp, a->alloc);
+      MP_FREE_DIGS(a->dp, a->alloc);
 
       /* reset members to make debugging easier */
       a->dp    = NULL;

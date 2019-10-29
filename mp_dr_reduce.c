@@ -49,7 +49,7 @@ mp_err mp_dr_reduce(mp_int *x, const mp_int *n, mp_digit k)
       x->dp[i] = mu;
 
       /* zero words above m */
-      MP_ZERO_DIGITS(x->dp + m + 1, (x->used - m) - 1);
+      s_mp_zero_digs(x->dp + m + 1, (x->used - m) - 1);
 
       /* clamp, sub and return */
       mp_clamp(x);

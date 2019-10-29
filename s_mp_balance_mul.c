@@ -8,7 +8,7 @@ mp_err s_mp_balance_mul(const mp_int *a, const mp_int *b, mp_int *c)
 {
    mp_int a0, tmp, r;
    mp_err err;
-   int i, j, count,
+   int i, j,
        nblocks = MP_MAX(a->used, b->used) / MP_MIN(a->used, b->used),
        bsize = MP_MIN(a->used, b->used);
 
@@ -27,12 +27,11 @@ mp_err s_mp_balance_mul(const mp_int *a, const mp_int *b, mp_int *c)
 
    for (i = 0, j=0; i < nblocks; i++) {
       /* Cut a slice off of a */
-      a0.used = 0;
-      for (count = 0; count < bsize; count++) {
-         a0.dp[count] = a->dp[ j++ ];
-         a0.used++;
-      }
+      a0.used = bsize;
+      s_mp_copy_digs(a0.dp, a->dp + j, a0.used);
+      j += a0.used;
       mp_clamp(&a0);
+
       /* Multiply with b */
       if ((err = mp_mul(&a0, b, &tmp)) != MP_OKAY) {
          goto LBL_ERR;
@@ -48,12 +47,11 @@ mp_err s_mp_balance_mul(const mp_int *a, const mp_int *b, mp_int *c)
    }
    /* The left-overs; there are always left-overs */
    if (j < a->used) {
-      a0.used = 0;
-      for (count = 0; j < a->used; count++) {
-         a0.dp[count] = a->dp[ j++ ];
-         a0.used++;
-      }
+      a0.used = a->used - j;
+      s_mp_copy_digs(a0.dp, a->dp + j, a0.used);
+      j += a0.used;
       mp_clamp(&a0);
+
       if ((err = mp_mul(&a0, b, &tmp)) != MP_OKAY) {
          goto LBL_ERR;
       }
