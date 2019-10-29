@@ -398,7 +398,7 @@ mp_err mp_mul_d(const mp_int *a, mp_digit b, mp_int *c) MP_WUR;
 mp_err mp_div_d(const mp_int *a, mp_digit b, mp_int *c, mp_digit *d) MP_WUR;
 
 /* c = a mod b, 0 <= c < b  */
-mp_err mp_mod_d(const mp_int *a, mp_digit b, mp_digit *c) MP_WUR;
+#define mp_mod_d(a, b, c) mp_div_d((a), (b), NULL, (c))
 
 /* ---> number theory <--- */
 
