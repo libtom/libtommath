@@ -15,14 +15,14 @@ After that loop you do the squares and add them in.
 
 mp_err s_mp_sqr_fast(const mp_int *a, mp_int *b)
 {
-   int       olduse, pa, ix, iz;
-   mp_digit  W[MP_WARRAY], *tmpx;
+   int       oldused, pa, ix;
+   mp_digit  W[MP_WARRAY];
    mp_word   W1;
-   mp_err    err;
 
    /* grow the destination as required */
    pa = a->used + a->used;
    if (b->alloc < pa) {
+      mp_err err;
       if ((err = mp_grow(b, pa)) != MP_OKAY) {
          return err;
       }
@@ -31,9 +31,8 @@ mp_err s_mp_sqr_fast(const mp_int *a, mp_int *b)
    /* number of output digits to produce */
    W1 = 0;
    for (ix = 0; ix < pa; ix++) {
-      int      tx, ty, iy;
+      int      tx, ty, iy, iz;
       mp_word  _W;
-      mp_digit *tmpy;
 
       /* clear counter */
       _W = 0;
@@ -41,10 +40,6 @@ mp_err s_mp_sqr_fast(const mp_int *a, mp_int *b)
       /* get offsets into the two bignums */
       ty = MP_MIN(a->used-1, ix);
       tx = ix - ty;
-
-      /* setup temp aliases */
-      tmpx = a->dp + tx;
-      tmpy = a->dp + ty;
 
       /* this is the number of times the loop will iterrate, essentially
          while (tx++ < a->used && ty-- >= 0) { ... }
@@ -59,7 +54,7 @@ mp_err s_mp_sqr_fast(const mp_int *a, mp_int *b)
 
       /* execute loop */
       for (iz = 0; iz < iy; iz++) {
-         _W += (mp_word)*tmpx++ * (mp_word)*tmpy--;
+         _W += (mp_word)a->dp[tx + iz] * (mp_word)a->dp[ty - iz];
       }
 
       /* double the inner product and add carry */
@@ -78,19 +73,16 @@ mp_err s_mp_sqr_fast(const mp_int *a, mp_int *b)
    }
 
    /* setup dest */
-   olduse  = b->used;
+   oldused  = b->used;
    b->used = a->used+a->used;
 
-   {
-      mp_digit *tmpb;
-      tmpb = b->dp;
-      for (ix = 0; ix < pa; ix++) {
-         *tmpb++ = W[ix] & MP_MASK;
-      }
-
-      /* clear unused digits [that existed in the old copy of c] */
-      MP_ZERO_DIGITS(tmpb, olduse - ix);
+   for (ix = 0; ix < pa; ix++) {
+      b->dp[ix] = W[ix] & MP_MASK;
    }
+
+   /* clear unused digits [that existed in the old copy of c] */
+   MP_ZERO_DIGITS(b->dp + b->used, oldused - b->used);
+
    mp_clamp(b);
    return MP_OKAY;
 }
