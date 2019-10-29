@@ -8,7 +8,6 @@ mp_err mp_div_d(const mp_int *a, mp_digit b, mp_int *c, mp_digit *d)
 {
    mp_int  q;
    mp_word w;
-   mp_digit t;
    mp_err err;
    int ix;
 
@@ -56,14 +55,12 @@ mp_err mp_div_d(const mp_int *a, mp_digit b, mp_int *c, mp_digit *d)
    q.used = a->used;
    q.sign = a->sign;
    w = 0;
-   for (ix = a->used - 1; ix >= 0; ix--) {
+   for (ix = a->used; ix --> 0;) {
+      mp_digit t = 0;
       w = (w << (mp_word)MP_DIGIT_BIT) | (mp_word)a->dp[ix];
-
       if (w >= b) {
          t = (mp_digit)(w / b);
          w -= (mp_word)t * (mp_word)b;
-      } else {
-         t = 0;
       }
       q.dp[ix] = t;
    }
@@ -78,7 +75,7 @@ mp_err mp_div_d(const mp_int *a, mp_digit b, mp_int *c, mp_digit *d)
    }
    mp_clear(&q);
 
-   return err;
+   return MP_OKAY;
 }
 
 #endif
