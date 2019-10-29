@@ -49,7 +49,7 @@ mp_err s_mp_sub(const mp_int *a, const mp_int *b, mp_int *c)
    }
 
    /* clear digits above used (since we may not have grown result above) */
-   MP_ZERO_DIGITS(c->dp + c->used, oldused - c->used);
+   s_mp_zero_digs(c->dp + c->used, oldused - c->used);
 
    mp_clamp(c);
    return MP_OKAY;

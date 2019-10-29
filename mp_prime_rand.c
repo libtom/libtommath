@@ -116,7 +116,7 @@ mp_err mp_prime_rand(mp_int *a, int t, int size, int flags)
 
    err = MP_OKAY;
 LBL_ERR:
-   MP_FREE_BUFFER(tmp, (size_t)bsize);
+   MP_FREE_BUF(tmp, (size_t)bsize);
    return err;
 }
 

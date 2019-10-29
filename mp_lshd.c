@@ -37,7 +37,7 @@ mp_err mp_lshd(mp_int *a, int b)
    }
 
    /* zero the lower digits */
-   MP_ZERO_DIGITS(a->dp, b);
+   s_mp_zero_digs(a->dp, b);
 
    return MP_OKAY;
 }

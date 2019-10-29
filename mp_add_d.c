@@ -80,7 +80,7 @@ mp_err mp_add_d(const mp_int *a, mp_digit b, mp_int *c)
    c->sign = MP_ZPOS;
 
    /* now zero to oldused */
-   MP_ZERO_DIGITS(c->dp + c->used, oldused - c->used);
+   s_mp_zero_digs(c->dp + c->used, oldused - c->used);
    mp_clamp(c);
 
    return MP_OKAY;

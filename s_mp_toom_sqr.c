@@ -21,7 +21,7 @@
 mp_err s_mp_toom_sqr(const mp_int *a, mp_int *b)
 {
    mp_int S0, a0, a1, a2;
-   int B, count;
+   int B;
    mp_err err;
 
    /* init temps */
@@ -34,22 +34,14 @@ mp_err s_mp_toom_sqr(const mp_int *a, mp_int *b)
 
    /** a = a2 * x^2 + a1 * x + a0; */
    if ((err = mp_init_size(&a0, B)) != MP_OKAY)                   goto LBL_ERRa0;
-
-   a0.used = B;
    if ((err = mp_init_size(&a1, B)) != MP_OKAY)                   goto LBL_ERRa1;
-   a1.used = B;
-   if ((err = mp_init_size(&a2, B + (a->used - (3 * B)))) != MP_OKAY) goto LBL_ERRa2;
+   if ((err = mp_init_size(&a2, a->used - (2 * B))) != MP_OKAY)   goto LBL_ERRa2;
 
-   for (count = 0; count < B; count++) {
-      a0.dp[count] = a->dp[count];
-   }
-   for (; count < (2 * B); count++) {
-      a1.dp[count - B] = a->dp[count];
-   }
-   for (; count < a->used; count++) {
-      a2.dp[count - 2 * B] = a->dp[count];
-      a2.used++;
-   }
+   a0.used = a1.used = B;
+   a2.used = a->used - 2 * B;
+   s_mp_copy_digs(a0.dp, a->dp, a0.used);
+   s_mp_copy_digs(a1.dp, a->dp + B, a1.used);
+   s_mp_copy_digs(a2.dp, a->dp + 2 * B, a2.used);
    mp_clamp(&a0);
    mp_clamp(&a1);
    mp_clamp(&a2);

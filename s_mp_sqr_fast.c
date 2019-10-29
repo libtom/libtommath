@@ -81,7 +81,7 @@ mp_err s_mp_sqr_fast(const mp_int *a, mp_int *b)
    }
 
    /* clear unused digits [that existed in the old copy of c] */
-   MP_ZERO_DIGITS(b->dp + b->used, oldused - b->used);
+   s_mp_zero_digs(b->dp + b->used, oldused - b->used);
 
    mp_clamp(b);
    return MP_OKAY;

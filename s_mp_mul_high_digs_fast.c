@@ -64,7 +64,7 @@ mp_err s_mp_mul_high_digs_fast(const mp_int *a, const mp_int *b, mp_int *c, int 
    }
 
    /* clear unused digits [that existed in the old copy of c] */
-   MP_ZERO_DIGITS(c->dp + c->used, oldused - c->used);
+   s_mp_zero_digs(c->dp + c->used, oldused - c->used);
 
    mp_clamp(c);
    return MP_OKAY;

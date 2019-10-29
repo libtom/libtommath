@@ -13,7 +13,7 @@
 mp_err s_mp_karatsuba_sqr(const mp_int *a, mp_int *b)
 {
    mp_int  x0, x1, t1, t2, x0x0, x1x1;
-   int B, x;
+   int B;
    mp_err  err;
 
    /* min # of digits */
@@ -39,16 +39,10 @@ mp_err s_mp_karatsuba_sqr(const mp_int *a, mp_int *b)
       goto X0X0;
 
    /* now shift the digits */
-   for (x = 0; x < B; x++) {
-      x0.dp[x] = a->dp[x];
-   }
-   for (x = B; x < a->used; x++) {
-      x1.dp[x - B] = a->dp[x];
-   }
-
    x0.used = B;
    x1.used = a->used - B;
-
+   s_mp_copy_digs(x0.dp, a->dp, x0.used);
+   s_mp_copy_digs(x1.dp, a->dp + B, x1.used);
    mp_clamp(&x0);
 
    /* now calc the products x0*x0 and x1*x1 */

@@ -45,7 +45,7 @@ mp_err mp_mul_d(const mp_int *a, mp_digit b, mp_int *c)
    c->used = a->used + 1;
 
    /* now zero digits above the top */
-   MP_ZERO_DIGITS(c->dp + c->used, oldused - c->used);
+   s_mp_zero_digs(c->dp + c->used, oldused - c->used);
 
    mp_clamp(c);
 
