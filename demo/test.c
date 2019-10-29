@@ -928,7 +928,7 @@ static int test_mp_prime_rand(void)
          goto LBL_ERR;
       }
       if (mp_count_bits(&a) != ix) {
-         printf("Prime is %lu not %d bits!!!\n", mp_count_bits(&a), ix);
+         printf("Prime is %zu not %d bits!!!\n", mp_count_bits(&a), ix);
          goto LBL_ERR;
       }
    }
@@ -991,7 +991,7 @@ static int test_mp_prime_is_prime(void)
          goto LBL_ERR;
       }
       if (mp_count_bits(&a) != ix) {
-         printf("Prime is %lu not %d bits!!!\n", mp_count_bits(&a), ix);
+         printf("Prime is %zu not %d bits!!!\n", mp_count_bits(&a), ix);
          goto LBL_ERR;
       }
       /* let's see if it's really a safe prime */
@@ -1308,7 +1308,7 @@ static int test_mp_cnt_lsb(void)
    mp_set(&a, 1uL);
    for (ix = 0; ix < 1024; ix++) {
       if (mp_cnt_lsb(&a) != ix) {
-         printf("Failed at %d, %lu\n", ix, mp_cnt_lsb(&a));
+         printf("Failed at %d, %zu\n", ix, mp_cnt_lsb(&a));
          goto LBL_ERR;
       }
       mp_mul_2(&a, &a);
