@@ -33,6 +33,7 @@ branches:
     - master
     - develop
     - /^release/
+    - /^support/
     - /^travis/
 
 # Additional installs: Valgrind for memory tests.
