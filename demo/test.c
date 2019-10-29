@@ -2169,7 +2169,7 @@ static int test_mp_read_write_ubin(void)
 {
    mp_int a, b, c;
    size_t size, len;
-   unsigned char *buf = NULL;
+   uint8_t *buf = NULL;
 
    DOR(mp_init_multi(&a, &b, &c, NULL));
 
@@ -2207,7 +2207,7 @@ static int test_mp_read_write_sbin(void)
 {
    mp_int a, b, c;
    size_t size, len;
-   unsigned char *buf = NULL;
+   uint8_t *buf = NULL;
 
    DOR(mp_init_multi(&a, &b, &c, NULL));
 
@@ -2246,7 +2246,7 @@ static int test_mp_pack_unpack(void)
 {
    mp_int a, b;
    size_t written, count;
-   unsigned char *buf = NULL;
+   uint8_t *buf = NULL;
 
    mp_order order = MP_LSB_FIRST;
    mp_endian endianess = MP_NATIVE_ENDIAN;

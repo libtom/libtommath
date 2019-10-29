@@ -20,7 +20,7 @@
 /* This is possibly the mother of all prime generation functions, muahahahahaha! */
 mp_err mp_prime_rand(mp_int *a, int t, int size, int flags)
 {
-   unsigned char *tmp, maskAND, maskOR_msb, maskOR_lsb;
+   uint8_t *tmp, maskAND, maskOR_msb, maskOR_lsb;
    int bsize, maskOR_msb_offset;
    bool res;
    mp_err err;
@@ -39,19 +39,19 @@ mp_err mp_prime_rand(mp_int *a, int t, int size, int flags)
    bsize = (size>>3) + ((size&7)?1:0);
 
    /* we need a buffer of bsize bytes */
-   tmp = (unsigned char *) MP_MALLOC((size_t)bsize);
+   tmp = (uint8_t *) MP_MALLOC((size_t)bsize);
    if (tmp == NULL) {
       return MP_MEM;
    }
 
    /* calc the maskAND value for the MSbyte*/
-   maskAND = ((size&7) == 0) ? 0xFFu : (unsigned char)(0xFFu >> (8 - (size & 7)));
+   maskAND = ((size&7) == 0) ? 0xFFu : (uint8_t)(0xFFu >> (8 - (size & 7)));
 
    /* calc the maskOR_msb */
    maskOR_msb        = 0;
    maskOR_msb_offset = ((size & 7) == 1) ? 1 : 0;
    if ((flags & MP_PRIME_2MSB_ON) != 0) {
-      maskOR_msb       |= (unsigned char)(0x80 >> ((9 - size) & 7));
+      maskOR_msb       |= (uint8_t)(0x80 >> ((9 - size) & 7));
    }
 
    /* get the maskOR_lsb */
@@ -68,7 +68,7 @@ mp_err mp_prime_rand(mp_int *a, int t, int size, int flags)
 
       /* work over the MSbyte */
       tmp[0]    &= maskAND;
-      tmp[0]    |= (unsigned char)(1 << ((size - 1) & 7));
+      tmp[0]    |= (uint8_t)(1 << ((size - 1) & 7));
 
       /* mix in the maskORs */
       tmp[maskOR_msb_offset]   |= maskOR_msb;

@@ -36,7 +36,8 @@ int mp_prime_rabin_miller_trials(int size)
    for (x = 0; x < (int)(sizeof(sizes)/(sizeof(sizes[0]))); x++) {
       if (sizes[x].k == size) {
          return sizes[x].t;
-      } else if (sizes[x].k > size) {
+      }
+      if (sizes[x].k > size) {
          return (x == 0) ? sizes[0].t : sizes[x - 1].t;
       }
    }

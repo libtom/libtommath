@@ -7,7 +7,7 @@
 void mp_zero(mp_int *a)
 {
    a->sign = MP_ZPOS;
+   MP_ZERO_DIGITS(a->dp, a->used);
    a->used = 0;
-   MP_ZERO_DIGITS(a->dp, a->alloc);
 }
 #endif

@@ -6,8 +6,7 @@
 /* shift right a certain amount of digits */
 void mp_rshd(mp_int *a, int b)
 {
-   int     x;
-   mp_digit *bottom, *top;
+   int x;
 
    /* if b <= 0 then ignore it */
    if (b <= 0) {
@@ -20,15 +19,8 @@ void mp_rshd(mp_int *a, int b)
       return;
    }
 
-   /* shift the digits down */
-
-   /* bottom */
-   bottom = a->dp;
-
-   /* top [offset into digits] */
-   top = a->dp + b;
-
-   /* this is implemented as a sliding window where
+   /* shift the digits down.
+    * this is implemented as a sliding window where
     * the window is b-digits long and digits from
     * the top of the window are copied to the bottom
     *
@@ -39,11 +31,11 @@ void mp_rshd(mp_int *a, int b)
                  \-------------------/      ---->
     */
    for (x = 0; x < (a->used - b); x++) {
-      *bottom++ = *top++;
+      a->dp[x] = a->dp[x + b];
    }
 
    /* zero the top digits */
-   MP_ZERO_DIGITS(bottom, a->used - x);
+   MP_ZERO_DIGITS(a->dp + a->used - b, b);
 
    /* remove excess digits */
    a->used -= b;

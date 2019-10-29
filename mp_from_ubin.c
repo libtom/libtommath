@@ -3,8 +3,8 @@
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
-/* reads a unsigned char array, assumes the msb is stored first [big endian] */
-mp_err mp_from_ubin(mp_int *a, const unsigned char *buf, size_t size)
+/* reads a uint8_t array, assumes the msb is stored first [big endian] */
+mp_err mp_from_ubin(mp_int *a, const uint8_t *buf, size_t size)
 {
    mp_err err;
 

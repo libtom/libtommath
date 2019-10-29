@@ -9,8 +9,11 @@ mp_err mp_mod_2d(const mp_int *a, int b, mp_int *c)
    int x;
    mp_err err;
 
-   /* if b is <= 0 then zero the int */
-   if (b <= 0) {
+   if (b < 0) {
+      return MP_VAL;
+   }
+
+   if (b == 0) {
       mp_zero(c);
       return MP_OKAY;
    }
@@ -20,7 +23,6 @@ mp_err mp_mod_2d(const mp_int *a, int b, mp_int *c)
       return mp_copy(a, c);
    }
 
-   /* copy */
    if ((err = mp_copy(a, c)) != MP_OKAY) {
       return err;
    }

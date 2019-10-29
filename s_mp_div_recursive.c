@@ -17,10 +17,9 @@
 static mp_err s_mp_recursion(const mp_int *a, const mp_int *b, mp_int *q, mp_int *r)
 {
    mp_err err;
-   int m, k;
    mp_int A1, A2, B1, B0, Q1, Q0, R1, R0, t;
+   int m = a->used - b->used, k = m/2;
 
-   m = a->used - b->used;
    if (m < MP_KARATSUBA_MUL_CUTOFF) {
       return s_mp_div_school(a, b, q, r);
    }
@@ -28,9 +27,6 @@ static mp_err s_mp_recursion(const mp_int *a, const mp_int *b, mp_int *q, mp_int
    if ((err = mp_init_multi(&A1, &A2, &B1, &B0, &Q1, &Q0, &R1, &R0, &t, NULL)) != MP_OKAY) {
       goto LBL_ERR;
    }
-
-   /* k = floor(m/2) */
-   k = m/2;
 
    /* B1 = b / beta^k, B0 = b % beta^k*/
    if ((err = mp_div_2d(b, k * MP_DIGIT_BIT, &B1, &B0)) != MP_OKAY)        goto LBL_ERR;
