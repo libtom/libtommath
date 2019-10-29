@@ -18,8 +18,8 @@
 static uint64_t s_timer_function(void);
 static void s_timer_start(void);
 static uint64_t s_timer_stop(void);
-static uint64_t s_time_mul(int size);
-static uint64_t s_time_sqr(int size);
+static uint64_t s_time_mul(size_t size);
+static uint64_t s_time_sqr(size_t size);
 static void s_usage(char *s);
 
 static uint64_t s_timer_function(void)
@@ -59,7 +59,7 @@ static int s_stabilization_extra;
 static int s_offset = 1;
 
 #define s_mp_mul(a, b, c) s_mp_mul_digs(a, b, c, (a)->used + (b)->used + 1)
-static uint64_t s_time_mul(int size)
+static uint64_t s_time_mul(size_t size)
 {
    int x;
    mp_err  e;
@@ -105,7 +105,7 @@ LBL_ERR:
    return t1;
 }
 
-static uint64_t s_time_sqr(int size)
+static uint64_t s_time_sqr(size_t size)
 {
    int x;
    mp_err  e;
@@ -156,7 +156,7 @@ struct tune_args {
    int increment_print;
 } args;
 
-static void s_run(const char *name, uint64_t (*op)(int size), int *cutoff)
+static void s_run(const char *name, uint64_t (*op)(size_t size), size_t *cutoff)
 {
    int x, count = 0;
    uint64_t t1, t2;
@@ -444,8 +444,8 @@ int main(int argc, char **argv)
    if ((args.bncore == 0) && (printpreset == 0)) {
       struct {
          const char *name;
-         int *cutoff, *update;
-         uint64_t (*fn)(int size);
+         size_t *cutoff, *update;
+         uint64_t (*fn)(size_t size);
       } test[] = {
 #define T_MUL_SQR(n, o, f)  { #n, &MP_##o##_CUTOFF, &(updated.o), MP_HAS(S_MP_##o) ? f : NULL }
          /*
@@ -471,16 +471,16 @@ int main(int argc, char **argv)
       }
    }
    if (args.terse == 1) {
-      printf("%d %d %d %d\n",
+      printf("%zu %zu %zu %zu\n",
              updated.KARATSUBA_MUL,
              updated.KARATSUBA_SQR,
              updated.TOOM_MUL,
              updated.TOOM_SQR);
    } else {
-      printf("KARATSUBA_MUL_CUTOFF = %d\n", updated.KARATSUBA_MUL);
-      printf("KARATSUBA_SQR_CUTOFF = %d\n", updated.KARATSUBA_SQR);
-      printf("TOOM_MUL_CUTOFF = %d\n", updated.TOOM_MUL);
-      printf("TOOM_SQR_CUTOFF = %d\n", updated.TOOM_SQR);
+      printf("KARATSUBA_MUL_CUTOFF = %zu\n", updated.KARATSUBA_MUL);
+      printf("KARATSUBA_SQR_CUTOFF = %zu\n", updated.KARATSUBA_SQR);
+      printf("TOOM_MUL_CUTOFF = %zu\n", updated.TOOM_MUL);
+      printf("TOOM_SQR_CUTOFF = %zu\n", updated.TOOM_SQR);
    }
 
    if (args.print == 1) {
@@ -524,16 +524,16 @@ int main(int argc, char **argv)
       if (args.verbose == 1) {
          set_cutoffs(&orig);
          if (args.terse == 1) {
-            printf("%d %d %d %d\n",
+            printf("%zu %zu %zu %zu\n",
                    MP_KARATSUBA_MUL_CUTOFF,
                    MP_KARATSUBA_SQR_CUTOFF,
                    MP_TOOM_MUL_CUTOFF,
                    MP_TOOM_SQR_CUTOFF);
          } else {
-            printf("KARATSUBA_MUL_CUTOFF = %d\n", MP_KARATSUBA_MUL_CUTOFF);
-            printf("KARATSUBA_SQR_CUTOFF = %d\n", MP_KARATSUBA_SQR_CUTOFF);
-            printf("TOOM_MUL_CUTOFF = %d\n", MP_TOOM_MUL_CUTOFF);
-            printf("TOOM_SQR_CUTOFF = %d\n", MP_TOOM_SQR_CUTOFF);
+            printf("KARATSUBA_MUL_CUTOFF = %zu\n", MP_KARATSUBA_MUL_CUTOFF);
+            printf("KARATSUBA_SQR_CUTOFF = %zu\n", MP_KARATSUBA_SQR_CUTOFF);
+            printf("TOOM_MUL_CUTOFF = %zu\n", MP_TOOM_MUL_CUTOFF);
+            printf("TOOM_SQR_CUTOFF = %zu\n", MP_TOOM_SQR_CUTOFF);
          }
       }
    }
