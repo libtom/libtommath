@@ -8,10 +8,6 @@
  */
 void mp_exch(mp_int *a, mp_int *b)
 {
-   mp_int  t;
-
-   t  = *a;
-   *a = *b;
-   *b = t;
+   MP_EXCH(mp_int, *a, *b);
 }
 #endif

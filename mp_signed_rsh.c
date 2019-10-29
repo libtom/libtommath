@@ -6,17 +6,16 @@
 /* shift right by a certain bit count with sign extension */
 mp_err mp_signed_rsh(const mp_int *a, int b, mp_int *c)
 {
-   mp_err res;
+   mp_err err;
    if (a->sign == MP_ZPOS) {
       return mp_div_2d(a, b, c, NULL);
    }
 
-   res = mp_add_d(a, 1uL, c);
-   if (res != MP_OKAY) {
-      return res;
+   if ((err = mp_add_d(a, 1uL, c)) != MP_OKAY) {
+      return err;
    }
 
-   res = mp_div_2d(c, b, c, NULL);
-   return (res == MP_OKAY) ? mp_sub_d(c, 1uL, c) : res;
+   err = mp_div_2d(c, b, c, NULL);
+   return (err == MP_OKAY) ? mp_sub_d(c, 1uL, c) : err;
 }
 #endif

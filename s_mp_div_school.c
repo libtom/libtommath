@@ -140,8 +140,6 @@ mp_err s_mp_div_school(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d)
       mp_exch(&x, d);
    }
 
-   err = MP_OKAY;
-
 LBL_Y:
    mp_clear(&y);
 LBL_X:

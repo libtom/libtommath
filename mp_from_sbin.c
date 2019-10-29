@@ -14,11 +14,7 @@ mp_err mp_from_sbin(mp_int *a, const uint8_t *buf, size_t size)
    }
 
    /* first byte is 0 for positive, non-zero for negative */
-   if (buf[0] == (uint8_t)0) {
-      a->sign = MP_ZPOS;
-   } else {
-      a->sign = MP_NEG;
-   }
+   a->sign = (buf[0] == (uint8_t)0) ? MP_ZPOS : MP_NEG;
 
    return MP_OKAY;
 }

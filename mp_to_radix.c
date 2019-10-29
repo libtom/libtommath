@@ -4,17 +4,11 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* reverse an array, used for radix code */
-static void s_mp_reverse(uint8_t *s, size_t len)
+static void s_mp_reverse(char *s, size_t len)
 {
-   size_t   ix, iy;
-   uint8_t t;
-
-   ix = 0u;
-   iy = len - 1u;
+   size_t ix = 0, iy = len - 1u;
    while (ix < iy) {
-      t     = s[ix];
-      s[ix] = s[iy];
-      s[iy] = t;
+      MP_EXCH(char, s[ix], s[iy]);
       ++ix;
       --iy;
    }
@@ -83,7 +77,7 @@ mp_err mp_to_radix(const mp_int *a, char *str, size_t maxlen, size_t *written, i
    /* reverse the digits of the string.  In this case _s points
     * to the first digit [exluding the sign] of the number
     */
-   s_mp_reverse((uint8_t *)_s, digs);
+   s_mp_reverse(_s, digs);
 
    /* append a NULL so the string is properly terminated */
    *str = '\0';

@@ -15,14 +15,14 @@ mp_err mp_div(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d)
    /* if a < b then q = 0, r = a */
    if (mp_cmp_mag(a, b) == MP_LT) {
       if (d != NULL) {
-         err = mp_copy(a, d);
-      } else {
-         err = MP_OKAY;
+         if ((err = mp_copy(a, d)) != MP_OKAY) {
+            return err;
+         }
       }
       if (c != NULL) {
          mp_zero(c);
       }
-      return err;
+      return MP_OKAY;
    }
 
    if (MP_HAS(S_MP_DIV_RECURSIVE)
@@ -31,11 +31,12 @@ mp_err mp_div(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d)
       err = s_mp_div_recursive(a, b, c, d);
    } else if (MP_HAS(S_MP_DIV_SCHOOL)) {
       err = s_mp_div_school(a, b, c, d);
-   } else {
+   } else if (MP_HAS(S_MP_DIV_SMALL)) {
       err = s_mp_div_small(a, b, c, d);
+   } else {
+      err = MP_VAL;
    }
 
    return err;
 }
 #endif
-

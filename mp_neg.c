@@ -6,18 +6,14 @@
 /* b = -a */
 mp_err mp_neg(const mp_int *a, mp_int *b)
 {
-   mp_err err;
    if (a != b) {
+      mp_err err;
       if ((err = mp_copy(a, b)) != MP_OKAY) {
          return err;
       }
    }
 
-   if (!mp_iszero(b)) {
-      b->sign = (a->sign == MP_ZPOS) ? MP_NEG : MP_ZPOS;
-   } else {
-      b->sign = MP_ZPOS;
-   }
+   b->sign = mp_iszero(b) || b->sign == MP_NEG ? MP_ZPOS : MP_NEG;
 
    return MP_OKAY;
 }

@@ -148,6 +148,8 @@ extern void MP_FREE(void *mem, size_t size);
 
 #define MP_TOUPPER(c) ((((c) >= 'a') && ((c) <= 'z')) ? (((c) + 'A') - 'a') : (c))
 
+#define MP_EXCH(t, a, b) do { t _c = a; a = b; b = _c; } while (0)
+
 /* Static assertion */
 #define MP_STATIC_ASSERT(msg, cond) typedef char mp_static_assert_##msg[(cond) ? 1 : -1];
 
@@ -267,9 +269,9 @@ extern MP_PRIVATE const mp_digit s_mp_prime_tab[];
 #define MP_GET_MAG(name, type)                                                         \
     type name(const mp_int* a)                                                         \
     {                                                                                  \
-        unsigned i = MP_MIN((unsigned)a->used, (unsigned)((MP_SIZEOF_BITS(type) + MP_DIGIT_BIT - 1) / MP_DIGIT_BIT)); \
+        int i = MP_MIN(a->used, (int)((MP_SIZEOF_BITS(type) + MP_DIGIT_BIT - 1) / MP_DIGIT_BIT)); \
         type res = 0u;                                                                 \
-        while (i --> 0u) {                                                             \
+        while (i --> 0) {                                                              \
             res <<= ((MP_SIZEOF_BITS(type) <= MP_DIGIT_BIT) ? 0 : MP_DIGIT_BIT);       \
             res |= (type)a->dp[i];                                                     \
             if (MP_SIZEOF_BITS(type) <= MP_DIGIT_BIT) { break; }                       \

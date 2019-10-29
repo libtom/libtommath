@@ -32,7 +32,7 @@ mp_err mp_fread(mp_int *a, int radix, FILE *stream)
    mp_zero(a);
 
    do {
-      int y;
+      uint8_t y;
       unsigned pos;
       ch = (radix <= 36) ? MP_TOUPPER(ch) : ch;
       pos = (unsigned)(ch - (int)'(');
@@ -40,7 +40,7 @@ mp_err mp_fread(mp_int *a, int radix, FILE *stream)
          break;
       }
 
-      y = (int)s_mp_rmap_reverse[pos];
+      y = s_mp_rmap_reverse[pos];
 
       if ((y == 0xff) || (y >= radix)) {
          break;
@@ -50,7 +50,7 @@ mp_err mp_fread(mp_int *a, int radix, FILE *stream)
       if ((err = mp_mul_d(a, (mp_digit)radix, a)) != MP_OKAY) {
          return err;
       }
-      if ((err = mp_add_d(a, (mp_digit)y, a)) != MP_OKAY) {
+      if ((err = mp_add_d(a, y, a)) != MP_OKAY) {
          return err;
       }
    } while ((ch = fgetc(stream)) != EOF);

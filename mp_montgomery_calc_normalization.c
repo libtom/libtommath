@@ -26,7 +26,6 @@ mp_err mp_montgomery_calc_normalization(mp_int *a, const mp_int *b)
       bits = 1;
    }
 
-
    /* now compute C = A * B mod b */
    for (x = bits - 1; x < (int)MP_DIGIT_BIT; x++) {
       if ((err = mp_mul_2(a, a)) != MP_OKAY) {

@@ -3,7 +3,7 @@
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
-static const int lnz[16] = {
+static const char lnz[16] = {
    4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0
 };
 
@@ -11,7 +11,7 @@ static const int lnz[16] = {
 int mp_cnt_lsb(const mp_int *a)
 {
    int x;
-   mp_digit q, qq;
+   mp_digit q;
 
    /* easy out */
    if (mp_iszero(a)) {
@@ -25,11 +25,12 @@ int mp_cnt_lsb(const mp_int *a)
 
    /* now scan this digit until a 1 is found */
    if ((q & 1u) == 0u) {
+      mp_digit p;
       do {
-         qq  = q & 15u;
-         x  += lnz[qq];
+         p = q & 15u;
+         x += lnz[p];
          q >>= 4;
-      } while (qq == 0u);
+      } while (p == 0u);
    }
    return x;
 }

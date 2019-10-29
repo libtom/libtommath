@@ -8,19 +8,14 @@ mp_ord mp_cmp(const mp_int *a, const mp_int *b)
 {
    /* compare based on sign */
    if (a->sign != b->sign) {
-      if (a->sign == MP_NEG) {
-         return MP_LT;
-      } else {
-         return MP_GT;
-      }
+      return a->sign == MP_NEG ? MP_LT : MP_GT;
    }
 
-   /* compare digits */
+   /* if negative compare opposite direction */
    if (a->sign == MP_NEG) {
-      /* if negative compare opposite direction */
-      return mp_cmp_mag(b, a);
-   } else {
-      return mp_cmp_mag(a, b);
+      MP_EXCH(const mp_int *, a, b);
    }
+
+   return mp_cmp_mag(a, b);
 }
 #endif
