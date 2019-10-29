@@ -13,14 +13,12 @@ static unsigned int s_floor_ilog2(int value)
    return r;
 }
 
-
 mp_err mp_prime_is_prime(const mp_int *a, int t, bool *result)
 {
    mp_int  b;
-   int     ix, p_max = 0, size_a, len;
-   bool res;
+   int     ix;
+   bool    res;
    mp_err  err;
-   unsigned int fips_rand, mask;
 
    /* default to no */
    *result = false;
@@ -133,6 +131,8 @@ mp_err mp_prime_is_prime(const mp_int *a, int t, bool *result)
       TODO: can be made a bit finer grained but comparing is not free.
    */
    if (t < 0) {
+      int p_max = 0;
+
       /*
           Sorenson, Jonathan; Webster, Jonathan (2015).
            "Strong Pseudoprimes to Twelve Prime Bases".
@@ -174,6 +174,9 @@ mp_err mp_prime_is_prime(const mp_int *a, int t, bool *result)
        See Fips 186.4 p. 126ff
    */
    else if (t > 0) {
+      unsigned int mask;
+      int size_a;
+
       /*
        * The mp_digit's have a defined bit-size but the size of the
        * array a.dp is a simple 'int' and this library can not assume full
@@ -219,6 +222,9 @@ mp_err mp_prime_is_prime(const mp_int *a, int t, bool *result)
         need to be prime.
       */
       for (ix = 0; ix < t; ix++) {
+         unsigned int fips_rand;
+         int len;
+
          /* mp_rand() guarantees the first digit to be non-zero */
          if ((err = mp_rand(&b, 1)) != MP_OKAY) {
             goto LBL_B;

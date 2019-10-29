@@ -192,7 +192,7 @@ mp_err mp_prime_strong_lucas_selfridge(const mp_int *a, bool *result)
       if ((err = mp_mod(&Qmz, a, &Qmz)) != MP_OKAY)               goto LBL_LS_ERR;
       if ((err = mp_mul_2(&Qmz, &Q2mz)) != MP_OKAY)               goto LBL_LS_ERR;
 
-      if (s_mp_get_bit(&Dz, (unsigned int)u)) {
+      if (s_mp_get_bit(&Dz, u)) {
          /* Formulas for addition of indices (carried out mod N);
           *
           * U_(m+n) = (U_m*V_n + U_n*V_m)/2
