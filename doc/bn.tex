@@ -1906,9 +1906,9 @@ mp_err mp_sqrmod(const mp_int *a, const mp_int *b, const mp_int *c, mp_int *d);
 
 \chapter{Exponentiation}
 \section{Single Digit Exponentiation}
-\index{mp\_expt\_u32}
+\index{mp\_expt}
 \begin{alltt}
-mp_err mp_expt_u32 (const mp_int *a, uint32_t b, mp_int *c)
+mp_err mp_expt (const mp_int *a, int b, mp_int *c)
 \end{alltt}
 This function computes $c = a^b$.
 
@@ -1935,9 +1935,9 @@ mp_err mp_mod_2d(const mp_int *a, int b, mp_int *c)
 It calculates $c = a \mod 2^b$.
 
 \section{Root Finding}
-\index{mp\_root\_u32}
+\index{mp\_root}
 \begin{alltt}
-mp_err mp_root_u32(const mp_int *a, uint32_t b, mp_int *c)
+mp_err mp_root(const mp_int *a, int b, mp_int *c)
 \end{alltt}
 This computes $c = a^{1/b}$ such that $c^b \le a$ and $(c+1)^b > a$. Will return a positive root
 only for even roots and return a root with the sign of the input for odd roots.  For example,
@@ -1959,9 +1959,9 @@ mp_err mp_sqrt(const mp_int *arg, mp_int *ret)
 A logarithm function for positive integer input \texttt{a, base} computing  $\floor{\log_bx}$ such
 that $(\log_b x)^b \le x$.
 
-\index{mp\_log\_u32}
+\index{mp\_log}
 \begin{alltt}
-mp_err mp_log_u32(const mp_int *a, uint32_t base, uint32_t *c)
+mp_err mp_log(const mp_int *a, int base, int *c)
 \end{alltt}
 
 \subsection{Example}
@@ -1976,7 +1976,7 @@ mp_err mp_log_u32(const mp_int *a, uint32_t base, uint32_t *c)
 int main(int argc, char **argv)
 {
    mp_int x, output;
-   uint32_t base;
+   int base;
    mp_err e;
 
    if (argc != 3) {
@@ -1989,12 +1989,8 @@ int main(int argc, char **argv)
               exit(EXIT_FAILURE);
    }
    errno = 0;
-#ifdef MP_64BIT
-   /* Check for overflow skipped  */
-   base = (uint32_t)strtoull(argv[1], NULL, 10);
-#else
-   base = (uint32_t)strtoul(argv[1], NULL, 10);
-#endif
+   base = (int)strtoul(argv[1], NULL, 10);
+
    if (errno == ERANGE) {
       fprintf(stderr,"strtoul(l) failed: input out of range\textbackslash{}n");
       exit(EXIT_FAILURE);
@@ -2004,8 +2000,8 @@ int main(int argc, char **argv)
                       mp_error_to_string(e));
       exit(EXIT_FAILURE);
    }
-   if ((e = mp_log_u32(&x, base, &output)) != MP_OKAY) {
-      fprintf(stderr,"mp_ilogb failed: \textbackslash{}"%s\textbackslash{}"\textbackslash{}n",
+   if ((e = mp_log(&x, base, &output)) != MP_OKAY) {
+      fprintf(stderr,"mp_log failed: \textbackslash{}"%s\textbackslash{}"\textbackslash{}n",
                       mp_error_to_string(e));
       exit(EXIT_FAILURE);
    }
