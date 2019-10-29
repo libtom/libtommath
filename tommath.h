@@ -142,17 +142,11 @@ MP_TOOM_SQR_CUTOFF;
  * Most functions in libtommath return an error code.
  * This error code must be checked in order to prevent crashes or invalid
  * results.
- *
- * If you still want to avoid the error checks for quick and dirty programs
- * without robustness guarantees, you can `#define MP_WUR` before including
- * tommath.h, disabling the warnings.
  */
-#ifndef MP_WUR
-#  if defined(__GNUC__) && __GNUC__ >= 4
-#     define MP_WUR __attribute__((warn_unused_result))
-#  else
-#     define MP_WUR
-#  endif
+#if defined(__GNUC__) && __GNUC__ >= 4
+#   define MP_WUR __attribute__((warn_unused_result))
+#else
+#   define MP_WUR
 #endif
 
 #if defined(__GNUC__) && (__GNUC__ * 100 + __GNUC_MINOR__ >= 405)
