@@ -59,14 +59,14 @@ LTM_CFLAGS += -Wdeclaration-after-statement -Wbad-function-cast -Wcast-align
 LTM_CFLAGS += -Wstrict-prototypes -Wpointer-arith
 endif
 
-ifdef CONV_WARNINGS
-LTM_CFLAGS += -std=c89 -Wconversion -Wsign-conversion
-ifeq ($(CONV_WARNINGS), strict)
-LTM_CFLAGS += -Wc++-compat
-endif
-else
+#ifdef CONV_WARNINGS
+#LTM_CFLAGS += -std=c89 -Wconversion -Wsign-conversion
+#ifeq ($(CONV_WARNINGS), strict)
+#LTM_CFLAGS += -Wc++-compat
+#endif
+#else
 LTM_CFLAGS += -Wsystem-headers
-endif
+#endif
 LTM_CFLAGS += -Wno-sign-compare
 
 ifdef COMPILE_DEBUG
