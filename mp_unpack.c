@@ -29,8 +29,8 @@ mp_err mp_unpack(mp_int *rop, size_t count, mp_order order, size_t size,
    for (i = 0; i < count; ++i) {
       for (j = 0; j < (size - nail_bytes); ++j) {
          uint8_t byte = *((const uint8_t *)op +
-                                (((order == MP_MSB_FIRST) ? i : ((count - 1u) - i)) * size) +
-                                ((endian == MP_BIG_ENDIAN) ? (j + nail_bytes) : (((size - 1u) - j) - nail_bytes)));
+                          (((order == MP_MSB_FIRST) ? i : ((count - 1u) - i)) * size) +
+                          ((endian == MP_BIG_ENDIAN) ? (j + nail_bytes) : (((size - 1u) - j) - nail_bytes)));
 
          if ((err = mp_mul_2d(rop, (j == 0u) ? (int)(8u - odd_nails) : 8, rop)) != MP_OKAY) {
             return err;

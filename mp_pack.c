@@ -39,8 +39,8 @@ mp_err mp_pack(void *rop, size_t maxcount, size_t *written, mp_order order, size
    for (i = 0u; i < count; ++i) {
       for (j = 0u; j < size; ++j) {
          uint8_t *byte = (uint8_t *)rop +
-                               (((order == MP_LSB_FIRST) ? i : ((count - 1u) - i)) * size) +
-                               ((endian == MP_LITTLE_ENDIAN) ? j : ((size - 1u) - j));
+                         (((order == MP_LSB_FIRST) ? i : ((count - 1u) - i)) * size) +
+                         ((endian == MP_LITTLE_ENDIAN) ? j : ((size - 1u) - j));
 
          if (j >= (size - nail_bytes)) {
             *byte = 0;
