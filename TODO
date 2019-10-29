@@ -126,13 +126,13 @@ DONE mp_mul_d.c
 DONE mp_reduce.c
 DONE s_mp_toom_sqr.c
 DONE mp_prime_rand.c
+DONE mp_is_square.c
 
 s_mp_div_school.c
 mp_dr_is_modulus.c
 mp_dr_reduce.c
 mp_exptmod.c
 mp_expt_u32.c
-mp_is_square.c
 mp_log_u32.c
 mp_montgomery_calc_normalization.c
 mp_montgomery_reduce.c
