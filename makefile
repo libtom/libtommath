@@ -64,20 +64,19 @@ $(LIBNAME):  $(OBJECTS)
 #
 # So far I've seen improvements in the MP math
 profiled:
-	make CFLAGS="$(CFLAGS) -fprofile-arcs -DTESTING" timing
+	make CFLAGS="$(CFLAGS) -fprofile-arcs" timing
 	./timing
 	rm -f *.a *.o timing
 	make CFLAGS="$(CFLAGS) -fbranch-probabilities"
 
 #make a single object profiled library
-profiled_single:
-	perl gen.pl
-	$(CC) $(LTM_CFLAGS) -fprofile-arcs -DTESTING -c mpi.c -o mpi.o
-	$(CC) $(LTM_CFLAGS) -DTESTING -DTIMER demo/timing.c mpi.o -lgcov -o timing
+profiled_single: pre_gen
+	$(CC) $(LTM_CFLAGS) -fprofile-arcs -c pre_gen/tommath_amalgam.c -o tommath_amalgam.o
+	$(CC) $(LTM_CFLAGS) -DMP_VERSION=\"before\" demo/timing.c tommath_amalgam.o -lgcov -o timing
 	./timing
 	rm -f *.o timing
-	$(CC) $(LTM_CFLAGS) -fbranch-probabilities -DTESTING -c mpi.c -o mpi.o
-	$(AR) $(ARFLAGS) $(LIBNAME) mpi.o
+	$(CC) $(LTM_CFLAGS) -fbranch-probabilities -c pre_gen/tommath_amalgam.c -o tommath_amalgam.o
+	$(AR) $(ARFLAGS) $(LIBNAME) tommath_amalgam.o
 	ranlib $(LIBNAME)
 
 install: $(LIBNAME)
@@ -103,8 +102,8 @@ $(foreach demo, $(strip $(DEMOS)), $(eval $(call DEMO_template,$(demo))))
 mtest:
 	cd mtest ; $(CC) $(LTM_CFLAGS) -O0 mtest.c $(LTM_LFLAGS) -o mtest
 
-timing: $(LIBNAME) demo/timing.c
-	$(CC) $(LTM_CFLAGS) -DTIMER demo/timing.c $(LIBNAME) $(LTM_LFLAGS) -o timing
+timing: demo/timing.c $(LIBNAME)
+	$(CC) $(LTM_CFLAGS) $^ $(LTM_LFLAGS) -o timing
 
 tune: $(LIBNAME)
 	$(MAKE) -C etc tune CFLAGS="$(LTM_CFLAGS)"
@@ -118,12 +117,15 @@ coveralls: lcov
 docs manual:
 	$(MAKE) -C doc/ $@ V=$(V)
 
-.PHONY: pre_gen
+.PHONY: pre_gen cmp
 pre_gen:
 	mkdir -p pre_gen
-	perl gen.pl
-	sed -e 's/[[:blank:]]*$$//' mpi.c > pre_gen/mpi.c
-	rm mpi.c
+	cat *mp_*.c > pre_gen/tommath_amalgam.c
+
+cmp: profiled_single
+	$(CC) $(LTM_CFLAGS) -DMP_VERSION=\"after\" demo/timing.c $(LIBNAME) -lgcov -o timing
+	./timing
+	$(MAKE) -C logs/ cmp
 
 zipup: clean astyle new_file docs
 	@# Update the index, so diff-index won't fail in case the pdf has been created.
