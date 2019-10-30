@@ -76,23 +76,23 @@
  * like removing support for even moduli, etc...
  */
 #   ifdef LTM_LAST
-#      undef MP_DR_IS_MODULUS_C
-#      undef MP_DR_SETUP_C
-#      undef MP_DR_REDUCE_C
 #      undef MP_DIV_3_C
-#      undef MP_REDUCE_2K_SETUP_C
+#      undef MP_DR_IS_MODULUS_C
+#      undef MP_DR_REDUCE_C
+#      undef MP_DR_SETUP_C
 #      undef MP_REDUCE_2K_C
+#      undef MP_REDUCE_2K_SETUP_C
 #      undef MP_REDUCE_IS_2K_C
 #      undef MP_REDUCE_SETUP_C
-#      undef S_MP_BALANCE_MUL_C
 #      undef S_MP_EXPTMOD_C
-#      undef S_MP_INVMOD_FAST_C
-#      undef S_MP_KARATSUBA_MUL_C
-#      undef S_MP_KARATSUBA_SQR_C
-#      undef S_MP_MUL_HIGH_DIGS_C
-#      undef S_MP_MUL_HIGH_DIGS_FAST_C
-#      undef S_MP_TOOM_MUL_C
-#      undef S_MP_TOOM_SQR_C
+#      undef S_MP_INVMOD_ODD_C
+#      undef S_MP_MUL_BALANCE_C
+#      undef S_MP_MUL_HIGH_C
+#      undef S_MP_MUL_HIGH_COMBA_C
+#      undef S_MP_MUL_KARATSUBA_C
+#      undef S_MP_MUL_TOOM_C
+#      undef S_MP_SQR_KARATSUBA_C
+#      undef S_MP_SQR_TOOM_C
 
 #      ifndef SC_RSA_1_WITH_TESTS
 #         undef MP_REDUCE_C
@@ -104,7 +104,7 @@
  * trouble.
  */
 #      undef MP_MONTGOMERY_REDUCE_C
-#      undef S_MP_MUL_DIGS_C
+#      undef S_MP_MUL_C
 #      undef S_MP_SQR_C
 #   endif
 

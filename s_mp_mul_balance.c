@@ -1,10 +1,10 @@
 #include "tommath_private.h"
-#ifdef S_MP_BALANCE_MUL_C
+#ifdef S_MP_MUL_BALANCE_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
 /* single-digit multiplication with the smaller number as the single-digit */
-mp_err s_mp_balance_mul(const mp_int *a, const mp_int *b, mp_int *c)
+mp_err s_mp_mul_balance(const mp_int *a, const mp_int *b, mp_int *c)
 {
    mp_int a0, tmp, r;
    mp_err err;

@@ -1,5 +1,5 @@
 #include "tommath_private.h"
-#ifdef S_MP_TOOM_SQR_C
+#ifdef S_MP_SQR_TOOM_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
@@ -18,7 +18,7 @@
      18th IEEE Symposium on Computer Arithmetic (ARITH'07). IEEE, 2007.
 
 */
-mp_err s_mp_toom_sqr(const mp_int *a, mp_int *b)
+mp_err s_mp_sqr_toom(const mp_int *a, mp_int *b)
 {
    mp_int S0, a0, a1, a2;
    int B;

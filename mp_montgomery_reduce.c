@@ -19,7 +19,7 @@ mp_err mp_montgomery_reduce(mp_int *x, const mp_int *n, mp_digit rho)
    if ((digs < MP_WARRAY) &&
        (x->used <= MP_WARRAY) &&
        (n->used < MP_MAXFAST)) {
-      return s_mp_montgomery_reduce_fast(x, n, rho);
+      return s_mp_montgomery_reduce_comba(x, n, rho);
    }
 
    /* grow the input as required */

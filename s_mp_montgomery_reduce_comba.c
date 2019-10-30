@@ -1,5 +1,5 @@
 #include "tommath_private.h"
-#ifdef S_MP_MONTGOMERY_REDUCE_FAST_C
+#ifdef S_MP_MONTGOMERY_REDUCE_COMBA_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
@@ -11,7 +11,7 @@
  *
  * Based on Algorithm 14.32 on pp.601 of HAC.
 */
-mp_err s_mp_montgomery_reduce_fast(mp_int *x, const mp_int *n, mp_digit rho)
+mp_err s_mp_montgomery_reduce_comba(mp_int *x, const mp_int *n, mp_digit rho)
 {
    int     ix, oldused;
    mp_err  err;
