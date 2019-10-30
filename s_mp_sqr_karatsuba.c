@@ -1,16 +1,16 @@
 #include "tommath_private.h"
-#ifdef S_MP_KARATSUBA_SQR_C
+#ifdef S_MP_SQR_KARATSUBA_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
 /* Karatsuba squaring, computes b = a*a using three
  * half size squarings
  *
- * See comments of karatsuba_mul for details.  It
+ * See comments of mul_karatsuba for details.  It
  * is essentially the same algorithm but merely
  * tuned to perform recursive squarings.
  */
-mp_err s_mp_karatsuba_sqr(const mp_int *a, mp_int *b)
+mp_err s_mp_sqr_karatsuba(const mp_int *a, mp_int *b)
 {
    mp_int  x0, x1, t1, t2, x0x0, x1x1;
    int B;

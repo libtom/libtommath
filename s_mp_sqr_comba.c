@@ -1,5 +1,5 @@
 #include "tommath_private.h"
-#ifdef S_MP_SQR_FAST_C
+#ifdef S_MP_SQR_COMBA_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
@@ -13,7 +13,7 @@
 After that loop you do the squares and add them in.
 */
 
-mp_err s_mp_sqr_fast(const mp_int *a, mp_int *b)
+mp_err s_mp_sqr_comba(const mp_int *a, mp_int *b)
 {
    int       oldused, pa, ix;
    mp_digit  W[MP_WARRAY];

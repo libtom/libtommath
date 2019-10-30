@@ -1,5 +1,5 @@
 #include "tommath_private.h"
-#ifdef S_MP_TOOM_MUL_C
+#ifdef S_MP_MUL_TOOM_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
@@ -29,7 +29,7 @@
      Centro Vito Volterra Universita di Roma Tor Vergata (2006)
 */
 
-mp_err s_mp_toom_mul(const mp_int *a, const mp_int *b, mp_int *c)
+mp_err s_mp_mul_toom(const mp_int *a, const mp_int *b, mp_int *c)
 {
    mp_int S1, S2, T1, a0, a1, a2, b0, b1, b2;
    int B;

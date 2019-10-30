@@ -4,7 +4,7 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* single-digit multiplication with the smaller number as the single-digit */
-mp_err s_mp_balance_mul(const mp_int *a, const mp_int *b, mp_int *c)
+mp_err s_mp_mul_balance(const mp_int *a, const mp_int *b, mp_int *c)
 {
    mp_int a0, tmp, r;
    mp_err err;

@@ -1866,7 +1866,7 @@ LBL_ERR:
    return EXIT_FAILURE;
 }
 
-static int test_s_mp_balance_mul(void)
+static int test_s_mp_mul_balance(void)
 {
    mp_int a, b, c;
 
@@ -1881,7 +1881,7 @@ static int test_s_mp_balance_mul(void)
    DO(mp_read_radix(&a, na, 64));
    DO(mp_read_radix(&b, nb, 64));
 
-   DO(s_mp_balance_mul(&a, &b, &c));
+   DO(s_mp_mul_balance(&a, &b, &c));
 
    DO(mp_read_radix(&b, nc, 64));
 
@@ -1896,18 +1896,18 @@ LBL_ERR:
    return EXIT_FAILURE;
 }
 
-#define s_mp_mul(a, b, c) s_mp_mul_digs(a, b, c, (a)->used + (b)->used + 1)
-static int test_s_mp_karatsuba_mul(void)
+#define s_mp_mul_full(a, b, c) s_mp_mul(a, b, c, (a)->used + (b)->used + 1)
+static int test_s_mp_mul_karatsuba(void)
 {
    mp_int a, b, c, d;
    int size;
 
    DOR(mp_init_multi(&a, &b, &c, &d, NULL));
-   for (size = MP_KARATSUBA_MUL_CUTOFF; size < MP_KARATSUBA_MUL_CUTOFF + 20; size++) {
+   for (size = MP_MUL_KARATSUBA_CUTOFF; size < MP_MUL_KARATSUBA_CUTOFF + 20; size++) {
       DO(mp_rand(&a, size));
       DO(mp_rand(&b, size));
-      DO(s_mp_karatsuba_mul(&a, &b, &c));
-      DO(s_mp_mul(&a,&b,&d));
+      DO(s_mp_mul_karatsuba(&a, &b, &c));
+      DO(s_mp_mul_full(&a,&b,&d));
       if (mp_cmp(&c, &d) != MP_EQ) {
          fprintf(stderr, "Karatsuba multiplication failed at size %d\n", size);
          goto LBL_ERR;
@@ -1921,15 +1921,15 @@ LBL_ERR:
    return EXIT_FAILURE;
 }
 
-static int test_s_mp_karatsuba_sqr(void)
+static int test_s_mp_sqr_karatsuba(void)
 {
    mp_int a, b, c;
    int size;
 
    DOR(mp_init_multi(&a, &b, &c, NULL));
-   for (size = MP_KARATSUBA_SQR_CUTOFF; size < MP_KARATSUBA_SQR_CUTOFF + 20; size++) {
+   for (size = MP_SQR_KARATSUBA_CUTOFF; size < MP_SQR_KARATSUBA_CUTOFF + 20; size++) {
       DO(mp_rand(&a, size));
-      DO(s_mp_karatsuba_sqr(&a, &b));
+      DO(s_mp_sqr_karatsuba(&a, &b));
       DO(s_mp_sqr(&a, &c));
       if (mp_cmp(&b, &c) != MP_EQ) {
          fprintf(stderr, "Karatsuba squaring failed at size %d\n", size);
@@ -1944,7 +1944,7 @@ LBL_ERR:
    return EXIT_FAILURE;
 }
 
-static int test_s_mp_toom_mul(void)
+static int test_s_mp_mul_toom(void)
 {
    mp_int a, b, c, d;
    int size;
@@ -1965,10 +1965,10 @@ static int test_s_mp_toom_mul(void)
    DO(mp_2expt(&c, 99000 - 1000));
    DO(mp_add(&b, &c, &b));
 
-   tc_cutoff = MP_TOOM_MUL_CUTOFF;
-   MP_TOOM_MUL_CUTOFF = INT_MAX;
+   tc_cutoff = MP_MUL_TOOM_CUTOFF;
+   MP_MUL_TOOM_CUTOFF = INT_MAX;
    DO(mp_mul(&a, &b, &c));
-   MP_TOOM_MUL_CUTOFF = tc_cutoff;
+   MP_MUL_TOOM_CUTOFF = tc_cutoff;
    DO(mp_mul(&a, &b, &d));
    if (mp_cmp(&c, &d) != MP_EQ) {
       fprintf(stderr, "Toom-Cook 3-way multiplication failed for edgecase f1 * f2\n");
@@ -1976,11 +1976,11 @@ static int test_s_mp_toom_mul(void)
    }
 #endif
 
-   for (size = MP_TOOM_MUL_CUTOFF; size < MP_TOOM_MUL_CUTOFF + 20; size++) {
+   for (size = MP_MUL_TOOM_CUTOFF; size < MP_MUL_TOOM_CUTOFF + 20; size++) {
       DO(mp_rand(&a, size));
       DO(mp_rand(&b, size));
-      DO(s_mp_toom_mul(&a, &b, &c));
-      DO(s_mp_mul(&a,&b,&d));
+      DO(s_mp_mul_toom(&a, &b, &c));
+      DO(s_mp_mul_full(&a,&b,&d));
       if (mp_cmp(&c, &d) != MP_EQ) {
          fprintf(stderr, "Toom-Cook 3-way multiplication failed at size %d\n", size);
          goto LBL_ERR;
@@ -1994,15 +1994,15 @@ LBL_ERR:
    return EXIT_FAILURE;
 }
 
-static int test_s_mp_toom_sqr(void)
+static int test_s_mp_sqr_toom(void)
 {
    mp_int a, b, c;
    int size;
 
    DOR(mp_init_multi(&a, &b, &c, NULL));
-   for (size = MP_TOOM_SQR_CUTOFF; size < MP_TOOM_SQR_CUTOFF + 20; size++) {
+   for (size = MP_SQR_TOOM_CUTOFF; size < MP_SQR_TOOM_CUTOFF + 20; size++) {
       DO(mp_rand(&a, size));
-      DO(s_mp_toom_sqr(&a, &b));
+      DO(s_mp_sqr_toom(&a, &b));
       DO(s_mp_sqr(&a, &c));
       if (mp_cmp(&b, &c) != MP_EQ) {
          fprintf(stderr, "Toom-Cook 3-way squaring failed at size %d\n", size);
@@ -2075,7 +2075,7 @@ static int test_s_mp_div_recursive(void)
 
    DOR(mp_init_multi(&a, &b, &c_q, &c_r, &d_q, &d_r, NULL));
 
-   for (size = MP_KARATSUBA_MUL_CUTOFF; size < 3 * MP_KARATSUBA_MUL_CUTOFF; size += 10) {
+   for (size = MP_MUL_KARATSUBA_CUTOFF; size < 3 * MP_MUL_KARATSUBA_CUTOFF; size += 10) {
       printf("\rsizes = %d / %d", 10 * size, size);
       /* Relation 10:1 */
       DO(mp_rand(&a, 10 * size));
@@ -2139,7 +2139,7 @@ static int test_s_mp_div_small(void)
    int size;
 
    DOR(mp_init_multi(&a, &b, &c_q, &c_r, &d_q, &d_r, NULL));
-   for (size = 1; size < MP_KARATSUBA_MUL_CUTOFF; size += 10) {
+   for (size = 1; size < MP_MUL_KARATSUBA_CUTOFF; size += 10) {
       printf("\rsizes = %d / %d", 2 * size, size);
       /* Relation 10:1 */
       DO(mp_rand(&a, 2 * size));
@@ -2332,11 +2332,11 @@ static int unit_tests(int argc, char **argv)
       T1(mp_xor, MP_XOR),
       T2(s_mp_div_recursive, S_MP_DIV_RECURSIVE, S_MP_DIV_SCHOOL),
       T2(s_mp_div_small, S_MP_DIV_SMALL, S_MP_DIV_SCHOOL),
-      T1(s_mp_balance_mul, S_MP_BALANCE_MUL),
-      T1(s_mp_karatsuba_mul, S_MP_KARATSUBA_MUL),
-      T1(s_mp_karatsuba_sqr, S_MP_KARATSUBA_SQR),
-      T1(s_mp_toom_mul, S_MP_TOOM_MUL),
-      T1(s_mp_toom_sqr, S_MP_TOOM_SQR)
+      T1(s_mp_mul_balance, S_MP_BALANCE_MUL),
+      T1(s_mp_mul_karatsuba, S_MP_MUL_KARATSUBA),
+      T1(s_mp_sqr_karatsuba, S_MP_SQR_KARATSUBA),
+      T1(s_mp_mul_toom, S_MP_MUL_TOOM),
+      T1(s_mp_sqr_toom, S_MP_SQR_TOOM)
 #undef T2
 #undef T1
    };

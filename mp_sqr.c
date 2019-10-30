@@ -7,16 +7,16 @@
 mp_err mp_sqr(const mp_int *a, mp_int *b)
 {
    mp_err err;
-   if (MP_HAS(S_MP_TOOM_SQR) && /* use Toom-Cook? */
-       (a->used >= MP_TOOM_SQR_CUTOFF)) {
-      err = s_mp_toom_sqr(a, b);
-   } else if (MP_HAS(S_MP_KARATSUBA_SQR) &&  /* Karatsuba? */
-              (a->used >= MP_KARATSUBA_SQR_CUTOFF)) {
-      err = s_mp_karatsuba_sqr(a, b);
-   } else if (MP_HAS(S_MP_SQR_FAST) && /* can we use the fast comba multiplier? */
+   if (MP_HAS(S_MP_SQR_TOOM) && /* use Toom-Cook? */
+       (a->used >= MP_SQR_TOOM_CUTOFF)) {
+      err = s_mp_sqr_toom(a, b);
+   } else if (MP_HAS(S_MP_SQR_KARATSUBA) &&  /* Karatsuba? */
+              (a->used >= MP_SQR_KARATSUBA_CUTOFF)) {
+      err = s_mp_sqr_karatsuba(a, b);
+   } else if (MP_HAS(S_MP_SQR_COMBA) && /* can we use the fast comba multiplier? */
               (((a->used * 2) + 1) < MP_WARRAY) &&
               (a->used < (MP_MAXFAST / 2))) {
-      err = s_mp_sqr_fast(a, b);
+      err = s_mp_sqr_comba(a, b);
    } else if (MP_HAS(S_MP_SQR)) {
       err = s_mp_sqr(a, b);
    } else {

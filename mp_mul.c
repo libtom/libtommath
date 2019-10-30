@@ -14,24 +14,24 @@ mp_err mp_mul(const mp_int *a, const mp_int *b, mp_int *c)
 
    if (MP_HAS(S_MP_BALANCE_MUL) &&
        /* Check sizes. The smaller one needs to be larger than the Karatsuba cut-off.
-        * The bigger one needs to be at least about one MP_KARATSUBA_MUL_CUTOFF bigger
+        * The bigger one needs to be at least about one MP_MUL_KARATSUBA_CUTOFF bigger
         * to make some sense, but it depends on architecture, OS, position of the
         * stars... so YMMV.
-        * Using it to cut the input into slices small enough for s_mp_mul_digs_fast
+        * Using it to cut the input into slices small enough for s_mp_mul_comba
         * was actually slower on the author's machine, but YMMV.
         */
-       (min >= MP_KARATSUBA_MUL_CUTOFF) &&
-       ((max / 2) >= MP_KARATSUBA_MUL_CUTOFF) &&
+       (min >= MP_MUL_KARATSUBA_CUTOFF) &&
+       ((max / 2) >= MP_MUL_KARATSUBA_CUTOFF) &&
        /* Not much effect was observed below a ratio of 1:2, but again: YMMV. */
        (max >= (2 * min))) {
-      err = s_mp_balance_mul(a,b,c);
-   } else if (MP_HAS(S_MP_TOOM_MUL) &&
-              (min >= MP_TOOM_MUL_CUTOFF)) {
-      err = s_mp_toom_mul(a, b, c);
-   } else if (MP_HAS(S_MP_KARATSUBA_MUL) &&
-              (min >= MP_KARATSUBA_MUL_CUTOFF)) {
-      err = s_mp_karatsuba_mul(a, b, c);
-   } else if (MP_HAS(S_MP_MUL_DIGS_FAST) &&
+      err = s_mp_mul_balance(a,b,c);
+   } else if (MP_HAS(S_MP_MUL_TOOM) &&
+              (min >= MP_MUL_TOOM_CUTOFF)) {
+      err = s_mp_mul_toom(a, b, c);
+   } else if (MP_HAS(S_MP_MUL_KARATSUBA) &&
+              (min >= MP_MUL_KARATSUBA_CUTOFF)) {
+      err = s_mp_mul_karatsuba(a, b, c);
+   } else if (MP_HAS(S_MP_MUL_COMBA) &&
               /* can we use the fast multiplier?
                *
                * The fast multiplier can be used if the output will
@@ -40,9 +40,9 @@ mp_err mp_mul(const mp_int *a, const mp_int *b, mp_int *c)
                */
               (digs < MP_WARRAY) &&
               (min <= MP_MAXFAST)) {
-      err = s_mp_mul_digs_fast(a, b, c, digs);
-   } else if (MP_HAS(S_MP_MUL_DIGS)) {
-      err = s_mp_mul_digs(a, b, c, digs);
+      err = s_mp_mul_comba(a, b, c, digs);
+   } else if (MP_HAS(S_MP_MUL)) {
+      err = s_mp_mul(a, b, c, digs);
    } else {
       err = MP_VAL;
    }
