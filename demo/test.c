@@ -1138,7 +1138,7 @@ static int test_mp_read_radix(void)
 
    DO(mp_read_radix(&a, "123456", 10));
 
-   DO(mp_to_radix(&a, buf, SIZE_MAX, &written, 10));
+   DO(mp_to_radix(&a, buf, sizeof(buf), &written, 10));
    printf(" '123456' a == %s, length = %zu", buf, written);
 
    /* See comment in mp_to_radix.c */
@@ -1153,11 +1153,11 @@ static int test_mp_read_radix(void)
              buf, written, mp_error_to_string(err));
    */
    DO(mp_read_radix(&a, "-123456", 10));
-   DO(mp_to_radix(&a, buf, SIZE_MAX, &written, 10));
+   DO(mp_to_radix(&a, buf, sizeof(buf), &written, 10));
    printf("\r '-123456' a == %s, length = %zu", buf, written);
 
    DO(mp_read_radix(&a, "0", 10));
-   DO(mp_to_radix(&a, buf, SIZE_MAX, &written, 10));
+   DO(mp_to_radix(&a, buf, sizeof(buf), &written, 10));
    printf("\r '0' a == %s, length = %zu", buf, written);
 
    while (0) {
@@ -1335,7 +1335,7 @@ static int test_mp_reduce_2k_l(void)
    mp_int a, b, c, d;
    int cnt;
    char buf[4096];
-   size_t length[1];
+   size_t length;
    DOR(mp_init_multi(&a, &b, NULL));
    /* test the mp_reduce_2k_l code */
 #      if LTM_DEMO_TEST_REDUCE_2K_L == 1
@@ -1353,9 +1353,8 @@ static int test_mp_reduce_2k_l(void)
 #      else
 #         error oops
 #      endif
-   *length = sizeof(buf);
-   DO(mp_to_radix(&a, buf, length, 10));
-   printf("\n\np==%s, length = %zu\n", buf, *length);
+   DO(mp_to_radix(&a, buf, sizeof(buf), &length, 10));
+   printf("\n\np==%s, length = %zu\n", buf, length);
    /* now mp_reduce_is_2k_l() should return */
    if (mp_reduce_is_2k_l(&a) != 1) {
       printf("mp_reduce_is_2k_l() return 0, should be 1\n");

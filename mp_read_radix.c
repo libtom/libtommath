@@ -33,8 +33,8 @@ mp_err mp_read_radix(mp_int *a, const char *str, int radix)
        */
       uint8_t y;
       char ch = (radix <= 36) ? (char)MP_TOUPPER((int)*str) : *str;
-      unsigned pos = (unsigned)(ch - '(');
-      if (MP_RMAP_REVERSE_SIZE < pos) {
+      unsigned pos = (unsigned)(ch - '+');
+      if (MP_RMAP_REVERSE_SIZE <= pos) {
          break;
       }
       y = s_mp_rmap_reverse[pos];
@@ -43,7 +43,7 @@ mp_err mp_read_radix(mp_int *a, const char *str, int radix)
        * and is less than the given radix add it
        * to the number, otherwise exit the loop.
        */
-      if ((y == 0xff) || (y >= radix)) {
+      if (y >= radix) {
          break;
       }
       if ((err = mp_mul_d(a, (mp_digit)radix, a)) != MP_OKAY) {
