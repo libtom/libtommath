@@ -15,19 +15,12 @@ After that loop you do the squares and add them in.
 
 mp_err s_mp_sqr_comba(const mp_int *a, mp_int *b)
 {
-   int       oldused, pa, ix;
+   int       ix, pa = a->used, pb = 2 * pa;
    mp_word   W1;
-   mp_err err;
-
-   /* grow the destination as required */
-   pa = a->used + a->used;
-   if ((err = mp_grow(b, pa)) != MP_OKAY) {
-      return err;
-   }
 
    /* number of output digits to produce */
    W1 = 0;
-   for (ix = 0; ix < pa; ix++) {
+   for (ix = 0; ix < pb; ix++) {
       int      tx, ty, iy, iz;
       mp_word  W;
 
@@ -35,13 +28,13 @@ mp_err s_mp_sqr_comba(const mp_int *a, mp_int *b)
       W = 0;
 
       /* get offsets into the two bignums */
-      ty = MP_MIN(a->used-1, ix);
+      ty = MP_MIN(pa-1, ix);
       tx = ix - ty;
 
       /* this is the number of times the loop will iterrate, essentially
-         while (tx++ < a->used && ty-- >= 0) { ... }
+         while (tx++ < pa && ty-- >= 0) { ... }
        */
-      iy = MP_MIN(a->used-tx, ty+1);
+      iy = MP_MIN(pa-tx, ty+1);
 
       /* now for squaring tx can never equal ty
        * we halve the distance since they approach at a rate of 2x
@@ -69,11 +62,7 @@ mp_err s_mp_sqr_comba(const mp_int *a, mp_int *b)
       W1 = W >> (mp_word)MP_DIGIT_BIT;
    }
 
-   /* clear unused digits [that existed in the old copy of c] */
-   oldused = b->used;
-   b->used = a->used + a->used;
-   s_mp_zero_digs(b->dp + b->used, oldused - b->used);
-
+   b->used = pb;
    mp_clamp(b);
    return MP_OKAY;
 }

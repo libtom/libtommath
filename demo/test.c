@@ -1,6 +1,31 @@
 #include <inttypes.h>
 #include "shared.h"
 
+static mp_err mp_sqr_simple(const mp_int *a, mp_int *b)
+{
+   mp_err err;
+   if (b->dp == a->dp) {
+      mp_int t;
+      if ((err = mp_init_size(&t, (2 * a->used) + 1)) != MP_OKAY) {
+         return err;
+      }
+      if ((err = s_mp_sqr(a, &t)) != MP_OKAY) {
+         mp_clear(&t);
+         return err;
+      }
+      mp_exch(b, &t);
+      mp_clear(&t);
+   } else {
+      if ((err = mp_grow(b, (2 * a->used) + 1)) != MP_OKAY) {
+         return err;
+      }
+      mp_zero(b);
+      err = s_mp_sqr(a, b);
+   }
+   b->sign = MP_ZPOS;
+   return err;
+}
+
 static long rand_long(void)
 {
    long x;
@@ -1930,7 +1955,7 @@ static int test_s_mp_sqr_karatsuba(void)
    for (size = MP_SQR_KARATSUBA_CUTOFF; size < MP_SQR_KARATSUBA_CUTOFF + 20; size++) {
       DO(mp_rand(&a, size));
       DO(s_mp_sqr_karatsuba(&a, &b));
-      DO(s_mp_sqr(&a, &c));
+      DO(mp_sqr_simple(&a, &c));
       if (mp_cmp(&b, &c) != MP_EQ) {
          fprintf(stderr, "Karatsuba squaring failed at size %d\n", size);
          goto LBL_ERR;
@@ -2003,7 +2028,7 @@ static int test_s_mp_sqr_toom(void)
    for (size = MP_SQR_TOOM_CUTOFF; size < MP_SQR_TOOM_CUTOFF + 20; size++) {
       DO(mp_rand(&a, size));
       DO(s_mp_sqr_toom(&a, &b));
-      DO(s_mp_sqr(&a, &c));
+      DO(mp_sqr_simple(&a, &c));
       if (mp_cmp(&b, &c) != MP_EQ) {
          fprintf(stderr, "Toom-Cook 3-way squaring failed at size %d\n", size);
          goto LBL_ERR;

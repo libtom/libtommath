@@ -889,9 +889,14 @@
 #endif
 
 #if defined(MP_SQR_C)
+#   define MP_CLEAR_C
+#   define MP_EXCH_C
+#   define MP_GROW_C
+#   define MP_INIT_SIZE_C
 #   define S_MP_SQR_C
 #   define S_MP_SQR_COMBA_C
 #   define S_MP_SQR_KARATSUBA_C
+#   define S_MP_SQR_NOALIAS_C
 #   define S_MP_SQR_TOOM_C
 #endif
 
@@ -1222,14 +1227,10 @@
 
 #if defined(S_MP_SQR_C)
 #   define MP_CLAMP_C
-#   define MP_CLEAR_C
-#   define MP_EXCH_C
-#   define MP_INIT_SIZE_C
 #endif
 
 #if defined(S_MP_SQR_COMBA_C)
 #   define MP_CLAMP_C
-#   define MP_GROW_C
 #   define S_MP_ZERO_DIGS_C
 #endif
 
