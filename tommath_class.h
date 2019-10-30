@@ -140,7 +140,6 @@
 #   define MP_XOR_C
 #   define MP_ZERO_C
 #   define S_MP_ADD_C
-#   define S_MP_BALANCE_MUL_C
 #   define S_MP_COPY_DIGS_C
 #   define S_MP_DIV_RECURSIVE_C
 #   define S_MP_DIV_SCHOOL_C
@@ -148,26 +147,27 @@
 #   define S_MP_EXPTMOD_C
 #   define S_MP_EXPTMOD_FAST_C
 #   define S_MP_GET_BIT_C
-#   define S_MP_INVMOD_FAST_C
-#   define S_MP_INVMOD_SLOW_C
-#   define S_MP_KARATSUBA_MUL_C
-#   define S_MP_KARATSUBA_SQR_C
+#   define S_MP_INVMOD_C
+#   define S_MP_INVMOD_ODD_C
 #   define S_MP_LOG_C
 #   define S_MP_LOG_D_C
 #   define S_MP_LOG_POW2_C
-#   define S_MP_MONTGOMERY_REDUCE_FAST_C
-#   define S_MP_MUL_DIGS_C
-#   define S_MP_MUL_DIGS_FAST_C
-#   define S_MP_MUL_HIGH_DIGS_C
-#   define S_MP_MUL_HIGH_DIGS_FAST_C
+#   define S_MP_MONTGOMERY_REDUCE_COMBA_C
+#   define S_MP_MUL_C
+#   define S_MP_MUL_BALANCE_C
+#   define S_MP_MUL_COMBA_C
+#   define S_MP_MUL_HIGH_C
+#   define S_MP_MUL_HIGH_COMBA_C
+#   define S_MP_MUL_KARATSUBA_C
+#   define S_MP_MUL_TOOM_C
 #   define S_MP_PRIME_IS_DIVISIBLE_C
 #   define S_MP_RAND_JENKINS_C
 #   define S_MP_RAND_PLATFORM_C
 #   define S_MP_SQR_C
-#   define S_MP_SQR_FAST_C
+#   define S_MP_SQR_COMBA_C
+#   define S_MP_SQR_KARATSUBA_C
+#   define S_MP_SQR_TOOM_C
 #   define S_MP_SUB_C
-#   define S_MP_TOOM_MUL_C
-#   define S_MP_TOOM_SQR_C
 #   define S_MP_ZERO_BUF_C
 #   define S_MP_ZERO_DIGS_C
 #endif
@@ -472,8 +472,8 @@
 
 #if defined(MP_INVMOD_C)
 #   define MP_CMP_D_C
-#   define S_MP_INVMOD_FAST_C
-#   define S_MP_INVMOD_SLOW_C
+#   define S_MP_INVMOD_C
+#   define S_MP_INVMOD_ODD_C
 #endif
 
 #if defined(MP_IS_SQUARE_C)
@@ -547,7 +547,7 @@
 #   define MP_CMP_MAG_C
 #   define MP_GROW_C
 #   define MP_RSHD_C
-#   define S_MP_MONTGOMERY_REDUCE_FAST_C
+#   define S_MP_MONTGOMERY_REDUCE_COMBA_C
 #   define S_MP_SUB_C
 #endif
 
@@ -555,11 +555,11 @@
 #endif
 
 #if defined(MP_MUL_C)
-#   define S_MP_BALANCE_MUL_C
-#   define S_MP_KARATSUBA_MUL_C
-#   define S_MP_MUL_DIGS_C
-#   define S_MP_MUL_DIGS_FAST_C
-#   define S_MP_TOOM_MUL_C
+#   define S_MP_MUL_BALANCE_C
+#   define S_MP_MUL_C
+#   define S_MP_MUL_COMBA_C
+#   define S_MP_MUL_KARATSUBA_C
+#   define S_MP_MUL_TOOM_C
 #endif
 
 #if defined(MP_MUL_2_C)
@@ -754,9 +754,9 @@
 #   define MP_RSHD_C
 #   define MP_SET_C
 #   define MP_SUB_C
-#   define S_MP_MUL_DIGS_C
-#   define S_MP_MUL_HIGH_DIGS_C
-#   define S_MP_MUL_HIGH_DIGS_FAST_C
+#   define S_MP_MUL_C
+#   define S_MP_MUL_HIGH_C
+#   define S_MP_MUL_HIGH_COMBA_C
 #   define S_MP_SUB_C
 #endif
 
@@ -889,10 +889,10 @@
 #endif
 
 #if defined(MP_SQR_C)
-#   define S_MP_KARATSUBA_SQR_C
 #   define S_MP_SQR_C
-#   define S_MP_SQR_FAST_C
-#   define S_MP_TOOM_SQR_C
+#   define S_MP_SQR_COMBA_C
+#   define S_MP_SQR_KARATSUBA_C
+#   define S_MP_SQR_TOOM_C
 #endif
 
 #if defined(MP_SQRMOD_C)
@@ -995,19 +995,6 @@
 #   define S_MP_ZERO_DIGS_C
 #endif
 
-#if defined(S_MP_BALANCE_MUL_C)
-#   define MP_ADD_C
-#   define MP_CLAMP_C
-#   define MP_CLEAR_C
-#   define MP_CLEAR_MULTI_C
-#   define MP_EXCH_C
-#   define MP_INIT_MULTI_C
-#   define MP_INIT_SIZE_C
-#   define MP_LSHD_C
-#   define MP_MUL_C
-#   define S_MP_COPY_DIGS_C
-#endif
-
 #if defined(S_MP_COPY_DIGS_C)
 #endif
 
@@ -1098,13 +1085,13 @@
 #   define MP_REDUCE_2K_SETUP_C
 #   define MP_SET_C
 #   define MP_SQR_C
-#   define S_MP_MONTGOMERY_REDUCE_FAST_C
+#   define S_MP_MONTGOMERY_REDUCE_COMBA_C
 #endif
 
 #if defined(S_MP_GET_BIT_C)
 #endif
 
-#if defined(S_MP_INVMOD_FAST_C)
+#if defined(S_MP_INVMOD_C)
 #   define MP_ADD_C
 #   define MP_CLEAR_MULTI_C
 #   define MP_CMP_C
@@ -1119,7 +1106,7 @@
 #   define MP_SUB_C
 #endif
 
-#if defined(S_MP_INVMOD_SLOW_C)
+#if defined(S_MP_INVMOD_ODD_C)
 #   define MP_ADD_C
 #   define MP_CLEAR_MULTI_C
 #   define MP_CMP_C
@@ -1132,30 +1119,6 @@
 #   define MP_MOD_C
 #   define MP_SET_C
 #   define MP_SUB_C
-#endif
-
-#if defined(S_MP_KARATSUBA_MUL_C)
-#   define MP_ADD_C
-#   define MP_CLAMP_C
-#   define MP_CLEAR_C
-#   define MP_INIT_SIZE_C
-#   define MP_LSHD_C
-#   define MP_MUL_C
-#   define S_MP_ADD_C
-#   define S_MP_COPY_DIGS_C
-#   define S_MP_SUB_C
-#endif
-
-#if defined(S_MP_KARATSUBA_SQR_C)
-#   define MP_ADD_C
-#   define MP_CLAMP_C
-#   define MP_CLEAR_C
-#   define MP_INIT_SIZE_C
-#   define MP_LSHD_C
-#   define MP_SQR_C
-#   define S_MP_ADD_C
-#   define S_MP_COPY_DIGS_C
-#   define S_MP_SUB_C
 #endif
 
 #if defined(S_MP_LOG_C)
@@ -1178,7 +1141,7 @@
 #   define MP_COUNT_BITS_C
 #endif
 
-#if defined(S_MP_MONTGOMERY_REDUCE_FAST_C)
+#if defined(S_MP_MONTGOMERY_REDUCE_COMBA_C)
 #   define MP_CLAMP_C
 #   define MP_CMP_MAG_C
 #   define MP_GROW_C
@@ -1187,32 +1150,63 @@
 #   define S_MP_ZERO_DIGS_C
 #endif
 
-#if defined(S_MP_MUL_DIGS_C)
+#if defined(S_MP_MUL_C)
 #   define MP_CLAMP_C
 #   define MP_CLEAR_C
 #   define MP_EXCH_C
 #   define MP_INIT_SIZE_C
-#   define S_MP_MUL_DIGS_FAST_C
+#   define S_MP_MUL_COMBA_C
 #endif
 
-#if defined(S_MP_MUL_DIGS_FAST_C)
+#if defined(S_MP_MUL_BALANCE_C)
+#endif
+
+#if defined(S_MP_MUL_COMBA_C)
 #   define MP_CLAMP_C
 #   define MP_GROW_C
 #   define S_MP_ZERO_DIGS_C
 #endif
 
-#if defined(S_MP_MUL_HIGH_DIGS_C)
+#if defined(S_MP_MUL_HIGH_C)
 #   define MP_CLAMP_C
 #   define MP_CLEAR_C
 #   define MP_EXCH_C
 #   define MP_INIT_SIZE_C
-#   define S_MP_MUL_HIGH_DIGS_FAST_C
+#   define S_MP_MUL_HIGH_COMBA_C
 #endif
 
-#if defined(S_MP_MUL_HIGH_DIGS_FAST_C)
+#if defined(S_MP_MUL_HIGH_COMBA_C)
 #   define MP_CLAMP_C
 #   define MP_GROW_C
 #   define S_MP_ZERO_DIGS_C
+#endif
+
+#if defined(S_MP_MUL_KARATSUBA_C)
+#   define MP_ADD_C
+#   define MP_CLAMP_C
+#   define MP_CLEAR_C
+#   define MP_INIT_SIZE_C
+#   define MP_LSHD_C
+#   define MP_MUL_C
+#   define S_MP_ADD_C
+#   define S_MP_COPY_DIGS_C
+#   define S_MP_SUB_C
+#endif
+
+#if defined(S_MP_MUL_TOOM_C)
+#   define MP_ADD_C
+#   define MP_CLAMP_C
+#   define MP_CLEAR_C
+#   define MP_CLEAR_MULTI_C
+#   define MP_DIV_2_C
+#   define MP_DIV_3_C
+#   define MP_INIT_MULTI_C
+#   define MP_INIT_SIZE_C
+#   define MP_LSHD_C
+#   define MP_MUL_2_C
+#   define MP_MUL_C
+#   define MP_SUB_C
+#   define S_MP_COPY_DIGS_C
 #endif
 
 #if defined(S_MP_PRIME_IS_DIVISIBLE_C)
@@ -1233,35 +1227,25 @@
 #   define MP_INIT_SIZE_C
 #endif
 
-#if defined(S_MP_SQR_FAST_C)
+#if defined(S_MP_SQR_COMBA_C)
 #   define MP_CLAMP_C
 #   define MP_GROW_C
 #   define S_MP_ZERO_DIGS_C
 #endif
 
-#if defined(S_MP_SUB_C)
-#   define MP_CLAMP_C
-#   define MP_GROW_C
-#   define S_MP_ZERO_DIGS_C
-#endif
-
-#if defined(S_MP_TOOM_MUL_C)
+#if defined(S_MP_SQR_KARATSUBA_C)
 #   define MP_ADD_C
 #   define MP_CLAMP_C
 #   define MP_CLEAR_C
-#   define MP_CLEAR_MULTI_C
-#   define MP_DIV_2_C
-#   define MP_DIV_3_C
-#   define MP_INIT_MULTI_C
 #   define MP_INIT_SIZE_C
 #   define MP_LSHD_C
-#   define MP_MUL_2_C
-#   define MP_MUL_C
-#   define MP_SUB_C
+#   define MP_SQR_C
+#   define S_MP_ADD_C
 #   define S_MP_COPY_DIGS_C
+#   define S_MP_SUB_C
 #endif
 
-#if defined(S_MP_TOOM_SQR_C)
+#if defined(S_MP_SQR_TOOM_C)
 #   define MP_ADD_C
 #   define MP_CLAMP_C
 #   define MP_CLEAR_C
@@ -1274,6 +1258,12 @@
 #   define MP_SQR_C
 #   define MP_SUB_C
 #   define S_MP_COPY_DIGS_C
+#endif
+
+#if defined(S_MP_SUB_C)
+#   define MP_CLAMP_C
+#   define MP_GROW_C
+#   define S_MP_ZERO_DIGS_C
 #endif
 
 #if defined(S_MP_ZERO_BUF_C)

@@ -829,10 +829,6 @@
 			>
 		</File>
 		<File
-			RelativePath="s_mp_balance_mul.c"
-			>
-		</File>
-		<File
 			RelativePath="s_mp_copy_digs.c"
 			>
 		</File>
@@ -861,19 +857,11 @@
 			>
 		</File>
 		<File
-			RelativePath="s_mp_invmod_fast.c"
+			RelativePath="s_mp_invmod.c"
 			>
 		</File>
 		<File
-			RelativePath="s_mp_invmod_slow.c"
-			>
-		</File>
-		<File
-			RelativePath="s_mp_karatsuba_mul.c"
-			>
-		</File>
-		<File
-			RelativePath="s_mp_karatsuba_sqr.c"
+			RelativePath="s_mp_invmod_odd.c"
 			>
 		</File>
 		<File
@@ -889,23 +877,35 @@
 			>
 		</File>
 		<File
-			RelativePath="s_mp_montgomery_reduce_fast.c"
+			RelativePath="s_mp_montgomery_reduce_comba.c"
 			>
 		</File>
 		<File
-			RelativePath="s_mp_mul_digs.c"
+			RelativePath="s_mp_mul.c"
 			>
 		</File>
 		<File
-			RelativePath="s_mp_mul_digs_fast.c"
+			RelativePath="s_mp_mul_balance.c"
 			>
 		</File>
 		<File
-			RelativePath="s_mp_mul_high_digs.c"
+			RelativePath="s_mp_mul_comba.c"
 			>
 		</File>
 		<File
-			RelativePath="s_mp_mul_high_digs_fast.c"
+			RelativePath="s_mp_mul_high.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_mul_high_comba.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_mul_karatsuba.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_mul_toom.c"
 			>
 		</File>
 		<File
@@ -925,19 +925,19 @@
 			>
 		</File>
 		<File
-			RelativePath="s_mp_sqr_fast.c"
+			RelativePath="s_mp_sqr_comba.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_sqr_karatsuba.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_sqr_toom.c"
 			>
 		</File>
 		<File
 			RelativePath="s_mp_sub.c"
-			>
-		</File>
-		<File
-			RelativePath="s_mp_toom_mul.c"
-			>
-		</File>
-		<File
-			RelativePath="s_mp_toom_sqr.c"
 			>
 		</File>
 		<File
