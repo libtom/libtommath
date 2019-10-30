@@ -32,14 +32,13 @@ mp_err mp_mul(const mp_int *a, const mp_int *b, mp_int *c)
               (min >= MP_MUL_KARATSUBA_CUTOFF)) {
       err = s_mp_mul_karatsuba(a, b, c);
    } else if (MP_HAS(S_MP_MUL_COMBA) &&
+              (a->dp != c->dp) && (b->dp != c->dp) &&
               /* can we use the fast multiplier?
                *
-               * The fast multiplier can be used if the output will
-               * have less than MP_WARRAY digits and the number of
+               * The fast multiplier can be used if the number of
                * digits won't affect carry propagation
                */
-              (digs < MP_WARRAY) &&
-              (min <= MP_MAXFAST)) {
+              (min <= MP_MAX_COMBA)) {
       err = s_mp_mul_comba(a, b, c, digs);
    } else if (MP_HAS(S_MP_MUL)) {
       err = s_mp_mul(a, b, c, digs);

@@ -14,8 +14,8 @@ mp_err s_mp_mul(const mp_int *a, const mp_int *b, mp_int *c, int digs)
    int     pa, ix;
 
    /* can we use the fast multiplier? */
-   if ((digs < MP_WARRAY) &&
-       (MP_MIN(a->used, b->used) < MP_MAXFAST)) {
+   if ((a->dp != c->dp) && (b->dp != c->dp) &&
+       (MP_MIN(a->used, b->used) < MP_MAX_COMBA)) {
       return s_mp_mul_comba(a, b, c, digs);
    }
 

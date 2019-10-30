@@ -18,7 +18,7 @@ mp_err mp_montgomery_reduce(mp_int *x, const mp_int *n, mp_digit rho)
    digs = (n->used * 2) + 1;
    if ((digs < MP_WARRAY) &&
        (x->used <= MP_WARRAY) &&
-       (n->used < MP_MAXFAST)) {
+       (n->used < MP_MAX_COMBA)) {
       return s_mp_montgomery_reduce_comba(x, n, rho);
    }
 

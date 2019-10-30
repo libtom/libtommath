@@ -124,7 +124,7 @@ extern void MP_FREE(void *mem, size_t size);
 #define MP_STATIC_ASSERT(msg, cond) typedef char mp_static_assert_##msg[(cond) ? 1 : -1];
 
 #define MP_SIZEOF_BITS(type)    ((size_t)CHAR_BIT * sizeof(type))
-#define MP_MAXFAST              (int)(1uL << (MP_SIZEOF_BITS(mp_word) - (2u * (size_t)MP_DIGIT_BIT)))
+#define MP_MAX_COMBA              (int)(1uL << (MP_SIZEOF_BITS(mp_word) - (2u * (size_t)MP_DIGIT_BIT)))
 
 #define MP_WARRAY               (int)(1uL << ((MP_SIZEOF_BITS(mp_word) - (2u * (size_t)MP_DIGIT_BIT)) + 1u))
 
