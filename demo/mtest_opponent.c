@@ -304,7 +304,7 @@ static int mtest_opponent(void)
          DO(mp_read_radix(&c, buf, 64));
          DO(mp_invmod(&a, &b, &d));
          DO(mp_mulmod(&d, &a, &b, &e));
-         if (mp_cmp_d(&e, 1uL) != MP_EQ) {
+         if (mp_cmp_d(&e, 1u) != MP_EQ) {
             printf("inv [wrong value from MPI?!] failure\n");
             draw(&a);
             draw(&b);
