@@ -43,12 +43,12 @@ static int64_t rand_int64(void)
 
 static uint32_t uabs32(int32_t x)
 {
-   return x > 0 ? (uint32_t)x : -(uint32_t)x;
+   return (x > 0) ? (uint32_t)x : -(uint32_t)x;
 }
 
 static uint64_t uabs64(int64_t x)
 {
-   return x > 0 ? (uint64_t)x : -(uint64_t)x;
+   return (x > 0) ? (uint64_t)x : -(uint64_t)x;
 }
 
 /* This function prototype is needed
@@ -292,7 +292,7 @@ static int test_mp_rand(void)
 LBL_ERR:
    mp_rand_source(s_mp_rand_jenkins);
    mp_clear_multi(&a, &b, NULL);
-   return e == MP_OKAY ? EXIT_SUCCESS : EXIT_FAILURE;
+   return (e == MP_OKAY) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
 static int test_mp_kronecker(void)
@@ -1092,7 +1092,7 @@ static int test_mp_montgomery_reduce(void)
 
          /* now test a random reduction */
          for (ix = 0; ix < 100; ix++) {
-            DO(mp_rand(&c, 1 + abs(rand_int()) % (2*i)));
+            DO(mp_rand(&c, 1 + (abs(rand_int()) % (2*i))));
             DO(mp_copy(&c, &d));
             DO(mp_copy(&c, &e));
 
@@ -1223,7 +1223,7 @@ static int test_mp_reduce_2k(void)
             printf(".");
             fflush(stdout);
          }
-         DO(mp_rand(&b, (cnt / MP_DIGIT_BIT + 1) * 2));
+         DO(mp_rand(&b, ((cnt / MP_DIGIT_BIT) + 1) * 2));
          DO(mp_copy(&c, &b));
          DO(mp_mod(&c, &a, &c));
          DO(mp_reduce_2k(&b, &a, 2u));
@@ -1257,7 +1257,7 @@ static int test_mp_div_3(void)
          printf("\r %9d", cnt);
          fflush(stdout);
       }
-      DO(mp_rand(&a, abs(rand_int()) % 128 + 1));
+      DO(mp_rand(&a, (abs(rand_int()) % 128) + 1));
       DO(mp_div(&a, &d, &b, &e));
       DO(mp_div_3(&a, &c, &r2));
 
@@ -1903,7 +1903,7 @@ static int test_s_mp_mul_karatsuba(void)
    int size;
 
    DOR(mp_init_multi(&a, &b, &c, &d, NULL));
-   for (size = MP_MUL_KARATSUBA_CUTOFF; size < MP_MUL_KARATSUBA_CUTOFF + 20; size++) {
+   for (size = MP_MUL_KARATSUBA_CUTOFF; size < (MP_MUL_KARATSUBA_CUTOFF + 20); size++) {
       DO(mp_rand(&a, size));
       DO(mp_rand(&b, size));
       DO(s_mp_mul_karatsuba(&a, &b, &c));
@@ -1927,7 +1927,7 @@ static int test_s_mp_sqr_karatsuba(void)
    int size;
 
    DOR(mp_init_multi(&a, &b, &c, NULL));
-   for (size = MP_SQR_KARATSUBA_CUTOFF; size < MP_SQR_KARATSUBA_CUTOFF + 20; size++) {
+   for (size = MP_SQR_KARATSUBA_CUTOFF; size < (MP_SQR_KARATSUBA_CUTOFF + 20); size++) {
       DO(mp_rand(&a, size));
       DO(s_mp_sqr_karatsuba(&a, &b));
       DO(s_mp_sqr(&a, &c));
@@ -1976,7 +1976,7 @@ static int test_s_mp_mul_toom(void)
    }
 #endif
 
-   for (size = MP_MUL_TOOM_CUTOFF; size < MP_MUL_TOOM_CUTOFF + 20; size++) {
+   for (size = MP_MUL_TOOM_CUTOFF; size < (MP_MUL_TOOM_CUTOFF + 20); size++) {
       DO(mp_rand(&a, size));
       DO(mp_rand(&b, size));
       DO(s_mp_mul_toom(&a, &b, &c));
@@ -2000,7 +2000,7 @@ static int test_s_mp_sqr_toom(void)
    int size;
 
    DOR(mp_init_multi(&a, &b, &c, NULL));
-   for (size = MP_SQR_TOOM_CUTOFF; size < MP_SQR_TOOM_CUTOFF + 20; size++) {
+   for (size = MP_SQR_TOOM_CUTOFF; size < (MP_SQR_TOOM_CUTOFF + 20); size++) {
       DO(mp_rand(&a, size));
       DO(s_mp_sqr_toom(&a, &b));
       DO(s_mp_sqr(&a, &c));
@@ -2075,7 +2075,7 @@ static int test_s_mp_div_recursive(void)
 
    DOR(mp_init_multi(&a, &b, &c_q, &c_r, &d_q, &d_r, NULL));
 
-   for (size = MP_MUL_KARATSUBA_CUTOFF; size < 3 * MP_MUL_KARATSUBA_CUTOFF; size += 10) {
+   for (size = MP_MUL_KARATSUBA_CUTOFF; size < (3 * MP_MUL_KARATSUBA_CUTOFF); size += 10) {
       printf("\rsizes = %d / %d", 10 * size, size);
       /* Relation 10:1 */
       DO(mp_rand(&a, 10 * size));
@@ -2289,7 +2289,7 @@ static int unit_tests(int argc, char **argv)
    } test[] = {
 #define T0(n)           { #n, test_##n }
 #define T1(n, o)        { #n, MP_HAS(o) ? test_##n : NULL }
-#define T2(n, o1, o2)   { #n, MP_HAS(o1) && MP_HAS(o2) ? test_##n : NULL }
+#define T2(n, o1, o2)   { #n, (MP_HAS(o1) && MP_HAS(o2)) ? test_##n : NULL }
       T0(feature_detection),
       T0(trivial_stuff),
       T2(mp_get_set_i32, MP_GET_I32, MP_GET_MAG_U32),
@@ -2351,7 +2351,7 @@ static int unit_tests(int argc, char **argv)
    s_mp_rand_jenkins_init(t);
    mp_rand_source(s_mp_rand_jenkins);
 
-   for (i = 0; i < sizeof(test) / sizeof(test[0]); ++i) {
+   for (i = 0; i < (sizeof(test) / sizeof(test[0])); ++i) {
       if (argc > 1) {
          for (j = 1; j < argc; ++j) {
             if (strstr(test[i].name, argv[j]) != NULL) {
