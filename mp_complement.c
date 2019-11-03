@@ -6,7 +6,8 @@
 /* b = ~a */
 mp_err mp_complement(const mp_int *a, mp_int *b)
 {
-   mp_err err = mp_neg(a, b);
-   return (err == MP_OKAY) ? mp_sub_d(b, 1uL, b) : err;
+   mp_int a_ = *a;
+   a_.sign = ((a_.sign == MP_ZPOS) && !mp_iszero(a)) ? MP_NEG : MP_ZPOS;
+   return mp_sub_d(&a_, 1uL, b);
 }
 #endif
