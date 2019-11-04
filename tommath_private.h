@@ -177,9 +177,11 @@ MP_STATIC_ASSERT(correct_word_size, sizeof(mp_word) == (2u * sizeof(mp_digit)))
 #   endif
 #endif
 
-/* Minimum number of available digits in mp_int, MP_PREC >= MP_MIN_PREC */
-#define MP_MIN_PREC ((((int)MP_SIZEOF_BITS(long long) + MP_DIGIT_BIT) - 1) / MP_DIGIT_BIT)
-
+/* Minimum number of available digits in mp_int, MP_PREC >= MP_MIN_PREC
+ * - Must be at least 3 for s_mp_div_school.
+ * - Must be large enough such that uint64_t can be stored in mp_int without growing
+ */
+#define MP_MIN_PREC MP_MAX(3, (((int)MP_SIZEOF_BITS(long long) + MP_DIGIT_BIT) - 1) / MP_DIGIT_BIT)
 MP_STATIC_ASSERT(prec_geq_min_prec, MP_PREC >= MP_MIN_PREC)
 
 /* random number source */
