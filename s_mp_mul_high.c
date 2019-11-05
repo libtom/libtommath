@@ -15,7 +15,7 @@ mp_err s_mp_mul_high(const mp_int *a, const mp_int *b, mp_int *c, int digs)
    /* can we use the fast multiplier? */
    if (MP_HAS(S_MP_MUL_HIGH_COMBA)
        && ((a->used + b->used + 1) < MP_WARRAY)
-       && (MP_MIN(a->used, b->used) < MP_MAXFAST)) {
+       && (MP_MIN(a->used, b->used) < MP_MAX_COMBA)) {
       return s_mp_mul_high_comba(a, b, c, digs);
    }
 

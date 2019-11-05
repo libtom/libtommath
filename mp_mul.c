@@ -39,7 +39,7 @@ mp_err mp_mul(const mp_int *a, const mp_int *b, mp_int *c)
                * digits won't affect carry propagation
                */
               (digs < MP_WARRAY) &&
-              (min <= MP_MAXFAST)) {
+              (min <= MP_MAX_COMBA)) {
       err = s_mp_mul_comba(a, b, c, digs);
    } else if (MP_HAS(S_MP_MUL)) {
       err = s_mp_mul(a, b, c, digs);
