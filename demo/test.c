@@ -43,12 +43,12 @@ static int64_t rand_int64(void)
 
 static uint32_t uabs32(int32_t x)
 {
-   return x > 0 ? (uint32_t)x : -(uint32_t)x;
+   return (x > 0) ? (uint32_t)x : -(uint32_t)x;
 }
 
 static uint64_t uabs64(int64_t x)
 {
-   return x > 0 ? (uint64_t)x : -(uint64_t)x;
+   return (x > 0) ? (uint64_t)x : -(uint64_t)x;
 }
 
 /* This function prototype is needed
@@ -115,20 +115,20 @@ static int test_trivial_stuff(void)
    DO(mp_abs(&a, &b));
    EXPECT(!mp_isneg(&b));
    /* a: -5-> b: -4 */
-   DO(mp_add_d(&a, 1uL, &b));
+   DO(mp_add_d(&a, 1u, &b));
    EXPECT(mp_isneg(&b));
    EXPECT(mp_get_i32(&b) == -4);
    EXPECT(mp_get_u32(&b) == (uint32_t)-4);
    EXPECT(mp_get_mag_u32(&b) == 4);
    /* a: -5-> b: 1 */
-   DO(mp_add_d(&a, 6uL, &b));
+   DO(mp_add_d(&a, 6u, &b));
    EXPECT(mp_get_u32(&b) == 1);
    /* a: -5-> a: 1 */
-   DO(mp_add_d(&a, 6uL, &a));
+   DO(mp_add_d(&a, 6u, &a));
    EXPECT(mp_get_u32(&a) == 1);
    mp_zero(&a);
    /* a: 0-> a: 6 */
-   DO(mp_add_d(&a, 6uL, &a));
+   DO(mp_add_d(&a, 6u, &a));
    EXPECT(mp_get_u32(&a) == 6);
 
    mp_set(&a, 42u);
@@ -223,9 +223,9 @@ static int test_mp_get_set_i64(void)
 
    DOR(mp_init(&a));
 
-   check_get_set_i64(&a, 0);
-   check_get_set_i64(&a, -1);
-   check_get_set_i64(&a, 1);
+   check_get_set_i64(&a, 0LL);
+   check_get_set_i64(&a, -1LL);
+   check_get_set_i64(&a, 1LL);
    check_get_set_i64(&a, INT64_MIN);
    check_get_set_i64(&a, INT64_MAX);
 
@@ -282,7 +282,7 @@ static int test_mp_rand(void)
       DO(mp_rand(&a, n));
       DO(mp_incr(&a));
       DO(mp_div_2d(&a, n * MP_DIGIT_BIT, &b, NULL));
-      if (mp_cmp_d(&b, 1) != MP_EQ) {
+      if (mp_cmp_d(&b, 1u) != MP_EQ) {
          ndraw(&a, "mp_rand() a");
          ndraw(&b, "mp_rand() b");
          e = MP_ERR;
@@ -292,7 +292,7 @@ static int test_mp_rand(void)
 LBL_ERR:
    mp_rand_source(s_mp_rand_jenkins);
    mp_clear_multi(&a, &b, NULL);
-   return e == MP_OKAY ? EXIT_SUCCESS : EXIT_FAILURE;
+   return (e == MP_OKAY) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
 static int test_mp_kronecker(void)
@@ -729,7 +729,7 @@ static int test_mp_sqrt(void)
          printf("\nmp_sqrt() error!");
          goto LBL_ERR;
       }
-      DO(mp_root_u32(&a, 2uL, &c));
+      DO(mp_root_u32(&a, 2u, &c));
       if (mp_cmp_mag(&b, &c) != MP_EQ) {
          printf("mp_sqrt() bad result!\n");
          goto LBL_ERR;
@@ -770,7 +770,7 @@ static int test_mp_is_square(void)
       }
 
       /* test for false positives */
-      DO(mp_add_d(&a, 1uL, &a));
+      DO(mp_add_d(&a, 1u, &a));
       if (mp_is_square(&a, &res) != MP_OKAY) {
          printf("\nfp:mp_is_square() error!");
          goto LBL_ERR;
@@ -879,9 +879,9 @@ static int test_mp_prime_is_prime(void)
    }
    /* About the same size as Arnault's pseudoprime */
    printf("\rTesting mp_prime_is_prime() with certified prime 2^1119 + 53       ");
-   mp_set(&a, 1uL);
+   mp_set(&a, 1u);
    DO(mp_mul_2d(&a,1119,&a));
-   DO(mp_add_d(&a, 53uL, &a));
+   DO(mp_add_d(&a, 53u, &a));
    e = mp_prime_is_prime(&a, mp_prime_rabin_miller_trials(mp_count_bits(&a)), &cnt);
    /* small problem */
    if (e != MP_OKAY) {
@@ -912,7 +912,7 @@ static int test_mp_prime_is_prime(void)
          goto LBL_ERR;
       }
       /* let's see if it's really a safe prime */
-      DO(mp_sub_d(&a, 1uL, &b));
+      DO(mp_sub_d(&a, 1u, &b));
       DO(mp_div_2(&b, &b));
       e = mp_prime_is_prime(&b, mp_prime_rabin_miller_trials(mp_count_bits(&b)), &cnt);
       /* small problem */
@@ -1010,7 +1010,7 @@ static int test_mp_prime_next_prime(void)
       putchar('\n');
       goto LBL_ERR;
    }
-   mp_set(&a, 8);
+   mp_set(&a, 8u);
    DO(mp_prime_next_prime(&a, 5, true));
    if (mp_cmp_d(&a, 11u) != MP_EQ) {
       printf("mp_prime_next_prime: output should have been 11 but was: ");
@@ -1092,7 +1092,7 @@ static int test_mp_montgomery_reduce(void)
 
          /* now test a random reduction */
          for (ix = 0; ix < 100; ix++) {
-            DO(mp_rand(&c, 1 + abs(rand_int()) % (2*i)));
+            DO(mp_rand(&c, 1 + (abs(rand_int()) % (2*i))));
             DO(mp_copy(&c, &d));
             DO(mp_copy(&c, &e));
 
@@ -1183,7 +1183,7 @@ static int test_mp_cnt_lsb(void)
    mp_int a, b;
    DOR(mp_init_multi(&a, &b, NULL));
 
-   mp_set(&a, 1uL);
+   mp_set(&a, 1u);
    for (ix = 0; ix < 1024; ix++) {
       if (mp_cnt_lsb(&a) != ix) {
          printf("Failed at %d, %d\n", ix, mp_cnt_lsb(&a));
@@ -1212,7 +1212,7 @@ static int test_mp_reduce_2k(void)
       mp_digit tmp;
 
       DO(mp_2expt(&a, cnt));
-      DO(mp_sub_d(&a, 2uL, &a));  /* a = 2**cnt - 2 */
+      DO(mp_sub_d(&a, 2u, &a));  /* a = 2**cnt - 2 */
 
       printf("\r %4d bits", cnt);
       printf("(%d)", mp_reduce_is_2k(&a));
@@ -1223,10 +1223,10 @@ static int test_mp_reduce_2k(void)
             printf(".");
             fflush(stdout);
          }
-         DO(mp_rand(&b, (cnt / MP_DIGIT_BIT + 1) * 2));
+         DO(mp_rand(&b, ((cnt / MP_DIGIT_BIT) + 1) * 2));
          DO(mp_copy(&c, &b));
          DO(mp_mod(&c, &a, &c));
-         DO(mp_reduce_2k(&b, &a, 2uL));
+         DO(mp_reduce_2k(&b, &a, 2u));
          if (mp_cmp(&c, &b) != MP_EQ) {
             printf("FAILED\n");
             goto LBL_ERR;
@@ -1249,7 +1249,7 @@ static int test_mp_div_3(void)
    DOR(mp_init_multi(&a, &b, &c, &d, &e, NULL));
 
    /* test mp_div_3  */
-   mp_set(&d, 3uL);
+   mp_set(&d, 3u);
    for (cnt = 0; cnt < 10000;) {
       mp_digit r2;
 
@@ -1257,7 +1257,7 @@ static int test_mp_div_3(void)
          printf("\r %9d", cnt);
          fflush(stdout);
       }
-      DO(mp_rand(&a, abs(rand_int()) % 128 + 1));
+      DO(mp_rand(&a, (abs(rand_int()) % 128) + 1));
       DO(mp_div(&a, &d, &b, &e));
       DO(mp_div_3(&a, &c, &r2));
 
@@ -1306,7 +1306,7 @@ static int test_mp_dr_reduce(void)
             fflush(stdout);
          }
          DO(mp_sqr(&b, &b));
-         DO(mp_add_d(&b, 1uL, &b));
+         DO(mp_add_d(&b, 1u, &b));
          DO(mp_copy(&b, &c));
 
          DO(mp_mod(&b, &a, &b));
@@ -1370,10 +1370,10 @@ static int test_mp_reduce_2k_l(void)
    fflush(stdout);
    for (cnt = 0; cnt < (int)(1uL << 20); cnt++) {
       DO(mp_sqr(&b, &b));
-      DO(mp_add_d(&b, 1uL, &b));
+      DO(mp_add_d(&b, 1u, &b));
       DO(mp_reduce_2k_l(&b, &a, &d));
       DO(mp_sqr(&c, &c));
-      DO(mp_add_d(&c, 1uL, &c));
+      DO(mp_add_d(&c, 1u, &c));
       DO(mp_mod(&c, &a, &c));
       if (mp_cmp(&b, &c) != MP_EQ) {
          printf("mp_reduce_2k_l() failed at step %d\n", cnt);
@@ -1439,7 +1439,7 @@ static int test_mp_log_u32(void)
       0     x    MP_VAL
       1     x    MP_VAL
    */
-   mp_set(&a, 42uL);
+   mp_set(&a, 42u);
    base = 0u;
    if (mp_log_u32(&a, base, &lb) != MP_VAL) {
       goto LBL_ERR;
@@ -1520,8 +1520,8 @@ static int test_mp_log_u32(void)
 
    /*Test upper edgecase with base UINT32_MAX and number (UINT32_MAX/2)*UINT32_MAX^10  */
    mp_set(&a, max_base);
-   DO(mp_expt_u32(&a, 10uL, &a));
-   DO(mp_add_d(&a, max_base / 2, &a));
+   DO(mp_expt_u32(&a, 10u, &a));
+   DO(mp_add_d(&a, max_base / 2u, &a));
    DO(mp_log_u32(&a, max_base, &lb));
    if (lb != 10u) {
       goto LBL_ERR;
@@ -1543,7 +1543,7 @@ static int test_mp_incr(void)
    /* Does it increment inside the limits of a MP_xBIT limb? */
    mp_set(&a, MP_MASK/2);
    DO(mp_incr(&a));
-   if (mp_cmp_d(&a, (MP_MASK/2uL) + 1uL) != MP_EQ) {
+   if (mp_cmp_d(&a, (MP_MASK/2u) + 1u) != MP_EQ) {
       goto LBL_ERR;
    }
 
@@ -1551,22 +1551,22 @@ static int test_mp_incr(void)
    mp_set(&a, MP_MASK);
    mp_set(&b, MP_MASK);
    DO(mp_incr(&a));
-   DO(mp_add_d(&b, 1uL, &b));
+   DO(mp_add_d(&b, 1u, &b));
    if (mp_cmp(&a, &b) != MP_EQ) {
       goto LBL_ERR;
    }
 
    /* Does it increment from -1 to 0? */
-   mp_set(&a, 1uL);
+   mp_set(&a, 1u);
    a.sign = MP_NEG;
    DO(mp_incr(&a));
-   if (mp_cmp_d(&a, 0uL) != MP_EQ) {
+   if (mp_cmp_d(&a, 0u) != MP_EQ) {
       goto LBL_ERR;
    }
 
    /* Does it increment from -(MP_MASK + 1) to -MP_MASK? */
    mp_set(&a, MP_MASK);
-   DO(mp_add_d(&a, 1uL, &a));
+   DO(mp_add_d(&a, 1u, &a));
    a.sign = MP_NEG;
    DO(mp_incr(&a));
    if (a.sign != MP_NEG) {
@@ -1593,13 +1593,13 @@ static int test_mp_decr(void)
    /* Does it decrement inside the limits of a MP_xBIT limb? */
    mp_set(&a, MP_MASK/2);
    DO(mp_decr(&a));
-   if (mp_cmp_d(&a, (MP_MASK/2uL) - 1uL) != MP_EQ) {
+   if (mp_cmp_d(&a, (MP_MASK/2u) - 1u) != MP_EQ) {
       goto LBL_ERR;
    }
 
    /* Does it decrement outside of the limits of a MP_xBIT limb? */
    mp_set(&a, MP_MASK);
-   DO(mp_add_d(&a, 1uL, &a));
+   DO(mp_add_d(&a, 1u, &a));
    DO(mp_decr(&a));
    if (mp_cmp_d(&a, MP_MASK) != MP_EQ) {
       goto LBL_ERR;
@@ -1610,7 +1610,7 @@ static int test_mp_decr(void)
    DO(mp_decr(&a));
    if (a.sign == MP_NEG) {
       a.sign = MP_ZPOS;
-      if (mp_cmp_d(&a, 1uL) != MP_EQ) {
+      if (mp_cmp_d(&a, 1u) != MP_EQ) {
          goto LBL_ERR;
       }
    } else {
@@ -1623,7 +1623,7 @@ static int test_mp_decr(void)
    a.sign = MP_NEG;
    mp_set(&b, MP_MASK);
    b.sign = MP_NEG;
-   DO(mp_sub_d(&b, 1uL, &b));
+   DO(mp_sub_d(&b, 1u, &b));
    DO(mp_decr(&a));
    if (mp_cmp(&a, &b) != MP_EQ) {
       goto LBL_ERR;
@@ -1903,7 +1903,7 @@ static int test_s_mp_mul_karatsuba(void)
    int size;
 
    DOR(mp_init_multi(&a, &b, &c, &d, NULL));
-   for (size = MP_MUL_KARATSUBA_CUTOFF; size < MP_MUL_KARATSUBA_CUTOFF + 20; size++) {
+   for (size = MP_MUL_KARATSUBA_CUTOFF; size < (MP_MUL_KARATSUBA_CUTOFF + 20); size++) {
       DO(mp_rand(&a, size));
       DO(mp_rand(&b, size));
       DO(s_mp_mul_karatsuba(&a, &b, &c));
@@ -1927,7 +1927,7 @@ static int test_s_mp_sqr_karatsuba(void)
    int size;
 
    DOR(mp_init_multi(&a, &b, &c, NULL));
-   for (size = MP_SQR_KARATSUBA_CUTOFF; size < MP_SQR_KARATSUBA_CUTOFF + 20; size++) {
+   for (size = MP_SQR_KARATSUBA_CUTOFF; size < (MP_SQR_KARATSUBA_CUTOFF + 20); size++) {
       DO(mp_rand(&a, size));
       DO(s_mp_sqr_karatsuba(&a, &b));
       DO(s_mp_sqr(&a, &c));
@@ -1976,7 +1976,7 @@ static int test_s_mp_mul_toom(void)
    }
 #endif
 
-   for (size = MP_MUL_TOOM_CUTOFF; size < MP_MUL_TOOM_CUTOFF + 20; size++) {
+   for (size = MP_MUL_TOOM_CUTOFF; size < (MP_MUL_TOOM_CUTOFF + 20); size++) {
       DO(mp_rand(&a, size));
       DO(mp_rand(&b, size));
       DO(s_mp_mul_toom(&a, &b, &c));
@@ -2000,7 +2000,7 @@ static int test_s_mp_sqr_toom(void)
    int size;
 
    DOR(mp_init_multi(&a, &b, &c, NULL));
-   for (size = MP_SQR_TOOM_CUTOFF; size < MP_SQR_TOOM_CUTOFF + 20; size++) {
+   for (size = MP_SQR_TOOM_CUTOFF; size < (MP_SQR_TOOM_CUTOFF + 20); size++) {
       DO(mp_rand(&a, size));
       DO(s_mp_sqr_toom(&a, &b));
       DO(s_mp_sqr(&a, &c));
@@ -2038,7 +2038,7 @@ static int test_mp_radix_size(void)
    DOR(mp_init(&a));
 
    /* number to result in a different size for every base: 67^(4 * 67) */
-   mp_set(&a, 67);
+   mp_set(&a, 67u);
    DO(mp_expt_u32(&a, 268u, &a));
 
    for (radix = 2; radix < 65; radix++) {
@@ -2075,7 +2075,7 @@ static int test_s_mp_div_recursive(void)
 
    DOR(mp_init_multi(&a, &b, &c_q, &c_r, &d_q, &d_r, NULL));
 
-   for (size = MP_MUL_KARATSUBA_CUTOFF; size < 3 * MP_MUL_KARATSUBA_CUTOFF; size += 10) {
+   for (size = MP_MUL_KARATSUBA_CUTOFF; size < (3 * MP_MUL_KARATSUBA_CUTOFF); size += 10) {
       printf("\rsizes = %d / %d", 10 * size, size);
       /* Relation 10:1 */
       DO(mp_rand(&a, 10 * size));
@@ -2254,7 +2254,7 @@ static int test_mp_pack_unpack(void)
    DOR(mp_init_multi(&a, &b, NULL));
    DO(mp_rand(&a, 15));
 
-   count = mp_pack_count(&a, 0, 1);
+   count = mp_pack_count(&a, 0uL, 1uL);
 
    buf = malloc(count);
    if (buf == NULL) {
@@ -2262,10 +2262,10 @@ static int test_mp_pack_unpack(void)
       goto LBL_ERR;
    }
 
-   DO(mp_pack((void *)buf, count, &written, order, 1,
-              endianess, 0, &a));
-   DO(mp_unpack(&b, count, order, 1,
-                endianess, 0, (const void *)buf));
+   DO(mp_pack((void *)buf, count, &written, order, 1uL,
+              endianess, 0uL, &a));
+   DO(mp_unpack(&b, count, order, 1uL,
+                endianess, 0uL, (const void *)buf));
 
    if (mp_cmp(&a, &b) != MP_EQ) {
       fprintf(stderr, "pack/unpack cycle failed\n");
@@ -2289,7 +2289,7 @@ static int unit_tests(int argc, char **argv)
    } test[] = {
 #define T0(n)           { #n, test_##n }
 #define T1(n, o)        { #n, MP_HAS(o) ? test_##n : NULL }
-#define T2(n, o1, o2)   { #n, MP_HAS(o1) && MP_HAS(o2) ? test_##n : NULL }
+#define T2(n, o1, o2)   { #n, (MP_HAS(o1) && MP_HAS(o2)) ? test_##n : NULL }
       T0(feature_detection),
       T0(trivial_stuff),
       T2(mp_get_set_i32, MP_GET_I32, MP_GET_MAG_U32),
@@ -2351,7 +2351,7 @@ static int unit_tests(int argc, char **argv)
    s_mp_rand_jenkins_init(t);
    mp_rand_source(s_mp_rand_jenkins);
 
-   for (i = 0; i < sizeof(test) / sizeof(test[0]); ++i) {
+   for (i = 0; i < (sizeof(test) / sizeof(test[0])); ++i) {
       if (argc > 1) {
          for (j = 1; j < argc; ++j) {
             if (strstr(test[i].name, argv[j]) != NULL) {

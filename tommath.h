@@ -375,10 +375,10 @@ mp_err mp_div(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d) MP_WUR;
 mp_err mp_mod(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
 
 /* Increment "a" by one like "a++". Changes input! */
-#define mp_incr(a) mp_add_d((a), 1, (a))
+#define mp_incr(a) mp_add_d((a), 1u, (a))
 
 /* Decrement "a" by one like "a--". Changes input! */
-#define mp_decr(a) mp_sub_d((a), 1, (a))
+#define mp_decr(a) mp_sub_d((a), 1u, (a))
 
 /* ---> single digit functions <--- */
 

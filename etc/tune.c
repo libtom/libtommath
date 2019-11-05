@@ -281,7 +281,7 @@ int main(int argc, char **argv)
    /*int preset[8];*/
    char *endptr, *str;
 
-   uint64_t seed = 0xdeadbeef;
+   uint64_t seed = 0xdeadbeefULL;
 
    int opt;
    struct cutoffs orig, updated;
