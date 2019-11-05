@@ -60,7 +60,6 @@ bn_s_mp_sub.o bn_s_mp_toom_mul.o bn_s_mp_toom_sqr.o
 
 $(LIBNAME):  $(OBJECTS)
 	$(AR) $(ARFLAGS) $@ $(OBJECTS)
-	$(RANLIB) $@
 
 #make a profiled library (takes a while!!!)
 #
@@ -83,7 +82,6 @@ profiled_single:
 	rm -f *.o timing
 	$(CC) $(LTM_CFLAGS) -fbranch-probabilities -DTESTING -c mpi.c -o mpi.o
 	$(AR) $(ARFLAGS) $(LIBNAME) mpi.o
-	$(RANLIB) $(LIBNAME)
 
 install: $(LIBNAME)
 	install -d $(DESTDIR)$(LIBPATH)

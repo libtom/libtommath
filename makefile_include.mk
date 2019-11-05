@@ -36,7 +36,6 @@ endif # CROSS_COMPILE non-empty
 
 LD=$(CROSS_COMPILE)ld
 AR=$(CROSS_COMPILE)ar
-RANLIB=$(CROSS_COMPILE)ranlib
 
 ifndef MAKE
 # BSDs refer to GNU Make as gmake
@@ -89,7 +88,6 @@ endif
 ifdef COMPILE_LTO
 LTM_CFLAGS += -flto
 AR = $(subst clang,llvm-ar,$(subst gcc,gcc-ar,$(CC)))
-RANLIB = $(subst clang,llvm-ranlib,$(subst gcc,gcc-ranlib,$(CC)))
 endif
 
 endif # COMPILE_SIZE
