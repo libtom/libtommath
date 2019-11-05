@@ -58,7 +58,15 @@ static int s_number_of_test_loops;
 static int s_stabilization_extra;
 static int s_offset = 1;
 
-#define s_mp_mul_full(a, b, c) s_mp_mul(a, b, c, (a)->used + (b)->used + 1)
+static mp_err s_mul_full(const mp_int *a, const mp_int *b, mp_int *c)
+{
+   if (MP_HAS(S_MP_MUL_HIGH_COMBA)
+       && (MP_MIN(a->used, b->used) < MP_MAX_COMBA)) {
+      return s_mp_mul_comba(a, b, c, a->used + b->used + 1);
+   }
+   return s_mp_mul(a, b, c, a->used + b->used + 1);
+}
+
 static uint64_t s_time_mul(int size)
 {
    int x;
@@ -87,7 +95,7 @@ static uint64_t s_time_mul(int size)
          goto LBL_ERR;
       }
       if (s_check_result == 1) {
-         if ((e = s_mp_mul_full(&a,&b,&d)) != MP_OKAY) {
+         if ((e = s_mul_full(&a,&b,&d)) != MP_OKAY) {
             t1 = UINT64_MAX;
             goto LBL_ERR;
          }

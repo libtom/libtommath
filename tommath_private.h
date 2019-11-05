@@ -116,6 +116,8 @@ extern void MP_FREE(void *mem, size_t size);
 #define MP_MIN(x, y) (((x) < (y)) ? (x) : (y))
 #define MP_MAX(x, y) (((x) > (y)) ? (x) : (y))
 
+#define MP_ALIAS(a, b) ((a) == (b) || (a)->dp == (b)->dp)
+
 #define MP_TOUPPER(c) ((((c) >= 'a') && ((c) <= 'z')) ? (((c) + 'A') - 'a') : (c))
 
 #define MP_EXCH(t, a, b) do { t _c = a; a = b; b = _c; } while (0)

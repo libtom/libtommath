@@ -16,18 +16,21 @@ mp_err s_mp_mul_high_comba(const mp_int *a, const mp_int *b, mp_int *c, int digs
 {
    int     oldused, pa, ix;
    mp_err   err;
-   mp_digit W[MP_WARRAY];
-   mp_word  _W;
+   mp_word  W;
+   mp_int   tmp, *c_;
 
-   /* grow the destination as required */
+   /* prepare the destination */
    pa = a->used + b->used;
-   if ((err = mp_grow(c, pa)) != MP_OKAY) {
+   err = (MP_ALIAS(a, c) || MP_ALIAS(b, c))
+         ? mp_init_size((c_ = &tmp), pa)
+         : mp_grow((c_ = c), pa);
+   if (err != MP_OKAY) {
       return err;
    }
 
    /* number of output digits to produce */
    pa = a->used + b->used;
-   _W = 0;
+   W = 0;
    for (ix = digs; ix < pa; ix++) {
       int      tx, ty, iy, iz;
 
@@ -42,29 +45,29 @@ mp_err s_mp_mul_high_comba(const mp_int *a, const mp_int *b, mp_int *c, int digs
 
       /* execute loop */
       for (iz = 0; iz < iy; iz++) {
-         _W += (mp_word)a->dp[tx + iz] * (mp_word)b->dp[ty - iz];
+         W += (mp_word)a->dp[tx + iz] * (mp_word)b->dp[ty - iz];
       }
 
       /* store term */
-      W[ix] = (mp_digit)_W & MP_MASK;
+      c_->dp[ix] = (mp_digit)W & MP_MASK;
 
       /* make next carry */
-      _W = _W >> (mp_word)MP_DIGIT_BIT;
+      W = W >> (mp_word)MP_DIGIT_BIT;
    }
 
    /* setup dest */
-   oldused  = c->used;
-   c->used = pa;
-
-   for (ix = digs; ix < pa; ix++) {
-      /* now extract the previous digit [below the carry] */
-      c->dp[ix] = W[ix];
-   }
+   oldused  = c_->used;
+   c_->used = pa;
 
    /* clear unused digits [that existed in the old copy of c] */
-   s_mp_zero_digs(c->dp + c->used, oldused - c->used);
+   s_mp_zero_digs(c_->dp + c_->used, oldused - c_->used);
+   mp_clamp(c_);
 
-   mp_clamp(c);
+   if (c_ == &tmp) {
+      mp_clear(c);
+      *c = *c_;
+   }
+
    return MP_OKAY;
 }
 #endif

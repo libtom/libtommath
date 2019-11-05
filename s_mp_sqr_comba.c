@@ -16,13 +16,17 @@ After that loop you do the squares and add them in.
 mp_err s_mp_sqr_comba(const mp_int *a, mp_int *b)
 {
    int       oldused, pa, ix;
-   mp_digit  W[MP_WARRAY];
    mp_word   W1;
    mp_err err;
+   mp_int tmp, *b_;
 
-   /* grow the destination as required */
-   pa = a->used + a->used;
-   if ((err = mp_grow(b, pa)) != MP_OKAY) {
+   pa = 2 * a->used;
+
+   /* prepare the destination */
+   err = MP_ALIAS(a, b)
+         ? mp_init_size((b_ = &tmp), pa)
+         : mp_grow((b_ = b), pa);
+   if (err != MP_OKAY) {
       return err;
    }
 
@@ -30,10 +34,7 @@ mp_err s_mp_sqr_comba(const mp_int *a, mp_int *b)
    W1 = 0;
    for (ix = 0; ix < pa; ix++) {
       int      tx, ty, iy, iz;
-      mp_word  _W;
-
-      /* clear counter */
-      _W = 0;
+      mp_word  W = 0;
 
       /* get offsets into the two bignums */
       ty = MP_MIN(a->used-1, ix);
@@ -52,36 +53,38 @@ mp_err s_mp_sqr_comba(const mp_int *a, mp_int *b)
 
       /* execute loop */
       for (iz = 0; iz < iy; iz++) {
-         _W += (mp_word)a->dp[tx + iz] * (mp_word)a->dp[ty - iz];
+         W += (mp_word)a->dp[tx + iz] * (mp_word)a->dp[ty - iz];
       }
 
       /* double the inner product and add carry */
-      _W = _W + _W + W1;
+      W = W + W + W1;
 
       /* even columns have the square term in them */
       if (((unsigned)ix & 1u) == 0u) {
-         _W += (mp_word)a->dp[ix>>1] * (mp_word)a->dp[ix>>1];
+         W += (mp_word)a->dp[ix>>1] * (mp_word)a->dp[ix>>1];
       }
 
       /* store it */
-      W[ix] = (mp_digit)_W & MP_MASK;
+      b_->dp[ix] = (mp_digit)W & MP_MASK;
 
       /* make next carry */
-      W1 = _W >> (mp_word)MP_DIGIT_BIT;
+      W1 = W >> (mp_word)MP_DIGIT_BIT;
    }
 
    /* setup dest */
-   oldused  = b->used;
-   b->used = a->used+a->used;
-
-   for (ix = 0; ix < pa; ix++) {
-      b->dp[ix] = W[ix] & MP_MASK;
-   }
+   oldused  = b_->used;
+   b_->used = 2 * a->used;
 
    /* clear unused digits [that existed in the old copy of c] */
-   s_mp_zero_digs(b->dp + b->used, oldused - b->used);
+   s_mp_zero_digs(b_->dp + b_->used, oldused - b_->used);
 
-   mp_clamp(b);
+   mp_clamp(b_);
+
+   if (b_ == &tmp) {
+      mp_clear(b);
+      *b = *b_;
+   }
+
    return MP_OKAY;
 }
 #endif

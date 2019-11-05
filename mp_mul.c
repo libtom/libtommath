@@ -21,8 +21,7 @@ mp_err mp_mul(const mp_int *a, const mp_int *b, mp_int *c)
               (a->used >= MP_SQR_KARATSUBA_CUTOFF)) {
       err = s_mp_sqr_karatsuba(a, c);
    } else if ((a == b) &&
-              MP_HAS(S_MP_SQR_COMBA) && /* can we use the fast comba multiplier? */
-              (((a->used * 2) + 1) < MP_WARRAY) &&
+              MP_HAS(S_MP_SQR_COMBA) &&
               (a->used < (MP_MAX_COMBA / 2))) {
       err = s_mp_sqr_comba(a, c);
    } else if ((a == b) &&
@@ -47,14 +46,7 @@ mp_err mp_mul(const mp_int *a, const mp_int *b, mp_int *c)
    } else if (MP_HAS(S_MP_MUL_KARATSUBA) &&
               (min >= MP_MUL_KARATSUBA_CUTOFF)) {
       err = s_mp_mul_karatsuba(a, b, c);
-   } else if (MP_HAS(S_MP_MUL_COMBA) &&
-              /* can we use the fast multiplier?
-               *
-               * The fast multiplier can be used if the output will
-               * have less than MP_WARRAY digits and the number of
-               * digits won't affect carry propagation
-               */
-              (digs < MP_WARRAY) &&
+   } else if (MP_HAS(S_MP_MUL_COMBA) && /* can we use the fast multiplier? */
               (min <= MP_MAX_COMBA)) {
       err = s_mp_mul_comba(a, b, c, digs);
    } else if (MP_HAS(S_MP_MUL)) {

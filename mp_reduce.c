@@ -23,17 +23,11 @@ mp_err mp_reduce(mp_int *x, const mp_int *m, const mp_int *mu)
 
    /* according to HAC this optimization is ok */
    if ((mp_digit)um > ((mp_digit)1 << (MP_DIGIT_BIT - 1))) {
-      if ((err = mp_mul(&q, mu, &q)) != MP_OKAY) {
-         goto LBL_ERR;
-      }
-   } else if (MP_HAS(S_MP_MUL_HIGH)) {
-      if ((err = s_mp_mul_high(&q, mu, &q, um)) != MP_OKAY) {
-         goto LBL_ERR;
-      }
+      if ((err = mp_mul(&q, mu, &q)) != MP_OKAY)                    goto LBL_ERR;
    } else if (MP_HAS(S_MP_MUL_HIGH_COMBA)) {
-      if ((err = s_mp_mul_high_comba(&q, mu, &q, um)) != MP_OKAY) {
-         goto LBL_ERR;
-      }
+      if ((err = s_mp_mul_high_comba(&q, mu, &q, um)) != MP_OKAY)   goto LBL_ERR;
+   } else if (MP_HAS(S_MP_MUL_HIGH)) {
+      if ((err = s_mp_mul_high(&q, mu, &q, um)) != MP_OKAY)         goto LBL_ERR;
    } else {
       err = MP_VAL;
       goto LBL_ERR;
@@ -43,41 +37,33 @@ mp_err mp_reduce(mp_int *x, const mp_int *m, const mp_int *mu)
    mp_rshd(&q, um + 1);
 
    /* x = x mod b**(k+1), quick (no division) */
-   if ((err = mp_mod_2d(x, MP_DIGIT_BIT * (um + 1), x)) != MP_OKAY) {
-      goto LBL_ERR;
-   }
+   if ((err = mp_mod_2d(x, MP_DIGIT_BIT * (um + 1), x)) != MP_OKAY) goto LBL_ERR;
 
    /* q = q * m mod b**(k+1), quick (no division) */
-   if ((err = s_mp_mul(&q, m, &q, um + 1)) != MP_OKAY) {
-      goto LBL_ERR;
+   if (MP_HAS(S_MP_MUL_COMBA)
+       && (MP_MIN(q.used, m->used) < MP_MAX_COMBA)) {
+      if ((err = s_mp_mul_comba(&q, m, &q, um + 1)) != MP_OKAY)     goto LBL_ERR;
+   } else {
+      if ((err = s_mp_mul(&q, m, &q, um + 1)) != MP_OKAY)           goto LBL_ERR;
    }
 
    /* x = x - q */
-   if ((err = mp_sub(x, &q, x)) != MP_OKAY) {
-      goto LBL_ERR;
-   }
+   if ((err = mp_sub(x, &q, x)) != MP_OKAY)                         goto LBL_ERR;
 
    /* If x < 0, add b**(k+1) to it */
    if (mp_cmp_d(x, 0uL) == MP_LT) {
       mp_set(&q, 1uL);
-      if ((err = mp_lshd(&q, um + 1)) != MP_OKAY) {
-         goto LBL_ERR;
-      }
-      if ((err = mp_add(x, &q, x)) != MP_OKAY) {
-         goto LBL_ERR;
-      }
+      if ((err = mp_lshd(&q, um + 1)) != MP_OKAY)                   goto LBL_ERR;
+      if ((err = mp_add(x, &q, x)) != MP_OKAY)                      goto LBL_ERR;
    }
 
    /* Back off if it's too big */
    while (mp_cmp(x, m) != MP_LT) {
-      if ((err = s_mp_sub(x, m, x)) != MP_OKAY) {
-         goto LBL_ERR;
-      }
+      if ((err = s_mp_sub(x, m, x)) != MP_OKAY)                     goto LBL_ERR;
    }
 
 LBL_ERR:
    mp_clear(&q);
-
    return err;
 }
 #endif
