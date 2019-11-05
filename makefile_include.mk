@@ -36,7 +36,6 @@ endif # CROSS_COMPILE non-empty
 
 LD=$(CROSS_COMPILE)ld
 AR=$(CROSS_COMPILE)ar
-RANLIB=$(CROSS_COMPILE)ranlib
 
 ifndef MAKE
 # BSDs refer to GNU Make as gmake
@@ -84,6 +83,11 @@ LTM_CFLAGS += -O3 -funroll-loops
 
 #x86 optimizations [should be valid for any GCC install though]
 LTM_CFLAGS  += -fomit-frame-pointer
+endif
+
+ifdef COMPILE_LTO
+LTM_CFLAGS += -flto
+AR = $(subst clang,llvm-ar,$(subst gcc,gcc-ar,$(CC)))
 endif
 
 endif # COMPILE_SIZE

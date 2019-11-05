@@ -163,6 +163,10 @@ matrix:
           packages:
             - clang-4.0
 
+    # Link time optimization
+    - env: SANITIZER=1 COMPILE_LTO=1 BUILDOPTIONS='--with-cc=gcc-5 --with-m64 --with-travis-valgrind'
+    #- env: SANITIZER=1 COMPILE_LTO=1 BUILDOPTIONS='--with-cc=clang-7 --with-m64 --with-travis-valgrind'
+
     # GCC for the x86-64 architecture with restricted limb sizes
     # formerly started with the option "--with-low-mp" to testme.sh
     # but testing all three in one run took to long and timed out.

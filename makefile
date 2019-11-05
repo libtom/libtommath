@@ -55,7 +55,6 @@ s_mp_zero_buf.o s_mp_zero_digs.o
 
 $(LIBNAME):  $(OBJECTS)
 	$(AR) $(ARFLAGS) $@ $(OBJECTS)
-	$(RANLIB) $@
 
 #make a profiled library (takes a while!!!)
 #
@@ -77,7 +76,6 @@ profiled_single: pre_gen
 	rm -f *.o timing
 	$(CC) $(LTM_CFLAGS) -fbranch-probabilities -c pre_gen/tommath_amalgam.c -o tommath_amalgam.o
 	$(AR) $(ARFLAGS) $(LIBNAME) tommath_amalgam.o
-	ranlib $(LIBNAME)
 
 install: $(LIBNAME)
 	install -d $(DESTDIR)$(LIBPATH)

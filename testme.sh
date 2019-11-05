@@ -107,7 +107,7 @@ _make()
 {
   echo -ne " Compile $1 $2"
   suffix=$(echo ${1}${2}  | tr ' ' '_')
-  CC="$1" CFLAGS="$2 $TEST_CFLAGS" make -j$MAKE_JOBS $3 $MAKE_OPTIONS > /dev/null 2>gcc_errors_${suffix}.log
+  CC="$1" CFLAGS="$2 $TEST_CFLAGS" make -j$MAKE_JOBS $3 $MAKE_OPTIONS 2>gcc_errors_${suffix}.log
   errcnt=$(wc -l < gcc_errors_${suffix}.log)
   if [[ ${errcnt} -gt 1 ]]; then
     echo " failed"
@@ -354,7 +354,7 @@ _banner
 if [[ "$TEST_VS_MTEST" != "" ]]
 then
    make clean > /dev/null
-   _make "${compilers[0]} ${archflags[0]}" "$CFLAGS" "mtest_opponent"
+   _make "${compilers[0]}" "${archflags[0]} $CFLAGS" "mtest_opponent"
    echo
    _make "gcc" "$MTEST_RAND" "mtest"
    echo
@@ -394,15 +394,15 @@ do
     fi
     if [[ "$VALGRIND_BIN" != "" ]]
     then
-      _runvalgrind "$i $a" "$CFLAGS"
+      _runvalgrind "$i" "$a $CFLAGS"
       [ "$WITH_LOW_MP" != "1" ] && continue
-      _runvalgrind "$i $a" "-DMP_16BIT $CFLAGS"
-      _runvalgrind "$i $a" "-DMP_32BIT $CFLAGS"
+      _runvalgrind "$i" "$a -DMP_16BIT $CFLAGS"
+      _runvalgrind "$i" "$a -DMP_32BIT $CFLAGS"
     else
-      _runtest "$i $a" "$CFLAGS"
+      _runtest "$i" "$a $CFLAGS"
       [ "$WITH_LOW_MP" != "1" ] && continue
-      _runtest "$i $a" "-DMP_16BIT $CFLAGS"
-      _runtest "$i $a" "-DMP_32BIT $CFLAGS"
+      _runtest "$i" "$a -DMP_16BIT $CFLAGS"
+      _runtest "$i" "$a -DMP_32BIT $CFLAGS"
     fi
   done
 done

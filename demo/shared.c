@@ -3,7 +3,7 @@
 void ndraw(const mp_int *a, const char *name)
 {
    char *buf;
-   size_t size;
+   size_t size = 0;
    mp_err err;
 
    if ((err = mp_radix_size(a, 10, &size)) != MP_OKAY) {
