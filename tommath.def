@@ -22,7 +22,6 @@ EXPORTS
     mp_complement
     mp_copy
     mp_count_bits
-    mp_cutoffs
     mp_div
     mp_div_2
     mp_div_2d
@@ -92,7 +91,6 @@ EXPORTS
     mp_prime_rabin_miller_trials
     mp_prime_rand
     mp_prime_strong_lucas_selfridge
-    mp_prime_tab
     mp_radix_size
     mp_rand
     mp_read_radix

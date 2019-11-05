@@ -59,13 +59,12 @@
 #   define MP_PRIME_IS_PRIME_C
 #   define MP_PRIME_RABIN_MILLER_TRIALS_C
 #   define MP_PRIME_RAND_C
-#   define MP_RADIX_SMAP_C
 #   define MP_SET_INT_C
 #   define MP_SHRINK_C
 #   define MP_TO_UNSIGNED_BIN_C
 #   define MP_UNSIGNED_BIN_SIZE_C
-#   define MP_PRIME_TAB_C
-#   define S_MP_REVERSE_C
+#   define S_MP_PRIME_TAB_C
+#   define S_MP_RADIX_MAP_C
 
 /* other modifiers */
 

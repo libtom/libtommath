@@ -36,11 +36,11 @@ mp_err mp_fread(mp_int *a, int radix, FILE *stream)
       unsigned pos;
       ch = (radix <= 36) ? MP_TOUPPER(ch) : ch;
       pos = (unsigned)(ch - (int)'+');
-      if (MP_RMAP_REVERSE_SIZE <= pos) {
+      if (MP_RADIX_MAP_REVERSE_SIZE <= pos) {
          break;
       }
 
-      y = s_mp_rmap_reverse[pos];
+      y = s_mp_radix_map_reverse[pos];
 
       if (y >= radix) {
          break;

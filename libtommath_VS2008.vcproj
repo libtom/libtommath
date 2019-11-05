@@ -657,15 +657,7 @@
 			>
 		</File>
 		<File
-			RelativePath="mp_prime_tab.c"
-			>
-		</File>
-		<File
 			RelativePath="mp_radix_size.c"
-			>
-		</File>
-		<File
-			RelativePath="mp_radix_smap.c"
 			>
 		</File>
 		<File
@@ -910,6 +902,14 @@
 		</File>
 		<File
 			RelativePath="s_mp_prime_is_divisible.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_prime_tab.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_radix_map.c"
 			>
 		</File>
 		<File

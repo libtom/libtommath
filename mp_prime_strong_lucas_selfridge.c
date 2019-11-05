@@ -13,7 +13,7 @@
  * multiply bigint a with int d and put the result in c
  * Like mp_mul_d() but with a signed long as the small input
  */
-static mp_err s_mp_mul_si(const mp_int *a, int32_t d, mp_int *c)
+static mp_err s_mul_si(const mp_int *a, int32_t d, mp_int *c)
 {
    mp_int t;
    mp_err err;
@@ -204,7 +204,7 @@ mp_err mp_prime_strong_lucas_selfridge(const mp_int *a, bool *result)
          if ((err = mp_mul(&Uz, &V2mz, &T2z)) != MP_OKAY)         goto LBL_LS_ERR;
          if ((err = mp_mul(&V2mz, &Vz, &T3z)) != MP_OKAY)         goto LBL_LS_ERR;
          if ((err = mp_mul(&U2mz, &Uz, &T4z)) != MP_OKAY)         goto LBL_LS_ERR;
-         if ((err = s_mp_mul_si(&T4z, Ds, &T4z)) != MP_OKAY)      goto LBL_LS_ERR;
+         if ((err = s_mul_si(&T4z, Ds, &T4z)) != MP_OKAY)      goto LBL_LS_ERR;
          if ((err = mp_add(&T1z, &T2z, &Uz)) != MP_OKAY)          goto LBL_LS_ERR;
          if (mp_isodd(&Uz)) {
             if ((err = mp_add(&Uz, a, &Uz)) != MP_OKAY)           goto LBL_LS_ERR;

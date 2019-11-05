@@ -14,7 +14,7 @@
    pages 19ff. in the above online document.
 */
 
-static mp_err s_mp_recursion(const mp_int *a, const mp_int *b, mp_int *q, mp_int *r)
+static mp_err s_recursion(const mp_int *a, const mp_int *b, mp_int *q, mp_int *r)
 {
    mp_err err;
    mp_int A1, A2, B1, B0, Q1, Q0, R1, R0, t;
@@ -33,7 +33,7 @@ static mp_err s_mp_recursion(const mp_int *a, const mp_int *b, mp_int *q, mp_int
 
    /* (Q1, R1) =  RecursiveDivRem(A / beta^(2k), B1) */
    if ((err = mp_div_2d(a, 2*k * MP_DIGIT_BIT, &A1, &t)) != MP_OKAY)       goto LBL_ERR;
-   if ((err = s_mp_recursion(&A1, &B1, &Q1, &R1)) != MP_OKAY)              goto LBL_ERR;
+   if ((err = s_recursion(&A1, &B1, &Q1, &R1)) != MP_OKAY)                 goto LBL_ERR;
 
    /* A1 = (R1 * beta^(2k)) + (A % beta^(2k)) - (Q1 * B0 * beta^k) */
    if ((err = mp_lshd(&R1, 2*k)) != MP_OKAY)                               goto LBL_ERR;
@@ -51,7 +51,7 @@ static mp_err s_mp_recursion(const mp_int *a, const mp_int *b, mp_int *q, mp_int
 
    /* (Q0, R0) =  RecursiveDivRem(A1 / beta^(k), B1) */
    if ((err = mp_div_2d(&A1, k * MP_DIGIT_BIT, &A1, &t)) != MP_OKAY)       goto LBL_ERR;
-   if ((err = s_mp_recursion(&A1, &B1, &Q0, &R0)) != MP_OKAY)              goto LBL_ERR;
+   if ((err = s_recursion(&A1, &B1, &Q0, &R0)) != MP_OKAY)              goto LBL_ERR;
 
    /* A2 = (R0*beta^k) +  (A1 % beta^k) - (Q0*B0) */
    if ((err = mp_lshd(&R0, k)) != MP_OKAY)                                 goto LBL_ERR;
@@ -142,7 +142,7 @@ mp_err s_mp_div_recursive(const mp_int *a, const mp_int *b, mp_int *q, mp_int *r
       /* (q, r) = RecursveDivRem(A / (beta^(m-n)), B) */
       j = (m - n) * MP_DIGIT_BIT;
       if ((err = mp_div_2d(&A, j, &A_div, &A_mod)) != MP_OKAY)                   goto LBL_ERR;
-      if ((err = s_mp_recursion(&A_div, &B, &Q1, &R)) != MP_OKAY)                goto LBL_ERR;
+      if ((err = s_recursion(&A_div, &B, &Q1, &R)) != MP_OKAY)                goto LBL_ERR;
       /* Q = (Q*beta!(n)) + q */
       if ((err = mp_mul_2d(&Q, n * MP_DIGIT_BIT, &Q)) != MP_OKAY)                goto LBL_ERR;
       if ((err = mp_add(&Q, &Q1, &Q)) != MP_OKAY)                                goto LBL_ERR;
@@ -153,7 +153,7 @@ mp_err s_mp_div_recursive(const mp_int *a, const mp_int *b, mp_int *q, mp_int *r
       m = m - n;
    }
    /* (q, r) = RecursveDivRem(A, B) */
-   if ((err = s_mp_recursion(&A, &B, &Q1, &R)) != MP_OKAY)                       goto LBL_ERR;
+   if ((err = s_recursion(&A, &B, &Q1, &R)) != MP_OKAY)                       goto LBL_ERR;
    /* Q = (Q * beta^m) + q, R = r */
    if ((err = mp_mul_2d(&Q, m * MP_DIGIT_BIT, &Q)) != MP_OKAY)                   goto LBL_ERR;
    if ((err = mp_add(&Q, &Q1, &Q)) != MP_OKAY)                                   goto LBL_ERR;

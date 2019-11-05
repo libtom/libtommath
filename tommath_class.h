@@ -97,9 +97,7 @@
 #   define MP_PRIME_RABIN_MILLER_TRIALS_C
 #   define MP_PRIME_RAND_C
 #   define MP_PRIME_STRONG_LUCAS_SELFRIDGE_C
-#   define MP_PRIME_TAB_C
 #   define MP_RADIX_SIZE_C
-#   define MP_RADIX_SMAP_C
 #   define MP_RAND_C
 #   define MP_READ_RADIX_C
 #   define MP_REDUCE_C
@@ -161,6 +159,8 @@
 #   define S_MP_MUL_KARATSUBA_C
 #   define S_MP_MUL_TOOM_C
 #   define S_MP_PRIME_IS_DIVISIBLE_C
+#   define S_MP_PRIME_TAB_C
+#   define S_MP_RADIX_MAP_C
 #   define S_MP_RAND_JENKINS_C
 #   define S_MP_RAND_PLATFORM_C
 #   define S_MP_SQR_C
@@ -714,17 +714,10 @@
 #   define MP_SUB_C
 #   define MP_SUB_D_C
 #   define S_MP_GET_BIT_C
-#   define S_MP_MUL_SI_C
-#endif
-
-#if defined(MP_PRIME_TAB_C)
 #endif
 
 #if defined(MP_RADIX_SIZE_C)
 #   define MP_LOG_U32_C
-#endif
-
-#if defined(MP_RADIX_SMAP_C)
 #endif
 
 #if defined(MP_RAND_C)
@@ -955,7 +948,6 @@
 #   define MP_CLEAR_C
 #   define MP_DIV_D_C
 #   define MP_INIT_COPY_C
-#   define S_MP_REVERSE_C
 #endif
 
 #if defined(MP_TO_SBIN_C)
@@ -1012,7 +1004,6 @@
 #   define MP_SUB_D_C
 #   define MP_ZERO_C
 #   define S_MP_DIV_SCHOOL_C
-#   define S_MP_RECURSION_C
 #endif
 
 #if defined(S_MP_DIV_SCHOOL_C)
@@ -1220,6 +1211,12 @@
 
 #if defined(S_MP_PRIME_IS_DIVISIBLE_C)
 #   define MP_DIV_D_C
+#endif
+
+#if defined(S_MP_PRIME_TAB_C)
+#endif
+
+#if defined(S_MP_RADIX_MAP_C)
 #endif
 
 #if defined(S_MP_RAND_JENKINS_C)
