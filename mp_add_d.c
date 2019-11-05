@@ -6,9 +6,8 @@
 /* single digit addition */
 mp_err mp_add_d(const mp_int *a, mp_digit b, mp_int *c)
 {
-   mp_err     err;
-   int ix, oldused;
-   mp_digit *tmpa, *tmpc;
+   mp_err err;
+   int oldused;
 
    /* fast path for a == c */
    if (a == c) {
@@ -26,10 +25,8 @@ mp_err mp_add_d(const mp_int *a, mp_digit b, mp_int *c)
    }
 
    /* grow c as required */
-   if (c->alloc < (a->used + 1)) {
-      if ((err = mp_grow(c, a->used + 1)) != MP_OKAY) {
-         return err;
-      }
+   if ((err = mp_grow(c, a->used + 1)) != MP_OKAY) {
+      return err;
    }
 
    /* if a is negative and |a| >= b, call c = |a| - b */
@@ -53,49 +50,34 @@ mp_err mp_add_d(const mp_int *a, mp_digit b, mp_int *c)
    /* old number of used digits in c */
    oldused = c->used;
 
-   /* source alias */
-   tmpa    = a->dp;
-
-   /* destination alias */
-   tmpc    = c->dp;
-
    /* if a is positive */
    if (a->sign == MP_ZPOS) {
       /* add digits, mu is carry */
+      int i;
       mp_digit mu = b;
-      for (ix = 0; ix < a->used; ix++) {
-         *tmpc   = *tmpa++ + mu;
-         mu      = *tmpc >> MP_DIGIT_BIT;
-         *tmpc++ &= MP_MASK;
+      for (i = 0; i < a->used; i++) {
+         c->dp[i] = a->dp[i] + mu;
+         mu = c->dp[i] >> MP_DIGIT_BIT;
+         c->dp[i] &= MP_MASK;
       }
       /* set final carry */
-      ix++;
-      *tmpc++  = mu;
+      c->dp[i] = mu;
 
       /* setup size */
       c->used = a->used + 1;
    } else {
       /* a was negative and |a| < b */
-      c->used  = 1;
+      c->used = 1;
 
       /* the result is a single digit */
-      if (a->used == 1) {
-         *tmpc++  =  b - a->dp[0];
-      } else {
-         *tmpc++  =  b;
-      }
-
-      /* setup count so the clearing of oldused
-       * can fall through correctly
-       */
-      ix       = 1;
+      c->dp[0] = (a->used == 1) ? b - a->dp[0] : b;
    }
 
    /* sign always positive */
    c->sign = MP_ZPOS;
 
    /* now zero to oldused */
-   MP_ZERO_DIGITS(tmpc, oldused - ix);
+   s_mp_zero_digs(c->dp + c->used, oldused - c->used);
    mp_clamp(c);
 
    return MP_OKAY;

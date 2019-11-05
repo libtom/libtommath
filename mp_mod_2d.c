@@ -29,7 +29,7 @@ mp_err mp_mod_2d(const mp_int *a, int b, mp_int *c)
 
    /* zero digits above the last digit of the modulus */
    x = (b / MP_DIGIT_BIT) + (((b % MP_DIGIT_BIT) == 0) ? 0 : 1);
-   MP_ZERO_DIGITS(c->dp + x, c->used - x);
+   s_mp_zero_digs(c->dp + x, c->used - x);
 
    /* clear the digit that is not completely outside/inside the modulus */
    c->dp[b / MP_DIGIT_BIT] &=

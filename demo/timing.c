@@ -247,18 +247,18 @@ int main(int argc, char **argv)
 
    if (should_test("mulsqr", argc, argv) != 0) {
       /* do mult/square twice, first without karatsuba and second with */
-      old_kara_m = MP_KARATSUBA_MUL_CUTOFF;
-      old_kara_s = MP_KARATSUBA_SQR_CUTOFF;
+      old_kara_m = MP_MUL_KARATSUBA_CUTOFF;
+      old_kara_s = MP_SQR_KARATSUBA_CUTOFF;
       /* currently toom-cook cut-off is too high to kick in, so we just use the karatsuba values */
       old_toom_m = old_kara_m;
       old_toom_s = old_kara_s;
       for (ix = 0; ix < 3; ix++) {
          printf("With%s Karatsuba, With%s Toom\n", (ix == 1) ? "" : "out", (ix == 2) ? "" : "out");
 
-         MP_KARATSUBA_MUL_CUTOFF = (ix == 1) ? old_kara_m : 9999;
-         MP_KARATSUBA_SQR_CUTOFF = (ix == 1) ? old_kara_s : 9999;
-         MP_TOOM_MUL_CUTOFF = (ix == 2) ? old_toom_m : 9999;
-         MP_TOOM_SQR_CUTOFF = (ix == 2) ? old_toom_s : 9999;
+         MP_MUL_KARATSUBA_CUTOFF = (ix == 1) ? old_kara_m : 9999;
+         MP_SQR_KARATSUBA_CUTOFF = (ix == 1) ? old_kara_s : 9999;
+         MP_MUL_TOOM_CUTOFF = (ix == 2) ? old_toom_m : 9999;
+         MP_SQR_TOOM_CUTOFF = (ix == 2) ? old_toom_s : 9999;
 
          log = FOPEN((ix == 0) ? "logs/mult" MP_TIMING_VERSION ".log" : (ix == 1) ? "logs/mult_kara" MP_TIMING_VERSION ".log" :
                      "logs/mult_toom" MP_TIMING_VERSION ".log", "w");

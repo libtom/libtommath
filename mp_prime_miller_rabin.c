@@ -16,9 +16,6 @@ mp_err mp_prime_miller_rabin(const mp_int *a, const mp_int *b, bool *result)
    mp_err  err;
    int     s, j;
 
-   /* default */
-   *result = false;
-
    /* ensure b > 1 */
    if (mp_cmp_d(b, 1uL) != MP_GT) {
       return MP_VAL;
@@ -29,12 +26,12 @@ mp_err mp_prime_miller_rabin(const mp_int *a, const mp_int *b, bool *result)
       return err;
    }
    if ((err = mp_sub_d(&n1, 1uL, &n1)) != MP_OKAY) {
-      goto LBL_N1;
+      goto LBL_ERR1;
    }
 
    /* set 2**s * r = n1 */
    if ((err = mp_init_copy(&r, &n1)) != MP_OKAY) {
-      goto LBL_N1;
+      goto LBL_ERR1;
    }
 
    /* count the number of least significant bits
@@ -44,15 +41,15 @@ mp_err mp_prime_miller_rabin(const mp_int *a, const mp_int *b, bool *result)
 
    /* now divide n - 1 by 2**s */
    if ((err = mp_div_2d(&r, s, &r, NULL)) != MP_OKAY) {
-      goto LBL_R;
+      goto LBL_ERR2;
    }
 
    /* compute y = b**r mod a */
    if ((err = mp_init(&y)) != MP_OKAY) {
-      goto LBL_R;
+      goto LBL_ERR2;
    }
    if ((err = mp_exptmod(b, &r, a, &y)) != MP_OKAY) {
-      goto LBL_Y;
+      goto LBL_END;
    }
 
    /* if y != 1 and y != n1 do */
@@ -61,12 +58,13 @@ mp_err mp_prime_miller_rabin(const mp_int *a, const mp_int *b, bool *result)
       /* while j <= s-1 and y != n1 */
       while ((j <= (s - 1)) && (mp_cmp(&y, &n1) != MP_EQ)) {
          if ((err = mp_sqrmod(&y, a, &y)) != MP_OKAY) {
-            goto LBL_Y;
+            goto LBL_END;
          }
 
          /* if y == 1 then composite */
          if (mp_cmp_d(&y, 1uL) == MP_EQ) {
-            goto LBL_Y;
+            *result = false;
+            goto LBL_END;
          }
 
          ++j;
@@ -74,17 +72,19 @@ mp_err mp_prime_miller_rabin(const mp_int *a, const mp_int *b, bool *result)
 
       /* if y != n1 then composite */
       if (mp_cmp(&y, &n1) != MP_EQ) {
-         goto LBL_Y;
+         *result = false;
+         goto LBL_END;
       }
    }
 
    /* probably prime now */
    *result = true;
-LBL_Y:
+
+LBL_END:
    mp_clear(&y);
-LBL_R:
+LBL_ERR2:
    mp_clear(&r);
-LBL_N1:
+LBL_ERR1:
    mp_clear(&n1);
    return err;
 }

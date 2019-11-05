@@ -6,6 +6,7 @@
 /* shift left a certain amount of digits */
 mp_err mp_lshd(mp_int *a, int b)
 {
+   mp_err err;
    int x;
 
    /* if its less than zero return */
@@ -18,11 +19,8 @@ mp_err mp_lshd(mp_int *a, int b)
    }
 
    /* grow to fit the new digits */
-   if (a->alloc < (a->used + b)) {
-      mp_err err;
-      if ((err = mp_grow(a, a->used + b)) != MP_OKAY) {
-         return err;
-      }
+   if ((err = mp_grow(a, a->used + b)) != MP_OKAY) {
+      return err;
    }
 
    /* increment the used by the shift amount then copy upwards */
@@ -37,7 +35,7 @@ mp_err mp_lshd(mp_int *a, int b)
    }
 
    /* zero the lower digits */
-   MP_ZERO_DIGITS(a->dp, b);
+   s_mp_zero_digs(a->dp, b);
 
    return MP_OKAY;
 }

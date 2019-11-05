@@ -1,5 +1,5 @@
 #include "tommath_private.h"
-#ifdef S_MP_TOOM_MUL_C
+#ifdef S_MP_MUL_TOOM_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
@@ -29,10 +29,10 @@
      Centro Vito Volterra Universita di Roma Tor Vergata (2006)
 */
 
-mp_err s_mp_toom_mul(const mp_int *a, const mp_int *b, mp_int *c)
+mp_err s_mp_mul_toom(const mp_int *a, const mp_int *b, mp_int *c)
 {
    mp_int S1, S2, T1, a0, a1, a2, b0, b1, b2;
-   int B, count;
+   int B;
    mp_err err;
 
    /* init temps */
@@ -45,43 +45,30 @@ mp_err s_mp_toom_mul(const mp_int *a, const mp_int *b, mp_int *c)
 
    /** a = a2 * x^2 + a1 * x + a0; */
    if ((err = mp_init_size(&a0, B)) != MP_OKAY)                   goto LBL_ERRa0;
-
-   for (count = 0; count < B; count++) {
-      a0.dp[count] = a->dp[count];
-      a0.used++;
-   }
-   mp_clamp(&a0);
    if ((err = mp_init_size(&a1, B)) != MP_OKAY)                   goto LBL_ERRa1;
-   for (; count < (2 * B); count++) {
-      a1.dp[count - B] = a->dp[count];
-      a1.used++;
-   }
+   if ((err = mp_init_size(&a2, a->used - 2 * B)) != MP_OKAY)     goto LBL_ERRa2;
+
+   a0.used = a1.used = B;
+   a2.used = a->used - 2 * B;
+   s_mp_copy_digs(a0.dp, a->dp, a0.used);
+   s_mp_copy_digs(a1.dp, a->dp + B, a1.used);
+   s_mp_copy_digs(a2.dp, a->dp + 2 * B, a2.used);
+   mp_clamp(&a0);
    mp_clamp(&a1);
-   if ((err = mp_init_size(&a2, B + (a->used - (3 * B)))) != MP_OKAY) goto LBL_ERRa2;
-   for (; count < a->used; count++) {
-      a2.dp[count - (2 * B)] = a->dp[count];
-      a2.used++;
-   }
    mp_clamp(&a2);
 
    /** b = b2 * x^2 + b1 * x + b0; */
    if ((err = mp_init_size(&b0, B)) != MP_OKAY)                   goto LBL_ERRb0;
-   for (count = 0; count < B; count++) {
-      b0.dp[count] = b->dp[count];
-      b0.used++;
-   }
-   mp_clamp(&b0);
    if ((err = mp_init_size(&b1, B)) != MP_OKAY)                   goto LBL_ERRb1;
-   for (; count < (2 * B); count++) {
-      b1.dp[count - B] = b->dp[count];
-      b1.used++;
-   }
+   if ((err = mp_init_size(&b2, b->used - 2 * B)) != MP_OKAY)     goto LBL_ERRb2;
+
+   b0.used = b1.used = B;
+   b2.used = b->used - 2 * B;
+   s_mp_copy_digs(b0.dp, b->dp, b0.used);
+   s_mp_copy_digs(b1.dp, b->dp + B, b1.used);
+   s_mp_copy_digs(b2.dp, b->dp + 2 * B, b2.used);
+   mp_clamp(&b0);
    mp_clamp(&b1);
-   if ((err = mp_init_size(&b2, B + (b->used - (3 * B)))) != MP_OKAY) goto LBL_ERRb2;
-   for (; count < b->used; count++) {
-      b2.dp[count - (2 * B)] = b->dp[count];
-      b2.used++;
-   }
    mp_clamp(&b2);
 
    /** \\ S1 = (a2+a1+a0) * (b2+b1+b0); */

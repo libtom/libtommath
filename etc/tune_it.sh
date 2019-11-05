@@ -93,15 +93,14 @@ i=$(tail -n +2 $FILE_NAME | wc -l)
 # our median point will be at $i entries
 i=$(( (i / 2) + 1 ))
 TMP=$(median $FILE_NAME 1 $i)
-echo "#define MP_DEFAULT_KARATSUBA_MUL_CUTOFF $TMP"
-echo "#define MP_DEFAULT_KARATSUBA_MUL_CUTOFF $TMP" >> $TOMMATH_CUTOFFS_H || die "(km) Appending to $TOMMATH_CUTOFFS_H" $?
+echo "#define MP_DEFAULT_MUL_KARATSUBA_CUTOFF $TMP"
+echo "#define MP_DEFAULT_MUL_KARATSUBA_CUTOFF $TMP" >> $TOMMATH_CUTOFFS_H || die "(km) Appending to $TOMMATH_CUTOFFS_H" $?
 TMP=$(median $FILE_NAME 2 $i)
-echo "#define MP_DEFAULT_KARATSUBA_SQR_CUTOFF $TMP"
-echo "#define MP_DEFAULT_KARATSUBA_SQR_CUTOFF $TMP" >> $TOMMATH_CUTOFFS_H || die "(ks) Appending to $TOMMATH_CUTOFFS_H" $?
+echo "#define MP_DEFAULT_SQR_KARATSUBA_CUTOFF $TMP"
+echo "#define MP_DEFAULT_SQR_KARATSUBA_CUTOFF $TMP" >> $TOMMATH_CUTOFFS_H || die "(ks) Appending to $TOMMATH_CUTOFFS_H" $?
 TMP=$(median $FILE_NAME 3 $i)
-echo "#define MP_DEFAULT_TOOM_MUL_CUTOFF      $TMP"
-echo "#define MP_DEFAULT_TOOM_MUL_CUTOFF      $TMP" >> $TOMMATH_CUTOFFS_H || die "(tc3m) Appending to $TOMMATH_CUTOFFS_H" $?
+echo "#define MP_DEFAULT_MUL_TOOM_CUTOFF      $TMP"
+echo "#define MP_DEFAULT_MUL_TOOM_CUTOFF      $TMP" >> $TOMMATH_CUTOFFS_H || die "(tc3m) Appending to $TOMMATH_CUTOFFS_H" $?
 TMP=$(median $FILE_NAME 4 $i)
-echo "#define MP_DEFAULT_TOOM_SQR_CUTOFF      $TMP"
-echo "#define MP_DEFAULT_TOOM_SQR_CUTOFF      $TMP" >> $TOMMATH_CUTOFFS_H || die "(tc3s) Appending to $TOMMATH_CUTOFFS_H" $?
-
+echo "#define MP_DEFAULT_SQR_TOOM_CUTOFF      $TMP"
+echo "#define MP_DEFAULT_SQR_TOOM_CUTOFF      $TMP" >> $TOMMATH_CUTOFFS_H || die "(tc3s) Appending to $TOMMATH_CUTOFFS_H" $?

@@ -20,7 +20,7 @@ static mp_err s_mp_recursion(const mp_int *a, const mp_int *b, mp_int *q, mp_int
    mp_int A1, A2, B1, B0, Q1, Q0, R1, R0, t;
    int m = a->used - b->used, k = m/2;
 
-   if (m < MP_KARATSUBA_MUL_CUTOFF) {
+   if (m < MP_MUL_KARATSUBA_CUTOFF) {
       return s_mp_div_school(a, b, q, r);
    }
 
@@ -104,7 +104,7 @@ mp_err s_mp_div_recursive(const mp_int *a, const mp_int *b, mp_int *q, mp_int *r
 
        Vid. section 2.3.
     */
-   m = MP_KARATSUBA_MUL_CUTOFF;
+   m = MP_MUL_KARATSUBA_CUTOFF;
    while (m <= b->used) {
       m <<= 1;
    }

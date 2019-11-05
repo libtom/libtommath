@@ -16,9 +16,6 @@ mp_err mp_prime_fermat(const mp_int *a, const mp_int *b, bool *result)
    mp_int  t;
    mp_err  err;
 
-   /* default to composite  */
-   *result = false;
-
    /* ensure b > 1 */
    if (mp_cmp_d(b, 1uL) != MP_GT) {
       return MP_VAL;
@@ -31,16 +28,13 @@ mp_err mp_prime_fermat(const mp_int *a, const mp_int *b, bool *result)
 
    /* compute t = b**a mod a */
    if ((err = mp_exptmod(b, a, a, &t)) != MP_OKAY) {
-      goto LBL_T;
+      goto LBL_ERR;
    }
 
    /* is it equal to b? */
-   if (mp_cmp(&t, b) == MP_EQ) {
-      *result = true;
-   }
+   *result = mp_cmp(&t, b) == MP_EQ;
 
-   err = MP_OKAY;
-LBL_T:
+LBL_ERR:
    mp_clear(&t);
    return err;
 }

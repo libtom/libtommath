@@ -6,9 +6,8 @@
 /* computes xR**-1 == x (mod N) via Montgomery Reduction */
 mp_err mp_montgomery_reduce(mp_int *x, const mp_int *n, mp_digit rho)
 {
-   int      ix, digs;
-   mp_err   err;
-   mp_digit mu;
+   mp_err err;
+   int ix, digs;
 
    /* can the fast reduction [comba] method be used?
     *
@@ -20,18 +19,19 @@ mp_err mp_montgomery_reduce(mp_int *x, const mp_int *n, mp_digit rho)
    if ((digs < MP_WARRAY) &&
        (x->used <= MP_WARRAY) &&
        (n->used < MP_MAXFAST)) {
-      return s_mp_montgomery_reduce_fast(x, n, rho);
+      return s_mp_montgomery_reduce_comba(x, n, rho);
    }
 
    /* grow the input as required */
-   if (x->alloc < digs) {
-      if ((err = mp_grow(x, digs)) != MP_OKAY) {
-         return err;
-      }
+   if ((err = mp_grow(x, digs)) != MP_OKAY) {
+      return err;
    }
    x->used = digs;
 
    for (ix = 0; ix < n->used; ix++) {
+      int iy;
+      mp_digit u, mu;
+
       /* mu = ai * rho mod b
        *
        * The value of rho must be precalculated via
@@ -43,41 +43,28 @@ mp_err mp_montgomery_reduce(mp_int *x, const mp_int *n, mp_digit rho)
       mu = (mp_digit)(((mp_word)x->dp[ix] * (mp_word)rho) & MP_MASK);
 
       /* a = a + mu * m * b**i */
-      {
-         int iy;
-         mp_digit *tmpn, *tmpx, u;
-         mp_word r;
 
-         /* alias for digits of the modulus */
-         tmpn = n->dp;
+      /* Multiply and add in place */
+      u = 0;
+      for (iy = 0; iy < n->used; iy++) {
+         /* compute product and sum */
+         mp_word r = ((mp_word)mu * (mp_word)n->dp[iy]) +
+                     (mp_word)u + (mp_word)x->dp[ix + iy];
 
-         /* alias for the digits of x [the input] */
-         tmpx = x->dp + ix;
+         /* get carry */
+         u       = (mp_digit)(r >> (mp_word)MP_DIGIT_BIT);
 
-         /* set the carry to zero */
-         u = 0;
+         /* fix digit */
+         x->dp[ix + iy] = (mp_digit)(r & (mp_word)MP_MASK);
+      }
+      /* At this point the ix'th digit of x should be zero */
 
-         /* Multiply and add in place */
-         for (iy = 0; iy < n->used; iy++) {
-            /* compute product and sum */
-            r       = ((mp_word)mu * (mp_word)*tmpn++) +
-                      (mp_word)u + (mp_word)*tmpx;
-
-            /* get carry */
-            u       = (mp_digit)(r >> (mp_word)MP_DIGIT_BIT);
-
-            /* fix digit */
-            *tmpx++ = (mp_digit)(r & (mp_word)MP_MASK);
-         }
-         /* At this point the ix'th digit of x should be zero */
-
-
-         /* propagate carries upwards as required*/
-         while (u != 0u) {
-            *tmpx   += u;
-            u        = *tmpx >> MP_DIGIT_BIT;
-            *tmpx++ &= MP_MASK;
-         }
+      /* propagate carries upwards as required*/
+      while (u != 0u) {
+         x->dp[ix + iy]   += u;
+         u        = x->dp[ix + iy] >> MP_DIGIT_BIT;
+         x->dp[ix + iy] &= MP_MASK;
+         ++iy;
       }
    }
 

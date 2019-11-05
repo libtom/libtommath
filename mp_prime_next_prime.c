@@ -10,11 +10,10 @@
  */
 mp_err mp_prime_next_prime(mp_int *a, int t, bool bbs_style)
 {
-   int      x, y;
-   mp_ord   cmp;
+   int      x;
    mp_err   err;
    bool  res = false;
-   mp_digit res_tab[MP_PRIME_TAB_SIZE], step, kstep;
+   mp_digit res_tab[MP_PRIME_TAB_SIZE], kstep;
    mp_int   b;
 
    /* force positive */
@@ -24,7 +23,7 @@ mp_err mp_prime_next_prime(mp_int *a, int t, bool bbs_style)
    if (mp_cmp_d(a, s_mp_prime_tab[MP_PRIME_TAB_SIZE-1]) == MP_LT) {
       /* find which prime it is bigger than "a" */
       for (x = 0; x < MP_PRIME_TAB_SIZE; x++) {
-         cmp = mp_cmp_d(a, s_mp_prime_tab[x]);
+         mp_ord cmp = mp_cmp_d(a, s_mp_prime_tab[x]);
          if (cmp == MP_EQ) {
             continue;
          }
@@ -42,11 +41,7 @@ mp_err mp_prime_next_prime(mp_int *a, int t, bool bbs_style)
    }
 
    /* generate a prime congruent to 3 mod 4 or 1/3 mod 4? */
-   if (bbs_style) {
-      kstep   = 4;
-   } else {
-      kstep   = 2;
-   }
+   kstep = bbs_style ? 4 : 2;
 
    /* at this point we will use a combination of a sieve and Miller-Rabin */
 
@@ -79,11 +74,12 @@ mp_err mp_prime_next_prime(mp_int *a, int t, bool bbs_style)
    }
 
    for (;;) {
+      mp_digit step = 0;
+      bool y;
       /* skip to the next non-trivially divisible candidate */
-      step = 0;
       do {
-         /* y == 1 if any residue was zero [e.g. cannot be prime] */
-         y     =  0;
+         /* y == true if any residue was zero [e.g. cannot be prime] */
+         y     = false;
 
          /* increase step to next candidate */
          step += kstep;
@@ -100,10 +96,10 @@ mp_err mp_prime_next_prime(mp_int *a, int t, bool bbs_style)
 
             /* set flag if zero */
             if (res_tab[x] == 0u) {
-               y = 1;
+               y = true;
             }
          }
-      } while ((y == 1) && (step < (((mp_digit)1 << MP_DIGIT_BIT) - kstep)));
+      } while (y && (step < (((mp_digit)1 << MP_DIGIT_BIT) - kstep)));
 
       /* add the step */
       if ((err = mp_add_d(a, step, a)) != MP_OKAY) {
@@ -111,7 +107,7 @@ mp_err mp_prime_next_prime(mp_int *a, int t, bool bbs_style)
       }
 
       /* if didn't pass sieve and step == MP_MAX then skip test */
-      if ((y == 1) && (step >= (((mp_digit)1 << MP_DIGIT_BIT) - kstep))) {
+      if (y && (step >= (((mp_digit)1 << MP_DIGIT_BIT) - kstep))) {
          continue;
       }
 
@@ -123,7 +119,6 @@ mp_err mp_prime_next_prime(mp_int *a, int t, bool bbs_style)
       }
    }
 
-   err = MP_OKAY;
 LBL_ERR:
    mp_clear(&b);
    return err;

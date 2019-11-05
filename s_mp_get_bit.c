@@ -5,12 +5,12 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* Get bit at position b and return true if the bit is 1, false if it is 0 */
-bool s_mp_get_bit(const mp_int *a, unsigned int b)
+bool s_mp_get_bit(const mp_int *a, int b)
 {
    mp_digit bit;
-   int limb = (int)(b / MP_DIGIT_BIT);
+   int limb = b / MP_DIGIT_BIT;
 
-   if (limb >= a->used) {
+   if (limb < 0 || limb >= a->used) {
       return false;
    }
 

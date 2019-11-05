@@ -57,9 +57,8 @@ sub check_source {
       push @{$troubles->{unwanted_calloc}},    $lineno if $file =~ /^[^\/]+\.c$/ && $l =~ /\bcalloc\s*\(/;
       push @{$troubles->{unwanted_free}},      $lineno if $file =~ /^[^\/]+\.c$/ && $l =~ /\bfree\s*\(/;
       # and we probably want to also avoid the following
-      push @{$troubles->{unwanted_memcpy}},    $lineno if $file =~ /^[^\/]+\.c$/ && $l =~ /\bmemcpy\s*\(/;
-      push @{$troubles->{unwanted_memset}},    $lineno if $file =~ /^[^\/]+\.c$/ && $l =~ /\bmemset\s*\(/;
-      push @{$troubles->{unwanted_memcpy}},    $lineno if $file =~ /^[^\/]+\.c$/ && $l =~ /\bmemcpy\s*\(/;
+      push @{$troubles->{unwanted_memcpy}},    $lineno if $file =~ /^[^\/]+\.c$/ && $l =~ /\bmemcpy\s*\(/ && $file !~ /s_mp_copy_digs.c/;
+      push @{$troubles->{unwanted_memset}},    $lineno if $file =~ /^[^\/]+\.c$/ && $l =~ /\bmemset\s*\(/ && $file !~ /s_mp_zero_buf.c/ && $file !~ /s_mp_zero_digs.c/;
       push @{$troubles->{unwanted_memmove}},   $lineno if $file =~ /^[^\/]+\.c$/ && $l =~ /\bmemmove\s*\(/;
       push @{$troubles->{unwanted_memcmp}},    $lineno if $file =~ /^[^\/]+\.c$/ && $l =~ /\bmemcmp\s*\(/;
       push @{$troubles->{unwanted_strcmp}},    $lineno if $file =~ /^[^\/]+\.c$/ && $l =~ /\bstrcmp\s*\(/;

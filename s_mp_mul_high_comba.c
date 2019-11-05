@@ -1,10 +1,10 @@
 #include "tommath_private.h"
-#ifdef S_MP_MUL_HIGH_DIGS_FAST_C
+#ifdef S_MP_MUL_HIGH_COMBA_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
-/* this is a modified version of s_mp_mul_digs_fast that only produces
- * output digits *above* digs.  See the comments for s_mp_mul_digs_fast
+/* this is a modified version of s_mp_mul_comba that only produces
+ * output digits *above* digs.  See the comments for s_mp_mul_comba
  * to see how it works.
  *
  * This is used in the Barrett reduction since for one of the multiplications
@@ -12,35 +12,28 @@
  *
  * Based on Algorithm 14.12 on pp.595 of HAC.
  */
-mp_err s_mp_mul_high_digs_fast(const mp_int *a, const mp_int *b, mp_int *c, int digs)
+mp_err s_mp_mul_high_comba(const mp_int *a, const mp_int *b, mp_int *c, int digs)
 {
-   int     olduse, pa, ix, iz;
+   int     oldused, pa, ix;
    mp_err   err;
    mp_digit W[MP_WARRAY];
    mp_word  _W;
 
    /* grow the destination as required */
    pa = a->used + b->used;
-   if (c->alloc < pa) {
-      if ((err = mp_grow(c, pa)) != MP_OKAY) {
-         return err;
-      }
+   if ((err = mp_grow(c, pa)) != MP_OKAY) {
+      return err;
    }
 
    /* number of output digits to produce */
    pa = a->used + b->used;
    _W = 0;
    for (ix = digs; ix < pa; ix++) {
-      int      tx, ty, iy;
-      mp_digit *tmpx, *tmpy;
+      int      tx, ty, iy, iz;
 
       /* get offsets into the two bignums */
       ty = MP_MIN(b->used-1, ix);
       tx = ix - ty;
-
-      /* setup temp aliases */
-      tmpx = a->dp + tx;
-      tmpy = b->dp + ty;
 
       /* this is the number of times the loop will iterrate, essentially its
          while (tx++ < a->used && ty-- >= 0) { ... }
@@ -49,7 +42,7 @@ mp_err s_mp_mul_high_digs_fast(const mp_int *a, const mp_int *b, mp_int *c, int 
 
       /* execute loop */
       for (iz = 0; iz < iy; iz++) {
-         _W += (mp_word)*tmpx++ * (mp_word)*tmpy--;
+         _W += (mp_word)a->dp[tx + iz] * (mp_word)b->dp[ty - iz];
       }
 
       /* store term */
@@ -60,21 +53,17 @@ mp_err s_mp_mul_high_digs_fast(const mp_int *a, const mp_int *b, mp_int *c, int 
    }
 
    /* setup dest */
-   olduse  = c->used;
+   oldused  = c->used;
    c->used = pa;
 
-   {
-      mp_digit *tmpc;
-
-      tmpc = c->dp + digs;
-      for (ix = digs; ix < pa; ix++) {
-         /* now extract the previous digit [below the carry] */
-         *tmpc++ = W[ix];
-      }
-
-      /* clear unused digits [that existed in the old copy of c] */
-      MP_ZERO_DIGITS(tmpc, olduse - ix);
+   for (ix = digs; ix < pa; ix++) {
+      /* now extract the previous digit [below the carry] */
+      c->dp[ix] = W[ix];
    }
+
+   /* clear unused digits [that existed in the old copy of c] */
+   s_mp_zero_digs(c->dp + c->used, oldused - c->used);
+
    mp_clamp(c);
    return MP_OKAY;
 }

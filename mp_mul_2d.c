@@ -6,20 +6,18 @@
 /* shift left by a certain bit count */
 mp_err mp_mul_2d(const mp_int *a, int b, mp_int *c)
 {
-   mp_digit d;
-   mp_err   err;
+   mp_err err;
 
-   /* copy */
-   if (a != c) {
-      if ((err = mp_copy(a, c)) != MP_OKAY) {
-         return err;
-      }
+   if (b < 0) {
+      return MP_VAL;
    }
 
-   if (c->alloc < (c->used + (b / MP_DIGIT_BIT) + 1)) {
-      if ((err = mp_grow(c, c->used + (b / MP_DIGIT_BIT) + 1)) != MP_OKAY) {
-         return err;
-      }
+   if ((err = mp_copy(a, c)) != MP_OKAY) {
+      return err;
+   }
+
+   if ((err = mp_grow(c, c->used + (b / MP_DIGIT_BIT) + 1)) != MP_OKAY) {
+      return err;
    }
 
    /* shift by as many digits in the bit count */
@@ -30,29 +28,25 @@ mp_err mp_mul_2d(const mp_int *a, int b, mp_int *c)
    }
 
    /* shift any bit count < MP_DIGIT_BIT */
-   d = (mp_digit)(b % MP_DIGIT_BIT);
-   if (d != 0u) {
-      mp_digit *tmpc, shift, mask, r, rr;
+   b %= MP_DIGIT_BIT;
+   if (b != 0u) {
+      mp_digit shift, mask, r;
       int x;
 
       /* bitmask for carries */
-      mask = ((mp_digit)1 << d) - (mp_digit)1;
+      mask = ((mp_digit)1 << b) - (mp_digit)1;
 
       /* shift for msbs */
-      shift = (mp_digit)MP_DIGIT_BIT - d;
-
-      /* alias */
-      tmpc = c->dp;
+      shift = (mp_digit)(MP_DIGIT_BIT - b);
 
       /* carry */
       r    = 0;
       for (x = 0; x < c->used; x++) {
          /* get the higher bits of the current word */
-         rr = (*tmpc >> shift) & mask;
+         mp_digit rr = (c->dp[x] >> shift) & mask;
 
          /* shift the current word and OR in the carry */
-         *tmpc = ((*tmpc << d) | r) & MP_MASK;
-         ++tmpc;
+         c->dp[x] = ((c->dp[x] << b) | r) & MP_MASK;
 
          /* set the carry to the carry bits of the current word */
          r = rr;

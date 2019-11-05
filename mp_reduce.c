@@ -26,12 +26,12 @@ mp_err mp_reduce(mp_int *x, const mp_int *m, const mp_int *mu)
       if ((err = mp_mul(&q, mu, &q)) != MP_OKAY) {
          goto LBL_ERR;
       }
-   } else if (MP_HAS(S_MP_MUL_HIGH_DIGS)) {
-      if ((err = s_mp_mul_high_digs(&q, mu, &q, um)) != MP_OKAY) {
+   } else if (MP_HAS(S_MP_MUL_HIGH)) {
+      if ((err = s_mp_mul_high(&q, mu, &q, um)) != MP_OKAY) {
          goto LBL_ERR;
       }
-   } else if (MP_HAS(S_MP_MUL_HIGH_DIGS_FAST)) {
-      if ((err = s_mp_mul_high_digs_fast(&q, mu, &q, um)) != MP_OKAY) {
+   } else if (MP_HAS(S_MP_MUL_HIGH_COMBA)) {
+      if ((err = s_mp_mul_high_comba(&q, mu, &q, um)) != MP_OKAY) {
          goto LBL_ERR;
       }
    } else {
@@ -48,7 +48,7 @@ mp_err mp_reduce(mp_int *x, const mp_int *m, const mp_int *mu)
    }
 
    /* q = q * m mod b**(k+1), quick (no division) */
-   if ((err = s_mp_mul_digs(&q, m, &q, um + 1)) != MP_OKAY) {
+   if ((err = s_mp_mul(&q, m, &q, um + 1)) != MP_OKAY) {
       goto LBL_ERR;
    }
 

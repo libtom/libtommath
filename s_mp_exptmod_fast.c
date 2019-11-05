@@ -80,10 +80,10 @@ mp_err s_mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_i
       }
 
       /* automatically pick the comba one if available (saves quite a few calls/ifs) */
-      if (MP_HAS(S_MP_MONTGOMERY_REDUCE_FAST) &&
+      if (MP_HAS(S_MP_MONTGOMERY_REDUCE_COMBA) &&
           (((P->used * 2) + 1) < MP_WARRAY) &&
           (P->used < MP_MAXFAST)) {
-         redux = s_mp_montgomery_reduce_fast;
+         redux = s_mp_montgomery_reduce_comba;
       } else if (MP_HAS(MP_MONTGOMERY_REDUCE)) {
          /* use slower baseline Montgomery method */
          redux = mp_montgomery_reduce;

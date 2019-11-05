@@ -26,7 +26,7 @@ mp_err mp_grow(mp_int *a, int size)
       a->dp = dp;
 
       /* zero excess digits */
-      MP_ZERO_DIGITS(a->dp + a->alloc, size - a->alloc);
+      s_mp_zero_digs(a->dp + a->alloc, size - a->alloc);
       a->alloc = size;
    }
    return MP_OKAY;

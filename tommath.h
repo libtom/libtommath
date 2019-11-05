@@ -63,7 +63,7 @@ typedef uint32_t             mp_digit;
 #   ifdef MP_31BIT
 /*
  * This is an extension that uses 31-bit digits.
- * Please be aware that not all functions support this size, especially s_mp_mul_digs_fast
+ * Please be aware that not all functions support this size, especially s_mp_mul_comba
  * will be reduced to work on small numbers only:
  * Up to 8 limbs, 248 bits instead of up to 512 limbs, 15872 bits with MP_28BIT.
  */
@@ -117,10 +117,10 @@ typedef enum {
 /* tunable cutoffs */
 #ifndef MP_FIXED_CUTOFFS
 extern int
-MP_KARATSUBA_MUL_CUTOFF,
-MP_KARATSUBA_SQR_CUTOFF,
-MP_TOOM_MUL_CUTOFF,
-MP_TOOM_SQR_CUTOFF;
+MP_MUL_KARATSUBA_CUTOFF,
+MP_SQR_KARATSUBA_CUTOFF,
+MP_MUL_TOOM_CUTOFF,
+MP_SQR_TOOM_CUTOFF;
 #endif
 
 /* define this to use lower memory usage routines (exptmods mostly) */
@@ -398,7 +398,7 @@ mp_err mp_mul_d(const mp_int *a, mp_digit b, mp_int *c) MP_WUR;
 mp_err mp_div_d(const mp_int *a, mp_digit b, mp_int *c, mp_digit *d) MP_WUR;
 
 /* c = a mod b, 0 <= c < b  */
-mp_err mp_mod_d(const mp_int *a, mp_digit b, mp_digit *c) MP_WUR;
+#define mp_mod_d(a, b, c) mp_div_d((a), (b), NULL, (c))
 
 /* ---> number theory <--- */
 
