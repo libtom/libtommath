@@ -425,7 +425,7 @@ sub generate_def {
     my @files = split /\n/, `git ls-files`;
     @files = grep(/\.c/, @files);
     @files = map { my $x = $_; $x =~ s/^bn_|\.c$//g; $x; } @files;
-    @files = grep(!/mp_radix_smap/, @files);
+    @files = grep(!/mp_cutoffs/, @files);
 
     my $files = join("\n    ", sort(grep(/^mp_/, @files)));
     write_file "tommath.def", "; libtommath

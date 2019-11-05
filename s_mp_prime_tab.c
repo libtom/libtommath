@@ -1,5 +1,5 @@
 #include "tommath_private.h"
-#ifdef MP_PRIME_TAB_C
+#ifdef S_MP_PRIME_TAB_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 

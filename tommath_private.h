@@ -193,9 +193,9 @@ MP_PRIVATE void s_mp_copy_digs(mp_digit *d, const mp_digit *s, int digits);
 MP_PRIVATE mp_err s_mp_rand_jenkins(void *p, size_t n) MP_WUR;
 MP_PRIVATE void s_mp_rand_jenkins_init(uint64_t seed);
 
-#define MP_RMAP_REVERSE_SIZE 80u
-extern MP_PRIVATE const char s_mp_rmap[];
-extern MP_PRIVATE const uint8_t s_mp_rmap_reverse[];
+#define MP_RADIX_MAP_REVERSE_SIZE 80u
+extern MP_PRIVATE const char s_mp_radix_map[];
+extern MP_PRIVATE const uint8_t s_mp_radix_map_reverse[];
 extern MP_PRIVATE const mp_digit s_mp_prime_tab[];
 
 /* number of primes */
