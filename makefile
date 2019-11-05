@@ -83,7 +83,7 @@ profiled_single:
 	rm -f *.o timing
 	$(CC) $(LTM_CFLAGS) -fbranch-probabilities -DTESTING -c mpi.c -o mpi.o
 	$(AR) $(ARFLAGS) $(LIBNAME) mpi.o
-	ranlib $(LIBNAME)
+	$(RANLIB) $(LIBNAME)
 
 install: $(LIBNAME)
 	install -d $(DESTDIR)$(LIBPATH)
