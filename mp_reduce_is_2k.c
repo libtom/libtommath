@@ -11,7 +11,9 @@ bool mp_reduce_is_2k(const mp_int *a)
    } else if (a->used == 1) {
       return true;
    } else if (a->used > 1) {
-      int ix, iy = mp_count_bits(a), iw = 1;
+      int ix;
+      int iy = mp_count_bits(a);
+      int iw = 1;
       mp_digit iz = 1;
 
       /* Test every bit from the second digit up, must be 1 */

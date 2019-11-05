@@ -8,9 +8,9 @@ mp_err s_mp_mul_balance(const mp_int *a, const mp_int *b, mp_int *c)
 {
    mp_int a0, tmp, r;
    mp_err err;
-   int i, j,
-       nblocks = MP_MAX(a->used, b->used) / MP_MIN(a->used, b->used),
-       bsize = MP_MIN(a->used, b->used);
+   int i, j;
+   int nblocks = MP_MAX(a->used, b->used) / MP_MIN(a->used, b->used);
+   int bsize = MP_MIN(a->used, b->used);
 
    if ((err = mp_init_size(&a0, bsize + 2)) != MP_OKAY) {
       return err;

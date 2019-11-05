@@ -11,11 +11,11 @@
  */
 mp_err mp_montgomery_calc_normalization(mp_int *a, const mp_int *b)
 {
-   int    x, bits;
+   int    x;
    mp_err err;
 
    /* how many bits of last digit does b use */
-   bits = mp_count_bits(b) % MP_DIGIT_BIT;
+   int bits = mp_count_bits(b) % MP_DIGIT_BIT;
 
    if (b->used > 1) {
       if ((err = mp_2expt(a, ((b->used - 1) * MP_DIGIT_BIT) + bits - 1)) != MP_OKAY) {

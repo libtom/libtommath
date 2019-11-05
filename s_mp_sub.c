@@ -6,7 +6,10 @@
 /* low level subtraction (assumes |a| > |b|), HAC pp.595 Algorithm 14.9 */
 mp_err s_mp_sub(const mp_int *a, const mp_int *b, mp_int *c)
 {
-   int oldused = c->used, min = b->used, max = a->used, i;
+   int oldused = c->used;
+   int min = b->used;
+   int max = a->used;
+   int i;
    mp_digit u;
    mp_err err;
 

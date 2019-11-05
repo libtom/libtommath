@@ -6,7 +6,8 @@
 /* reverse an array, used for radix code */
 static void s_reverse(char *s, size_t len)
 {
-   size_t ix = 0, iy = len - 1u;
+   size_t ix = 0;
+   size_t iy = len - 1u;
    while (ix < iy) {
       MP_EXCH(char, s[ix], s[iy]);
       ++ix;

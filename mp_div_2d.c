@@ -34,16 +34,15 @@ mp_err mp_div_2d(const mp_int *a, int b, mp_int *c, mp_int *d)
    b %= MP_DIGIT_BIT;
    if (b != 0u) {
       int x;
-      mp_digit r, mask, shift;
 
       /* mask */
-      mask = ((mp_digit)1 << b) - 1uL;
+      mp_digit mask = ((mp_digit)1 << b) - 1uL;
 
       /* shift for lsb */
-      shift = (mp_digit)(MP_DIGIT_BIT - b);
+      mp_digit shift = (mp_digit)(MP_DIGIT_BIT - b);
 
       /* carry */
-      r = 0;
+      mp_digit r = 0;
       for (x = c->used; x --> 0;) {
          /* get the lower  bits of this word in a temp */
          mp_digit rr = c->dp[x] & mask;

@@ -7,9 +7,9 @@
 mp_err mp_mul(const mp_int *a, const mp_int *b, mp_int *c)
 {
    mp_err err;
-   int min = MP_MIN(a->used, b->used),
-       max = MP_MAX(a->used, b->used),
-       digs = a->used + b->used + 1;
+   int min = MP_MIN(a->used, b->used);
+   int max = MP_MAX(a->used, b->used);
+   int digs = a->used + b->used + 1;
    mp_sign neg = (a->sign == b->sign) ? MP_ZPOS : MP_NEG;
 
    if (MP_HAS(S_MP_MUL_BALANCE) &&
