@@ -77,7 +77,7 @@ profiled_single: pre_gen
 	rm -f *.o timing
 	$(CC) $(LTM_CFLAGS) -fbranch-probabilities -c pre_gen/tommath_amalgam.c -o tommath_amalgam.o
 	$(AR) $(ARFLAGS) $(LIBNAME) tommath_amalgam.o
-	ranlib $(LIBNAME)
+	$(RANLIB) $(LIBNAME)
 
 install: $(LIBNAME)
 	install -d $(DESTDIR)$(LIBPATH)

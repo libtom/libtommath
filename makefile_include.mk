@@ -86,6 +86,12 @@ LTM_CFLAGS += -O3 -funroll-loops
 LTM_CFLAGS  += -fomit-frame-pointer
 endif
 
+ifdef COMPILE_LTO
+LTM_CFLAGS += -flto
+AR = $(subst clang,llvm-ar,$(subst gcc,gcc-ar,$(CC)))
+RANLIB = $(subst clang,llvm-ranlib,$(subst gcc,gcc-ranlib,$(CC)))
+endif
+
 endif # COMPILE_SIZE
 
 ifneq ($(findstring clang,$(CC)),)
