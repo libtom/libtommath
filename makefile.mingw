@@ -13,8 +13,7 @@
 PREFIX    = c:\mingw
 CC        = gcc
 AR        = ar
-ARFLAGS   = r
-RANLIB    = ranlib
+ARFLAGS   = rcs
 STRIP     = strip
 CFLAGS    = -O2
 LDFLAGS   =
@@ -69,7 +68,6 @@ $(OBJECTS): $(HEADERS)
 #Create libtommath.a
 $(LIBMAIN_S): $(OBJECTS)
 	$(AR) $(ARFLAGS) $@ $(OBJECTS)
-	$(RANLIB) $@
 
 #Create DLL + import library libtommath.dll.a
 $(LIBMAIN_D) $(LIBMAIN_I): $(OBJECTS)

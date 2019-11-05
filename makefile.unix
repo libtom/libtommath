@@ -16,8 +16,7 @@ LIBPATH   = $(PREFIX)/lib
 INCPATH   = $(PREFIX)/include
 CC        = cc
 AR        = ar
-ARFLAGS   = r
-RANLIB    = ranlib
+ARFLAGS   = rcs
 CFLAGS    = -O2
 LDFLAGS   =
 
@@ -72,7 +71,6 @@ $(OBJECTS): $(HEADERS)
 #Create libtommath.a
 $(LIBMAIN_S): $(OBJECTS)
 	$(AR) $(ARFLAGS) $@ $(OBJECTS)
-	$(RANLIB) $@
 
 #Build test_standalone suite
 test: demo/shared.o demo/test.o $(LIBMAIN_S)
