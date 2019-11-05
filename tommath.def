@@ -32,7 +32,7 @@ EXPORTS
     mp_dr_setup
     mp_error_to_string
     mp_exch
-    mp_expt_u32
+    mp_expt
     mp_exptmod
     mp_exteuclid
     mp_fread
@@ -67,7 +67,7 @@ EXPORTS
     mp_is_square
     mp_kronecker
     mp_lcm
-    mp_log_u32
+    mp_log
     mp_lshd
     mp_mod
     mp_mod_2d
@@ -102,7 +102,7 @@ EXPORTS
     mp_reduce_is_2k
     mp_reduce_is_2k_l
     mp_reduce_setup
-    mp_root_u32
+    mp_root
     mp_rshd
     mp_sbin_size
     mp_set

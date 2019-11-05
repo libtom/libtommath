@@ -38,7 +38,7 @@
 #   define MP_DR_SETUP_C
 #   define MP_ERROR_TO_STRING_C
 #   define MP_EXCH_C
-#   define MP_EXPT_U32_C
+#   define MP_EXPT_C
 #   define MP_EXPTMOD_C
 #   define MP_EXTEUCLID_C
 #   define MP_FREAD_C
@@ -73,7 +73,7 @@
 #   define MP_IS_SQUARE_C
 #   define MP_KRONECKER_C
 #   define MP_LCM_C
-#   define MP_LOG_U32_C
+#   define MP_LOG_C
 #   define MP_LSHD_C
 #   define MP_MOD_C
 #   define MP_MOD_2D_C
@@ -108,7 +108,7 @@
 #   define MP_REDUCE_IS_2K_C
 #   define MP_REDUCE_IS_2K_L_C
 #   define MP_REDUCE_SETUP_C
-#   define MP_ROOT_U32_C
+#   define MP_ROOT_C
 #   define MP_RSHD_C
 #   define MP_SBIN_SIZE_C
 #   define MP_SET_C
@@ -148,8 +148,8 @@
 #   define S_MP_INVMOD_C
 #   define S_MP_INVMOD_ODD_C
 #   define S_MP_LOG_C
+#   define S_MP_LOG_2EXPT_C
 #   define S_MP_LOG_D_C
-#   define S_MP_LOG_POW2_C
 #   define S_MP_MONTGOMERY_REDUCE_COMBA_C
 #   define S_MP_MUL_C
 #   define S_MP_MUL_BALANCE_C
@@ -303,7 +303,7 @@
 #if defined(MP_EXCH_C)
 #endif
 
-#if defined(MP_EXPT_U32_C)
+#if defined(MP_EXPT_C)
 #   define MP_CLEAR_C
 #   define MP_INIT_COPY_C
 #   define MP_MUL_C
@@ -504,10 +504,10 @@
 #   define MP_MUL_C
 #endif
 
-#if defined(MP_LOG_U32_C)
+#if defined(MP_LOG_C)
+#   define S_MP_LOG_2EXPT_C
 #   define S_MP_LOG_C
 #   define S_MP_LOG_D_C
-#   define S_MP_LOG_POW2_C
 #endif
 
 #if defined(MP_LSHD_C)
@@ -710,7 +710,7 @@
 #endif
 
 #if defined(MP_RADIX_SIZE_C)
-#   define MP_LOG_U32_C
+#   define MP_LOG_C
 #endif
 
 #if defined(MP_RAND_C)
@@ -795,7 +795,7 @@
 #   define MP_DIV_C
 #endif
 
-#if defined(MP_ROOT_U32_C)
+#if defined(MP_ROOT_C)
 #   define MP_2EXPT_C
 #   define MP_ADD_D_C
 #   define MP_CLEAR_MULTI_C
@@ -804,7 +804,7 @@
 #   define MP_COUNT_BITS_C
 #   define MP_DIV_C
 #   define MP_EXCH_C
-#   define MP_EXPT_U32_C
+#   define MP_EXPT_C
 #   define MP_INIT_MULTI_C
 #   define MP_MUL_C
 #   define MP_MUL_D_C
@@ -1106,18 +1106,18 @@
 #   define MP_CMP_D_C
 #   define MP_COPY_C
 #   define MP_EXCH_C
-#   define MP_EXPT_U32_C
+#   define MP_EXPT_C
 #   define MP_INIT_MULTI_C
 #   define MP_MUL_C
 #   define MP_SET_C
 #   define MP_SQR_C
 #endif
 
-#if defined(S_MP_LOG_D_C)
+#if defined(S_MP_LOG_2EXPT_C)
+#   define MP_COUNT_BITS_C
 #endif
 
-#if defined(S_MP_LOG_POW2_C)
-#   define MP_COUNT_BITS_C
+#if defined(S_MP_LOG_D_C)
 #endif
 
 #if defined(S_MP_MONTGOMERY_REDUCE_COMBA_C)
