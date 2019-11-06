@@ -18,7 +18,7 @@ mp_err mp_mul_d(const mp_int *a, mp_digit b, mp_int *c)
    if (MP_HAS(MP_MUL_2) && (b == 2u)) {
       return mp_mul_2(a, c);
    }
-   if (MP_HAS(MP_MUL_2D) && (b != 0u) && ((b & (b - 1u)) == 0u)) {
+   if (MP_HAS(MP_MUL_2D) && MP_IS_2EXPT(b)) {
       ix = 1;
       while ((ix < MP_DIGIT_BIT) && (b != (((mp_digit)1)<<ix))) {
          ix++;

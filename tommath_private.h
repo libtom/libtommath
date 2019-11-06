@@ -120,6 +120,8 @@ extern void MP_FREE(void *mem, size_t size);
 
 #define MP_EXCH(t, a, b) do { t _c = a; a = b; b = _c; } while (0)
 
+#define MP_IS_2EXPT(x) (((x) != 0u) && (((x) & ((x) - 1u)) == 0u))
+
 /* Static assertion */
 #define MP_STATIC_ASSERT(msg, cond) typedef char mp_static_assert_##msg[(cond) ? 1 : -1];
 
