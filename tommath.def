@@ -25,7 +25,6 @@ EXPORTS
     mp_div
     mp_div_2
     mp_div_2d
-    mp_div_3
     mp_div_d
     mp_dr_is_modulus
     mp_dr_reduce
@@ -117,7 +116,6 @@ EXPORTS
     mp_set_ull
     mp_shrink
     mp_signed_rsh
-    mp_sqr
     mp_sqrmod
     mp_sqrt
     mp_sqrtmod_prime
