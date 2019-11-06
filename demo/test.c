@@ -690,7 +690,7 @@ static int test_mp_get_u64(void)
    DOR(mp_init_multi(&a, &b, NULL));
 
    for (i = 0; i < (int)(MP_SIZEOF_BITS(uint64_t) - 1); ++i) {
-      r = (UINT64_C(1) << (i+1)) - 1;
+      r = ((uint64_t)1 << (i+1)) - 1;
       if (!r)
          r = UINT64_MAX;
       printf(" r = 0x%" PRIx64 " i = %d\r", r, i);
