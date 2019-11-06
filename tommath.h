@@ -366,7 +366,7 @@ mp_err mp_sub(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
 mp_err mp_mul(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
 
 /* b = a*a  */
-mp_err mp_sqr(const mp_int *a, mp_int *b) MP_WUR;
+#define mp_sqr(a, b) mp_mul((a), (a), (b))
 
 /* a/b => cb + d == a */
 mp_err mp_div(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d) MP_WUR;
