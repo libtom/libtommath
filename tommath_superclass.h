@@ -75,7 +75,6 @@
  * like removing support for even moduli, etc...
  */
 #   ifdef LTM_LAST
-#      undef MP_DIV_3_C
 #      undef MP_DR_IS_MODULUS_C
 #      undef MP_DR_REDUCE_C
 #      undef MP_DR_SETUP_C
@@ -83,6 +82,7 @@
 #      undef MP_REDUCE_2K_SETUP_C
 #      undef MP_REDUCE_IS_2K_C
 #      undef MP_REDUCE_SETUP_C
+#      undef S_MP_DIV_3_C
 #      undef S_MP_EXPTMOD_C
 #      undef S_MP_INVMOD_ODD_C
 #      undef S_MP_MUL_BALANCE_C
