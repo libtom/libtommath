@@ -196,8 +196,6 @@
 
 #if defined(MP_ADDMOD_C)
 #   define MP_ADD_C
-#   define MP_CLEAR_C
-#   define MP_INIT_C
 #   define MP_MOD_C
 #endif
 
@@ -519,10 +517,7 @@
 
 #if defined(MP_MOD_C)
 #   define MP_ADD_C
-#   define MP_CLEAR_C
 #   define MP_DIV_C
-#   define MP_EXCH_C
-#   define MP_INIT_SIZE_C
 #endif
 
 #if defined(MP_MOD_2D_C)
@@ -580,8 +575,6 @@
 #endif
 
 #if defined(MP_MULMOD_C)
-#   define MP_CLEAR_C
-#   define MP_INIT_SIZE_C
 #   define MP_MOD_C
 #   define MP_MUL_C
 #endif
@@ -888,8 +881,6 @@
 #endif
 
 #if defined(MP_SQRMOD_C)
-#   define MP_CLEAR_C
-#   define MP_INIT_C
 #   define MP_MOD_C
 #   define MP_SQR_C
 #endif
@@ -938,8 +929,6 @@
 #endif
 
 #if defined(MP_SUBMOD_C)
-#   define MP_CLEAR_C
-#   define MP_INIT_C
 #   define MP_MOD_C
 #   define MP_SUB_C
 #endif
