@@ -467,8 +467,12 @@ int main(int argc, char **argv)
          if (test[n].fn != NULL) {
             s_run(test[n].name, test[n].fn, test[n].cutoff);
             *test[n].update = *test[n].cutoff;
+            *test[n].cutoff = INT_MAX;
          }
       }
+   }
+   if (printpreset == 1) {
+      updated = orig;
    }
    if (args.terse == 1) {
       printf("%d %d %d %d\n",
