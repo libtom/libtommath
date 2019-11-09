@@ -12,7 +12,7 @@
 mp_err s_mp_invmod_odd(const mp_int *a, const mp_int *b, mp_int *c)
 {
    mp_int  x, y, u, v, B, D;
-   mp_sign neg;
+   mp_sign sign;
    mp_err  err;
 
    /* 2. [modified] b must be odd   */
@@ -95,8 +95,8 @@ mp_err s_mp_invmod_odd(const mp_int *a, const mp_int *b, mp_int *c)
    }
 
    /* b is now the inverse */
-   neg = a->sign;
-   while (D.sign == MP_NEG) {
+   sign = a->sign;
+   while (mp_isneg(&D)) {
       if ((err = mp_add(&D, b, &D)) != MP_OKAY)                   goto LBL_ERR;
    }
 
@@ -106,7 +106,7 @@ mp_err s_mp_invmod_odd(const mp_int *a, const mp_int *b, mp_int *c)
    }
 
    mp_exch(&D, c);
-   c->sign = neg;
+   c->sign = sign;
    err = MP_OKAY;
 
 LBL_ERR:

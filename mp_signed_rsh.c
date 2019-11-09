@@ -7,7 +7,7 @@
 mp_err mp_signed_rsh(const mp_int *a, int b, mp_int *c)
 {
    mp_err err;
-   if (a->sign == MP_ZPOS) {
+   if (!mp_isneg(a)) {
       return mp_div_2d(a, b, c, NULL);
    }
 

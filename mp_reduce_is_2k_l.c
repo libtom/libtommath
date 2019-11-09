@@ -6,7 +6,7 @@
 /* determines if reduce_2k_l can be used */
 bool mp_reduce_is_2k_l(const mp_int *a)
 {
-   if (a->used == 0) {
+   if (mp_iszero(a)) {
       return false;
    } else if (a->used == 1) {
       return true;

@@ -5,7 +5,7 @@
 
 static mp_word s_pow(mp_word base, mp_word exponent)
 {
-   mp_word result = 1uLL;
+   mp_word result = 1u;
    while (exponent != 0u) {
       if ((exponent & 1u) == 1u) {
          result *= base;
@@ -19,7 +19,7 @@ static mp_word s_pow(mp_word base, mp_word exponent)
 
 mp_digit s_mp_log_d(mp_digit base, mp_digit n)
 {
-   mp_word bracket_low = 1uLL, bracket_mid, bracket_high, N;
+   mp_word bracket_low = 1u, bracket_mid, bracket_high, N;
    mp_digit ret, high = 1uL, low = 0uL, mid;
 
    if (n < base) {

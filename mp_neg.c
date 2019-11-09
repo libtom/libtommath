@@ -11,7 +11,7 @@ mp_err mp_neg(const mp_int *a, mp_int *b)
       return err;
    }
 
-   b->sign = mp_iszero(b) || b->sign == MP_NEG ? MP_ZPOS : MP_NEG;
+   b->sign = ((!mp_iszero(b) && !mp_isneg(b)) ? MP_NEG : MP_ZPOS);
 
    return MP_OKAY;
 }

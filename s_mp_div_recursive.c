@@ -83,7 +83,7 @@ mp_err s_mp_div_recursive(const mp_int *a, const mp_int *b, mp_int *q, mp_int *r
 {
    int j, m, n, sigma;
    mp_err err;
-   mp_sign neg;
+   bool neg;
    mp_digit msb_b, msb;
    mp_int A, B, Q, Q1, R, A_div, A_mod;
 
@@ -126,7 +126,7 @@ mp_err s_mp_div_recursive(const mp_int *a, const mp_int *b, mp_int *q, mp_int *r
    }
 
    /* fix the sign */
-   neg = (a->sign == b->sign) ? MP_ZPOS : MP_NEG;
+   neg = (a->sign != b->sign);
    A.sign = B.sign = MP_ZPOS;
 
    /*
@@ -159,11 +159,11 @@ mp_err s_mp_div_recursive(const mp_int *a, const mp_int *b, mp_int *q, mp_int *r
    if ((err = mp_add(&Q, &Q1, &Q)) != MP_OKAY)                                   goto LBL_ERR;
 
    /* get sign before writing to c */
-   Q.sign = (Q.used == 0) ? MP_ZPOS : a->sign;
+   Q.sign = (mp_iszero(&Q) ? MP_ZPOS : a->sign);
 
    if (q != NULL) {
       mp_exch(&Q, q);
-      q->sign = neg;
+      q->sign = (neg ? MP_NEG : MP_ZPOS);
    }
    if (r != NULL) {
       /* de-normalize the remainder */

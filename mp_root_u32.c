@@ -20,7 +20,7 @@ mp_err mp_root_u32(const mp_int *a, uint32_t b, mp_int *c)
    mp_err err;
 
    /* input must be positive if b is even */
-   if (((b & 1u) == 0u) && (a->sign == MP_NEG)) {
+   if (((b & 1u) == 0u) && mp_isneg(a)) {
       return MP_VAL;
    }
 

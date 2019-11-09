@@ -261,7 +261,7 @@ extern MP_PRIVATE const mp_digit s_mp_prime_tab[];
     type name(const mp_int* a)                                \
     {                                                         \
         utype res = mag(a);                                   \
-        return (a->sign == MP_NEG) ? (type)-res : (type)res;  \
+        return mp_isneg(a) ? (type)-res : (type)res;          \
     }
 
 #endif

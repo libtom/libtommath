@@ -846,7 +846,7 @@ mp_err mp_neg(mp_int *a, mp_int *b)
   if(s_mp_cmp_d(b, 0) == MP_EQ)
     SIGN(b) = MP_ZPOS;
   else
-    SIGN(b) = (SIGN(b) == MP_NEG) ? MP_ZPOS : MP_NEG;
+    SIGN(b) = (SIGN(b) != MP_NEG) ? MP_NEG : MP_ZPOS;
 
   return MP_OKAY;
 
@@ -1055,7 +1055,7 @@ mp_err mp_mul(mp_int *a, mp_int *b, mp_int *c)
 
   ARGCHK(a != NULL && b != NULL && c != NULL, MP_BADARG);
 
-  sgn = (SIGN(a) == SIGN(b)) ? MP_ZPOS : MP_NEG;
+  sgn = (SIGN(a) != SIGN(b)) ? MP_NEG : MP_ZPOS;
 
   if(c == b) {
     if((res = s_mp_mul(c, a)) != MP_OKAY)
@@ -1069,7 +1069,7 @@ mp_err mp_mul(mp_int *a, mp_int *b, mp_int *c)
       return res;
   }
 
-  if(sgn == MP_ZPOS || s_mp_cmp_d(c, 0) == MP_EQ)
+  if(sgn != MP_NEG || s_mp_cmp_d(c, 0) == MP_EQ)
     SIGN(c) = MP_ZPOS;
   else
     SIGN(c) = sgn;
@@ -1821,12 +1821,12 @@ int    mp_cmp(mp_int *a, mp_int *b)
     if((mag = s_mp_cmp(a, b)) == MP_EQ)
       return MP_EQ;
 
-    if(SIGN(a) == MP_ZPOS)
+    if(SIGN(a) != MP_NEG)
       return mag;
     else
       return -mag;
 
-  } else if(SIGN(a) == MP_ZPOS) {
+  } else if(SIGN(a) != MP_NEG) {
     return MP_GT;
   } else {
     return MP_LT;
@@ -1957,7 +1957,7 @@ mp_err mp_gcd(mp_int *a, mp_int *b, mp_int *c)
       goto CLEANUP;
 
     /* t = -v */
-    if(SIGN(&v) == MP_ZPOS)
+    if(SIGN(&v) != MP_NEG)
       SIGN(&t) = MP_NEG;
     else
       SIGN(&t) = MP_ZPOS;
@@ -1982,7 +1982,7 @@ mp_err mp_gcd(mp_int *a, mp_int *b, mp_int *c)
         goto CLEANUP;
 
       /* v = -t */
-      if(SIGN(&t) == MP_ZPOS)
+      if(SIGN(&t) != MP_NEG)
         SIGN(&v) = MP_NEG;
       else
         SIGN(&v) = MP_ZPOS;

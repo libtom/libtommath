@@ -23,7 +23,7 @@ mp_err mp_sub(const mp_int *a, const mp_int *b, mp_int *c)
       /* The second has a larger magnitude */
       /* The result has the *opposite* sign from */
       /* the first number. */
-      c->sign = (a->sign == MP_ZPOS) ? MP_NEG : MP_ZPOS;
+      c->sign = (!mp_isneg(a) ? MP_NEG : MP_ZPOS);
       MP_EXCH(const mp_int *, a, b);
    } else {
       /* The first has a larger or equal magnitude */

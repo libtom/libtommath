@@ -18,10 +18,10 @@
 */
 mp_err s_mp_div_school(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d)
 {
-   mp_int  q, x, y, t1, t2;
-   int     n, t, i, norm;
-   mp_sign neg;
-   mp_err  err;
+   mp_int q, x, y, t1, t2;
+   int n, t, i, norm;
+   bool neg;
+   mp_err err;
 
    if ((err = mp_init_size(&q, a->used + 2)) != MP_OKAY) {
       return err;
@@ -34,7 +34,7 @@ mp_err s_mp_div_school(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d)
    if ((err = mp_init_copy(&y, b)) != MP_OKAY)                    goto LBL_X;
 
    /* fix the sign */
-   neg = (a->sign == b->sign) ? MP_ZPOS : MP_NEG;
+   neg = (a->sign != b->sign);
    x.sign = y.sign = MP_ZPOS;
 
    /* normalize both x and y, ensure that y >= b/2, [b == 2**MP_DIGIT_BIT] */
@@ -113,7 +113,7 @@ mp_err s_mp_div_school(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d)
       if ((err = mp_sub(&x, &t1, &x)) != MP_OKAY)                        goto LBL_Y;
 
       /* if x < 0 then { x = x + y*b**{i-t-1}; q{i-t-1} -= 1; } */
-      if (x.sign == MP_NEG) {
+      if (mp_isneg(&x)) {
          if ((err = mp_copy(&y, &t1)) != MP_OKAY)                        goto LBL_Y;
          if ((err = mp_lshd(&t1, (i - t) - 1)) != MP_OKAY)               goto LBL_Y;
          if ((err = mp_add(&x, &t1, &x)) != MP_OKAY)                     goto LBL_Y;
@@ -127,12 +127,12 @@ mp_err s_mp_div_school(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d)
     */
 
    /* get sign before writing to c */
-   x.sign = (x.used == 0) ? MP_ZPOS : a->sign;
+   x.sign = mp_iszero(&x) ? MP_ZPOS : a->sign;
 
    if (c != NULL) {
       mp_clamp(&q);
       mp_exch(&q, c);
-      c->sign = neg;
+      c->sign = (neg ? MP_NEG : MP_ZPOS);
    }
 
    if (d != NULL) {

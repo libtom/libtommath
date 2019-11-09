@@ -8,7 +8,7 @@
 mp_err mp_fread(mp_int *a, int radix, FILE *stream)
 {
    mp_err err;
-   mp_sign neg = MP_ZPOS;
+   mp_sign sign = MP_ZPOS;
    int ch;
 
    /* make sure the radix is ok */
@@ -19,7 +19,7 @@ mp_err mp_fread(mp_int *a, int radix, FILE *stream)
    /* if first digit is - then set negative */
    ch = fgetc(stream);
    if (ch == (int)'-') {
-      neg = MP_NEG;
+      sign = MP_NEG;
       ch = fgetc(stream);
    }
 
@@ -56,7 +56,7 @@ mp_err mp_fread(mp_int *a, int radix, FILE *stream)
    } while ((ch = fgetc(stream)) != EOF);
 
    if (!mp_iszero(a)) {
-      a->sign = neg;
+      a->sign = sign;
    }
 
    return MP_OKAY;

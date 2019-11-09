@@ -7,7 +7,7 @@
 mp_err mp_read_radix(mp_int *a, const char *str, int radix)
 {
    mp_err   err;
-   mp_sign  neg = MP_ZPOS;
+   mp_sign  sign = MP_ZPOS;
 
    /* make sure the radix is ok */
    if ((radix < 2) || (radix > 64)) {
@@ -19,7 +19,7 @@ mp_err mp_read_radix(mp_int *a, const char *str, int radix)
     */
    if (*str == '-') {
       ++str;
-      neg = MP_NEG;
+      sign = MP_NEG;
    }
 
    /* set the integer to the default of zero */
@@ -62,7 +62,7 @@ mp_err mp_read_radix(mp_int *a, const char *str, int radix)
 
    /* set the sign only if a != 0 */
    if (!mp_iszero(a)) {
-      a->sign = neg;
+      a->sign = sign;
    }
    return MP_OKAY;
 }

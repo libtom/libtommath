@@ -5,15 +5,7 @@
 
 mp_err mp_log_u32(const mp_int *a, uint32_t base, uint32_t *c)
 {
-   if (a->sign == MP_NEG) {
-      return MP_VAL;
-   }
-
-   if (mp_iszero(a)) {
-      return MP_VAL;
-   }
-
-   if (base < 2u) {
+   if (mp_isneg(a) || mp_iszero(a) || (base < 2u)) {
       return MP_VAL;
    }
 
