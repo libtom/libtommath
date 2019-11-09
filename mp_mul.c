@@ -46,11 +46,8 @@ mp_err mp_mul(const mp_int *a, const mp_int *b, mp_int *c)
    } else if (MP_HAS(S_MP_MUL_KARATSUBA) &&
               (min >= MP_MUL_KARATSUBA_CUTOFF)) {
       err = s_mp_mul_karatsuba(a, b, c);
-   } else if (MP_HAS(S_MP_MUL_COMBA) && /* can we use the fast multiplier? */
-              (min <= MP_MAX_COMBA)) {
+   } else if (MP_HAS(S_MP_MUL_COMBA)) {
       err = s_mp_mul_comba(a, b, c, digs);
-   } else if (MP_HAS(S_MP_MUL)) {
-      err = s_mp_mul(a, b, c, digs);
    } else {
       err = MP_VAL;
    }

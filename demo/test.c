@@ -1895,7 +1895,7 @@ LBL_ERR:
    return EXIT_FAILURE;
 }
 
-#define s_mp_mul_full(a, b, c) s_mp_mul(a, b, c, (a)->used + (b)->used + 1)
+#define s_mp_mul_full(a, b, c) s_mp_mul_comba(a, b, c, (a)->used + (b)->used + 1)
 static int test_s_mp_mul_karatsuba(void)
 {
    mp_int a, b, c, d;

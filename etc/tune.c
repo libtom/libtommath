@@ -60,11 +60,7 @@ static int s_offset = 1;
 
 static mp_err s_mul_full(const mp_int *a, const mp_int *b, mp_int *c)
 {
-   if (MP_HAS(S_MP_MUL_HIGH_COMBA)
-       && (MP_MIN(a->used, b->used) < MP_MAX_COMBA)) {
-      return s_mp_mul_comba(a, b, c, a->used + b->used + 1);
-   }
-   return s_mp_mul(a, b, c, a->used + b->used + 1);
+   return s_mp_mul_comba(a, b, c, a->used + b->used + 1);
 }
 
 static uint64_t s_time_mul(int size)

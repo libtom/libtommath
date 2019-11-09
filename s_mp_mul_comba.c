@@ -23,7 +23,7 @@ mp_err s_mp_mul_comba(const mp_int *a, const mp_int *b, mp_int *c, int digs)
 {
    int      oldused, pa, ix;
    mp_err   err;
-   mp_word  W;
+   mp_digit c0, c1, c2;
    mp_int   tmp, *c_;
 
    /* prepare the destination */
@@ -38,7 +38,7 @@ mp_err s_mp_mul_comba(const mp_int *a, const mp_int *b, mp_int *c, int digs)
    pa = MP_MIN(digs, a->used + b->used);
 
    /* clear the carry */
-   W = 0;
+   c0 = c1 = c2 = 0;
    for (ix = 0; ix < pa; ix++) {
       int tx, ty, iy, iz;
 
@@ -51,16 +51,59 @@ mp_err s_mp_mul_comba(const mp_int *a, const mp_int *b, mp_int *c, int digs)
        */
       iy = MP_MIN(a->used-tx, ty+1);
 
-      /* execute loop */
-      for (iz = 0; iz < iy; ++iz) {
-         W += (mp_word)a->dp[tx + iz] * (mp_word)b->dp[ty - iz];
+      /* execute loop
+       *
+       * Give the autovectorizer a hint! this might not be necessary.
+       * I don't think the generated code will be particularily good here,
+       * if we will use full width digits the masks will go away.
+       */
+      for (iz = 0; iz + 3 < iy;) {
+         mp_word w = (mp_word)c0 + ((mp_word)a->dp[tx + iz] * (mp_word)b->dp[ty - iz]);
+         c0 = (mp_digit)(w & MP_MASK);
+         w = (mp_word)c1 + (w >> MP_DIGIT_BIT);
+         c1 = (mp_digit)(w & MP_MASK);
+         c2 += (mp_digit)(w >> MP_DIGIT_BIT);
+         ++iz;
+
+         w = (mp_word)c0 + ((mp_word)a->dp[tx + iz] * (mp_word)b->dp[ty - iz]);
+         c0 = (mp_digit)(w & MP_MASK);
+         w = (mp_word)c1 + (w >> MP_DIGIT_BIT);
+         c1 = (mp_digit)(w & MP_MASK);
+         c2 += (mp_digit)(w >> MP_DIGIT_BIT);
+         ++iz;
+
+         w = (mp_word)c0 + ((mp_word)a->dp[tx + iz] * (mp_word)b->dp[ty - iz]);
+         c0 = (mp_digit)(w & MP_MASK);
+         w = (mp_word)c1 + (w >> MP_DIGIT_BIT);
+         c1 = (mp_digit)(w & MP_MASK);
+         c2 += (mp_digit)(w >> MP_DIGIT_BIT);
+         ++iz;
+
+         w = (mp_word)c0 + ((mp_word)a->dp[tx + iz] * (mp_word)b->dp[ty - iz]);
+         c0 = (mp_digit)(w & MP_MASK);
+         w = (mp_word)c1 + (w >> MP_DIGIT_BIT);
+         c1 = (mp_digit)(w & MP_MASK);
+         c2 += (mp_digit)(w >> MP_DIGIT_BIT);
+         ++iz;
+      }
+
+      /* execute rest of loop */
+      for (; iz < iy;) {
+         mp_word w = (mp_word)c0 + ((mp_word)a->dp[tx + iz] * (mp_word)b->dp[ty - iz]);
+         c0 = (mp_digit)(w & MP_MASK);
+         w = (mp_word)c1 + (w >> MP_DIGIT_BIT);
+         c1 = (mp_digit)(w & MP_MASK);
+         c2 += (mp_digit)(w >> MP_DIGIT_BIT);
+         ++iz;
       }
 
       /* store term */
-      c_->dp[ix] = (mp_digit)W & MP_MASK;
+      c_->dp[ix] = c0;
 
       /* make next carry */
-      W = W >> (mp_word)MP_DIGIT_BIT;
+      c0 = c1;
+      c1 = c2;
+      c2 = 0;
    }
 
    /* setup dest */

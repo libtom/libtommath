@@ -869,10 +869,6 @@
 			>
 		</File>
 		<File
-			RelativePath="s_mp_mul.c"
-			>
-		</File>
-		<File
 			RelativePath="s_mp_mul_balance.c"
 			>
 		</File>

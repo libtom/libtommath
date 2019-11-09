@@ -40,12 +40,7 @@ mp_err mp_reduce(mp_int *x, const mp_int *m, const mp_int *mu)
    if ((err = mp_mod_2d(x, MP_DIGIT_BIT * (um + 1), x)) != MP_OKAY) goto LBL_ERR;
 
    /* q = q * m mod b**(k+1), quick (no division) */
-   if (MP_HAS(S_MP_MUL_COMBA)
-       && (MP_MIN(q.used, m->used) < MP_MAX_COMBA)) {
-      if ((err = s_mp_mul_comba(&q, m, &q, um + 1)) != MP_OKAY)     goto LBL_ERR;
-   } else {
-      if ((err = s_mp_mul(&q, m, &q, um + 1)) != MP_OKAY)           goto LBL_ERR;
-   }
+   if ((err = s_mp_mul_comba(&q, m, &q, um + 1)) != MP_OKAY)        goto LBL_ERR;
 
    /* x = x - q */
    if ((err = mp_sub(x, &q, x)) != MP_OKAY)                         goto LBL_ERR;

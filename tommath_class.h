@@ -150,7 +150,6 @@
 #   define S_MP_LOG_D_C
 #   define S_MP_LOG_POW2_C
 #   define S_MP_MONTGOMERY_REDUCE_COMBA_C
-#   define S_MP_MUL_C
 #   define S_MP_MUL_BALANCE_C
 #   define S_MP_MUL_COMBA_C
 #   define S_MP_MUL_HIGH_C
@@ -542,7 +541,6 @@
 
 #if defined(MP_MUL_C)
 #   define S_MP_MUL_BALANCE_C
-#   define S_MP_MUL_C
 #   define S_MP_MUL_COMBA_C
 #   define S_MP_MUL_KARATSUBA_C
 #   define S_MP_MUL_TOOM_C
@@ -737,7 +735,6 @@
 #   define MP_RSHD_C
 #   define MP_SET_C
 #   define MP_SUB_C
-#   define S_MP_MUL_C
 #   define S_MP_MUL_COMBA_C
 #   define S_MP_MUL_HIGH_C
 #   define S_MP_MUL_HIGH_COMBA_C
@@ -1122,14 +1119,6 @@
 #   define MP_GROW_C
 #   define S_MP_SUB_C
 #   define S_MP_ZERO_BUF_C
-#   define S_MP_ZERO_DIGS_C
-#endif
-
-#if defined(S_MP_MUL_C)
-#   define MP_CLAMP_C
-#   define MP_CLEAR_C
-#   define MP_GROW_C
-#   define MP_INIT_SIZE_C
 #   define S_MP_ZERO_DIGS_C
 #endif
 
