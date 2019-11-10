@@ -393,10 +393,6 @@
 			>
 		</File>
 		<File
-			RelativePath="mp_div_3.c"
-			>
-		</File>
-		<File
 			RelativePath="mp_div_d.c"
 			>
 		</File>
@@ -761,10 +757,6 @@
 			>
 		</File>
 		<File
-			RelativePath="mp_sqr.c"
-			>
-		</File>
-		<File
 			RelativePath="mp_sqrmod.c"
 			>
 		</File>
@@ -822,6 +814,10 @@
 		</File>
 		<File
 			RelativePath="s_mp_copy_digs.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_div_3.c"
 			>
 		</File>
 		<File

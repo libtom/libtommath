@@ -10,6 +10,22 @@ mp_err mp_mul_d(const mp_int *a, mp_digit b, mp_int *c)
    mp_err   err;
    int   ix, oldused;
 
+   if (b == 1u) {
+      return mp_copy(a, c);
+   }
+
+   /* power of two ? */
+   if (MP_HAS(MP_MUL_2) && (b == 2u)) {
+      return mp_mul_2(a, c);
+   }
+   if (MP_HAS(MP_MUL_2D) && MP_IS_2EXPT(b)) {
+      ix = 1;
+      while ((ix < MP_DIGIT_BIT) && (b != (((mp_digit)1)<<ix))) {
+         ix++;
+      }
+      return mp_mul_2d(a, ix, c);
+   }
+
    /* make sure c is big enough to hold a*b */
    if ((err = mp_grow(c, a->used + 1)) != MP_OKAY) {
       return err;
