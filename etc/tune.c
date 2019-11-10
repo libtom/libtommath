@@ -133,7 +133,7 @@ static uint64_t s_time_sqr(int size)
          goto LBL_ERR;
       }
       if (s_check_result == 1) {
-         if ((e = s_mp_sqr(&a,&c)) != MP_OKAY) {
+         if ((e = s_mp_sqr_comba(&a,&c)) != MP_OKAY) {
             t1 = UINT64_MAX;
             goto LBL_ERR;
          }

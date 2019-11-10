@@ -21,12 +21,8 @@ mp_err mp_mul(const mp_int *a, const mp_int *b, mp_int *c)
               (a->used >= MP_SQR_KARATSUBA_CUTOFF)) {
       err = s_mp_sqr_karatsuba(a, c);
    } else if ((a == b) &&
-              MP_HAS(S_MP_SQR_COMBA) &&
-              (a->used < (MP_MAX_COMBA / 2))) {
+              MP_HAS(S_MP_SQR_COMBA)) {
       err = s_mp_sqr_comba(a, c);
-   } else if ((a == b) &&
-              MP_HAS(S_MP_SQR)) {
-      err = s_mp_sqr(a, c);
    } else if (MP_HAS(S_MP_MUL_BALANCE) &&
               /* Check sizes. The smaller one needs to be larger than the Karatsuba cut-off.
                * The bigger one needs to be at least about one MP_MUL_KARATSUBA_CUTOFF bigger

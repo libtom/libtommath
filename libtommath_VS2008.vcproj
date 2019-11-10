@@ -913,10 +913,6 @@
 			>
 		</File>
 		<File
-			RelativePath="s_mp_sqr.c"
-			>
-		</File>
-		<File
 			RelativePath="s_mp_sqr_comba.c"
 			>
 		</File>

@@ -16,7 +16,7 @@ After that loop you do the squares and add them in.
 mp_err s_mp_sqr_comba(const mp_int *a, mp_int *b)
 {
    int       oldused, pa, ix;
-   mp_word   W1;
+   mp_digit c0, c1, c2;
    mp_err err;
    mp_int tmp, *b_;
 
@@ -31,10 +31,9 @@ mp_err s_mp_sqr_comba(const mp_int *a, mp_int *b)
    }
 
    /* number of output digits to produce */
-   W1 = 0;
+   c0 = c1 = c2 = 0;
    for (ix = 0; ix < pa; ix++) {
       int      tx, ty, iy, iz;
-      mp_word  W = 0;
 
       /* get offsets into the two bignums */
       ty = MP_MIN(a->used-1, ix);
@@ -53,22 +52,33 @@ mp_err s_mp_sqr_comba(const mp_int *a, mp_int *b)
 
       /* execute loop */
       for (iz = 0; iz < iy; iz++) {
-         W += (mp_word)a->dp[tx + iz] * (mp_word)a->dp[ty - iz];
+         mp_word t = (mp_word)a->dp[tx + iz] * (mp_word)a->dp[ty - iz];
+         int j;
+         for (j = 0; j < 2; ++j) {
+            mp_word w = (mp_word)c0 + t;
+            c0 = (mp_digit)(w & MP_MASK);
+            w = (mp_word)c1 + (w >> MP_DIGIT_BIT);
+            c1 = (mp_digit)(w & MP_MASK);
+            c2 += (mp_digit)(w >> MP_DIGIT_BIT);
+         }
       }
-
-      /* double the inner product and add carry */
-      W = W + W + W1;
 
       /* even columns have the square term in them */
       if (((unsigned)ix & 1u) == 0u) {
-         W += (mp_word)a->dp[ix>>1] * (mp_word)a->dp[ix>>1];
+         mp_word w = (mp_word)c0 + ((mp_word)a->dp[ix / 2] * (mp_word)a->dp[ix / 2]);
+         c0 = (mp_digit)(w & MP_MASK);
+         w = (mp_word)c1 + (w >> MP_DIGIT_BIT);
+         c1 = (mp_digit)(w & MP_MASK);
+         c2 += (mp_digit)(w >> MP_DIGIT_BIT);
       }
 
-      /* store it */
-      b_->dp[ix] = (mp_digit)W & MP_MASK;
+      /* store term */
+      b_->dp[ix] = c0;
 
       /* make next carry */
-      W1 = W >> (mp_word)MP_DIGIT_BIT;
+      c0 = c1;
+      c1 = c2;
+      c2 = 0;
    }
 
    /* setup dest */

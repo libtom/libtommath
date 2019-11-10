@@ -1929,7 +1929,7 @@ static int test_s_mp_sqr_karatsuba(void)
    for (size = MP_SQR_KARATSUBA_CUTOFF; size < (MP_SQR_KARATSUBA_CUTOFF + 20); size++) {
       DO(mp_rand(&a, size));
       DO(s_mp_sqr_karatsuba(&a, &b));
-      DO(s_mp_sqr(&a, &c));
+      DO(s_mp_sqr_comba(&a, &c));
       if (mp_cmp(&b, &c) != MP_EQ) {
          fprintf(stderr, "Karatsuba squaring failed at size %d\n", size);
          goto LBL_ERR;
@@ -2002,7 +2002,7 @@ static int test_s_mp_sqr_toom(void)
    for (size = MP_SQR_TOOM_CUTOFF; size < (MP_SQR_TOOM_CUTOFF + 20); size++) {
       DO(mp_rand(&a, size));
       DO(s_mp_sqr_toom(&a, &b));
-      DO(s_mp_sqr(&a, &c));
+      DO(s_mp_sqr_comba(&a, &c));
       if (mp_cmp(&b, &c) != MP_EQ) {
          fprintf(stderr, "Toom-Cook 3-way squaring failed at size %d\n", size);
          goto LBL_ERR;
