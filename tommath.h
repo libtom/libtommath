@@ -243,6 +243,7 @@ uint32_t mp_get_mag_u32(const mp_int *a) MP_WUR;
 uint64_t mp_get_mag_u64(const mp_int *a) MP_WUR;
 unsigned long mp_get_mag_ul(const mp_int *a) MP_WUR;
 unsigned long long mp_get_mag_ull(const mp_int *a) MP_WUR;
+uintmax_t mp_get_mag_umax(const mp_int *a) MP_WUR;
 
 /* get integer, set integer (long) */
 long mp_get_l(const mp_int *a) MP_WUR;
@@ -263,6 +264,16 @@ mp_err mp_init_ll(mp_int *a, long long b) MP_WUR;
 #define mp_get_ull(a) ((unsigned long long)mp_get_ll(a))
 void mp_set_ull(mp_int *a, unsigned long long b);
 mp_err mp_init_ull(mp_int *a, unsigned long long b) MP_WUR;
+
+/* get integer, set integer (intmax_t) */
+intmax_t mp_get_max(const mp_int *a) MP_WUR;
+void mp_set_max(mp_int *a, intmax_t b);
+mp_err mp_init_max(mp_int *a, intmax_t b) MP_WUR;
+
+/* get integer, set integer (uintmax_t) */
+#define mp_get_umax(a) ((uintmax_t)mp_get_max(a))
+void mp_set_umax(mp_int *a, uintmax_t b);
+mp_err mp_init_umax(mp_int *a, uintmax_t b) MP_WUR;
 
 /* set to single unsigned digit, up to MP_DIGIT_MAX */
 void mp_set(mp_int *a, mp_digit b);

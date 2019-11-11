@@ -485,6 +485,14 @@
 			>
 		</File>
 		<File
+			RelativePath="mp_get_mag_umax.c"
+			>
+		</File>
+		<File
+			RelativePath="mp_get_max.c"
+			>
+		</File>
+		<File
 			RelativePath="mp_grow.c"
 			>
 		</File>
@@ -513,6 +521,10 @@
 			>
 		</File>
 		<File
+			RelativePath="mp_init_max.c"
+			>
+		</File>
+		<File
 			RelativePath="mp_init_multi.c"
 			>
 		</File>
@@ -538,6 +550,10 @@
 		</File>
 		<File
 			RelativePath="mp_init_ull.c"
+			>
+		</File>
+		<File
+			RelativePath="mp_init_umax.c"
 			>
 		</File>
 		<File
@@ -733,6 +749,10 @@
 			>
 		</File>
 		<File
+			RelativePath="mp_set_max.c"
+			>
+		</File>
+		<File
 			RelativePath="mp_set_u32.c"
 			>
 		</File>
@@ -746,6 +766,10 @@
 		</File>
 		<File
 			RelativePath="mp_set_ull.c"
+			>
+		</File>
+		<File
+			RelativePath="mp_set_umax.c"
 			>
 		</File>
 		<File
