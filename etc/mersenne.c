@@ -43,7 +43,7 @@ static mp_err is_mersenne(long s, bool *pp)
       }
 
       /* make sure u is positive */
-      while (u.sign == MP_NEG) {
+      while (mp_isneg(&u)) {
          if ((res = mp_add(&u, &n, &u)) != MP_OKAY) {
             goto LBL_MU;
          }

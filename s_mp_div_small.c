@@ -8,7 +8,7 @@ mp_err s_mp_div_small(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d)
 {
    mp_int ta, tb, tq, q;
    int n;
-   mp_sign sign;
+   bool neg;
    mp_err err;
 
    /* init our temps */
@@ -34,14 +34,14 @@ mp_err s_mp_div_small(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d)
 
    /* now q == quotient and ta == remainder */
 
-   sign = (a->sign == b->sign) ? MP_ZPOS : MP_NEG;
+   neg = (a->sign != b->sign);
    if (c != NULL) {
       mp_exch(c, &q);
-      c->sign  = mp_iszero(c) ? MP_ZPOS : sign;
+      c->sign = ((neg && !mp_iszero(c)) ? MP_NEG : MP_ZPOS);
    }
    if (d != NULL) {
       mp_exch(d, &ta);
-      d->sign = mp_iszero(d) ? MP_ZPOS : a->sign;
+      d->sign = (mp_iszero(d) ? MP_ZPOS : a->sign);
    }
 LBL_ERR:
    mp_clear_multi(&ta, &tb, &tq, &q, NULL);

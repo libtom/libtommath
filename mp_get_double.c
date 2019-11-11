@@ -13,6 +13,6 @@ double mp_get_double(const mp_int *a)
    for (i = a->used; i --> 0;) {
       d = (d * fac) + (double)a->dp[i];
    }
-   return (a->sign == MP_NEG) ? -d : d;
+   return mp_isneg(a) ? -d : d;
 }
 #endif

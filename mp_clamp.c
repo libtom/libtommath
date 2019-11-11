@@ -19,8 +19,8 @@ void mp_clamp(mp_int *a)
       --(a->used);
    }
 
-   /* reset the sign flag if used == 0 */
-   if (a->used == 0) {
+   /* reset the sign flag if zero */
+   if (mp_iszero(a)) {
       a->sign = MP_ZPOS;
    }
 }

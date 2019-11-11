@@ -57,9 +57,9 @@ mp_err mp_kronecker(const mp_int *a, const mp_int *p, int *c)
       k = table[a->dp[0] & 7u];
    }
 
-   if (p1.sign == MP_NEG) {
+   if (mp_isneg(&p1)) {
       p1.sign = MP_ZPOS;
-      if (a1.sign == MP_NEG) {
+      if (mp_isneg(&a1)) {
          k = -k;
       }
    }
@@ -88,7 +88,7 @@ mp_err mp_kronecker(const mp_int *a, const mp_int *p, int *c)
          k = k * table[p1.dp[0] & 7u];
       }
 
-      if (a1.sign == MP_NEG) {
+      if (mp_isneg(&a1)) {
          /*
           * Compute k = (-1)^((a1)*(p1-1)/4) * k
           * a1.dp[0] + 1 cannot overflow because the MSB

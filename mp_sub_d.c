@@ -46,7 +46,7 @@ mp_err mp_sub_d(const mp_int *a, mp_digit b, mp_int *c)
    oldused = c->used;
 
    /* if a <= b simply fix the single digit */
-   if (((a->used == 1) && (a->dp[0] <= b)) || (a->used == 0)) {
+   if (((a->used == 1) && (a->dp[0] <= b)) || mp_iszero(a)) {
       c->dp[0] = (a->used == 1) ? b - a->dp[0] : b;
 
       /* negative/1digit */

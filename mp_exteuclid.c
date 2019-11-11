@@ -48,7 +48,7 @@ mp_err mp_exteuclid(const mp_int *a, const mp_int *b, mp_int *U1, mp_int *U2, mp
    }
 
    /* make sure U3 >= 0 */
-   if (u3.sign == MP_NEG) {
+   if (mp_isneg(&u3)) {
       if ((err = mp_neg(&u1, &u1)) != MP_OKAY)                    goto LBL_ERR;
       if ((err = mp_neg(&u2, &u2)) != MP_OKAY)                    goto LBL_ERR;
       if ((err = mp_neg(&u3, &u3)) != MP_OKAY)                    goto LBL_ERR;

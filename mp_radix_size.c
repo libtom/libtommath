@@ -27,7 +27,7 @@ mp_err mp_radix_size(const mp_int *a, int radix, size_t *size)
    }
 
    /* mp_ilogb truncates to zero, hence we need one extra put on top and one for `\0`. */
-   *size = (size_t)b + 2U + ((a->sign == MP_NEG) ? 1U : 0U);
+   *size = (size_t)b + 2U + (mp_isneg(a) ? 1U : 0U);
 
 LBL_ERR:
    return err;

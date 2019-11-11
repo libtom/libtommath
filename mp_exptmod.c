@@ -13,12 +13,12 @@ mp_err mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y)
    int dr;
 
    /* modulus P must be positive */
-   if (P->sign == MP_NEG) {
+   if (mp_isneg(P)) {
       return MP_VAL;
    }
 
    /* if exponent X is negative we have to recurse */
-   if (X->sign == MP_NEG) {
+   if (mp_isneg(X)) {
       mp_int tmpG, tmpX;
       mp_err err;
 

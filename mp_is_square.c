@@ -36,7 +36,7 @@ mp_err mp_is_square(const mp_int *arg, bool *ret)
    /* Default to Non-square :) */
    *ret = false;
 
-   if (arg->sign == MP_NEG) {
+   if (mp_isneg(arg)) {
       return MP_VAL;
    }
 

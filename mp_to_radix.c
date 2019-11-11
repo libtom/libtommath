@@ -50,7 +50,7 @@ mp_err mp_to_radix(const mp_int *a, char *str, size_t maxlen, size_t *written, i
    }
 
    /* if it is negative output a - */
-   if (t.sign == MP_NEG) {
+   if (mp_isneg(&t)) {
       /* we have to reverse our digits later... but not the - sign!! */
       ++_s;
 
@@ -84,7 +84,7 @@ mp_err mp_to_radix(const mp_int *a, char *str, size_t maxlen, size_t *written, i
    digs++;
 
    if (written != NULL) {
-      *written = (a->sign == MP_NEG) ? (digs + 1u): digs;
+      *written = mp_isneg(a) ? (digs + 1u): digs;
    }
 
 LBL_ERR:

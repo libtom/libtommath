@@ -16,7 +16,7 @@ mp_err mp_to_sbin(const mp_int *a, uint8_t *buf, size_t maxlen, size_t *written)
    if (written != NULL) {
       (*written)++;
    }
-   buf[0] = (a->sign == MP_ZPOS) ? (uint8_t)0 : (uint8_t)1;
+   buf[0] = mp_isneg(a) ? (uint8_t)1 : (uint8_t)0;
    return MP_OKAY;
 }
 #endif

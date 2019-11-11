@@ -216,7 +216,7 @@ mp_err mp_prime_strong_lucas_selfridge(const mp_int *a, bool *result)
           */
          oddness = mp_isodd(&Uz);
          if ((err = mp_div_2(&Uz, &Uz)) != MP_OKAY)               goto LBL_LS_ERR;
-         if ((Uz.sign == MP_NEG) && oddness) {
+         if (mp_isneg(&Uz) && oddness) {
             if ((err = mp_sub_d(&Uz, 1uL, &Uz)) != MP_OKAY)       goto LBL_LS_ERR;
          }
          if ((err = mp_add(&T3z, &T4z, &Vz)) != MP_OKAY)          goto LBL_LS_ERR;
@@ -225,7 +225,7 @@ mp_err mp_prime_strong_lucas_selfridge(const mp_int *a, bool *result)
          }
          oddness = mp_isodd(&Vz);
          if ((err = mp_div_2(&Vz, &Vz)) != MP_OKAY)               goto LBL_LS_ERR;
-         if ((Vz.sign == MP_NEG) && oddness) {
+         if (mp_isneg(&Vz) && oddness) {
             if ((err = mp_sub_d(&Vz, 1uL, &Vz)) != MP_OKAY)       goto LBL_LS_ERR;
          }
          if ((err = mp_mod(&Uz, a, &Uz)) != MP_OKAY)              goto LBL_LS_ERR;

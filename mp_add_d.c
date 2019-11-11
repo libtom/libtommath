@@ -11,13 +11,13 @@ mp_err mp_add_d(const mp_int *a, mp_digit b, mp_int *c)
 
    /* fast path for a == c */
    if (a == c) {
-      if ((c->sign == MP_ZPOS) &&
+      if (!mp_isneg(c) &&
           !mp_iszero(c) &&
           ((c->dp[0] + b) < MP_DIGIT_MAX)) {
          c->dp[0] += b;
          return MP_OKAY;
       }
-      if ((c->sign == MP_NEG) &&
+      if (mp_isneg(c) &&
           (c->dp[0] > b)) {
          c->dp[0] -= b;
          return MP_OKAY;
@@ -30,7 +30,7 @@ mp_err mp_add_d(const mp_int *a, mp_digit b, mp_int *c)
    }
 
    /* if a is negative and |a| >= b, call c = |a| - b */
-   if ((a->sign == MP_NEG) && ((a->used > 1) || (a->dp[0] >= b))) {
+   if (mp_isneg(a) && ((a->used > 1) || (a->dp[0] >= b))) {
       mp_int a_ = *a;
       /* temporarily fix sign of a */
       a_.sign = MP_ZPOS;
@@ -51,7 +51,7 @@ mp_err mp_add_d(const mp_int *a, mp_digit b, mp_int *c)
    oldused = c->used;
 
    /* if a is positive */
-   if (a->sign == MP_ZPOS) {
+   if (!mp_isneg(a)) {
       /* add digits, mu is carry */
       int i;
       mp_digit mu = b;

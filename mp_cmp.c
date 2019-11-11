@@ -8,11 +8,11 @@ mp_ord mp_cmp(const mp_int *a, const mp_int *b)
 {
    /* compare based on sign */
    if (a->sign != b->sign) {
-      return a->sign == MP_NEG ? MP_LT : MP_GT;
+      return mp_isneg(a) ? MP_LT : MP_GT;
    }
 
    /* if negative compare opposite direction */
-   if (a->sign == MP_NEG) {
+   if (mp_isneg(a)) {
       MP_EXCH(const mp_int *, a, b);
    }
 

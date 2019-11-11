@@ -10,7 +10,7 @@ mp_err mp_mul(const mp_int *a, const mp_int *b, mp_int *c)
    int min = MP_MIN(a->used, b->used),
        max = MP_MAX(a->used, b->used),
        digs = a->used + b->used + 1;
-   mp_sign neg = (a->sign == b->sign) ? MP_ZPOS : MP_NEG;
+   bool neg = (a->sign != b->sign);
 
    if ((a == b) &&
        MP_HAS(S_MP_SQR_TOOM) && /* use Toom-Cook? */
@@ -62,7 +62,7 @@ mp_err mp_mul(const mp_int *a, const mp_int *b, mp_int *c)
    } else {
       err = MP_VAL;
    }
-   c->sign = (c->used > 0) ? neg : MP_ZPOS;
+   c->sign = ((c->used > 0) && neg) ? MP_NEG : MP_ZPOS;
    return err;
 }
 #endif

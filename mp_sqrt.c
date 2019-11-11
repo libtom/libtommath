@@ -10,7 +10,7 @@ mp_err mp_sqrt(const mp_int *arg, mp_int *ret)
    mp_int t1, t2;
 
    /* must be positive */
-   if (arg->sign == MP_NEG) {
+   if (mp_isneg(arg)) {
       return MP_VAL;
    }
 
