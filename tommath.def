@@ -48,6 +48,8 @@ EXPORTS
     mp_get_mag_u64
     mp_get_mag_ul
     mp_get_mag_ull
+    mp_get_mag_umax
+    mp_get_max
     mp_grow
     mp_init
     mp_init_copy
@@ -55,6 +57,7 @@ EXPORTS
     mp_init_i64
     mp_init_l
     mp_init_ll
+    mp_init_max
     mp_init_multi
     mp_init_set
     mp_init_size
@@ -62,6 +65,7 @@ EXPORTS
     mp_init_u64
     mp_init_ul
     mp_init_ull
+    mp_init_umax
     mp_invmod
     mp_is_square
     mp_kronecker
@@ -110,10 +114,12 @@ EXPORTS
     mp_set_i64
     mp_set_l
     mp_set_ll
+    mp_set_max
     mp_set_u32
     mp_set_u64
     mp_set_ul
     mp_set_ull
+    mp_set_umax
     mp_shrink
     mp_signed_rsh
     mp_sqrmod

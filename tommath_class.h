@@ -478,8 +478,8 @@
 #endif
 
 #if defined(MP_INIT_UMAX_C)
-#   define MP_GET_LL_C
-#   define MP_GET_MAG_ULL_C
+#   define MP_INIT_C
+#   define MP_SET_UMAX_C
 #endif
 
 #if defined(MP_INVMOD_C)
@@ -870,8 +870,7 @@
 #endif
 
 #if defined(MP_SET_MAX_C)
-#   define MP_GET_LL_C
-#   define MP_GET_MAG_ULL_C
+#   define MP_SET_UMAX_C
 #endif
 
 #if defined(MP_SET_U32_C)
@@ -891,8 +890,7 @@
 #endif
 
 #if defined(MP_SET_UMAX_C)
-#   define MP_GET_LL_C
-#   define MP_GET_MAG_ULL_C
+#   define S_MP_ZERO_DIGS_C
 #endif
 
 #if defined(MP_SHRINK_C)

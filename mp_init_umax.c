@@ -1,7 +1,7 @@
 #include "tommath_private.h"
-#ifdef MP_GET_LL_C
+#ifdef MP_INIT_UMAX_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
-MP_GET_SIGNED(mp_get_ll, mp_get_mag_ull, long long, unsigned long long)
+MP_INIT_INT(mp_init_umax, mp_set_umax, uintmax_t)
 #endif

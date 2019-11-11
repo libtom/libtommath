@@ -41,6 +41,16 @@ static int64_t rand_int64(void)
    return x;
 }
 
+static intmax_t rand_intmax(void)
+{
+   intmax_t x;
+   if (s_mp_rand_source(&x, sizeof(x)) != MP_OKAY) {
+      fprintf(stderr, "s_mp_rand_source failed\n");
+      exit(EXIT_FAILURE);
+   }
+   return x;
+}
+
 static uint32_t uabs32(int32_t x)
 {
    return (x > 0) ? (uint32_t)x : -(uint32_t)x;
@@ -49,6 +59,11 @@ static uint32_t uabs32(int32_t x)
 static uint64_t uabs64(int64_t x)
 {
    return (x > 0) ? (uint64_t)x : -(uint64_t)x;
+}
+
+static uintmax_t uabsmax(intmax_t x)
+{
+   return (x > 0) ? (uintmax_t)x : -(uintmax_t)x;
 }
 
 /* This function prototype is needed
@@ -232,6 +247,51 @@ static int test_mp_get_set_i64(void)
    for (i = 0; i < 1000; ++i) {
       int64_t b = rand_int64();
       if (check_get_set_i64(&a, b) != EXIT_SUCCESS) {
+         goto LBL_ERR;
+      }
+   }
+
+   mp_clear(&a);
+   return EXIT_SUCCESS;
+LBL_ERR:
+   mp_clear(&a);
+   return EXIT_FAILURE;
+}
+
+static int check_get_set_max(mp_int *a, intmax_t b)
+{
+   mp_clear(a);
+   if (mp_shrink(a) != MP_OKAY) return EXIT_FAILURE;
+
+   mp_set_max(a, b);
+   if (mp_shrink(a) != MP_OKAY) return EXIT_FAILURE;
+   if (mp_get_max(a) != b) return EXIT_FAILURE;
+   if (mp_get_umax(a) != (uintmax_t)b) return EXIT_FAILURE;
+   if (mp_get_mag_umax(a) != uabsmax(b)) return EXIT_FAILURE;
+
+   mp_set_umax(a, (uintmax_t)b);
+   if (mp_get_umax(a) != (uintmax_t)b) return EXIT_FAILURE;
+   if (mp_get_max(a) != (intmax_t)(uintmax_t)b) return EXIT_FAILURE;
+
+   return EXIT_SUCCESS;
+}
+
+static int test_mp_get_set_max(void)
+{
+   int i;
+   mp_int a;
+
+   DOR(mp_init(&a));
+
+   check_get_set_max(&a, 0LL);
+   check_get_set_max(&a, -1LL);
+   check_get_set_max(&a, 1LL);
+   check_get_set_max(&a, INTMAX_MIN);
+   check_get_set_max(&a, INTMAX_MAX);
+
+   for (i = 0; i < 1000; ++i) {
+      intmax_t b = rand_intmax();
+      if (check_get_set_max(&a, b) != EXIT_SUCCESS) {
          goto LBL_ERR;
       }
    }
@@ -699,6 +759,38 @@ static int test_mp_get_u64(void)
          q = mp_get_u64(&a);
          if (q != r) {
             printf("\nmp_get_u64() bad result! 0x%llx != 0x%llx", q, r);
+            goto LBL_ERR;
+         }
+         r <<= 1;
+      } while (r != 0uLL);
+   }
+
+   mp_clear_multi(&a, &b, NULL);
+   return EXIT_SUCCESS;
+LBL_ERR:
+   mp_clear_multi(&a, &b, NULL);
+   return EXIT_FAILURE;
+
+}
+
+static int test_mp_get_umax(void)
+{
+   uintmax_t q, r;
+   int i;
+
+   mp_int a, b;
+   DOR(mp_init_multi(&a, &b, NULL));
+
+   for (i = 0; i < (int)(MP_SIZEOF_BITS(uintmax_t) - 1); ++i) {
+      r = ((uintmax_t)1 << (i+1)) - 1;
+      if (!r)
+         r = UINTMAX_MAX;
+      printf(" r = 0x%" PRIxMAX " i = %d\r", r, i);
+      do {
+         mp_set_umax(&a, r);
+         q = mp_get_umax(&a);
+         if (q != r) {
+            printf("\nmp_get_umax() bad result! 0x%" PRIxMAX " != 0x%" PRIxMAX, q, r);
             goto LBL_ERR;
          }
          r <<= 1;
@@ -2293,6 +2385,7 @@ static int unit_tests(int argc, char **argv)
       T0(trivial_stuff),
       T2(mp_get_set_i32, MP_GET_I32, MP_GET_MAG_U32),
       T2(mp_get_set_i64, MP_GET_I64, MP_GET_MAG_U64),
+      T2(mp_get_set_max, MP_GET_MAX, MP_GET_MAG_UMAX),
       T1(mp_and, MP_AND),
       T1(mp_cnt_lsb, MP_CNT_LSB),
       T1(mp_complement, MP_COMPLEMENT),
@@ -2303,6 +2396,7 @@ static int unit_tests(int argc, char **argv)
       T2(mp_fread_fwrite, MP_FREAD, MP_FWRITE),
       T1(mp_get_u32, MP_GET_I32),
       T1(mp_get_u64, MP_GET_I64),
+      T1(mp_get_umax, MP_GET_MAX),
       T1(mp_get_ul, MP_GET_L),
       T1(mp_log_u32, MP_LOG_U32),
       T1(mp_incr, MP_ADD_D),
