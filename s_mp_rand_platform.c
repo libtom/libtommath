@@ -117,6 +117,25 @@ mp_err s_read_wincsp(void *p, size_t n);
 mp_err s_read_getrandom(void *p, size_t n);
 mp_err s_read_urandom(void *p, size_t n);
 
+/*
+ * Note: libtommath relies on dead code elimination
+ * for the configuration system, i.e., the MP_HAS macro.
+ *
+ * If you observe linking errors in this functions,
+ * your compiler does not perform the dead code compilation
+ * such that the unused functions are still referenced.
+ *
+ * This happens for example for MSVC if the /Od compilation
+ * option is given. The option /Od instructs MSVC to
+ * not perform any "optimizations", not even removal of
+ * dead code wrapped in `if (0)` blocks.
+ *
+ * If you still insist on compiling with /Od, simply
+ * comment out the lines which result in linking errors.
+ *
+ * We intentionally don't fix this issue in order
+ * to have a single point of failure for misconfigured compilers.
+ */
 mp_err s_mp_rand_platform(void *p, size_t n)
 {
    mp_err err = MP_ERR;
