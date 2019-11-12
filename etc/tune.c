@@ -179,7 +179,7 @@ static void s_run(const char *name, uint64_t (*op)(int size), int *cutoff)
          exit(EXIT_FAILURE);
       }
       if (args.verbose == 1) {
-         printf("%d: %9"PRIu64" %9"PRIu64", %9"PRIi64"\n", x, t1, t2, (int64_t)t2 - (int64_t)t1);
+         printf("%d: %9" PRIu64 " %9" PRIu64 ", %9" PRIi64 "\n", x, t1, t2, (int64_t)t2 - (int64_t)t1);
       }
       if (t2 < t1) {
          if (count == s_stabilization_extra) {
@@ -504,20 +504,20 @@ int main(int argc, char **argv)
          t1 = s_time_mul(x);
          set_cutoffs(&orig);
          t2 = s_time_mul(x);
-         fprintf(multiplying, "%d: %9"PRIu64" %9"PRIu64", %9"PRIi64"\n", x, t1, t2, (int64_t)t2 - (int64_t)t1);
+         fprintf(multiplying, "%d: %9" PRIu64 " %9" PRIu64 ", %9" PRIi64 "\n", x, t1, t2, (int64_t)t2 - (int64_t)t1);
          fflush(multiplying);
          if (args.verbose == 1) {
-            printf("MUL %d: %9"PRIu64" %9"PRIu64", %9"PRIi64"\n", x, t1, t2, (int64_t)t2 - (int64_t)t1);
+            printf("MUL %d: %9" PRIu64 " %9" PRIu64 ", %9" PRIi64 "\n", x, t1, t2, (int64_t)t2 - (int64_t)t1);
             fflush(stdout);
          }
          set_cutoffs(&max_cutoffs);
          t1 = s_time_sqr(x);
          set_cutoffs(&orig);
          t2 = s_time_sqr(x);
-         fprintf(squaring,"%d: %9"PRIu64" %9"PRIu64", %9"PRIi64"\n", x, t1, t2, (int64_t)t2 - (int64_t)t1);
+         fprintf(squaring,"%d: %9" PRIu64 " %9" PRIu64 ", %9" PRIi64 "\n", x, t1, t2, (int64_t)t2 - (int64_t)t1);
          fflush(squaring);
          if (args.verbose == 1) {
-            printf("SQR %d: %9"PRIu64" %9"PRIu64", %9"PRIi64"\n", x, t1, t2, (int64_t)t2 - (int64_t)t1);
+            printf("SQR %d: %9" PRIu64 " %9" PRIu64 ", %9" PRIi64 "\n", x, t1, t2, (int64_t)t2 - (int64_t)t1);
             fflush(stdout);
          }
       }
