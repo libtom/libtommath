@@ -1411,7 +1411,7 @@ static mp_err s_rs(const mp_int *a, int radix, int *size)
       *size = mp_count_bits(a) + 1;
       return MP_OKAY;
    }
-   DOR(mp_init_copy(&t, a));
+   DO_WHAT(mp_init_copy(&t, a), return MP_ERR);
    t.sign = MP_ZPOS;
    while (!mp_iszero(&t)) {
       if ((res = mp_div_d(&t, (mp_digit)radix, &t, &d)) != MP_OKAY) {
