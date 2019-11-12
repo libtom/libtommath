@@ -223,9 +223,9 @@ static int test_mp_get_set_i64(void)
 
    DOR(mp_init(&a));
 
-   check_get_set_i64(&a, (int64_t)0);
-   check_get_set_i64(&a, (int64_t)-1);
-   check_get_set_i64(&a, (int64_t)1);
+   check_get_set_i64(&a, 0);
+   check_get_set_i64(&a, -1);
+   check_get_set_i64(&a, 1);
    check_get_set_i64(&a, INT64_MIN);
    check_get_set_i64(&a, INT64_MAX);
 
