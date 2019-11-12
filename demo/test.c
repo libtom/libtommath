@@ -618,14 +618,14 @@ LBL_ERR:
 
 static int test_mp_get_u32(void)
 {
-   unsigned long t;
+   uint32_t t;
    int i;
 
    mp_int a, b;
    DOR(mp_init_multi(&a, &b, NULL));
 
    for (i = 0; i < 1000; ++i) {
-      t = (unsigned long)rand_long() & (unsigned long)UINT32_MAX;
+      t = (uint32_t)rand_long();
       mp_set_ul(&a, t);
       if (t != mp_get_u32(&a)) {
          printf("\nmp_get_u32() bad result!");
@@ -637,7 +637,7 @@ static int test_mp_get_u32(void)
       printf("\nmp_get_u32() bad result!");
       goto LBL_ERR;
    }
-   mp_set_ul(&a, (unsigned long)UINT32_MAX);
+   mp_set_ul(&a, UINT32_MAX);
    if (mp_get_u32(&a) != UINT32_MAX) {
       printf("\nmp_get_u32() bad result!");
       goto LBL_ERR;
@@ -2177,7 +2177,7 @@ static int test_mp_read_write_ubin(void)
 
    size = mp_ubin_size(&a);
    printf("mp_to_ubin_size  %zu - ", size);
-   buf = (unsigned char *)malloc(sizeof(*buf) * size);
+   buf = (uint8_t *)malloc(sizeof(*buf) * size);
    if (buf == NULL) {
       fprintf(stderr, "test_read_write_binaries (u) failed to allocate %zu bytes\n",
               sizeof(*buf) * size);
@@ -2215,7 +2215,7 @@ static int test_mp_read_write_sbin(void)
 
    size = mp_sbin_size(&a);
    printf("mp_to_sbin_size  %zu - ", size);
-   buf = (unsigned char *)malloc(sizeof(*buf) * size);
+   buf = (uint8_t *)malloc(sizeof(*buf) * size);
    if (buf == NULL) {
       fprintf(stderr, "test_read_write_binaries (s) failed to allocate %zu bytes\n",
               sizeof(*buf) * size);
@@ -2255,7 +2255,7 @@ static int test_mp_pack_unpack(void)
 
    count = mp_pack_count(&a, 0uL, 1uL);
 
-   buf = (unsigned char *)malloc(count);
+   buf = (uint8_t *)malloc(count);
    if (buf == NULL) {
       fprintf(stderr, "test_pack_unpack failed to allocate\n");
       goto LBL_ERR;
