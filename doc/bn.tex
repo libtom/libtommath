@@ -298,6 +298,11 @@ You will also note that the header \texttt{tommath\_class.h} is actually recursi
 includes itself twice). This is to help resolve as many dependencies as possible.  In the last pass
 the symbol \texttt{LTM\_LAST} will be defined. This is useful for ``trims''.
 
+Note that the configuration system relies
+on dead code elimination. Unfortunately this can result in linking errors on compilers which
+perform insufficient dead code elimination. In particular MSVC with the /Od option enabled shows this issue.
+The issue can be resolved by passing the /O option instead to the compiler.
+
 \subsection{Build Trims}
 A trim is a manner of removing functionality from a function that is not required.  For instance,
 to perform RSA cryptography you only require exponentiation with odd moduli so even moduli support
