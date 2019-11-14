@@ -10,7 +10,7 @@ bool s_mp_get_bit(const mp_int *a, int b)
    mp_digit bit;
    int limb = b / MP_DIGIT_BIT;
 
-   if (limb < 0 || limb >= a->used) {
+   if ((limb < 0) || (limb >= a->used)) {
       return false;
    }
 

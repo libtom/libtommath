@@ -5,7 +5,7 @@
 
 mp_err mp_log_n(const mp_int *a, int base, int *c)
 {
-   if (mp_isneg(a) || mp_iszero(a) || (base < 2) || (unsigned)base > (unsigned)MP_DIGIT_MAX) {
+   if (mp_isneg(a) || mp_iszero(a) || (base < 2) || ((unsigned)base > (unsigned)MP_DIGIT_MAX)) {
       return MP_VAL;
    }
 

@@ -38,10 +38,10 @@ mp_err s_mp_sqr_toom(const mp_int *a, mp_int *b)
    if ((err = mp_init_size(&a2, a->used - (2 * B))) != MP_OKAY)   goto LBL_ERRa2;
 
    a0.used = a1.used = B;
-   a2.used = a->used - 2 * B;
+   a2.used = a->used - (2 * B);
    s_mp_copy_digs(a0.dp, a->dp, a0.used);
    s_mp_copy_digs(a1.dp, a->dp + B, a1.used);
-   s_mp_copy_digs(a2.dp, a->dp + 2 * B, a2.used);
+   s_mp_copy_digs(a2.dp, a->dp + (2 * B), a2.used);
    mp_clamp(&a0);
    mp_clamp(&a1);
    mp_clamp(&a2);

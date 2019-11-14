@@ -18,7 +18,7 @@ mp_err mp_root_n(const mp_int *a, int b, mp_int *c)
    int    ilog2;
    mp_err err;
 
-   if (b < 0 || (unsigned)b > (unsigned)MP_DIGIT_MAX) {
+   if ((b < 0) || ((unsigned)b > (unsigned)MP_DIGIT_MAX)) {
       return MP_VAL;
    }
 
@@ -43,7 +43,7 @@ mp_err mp_root_n(const mp_int *a, int b, mp_int *c)
      log_2(n) because the bit-length of the "n" is measured
      with an int and hence the root is always < 2 (two).
    */
-   if (b > INT_MAX/2) {
+   if (b > (INT_MAX/2)) {
       mp_set(c, 1uL);
       c->sign = a->sign;
       err = MP_OKAY;

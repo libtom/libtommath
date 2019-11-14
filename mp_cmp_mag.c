@@ -10,13 +10,13 @@ mp_ord mp_cmp_mag(const mp_int *a, const mp_int *b)
 
    /* compare based on # of non-zero digits */
    if (a->used != b->used) {
-      return a->used > b->used ? MP_GT : MP_LT;
+      return (a->used > b->used) ? MP_GT : MP_LT;
    }
 
    /* compare based on digits  */
    for (n = a->used; n --> 0;) {
       if (a->dp[n] != b->dp[n]) {
-         return a->dp[n] > b->dp[n] ? MP_GT : MP_LT;
+         return (a->dp[n] > b->dp[n]) ? MP_GT : MP_LT;
       }
    }
 
