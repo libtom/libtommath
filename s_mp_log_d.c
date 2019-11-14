@@ -17,20 +17,17 @@ static mp_word s_pow(mp_word base, mp_word exponent)
    return result;
 }
 
-mp_digit s_mp_log_d(mp_digit base, mp_digit n)
+int s_mp_log_d(mp_digit base, mp_digit n)
 {
-   mp_word bracket_low = 1u, bracket_mid, bracket_high, N;
-   mp_digit ret, high = 1uL, low = 0uL, mid;
+   mp_word bracket_low = 1uLL, bracket_high = base, N = n;
+   int ret, high = 1, low = 0;
 
    if (n < base) {
-      return 0uL;
+      return 0;
    }
    if (n == base) {
-      return 1uL;
+      return 1;
    }
-
-   bracket_high = (mp_word) base ;
-   N = (mp_word) n;
 
    while (bracket_high < N) {
       low = high;
@@ -40,8 +37,8 @@ mp_digit s_mp_log_d(mp_digit base, mp_digit n)
    }
 
    while (((mp_digit)(high - low)) > 1uL) {
-      mid = (low + high) >> 1;
-      bracket_mid = bracket_low * s_pow(base, (mp_word)(mid - low));
+      int mid = (low + high) >> 1;
+      mp_word bracket_mid = bracket_low * s_pow(base, (mp_word)(mid - low));
 
       if (N < bracket_mid) {
          high = mid ;
@@ -52,7 +49,7 @@ mp_digit s_mp_log_d(mp_digit base, mp_digit n)
          bracket_low = bracket_mid ;
       }
       if (N == bracket_mid) {
-         return (mp_digit) mid;
+         return mid;
       }
    }
 

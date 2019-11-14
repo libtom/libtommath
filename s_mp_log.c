@@ -3,14 +3,13 @@
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
-mp_err s_mp_log(const mp_int *a, uint32_t base, uint32_t *c)
+mp_err s_mp_log(const mp_int *a, mp_digit base, int *c)
 {
    mp_err err;
-   mp_ord cmp;
-   uint32_t high, low, mid;
+   int high, low;
    mp_int bracket_low, bracket_high, bracket_mid, t, bi_base;
 
-   cmp = mp_cmp_d(a, base);
+   mp_ord cmp = mp_cmp_d(a, base);
    if ((cmp == MP_LT) || (cmp == MP_EQ)) {
       *c = cmp == MP_EQ;
       return MP_OKAY;
@@ -22,9 +21,9 @@ mp_err s_mp_log(const mp_int *a, uint32_t base, uint32_t *c)
       return err;
    }
 
-   low = 0u;
+   low = 0;
    mp_set(&bracket_low, 1uL);
-   high = 1u;
+   high = 1;
 
    mp_set(&bracket_high, base);
 
@@ -46,10 +45,10 @@ mp_err s_mp_log(const mp_int *a, uint32_t base, uint32_t *c)
    }
    mp_set(&bi_base, base);
 
-   while ((high - low) > 1u) {
-      mid = (high + low) >> 1;
+   while ((high - low) > 1) {
+      int mid = (high + low) >> 1;
 
-      if ((err = mp_expt_u32(&bi_base, (uint32_t)(mid - low), &t)) != MP_OKAY) {
+      if ((err = mp_expt_n(&bi_base, mid - low, &t)) != MP_OKAY) {
          goto LBL_END;
       }
       if ((err = mp_mul(&bracket_low, &t, &bracket_mid)) != MP_OKAY) {

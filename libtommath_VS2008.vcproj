@@ -417,7 +417,7 @@
 			>
 		</File>
 		<File
-			RelativePath="mp_expt_u32.c"
+			RelativePath="mp_expt_n.c"
 			>
 		</File>
 		<File
@@ -557,7 +557,7 @@
 			>
 		</File>
 		<File
-			RelativePath="mp_log_u32.c"
+			RelativePath="mp_log_n.c"
 			>
 		</File>
 		<File
@@ -697,7 +697,7 @@
 			>
 		</File>
 		<File
-			RelativePath="mp_root_u32.c"
+			RelativePath="mp_root_n.c"
 			>
 		</File>
 		<File
@@ -857,11 +857,11 @@
 			>
 		</File>
 		<File
-			RelativePath="s_mp_log_d.c"
+			RelativePath="s_mp_log_2expt.c"
 			>
 		</File>
 		<File
-			RelativePath="s_mp_log_pow2.c"
+			RelativePath="s_mp_log_d.c"
 			>
 		</File>
 		<File
