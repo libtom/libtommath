@@ -32,7 +32,7 @@ mp_err mp_div_2d(const mp_int *a, int b, mp_int *c, mp_int *d)
 
    /* shift any bit count < MP_DIGIT_BIT */
    b %= MP_DIGIT_BIT;
-   if (b != 0u) {
+   if (b != 0) {
       int x;
       mp_digit r, mask, shift;
 

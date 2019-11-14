@@ -29,7 +29,7 @@ mp_err mp_mul_2d(const mp_int *a, int b, mp_int *c)
 
    /* shift any bit count < MP_DIGIT_BIT */
    b %= MP_DIGIT_BIT;
-   if (b != 0u) {
+   if (b != 0) {
       mp_digit shift, mask, r;
       int x;
 
