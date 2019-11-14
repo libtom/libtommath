@@ -162,12 +162,12 @@ c89:
 	-e 's/bool/mp_bool/g' \
 	-e 's/true/MP_YES/g' \
 	-e 's/false/MP_NO/g' \
-	-e 's/UINT32_MAX/0xFFFFFFFFU/g' \
-	-e 's/UINT64_MAX/0xFFFFFFFFFFFFFFFFULL/g' \
-	-e 's/INT32_MAX/2147483647/g' \
+	-e 's/UINT32_MAX/0xFFFFFFFFu/g' \
+	-e 's/UINT64_MAX/(mp_u64)-1/g' \
+	-e 's/INT32_MAX/0x7FFFFFFF/g' \
         -e 's/INT32_MIN/(-2147483647-1)/g' \
-	-e 's/INT64_MAX/((mp_i64)9223372036854775807LL)/g' \
-	-e 's/INT64_MIN/((mp_i64)-9223372036854775807LL-1)/g' \
+	-e 's/INT64_MAX/(mp_i64)(((mp_u64)1<<63)-1)/g' \
+	-e 's/INT64_MIN/(mp_i64)((mp_u64)1<<63)/g' \
 	-e 's/SIZE_MAX/((size_t)-1)/g' \
 	-e 's/\(PRI[iux]64\)/MP_\1/g' \
 	-e 's/uint\([0-9][0-9]*\)_t/mp_u\1/g' \
@@ -184,12 +184,12 @@ c99:
 	-e 's/MP_YES/true/g' \
 	-e 's/MP_NO/false/g' \
 	-e 's/false_/MP_NO_/g' \
-	-e 's/0xFFFFFFFFU/UINT32_MAX/g' \
-	-e 's/0xFFFFFFFFFFFFFFFFULL/UINT64_MAX/g' \
+	-e 's/0xFFFFFFFFu/UINT32_MAX/g' \
+	-e 's/(mp_u64)-1/UINT64_MAX/g' \
         -e 's/(-2147483647-1)/INT32_MIN/g' \
-	-e 's/2147483647/INT32_MAX/g' \
-	-e 's/((mp_i64)-9223372036854775807LL-1)/INT64_MIN/g' \
-	-e 's/((mp_i64)9223372036854775807LL)/INT64_MAX/g' \
+	-e 's/0x7FFFFFFF/INT32_MAX/g' \
+	-e 's/(mp_i64)((mp_u64)1<<63)/INT64_MIN/g' \
+	-e 's/(mp_i64)(((mp_u64)1<<63)-1)/INT64_MAX/g' \
 	-e 's/((size_t)-1)/SIZE_MAX/g' \
 	-e 's/MP_\(PRI[iux]64\)/\1/g' \
 	-e 's/mp_u\([0-9][0-9]*\)/uint\1_t/g' \

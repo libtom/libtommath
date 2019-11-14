@@ -47,7 +47,7 @@ static unsigned long lfsr = 0xAAAAAAAAuL;
 static unsigned int lbit(void)
 {
    if ((lfsr & 0x80000000uL) != 0uL) {
-      lfsr = ((lfsr << 1) ^ 0x8000001BuL) & 0xFFFFFFFFuL;
+      lfsr = ((lfsr << 1) ^ 0x8000001BuL) & UINT32_MAX;
       return 1u;
    } else {
       lfsr <<= 1;
