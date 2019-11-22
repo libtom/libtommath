@@ -2082,16 +2082,53 @@ static int test_s_mp_div_recursive(void)
       DO(s_mp_div_recursive(&a, &b, &c_q, &c_r));
       DO(s_mp_div_school(&a, &b, &d_q, &d_r));
       if (mp_cmp(&c_q, &d_q) != MP_EQ) {
-         fprintf(stderr, "1. Recursive division failed at sizes %d / %d, wrong quotient\n",
+         fprintf(stderr, "1a. Recursive division failed at sizes %d / %d, wrong quotient\n",
                  10 * size, size);
          goto LBL_ERR;
       }
       if (mp_cmp(&c_r, &d_r) != MP_EQ) {
-         fprintf(stderr, "1. Recursive division failed at sizes %d / %d, wrong remainder\n",
+         fprintf(stderr, "1a. Recursive division failed at sizes %d / %d, wrong remainder\n",
                  10 * size, size);
          goto LBL_ERR;
       }
       printf("\rsizes = %d / %d", 2 * size, size);
+
+      /* Relation 10:1 negative numerator*/
+      DO(mp_rand(&a, 10 * size));
+      DO(mp_neg(&a, &a));
+      DO(mp_rand(&b, size));
+      DO(s_mp_div_recursive(&a, &b, &c_q, &c_r));
+      DO(s_mp_div_school(&a, &b, &d_q, &d_r));
+      if (mp_cmp(&c_q, &d_q) != MP_EQ) {
+         fprintf(stderr, "1b. Recursive division failed at sizes %d / %d, wrong quotient\n",
+                 10 * size, size);
+         goto LBL_ERR;
+      }
+      if (mp_cmp(&c_r, &d_r) != MP_EQ) {
+         fprintf(stderr, "1b. Recursive division failed at sizes %d / %d, wrong remainder\n",
+                 10 * size, size);
+         goto LBL_ERR;
+      }
+      printf("\rsizes = %d / %d, negative numerator", 2 * size, size);
+
+      /* Relation 10:1 negative denominator*/
+      DO(mp_rand(&a, 10 * size));
+      DO(mp_rand(&b, size));
+      DO(mp_neg(&b, &b));
+      DO(s_mp_div_recursive(&a, &b, &c_q, &c_r));
+      DO(s_mp_div_school(&a, &b, &d_q, &d_r));
+      if (mp_cmp(&c_q, &d_q) != MP_EQ) {
+         fprintf(stderr, "1c. Recursive division failed at sizes %d / %d, wrong quotient\n",
+                 10 * size, size);
+         goto LBL_ERR;
+      }
+      if (mp_cmp(&c_r, &d_r) != MP_EQ) {
+         fprintf(stderr, "1c. Recursive division failed at sizes %d / %d, wrong remainder\n",
+                 10 * size, size);
+         goto LBL_ERR;
+      }
+      printf("\rsizes = %d / %d, negative denominator", 2 * size, size);
+
       /* Relation 2:1 */
       DO(mp_rand(&a, 2 * size));
       DO(mp_rand(&b, size));

@@ -159,7 +159,7 @@ mp_err s_mp_div_recursive(const mp_int *a, const mp_int *b, mp_int *q, mp_int *r
    if ((err = mp_add(&Q, &Q1, &Q)) != MP_OKAY)                                   goto LBL_ERR;
 
    /* get sign before writing to c */
-   Q.sign = (mp_iszero(&Q) ? MP_ZPOS : a->sign);
+   R.sign = (mp_iszero(&Q) ? MP_ZPOS : a->sign);
 
    if (q != NULL) {
       mp_exch(&Q, q);
