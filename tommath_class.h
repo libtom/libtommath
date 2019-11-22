@@ -49,25 +49,21 @@
 #   define MP_GET_I32_C
 #   define MP_GET_I64_C
 #   define MP_GET_L_C
-#   define MP_GET_LL_C
 #   define MP_GET_MAG_U32_C
 #   define MP_GET_MAG_U64_C
 #   define MP_GET_MAG_UL_C
-#   define MP_GET_MAG_ULL_C
 #   define MP_GROW_C
 #   define MP_INIT_C
 #   define MP_INIT_COPY_C
 #   define MP_INIT_I32_C
 #   define MP_INIT_I64_C
 #   define MP_INIT_L_C
-#   define MP_INIT_LL_C
 #   define MP_INIT_MULTI_C
 #   define MP_INIT_SET_C
 #   define MP_INIT_SIZE_C
 #   define MP_INIT_U32_C
 #   define MP_INIT_U64_C
 #   define MP_INIT_UL_C
-#   define MP_INIT_ULL_C
 #   define MP_INVMOD_C
 #   define MP_IS_SQUARE_C
 #   define MP_KRONECKER_C
@@ -115,11 +111,9 @@
 #   define MP_SET_I32_C
 #   define MP_SET_I64_C
 #   define MP_SET_L_C
-#   define MP_SET_LL_C
 #   define MP_SET_U32_C
 #   define MP_SET_U64_C
 #   define MP_SET_UL_C
-#   define MP_SET_ULL_C
 #   define MP_SHRINK_C
 #   define MP_SIGNED_RSH_C
 #   define MP_SQRMOD_C
@@ -377,10 +371,6 @@
 #   define MP_GET_MAG_UL_C
 #endif
 
-#if defined(MP_GET_LL_C)
-#   define MP_GET_MAG_ULL_C
-#endif
-
 #if defined(MP_GET_MAG_U32_C)
 #endif
 
@@ -388,9 +378,6 @@
 #endif
 
 #if defined(MP_GET_MAG_UL_C)
-#endif
-
-#if defined(MP_GET_MAG_ULL_C)
 #endif
 
 #if defined(MP_GROW_C)
@@ -421,11 +408,6 @@
 #   define MP_SET_L_C
 #endif
 
-#if defined(MP_INIT_LL_C)
-#   define MP_INIT_C
-#   define MP_SET_LL_C
-#endif
-
 #if defined(MP_INIT_MULTI_C)
 #   define MP_CLEAR_C
 #   define MP_INIT_C
@@ -452,11 +434,6 @@
 #if defined(MP_INIT_UL_C)
 #   define MP_INIT_C
 #   define MP_SET_UL_C
-#endif
-
-#if defined(MP_INIT_ULL_C)
-#   define MP_INIT_C
-#   define MP_SET_ULL_C
 #endif
 
 #if defined(MP_INVMOD_C)
@@ -842,10 +819,6 @@
 #   define MP_SET_UL_C
 #endif
 
-#if defined(MP_SET_LL_C)
-#   define MP_SET_ULL_C
-#endif
-
 #if defined(MP_SET_U32_C)
 #   define S_MP_ZERO_DIGS_C
 #endif
@@ -855,10 +828,6 @@
 #endif
 
 #if defined(MP_SET_UL_C)
-#   define S_MP_ZERO_DIGS_C
-#endif
-
-#if defined(MP_SET_ULL_C)
 #   define S_MP_ZERO_DIGS_C
 #endif
 
