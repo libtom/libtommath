@@ -729,7 +729,7 @@ static int test_mp_sqrt(void)
          printf("\nmp_sqrt() error!");
          goto LBL_ERR;
       }
-      DO(mp_root_n(&a, 2u, &c));
+      DO(mp_root_n(&a, 2, &c));
       if (mp_cmp_mag(&b, &c) != MP_EQ) {
          printf("mp_sqrt() bad result!\n");
          goto LBL_ERR;
@@ -2363,7 +2363,7 @@ static int unit_tests(int argc, char **argv)
       T1(mp_set_double, MP_SET_DOUBLE),
 #endif
       T1(mp_signed_rsh, MP_SIGNED_RSH),
-      T2(mp_sqrt, MP_SQRT, mp_root_n),
+      T2(mp_sqrt, MP_SQRT, MP_ROOT_N),
       T1(mp_sqrtmod_prime, MP_SQRTMOD_PRIME),
       T1(mp_xor, MP_XOR),
       T2(s_mp_div_recursive, S_MP_DIV_RECURSIVE, S_MP_DIV_SCHOOL),
