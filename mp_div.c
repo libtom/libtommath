@@ -26,7 +26,7 @@ mp_err mp_div(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d)
    }
 
    if (MP_HAS(S_MP_DIV_RECURSIVE)
-       && (b->used > MP_MUL_KARATSUBA_CUTOFF)
+       && (b->used > (2 * MP_MUL_KARATSUBA_CUTOFF))
        && (b->used <= ((a->used/3)*2))) {
       err = s_mp_div_recursive(a, b, c, d);
    } else if (MP_HAS(S_MP_DIV_SCHOOL)) {
