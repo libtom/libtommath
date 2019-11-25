@@ -95,7 +95,7 @@ void rand_num2(mp_int *a)
 int main(int argc, char *argv[])
 {
    int n, tmp;
-   long long max;
+   long max;
    mp_int a, b, c, d, e;
 #ifdef MTEST_NO_FULLSPEED
    clock_t t1;
