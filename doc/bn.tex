@@ -978,30 +978,6 @@ unsigned long mp_get_mag_ul (const mp_int *a);
 This will return the least significant bits of the big integer $a$ that fit into the native data
 type \texttt{long}.
 
-\subsection{Long Long Constants - platform dependant}
-
-\index{mp\_set\_ll} \index{mp\_set\_ull}
-\begin{alltt}
-void mp_set_ll (mp_int *a, long long b);
-void mp_set_ull (mp_int *a, unsigned long long b);
-\end{alltt}
-
-This will assign the value of the platform--dependent sized variable $b$ to the big integer $a$.
-
-To retrieve the value, the following functions can be used.
-
-\index{mp\_get\_ll}
-\index{mp\_get\_ull}
-\index{mp\_get\_mag\_ull}
-\begin{alltt}
-long long mp_get_ll (const mp_int *a);
-unsigned long long mp_get_ull (const mp_int *a);
-unsigned long long mp_get_mag_ull (const mp_int *a);
-\end{alltt}
-
-This will return the least significant bits of $a$ that fit into the native data type \texttt{long
-  long}.
-
 \subsection{Floating Point Constants - platform dependant}
 
 \index{mp\_set\_double}
@@ -1023,7 +999,7 @@ double mp_get_double(const mp_int *a);
 \subsection{Initialize and Setting Constants}
 To both initialize and set small constants the following nine functions are available.
 \index{mp\_init\_set} \index{mp\_init\_i32} \index{mp\_init\_i64} \index{mp\_init\_u32} \index{mp\_init\_u64}
-\index{mp\_init\_l} \index{mp\_init\_ll} \index{mp\_init\_ul} \index{mp\_init\_ull}
+\index{mp\_init\_l} \index{mp\_init\_ul}
 \begin{alltt}
 mp_err mp_init_set (mp_int *a, mp_digit b);
 mp_err mp_init_i32 (mp_int *a, int32_t b);
@@ -1032,8 +1008,6 @@ mp_err mp_init_i64 (mp_int *a, int64_t b);
 mp_err mp_init_u64 (mp_int *a, uint64_t b);
 mp_err mp_init_l   (mp_int *a, long b);
 mp_err mp_init_ul  (mp_int *a, unsigned long b);
-mp_err mp_init_ll  (mp_int *a, long long b);
-mp_err mp_init_ull (mp_int *a, unsigned long long b);
 \end{alltt}
 
 Both functions work like the previous counterparts except they first initialize $a$ with the

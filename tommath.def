@@ -43,25 +43,21 @@ EXPORTS
     mp_get_i32
     mp_get_i64
     mp_get_l
-    mp_get_ll
     mp_get_mag_u32
     mp_get_mag_u64
     mp_get_mag_ul
-    mp_get_mag_ull
     mp_grow
     mp_init
     mp_init_copy
     mp_init_i32
     mp_init_i64
     mp_init_l
-    mp_init_ll
     mp_init_multi
     mp_init_set
     mp_init_size
     mp_init_u32
     mp_init_u64
     mp_init_ul
-    mp_init_ull
     mp_invmod
     mp_is_square
     mp_kronecker
@@ -109,11 +105,9 @@ EXPORTS
     mp_set_i32
     mp_set_i64
     mp_set_l
-    mp_set_ll
     mp_set_u32
     mp_set_u64
     mp_set_ul
-    mp_set_ull
     mp_shrink
     mp_signed_rsh
     mp_sqrmod

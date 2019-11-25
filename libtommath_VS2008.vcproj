@@ -465,10 +465,6 @@
 			>
 		</File>
 		<File
-			RelativePath="mp_get_ll.c"
-			>
-		</File>
-		<File
 			RelativePath="mp_get_mag_u32.c"
 			>
 		</File>
@@ -478,10 +474,6 @@
 		</File>
 		<File
 			RelativePath="mp_get_mag_ul.c"
-			>
-		</File>
-		<File
-			RelativePath="mp_get_mag_ull.c"
 			>
 		</File>
 		<File
@@ -509,10 +501,6 @@
 			>
 		</File>
 		<File
-			RelativePath="mp_init_ll.c"
-			>
-		</File>
-		<File
 			RelativePath="mp_init_multi.c"
 			>
 		</File>
@@ -534,10 +522,6 @@
 		</File>
 		<File
 			RelativePath="mp_init_ul.c"
-			>
-		</File>
-		<File
-			RelativePath="mp_init_ull.c"
 			>
 		</File>
 		<File
@@ -729,10 +713,6 @@
 			>
 		</File>
 		<File
-			RelativePath="mp_set_ll.c"
-			>
-		</File>
-		<File
 			RelativePath="mp_set_u32.c"
 			>
 		</File>
@@ -742,10 +722,6 @@
 		</File>
 		<File
 			RelativePath="mp_set_ul.c"
-			>
-		</File>
-		<File
-			RelativePath="mp_set_ull.c"
 			>
 		</File>
 		<File
