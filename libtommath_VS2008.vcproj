@@ -397,18 +397,6 @@
 			>
 		</File>
 		<File
-			RelativePath="mp_dr_is_modulus.c"
-			>
-		</File>
-		<File
-			RelativePath="mp_dr_reduce.c"
-			>
-		</File>
-		<File
-			RelativePath="mp_dr_setup.c"
-			>
-		</File>
-		<File
 			RelativePath="mp_error_to_string.c"
 			>
 		</File>
@@ -649,38 +637,6 @@
 			>
 		</File>
 		<File
-			RelativePath="mp_reduce.c"
-			>
-		</File>
-		<File
-			RelativePath="mp_reduce_2k.c"
-			>
-		</File>
-		<File
-			RelativePath="mp_reduce_2k_l.c"
-			>
-		</File>
-		<File
-			RelativePath="mp_reduce_2k_setup.c"
-			>
-		</File>
-		<File
-			RelativePath="mp_reduce_2k_setup_l.c"
-			>
-		</File>
-		<File
-			RelativePath="mp_reduce_is_2k.c"
-			>
-		</File>
-		<File
-			RelativePath="mp_reduce_is_2k_l.c"
-			>
-		</File>
-		<File
-			RelativePath="mp_reduce_setup.c"
-			>
-		</File>
-		<File
 			RelativePath="mp_root_n.c"
 			>
 		</File>
@@ -809,6 +765,18 @@
 			>
 		</File>
 		<File
+			RelativePath="s_mp_dr_is_modulus.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_dr_reduce.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_dr_setup.c"
+			>
+		</File>
+		<File
 			RelativePath="s_mp_exptmod.c"
 			>
 		</File>
@@ -890,6 +858,38 @@
 		</File>
 		<File
 			RelativePath="s_mp_rand_platform.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_reduce.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_reduce_2k.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_reduce_2k_l.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_reduce_2k_setup.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_reduce_2k_setup_l.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_reduce_is_2k.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_reduce_is_2k_l.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_reduce_setup.c"
 			>
 		</File>
 		<File

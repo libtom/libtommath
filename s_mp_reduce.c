@@ -1,13 +1,15 @@
 #include "tommath_private.h"
-#ifdef MP_REDUCE_C
+#ifdef S_MP_REDUCE_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
+
+
 
 /* reduces x mod m, assumes 0 < x < m**2, mu is
  * precomputed via mp_reduce_setup.
  * From HAC pp.604 Algorithm 14.42
  */
-mp_err mp_reduce(mp_int *x, const mp_int *m, const mp_int *mu)
+mp_err s_mp_reduce(mp_int *x, const mp_int *m, const mp_int *mu)
 {
    mp_int  q;
    mp_err  err;
@@ -80,4 +82,6 @@ LBL_ERR:
 
    return err;
 }
+
+
 #endif

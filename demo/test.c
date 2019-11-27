@@ -1215,8 +1215,8 @@ static int test_mp_reduce_2k(void)
       DO(mp_sub_d(&a, 2u, &a));  /* a = 2**cnt - 2 */
 
       printf("\r %4d bits", cnt);
-      printf("(%d)", mp_reduce_is_2k(&a));
-      DO(mp_reduce_2k_setup(&a, &tmp));
+      printf("(%d)", s_mp_reduce_is_2k(&a));
+      DO(s_mp_reduce_2k_setup(&a, &tmp));
       printf("(%lu)", (unsigned long) tmp);
       for (ix = 0; ix < 1000; ix++) {
          if (!(ix & 127)) {
@@ -1226,7 +1226,7 @@ static int test_mp_reduce_2k(void)
          DO(mp_rand(&b, ((cnt / MP_DIGIT_BIT) + 1) * 2));
          DO(mp_copy(&c, &b));
          DO(mp_mod(&c, &a, &c));
-         DO(mp_reduce_2k(&b, &a, 2u));
+         DO(s_mp_reduce_2k(&b, &a, 2u));
          if (mp_cmp(&c, &b) != MP_EQ) {
             printf("FAILED\n");
             goto LBL_ERR;
@@ -1310,8 +1310,8 @@ static int test_mp_dr_reduce(void)
          DO(mp_copy(&b, &c));
 
          DO(mp_mod(&b, &a, &b));
-         mp_dr_setup(&a, &mp);
-         DO(mp_dr_reduce(&c, &a, mp));
+         s_mp_dr_setup(&a, &mp);
+         DO(s_mp_dr_reduce(&c, &a, mp));
 
          if (mp_cmp(&b, &c) != MP_EQ) {
             printf("Failed on trial %u\n", rr);
@@ -2335,7 +2335,7 @@ static int unit_tests(int argc, char **argv)
       T1(mp_complement, MP_COMPLEMENT),
       T1(mp_decr, MP_SUB_D),
       T1(s_mp_div_3, S_MP_DIV_3),
-      T1(mp_dr_reduce, MP_DR_REDUCE),
+      T1(mp_dr_reduce, S_MP_DR_REDUCE),
       T2(mp_pack_unpack,MP_PACK, MP_UNPACK),
       T2(mp_fread_fwrite, MP_FREAD, MP_FWRITE),
       T1(mp_get_u32, MP_GET_I32),
@@ -2356,8 +2356,8 @@ static int unit_tests(int argc, char **argv)
       T1(mp_read_radix, MP_READ_RADIX),
       T1(mp_read_write_ubin, MP_TO_UBIN),
       T1(mp_read_write_sbin, MP_TO_SBIN),
-      T1(mp_reduce_2k, MP_REDUCE_2K),
-      T1(mp_reduce_2k_l, MP_REDUCE_2K_L),
+      T1(mp_reduce_2k, S_MP_REDUCE_2K),
+      T1(mp_reduce_2k_l, S_MP_REDUCE_2K_L),
       T1(mp_radix_size, MP_RADIX_SIZE),
 #if defined(__STDC_IEC_559__) || defined(__GCC_IEC_559)
       T1(mp_set_double, MP_SET_DOUBLE),

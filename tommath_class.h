@@ -32,9 +32,6 @@
 #   define MP_DIV_2_C
 #   define MP_DIV_2D_C
 #   define MP_DIV_D_C
-#   define MP_DR_IS_MODULUS_C
-#   define MP_DR_REDUCE_C
-#   define MP_DR_SETUP_C
 #   define MP_ERROR_TO_STRING_C
 #   define MP_EXCH_C
 #   define MP_EXPT_N_C
@@ -95,14 +92,6 @@
 #   define MP_RADIX_SIZE_C
 #   define MP_RAND_C
 #   define MP_READ_RADIX_C
-#   define MP_REDUCE_C
-#   define MP_REDUCE_2K_C
-#   define MP_REDUCE_2K_L_C
-#   define MP_REDUCE_2K_SETUP_C
-#   define MP_REDUCE_2K_SETUP_L_C
-#   define MP_REDUCE_IS_2K_C
-#   define MP_REDUCE_IS_2K_L_C
-#   define MP_REDUCE_SETUP_C
 #   define MP_ROOT_N_C
 #   define MP_RSHD_C
 #   define MP_SBIN_SIZE_C
@@ -135,6 +124,9 @@
 #   define S_MP_DIV_RECURSIVE_C
 #   define S_MP_DIV_SCHOOL_C
 #   define S_MP_DIV_SMALL_C
+#   define S_MP_DR_IS_MODULUS_C
+#   define S_MP_DR_REDUCE_C
+#   define S_MP_DR_SETUP_C
 #   define S_MP_EXPTMOD_C
 #   define S_MP_EXPTMOD_FAST_C
 #   define S_MP_GET_BIT_C
@@ -156,6 +148,14 @@
 #   define S_MP_RADIX_MAP_C
 #   define S_MP_RAND_JENKINS_C
 #   define S_MP_RAND_PLATFORM_C
+#   define S_MP_REDUCE_C
+#   define S_MP_REDUCE_2K_C
+#   define S_MP_REDUCE_2K_L_C
+#   define S_MP_REDUCE_2K_SETUP_C
+#   define S_MP_REDUCE_2K_SETUP_L_C
+#   define S_MP_REDUCE_IS_2K_C
+#   define S_MP_REDUCE_IS_2K_L_C
+#   define S_MP_REDUCE_SETUP_C
 #   define S_MP_SQR_C
 #   define S_MP_SQR_COMBA_C
 #   define S_MP_SQR_KARATSUBA_C
@@ -268,20 +268,6 @@
 #   define MP_EXCH_C
 #   define MP_INIT_SIZE_C
 #   define S_MP_DIV_3_C
-#endif
-
-#if defined(MP_DR_IS_MODULUS_C)
-#endif
-
-#if defined(MP_DR_REDUCE_C)
-#   define MP_CLAMP_C
-#   define MP_CMP_MAG_C
-#   define MP_GROW_C
-#   define S_MP_SUB_C
-#   define S_MP_ZERO_DIGS_C
-#endif
-
-#if defined(MP_DR_SETUP_C)
 #endif
 
 #if defined(MP_ERROR_TO_STRING_C)
@@ -702,74 +688,6 @@
 #   define MP_ZERO_C
 #endif
 
-#if defined(MP_REDUCE_C)
-#   define MP_ADD_C
-#   define MP_CLEAR_C
-#   define MP_CMP_C
-#   define MP_CMP_D_C
-#   define MP_INIT_COPY_C
-#   define MP_LSHD_C
-#   define MP_MOD_2D_C
-#   define MP_MUL_C
-#   define MP_RSHD_C
-#   define MP_SET_C
-#   define MP_SUB_C
-#   define S_MP_MUL_C
-#   define S_MP_MUL_HIGH_C
-#   define S_MP_MUL_HIGH_COMBA_C
-#   define S_MP_SUB_C
-#endif
-
-#if defined(MP_REDUCE_2K_C)
-#   define MP_CLEAR_C
-#   define MP_CMP_MAG_C
-#   define MP_COUNT_BITS_C
-#   define MP_DIV_2D_C
-#   define MP_INIT_C
-#   define MP_MUL_D_C
-#   define S_MP_ADD_C
-#   define S_MP_SUB_C
-#endif
-
-#if defined(MP_REDUCE_2K_L_C)
-#   define MP_CLEAR_C
-#   define MP_CMP_MAG_C
-#   define MP_COUNT_BITS_C
-#   define MP_DIV_2D_C
-#   define MP_INIT_C
-#   define MP_MUL_C
-#   define S_MP_ADD_C
-#   define S_MP_SUB_C
-#endif
-
-#if defined(MP_REDUCE_2K_SETUP_C)
-#   define MP_2EXPT_C
-#   define MP_CLEAR_C
-#   define MP_COUNT_BITS_C
-#   define MP_INIT_C
-#   define S_MP_SUB_C
-#endif
-
-#if defined(MP_REDUCE_2K_SETUP_L_C)
-#   define MP_2EXPT_C
-#   define MP_CLEAR_C
-#   define MP_COUNT_BITS_C
-#   define MP_INIT_C
-#   define S_MP_SUB_C
-#endif
-
-#if defined(MP_REDUCE_IS_2K_C)
-#   define MP_COUNT_BITS_C
-#endif
-
-#if defined(MP_REDUCE_IS_2K_L_C)
-#endif
-
-#if defined(MP_REDUCE_SETUP_C)
-#   define MP_2EXPT_C
-#   define MP_DIV_C
-#endif
-
 #if defined(MP_ROOT_N_C)
 #   define MP_2EXPT_C
 #   define MP_ADD_D_C
@@ -997,6 +915,20 @@
 #   define MP_SUB_C
 #endif
 
+#if defined(S_MP_DR_IS_MODULUS_C)
+#endif
+
+#if defined(S_MP_DR_REDUCE_C)
+#   define MP_CLAMP_C
+#   define MP_CMP_MAG_C
+#   define MP_GROW_C
+#   define S_MP_SUB_C
+#   define S_MP_ZERO_DIGS_C
+#endif
+
+#if defined(S_MP_DR_SETUP_C)
+#endif
+
 #if defined(S_MP_EXPTMOD_C)
 #   define MP_CLEAR_C
 #   define MP_COPY_C
@@ -1177,6 +1109,74 @@
 #endif
 
 #if defined(S_MP_RAND_PLATFORM_C)
+#endif
+
+#if defined(S_MP_REDUCE_C)
+#   define MP_ADD_C
+#   define MP_CLEAR_C
+#   define MP_CMP_C
+#   define MP_CMP_D_C
+#   define MP_INIT_COPY_C
+#   define MP_LSHD_C
+#   define MP_MOD_2D_C
+#   define MP_MUL_C
+#   define MP_RSHD_C
+#   define MP_SET_C
+#   define MP_SUB_C
+#   define S_MP_MUL_C
+#   define S_MP_MUL_HIGH_C
+#   define S_MP_MUL_HIGH_COMBA_C
+#   define S_MP_SUB_C
+#endif
+
+#if defined(S_MP_REDUCE_2K_C)
+#   define MP_CLEAR_C
+#   define MP_CMP_MAG_C
+#   define MP_COUNT_BITS_C
+#   define MP_DIV_2D_C
+#   define MP_INIT_C
+#   define MP_MUL_D_C
+#   define S_MP_ADD_C
+#   define S_MP_SUB_C
+#endif
+
+#if defined(S_MP_REDUCE_2K_L_C)
+#   define MP_CLEAR_C
+#   define MP_CMP_MAG_C
+#   define MP_COUNT_BITS_C
+#   define MP_DIV_2D_C
+#   define MP_INIT_C
+#   define MP_MUL_C
+#   define S_MP_ADD_C
+#   define S_MP_SUB_C
+#endif
+
+#if defined(S_MP_REDUCE_2K_SETUP_C)
+#   define MP_2EXPT_C
+#   define MP_CLEAR_C
+#   define MP_COUNT_BITS_C
+#   define MP_INIT_C
+#   define S_MP_SUB_C
+#endif
+
+#if defined(S_MP_REDUCE_2K_SETUP_L_C)
+#   define MP_2EXPT_C
+#   define MP_CLEAR_C
+#   define MP_COUNT_BITS_C
+#   define MP_INIT_C
+#   define S_MP_SUB_C
+#endif
+
+#if defined(S_MP_REDUCE_IS_2K_C)
+#   define MP_COUNT_BITS_C
+#endif
+
+#if defined(S_MP_REDUCE_IS_2K_L_C)
+#endif
+
+#if defined(S_MP_REDUCE_SETUP_C)
+#   define MP_2EXPT_C
+#   define MP_DIV_C
 #endif
 
 #if defined(S_MP_SQR_C)
