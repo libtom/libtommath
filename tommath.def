@@ -26,9 +26,6 @@ EXPORTS
     mp_div_2
     mp_div_2d
     mp_div_d
-    mp_dr_is_modulus
-    mp_dr_reduce
-    mp_dr_setup
     mp_error_to_string
     mp_exch
     mp_expt_n
@@ -89,14 +86,6 @@ EXPORTS
     mp_radix_size
     mp_rand
     mp_read_radix
-    mp_reduce
-    mp_reduce_2k
-    mp_reduce_2k_l
-    mp_reduce_2k_setup
-    mp_reduce_2k_setup_l
-    mp_reduce_is_2k
-    mp_reduce_is_2k_l
-    mp_reduce_setup
     mp_root_n
     mp_rshd
     mp_sbin_size

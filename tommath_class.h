@@ -286,13 +286,13 @@
 #if defined(MP_EXPTMOD_C)
 #   define MP_ABS_C
 #   define MP_CLEAR_MULTI_C
-#   define MP_DR_IS_MODULUS_C
 #   define MP_INIT_MULTI_C
 #   define MP_INVMOD_C
-#   define MP_REDUCE_IS_2K_C
-#   define MP_REDUCE_IS_2K_L_C
+#   define S_MP_DR_IS_MODULUS_C
 #   define S_MP_EXPTMOD_C
 #   define S_MP_EXPTMOD_FAST_C
+#   define S_MP_REDUCE_IS_2K_C
+#   define S_MP_REDUCE_IS_2K_L_C
 #endif
 
 #if defined(MP_EXTEUCLID_C)
@@ -937,19 +937,17 @@
 #   define MP_INIT_C
 #   define MP_MOD_C
 #   define MP_MUL_C
-#   define MP_REDUCE_2K_L_C
-#   define MP_REDUCE_2K_SETUP_L_C
-#   define MP_REDUCE_C
-#   define MP_REDUCE_SETUP_C
 #   define MP_SET_C
+#   define S_MP_REDUCE_2K_L_C
+#   define S_MP_REDUCE_2K_SETUP_L_C
+#   define S_MP_REDUCE_C
+#   define S_MP_REDUCE_SETUP_C
 #endif
 
 #if defined(S_MP_EXPTMOD_FAST_C)
 #   define MP_CLEAR_C
 #   define MP_COPY_C
 #   define MP_COUNT_BITS_C
-#   define MP_DR_REDUCE_C
-#   define MP_DR_SETUP_C
 #   define MP_EXCH_C
 #   define MP_INIT_SIZE_C
 #   define MP_MOD_C
@@ -958,10 +956,12 @@
 #   define MP_MONTGOMERY_SETUP_C
 #   define MP_MULMOD_C
 #   define MP_MUL_C
-#   define MP_REDUCE_2K_C
-#   define MP_REDUCE_2K_SETUP_C
 #   define MP_SET_C
+#   define S_MP_DR_REDUCE_C
+#   define S_MP_DR_SETUP_C
 #   define S_MP_MONTGOMERY_REDUCE_COMBA_C
+#   define S_MP_REDUCE_2K_C
+#   define S_MP_REDUCE_2K_SETUP_C
 #endif
 
 #if defined(S_MP_GET_BIT_C)

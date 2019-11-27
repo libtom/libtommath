@@ -30,8 +30,8 @@
 #   define MP_RADIX_SIZE_C
 #   define MP_LOG_N_C
 #   define MP_RAND_C
-#   define MP_REDUCE_C
-#   define MP_REDUCE_2K_L_C
+#   define S_MP_REDUCE_C
+#   define S_MP_REDUCE_2K_L_C
 #   define MP_FROM_SBIN_C
 #   define MP_ROOT_N_C
 #   define MP_SET_L_C
@@ -75,13 +75,13 @@
  * like removing support for even moduli, etc...
  */
 #   ifdef LTM_LAST
-#      undef MP_DR_IS_MODULUS_C
-#      undef MP_DR_REDUCE_C
-#      undef MP_DR_SETUP_C
-#      undef MP_REDUCE_2K_C
-#      undef MP_REDUCE_2K_SETUP_C
-#      undef MP_REDUCE_IS_2K_C
-#      undef MP_REDUCE_SETUP_C
+#      undef S_MP_DR_IS_MODULUS_C
+#      undef S_MP_DR_REDUCE_C
+#      undef S_MP_DR_SETUP_C
+#      undef S_MP_REDUCE_2K_C
+#      undef S_MP_REDUCE_2K_SETUP_C
+#      undef S_MP_REDUCE_IS_2K_C
+#      undef S_MP_REDUCE_SETUP_C
 #      undef S_MP_DIV_3_C
 #      undef S_MP_EXPTMOD_C
 #      undef S_MP_INVMOD_ODD_C
@@ -94,7 +94,7 @@
 #      undef S_MP_SQR_TOOM_C
 
 #      ifndef SC_RSA_1_WITH_TESTS
-#         undef MP_REDUCE_C
+#         undef S_MP_REDUCE_C
 #      endif
 
 /* To safely undefine these you have to make sure your RSA key won't exceed the Comba threshold
