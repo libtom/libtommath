@@ -26,7 +26,6 @@
 #   define MP_ISEVEN_C
 #   define MP_ISODD_C
 #   define MP_NEG_C
-#   define MP_PRIME_FROBENIUS_UNDERWOOD_C
 #   define MP_RADIX_SIZE_C
 #   define MP_LOG_N_C
 #   define MP_RAND_C

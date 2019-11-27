@@ -35,10 +35,9 @@ mp_get_mag_u64.o mp_get_mag_ul.o mp_grow.o mp_init.o mp_init_copy.o mp_init_i32.
 mp_init_multi.o mp_init_set.o mp_init_size.o mp_init_u32.o mp_init_u64.o mp_init_ul.o mp_invmod.o \
 mp_is_square.o mp_kronecker.o mp_lcm.o mp_log_n.o mp_lshd.o mp_mod.o mp_mod_2d.o \
 mp_montgomery_calc_normalization.o mp_montgomery_reduce.o mp_montgomery_setup.o mp_mul.o mp_mul_2.o \
-mp_mul_2d.o mp_mul_d.o mp_mulmod.o mp_neg.o mp_or.o mp_pack.o mp_pack_count.o mp_prime_fermat.o \
-mp_prime_frobenius_underwood.o mp_prime_is_prime.o mp_prime_miller_rabin.o mp_prime_next_prime.o \
-mp_prime_rabin_miller_trials.o mp_prime_rand.o mp_prime_strong_lucas_selfridge.o mp_radix_size.o \
-mp_rand.o mp_read_radix.o mp_reduce.o mp_reduce_2k.o mp_reduce_2k_l.o mp_reduce_2k_setup.o \
+mp_mul_2d.o mp_mul_d.o mp_mulmod.o mp_neg.o mp_or.o mp_pack.o mp_pack_count.o mp_prime_is_prime.o \
+mp_prime_miller_rabin.o mp_prime_next_prime.o mp_prime_rabin_miller_trials.o mp_prime_rand.o \
+mp_radix_size.o mp_rand.o mp_read_radix.o mp_reduce.o mp_reduce_2k.o mp_reduce_2k_l.o mp_reduce_2k_setup.o \
 mp_reduce_2k_setup_l.o mp_reduce_is_2k.o mp_reduce_is_2k_l.o mp_reduce_setup.o mp_root_n.o mp_rshd.o \
 mp_sbin_size.o mp_set.o mp_set_double.o mp_set_i32.o mp_set_i64.o mp_set_l.o mp_set_u32.o mp_set_u64.o \
 mp_set_ul.o mp_shrink.o mp_signed_rsh.o mp_sqrmod.o mp_sqrt.o mp_sqrtmod_prime.o mp_sub.o mp_sub_d.o \
@@ -47,8 +46,9 @@ s_mp_copy_digs.o s_mp_div_3.o s_mp_div_recursive.o s_mp_div_school.o s_mp_div_sm
 s_mp_exptmod_fast.o s_mp_get_bit.o s_mp_invmod.o s_mp_invmod_odd.o s_mp_log.o s_mp_log_2expt.o \
 s_mp_log_d.o s_mp_montgomery_reduce_comba.o s_mp_mul.o s_mp_mul_balance.o s_mp_mul_comba.o \
 s_mp_mul_high.o s_mp_mul_high_comba.o s_mp_mul_karatsuba.o s_mp_mul_toom.o s_mp_prime_is_divisible.o \
-s_mp_prime_tab.o s_mp_radix_map.o s_mp_rand_jenkins.o s_mp_rand_platform.o s_mp_sqr.o s_mp_sqr_comba.o \
-s_mp_sqr_karatsuba.o s_mp_sqr_toom.o s_mp_sub.o s_mp_zero_buf.o s_mp_zero_digs.o
+s_mp_prime_strong_lucas_selfridge.o s_mp_prime_tab.o s_mp_radix_map.o s_mp_rand_jenkins.o \
+s_mp_rand_platform.o s_mp_sqr.o s_mp_sqr_comba.o s_mp_sqr_karatsuba.o s_mp_sqr_toom.o s_mp_sub.o \
+s_mp_zero_buf.o s_mp_zero_digs.o
 
 #END_INS
 

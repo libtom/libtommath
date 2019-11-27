@@ -862,7 +862,7 @@ static int test_mp_prime_is_prime(void)
 {
    int ix;
    mp_err e;
-   bool cnt, fu;
+   bool cnt;
 
    mp_int a, b;
    DOR(mp_init_multi(&a, &b, NULL));
@@ -923,10 +923,6 @@ static int test_mp_prime_is_prime(void)
       if (!cnt) {
          printf("\nsub is not prime!\n");
       }
-      DO(mp_prime_frobenius_underwood(&b, &fu));
-      if (!fu) {
-         printf("\nfrobenius-underwood says sub is not prime!\n");
-      }
       if ((e != MP_OKAY) || !cnt) {
          printf("prime tested was: 0x");
          DO(mp_fwrite(&a,16,stdout));
@@ -942,14 +938,14 @@ static int test_mp_prime_is_prime(void)
    DO(mp_read_radix(&a,
                     "FFFFFFFFFFFFFFFFC90FDAA22168C234C4C6628B80DC1CD129024E088A67CC74020BBEA63B139B22514A08798E3404DDEF9519B3CD3A431B302B0A6DF25F14374FE1356D6D51C245E485B576625E7EC6F44C42E9A63A3620FFFFFFFFFFFFFFFF",
                     16));
-   e = mp_prime_strong_lucas_selfridge(&a, &cnt);
+   e = s_mp_prime_strong_lucas_selfridge(&a, &cnt);
    /* small problem */
    if (e != MP_OKAY) {
-      printf("\nmp_prime_strong_lucas_selfridge failed with error: %s\n", mp_error_to_string(e));
+      printf("\ns_mp_prime_strong_lucas_selfridge failed with error: %s\n", mp_error_to_string(e));
    }
    /* large problem */
    if (!cnt) {
-      printf("\n\nissue #143 - mp_prime_strong_lucas_selfridge FAILED!\n");
+      printf("\n\nissue #143 - s_mp_prime_strong_lucas_selfridge FAILED!\n");
    }
    if ((e != MP_OKAY) || !cnt) {
       printf("prime tested was: 0x");

@@ -1,4 +1,4 @@
-/* LibTomMath, multiple-precision integer library -- Tom St Denis */
+//* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
 #ifndef TOMMATH_H_
@@ -489,11 +489,6 @@ mp_err mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y) 
 
 /* ---> Primes <--- */
 
-/* performs one Fermat test of "a" using base "b".
- * Sets result to 0 if composite or 1 if probable prime
- */
-mp_err mp_prime_fermat(const mp_int *a, const mp_int *b, bool *result) MP_WUR;
-
 /* performs one Miller-Rabin test of "a" using base "b".
  * Sets result to 0 if composite or 1 if probable prime
  */
@@ -504,15 +499,6 @@ mp_err mp_prime_miller_rabin(const mp_int *a, const mp_int *b, bool *result) MP_
  */
 int mp_prime_rabin_miller_trials(int size) MP_WUR;
 
-/* performs one strong Lucas-Selfridge test of "a".
- * Sets result to 0 if composite or 1 if probable prime
- */
-mp_err mp_prime_strong_lucas_selfridge(const mp_int *a, bool *result) MP_WUR;
-
-/* performs one Frobenius test of "a" as described by Paul Underwood.
- * Sets result to 0 if composite or 1 if probable prime
- */
-mp_err mp_prime_frobenius_underwood(const mp_int *N, bool *result) MP_WUR;
 
 /* performs t random rounds of Miller-Rabin on "a" additional to
  * bases 2 and 3.  Also performs an initial sieve of trial
