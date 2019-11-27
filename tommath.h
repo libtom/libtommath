@@ -1,4 +1,4 @@
-//* LibTomMath, multiple-precision integer library -- Tom St Denis */
+/* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
 #ifndef TOMMATH_H_
