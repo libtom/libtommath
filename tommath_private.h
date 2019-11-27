@@ -196,7 +196,7 @@ MP_PRIVATE void s_mp_zero_digs(mp_digit *d, int digits);
 /* performs one strong Lucas-Selfridge test of "a".
  * Sets result to 0 if composite or 1 if probable prime
  */
-mp_err s_mp_prime_strong_lucas_selfridge(const mp_int *a, bool *result) MP_WUR;
+MP_PRIVATE mp_err s_mp_prime_strong_lucas_selfridge(const mp_int *a, bool *result) MP_WUR;
 
 
 /* TODO: jenkins prng is not thread safe as of now */
