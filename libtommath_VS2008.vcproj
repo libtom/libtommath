@@ -605,14 +605,6 @@
 			>
 		</File>
 		<File
-			RelativePath="mp_prime_fermat.c"
-			>
-		</File>
-		<File
-			RelativePath="mp_prime_frobenius_underwood.c"
-			>
-		</File>
-		<File
 			RelativePath="mp_prime_is_prime.c"
 			>
 		</File>
@@ -630,10 +622,6 @@
 		</File>
 		<File
 			RelativePath="mp_prime_rand.c"
-			>
-		</File>
-		<File
-			RelativePath="mp_prime_strong_lucas_selfridge.c"
 			>
 		</File>
 		<File
@@ -874,6 +862,10 @@
 		</File>
 		<File
 			RelativePath="s_mp_prime_is_divisible.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_prime_strong_lucas_selfridge.c"
 			>
 		</File>
 		<File

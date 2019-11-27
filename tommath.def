@@ -78,14 +78,11 @@ EXPORTS
     mp_or
     mp_pack
     mp_pack_count
-    mp_prime_fermat
-    mp_prime_frobenius_underwood
     mp_prime_is_prime
     mp_prime_miller_rabin
     mp_prime_next_prime
     mp_prime_rabin_miller_trials
     mp_prime_rand
-    mp_prime_strong_lucas_selfridge
     mp_radix_size
     mp_rand
     mp_read_radix

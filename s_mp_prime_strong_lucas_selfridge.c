@@ -1,8 +1,9 @@
 #include "tommath_private.h"
-#ifdef MP_PRIME_STRONG_LUCAS_SELFRIDGE_C
-
+#ifdef S_MP_PRIME_STRONG_LUCAS_SELFRIDGE_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
+
+
 
 /*
  *  See file mp_prime_is_prime.c or the documentation in doc/bn.tex for the details
@@ -48,7 +49,7 @@ static mp_err s_mul_si(const mp_int *a, int32_t d, mp_int *c)
     (If that name sounds familiar, he is the guy who found the fdiv bug in the
      Pentium (P5x, I think) Intel processor)
 */
-mp_err mp_prime_strong_lucas_selfridge(const mp_int *a, bool *result)
+mp_err s_mp_prime_strong_lucas_selfridge(const mp_int *a, bool *result)
 {
    /* CZ TODO: choose better variable names! */
    mp_int Dz, gcd, Np1, Uz, Vz, U2mz, V2mz, Qmz, Q2mz, Qkdz, T1z, T2z, T3z, T4z, Q2kdz;
@@ -278,4 +279,5 @@ LBL_LS_ERR:
    return err;
 }
 #endif
+
 #endif

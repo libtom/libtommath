@@ -92,28 +92,17 @@ mp_err mp_prime_is_prime(const mp_int *a, int t, bool *result)
    }
 
    /*
-    * Both, the Frobenius-Underwood test and the the Lucas-Selfridge test are quite
-    * slow so if speed is an issue, define LTM_USE_ONLY_MR to use M-R tests with
-    * bases 2, 3 and t random bases.
+    * The Lucas-Selfridge test is quite slow so if speed is an issue, define LTM_USE_ONLY_MR
+    * to use M-R tests with bases 2, 3 and t random bases.
     */
 #ifndef LTM_USE_ONLY_MR
    if (t >= 0) {
-#ifdef LTM_USE_FROBENIUS_TEST
-      err = mp_prime_frobenius_underwood(a, &res);
-      if ((err != MP_OKAY) && (err != MP_ITER)) {
+      if ((err = s_mp_prime_strong_lucas_selfridge(a, &res)) != MP_OKAY) {
          goto LBL_B;
       }
       if (!res) {
          goto LBL_B;
       }
-#else
-      if ((err = mp_prime_strong_lucas_selfridge(a, &res)) != MP_OKAY) {
-         goto LBL_B;
-      }
-      if (!res) {
-         goto LBL_B;
-      }
-#endif
    }
 #endif
 
