@@ -1,10 +1,12 @@
 #include "tommath_private.h"
-#ifdef MP_REDUCE_IS_2K_L_C
+#ifdef S_MP_REDUCE_IS_2K_L_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
+
+
 /* determines if reduce_2k_l can be used */
-bool mp_reduce_is_2k_l(const mp_int *a)
+bool s_mp_reduce_is_2k_l(const mp_int *a)
 {
    if (mp_iszero(a)) {
       return false;
@@ -23,5 +25,6 @@ bool mp_reduce_is_2k_l(const mp_int *a)
       return false;
    }
 }
+
 
 #endif

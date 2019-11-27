@@ -436,16 +436,6 @@ mp_err mp_is_square(const mp_int *arg, bool *ret) MP_WUR;
 /* computes the Kronecker symbol c = (a | p) (like jacobi() but with {a,p} in Z */
 mp_err mp_kronecker(const mp_int *a, const mp_int *p, int *c) MP_WUR;
 
-/* used to setup the Barrett reduction for a given modulus b */
-mp_err mp_reduce_setup(mp_int *a, const mp_int *b) MP_WUR;
-
-/* Barrett Reduction, computes a (mod b) with a precomputed value c
- *
- * Assumes that 0 < x <= m*m, note if 0 > x > -(m*m) then you can merely
- * compute the reduction as -1 * mp_reduce(mp_abs(x)) [pseudo code].
- */
-mp_err mp_reduce(mp_int *x, const mp_int *m, const mp_int *mu) MP_WUR;
-
 /* setups the montgomery reduction */
 mp_err mp_montgomery_setup(const mp_int *n, mp_digit *rho) MP_WUR;
 
@@ -456,33 +446,6 @@ mp_err mp_montgomery_calc_normalization(mp_int *a, const mp_int *b) MP_WUR;
 
 /* computes x/R == x (mod N) via Montgomery Reduction */
 mp_err mp_montgomery_reduce(mp_int *x, const mp_int *n, mp_digit rho) MP_WUR;
-
-/* returns 1 if a is a valid DR modulus */
-bool mp_dr_is_modulus(const mp_int *a) MP_WUR;
-
-/* sets the value of "d" required for mp_dr_reduce */
-void mp_dr_setup(const mp_int *a, mp_digit *d);
-
-/* reduces a modulo n using the Diminished Radix method */
-mp_err mp_dr_reduce(mp_int *x, const mp_int *n, mp_digit k) MP_WUR;
-
-/* returns true if a can be reduced with mp_reduce_2k */
-bool mp_reduce_is_2k(const mp_int *a) MP_WUR;
-
-/* determines k value for 2k reduction */
-mp_err mp_reduce_2k_setup(const mp_int *a, mp_digit *d) MP_WUR;
-
-/* reduces a modulo b where b is of the form 2**p - k [0 <= a] */
-mp_err mp_reduce_2k(mp_int *a, const mp_int *n, mp_digit d) MP_WUR;
-
-/* returns true if a can be reduced with mp_reduce_2k_l */
-bool mp_reduce_is_2k_l(const mp_int *a) MP_WUR;
-
-/* determines k value for 2k reduction */
-mp_err mp_reduce_2k_setup_l(const mp_int *a, mp_int *d) MP_WUR;
-
-/* reduces a modulo b where b is of the form 2**p - k [0 <= a] */
-mp_err mp_reduce_2k_l(mp_int *a, const mp_int *n, const mp_int *d) MP_WUR;
 
 /* Y = G**X (mod P) */
 mp_err mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y) MP_WUR;

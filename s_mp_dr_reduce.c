@@ -1,7 +1,9 @@
 #include "tommath_private.h"
-#ifdef MP_DR_REDUCE_C
+#ifdef S_MP_DR_REDUCE_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
+
+
 
 /* reduce "x" in place modulo "n" using the Diminished Radix algorithm.
  *
@@ -17,7 +19,7 @@
  *
  * Input x must be in the range 0 <= x <= (n-1)**2
  */
-mp_err mp_dr_reduce(mp_int *x, const mp_int *n, mp_digit k)
+mp_err s_mp_dr_reduce(mp_int *x, const mp_int *n, mp_digit k)
 {
    mp_err err;
 
@@ -65,4 +67,6 @@ mp_err mp_dr_reduce(mp_int *x, const mp_int *n, mp_digit k)
    }
    return MP_OKAY;
 }
+
+
 #endif

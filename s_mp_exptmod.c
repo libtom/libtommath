@@ -60,11 +60,11 @@ mp_err s_mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y
    if ((err = mp_init(&mu)) != MP_OKAY)                           goto LBL_M;
 
    if (redmode == 0) {
-      if ((err = mp_reduce_setup(&mu, P)) != MP_OKAY)             goto LBL_MU;
-      redux = mp_reduce;
+      if ((err = s_mp_reduce_setup(&mu, P)) != MP_OKAY)             goto LBL_MU;
+      redux = s_mp_reduce;
    } else {
-      if ((err = mp_reduce_2k_setup_l(P, &mu)) != MP_OKAY)        goto LBL_MU;
-      redux = mp_reduce_2k_l;
+      if ((err = s_mp_reduce_2k_setup_l(P, &mu)) != MP_OKAY)        goto LBL_MU;
+      redux = s_mp_reduce_2k_l;
    }
 
    /* create M table

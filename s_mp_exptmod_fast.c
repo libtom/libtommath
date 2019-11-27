@@ -92,18 +92,18 @@ mp_err s_mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_i
          goto LBL_M;
       }
    } else if (redmode == 1) {
-      if (MP_HAS(MP_DR_SETUP) && MP_HAS(MP_DR_REDUCE)) {
+      if (MP_HAS(S_MP_DR_SETUP) && MP_HAS(S_MP_DR_REDUCE)) {
          /* setup DR reduction for moduli of the form B**k - b */
-         mp_dr_setup(P, &mp);
-         redux = mp_dr_reduce;
+         s_mp_dr_setup(P, &mp);
+         redux = s_mp_dr_reduce;
       } else {
          err = MP_VAL;
          goto LBL_M;
       }
-   } else if (MP_HAS(MP_REDUCE_2K_SETUP) && MP_HAS(MP_REDUCE_2K)) {
+   } else if (MP_HAS(S_MP_REDUCE_2K_SETUP) && MP_HAS(S_MP_REDUCE_2K)) {
       /* setup DR reduction for moduli of the form 2**k - b */
-      if ((err = mp_reduce_2k_setup(P, &mp)) != MP_OKAY)          goto LBL_M;
-      redux = mp_reduce_2k;
+      if ((err = s_mp_reduce_2k_setup(P, &mp)) != MP_OKAY)          goto LBL_M;
+      redux = s_mp_reduce_2k;
    } else {
       err = MP_VAL;
       goto LBL_M;
