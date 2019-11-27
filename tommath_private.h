@@ -171,6 +171,44 @@ MP_PRIVATE mp_err s_mp_div_school(const mp_int *a, const mp_int *b, mp_int *c, m
 MP_PRIVATE mp_err s_mp_div_small(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d) MP_WUR;
 MP_PRIVATE mp_err s_mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y, int redmode) MP_WUR;
 MP_PRIVATE mp_err s_mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y, int redmode) MP_WUR;
+
+/* used to setup the Barrett reduction for a given modulus b */
+MP_PRIVATE mp_err mp_reduce_setup(mp_int *a, const mp_int *b) MP_WUR;
+
+/* Barrett Reduction, computes a (mod b) with a precomputed value c
+ *
+ * Assumes that 0 < x <= m*m, note if 0 > x > -(m*m) then you can merely
+ * compute the reduction as -1 * mp_reduce(mp_abs(x)) [pseudo code].
+ */
+MP_PRIVATE mp_err mp_reduce(mp_int *x, const mp_int *m, const mp_int *mu) MP_WUR;
+
+/* returns 1 if a is a valid DR modulus */
+MP_PRIVATE bool mp_dr_is_modulus(const mp_int *a) MP_WUR;
+
+/* sets the value of "d" required for mp_dr_reduce */
+MP_PRIVATE void mp_dr_setup(const mp_int *a, mp_digit *d);
+
+/* reduces a modulo n using the Diminished Radix method */
+MP_PRIVATE mp_err mp_dr_reduce(mp_int *x, const mp_int *n, mp_digit k) MP_WUR;
+
+/* returns true if a can be reduced with mp_reduce_2k */
+MP_PRIVATE bool mp_reduce_is_2k(const mp_int *a) MP_WUR;
+
+/* determines k value for 2k reduction */
+MP_PRIVATE mp_err mp_reduce_2k_setup(const mp_int *a, mp_digit *d) MP_WUR;
+
+/* reduces a modulo b where b is of the form 2**p - k [0 <= a] */
+MP_PRIVATE mp_err mp_reduce_2k(mp_int *a, const mp_int *n, mp_digit d) MP_WUR;
+
+/* returns true if a can be reduced with mp_reduce_2k_l */
+MP_PRIVATE bool mp_reduce_is_2k_l(const mp_int *a) MP_WUR;
+
+/* determines k value for 2k reduction */
+MP_PRIVATE mp_err mp_reduce_2k_setup_l(const mp_int *a, mp_int *d) MP_WUR;
+
+/* reduces a modulo b where b is of the form 2**p - k [0 <= a] */
+MP_PRIVATE mp_err mp_reduce_2k_l(mp_int *a, const mp_int *n, const mp_int *d) MP_WUR;
+
 MP_PRIVATE mp_err s_mp_invmod(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
 MP_PRIVATE mp_err s_mp_invmod_odd(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
 MP_PRIVATE mp_err s_mp_log(const mp_int *a, mp_digit base, int *c) MP_WUR;
