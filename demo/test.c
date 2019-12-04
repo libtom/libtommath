@@ -2220,7 +2220,6 @@ static int test_s_mp_radix_size_overestimate(void)
        284u, 283u, 281u, 280u, 279u, 278u, 277u, 276u, 275u,
        273u, 272u
    };
-#ifdef MP_RADIX_SIZE_OVERESTIMATE_TEST_BIG
    size_t big_results[65] = {
               0u,         0u,         0u,  1354911329u, 1073741825u,
       924870867u, 830760078u, 764949110u,   715827883u,  677455665u,
@@ -2236,7 +2235,6 @@ static int test_s_mp_radix_size_overestimate(void)
       371449582u, 369786879u, 368168034u,   366591092u,  365054217u,
       363555684u, 362093873u, 360667257u,   359274399u,  357913942
    };
-#endif
 
 /* *INDENT-ON* */
    if ((err = mp_init(&a)) != MP_OKAY)        goto LBL_ERR;
@@ -2267,7 +2265,6 @@ static int test_s_mp_radix_size_overestimate(void)
       }
       a.sign = MP_ZPOS;
    }
-#ifdef MP_RADIX_SIZE_OVERESTIMATE_TEST_BIG
    if ((err = mp_2expt(&a, INT_MAX - 1)) != MP_OKAY) {
       goto LBL_ERR;
    }
@@ -2295,7 +2292,6 @@ static int test_s_mp_radix_size_overestimate(void)
       }
       a.sign = MP_ZPOS;
    }
-#endif
    mp_clear(&a);
    return EXIT_SUCCESS;
 LBL_ERR:
