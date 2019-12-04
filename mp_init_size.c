@@ -8,6 +8,7 @@ mp_err mp_init_size(mp_int *a, int size)
 {
    size = MP_MAX(MP_MIN_PREC, size);
 
+   /*TODO*/
    /* alloc mem */
    a->dp = (mp_digit *) MP_CALLOC((size_t)size, sizeof(mp_digit));
    if (a->dp == NULL) {
