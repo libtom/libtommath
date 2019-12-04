@@ -6,9 +6,12 @@
 /* init an mp_init for a given size */
 mp_err mp_init_size(mp_int *a, int size)
 {
-   size = MP_MAX(MP_MIN_PREC, size);
+   size = MP_MAX(MP_MIN_DIGIT_COUNT, size);
 
-   /*TODO*/
+   if (size > MP_MAX_DIGIT_COUNT) {
+      return MP_MEM;
+   }
+
    /* alloc mem */
    a->dp = (mp_digit *) MP_CALLOC((size_t)size, sizeof(mp_digit));
    if (a->dp == NULL) {

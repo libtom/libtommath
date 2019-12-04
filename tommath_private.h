@@ -140,22 +140,29 @@ typedef uint64_t mp_word;
 
 MP_STATIC_ASSERT(correct_word_size, sizeof(mp_word) == (2u * sizeof(mp_digit)))
 
-/* default precision */
-#ifndef MP_PREC
+/* default number of digits */
+#ifndef MP_DEFAULT_DIGIT_COUNT
 #   ifndef MP_LOW_MEM
-#      define MP_PREC 32        /* default digits of precision */
+#      define MP_DEFAULT_DIGIT_COUNT 32
 #   else
-#      define MP_PREC 8         /* default digits of precision */
+#      define MP_DEFAULT_DIGIT_COUNT 8
 #   endif
 #endif
 
-/* Minimum number of available digits in mp_int, MP_PREC >= MP_MIN_PREC
+/* Minimum number of available digits in mp_int, MP_DEFAULT_DIGIT_COUNT >= MP_MIN_DIGIT_COUNT
  * - Must be at least 3 for s_mp_div_school.
  * - Must be large enough such that the mp_set_u64 setter can
  *   store uint64_t in the mp_int without growing
  */
-#define MP_MIN_PREC MP_MAX(3, (((int)MP_SIZEOF_BITS(uint64_t) + MP_DIGIT_BIT) - 1) / MP_DIGIT_BIT)
-MP_STATIC_ASSERT(prec_geq_min_prec, MP_PREC >= MP_MIN_PREC)
+#define MP_MIN_DIGIT_COUNT MP_MAX(3, (((int)MP_SIZEOF_BITS(uint64_t) + MP_DIGIT_BIT) - 1) / MP_DIGIT_BIT)
+MP_STATIC_ASSERT(prec_geq_min_prec, MP_DEFAULT_DIGIT_COUNT >= MP_MIN_DIGIT_COUNT)
+
+/* Maximum number of digits.
+ * - Must be small enough such that mp_bit_count does not overflow.
+ * - Must be small enough such that mp_radix_size for base 2 does not overflow.
+ *   mp_radix_size needs two additional bytes for zero termination and sign.
+ */
+#define MP_MAX_DIGIT_COUNT ((INT_MAX - 2) / MP_DIGIT_BIT)
 
 /* random number source */
 extern MP_PRIVATE mp_err(*s_mp_rand_source)(void *out, size_t size);
