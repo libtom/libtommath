@@ -2016,6 +2016,7 @@ LBL_ERR:
    return EXIT_FAILURE;
 }
 
+
 static int test_mp_radix_size(void)
 {
    mp_int a;
@@ -2201,6 +2202,104 @@ LBL_ERR:
 }
 
 
+static int test_s_mp_radix_size_overestimate(void)
+{
+
+   mp_err err;
+   mp_int a;
+   int radix;
+   size_t size;
+/* *INDENT-OFF* */
+   size_t results[65] = {
+       0u,  0u,  1627u, 1027u, 814u, 702u, 630u, 581u, 543u,
+       514u, 491u, 471u, 455u, 441u, 428u, 418u, 408u, 399u,
+       391u, 384u, 378u, 372u, 366u, 361u, 356u, 352u, 347u,
+       343u, 340u, 336u, 333u, 330u, 327u, 324u, 321u, 318u,
+       316u, 314u, 311u, 309u, 307u, 305u, 303u, 301u, 299u,
+       298u, 296u, 294u, 293u, 291u, 290u, 288u, 287u, 285u,
+       284u, 283u, 281u, 280u, 279u, 278u, 277u, 276u, 275u,
+       273u, 272u
+   };
+   size_t big_results[65] = {
+              0u,         0u,         0u,  1354911329u, 1073741825u,
+      924870867u, 830760078u, 764949110u,   715827883u,  677455665u,
+      646456994u, 620761988u, 599025415u,   580332018u,  564035582u,
+      549665673u, 536870913u, 525383039u,   514993351u,  505536793u,
+      496880930u, 488918137u, 481559946u,   474732892u,  468375401u,
+      462435434u, 456868672u, 451637110u,   446707948u,  442052707u,
+      437646532u, 433467613u, 429496730u,   425716865u,  422112892u,
+      418671312u, 415380039u, 412228213u,   409206043u,  406304679u,
+      403516096u, 400833001u, 398248746u,   395757256u,  393352972u,
+      391030789u, 388786017u, 386614331u,   384511740u,  382474555u,
+      380499357u, 378582973u, 376722456u,   374915062u,  373158233u,
+      371449582u, 369786879u, 368168034u,   366591092u,  365054217u,
+      363555684u, 362093873u, 360667257u,   359274399u,  357913942
+   };
+
+/* *INDENT-ON* */
+   if ((err = mp_init(&a)) != MP_OKAY)        goto LBL_ERR;
+
+   /* number to result in a different size for every base: 67^(4 * 67) */
+   mp_set(&a, 67);
+   if ((err = mp_expt_n(&a, 268, &a)) != MP_OKAY) {
+      goto LBL_ERR;
+   }
+
+   for (radix = 2; radix < 65; radix++) {
+      if ((err = s_mp_radix_size_overestimate(&a, radix, &size)) != MP_OKAY) {
+         goto LBL_ERR;
+      }
+      if (size < results[radix]) {
+         fprintf(stderr, "s_mp_radix_size_overestimate: result for base %d was %zu instead of %zu\n",
+                 radix, size, results[radix]);
+         goto LBL_ERR;
+      }
+      a.sign = MP_NEG;
+      if ((err = s_mp_radix_size_overestimate(&a, radix, &size)) != MP_OKAY) {
+         goto LBL_ERR;
+      }
+      if (size < results[radix]) {
+         fprintf(stderr, "s_mp_radix_size_overestimate: result for base %d was %zu instead of %zu\n",
+                 radix, size, results[radix]);
+         goto LBL_ERR;
+      }
+      a.sign = MP_ZPOS;
+   }
+   if ((err = mp_2expt(&a, INT_MAX - 1)) != MP_OKAY) {
+      goto LBL_ERR;
+   }
+   printf("bitcount = %d, alloc = %d\n", mp_count_bits(&a), a.alloc);
+   /* Start at 3 to avoid integer overflow */
+   for (radix = 3; radix < 65; radix++) {
+      printf("radix = %d, ",radix);
+      if ((err = s_mp_radix_size_overestimate(&a, radix, &size)) != MP_OKAY) {
+         goto LBL_ERR;
+      }
+      printf("size = %zu, diff = %zu\n", size, size - big_results[radix]);
+      if (size < big_results[radix]) {
+         fprintf(stderr, "s_mp_radix_size_overestimate: result for base %d was %zu instead of %zu\n",
+                 radix, size, results[radix]);
+         goto LBL_ERR;
+      }
+      a.sign = MP_NEG;
+      if ((err = s_mp_radix_size_overestimate(&a, radix, &size)) != MP_OKAY) {
+         goto LBL_ERR;
+      }
+      if (size < big_results[radix]) {
+         fprintf(stderr, "s_mp_radix_size_overestimate: result for base %d was %zu instead of %zu\n",
+                 radix, size, results[radix]);
+         goto LBL_ERR;
+      }
+      a.sign = MP_ZPOS;
+   }
+   mp_clear(&a);
+   return EXIT_SUCCESS;
+LBL_ERR:
+   mp_clear(&a);
+   return EXIT_FAILURE;
+}
+
+
 static int test_mp_read_write_ubin(void)
 {
    mp_int a, b, c;
@@ -2359,6 +2458,7 @@ static int unit_tests(int argc, char **argv)
       T1(mp_reduce_2k, MP_REDUCE_2K),
       T1(mp_reduce_2k_l, MP_REDUCE_2K_L),
       T1(mp_radix_size, MP_RADIX_SIZE),
+      T1(s_mp_radix_size_overestimate, S_MP_RADIX_SIZE_OVERESTIMATE),
 #if defined(__STDC_IEC_559__) || defined(__GCC_IEC_559)
       T1(mp_set_double, MP_SET_DOUBLE),
 #endif

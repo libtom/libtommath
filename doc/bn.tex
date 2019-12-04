@@ -2380,7 +2380,21 @@ mp_err mp_radix_size (const mp_int *a, int radix, int *size)
 \end{alltt}
 This stores in \texttt{size} the number of characters (including space for the \texttt{NUL}
 terminator) required. Upon error this function returns an error code and \texttt{size} will be
-zero.
+zero. This version of \texttt{mp\_radix\_size} uses \texttt{mp\_log} to calculate the size. It
+is exact but slow for larger numbers.
+
+\index{mp\_radix\_size\_overestimate}
+\begin{alltt}
+mp_err mp_radix_size_overestimate (const mp_int *a, int radix, int *size)
+\end{alltt}
+This stores in \texttt{size} the number of characters (including space for the \texttt{NUL}
+terminator) required. Upon error this function returns an error code and \texttt{size} will be
+zero. This version of \texttt{mp\_radix\_size} is much faster than the exact version above but
+introduces the relative error $\approx 10^{-8}$. That would be $22$ for $2^{2^{31}}-1$, the
+largest possible number in LibTomMath. Experiments gave no absolute error over $+5$.
+
+The result is \emph{always} either exact or too large but it is \emph{never} too small.
+
 
 If \texttt{MP\_NO\_FILE} is not defined a function to write to a file is also available.
 
