@@ -422,9 +422,8 @@ EOS
 }
 
 sub generate_def {
-    my @files = split /\n/, `git ls-files`;
-    @files = grep(/\.c/, @files);
-    @files = map { my $x = $_; $x =~ s/^bn_|\.c$//g; $x; } @files;
+    my @files = glob '*mp_*.c';
+    @files = map { my $x = $_; $x =~ s/\.c$//g; $x; } @files;
     @files = grep(!/mp_cutoffs/, @files);
 
     my $files = join("\n    ", sort(grep(/^mp_/, @files)));
