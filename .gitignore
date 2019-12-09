@@ -104,3 +104,7 @@ logs/*.png
 logs/*-*.dem
 
 callgraph.txt
+
+# cmake build directories
+build*/
+
