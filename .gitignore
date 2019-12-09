@@ -108,3 +108,6 @@ callgraph.txt
 # cmake build directories
 build*/
 
+# kdevelop section
+.kdev4/
+*.kdev4
