@@ -31,16 +31,16 @@ set_target_properties(${PROJECT_NAME} PROPERTIES SOVERSION ${PROJECT_VERSION_MAJ
 #-----------------------------------------------------------------------------
 # demo target
 #-----------------------------------------------------------------------------
-add_executable(test EXCLUDE_FROM_ALL
+add_executable(test-target EXCLUDE_FROM_ALL
     ${CMAKE_CURRENT_SOURCE_DIR}/demo/shared.c
     ${CMAKE_CURRENT_SOURCE_DIR}/demo/test.c
 )
 
-target_include_directories(test PRIVATE
+target_include_directories(test-target PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-target_link_libraries(test PRIVATE
+target_link_libraries(test-target PRIVATE
     ${PROJECT_NAME}
 )
 
@@ -48,10 +48,10 @@ target_link_libraries(test PRIVATE
 # demo target
 #-----------------------------------------------------------------------------
 add_custom_target(check
-    COMMAND ${CMAKE_CURRENT_BINARY_DIR}/test
+    COMMAND ${CMAKE_CURRENT_BINARY_DIR}/test-target
 )
 
-add_dependencies(check test)
+add_dependencies(check test-target)
 
 #-----------------------------------------------------------------------------
 # Install/export targets and files
