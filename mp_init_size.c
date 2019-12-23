@@ -9,7 +9,7 @@ mp_err mp_init_size(mp_int *a, int size)
    size = MP_MAX(MP_MIN_DIGIT_COUNT, size);
 
    if (size > MP_MAX_DIGIT_COUNT) {
-      return MP_MEM;
+      return MP_OVF;
    }
 
    /* alloc mem */

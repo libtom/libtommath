@@ -11,7 +11,7 @@ mp_err mp_grow(mp_int *a, int size)
       mp_digit *dp;
 
       if (size > MP_MAX_DIGIT_COUNT) {
-         return MP_MEM;
+         return MP_OVF;
       }
 
       /* reallocate the array a->dp

@@ -7,14 +7,15 @@
 
 mp_err mp_init_multi(mp_int *mp, ...)
 {
-   mp_err err = MP_OKAY;      /* Assume ok until proven otherwise */
+   mp_err err = MP_OKAY;
    int n = 0;                 /* Number of ok inits */
    mp_int *cur_arg = mp;
    va_list args;
 
    va_start(args, mp);        /* init args to next argument from caller */
    while (cur_arg != NULL) {
-      if (mp_init(cur_arg) != MP_OKAY) {
+      err = mp_init(cur_arg);
+      if (err != MP_OKAY) {
          /* Oops - error! Back-track and mp_clear what we already
             succeeded in init-ing, then return error.
          */
@@ -28,14 +29,13 @@ mp_err mp_init_multi(mp_int *mp, ...)
             cur_arg = va_arg(clean_args, mp_int *);
          }
          va_end(clean_args);
-         err = MP_MEM;
          break;
       }
       n++;
       cur_arg = va_arg(args, mp_int *);
    }
    va_end(args);
-   return err;                /* Assumed ok, if error flagged above. */
+   return err;
 }
 
 #endif
