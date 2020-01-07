@@ -17,8 +17,8 @@
 #include "tommath_private.h"
 
 
-#define EXPECT(a) do { if (!(a)) { fprintf(stderr, "%d: EXPECT(%s) failed\n", __LINE__, #a); goto LBL_ERR; } } while(0)
-#define DO_WHAT(a, what) do { mp_err err; if ((err = (a)) != MP_OKAY) { fprintf(stderr, "%d: DO(%s) failed: %s\n", __LINE__, #a, mp_error_to_string(err)); what; } } while(0)
+#define EXPECT(a) do { if (!(a)) { fprintf(stderr, "%s, line %d: EXPECT(%s) failed\n", __func__, __LINE__, #a); goto LBL_ERR; } } while(0)
+#define DO_WHAT(a, what) do { mp_err err; if ((err = (a)) != MP_OKAY) { fprintf(stderr, "%s, line %d: DO(%s) failed: %s\n", __func__, __LINE__, #a, mp_error_to_string(err)); what; } } while(0)
 #define DO(a) DO_WHAT(a, goto LBL_ERR)
 #define DOR(a) DO_WHAT(a, return EXIT_FAILURE)
 

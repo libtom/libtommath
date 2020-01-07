@@ -172,6 +172,7 @@ c89:
 	-e 's/\(PRI[iux]64\)/MP_\1/g' \
 	-e 's/uint\([0-9][0-9]*\)_t/mp_u\1/g' \
 	-e 's/int\([0-9][0-9]*\)_t/mp_i\1/g' \
+	-e 's/__func__/MP_FUNCTION_NAME/g' \
 	*.c tommath.h tommath_private.h demo/*.c demo/*.h etc/*.c
 
 c99:
@@ -194,6 +195,7 @@ c99:
 	-e 's/MP_\(PRI[iux]64\)/\1/g' \
 	-e 's/mp_u\([0-9][0-9]*\)/uint\1_t/g' \
 	-e 's/mp_i\([0-9][0-9]*\)/int\1_t/g' \
+	-e 's/MP_FUNCTION_NAME/__func__/g' \
 	*.c tommath.h tommath_private.h demo/*.c demo/*.h etc/*.c
 
 astyle:

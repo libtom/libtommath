@@ -36,3 +36,5 @@ typedef __UINT64_TYPE__ mp_u64;
 #define MP_PRIi64 MP_PRI64_PREFIX "i"
 #define MP_PRIu64 MP_PRI64_PREFIX "u"
 #define MP_PRIx64 MP_PRI64_PREFIX "x"
+
+#define MP_FUNCTION_NAME __func__

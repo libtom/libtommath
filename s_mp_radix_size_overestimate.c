@@ -52,12 +52,7 @@ mp_err s_mp_radix_size_overestimate(const mp_int *a, const int radix, size_t *si
 
    if (MP_HAS(S_MP_LOG_2EXPT) && MP_IS_2EXPT((mp_digit)radix)) {
       /* floor(log_{2^n}(a)) + 1 + EOS + sign */
-      *size = (size_t)(s_mp_log_2expt(a, (mp_digit)radix));
-      /* Would overflow with base 2 otherwise */
-      if (*size > (INT_MAX - 4)) {
-         return MP_VAL;
-      }
-      *size += 3u;
+      *size = (size_t)(s_mp_log_2expt(a, (mp_digit)radix) + 3);
       return MP_OKAY;
    }
 

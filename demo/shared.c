@@ -45,5 +45,5 @@ void print_header(void)
    printf("Size of mp_digit: %u\n", (unsigned int)sizeof(mp_digit));
    printf("Size of mp_word: %u\n", (unsigned int)sizeof(mp_word));
    printf("MP_DIGIT_BIT: %d\n", MP_DIGIT_BIT);
-   printf("MP_PREC: %d\n", MP_PREC);
+   printf("MP_DEFAULT_DIGIT_COUNT: %d\n", MP_DEFAULT_DIGIT_COUNT);
 }
