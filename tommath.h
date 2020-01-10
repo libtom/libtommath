@@ -259,11 +259,15 @@ TOOM_SQR_CUTOFF;
 #define SIGN(m)     (MP_DEPRECATED_PRAGMA("SIGN macro is deprecated, use z->sign instead") (m)->sign)
 
 /* the infamous mp_int structure */
-typedef struct  {
+#ifndef MP_INT_DECLARED
+#define MP_INT_DECLARED
+typedef struct mp_int mp_int;
+#endif
+struct mp_int {
    int used, alloc;
    mp_sign sign;
    mp_digit *dp;
-} mp_int;
+};
 
 /* callback for mp_prime_random, should fill dst with random bytes and return how many read [upto len] */
 typedef int private_mp_prime_callback(unsigned char *dst, int len, void *dat);
