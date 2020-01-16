@@ -221,6 +221,16 @@ sub patch_file {
   return $content;
 }
 
+sub make_sources_cmake {
+  my @list = @_;
+  my $output = "set(SOURCES\n";
+  foreach my $obj (sort @list) {
+    $output .= $obj . "\n";
+  }
+  $output .= ")\n\nset(HEADERS\ntommath.h\n)\n";
+  return $output;
+}
+
 sub process_makefiles {
   my $write = shift;
   my $changed_count = 0;
@@ -244,10 +254,12 @@ sub process_makefiles {
   }
 
   # update OBJECTS + HEADERS in makefile*
-  for my $m (qw/ makefile makefile.shared makefile_include.mk makefile.msvc makefile.unix makefile.mingw /) {
+  for my $m (qw/ makefile makefile.shared makefile_include.mk makefile.msvc makefile.unix makefile.mingw sources.cmake /) {
     my $old = read_file($m);
     my $new = $m eq 'makefile.msvc' ? patch_file($old, $var_obj)
-                                    : patch_file($old, $var_o);
+            : $m eq 'sources.cmake' ? make_sources_cmake(bsd_glob("*.c"))
+            :                         patch_file($old, $var_o);
+
     if ($old ne $new) {
       write_file($m, $new) if $write;
       warn "changed: $m\n";
