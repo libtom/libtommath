@@ -523,18 +523,23 @@ LBL_ERR:
 }
 
 #if defined(__STDC_IEC_559__) || defined(__GCC_IEC_559) || defined(__x86_64__) || defined(_M_X64) || defined(_M_AMD64) || defined(__i386__) || defined(_M_X86) || defined(__aarch64__) || defined(__arm__)
+
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable: 4723) /* potential divide by 0 */
+#endif
 static int test_mp_set_double(void)
 {
    int i;
+   double dbl_zero = 0.0;
 
    mp_int a, b;
    DOR(mp_init_multi(&a, &b, NULL));
-
    /* test mp_get_double/mp_set_double */
-   EXPECT(mp_set_double(&a, +1.0/0.0) == MP_VAL);
-   EXPECT(mp_set_double(&a, -1.0/0.0) == MP_VAL);
-   EXPECT(mp_set_double(&a, +0.0/0.0) == MP_VAL);
-   EXPECT(mp_set_double(&a, -0.0/0.0) == MP_VAL);
+   EXPECT(mp_set_double(&a, +1.0/dbl_zero) == MP_VAL);
+   EXPECT(mp_set_double(&a, -1.0/dbl_zero) == MP_VAL);
+   EXPECT(mp_set_double(&a, +0.0/dbl_zero) == MP_VAL);
+   EXPECT(mp_set_double(&a, -0.0/dbl_zero) == MP_VAL);
 
    for (i = 0; i < 1000; ++i) {
       int tmp = rand_int();
@@ -552,6 +557,9 @@ LBL_ERR:
    return EXIT_FAILURE;
 
 }
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
 #endif
 
 static int test_mp_get_u32(void)
