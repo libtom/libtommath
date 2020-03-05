@@ -164,6 +164,13 @@ MP_STATIC_ASSERT(prec_geq_min_prec, MP_DEFAULT_DIGIT_COUNT >= MP_MIN_DIGIT_COUNT
  */
 #define MP_MAX_DIGIT_COUNT ((INT_MAX - 2) / MP_DIGIT_BIT)
 
+#if defined(__STDC_IEC_559__) || defined(__GCC_IEC_559) \
+   || defined(__x86_64__) || defined(_M_X64) || defined(_M_AMD64) \
+   || defined(__i386__) || defined(_M_X86) \
+   || defined(__aarch64__) || defined(__arm__)
+#define MP_HAS_SET_DOUBLE
+#endif
+
 /* random number source */
 extern MP_PRIVATE mp_err(*s_mp_rand_source)(void *out, size_t size);
 

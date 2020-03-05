@@ -522,7 +522,7 @@ LBL_ERR:
 
 }
 
-#if defined(__STDC_IEC_559__) || defined(__GCC_IEC_559) || defined(__x86_64__) || defined(_M_X64) || defined(_M_AMD64) || defined(__i386__) || defined(_M_X86) || defined(__aarch64__) || defined(__arm__)
+#if defined(MP_HAS_SET_DOUBLE)
 
 #ifdef _MSC_VER
 #pragma warning(push)
@@ -2172,7 +2172,7 @@ static int unit_tests(int argc, char **argv)
       T1(mp_reduce_2k_l, MP_REDUCE_2K_L),
       T1(mp_radix_size, MP_RADIX_SIZE),
       T1(s_mp_radix_size_overestimate, S_MP_RADIX_SIZE_OVERESTIMATE),
-#if defined(__STDC_IEC_559__) || defined(__GCC_IEC_559)
+#if defined(MP_HAS_SET_DOUBLE)
       T1(mp_set_double, MP_SET_DOUBLE),
 #endif
       T1(mp_signed_rsh, MP_SIGNED_RSH),
