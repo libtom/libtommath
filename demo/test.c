@@ -135,10 +135,7 @@ static int test_trivial_stuff(void)
    mp_set(&b, 1u);
    DO(mp_neg(&b, &b));
    mp_set(&c, 1u);
-   /* I expected this works, but somehow the computer sez no
-    * DO(mp_exptmod(&a, &b, &c, &d));
-    */
-   EXPECT(mp_exptmod(&a, &b, &c, &d) != MP_OKAY);
+   DO(mp_exptmod(&a, &b, &c, &d));
 
    mp_set(&c, 7u);
    /* same here */

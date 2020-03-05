@@ -440,6 +440,7 @@
 
 #if defined(MP_INVMOD_C)
 #   define MP_CMP_D_C
+#   define MP_ZERO_C
 #   define S_MP_INVMOD_C
 #   define S_MP_INVMOD_ODD_C
 #endif
