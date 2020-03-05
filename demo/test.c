@@ -522,19 +522,24 @@ LBL_ERR:
 
 }
 
-#if defined(__STDC_IEC_559__) || defined(__GCC_IEC_559)
+#if defined(MP_HAS_SET_DOUBLE)
+
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable: 4723) /* potential divide by 0 */
+#endif
 static int test_mp_set_double(void)
 {
    int i;
+   double dbl_zero = 0.0;
 
    mp_int a, b;
    DOR(mp_init_multi(&a, &b, NULL));
-
    /* test mp_get_double/mp_set_double */
-   EXPECT(mp_set_double(&a, +1.0/0.0) == MP_VAL);
-   EXPECT(mp_set_double(&a, -1.0/0.0) == MP_VAL);
-   EXPECT(mp_set_double(&a, +0.0/0.0) == MP_VAL);
-   EXPECT(mp_set_double(&a, -0.0/0.0) == MP_VAL);
+   EXPECT(mp_set_double(&a, +1.0/dbl_zero) == MP_VAL);
+   EXPECT(mp_set_double(&a, -1.0/dbl_zero) == MP_VAL);
+   EXPECT(mp_set_double(&a, +0.0/dbl_zero) == MP_VAL);
+   EXPECT(mp_set_double(&a, -0.0/dbl_zero) == MP_VAL);
 
    for (i = 0; i < 1000; ++i) {
       int tmp = rand_int();
@@ -552,6 +557,9 @@ LBL_ERR:
    return EXIT_FAILURE;
 
 }
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
 #endif
 
 static int test_mp_get_u32(void)
@@ -2164,7 +2172,7 @@ static int unit_tests(int argc, char **argv)
       T1(mp_reduce_2k_l, MP_REDUCE_2K_L),
       T1(mp_radix_size, MP_RADIX_SIZE),
       T1(s_mp_radix_size_overestimate, S_MP_RADIX_SIZE_OVERESTIMATE),
-#if defined(__STDC_IEC_559__) || defined(__GCC_IEC_559)
+#if defined(MP_HAS_SET_DOUBLE)
       T1(mp_set_double, MP_SET_DOUBLE),
 #endif
       T1(mp_signed_rsh, MP_SIGNED_RSH),
