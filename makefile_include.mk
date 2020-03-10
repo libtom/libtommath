@@ -26,7 +26,7 @@ ifeq ($(PLATFORM),FreeBSD)
   # XXX: FreeBSD needs extra escaping for some reason
   CSTR := $$$(CSTR)
 endif
-ifneq (,$(shell echo $(CSTR) | $(CC) -E - | grep CLANG))
+ifneq (,$(shell printf $(CSTR) | $(CC) -E - | grep CLANG))
   CC := $(CROSS_COMPILE)clang
 else
   CC := $(CROSS_COMPILE)gcc
