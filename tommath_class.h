@@ -40,6 +40,7 @@
 #   define MP_EXPT_N_C
 #   define MP_EXPTMOD_C
 #   define MP_EXTEUCLID_C
+#   define MP_FIND_PRIME_C
 #   define MP_FREAD_C
 #   define MP_FROM_SBIN_C
 #   define MP_FROM_UBIN_C
@@ -321,6 +322,9 @@
 #   define MP_NEG_C
 #   define MP_SET_C
 #   define MP_SUB_C
+#endif
+
+#if defined(MP_FIND_PRIME_C)
 #endif
 
 #if defined(MP_FREAD_C)
@@ -1196,6 +1200,7 @@
 #endif
 
 #if defined(S_MP_RAND_PLATFORM_C)
+#   define MP_DPROTECTED_NP_C
 #endif
 
 #if defined(S_MP_SQR_C)

@@ -429,6 +429,10 @@
 			>
 		</File>
 		<File
+			RelativePath="mp_find_prime.c"
+			>
+		</File>
+		<File
 			RelativePath="mp_fread.c"
 			>
 		</File>

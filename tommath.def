@@ -34,6 +34,7 @@ EXPORTS
     mp_expt_n
     mp_exptmod
     mp_exteuclid
+    mp_find_prime
     mp_fread
     mp_from_sbin
     mp_from_ubin
