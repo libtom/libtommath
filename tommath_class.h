@@ -872,12 +872,12 @@
 #   define MP_CMP_D_C
 #   define MP_COPY_C
 #   define MP_DIV_2_C
-#   define MP_DIV_D_C
 #   define MP_EXPTMOD_C
 #   define MP_INIT_MULTI_C
 #   define MP_KRONECKER_C
 #   define MP_MULMOD_C
 #   define MP_SET_C
+#   define MP_SET_I32_C
 #   define MP_SQRMOD_C
 #   define MP_SUB_D_C
 #   define MP_ZERO_C
