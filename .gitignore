@@ -5,6 +5,9 @@
 *.gcda
 *.gcno
 *.gcov
+*.dll
+*.exp
+*.pdb
 *.lib
 *.tmp
 [Dd]ebug/
