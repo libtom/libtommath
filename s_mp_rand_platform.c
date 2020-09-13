@@ -14,13 +14,6 @@ static mp_err s_read_arc4random(void *p, size_t n)
    arc4random_buf(p, n);
    return MP_OKAY;
 }
-#else
-static mp_err s_read_arc4random(void *p, size_t n)
-{
-   (void)p;
-   (void)n;
-   return MP_ERR;
-}
 #endif
 
 #if defined(_WIN32)
@@ -79,15 +72,6 @@ static mp_err s_read_getrandom(void *p, size_t n)
 #endif
 #endif
 
-#ifndef S_READ_GETRANDOM_C
-static mp_err s_read_getrandom(void *p, size_t n)
-{
-   (void)p;
-   (void)n;
-   return MP_ERR;
-}
-#endif
-
 /* We assume all platforms besides windows provide "/dev/urandom".
  * In case yours doesn't, define MP_NO_DEV_URANDOM at compile-time.
  */
@@ -125,13 +109,6 @@ static mp_err s_read_urandom(void *p, size_t n)
 
    close(fd);
    return MP_OKAY;
-}
-#else
-static mp_err s_read_urandom(void *p, size_t n)
-{
-   (void)p;
-   (void)n;
-   return MP_ERR;
 }
 #endif
 
