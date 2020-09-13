@@ -72,6 +72,13 @@ matrix:
           packages:
             - astyle
 
+    # Check public symbols of dynamic libraries
+    - env: BUILDOPTIONS='--symbols'
+      addons:
+        apt:
+          packages:
+            - libtool-bin
+
     # Run always with valgrind (no sanitizer, but debug info)
     - env: COMPILE_DEBUG=1 BUILDOPTIONS='--with-cc=gcc-4.9 --with-m64 --with-valgrind'
       addons:

@@ -195,6 +195,7 @@ VALGRIND_OPTS=" --leak-check=full --show-leak-kinds=all --error-exitcode=1 "
 #VALGRIND_OPTS=""
 VALGRIND_BIN=""
 CHECK_FORMAT=""
+CHECK_SYMBOLS=""
 C89=""
 C89_C99_ROUNDTRIP=""
 TUNE_CMD="./etc/tune -t -r 10 -L 3"
@@ -276,6 +277,9 @@ do
     --format)
       CHECK_FORMAT="1"
     ;;
+    --symbols)
+      CHECK_SYMBOLS="1"
+    ;;
     --all)
       COMPILERS="gcc clang"
       ARCHFLAGS="-m64 -m32 -mx32"
@@ -307,6 +311,25 @@ then
   make c99
   _check_git "make c89; make c99"
   exit $?
+fi
+
+if [[ "$CHECK_SYMBOLS" == "1" ]]
+then
+  make -f makefile.shared
+  cat << EOF
+
+
+The following list shows the discrepancy between
+the shared library and the Windows dynamic library.
+To fix this error, one of the following things
+has to be done:
+* the script which generates tommath.def has to be modified
+    (function generate_def() in helper.pl).
+* The exported symbols are really different for some reason
+    This has to be manually investigated.
+
+EOF
+  exit $(comm -3 <(nm -D --defined-only .libs/libtommath.so | cut -d' ' -f3 | grep -v '^_' | sort) <(tail -n+9 tommath.def | tr -d ' ' | sort) | tee /dev/tty | wc -l)
 fi
 
 if [[ "$CHECK_FORMAT" == "1" ]]
