@@ -649,6 +649,10 @@
 			>
 		</File>
 		<File
+			RelativePath="mp_rand_source.c"
+			>
+		</File>
+		<File
 			RelativePath="mp_read_radix.c"
 			>
 		</File>
