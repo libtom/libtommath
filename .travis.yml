@@ -86,6 +86,13 @@ matrix:
           packages:
             - gcc-4.9
 
+    # Shared library build
+    - env: COMPILE_LTO=1 BUILDOPTIONS='--with-cc=gcc --make-option=-f --make-option=makefile.shared'
+      addons:
+        apt:
+          packages:
+            - libtool-bin
+
     # GCC for the 32-bit architecture (no valgrind)
     - env: BUILDOPTIONS='--with-cc=gcc-5 --with-m32'
       addons:

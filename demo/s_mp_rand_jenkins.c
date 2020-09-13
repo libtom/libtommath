@@ -5,6 +5,9 @@
 
 /* Bob Jenkins' http://burtleburtle.net/bob/rand/smallprng.html */
 /* Chosen for speed and a good "mix" */
+
+/* TODO: jenkins prng is not thread safe as of now */
+
 typedef struct {
    uint64_t a;
    uint64_t b;
@@ -25,7 +28,7 @@ static uint64_t s_rand_jenkins_val(void)
    return jenkins_x.d;
 }
 
-void s_mp_rand_jenkins_init(uint64_t seed)
+static void s_mp_rand_jenkins_init(uint64_t seed)
 {
    int i;
    jenkins_x.a = 0xF1EA5EEDuL;
@@ -35,7 +38,7 @@ void s_mp_rand_jenkins_init(uint64_t seed)
    }
 }
 
-mp_err s_mp_rand_jenkins(void *p, size_t n)
+static mp_err s_mp_rand_jenkins(void *p, size_t n)
 {
    char *q = (char *)p;
    while (n > 0u) {

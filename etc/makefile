@@ -1,5 +1,4 @@
-LTM_CFLAGS += -Wall -W -Wextra -Wshadow -O3 -I../
-LTM_CFLAGS += $(CFLAGS)
+LTM_TUNE_CFLAGS = $(CFLAGS) $(LTM_CFLAGS) -Wall -W -Wextra -Wshadow -O3 -I../
 
 # default lib name (requires install with root)
 # LIBNAME=-ltommath
@@ -9,31 +8,31 @@ LIBNAME=../libtommath.a
 
 #provable primes
 pprime: pprime.o
-	$(CC) $(LTM_CFLAGS) pprime.o $(LIBNAME) -o pprime
+	$(CC) $(LTM_TUNE_CFLAGS) pprime.o $(LIBNAME) -o pprime
 
 # portable [well requires clock()] tuning app
 tune: tune.o
-	$(CC) $(LTM_CFLAGS) tune.o $(LIBNAME) -o tune
+	$(CC) $(LTM_TUNE_CFLAGS) tune.o $(LIBNAME) -o tune
 	./tune_it.sh
 
 test_standalone: tune.o
 	# The benchmark program works as a testtool, too
-	$(CC) $(LTM_CFLAGS) tune.o $(LIBNAME) -o test
+	$(CC) $(LTM_TUNE_CFLAGS) tune.o $(LIBNAME) -o test
 
 # spits out mersenne primes
 mersenne: mersenne.o
-	$(CC) $(LTM_CFLAGS) mersenne.o $(LIBNAME) -o mersenne
+	$(CC) $(LTM_TUNE_CFLAGS) mersenne.o $(LIBNAME) -o mersenne
 
 # finds DR safe primes for the given config
 drprime: drprime.o
-	$(CC) $(LTM_CFLAGS) drprime.o $(LIBNAME) -o drprime
+	$(CC) $(LTM_TUNE_CFLAGS) drprime.o $(LIBNAME) -o drprime
 
 # finds 2k safe primes for the given config
 2kprime: 2kprime.o
-	$(CC) $(LTM_CFLAGS) 2kprime.o $(LIBNAME) -o 2kprime
+	$(CC) $(LTM_TUNE_CFLAGS) 2kprime.o $(LIBNAME) -o 2kprime
 
 mont: mont.o
-	$(CC) $(LTM_CFLAGS) mont.o $(LIBNAME) -o mont
+	$(CC) $(LTM_TUNE_CFLAGS) mont.o $(LIBNAME) -o mont
 
 
 clean:

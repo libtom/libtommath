@@ -348,7 +348,7 @@ fi
 # default to CC environment variable if no compiler is defined but some other options
 if [[ "$COMPILERS" == "" ]] && [[ "$ARCHFLAGS$MAKE_OPTIONS$CFLAGS" != "" ]]
 then
-   COMPILERS="$CC"
+   COMPILERS="${CC:-cc}"
 # default to CC environment variable and run only default config if no option is given
 elif [[ "$COMPILERS" == "" ]]
 then

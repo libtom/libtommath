@@ -157,7 +157,6 @@
 #   define S_MP_PRIME_TAB_C
 #   define S_MP_RADIX_MAP_C
 #   define S_MP_RADIX_SIZE_OVERESTIMATE_C
-#   define S_MP_RAND_JENKINS_C
 #   define S_MP_RAND_PLATFORM_C
 #   define S_MP_SQR_C
 #   define S_MP_SQR_COMBA_C
@@ -1192,10 +1191,6 @@
 #   define MP_MUL_C
 #   define MP_SET_U32_C
 #   define S_MP_LOG_2EXPT_C
-#endif
-
-#if defined(S_MP_RAND_JENKINS_C)
-#   define S_MP_RAND_JENKINS_INIT_C
 #endif
 
 #if defined(S_MP_RAND_PLATFORM_C)

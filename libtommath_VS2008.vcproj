@@ -897,10 +897,6 @@
 			>
 		</File>
 		<File
-			RelativePath="s_mp_rand_jenkins.c"
-			>
-		</File>
-		<File
 			RelativePath="s_mp_rand_platform.c"
 			>
 		</File>
