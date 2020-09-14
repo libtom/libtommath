@@ -71,10 +71,15 @@ $(LIBMAIN_D) $(LIBMAIN_I): $(OBJECTS) tommath.def
 
 #Build test suite
 test.exe: $(LIBMAIN_S) demo/shared.obj demo/test.obj
-	cl $(LTM_CFLAGS) $(TOBJECTS) $(LIBMAIN_S) $(LTM_LDFLAGS) demo/shared.c demo/test.c /Fe$@
+       link $(TOBJECTS) $(LTM_LDFLAGS) $? /out:$@
 	@echo NOTICE: start the tests by launching test.exe
 
-all: $(LIBMAIN_S) test.exe $(LIBMAIN_D)
+#Build test suite for dll
+test_dll.exe: $(LIBMAIN_I) demo/shared.obj demo/test.obj
+       link $(TOBJECTS) $(LTM_LDFLAGS) $? /out:$@
+       @echo NOTICE: start the tests by launching test_dll.exe
+
+all: $(LIBMAIN_S) test.exe $(LIBMAIN_D) test_dll.exe
 
 tune: $(LIBMAIN_S)
 	$(MAKE) -C etc tune
