@@ -71,13 +71,13 @@ $(LIBMAIN_D) $(LIBMAIN_I): $(OBJECTS) tommath.def
 
 #Build test suite
 test.exe: $(LIBMAIN_S) demo/shared.obj demo/test.obj
-       link $(TOBJECTS) $(LTM_LDFLAGS) $? /out:$@
+	link $(TOBJECTS) $(LTM_LDFLAGS) $? /out:$@
 	@echo NOTICE: start the tests by launching test.exe
 
 #Build test suite for dll
 test_dll.exe: $(LIBMAIN_I) demo/shared.obj demo/test.obj
-       link $(TOBJECTS) $(LTM_LDFLAGS) $? /out:$@
-       @echo NOTICE: start the tests by launching test_dll.exe
+	link $(TOBJECTS) $(LTM_LDFLAGS) $? /out:$@
+	@echo NOTICE: start the tests by launching test_dll.exe
 
 all: $(LIBMAIN_S) test.exe $(LIBMAIN_D) test_dll.exe
 
@@ -85,8 +85,11 @@ tune: $(LIBMAIN_S)
 	$(MAKE) -C etc tune
 	$(MAKE)
 
-clean:
-	@-cmd /c del /Q /S *.OBJ *.LIB *.EXE *.DLL 2>nul
+clean-obj:
+	@-cmd /c del /Q /S *.OBJ 2>nul
+
+clean: clean-obj
+	@-cmd /c del /Q /S *.LIB *.EXE *.DLL 2>nul
 
 #Install the library + headers
 install: $(LIBMAIN_S) $(LIBMAIN_I) $(LIBMAIN_D)
