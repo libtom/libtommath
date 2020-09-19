@@ -707,9 +707,9 @@ static int test_mp_sqrtmod_prime(void)
    };
 
    static struct mp_sqrtmod_prime_st sqrtmod_prime[] = {
-      { 5, 14, 3 },
-      { 7, 9, 4 },
-      { 113, 2, 62 }
+      { 5, 14, 3 },   /* 5 \cong 1 (mod 4) */
+      { 7, 9, 4 },    /* 7 \cong 3 (mod 4) */
+      { 113, 2, 62 }  /* 113 \cong 1 (mod 4) */
    };
    int i;
 
@@ -723,6 +723,14 @@ static int test_mp_sqrtmod_prime(void)
       DO(mp_sqrtmod_prime(&b, &a, &c));
       EXPECT(mp_cmp_d(&c, sqrtmod_prime[i].r) == MP_EQ);
    }
+   /* Check handling of wrong input (here: modulus is square and cong. 1 mod 4,24 ) */
+   mp_set_ul(&a, 25);
+   mp_set_ul(&b, 2);
+   EXPECT(mp_sqrtmod_prime(&b, &a, &c) == MP_VAL);
+   /* b \cong 0 (mod a) */
+   mp_set_ul(&a, 45);
+   mp_set_ul(&b, 3);
+   EXPECT(mp_sqrtmod_prime(&b, &a, &c) == MP_VAL);
 
    mp_clear_multi(&a, &b, &c, NULL);
    return EXIT_SUCCESS;
