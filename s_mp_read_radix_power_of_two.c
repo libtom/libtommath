@@ -32,6 +32,7 @@ mp_err s_mp_read_radix_power_of_two(mp_int *a, const char *str, int radix, int r
    /* Count of bits residing in buffer */
    int w_bit = 0;
 
+   int i;
    /* Buffer */
    mp_word W = 0u;
 
@@ -118,7 +119,7 @@ mp_err s_mp_read_radix_power_of_two(mp_int *a, const char *str, int radix, int r
       We have "alen" limbs to fill. Every limb wants MP_DIGIT_BIT except the most significant one
       which might need less.
     */
-   for (int i=0; slen != 0;) {
+   for (i=0; slen != 0;) {
       uint8_t y;
       char ch = (radix <= 36) ? (char)MP_TOUPPER((int)*_s) : *_s;
       unsigned pos = (unsigned)(ch - '+');

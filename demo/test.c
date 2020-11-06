@@ -1373,14 +1373,15 @@ static int test_s_mp_radix_power_of_two(void)
    char *buf_n;
    mp_int N;
    size_t len, written;
+   int number_base, number, radix;
 
    DOR(mp_init_multi(&N, NULL));
 
-   for (int number_base = 0; number_base < 63; number_base++) {
-      for (int number = 0; number < (int)(sizeof(numbers[0])/sizeof(numbers[0][0])); number++) {
+   for (number_base = 0; number_base < 63; number_base++) {
+      for (number = 0; number < (int)(sizeof(numbers[0])/sizeof(numbers[0][0])); number++) {
          DO(mp_read_radix(&N, numbers[number_base][number], number_base+2));
          /* If read in correctly it should print it correctly, too, in every other base. */
-         for (int radix = 0; radix < 63; radix++) {
+         for (radix = 0; radix < 63; radix++) {
             DO(mp_radix_size(&N, radix+2, &len));
             buf_n = (char *) malloc(len);
             if (buf_n == NULL) {
