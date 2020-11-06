@@ -901,6 +901,10 @@
 			>
 		</File>
 		<File
+			RelativePath="s_mp_read_radix_power_of_two.c"
+			>
+		</File>
+		<File
 			RelativePath="s_mp_sqr.c"
 			>
 		</File>
@@ -918,6 +922,10 @@
 		</File>
 		<File
 			RelativePath="s_mp_sub.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_to_radix_power_of_two.c"
 			>
 		</File>
 		<File

@@ -45,22 +45,37 @@ mp_err mp_to_radix(const mp_int *a, char *str, size_t maxlen, size_t *written, i
       return MP_OKAY;
    }
 
-   if ((err = mp_init_copy(&t, a)) != MP_OKAY) {
-      return err;
-   }
-
    /* if it is negative output a - */
-   if (mp_isneg(&t)) {
+   if (mp_isneg(a)) {
       /* we have to reverse our digits later... but not the - sign!! */
       ++_s;
 
       /* store the flag and mark the number as positive */
       *str++ = '-';
-      t.sign = MP_ZPOS;
 
       /* subtract a char */
       --maxlen;
    }
+
+   if (maxlen < 1u) {
+      /* no more room */
+      return MP_BUF;
+   }
+
+   if (MP_HAS(S_MP_TO_RADIX_POWER_OF_TWO)) {
+      unsigned int base, radix_bit;
+      /* TODO: that line below is a bit unsightly. */
+      for (base = (unsigned int)radix, radix_bit = 0; (base & 1) == 0; radix_bit++, base >>= 1) {}
+      if (base == 1) {
+         return s_mp_to_radix_power_of_two(a, str, maxlen, written, radix_bit);
+      }
+   }
+
+   if ((err = mp_init_copy(&t, a)) != MP_OKAY) {
+      return err;
+   }
+   t.sign = MP_ZPOS;
+
    digs = 0u;
    while (!mp_iszero(&t)) {
       if (--maxlen < 1u) {

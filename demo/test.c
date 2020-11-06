@@ -1009,6 +1009,406 @@ LBL_ERR:
 
 }
 
+/* Test by checking round trips */
+static int test_s_mp_radix_power_of_two(void)
+{
+   /* A bit less than MP_DIGIT_BIT, a bit more, and a number that needs at least two limbs. */
+   char *numbers[63][22] = {
+      { /* Base 2 */
+         "0", "1", "10", "1111011", "11000000111001", "11110001001000000", "111010110111100110100010101",
+         "1001001100101100000001011010011", "110110110100110110100101110101011011110110110101101000011",
+         "1000100100010000100001111010010110010110100100011000010100010",
+         "10000011111111010000011001110010111010101010011111011101010110010111110101100001010110000010100"
+         "0001101001010100000110100010010111101001010111100000000101001110010101010100111",
+         "-0", "-1", "-10", "-1111011", "-11000000111001", "-11110001001000000",
+         "-111010110111100110100010101", "-1001001100101100000001011010011",
+         "-110110110100110110100101110101011011110110110101101000011",
+         "-1000100100010000100001111010010110010110100100011000010100010",
+         "-10000011111111010000011001110010111010101010011111011101010110010111110101100001010110000010100"
+         "0001101001010100000110100010010111101001010111100000000101001110010101010100111"
+      },
+      { /* Base 3 */
+         "0", "1", "2", "11120", "121221020", "20021100110", "22121022020212200", "10012001001112202201",
+         "211012121210012202220010110120122102", "22020002012212010201221021122210110020",
+         "101221201212200121022111100021101020002210120112010012101112021210200102201120200200"
+         "22222220112101012222000001",
+         "-0", "-1", "-2", "-11120", "-121221020", "-20021100110", "-22121022020212200",
+         "-10012001001112202201", "-211012121210012202220010110120122102",
+         "-22020002012212010201221021122210110020",
+         "-101221201212200121022111100021101020002210120112010012101112021210200102201120200200"
+         "22222220112101012222000001"
+      },
+      { /* Base 4 */
+         "0", "1", "2", "1323", "3000321", "132021000", "13112330310111",
+         "1021211200023103", "12312212310232223132312231003", "1010202010033102302310203002202",
+         "200333310012130232222213313111211331120111200220031022200310102331022330000221302222213",
+         "-0", "-1", "-2", "-1323", "-3000321", "-132021000", "-13112330310111", "-1021211200023103",
+         "-12312212310232223132312231003", "-1010202010033102302310203002202",
+         "-200333310012130232222213313111211331120111200220031022200310102331022330000221302222213"
+      },
+      { /* Base 5 */
+         "0", "1", "2", "443", "343340", "12422311", "223101104124",
+         "10012022133031", "2013423212013034341042011", "40324014240311242321340224",
+         "213122300124304204400300132420144024140022042220302133441421001031420334111",
+         "-0", "-1", "-2", "-443", "-343340", "-12422311", "-223101104124",
+         "-10012022133031", "-2013423212013034341042011", "-40324014240311242321340224",
+         "-213122300124304204400300132420144024140022042220302133441421001031420334111"
+      },
+      { /* Base 6 */
+         "0", "1", "2", "323", "133053", "2351320", "20130035113",
+         "322301024031", "5343334401541054501015", "132140014431255340214310",
+         "5225243502120132340435411122430500003435450225002504023125504202131",
+         "-0", "-1", "-2", "-323", "-133053", "-2351320", "-20130035113",
+         "-322301024031", "-5343334401541054501015", "-132140014431255340214310",
+         "-5225243502120132340435411122430500003435450225002504023125504202131"
+      },
+      {  /* Base 7 */
+         "0", "1", "2", "234", "50664", "1022634", "3026236221", "42410440204", "135546152445056320460",
+         "2132066345452131466644", "33205255565356653620403665154061410660352051560661355055046225",
+         "-0", "-1", "-2", "-234", "-50664", "-1022634", "-3026236221",
+         "-42410440204", "-135546152445056320460", "-2132066345452131466644",
+         "-33205255565356653620403665154061410660352051560661355055046225"
+      },
+      {  /* Base 8 */
+         "0", "1", "2", "173", "30071", "361100", "726746425", "11145401323", "6664664565336665503",
+         "104420417226264430242", "4077640634565247672545753025405015124064227512740051625247", "0",
+         "-1", "-2", "-173", "-30071", "-361100", "-726746425", "-11145401323", "-6664664565336665503",
+         "-104420417226264430242", "-4077640634565247672545753025405015124064227512740051625247"
+      },
+      {  /* Base 9 */
+         "0", "1", "2", "146", "17836", "207313", "277266780", "3161045681", "735553182803416572",
+         "8202185121837583406", "3576556172743073360835151053452536126466208886471188001", "0",
+         "-1", "-2", "-146", "-17836", "-207313", "-277266780", "-3161045681", "-735553182803416572",
+         "-8202185121837583406", "-3576556172743073360835151053452536126466208886471188001"
+      },
+      {  /* Base 10 */
+         "0", "1", "2", "123", "12345", "123456", "123456789", "1234567891", "123456789101112131",
+         "1234567891011121314", "12345678910111213141516171819202122232425262728293031", "0", "-1",
+         "-2", "-123", "-12345", "-123456", "-123456789", "-1234567891", "-123456789101112131",
+         "-1234567891011121314", "-12345678910111213141516171819202122232425262728293031"
+      },
+      {  /* Base 11 */
+         "0", "1", "2", "102", "9303", "84833", "63762A05", "583977147", "276111572587A8155",
+         "24960041632A2843AA", "106285A94059741010991A864702A51587965849A0397051885", "0",
+         "-1", "-2", "-102", "-9303", "-84833", "-63762A05", "-583977147", "-276111572587A8155",
+         "-24960041632A2843AA", "-106285A94059741010991A864702A51587965849A0397051885"
+      },
+      {  /* Base 12 */
+         "0", "1", "2", "A3", "7189", "5B540", "35418A99", "2A5555017", "801A6009A550476B",
+         "6816900828623A396", "1B537B333093A1A993B082560420B77A6792BA43524909347", "-0", "-1", "-2",
+         "-A3", "-7189", "-5B540", "-35418A99", "-2A5555017", "-801A6009A550476B", "-6816900828623A396",
+         "-1B537B333093A1A993B082560420B77A6792BA43524909347"
+      },
+      {  /* Base 13 */
+         "0", "1", "2", "96", "5808", "44268", "1C767471", "168A0865B", "2548019348365CB2",
+         "1B1721417748C7B7B", "7109B82918C24A7AC249ACC7839C6253A7C00968048B555", "-0", "-1", "-2",
+         "-96", "-5808", "-44268", "-1C767471", "-168A0865B", "-2548019348365CB2", "-1B1721417748C7B7B",
+         "-7109B82918C24A7AC249ACC7839C6253A7C00968048B555"
+      },
+      {  /* Base 14 */
+         "0", "1", "2", "8B", "46DB", "32DC4", "12579781", "B9D6B5AB", "B17860690D94667",
+         "7D16044A69A92894", "33C9B762C56D00B0DAA817836A20212C494840DB7C7B15", "-0", "-1", "-2",
+         "-8B", "-46DB", "-32DC4", "-12579781", "-B9D6B5AB", "-B17860690D94667", "-7D16044A69A92894",
+         "-33C9B762C56D00B0DAA817836A20212C494840DB7C7B15"
+      },
+      {  /* Base 15 */
+         "0", "1", "2", "83", "39D0", "268A6", "AC89BC9", "735B7D61", "4367CE60799773B",
+         "2C4539905164EC79", "231367A8A8A198AC5D30A202751D3924106AE9A1231C1", "-0", "-1", "-2",
+         "-83", "-39D0", "-268A6", "-AC89BC9", "-735B7D61", "-4367CE60799773B", "-2C4539905164EC79",
+         "-231367A8A8A198AC5D30A202751D3924106AE9A1231C1"
+      },
+      {  /* Base 16 */
+         "0", "1", "2", "7B", "3039", "1E240", "75BCD15", "499602D3", "1B69B4BAB7B6B43",
+         "112210F4B2D230A2", "20FF419CBAA9F7565F58560A0D2A0D12F4AF00A72AA7", "-0", "-1", "-2",
+         "-7B", "-3039", "-1E240", "-75BCD15", "-499602D3", "-1B69B4BAB7B6B43", "-112210F4B2D230A2",
+         "-20FF419CBAA9F7565F58560A0D2A0D12F4AF00A72AA7"
+      },
+      {  /* Base 17 */
+         "0", "1", "2", "74", "28C3", "18232", "51G2A21", "30288G3B", "C7F4B7340AE86E",
+         "75AGCC3F6668G08", "29G6G1C3G856A43D3EFF3865743GG4E111B14GBC66A", "-0", "-1", "-2",
+         "-74", "-28C3", "-18232", "-51G2A21", "-30288G3B", "-C7F4B7340AE86E", "-75AGCC3F6668G08",
+         "-29G6G1C3G856A43D3EFF3865743GG4E111B14GBC66A"
+      },
+      {  /* Base 18 */
+         "0", "1", "2", "6F", "221F", "1330C", "3B60F89", "20568AD1", "5GCH3D8GE38CCB",
+         "3553A18H5FGF106", "43H6D28107HE02D80GBH51B89HB047H325C3H3GD91", "-0", "-1", "-2", "-6F",
+         "-221F", "-1330C", "-3B60F89", "-20568AD1", "-5GCH3D8GE38CCB", "-3553A18H5FGF106",
+         "-43H6D28107HE02D80GBH51B89HB047H325C3H3GD91"
+      },
+      {  /* Base 19 */
+         "0", "1", "2", "69", "1F3E", "HIID", "2BG64AE", "174B57C8", "2HEF5199HC93H7",
+         "1A6F0CF045AG12H", "8E0252A7680B28460HC6C2CI78GFI7DA1H8B9770H", "-0", "-1", "-2", "-69",
+         "-1F3E", "-HIID", "-2BG64AE", "-174B57C8", "-2HEF5199HC93H7", "-1A6F0CF045AG12H",
+         "-8E0252A7680B28460HC6C2CI78GFI7DA1H8B9770H"
+      },
+      {  /* Base 20 */
+         "0", "1", "2", "63", "1AH5", "F8CG", "1IBC1J9", "J5G0JEB", "1A2G6AG9E1J06B",
+         "F183584H0JA35E", "1292D5939H0FFI4D8CI37058B42G3305BGA2BGCBB", "-0", "-1", "-2",
+         "-63", "-1AH5", "-F8CG", "-1IBC1J9", "-J5G0JEB", "-1A2G6AG9E1J06B", "-F183584H0JA35E",
+         "-1292D5939H0FFI4D8CI37058B42G3305BGA2BGCBB"
+      },
+      {  /* Base 21 */
+         "0", "1", "2", "5I", "16KI", "D6JI", "194GH7F", "E8605E4", "GG9B6E8F5IJKE",
+         "7KHB83I35H0AHI", "37719I25GF6AEKI5E3HI6B4A30J31B903CGJG10J", "-0", "-1", "-2",
+         "-5I", "-16KI", "-D6JI", "-194GH7F", "-E8605E4", "-GG9B6E8F5IJKE", "-7KHB83I35H0AHI",
+         "-37719I25GF6AEKI5E3HI6B4A30J31B903CGJG10J"
+      },
+      {  /* Base 22 */
+         "0", "1", "2", "5D", "13B3", "BD1E", "11L0805", "AJC3E27", "9D6544IJ395J5", "480I7K4CFC4EGA",
+         "C03E051123B7G3FD0B58J453H3G35028739KIF5", "-0", "-1", "-2", "-5D", "-13B3", "-BD1E", "-11L0805",
+         "-AJC3E27", "-9D6544IJ395J5", "-480I7K4CFC4EGA", "-C03E051123B7G3FD0B58J453H3G35028739KIF5"
+      },
+      {  /* Base 23 */
+         "0", "1", "2", "58", "107H", "A38F", "J43JFB", "87IFCGJ", "5ED34K5MF2534", "2A7G92IDJCM58L",
+         "2500L5EB2E1M3D6GM95EHJGA81L8GJLC3E29E7L", "-0", "-1", "-2", "-58", "-107H", "-A38F", "-J43JFB",
+         "-87IFCGJ", "-5ED34K5MF2534", "-2A7G92IDJCM58L", "-2500L5EB2E1M3D6GM95EHJGA81L8GJLC3E29E7L"
+      },
+      {  /* Base 24 */
+         "0", "1", "2", "53", "LA9", "8M80", "FC2EGL", "6B1230J", "3933MCM50IDLB", "19J7F99627HIMI",
+         "ADB15KFDIG7DLD7N7JC781J90K3G70LKGIJ3K7", "-0", "-1", "-2", "-53", "-LA9", "-8M80", "-FC2EGL",
+         "-6B1230J", "-3933MCM50IDLB", "-19J7F99627HIMI", "-ADB15KFDIG7DLD7N7JC781J90K3G70LKGIJ3K7"
+      },
+      {  /* Base 25 */
+         "0", "1", "2", "4N", "JIK", "7MD6", "CG15LE", "51AC8FG", "21JDBA83NL4A6", "KHK9E36EDBJ2E",
+         "287D07N4AO0F1HM1O2LK2AMC328JLM5139AIL6", "-0", "-1", "-2", "-4N", "-JIK", "-7MD6", "-CG15LE",
+         "-51AC8FG", "-21JDBA83NL4A6", "-KHK9E36EDBJ2E", "-287D07N4AO0F1HM1O2LK2AMC328JLM5139AIL6"
+      },
+      {  /* Base 26 */
+         "0", "1", "2", "4J", "I6L", "70G8", "AA44A1", "3PNFHMB", "17GE3DBD2LMIF", "CO9B94B12AJ3O",
+         "E5984DF0DP5PDMEAN14I9B86B0282AIN7ME95", "-0", "-1", "-2", "-4J", "-I6L", "-70G8", "-AA44A1",
+         "-3PNFHMB", "-17GE3DBD2LMIF", "-CO9B94B12AJ3O", "-E5984DF0DP5PDMEAN14I9B86B0282AIN7ME95"
+      },
+      {  /* Base 27 */
+         "0", "1", "2", "4F", "GP6", "679C", "8G86NI", "3511EKJ", "M5GL5KO3CFHB", "8625N3JP7HLC6",
+         "3HFGO5BMC2CB0P54J1LDKG63OE668QOEA5Q01", "-0", "-1", "-2", "-4F", "-GP6", "-679C", "-8G86NI",
+         "-3511EKJ", "-M5GL5KO3CFHB", "-8625N3JP7HLC6", "-3HFGO5BMC2CB0P54J1LDKG63OE668QOEA5Q01"
+      },
+      {  /* Base 28 */
+         "0", "1", "2", "4B", "FKP", "5HD4", "74NQB1", "2FKFBQB", "EOMGC2O1CMH7", "58O1O90GEG24I",
+         "RGQ3FI2HK1J7158DPBB9A59ORCQA7REJ4D7J", "-0", "-1", "-2", "-4B", "-FKP", "-5HD4", "-74NQB1",
+         "-2FKFBQB", "-EOMGC2O1CMH7", "-58O1O90GEG24I", "-RGQ3FI2HK1J7158DPBB9A59ORCQA7REJ4D7J"
+      },
+      {  /* Base 29 */
+         "0", "1", "2", "47", "EJK", "51N3", "60FSHJ", "225EP2H", "A3D1RI746O60", "3E5EJF8DDAA24",
+         "82BSREKJKOC2HGN2JEA7FG9PAOQPOJ7JR550", "-0", "-1", "-2", "-47", "-EJK", "-51N3", "-60FSHJ",
+         "-225EP2H", "-A3D1RI746O60", "-3E5EJF8DDAA24", "-82BSREKJKOC2HGN2JEA7FG9PAOQPOJ7JR550"
+      },
+      {  /* Base 30 */
+         "0", "1", "2", "43", "DLF", "4H56", "52CE69", "1KO4M31", "6T27J6KDLGOB", "29KMGC6OH5I3O",
+         "2E0OIT7GJG4R0FMBL8S3R3KET74JF98S7QL1", "-0", "-1", "-2", "-43", "-DLF", "-4H56", "-52CE69",
+         "-1KO4M31", "-6T27J6KDLGOB", "-29KMGC6OH5I3O", "-2E0OIT7GJG4R0FMBL8S3R3KET74JF98S7QL1"
+      },
+      {  /* Base 31 */
+         "0", "1", "2", "3U", "CQ7", "44EE", "49L302", "1C3OU0L", "4QJBTF8Q3TUL", "1HI7QFSQD8KRS",
+         "O8JCB423DBK5NNB1P928SFQ1DSKUU1BLBOI", "-0", "-1", "-2", "-3U", "-CQ7", "-44EE", "-49L302",
+         "-1C3OU0L", "-4QJBTF8Q3TUL", "-1HI7QFSQD8KRS", "-O8JCB423DBK5NNB1P928SFQ1DSKUU1BLBOI"
+      },
+      {  /* Base 32 */
+         "0", "1", "2", "3R", "C1P", "3OI0", "3LNJ8L", "14PC0MJ", "3DKR9ELNMQQ3", "128GGUIPD4C52",
+         "87V86EBLAFNAPFLGLGA1KL0Q4NKLS0AEAL7", "-0", "-1", "-2", "-3R", "-C1P", "-3OI0", "-3LNJ8L",
+         "-14PC0MJ", "-3DKR9ELNMQQ3", "-128GGUIPD4C52", "-87V86EBLAFNAPFLGLGA1KL0Q4NKLS0AEAL7"
+      },
+      {  /* Base 33 */
+         "0", "1", "2", "3O", "BB3", "3EC3", "353C3R", "VI0M57", "2EK1JIUAEVV5", "OE2FUO65HMEL",
+         "2TKGM5MWHIRFQFFNCUTF4U1QF147PJAUKHG", "-0", "-1", "-2", "-3O", "-BB3", "-3EC3", "-353C3R",
+         "-VI0M57", "-2EK1JIUAEVV5", "-OE2FUO65HMEL", "-2TKGM5MWHIRFQFFNCUTF4U1QF147PJAUKHG"
+      },
+      {  /* Base 34 */
+         "0", "1", "2", "3L", "AN3", "34R2", "2OD2I1", "R5SPAB", "1PRAOFOXKVSV", "HK156LBU5CH8",
+         "11NV83VX1G6VL4SGI9ONH313HDJSA5SC5SR", "-0", "-1", "-2", "-3L", "-AN3", "-34R2", "-2OD2I1",
+         "-R5SPAB", "-1PRAOFOXKVSV", "-HK156LBU5CH8", "-11NV83VX1G6VL4SGI9ONH313HDJSA5SC5SR"
+      },
+      {  /* Base 35 */
+         "0", "1", "2", "3I", "A2P", "2URB", "2C9G1T", "NHOKIB", "19QDYK4WVSGL", "CRIYUQEE34Q4",
+         "DP3PEV0BR6IXY49QOIVR1T8PVFDN24BKIQ", "-0", "-1", "-2", "-3I", "-A2P", "-2URB", "-2C9G1T",
+         "-NHOKIB", "-19QDYK4WVSGL", "-CRIYUQEE34Q4", "-DP3PEV0BR6IXY49QOIVR1T8PVFDN24BKIQ"
+      },
+      {  /* Base 36 */
+         "0", "1", "2", "3F", "9IX", "2N9C", "21I3V9", "KF12OJ", "XRLS1Y6YU6B", "9DO1SJHXODR6",
+         "5EWRUDC9FORY78GIU03RYUEU2UOF8Z4CDJ", "-0", "-1", "-2", "-3F", "-9IX", "-2N9C", "-21I3V9",
+         "-KF12OJ", "-XRLS1Y6YU6B", "-9DO1SJHXODR6", "-5EWRUDC9FORY78GIU03RYUEU2UOF8Z4CDJ"
+      },
+      {  /* Base 37 */
+         "0", "1", "2", "3C", "90O", "2G6O", "1SWB9a", "HTR1PS", "POZ1PVG07HA", "6YRHGaIC20OU",
+         "273ZVSKAWW0XMJ57UJDDJBQ32MOPX3M75W", "-0", "-1", "-2", "-3C", "-90O", "-2G6O", "-1SWB9a",
+         "-HTR1PS", "-POZ1PVG07HA", "-6YRHGaIC20OU", "-273ZVSKAWW0XMJ57UJDDJBQ32MOPX3M75W"
+      },
+      {  /* Base 38 */
+         "0", "1", "2", "39", "8KX", "29IW", "1L7YEX", "FM31YR", "JP9ASa6RAI7", "56OGVNJT6STa",
+         "YKX9a8bP7ZHH5OXKK4a0YDNPI4GSWOPJH", "-0", "-1", "-2", "-39", "-8KX", "-29IW", "-1L7YEX",
+         "-FM31YR", "-JP9ASa6RAI7", "-56OGVNJT6STa", "-YKX9a8bP7ZHH5OXKK4a0YDNPI4GSWOPJH"
+      },
+      {  /* Base 39 */
+         "0", "1", "2", "36", "84L", "236L", "1EE96R", "DQPDRb", "F6IEJbQFOL2", "3YPRS4PU0BFO",
+         "F1WE4Z3ILbYKL5F2DISOaPFH5ZIH5FWEV", "-0", "-1", "-2", "-36", "-84L", "-236L", "-1EE96R",
+         "-DQPDRb", "-F6IEJbQFOL2", "-3YPRS4PU0BFO", "-F1WE4Z3ILbYKL5F2DISOaPFH5ZIH5FWEV"
+      },
+      {  /* Base 40 */
+         "0", "1", "2", "33", "7SP", "1b6G", "1890JT", "C2A4bB", "BUc0HQ2OZ3B", "2bTK4GKQ8UWY",
+         "6RS6V91AUcQdRJ2AGTBUCUcT97IaD9N5V", "-0", "-1", "-2", "-33", "-7SP", "-1b6G", "-1890JT",
+         "-C2A4bB", "-BUc0HQ2OZ3B", "-2bTK4GKQ8UWY", "-6RS6V91AUcQdRJ2AGTBUCUcT97IaD9N5V"
+      },
+      {  /* Base 41 */
+         "0", "1", "2", "30", "7E4", "1WI5", "12SBJ8", "AQaWRe", "9849MOM2a4V", "29e1DKeFSX6R",
+         "31L1SUHMQe8NZB1cUIQH9OL7ZDabIZLTU", "-0", "-1", "-2", "-30", "-7E4", "-1WI5", "-12SBJ8",
+         "-AQaWRe", "-9849MOM2a4V", "-29e1DKeFSX6R", "-31L1SUHMQe8NZB1cUIQH9OL7ZDabIZLTU"
+      },
+      {  /* Base 42 */
+         "0", "1", "2", "2d", "6fd", "1RfI", "dSEZF", "9IVMHP", "79OCc8EXaKZ", "1UBX33fM2SeI",
+         "1GfQHJ3P08Ofa3bEfFMI7afaIJ9GBUb0J", "-0", "-1", "-2", "-2d", "-6fd", "-1RfI", "-dSEZF",
+         "-9IVMHP", "-79OCc8EXaKZ", "-1UBX33fM2SeI", "-1GfQHJ3P08Ofa3bEfFMI7afaIJ9GBUb0J"
+      },
+      {  /* Base 43 */
+         "0", "1", "2", "2b", "6T4", "1NX3", "a4XL5", "8H4Xd8", "5URM5faUC8T", "1E5H6GVN1a0a",
+         "SJ49KYOgMEHcHP8KQLP7NUYD0eQeSU7g", "-0", "-1", "-2", "-2b", "-6T4", "-1NX3", "-a4XL5",
+         "-8H4Xd8", "-5URM5faUC8T", "-1E5H6GVN1a0a", "-SJ49KYOgMEHcHP8KQLP7NUYD0eQeSU7g"
+      },
+      {  /* Base 44 */
+         "0", "1", "2", "2Z", "6GP", "1JXa", "WfD05", "7LGg17", "4NW35YgadgR", "11HCVDfWH3UA",
+         "DfTKO0ddDPMO5F18UPeRLKJ959WILbTR", "-0", "-1", "-2", "-2Z", "-6GP", "-1JXa", "-WfD05",
+         "-7LGg17", "-4NW35YgadgR", "-11HCVDfWH3UA", "-DfTKO0ddDPMO5F18UPeRLKJ959WILbTR"
+      },
+      {  /* Base 45 */
+         "0", "1", "2", "2X", "64F", "1FhL", "U4aE9", "6V3371", "3S70GULACLB", "aBP3VYWCYWO",
+         "6gVdO2H6K42W1dMMRVXTbXAh5gLWiP91", "-0", "-1", "-2", "-2X", "-64F", "-1FhL", "-U4aE9",
+         "-6V3371", "-3S70GULACLB", "-aBP3VYWCYWO", "-6gVdO2H6K42W1dMMRVXTbXAh5gLWiP91"
+      },
+      {  /* Base 46 */
+         "0", "1", "2", "2V", "5cH", "1CFc", "RQGJB", "5jXQ8J", "2fe8BAZKIOR", "T4XaKFWK1Fi",
+         "3NXIGOEajO5KeCA96WF5YACgd40KCWFL", "-0", "-1", "-2", "-2V", "-5cH", "-1CFc", "-RQGJB",
+         "-5jXQ8J", "-2fe8BAZKIOR", "-T4XaKFWK1Fi", "-3NXIGOEajO5KeCA96WF5YACgd40KCWFL"
+      },
+      {  /* Base 47 */
+         "0", "1", "2", "2T", "5RV", "18fY", "PE549", "5I03fi", "2GEbUkDCXOU", "NM70RdcX6BM",
+         "1bdDEfNkCkDQKeZah9WWbLccbMUMHb5X", "-0", "-1", "-2", "-2T", "-5RV", "-18fY", "-PE549",
+         "-5I03fi", "-2GEbUkDCXOU", "-NM70RdcX6BM", "-1bdDEfNkCkDQKeZah9WWbLccbMUMHb5X"
+      },
+      {  /* Base 48 */
+         "0", "1", "2", "2R", "5H9", "15S0", "NCFWL", "4eRCaJ", "1hD5YeVQFMZ", "J0Z9CMRNAZI",
+         "j5EUgajREIUil71DSR2IlG6VW9P8Ik7", "-0", "-1", "-2", "-2R", "-5H9", "-15S0", "-NCFWL",
+         "-4eRCaJ", "-1hD5YeVQFMZ", "-J0Z9CMRNAZI", "-j5EUgajREIUil71DSR2IlG6VW9P8Ik7"
+      },
+      {  /* Base 49 */
+         "0", "1", "2", "2P", "56k", "12KP", "LKHiF", "4I7W24", "1QdhbWZfN4g", "FN6jXXFMYmW",
+         "OEbefcflRESRlCShT6gQEaf6hQZe4iJ", "-0", "-1", "-2", "-2P", "-56k", "-12KP", "-LKHiF",
+         "-4I7W24", "-1QdhbWZfN4g", "-FN6jXXFMYmW", "-OEbefcflRESRlCShT6gQEaf6hQZe4iJ"
+      },
+      {  /* Base 50 */
+         "0", "1", "2", "2N", "4kj", "nJ6", "JbWZd", "3lQR7f", "1DAOYP68igV", "CW4kj1BcmQE",
+         "DCe8mYfT10h5JUcI8T1iVX04GeaQHAV", "-0", "-1", "-2", "-2N", "-4kj", "-nJ6", "-JbWZd", "-3lQR7f",
+         "-1DAOYP68igV", "-CW4kj1BcmQE", "-DCe8mYfT10h5JUcI8T1iVX04GeaQHAV"
+      },
+      {  /* Base 51 */
+         "0", "1", "2", "2L", "4c3", "lNa", "ICZ6I", "3TOjCS", "11jN06BYRJE", "AIkQ1BEdIdg",
+         "7GBiXij936gQc5QH7M9eEbNUDHW2HaA", "-0", "-1", "-2", "-2L", "-4c3", "-lNa", "-ICZ6I", "-3TOjCS",
+         "-11jN06BYRJE", "-AIkQ1BEdIdg", "-7GBiXij936gQc5QH7M9eEbNUDHW2HaA"
+      },
+      {  /* Base 52 */
+         "0", "1", "2", "2J", "4TL", "jY8", "Gk151", "3CiAoB", "iLHeKbSc9F", "8S5LdpBRHeo",
+         "44RQ8f10FA60dLJ7ofbXQ8225p5J3UV", "-0", "-1", "-2", "-2J", "-4TL", "-jY8", "-Gk151", "-3CiAoB",
+         "-iLHeKbSc9F", "-8S5LdpBRHeo", "-44RQ8f10FA60dLJ7ofbXQ8225p5J3UV"
+      },
+      {  /* Base 53 */
+         "0", "1", "2", "2H", "4Kn", "hoJ", "FYDNK", "2oOSLg", "bLnNSkmJNX", "737HNNj6ZOG",
+         "2GHBTR7h6UPoM0HnmchGkA7Ln3VSKAc", "-0", "-1", "-2", "-2H", "-4Kn", "-hoJ", "-FYDNK", "-2oOSLg",
+         "-bLnNSkmJNX", "-737HNNj6ZOG", "-2GHBTR7h6UPoM0HnmchGkA7Ln3VSKAc"
+      },
+      {  /* Base 54 */
+         "0", "1", "2", "2F", "4CX", "gIC", "ES1cj", "2bAHAJ", "VXRlrn8HMB", "5kB8lr5TC66",
+         "1H7LagrLQiGaj105LYhPkNbEISFiXR1", "-0", "-1", "-2", "-2F", "-4CX", "-gIC", "-ES1cj", "-2bAHAJ",
+         "-VXRlrn8HMB", "-5kB8lr5TC66", "-1H7LagrLQiGaj105LYhPkNbEISFiXR1"
+      },
+      {  /* Base 55 */
+         "0", "1", "2", "2D", "44P", "eia", "DR28n", "2OoLXp", "QiLZn2qX3G", "4m3pSoTV0Ws",
+         "fh2iN58IYi8COdHq4WVACHnAB8Sr8G", "-0", "-1", "-2", "-2D", "-44P", "-eia", "-DR28n", "-2OoLXp",
+         "-QiLZn2qX3G", "-4m3pSoTV0Ws", "-fh2iN58IYi8COdHq4WVACHnAB8Sr8G"
+      },
+      {  /* Base 56 */
+         "0", "1", "2", "2B", "3qP", "dKW", "CUtXT", "2DTptB", "MiQJGS55aZ", "43qdOr0p0UI",
+         "OhV4Z4cOtZGNSTKq2VO7HUnRtWd3Hl", "-0", "-1", "-2", "-2B", "-3qP", "-dKW", "-CUtXT", "-2DTptB",
+         "-MiQJGS55aZ", "-43qdOr0p0UI", "-OhV4Z4cOtZGNSTKq2VO7HUnRtWd3Hl"
+      },
+      {  /* Base 57 */
+         "0", "1", "2", "29", "3jX", "bup", "BdaMX", "22sLsk", "JOrW8TR4bQ", "3NLMaS9gkWa",
+         "ElI0DUSnOmIYotfUfUKB4MITD1TlCt", "-0", "-1", "-2", "-29", "-3jX", "-bup", "-BdaMX", "-22sLsk",
+         "-JOrW8TR4bQ", "-3NLMaS9gkWa", "-ElI0DUSnOmIYotfUfUKB4MITD1TlCt"
+      },
+      {  /* Base 58 */
+         "0", "1", "2", "27", "3cn", "aeW", "AqhNJ", "1p5S1H", "Ga1kTCtDHT", "2oCI12DUH14",
+         "8tPD7cMOa6VXL86T8pOoSSBH3oAbVT", "-0", "-1", "-2", "-27", "-3cn", "-aeW", "-AqhNJ", "-1p5S1H",
+         "-Ga1kTCtDHT", "-2oCI12DUH14", "-8tPD7cMOa6VXL86T8pOoSSBH3oAbVT"
+      },
+      {  /* Base 59 */
+         "0", "1", "2", "25", "3WE", "ZRS", "AB6qu", "1gq9vU", "EElrR1oKHI", "2OU73YIVPt7",
+         "5QoM6BASQ8rhGj5ILqDi2Qm0FKjj2K", "-0", "-1", "-2", "-25", "-3WE", "-ZRS", "-AB6qu", "-1gq9vU",
+         "-EElrR1oKHI", "-2OU73YIVPt7", "-5QoM6BASQ8rhGj5ILqDi2Qm0FKjj2K"
+      },
+      {  /* Base 60 */
+         "0", "1", "2", "23", "3Pj", "YHa", "9VXX9", "1ZFZVV", "CF1lQrLQgB", "22UHsSrYR1s",
+         "3L2Jn8s1sN9JsCWY1MxDNiMN6oUxAV", "-0", "-1", "-2", "-23", "-3Pj", "-YHa", "-9VXX9", "-1ZFZVV",
+         "-CF1lQrLQgB", "-22UHsSrYR1s", "-3L2Jn8s1sN9JsCWY1MxDNiMN6oUxAV"
+      },
+      {  /* Base 61 */
+         "0", "1", "2", "21", "3JN", "XAr", "8ttNm", "1SA4ss", "AXy8BxEGoo", "1iYqKwhKkKG",
+         "24XqSZ2DhiqHi82mRoRGebd9OPOdtW", "-0", "-1", "-2", "-21", "-3JN", "-XAr", "-8ttNm", "-1SA4ss",
+         "-AXy8BxEGoo", "-1iYqKwhKkKG", "-24XqSZ2DhiqHi82mRoRGebd9OPOdtW"
+      },
+      {  /* Base 62 */
+         "0", "1", "2", "1z", "3D7", "W7E", "8M0kX", "1LY7VL", "97Qs0H8FFL", "1TCKi2lKSTS",
+         "1IGfuGCfSONgSFv2mYHZc8g8hdTnRn", "-0", "-1", "-2", "-1z", "-3D7", "-W7E", "-8M0kX", "-1LY7VL",
+         "-97Qs0H8FFL", "-1TCKi2lKSTS", "-1IGfuGCfSONgSFv2mYHZc8g8hdTnRn"
+      },
+      {  /* Base 63 */
+         "0", "1", "2", "1y", "36y", "V6d", "7qkGa", "1FNLdk", "7uVK7VBbDu", "1FyzCBxqvCy",
+         "pHt7TvREbOvFTrqscbEKPF+KYjiSJ", "-0", "-1", "-2", "-1y", "-36y", "-V6d", "-7qkGa", "-1FNLdk",
+         "-7uVK7VBbDu", "-1FyzCBxqvCy", "-pHt7TvREbOvFTrqscbEKPF+KYjiSJ"
+      },
+      {  /* Base 64 */
+         "0", "1", "2", "1x", "30v", "U90", "7MyqL", "19bWBJ", "6scqkhUsj3", "14Y4FIoqZ2Y",
+         "W/q6SkgdtLbzOLWeDAWqIzAy0fogd", "-0", "-1", "-2", "-1x", "-30v", "-U90", "-7MyqL", "-19bWBJ",
+         "-6scqkhUsj3", "-14Y4FIoqZ2Y", "-W/q6SkgdtLbzOLWeDAWqIzAy0fogd",
+      }
+   };
+
+   char *buf_n;
+   mp_int N;
+   size_t len, written;
+
+   DOR(mp_init_multi(&N, NULL));
+
+   for (int number_base = 0; number_base < 63; number_base++) {
+      for (int number = 0; number < (int)(sizeof(numbers[0])/sizeof(numbers[0][0])); number++) {
+         DO(mp_read_radix(&N, numbers[number_base][number], number_base+2));
+         /* If read in correctly it should print it correctly, too, in every other base. */
+         for (int radix = 0; radix < 63; radix++) {
+            DO(mp_radix_size(&N, radix+2, &len));
+            buf_n = (char *) malloc(len);
+            if (buf_n == NULL) {
+               fprintf(stderr,"Allocating buf_n in test_read_write_radix_power_of_two() failed\n");
+               goto LBL_ERR;
+            }
+            DO(mp_to_radix(&N, buf_n, len, &written, radix+2));
+            /* printf("%s %d %s\n",buf_n, radix+2, numbers[radix][number]); */
+            /* Check that "-0" gets correctly converted to "0" */
+            if (mp_iszero(&N) && (strcmp(numbers[radix][number], "-0") == 0))  {
+               EXPECT(strcmp(buf_n, "0") == 0);
+            } else {
+               EXPECT(strcmp(buf_n, numbers[radix][number]) == 0);
+            }
+
+            free(buf_n);
+         }
+      }
+   }
+
+   mp_clear_multi(&N, NULL);
+   return EXIT_SUCCESS;
+LBL_ERR:
+   mp_clear_multi(&N, NULL);
+   return EXIT_FAILURE;
+}
+
+
 static int test_mp_read_radix(void)
 {
    char buf[4096];
@@ -2190,7 +2590,8 @@ static int unit_tests(int argc, char **argv)
       T1(s_mp_mul_karatsuba, S_MP_MUL_KARATSUBA),
       T1(s_mp_sqr_karatsuba, S_MP_SQR_KARATSUBA),
       T1(s_mp_mul_toom, S_MP_MUL_TOOM),
-      T1(s_mp_sqr_toom, S_MP_SQR_TOOM)
+      T1(s_mp_sqr_toom, S_MP_SQR_TOOM),
+      T2(s_mp_radix_power_of_two, S_MP_READ_RADIX_POWER_OF_TWO, S_MP_TO_RADIX_POWER_OF_TWO)
 #undef T2
 #undef T1
    };

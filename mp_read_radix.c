@@ -14,6 +14,16 @@ mp_err mp_read_radix(mp_int *a, const char *str, int radix)
       return MP_VAL;
    }
 
+   if (MP_HAS(S_MP_READ_RADIX_POWER_OF_TWO)) {
+      unsigned int base;
+      int radix_bit;
+      /* TODO: that line below is a bit unsightly. */
+      for (base = (unsigned int)radix, radix_bit = 0; (base & 1) == 0; radix_bit++, base >>= 1) {}
+      if (base == 1) {
+         return s_mp_read_radix_power_of_two(a, str, radix, radix_bit);
+      }
+   }
+
    /* if the leading digit is a
     * minus set the sign to negative.
     */
