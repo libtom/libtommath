@@ -97,6 +97,12 @@ mp_err s_mp_read_radix_power_of_two(mp_int *a, const char *str, int radix, int r
    /* set the integer to zero */
    mp_zero(a);
 
+   /* We roll it up from the back, so skip allowed trailing characters first. */
+   while ((*_s == '\r') || (*_s == '\n')) {
+      _s--;
+      slen--;
+   }
+
    /* A little shortcut */
    if ((slen == 1) && (*_s == '0')) {
       return MP_OKAY;
@@ -124,19 +130,12 @@ mp_err s_mp_read_radix_power_of_two(mp_int *a, const char *str, int radix, int r
       char ch = (radix <= 36) ? (char)MP_TOUPPER((int)*_s) : *_s;
       unsigned pos = (unsigned)(ch - '+');
       if (MP_RADIX_MAP_REVERSE_SIZE <= pos) {
-         /* if an illegal character was found, fail. */
-         if ((*_s != '\0') && (*_s != '\r') && (*_s != '\n')) {
-            err = MP_VAL;
-            goto LBL_ERR;
-         } else {
-            break;
-         }
+         err = MP_VAL;
          goto LBL_ERR;
       }
       y = s_mp_radix_map_reverse[pos];
       if (y >= radix) {
          err = MP_VAL;
-         fprintf(stderr,"222\n\n");
          goto LBL_ERR;
       }
       /* Fill buffer MSB -> LSB */
@@ -154,7 +153,7 @@ mp_err s_mp_read_radix_power_of_two(mp_int *a, const char *str, int radix, int r
          W >>= MP_DIGIT_BIT;
       }
       /* Handle MSB-remainder if any */
-      if ((alen == (i+1)) && (slen == 0)) {
+      if (slen == 0) {
          a->dp[i] = (mp_digit)(W & MP_MASK);
          break;
       }
