@@ -158,11 +158,13 @@
 #   define S_MP_RADIX_SIZE_OVERESTIMATE_C
 #   define S_MP_RAND_JENKINS_C
 #   define S_MP_RAND_PLATFORM_C
+#   define S_MP_READ_RADIX_POWER_OF_TWO_C
 #   define S_MP_SQR_C
 #   define S_MP_SQR_COMBA_C
 #   define S_MP_SQR_KARATSUBA_C
 #   define S_MP_SQR_TOOM_C
 #   define S_MP_SUB_C
+#   define S_MP_TO_RADIX_POWER_OF_TWO_C
 #   define S_MP_ZERO_BUF_C
 #   define S_MP_ZERO_DIGS_C
 #endif
@@ -708,6 +710,7 @@
 #   define MP_ADD_D_C
 #   define MP_MUL_D_C
 #   define MP_ZERO_C
+#   define S_MP_READ_RADIX_POWER_OF_TWO_C
 #endif
 
 #if defined(MP_REDUCE_C)
@@ -905,6 +908,7 @@
 #   define MP_CLEAR_C
 #   define MP_DIV_D_C
 #   define MP_INIT_COPY_C
+#   define S_MP_TO_RADIX_POWER_OF_TWO_C
 #endif
 
 #if defined(MP_TO_SBIN_C)
@@ -1198,6 +1202,12 @@
 #if defined(S_MP_RAND_PLATFORM_C)
 #endif
 
+#if defined(S_MP_READ_RADIX_POWER_OF_TWO_C)
+#   define MP_CLAMP_C
+#   define MP_GROW_C
+#   define MP_ZERO_C
+#endif
+
 #if defined(S_MP_SQR_C)
 #   define MP_CLAMP_C
 #   define MP_CLEAR_C
@@ -1241,6 +1251,11 @@
 #   define MP_CLAMP_C
 #   define MP_GROW_C
 #   define S_MP_ZERO_DIGS_C
+#endif
+
+#if defined(S_MP_TO_RADIX_POWER_OF_TWO_C)
+#   define MP_COUNT_BITS_C
+#   define S_MP_GET_BIT_GROUP_C
 #endif
 
 #if defined(S_MP_ZERO_BUF_C)

@@ -208,6 +208,9 @@ MP_PRIVATE void s_mp_zero_buf(void *mem, size_t size);
 MP_PRIVATE void s_mp_zero_digs(mp_digit *d, int digits);
 MP_PRIVATE mp_err s_mp_radix_size_overestimate(const mp_int *a, const int radix, size_t *size);
 
+MP_PRIVATE mp_err s_mp_read_radix_power_of_two(mp_int *a, const char *str, int radix, int radix_bit);
+MP_PRIVATE mp_err s_mp_to_radix_power_of_two(const mp_int *a, char *str, size_t maxlen, size_t *written, int radix_bit);
+
 /* TODO: jenkins prng is not thread safe as of now */
 MP_PRIVATE mp_err s_mp_rand_jenkins(void *p, size_t n) MP_WUR;
 MP_PRIVATE void s_mp_rand_jenkins_init(uint64_t seed);
