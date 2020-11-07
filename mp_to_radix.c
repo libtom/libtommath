@@ -63,7 +63,8 @@ mp_err mp_to_radix(const mp_int *a, char *str, size_t maxlen, size_t *written, i
    }
 
    if (MP_HAS(S_MP_TO_RADIX_POWER_OF_TWO)) {
-      unsigned int base, radix_bit;
+      unsigned int base;
+      int radix_bit;
       /* TODO: that line below is a bit unsightly. */
       for (base = (unsigned int)radix, radix_bit = 0; (base & 1) == 0; radix_bit++, base >>= 1) {}
       if (base == 1) {

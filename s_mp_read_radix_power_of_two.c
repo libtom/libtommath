@@ -124,12 +124,19 @@ mp_err s_mp_read_radix_power_of_two(mp_int *a, const char *str, int radix, int r
       char ch = (radix <= 36) ? (char)MP_TOUPPER((int)*_s) : *_s;
       unsigned pos = (unsigned)(ch - '+');
       if (MP_RADIX_MAP_REVERSE_SIZE <= pos) {
-         err = MP_VAL;
+         /* if an illegal character was found, fail. */
+         if ((*_s != '\0') && (*_s != '\r') && (*_s != '\n')) {
+            err = MP_VAL;
+            goto LBL_ERR;
+         } else {
+            break;
+         }
          goto LBL_ERR;
       }
       y = s_mp_radix_map_reverse[pos];
       if (y >= radix) {
          err = MP_VAL;
+         fprintf(stderr,"222\n\n");
          goto LBL_ERR;
       }
       /* Fill buffer MSB -> LSB */
