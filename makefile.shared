@@ -74,15 +74,23 @@ uninstall:
 	rm $(HEADERS_PUB:%=$(DESTDIR)$(INCPATH)/%)
 	rm $(DESTDIR)$(LIBPATH)/pkgconfig/libtommath.pc
 
-test mtest_opponent: demo/shared.o $(LIBNAME) | demo/test.o demo/mtest_opponent.o
-	$(LTLINK) $(LTM_LDFLAGS) -DLTM_TEST_DYNAMIC demo/$@.o $^ -o $@
+DEMOS=mtest_opponent test timing
+test: LTM_LDFLAGS+=-DLTM_TEST_DYNAMIC
+
+# build the demos from a template
+define DEMO_template
+$(1): $(call print-help,$(1),Builds the library and the '$(1)' demo) demo/$(1).o demo/shared.o $$(LIBNAME)
+ifneq ($V,1)
+	@echo "   * $${CC} $$@" ${silent_echo}
+endif
+	$(LTLINK) $(LTM_CFLAGS) $(LTM_LDFLAGS) $$^ -o $(1)
+endef
+
+$(foreach demo, $(strip $(DEMOS)), $(eval $(call DEMO_template,$(demo))))
 
 .PHONY: mtest
 mtest:
 	cd mtest ; $(CC) $(LTM_CFLAGS) -O0 mtest.c $(LTM_LDFLAGS) -o mtest
-
-timing: $(LIBNAME) demo/timing.c
-	$(LTLINK) $(LTM_CFLAGS) $(LTM_LDFLAGS) -DTIMER demo/timing.c $(LIBNAME) -o timing
 
 tune: $(LIBNAME)
 	$(LTCOMPILE) $(LTM_CFLAGS) -c etc/tune.c -o etc/tune.o
