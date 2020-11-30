@@ -436,6 +436,10 @@ sub generate_def {
 ;
 EXPORTS
     $files
+    MP_MUL_KARATSUBA_CUTOFF
+    MP_SQR_KARATSUBA_CUTOFF
+    MP_MUL_TOOM_CUTOFF
+    MP_SQR_TOOM_CUTOFF
 ";
     return 0;
 }

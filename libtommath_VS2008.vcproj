@@ -649,6 +649,10 @@
 			>
 		</File>
 		<File
+			RelativePath="mp_rand_source.c"
+			>
+		</File>
+		<File
 			RelativePath="mp_read_radix.c"
 			>
 		</File>
@@ -890,10 +894,6 @@
 		</File>
 		<File
 			RelativePath="s_mp_radix_size_overestimate.c"
-			>
-		</File>
-		<File
-			RelativePath="s_mp_rand_jenkins.c"
 			>
 		</File>
 		<File

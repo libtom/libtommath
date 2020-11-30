@@ -87,6 +87,7 @@ endif
 
 ifdef COMPILE_LTO
 LTM_CFLAGS += -flto
+LTM_LDFLAGS += -flto
 AR = $(subst clang,llvm-ar,$(subst gcc,gcc-ar,$(CC)))
 endif
 

@@ -5,8 +5,8 @@
 #                                                                           #
 #############################################################################
 
-# Run the tests based on Ubuntu 16.04
-dist: xenial
+# The Ubuntu version we're going to use to run the tests
+dist: bionic
 
 # Compilation failures are in gcc_errors_*.log
 # Failed tests in test_*.log
@@ -72,15 +72,26 @@ matrix:
           packages:
             - astyle
 
-    # Run always with valgrind (no sanitizer, but debug info)
-    - env: COMPILE_DEBUG=1 BUILDOPTIONS='--with-cc=gcc-4.9 --with-m64 --with-valgrind'
+    # Check public symbols of dynamic libraries
+    - env: BUILDOPTIONS='--symbols'
       addons:
         apt:
           packages:
-            - gcc-4.9
+            - libtool-bin
+
+    # Run always with valgrind (no sanitizer, but debug info)
+    - env: COMPILE_DEBUG=1 BUILDOPTIONS='--with-cc=gcc --with-m64 --with-valgrind'
+
+    # Shared library build
+    - env: COMPILE_LTO=1 BUILDOPTIONS='--with-cc=gcc --make-option=-f --make-option=makefile.shared'
+      addons:
+        apt:
+          packages:
+            - gcc-8
+            - libtool-bin
 
     # GCC for the 32-bit architecture (no valgrind)
-    - env: BUILDOPTIONS='--with-cc=gcc-5 --with-m32'
+    - env: BUILDOPTIONS='--with-cc=gcc --with-m32'
       addons:
         apt:
           packages:
@@ -108,9 +119,9 @@ matrix:
 
     # GCC for the x86-64 architecture testing against a different Bigint-implementation
     # with 333333 different inputs.
-    #- env: BUILDOPTIONS='--with-cc=gcc-5 --test-vs-mtest=333333 --with-travis-valgrind'
+    #- env: BUILDOPTIONS='--with-cc=gcc --test-vs-mtest=333333 --with-travis-valgrind'
     # ...  and a better random source.
-    - env: BUILDOPTIONS='--with-cc=gcc-5 --test-vs-mtest=333333 --mtest-real-rand --with-travis-valgrind'
+    - env: BUILDOPTIONS='--with-cc=gcc --test-vs-mtest=333333 --mtest-real-rand --with-travis-valgrind'
 
     # clang for the x86-64 architecture testing against a different Bigint-implementation
     # with 333333 different inputs
@@ -121,7 +132,7 @@ matrix:
     # GCC for the x64_32 architecture (32-bit longs and 32-bit pointers)
     # TODO: Probably not possible to run anything in x32 in Travis
     #       but needs to be checked to be sure.
-    - env: SANITIZER=1 BUILDOPTIONS='--with-cc=gcc-5 --with-mx32'
+    - env: SANITIZER=1 BUILDOPTIONS='--with-cc=gcc --with-mx32'
       addons:
         apt:
           packages:
@@ -129,12 +140,12 @@ matrix:
             - gcc-multilib
 
     # GCC for the x86-64 architecture (64-bit longs and 64-bit pointers)
-    - env: SANITIZER=1 BUILDOPTIONS='--with-cc=gcc-5 --with-m64 --with-travis-valgrind'
-    - env: BUILDOPTIONS='--with-cc=gcc-4.7 --with-m64 --with-travis-valgrind'
+    - env: SANITIZER=1 BUILDOPTIONS='--with-cc=gcc --with-m64 --with-travis-valgrind'
+    - env: BUILDOPTIONS='--with-cc=gcc-5 --with-m64 --with-travis-valgrind'
       addons:
         apt:
           packages:
-            - gcc-4.7
+            - gcc-5
     - env: BUILDOPTIONS='--with-cc=gcc-4.8 --with-m64 --with-travis-valgrind'
       addons:
         apt:
@@ -147,6 +158,21 @@ matrix:
     - env: SANITIZER=1 CONV_WARNINGS=strict BUILDOPTIONS='--with-cc=clang-7 --cflags=-DMP_USE_MEMOPS --with-m64 --with-travis-valgrind'
     - env: SANITIZER=1 CONV_WARNINGS=strict BUILDOPTIONS='--with-cc=clang-7 --c89 --with-m64 --with-travis-valgrind'
     - env: SANITIZER=1 BUILDOPTIONS='--with-cc=clang-7 --with-m64 --with-travis-valgrind --cflags=-DMP_PREC=MP_MIN_PREC'
+    - env: SANITIZER=1 BUILDOPTIONS='--with-cc=clang-10 --with-m64 --with-travis-valgrind'
+      addons:
+        apt:
+          packages:
+            - clang-10
+    - env: SANITIZER=1 BUILDOPTIONS='--with-cc=clang-9 --with-m64 --with-travis-valgrind'
+      addons:
+        apt:
+          packages:
+            - clang-9
+    - env: SANITIZER=1 BUILDOPTIONS='--with-cc=clang-8 --with-m64 --with-travis-valgrind'
+      addons:
+        apt:
+          packages:
+            - clang-8
     - env: SANITIZER=1 BUILDOPTIONS='--with-cc=clang-6.0 --with-m64 --with-travis-valgrind'
       addons:
         apt:
@@ -164,18 +190,18 @@ matrix:
             - clang-4.0
 
     # Link time optimization
-    - env: SANITIZER=1 COMPILE_LTO=1 BUILDOPTIONS='--with-cc=gcc-5 --with-m64 --with-travis-valgrind'
+    - env: SANITIZER=1 COMPILE_LTO=1 BUILDOPTIONS='--with-cc=gcc --with-m64 --with-travis-valgrind'
     #- env: SANITIZER=1 COMPILE_LTO=1 BUILDOPTIONS='--with-cc=clang-7 --with-m64 --with-travis-valgrind'
 
     # GCC for the x86-64 architecture with restricted limb sizes
     # formerly started with the option "--with-low-mp" to testme.sh
     # but testing all three in one run took to long and timed out.
-    - env: SANITIZER=1 BUILDOPTIONS='--with-cc=gcc-5 --cflags=-DMP_16BIT --with-travis-valgrind'
-    - env: SANITIZER=1 BUILDOPTIONS='--with-cc=gcc-5 --cflags=-DMP_32BIT --with-travis-valgrind'
+    - env: SANITIZER=1 BUILDOPTIONS='--with-cc=gcc --cflags=-DMP_16BIT --with-travis-valgrind'
+    - env: SANITIZER=1 BUILDOPTIONS='--with-cc=gcc --cflags=-DMP_32BIT --with-travis-valgrind'
 
     # clang for the x86-64 architecture with restricted limb sizes
-    - env: SANITIZER=1 BUILDOPTIONS='--with-cc=clang-7 --cflags=-DMP_16BIT --with-travis-valgrind'
-    - env: SANITIZER=1 BUILDOPTIONS='--with-cc=clang-7 --cflags=-DMP_32BIT --with-travis-valgrind'
+    - env: SANITIZER=1 BUILDOPTIONS='--with-cc=clang --cflags=-DMP_16BIT --with-travis-valgrind'
+    - env: SANITIZER=1 BUILDOPTIONS='--with-cc=clang --cflags=-DMP_32BIT --with-travis-valgrind'
 
 # Notifications go to
 # An email address is also possible.

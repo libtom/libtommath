@@ -2,11 +2,13 @@
  *
  * Tom St Denis, tstdenis82@gmail.com
  */
-#include "../tommath.h"
-#include "../tommath_private.h"
+#include "tommath_private.h"
 #include <time.h>
 #include <inttypes.h>
 #include <errno.h>
+
+#define S_MP_RAND_JENKINS_C
+#include "../demo/s_mp_rand_jenkins.c"
 
 /*
    Please take in mind that both multiplicands are of the same size. The balancing
