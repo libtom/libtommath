@@ -177,7 +177,7 @@ extern MP_PRIVATE mp_err(*s_mp_rand_source)(void *out, size_t size);
 /* lowlevel functions, do not call! */
 MP_PRIVATE bool s_mp_get_bit(const mp_int *a, int b) MP_WUR;
 MP_PRIVATE int s_mp_log_2expt(const mp_int *a, mp_digit base) MP_WUR;
-MP_PRIVATE int s_mp_log_d(mp_digit base, mp_digit n) MP_WUR;
+
 MP_PRIVATE mp_err s_mp_add(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
 MP_PRIVATE mp_err s_mp_div_3(const mp_int *a, mp_int *c, mp_digit *d) MP_WUR;
 MP_PRIVATE mp_err s_mp_div_recursive(const mp_int *a, const mp_int *b, mp_int *q, mp_int *r) MP_WUR;
@@ -187,7 +187,7 @@ MP_PRIVATE mp_err s_mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P
 MP_PRIVATE mp_err s_mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y, int redmode) MP_WUR;
 MP_PRIVATE mp_err s_mp_invmod(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
 MP_PRIVATE mp_err s_mp_invmod_odd(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
-MP_PRIVATE mp_err s_mp_log(const mp_int *a, mp_digit base, int *c) MP_WUR;
+
 MP_PRIVATE mp_err s_mp_montgomery_reduce_comba(mp_int *x, const mp_int *n, mp_digit rho) MP_WUR;
 MP_PRIVATE mp_err s_mp_mul(const mp_int *a, const mp_int *b, mp_int *c, int digs) MP_WUR;
 MP_PRIVATE mp_err s_mp_mul_balance(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;

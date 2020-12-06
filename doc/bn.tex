@@ -1936,39 +1936,49 @@ mp_err mp_sqrt(const mp_int *arg, mp_int *ret)
 \chapter{Logarithm}
 \section{Integer Logarithm}
 A logarithm function for positive integer input \texttt{a, base} computing  $\floor{\log_bx}$ such
-that $(\log_b x)^b \le x$.
+that $(\log_b x)^b \le x$. The function \texttt{mp\_log\_n} is just a wrapper that converts \texttt{base}
+to a bigint and calls \texttt{mp\_log\_n}.
 
-\index{mp\_log\_n}
+\index{mp\_log}
 \begin{alltt}
-mp_err mp_log_n(const mp_int *a, int base, int *c)
+mp_err mp_log(const mp_int *a, const mp_int *base, int *c)
+\end{alltt}
+
+\index{mp\_log\_u32}
+\begin{alltt}
+mp_err mp_log_u32(const mp_int *a, uint32_t base, uint32_t *c)
 \end{alltt}
 
 \subsection{Example}
+Example given for \texttt{mp\_log\_u32} only because the single difference is the type of \texttt{base}.
 \begin{small}
   \begin{alltt}
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdint.h>
+#include <inttypes.h>
 #include <errno.h>
 
 #include <tommath.h>
 
 int main(int argc, char **argv)
 {
-   mp_int x, output;
-   int base;
+   mp_int x;
+   uint32_t base;
+   int output;
    mp_err e;
 
    if (argc != 3) {
       fprintf(stderr,"Usage %s base x\textbackslash{}n", argv[0]);
       exit(EXIT_FAILURE);
    }
-   if ((e = mp_init_multi(&x, &output, NULL)) != MP_OKAY) {
+   if ((e = mp_init(&x)) != MP_OKAY) {
       fprintf(stderr,"mp_init failed: \textbackslash{}"%s\textbackslash{}"\textbackslash{}n",
                      mp_error_to_string(e));
               exit(EXIT_FAILURE);
    }
    errno = 0;
-   base = (int)strtoul(argv[1], NULL, 10);
+   base = (uint32_t)strtoul(argv[1], NULL, 10);
 
    if (errno == ERANGE) {
       fprintf(stderr,"strtoul(l) failed: input out of range\textbackslash{}n");
@@ -1979,20 +1989,14 @@ int main(int argc, char **argv)
                       mp_error_to_string(e));
       exit(EXIT_FAILURE);
    }
-   if ((e = mp_log_n(&x, base, &output)) != MP_OKAY) {
-      fprintf(stderr,"mp_log_n failed: \textbackslash{}"%s\textbackslash{}"\textbackslash{}n",
+   if ((e = mp_log_u32(&x, base, &output)) != MP_OKAY) {
+      fprintf(stderr,"mp_log_u32 failed: \textbackslash{}"%s\textbackslash{}"\textbackslash{}n",
                       mp_error_to_string(e));
       exit(EXIT_FAILURE);
    }
+   printf("%" PRIu32 "\n",output);
 
-   if ((e = mp_fwrite(&output, 10, stdout)) != MP_OKAY) {
-      fprintf(stderr,"mp_fwrite failed: \textbackslash{}"%s\textbackslash{}"\textbackslash{}n",
-                      mp_error_to_string(e));
-      exit(EXIT_FAILURE);
-   }
-   putchar('\textbackslash{}n');
-
-   mp_clear_multi(&x, &output, NULL);
+   mp_clear(&x);
    exit(EXIT_SUCCESS);
 }
 \end{alltt}

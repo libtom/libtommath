@@ -1,0 +1,1021 @@
+% build with
+% rm 83aea75e0c59d1de027747003151d53dcb2a51c9.bib ; pdflatex flan.tex && biber flan && pdflatex flan.tex && pdflatex flan.tex
+% For those wondering: the name is just the output of `date | shasum` without the trailing ` -`
+\begin{filecontents}{83aea75e0c59d1de027747003151d53dcb2a51c9.bib}
+@article{turner2010fast,
+  title = {A fast binary logarithm algorithm},
+  author = {Turner, Clay S},
+  journal = {IEEE Signal Processing Magazine},
+  volume = {27},
+  number = {5},
+  pages={124--140},
+  year = {2010},
+  publisher = {IEEE},
+  url = {http://www.claysturner.com/dsp/BinaryLogarithm.pdf},
+  urldate = "2019-12-05"
+}
+
+@Book{9899:2018,
+  author =       "{ISO}",
+  title =        "{ISO\slash IEC 9899:2018 Information technology ---
+                 Programming languages --- C}",
+  publisher =    "International Organization for Standardization",
+  address =      "Geneva, Switzerland",
+  edition =      "4",
+  pages =        "520",
+  year =         "2018",
+  ISBN-13 =      "9780580515453",
+  URL =          "https://www.iso.org/standard/74528.html",
+  remark =       "Revises ISO/IEC 9899:2011"
+}
+
+@article{chen2005rounding,
+  title={On the rounding rules for logarithmic and exponential operations},
+  author={Chen, Wei-Da and Lee, Wei and Mulliss, Christopher L},
+  journal={Chinese Journal of Physics},
+  volume={43},
+  number={6},
+  pages={1017--1034},
+  year={2005},
+  publisher={Taiwan Physical Society}
+}
+
+@Book{knuth69seminum,
+  author    = "Donald E. Knuth",
+  title     = "Seminumerical Algorithms",
+  volume    = "2",
+  edition   = "First",
+  publisher = "Addison-Wesley",
+  address   = "Reading, MA, USA",
+  pages     = "xi + 624",
+  year      = "1969",
+  ISBN      = "0-201-03802-1",
+  ISBN-13   = "978-0-201-03802-6",
+  series    = "The Art of Computer Programming"
+}
+
+@book{knuth97seminum,
+  author    = "Donald E. Knuth",
+  title     = "Seminumerical Algorithms",
+  volume    = "2",
+  edition   = "Third",
+  publisher = "Addison-Wesley",
+  address   = "Boston",
+  year      = "1997",
+  ISBN      = "0-201-89684-2",
+  ISBN-13   = "978-0-201-89684-8",
+  series    = "The Art of Computer Programming"
+}
+
+@misc{denislibtommath,
+  title     = {Libtommath},
+  author    = {Denis, Tom St},
+  url       = "https://github.com/libtom/libtommath",
+  urldate   = "2015-12-25"
+}
+
+@book{st2006bignum,
+  title     = {BigNum Math: Implementing Cryptographic Multiple Precision Arithmetic},
+  author    = {St Denis, Tom},
+  year      = {2006},
+  publisher = {Syngress},
+  address   = "Rockland, MA",
+  pages     = "318",
+  ISBN-10   = "1-597-49112-8",
+  ISBN-13   = "978-1-597-49112-9"
+}
+
+
+@TechReport{vdH:nlogn,
+  author      = {Harvey, D. and Hoeven, J. van der},
+  title       = {Integer multiplication in time {$O(n \log n)$}},
+  institution = {HAL},
+  year        = {2019},
+  url         = "http://hal.archives-ouvertes.fr/hal-02070778"
+}
+
+@Book{ieee7542008,
+  author =       "{IEEE Task P754}",
+  title =        "{IEEE 754-2008, Standard for Floating-Point
+                 Arithmetic}",
+  publisher =    "pub-IEEE-STD",
+  pages =        "58",
+  day =          "29",
+  month =        Aug,
+  year =         "2008",
+  DOI =          "http://dx.doi.org/10.1109/IEEESTD.2008.4610935",
+  ISBN =         "0-7381-5753-8 (paper), 0-7381-5752-X (electronic)",
+  ISBN-13 =      "978-0-7381-5753-5 (paper), 978-0-7381-5752-8
+                 (electronic)",
+  URL =          "http://ieeexplore.ieee.org/servlet/opac?punumber=4610933"
+}
+
+@article{majithia1973note,
+  title={A note on base-2 logarithm computations},
+  author={Majithia, Jayanti C and Levan, D},
+  journal={Proceedings of the IEEE},
+  volume={61},
+  number={10},
+  pages={1519--1520},
+  year={1973},
+  publisher={IEEE}
+}
+
+@article{combet1965computation,
+  title={Computation of the base two logarithm of binary numbers},
+  author={Combet, M and Van Zonneveld, H and Verbeek, L},
+  journal={IEEE Transactions on Electronic Computers},
+  number={6},
+  pages={863--867},
+  year={1965},
+  publisher={IEEE}
+}
+
+@article{mitchell1962computer,
+  title={Computer multiplication and division using binary logarithms},
+  author={Mitchell, John N},
+  journal={IRE Transactions on Electronic Computers},
+  number={4},
+  pages={512--517},
+  year={1962},
+  publisher={IEEE}
+}
+
+@article{bernstein2003computing,
+  title={Computing logarithm intervals with the arithmeticgeometric-mean iteration},
+  author={Bernstein, Daniel J},
+  url={https://cr.yp.to/arith/logagm-20030717.pdf},
+  volume={16},
+  year={2003}
+}
+
+\end{filecontents}
+\documentclass[a4paper,10pt]{article}
+
+% This bunch of macros grew to that size in a couple of years,
+% some parts are even decades old, so be aware of the risks of diving in!
+% And I even stripped it down by ca 50% for this text!
+
+\usepackage{palatino}
+%\usepackage{lmodern}
+
+% Narrow the margins a bit to fit in the code
+\usepackage[margin=1.2in]{geometry}
+\usepackage{amsmath, amsthm,amsfonts,amssymb}
+\usepackage{graphicx}
+\usepackage{fixltx2e}
+\usepackage{listings}
+\usepackage{algorithm}
+
+\usepackage{hyperref}
+\usepackage{longtable}
+\usepackage{siunitx}
+\usepackage{graphicx}
+
+\usepackage{float}
+
+\usepackage[
+    backend=biber,
+    style=authoryear,
+    autocite=inline,
+    natbib=true,
+    sortlocale=en_US,
+    url=true, 
+    doi=true,
+    eprint=true
+]{biblatex}
+\addbibresource{83aea75e0c59d1de027747003151d53dcb2a51c9.bib}
+
+
+% pseudocode
+\usepackage[end]{algpseudocode}
+\newcommand*\Let[2]{\State #1 $\gets$ #2}
+\algrenewcommand\alglinenumber[1]{{\sf\scriptsize#1}}
+\algrenewcommand\algorithmicrequire{\textbf{Input:}}
+\algrenewcommand\algorithmicensure{\textbf{Output:}}
+
+\makeatletter
+\let\OldStatex\Statex
+\renewcommand{\Statex}[1][3]{%
+  \setlength\@tempdima{\algorithmicindent}%
+  \OldStatex\hskip\dimexpr#1\@tempdima\relax}
+\makeatother
+
+\algnewcommand\algorithmicblackcomment[1]{\hfill\(\blacktriangleright\) #1}
+\algnewcommand{\CommentMulti}[1]{ \(\blacktriangleright\) #1}
+\makeatletter
+\algnewcommand{\CommentInlineMulti}[1]{\Statex[\theALG@nested] \(\triangleright\) #1}
+
+% "algorithmic" without "algorithm" lacks all of the horizontal lines
+% The top lines are in the  "captionof" redefinition below and the trailing
+% line is here
+\algrenewcommand\ALG@endalgorithmic{\Statex[-1]\hrulefill}
+
+\usepackage{xpatch}
+% too many fractions in the algorithms
+% TODO: do it individually per case
+\xpatchcmd{\algorithmic}{\itemsep\z@}{\itemsep=.25ex}{}{}
+\makeatother
+
+
+% shamelessly stolen from http://tex.stackexchange.com/questions/53357/switch-cases-in-algorithmic
+% New definitions
+\algnewcommand\algorithmicswitch{\textbf{switch}}
+\algnewcommand\algorithmiccase{\textbf{case}}
+\algnewcommand\algorithmicdefault{\textbf{default}}
+
+\newcommand{\longsub}[1]{\text{\textit{\scriptsize{#1}}}}
+\newcommand{\RETURN}{\State \textbf{return} }
+\newcommand{\Break}{\State \textbf{break} }
+\newcommand{\Continue}{\State \textbf{continue} }
+
+% New "environments"
+\algdef{SE}[SWITCH]{Switch}{EndSwitch}[1]{\algorithmicswitch\ #1\ \algorithmicdo}{\algorithmicend\ \algorithmicswitch}%
+\algdef{SE}[CASE]{Case}{EndCase}[1]{\algorithmiccase\ #1}{\algorithmicend\ \algorithmiccase}%
+\algdef{SE}[DEFAULT]{Default}{EndDefault}[1]{\algorithmicdefault\ #1}{\algorithmicend\ \algorithmicdefault}%
+\algtext*{EndSwitch}%
+\algtext*{EndCase}%
+
+\algdef{SE}[DOWHILE]{Do}{doWhile}{\algorithmicdo}[1]{\algorithmicwhile\ #1}
+
+
+\makeatletter
+\def\hrulefillthick{\leavevmode\leaders\hrule height .85pt\hfill\kern\z@}
+\makeatother
+% shamelessly stolen from http://tex.stackexchange.com/questions/33866/algorithm-tag-and-page-break
+\usepackage[font=small,labelfont=bf,width=.8\linewidth]{caption}
+\DeclareCaptionFormat{algor}{%
+  \hrulefillthick\par\offinterlineskip\vskip2pt%
+     \textbf{#1#2}#3\offinterlineskip\hrulefill}
+\DeclareCaptionStyle{algori}{singlelinecheck=off,format=algor,labelsep=space}
+\captionsetup[algorithm]{style=algori}
+%Still necessary?
+\MakeRobust{\Call}
+
+\usepackage{tikz}
+\usetikzlibrary{shapes.arrows,chains,patterns,snakes, backgrounds,trees,calc}
+
+\usepackage{longtable}
+
+% http://tex.stackexchange.com/questions/77996/how-to-show-a-hint-when-lstlisting-is-breaking-page
+\usepackage[framemethod=tikz]{mdframed}
+% define the frame style for the listing:
+\mdfdefinestyle{note}
+  {
+    hidealllines = true,
+    skipabove    = .5\baselineskip,
+    skipbelow    = .5\baselineskip,
+    singleextra  = {},
+    firstextra   = {
+      \node[below right,overlay,align=center,font=\continuingfont]
+        at (O) {\continuingtext};
+    },
+    secondextra  = {
+      \node[above right,overlay,align=center,font=\continuingfont]
+        at (O |- P) {\continuedtext};
+    },
+    middleextra  = {
+      \node[below right,overlay,align=center,font=\continuingfont]
+        at (O) {\continuingtext};
+      \node[above right,overlay,align=center,font=\continuingfont]
+        at (O |- P) {\continuedtext};
+    }
+  }
+\newcommand*\continuingfont{\footnotesize\itshape}
+\newcommand*\continuingtext{\hspace{2em}Listing continues on next page}
+\newcommand*\continuedtext{\hspace{2em}Continuing from last page}
+% the trick with mdframed writes over the footnote-line,
+% this lowers the footnote
+\setlength{\skip\footins}{5ex}
+
+\lstdefinelanguage{pari}%
+  {morekeywords={int, real, intmod, frac, ffelt, complex, padic, quad, polmod,%
+   pol, ser, rfrac, qfr, qfi, vec, col, mat, list, str, vecsmall, closure,%
+   Catalan, Euler, I, oo, Pi, breakloop, colors, compatible, datadir, debug,%
+   debugfiles, debugmem, echo, factor_add_primes, factor_proven, format,%
+   graphcolormap, graphcolors, help, histfile, histsize, lines, linewrap,%
+   log, logfile, nbthreads, new_galois_format, output, parisize, parisizemax,%
+   path, prettyprinter, primelimit, prompt, prompt_cont, psfile, readline,%
+   realbitprecision, realprecision, recover, secure, seriesprecision,%
+   simplify, sopath, strictargs, strictmatch, TeXstyle, threadsize,%
+   threadsizemax, timer, abs, acosh, acos, addhelp, addprimes, agm, alarm,%
+   algabsdim, algadd, algalgtobasis, algaut, algbasis, algbasistoalg, algb,%
+   algcenter, algcentralproj, algchar, algcharpoly, algdecomposition,%
+   algdegree, algdep, algdim, algdisc, algdivl, algdivr, alggroup,%
+   alghassef, alghassei, alghasse, algindex, alginit, alginvbasis, alginv,%
+   algisassociative, algiscommutative, algisdivision, algisdivl, algisinv,%
+   algisramified, algissemisimple, algissimple, algissplit, alglathnf,%
+   algleftmultable, algmul, algmultable, algneg, algnorm, algpoleval, algpow,%
+   algprimesubalg, algquotient, algradical, algramifiedplaces, algrandom,%
+   algrelmultable, algsimpledec, algsplittingdata, algsplittingfield,%
+   algsplittingmatrix, algsqr, algsubalg, algsub, algtableinit, algtensor,%
+   algtrace, algtype, alias, allocatemem, apply, arg, asinh, asin, asympnum,%
+   atanh, atan, bernfrac, bernpol, bernreal, bernvec, besselh1, besselh2,%
+   besseli, besseljh, besselj, besselk, besseln, bestappr, bestapprPade,%
+   bezout, bezoutres, bigomega, binary, binomial, bitand, bitnegimply,%
+   bitneg, bitor, bitprecision, bittest, bitxor, bnfcertify, bnfcompress,%
+   bnfdecodemodule, bnfinit, bnfisintnorm, bnfisnorm, bnfisprincipal,%
+   bnfissunit, bnfisunit, bnfnarrow, bnfsignunit, bnfsunit, bnrchar,%
+   bnrclassno, bnrclassnolist, bnrconductor, bnrconductorofchar, bnrdisc,%
+   bnrdisclist, bnrgaloisapply, bnrgaloismatrix, bnrinit, bnrisconductor,%
+   bnrisgalois, bnrisprincipal, bnrL1, bnrrootnumber, bnrstark, break,%
+   breakpoint, call, Catalan, ceil, centerlift, characteristic, charconj,%
+   chardiv, chareval, charker, charmul, charorder, charpoly, chinese, clone,%
+   cmp, Col, Colrev, component, concat, conj, conjvec, content, contfraceval,%
+   contfracinit, contfrac, contfracpnqn, copy, coredisc, core, cosh, cos,%
+   cotanh, cotan, dbg_down, dbg_err, dbg_up, dbg_x, default, denominator,%
+   deriv, derivnum, diffop, digits, dilog, dirdiv, direuler, dirmul,%
+   dirzetak, divisors, divrem, eint1, elladd, ellak, ellanalyticrank, ellan,%
+   ellap, ellbil, ellcard, ellchangecurve, ellchangepointinv, ellchangepoint,%
+   ellconvertname, elldivpol, elleisnum, elleta, ellformaldifferential,%
+   ellformalexp, ellformallog, ellformalpoint, ellformalw, ellfromeqn,%
+   ellfromj, ellgenerators, ellglobalred, ellgroup, ellheegner, ellheight,%
+   ellheightmatrix, ellidentify, ellinit, ellisdivisible, ellisogenyapply,%
+   ellisogeny, ellisomat, ellisoncurve, ellissupersingular, ellj, ellL1,%
+   elllocalred, elllog, elllseries, ellminimalmodel, ellminimaltwist,%
+   ellmoddegree, ellmodulareqn, ellmul, ellneg, ellnonsingularmultiple,%
+   ellorder, ellordinate, ellpadicfrobenius, ellpadicheight,%
+   ellpadicheightmatrix, ellpadicL, ellpadiclog, ellpadics2, ellperiods,%
+   ellpointtoz, ellpow, ellrootno, ellsea, ellsearch, ellsigma, ellsub,%
+   elltaniyama, elltatepairing, elltors, elltwist, ellweilpairing, ellwp,%
+   ellxn, ellzeta, ellztopoint, erfc, errname, error, eta, Euler, eulerphi,%
+   eval, exp, expm1, extern, externstr, factorback, factorcantor, factorff,%
+   factorial, factorint, factor, factormod, factornf, factorpadic, ffgen,%
+   ffinit, fflog, ffnbirred, fforder, ffprimroot, fibonacci, floor, fold,%
+   forcomposite, fordiv, forell, for, forpart, forprime, forqfvec, forstep,%
+   forsubgroup, forvec, frac, fromdigits, galoisexport, galoisfixedfield,%
+   galoisgetpol, galoisidentify, galoisinit, galoisisabelian, galoisisnormal,%
+   galoispermtopol, galoissubcyclo, galoissubfields, galoissubgroups,%
+   gammah, gamma, gammamellininvasymp, gammamellininvinit, gammamellininv,%
+   gcdext, gcd, genus2red, getabstime, getenv, getheap, getrand, getstack,%
+   gettime, getwalltime, global, hammingweight, hilbert, hyperellcharpoly,%
+   hyperellpadicfrobenius, hyperu, idealadd, idealaddtoone, idealappr,%
+   idealchinese, idealcoprime, idealdiv, idealfactorback, idealfactor,%
+   idealfrobenius, idealhnf, idealintersect, idealinv, ideallistarch,%
+   ideallist, ideallog, idealmin, idealmul, idealnorm, idealnumden, idealpow,%
+   idealprimedec, idealprincipalunits, idealramgroups, idealred, idealstar,%
+   idealtwoelt, idealval, iferr, if, I, imag, incgamc, incgam, inline, input,%
+   install, intcirc, intformal, intfuncinit, intnumgaussinit, intnumgauss,%
+   intnuminit, intnum, intnumromb, isfundamental, ispolygonal, ispowerful,%
+   ispower, isprime, isprimepower, ispseudoprime, ispseudoprimepower,%
+   issquarefree, issquare, istotient, kill, kronecker, lambertw, lcm,%
+   length, lex, lfunabelianrelinit, lfunan, lfunartin, lfuncheckfeq,%
+   lfunconductor, lfuncost, lfuncreate, lfundiv, lfunetaquo, lfungenus2,%
+   lfunhardy, lfuninit, lfun, lfunlambda, lfunmfspec, lfunmul, lfunorderzero,%
+   lfunqf, lfunrootres, lfunthetacost, lfunthetainit, lfuntheta, lfunzeros,%
+   liftall, liftint, lift, liftpol, limitnum, lindep, listcreate, listinsert,%
+   List, listkill, listpop, listput, listsort, lngamma, localbitprec, local,%
+   localprec, logint, log, mapdelete, mapget, mapisdefined, Map, mapput,%
+   matadjoint, matalgtobasis, matbasistoalg, matcompanion, matconcat,%
+   matdetint, matdet, matdiagonal, mateigen, matfrobenius, mathess,%
+   mathilbert, mathnf, mathnfmodid, mathnfmod, mathouseholder, matid,%
+   matimagecompl, matimage, matindexrank, matintersect, matinverseimage,%
+   matisdiagonal, matkerint, matker, Mat, matmuldiagonal, matmultodiagonal,%
+   matpascal, matqr, matrank, matrix, matrixqz, matsize, matsnf, matsolve,%
+   matsolvemod, matsupplement, mattranspose, max, min, minpoly, Mod,%
+   modreverse, moebius, msatkinlehner, mscuspidal, mseisenstein, mseval,%
+   msfromcusp, msfromell, msfromhecke, msgetlevel, msgetsign, msgetweight,%
+   mshecke, msinit, msissymbol, msnew, msomseval, mspadicinit, mspadicL,%
+   mspadicmoments, mspadicseries, mspathgens, mspathlog, msqexpansion,%
+   mssplit, msstar, mstooms, my, newtonpoly, next, nextprime, nfalgtobasis,%
+   nfbasis, nfbasistoalg, nfcertify, nfcompositum, nfdetint, nfdisc,%
+   nfeltadd, nfeltdiveuc, nfeltdiv, nfeltdivmodpr, nfeltdivrem, nfeltmod,%
+   nfeltmul, nfeltmulmodpr, nfeltnorm, nfeltpow, nfeltpowmodpr, nfeltreduce,%
+   nfeltreducemodpr, nfelttrace, nfeltval, nffactorback, nffactor,%
+   nffactormod, nfgaloisapply, nfgaloisconj, nfgrunwaldwang, nfhilbert,%
+   nfhnf, nfhnfmod, nfinit, nfisideal, nfisincl, nfisisom, nfkermodpr,%
+   nfmodprinit, nfnewprec, nfroots, nfrootsof1, nfsnf, nfsolvemodpr,%
+   nfsplitting, nfsubfields, norm, norml2, normlp, numbpart, numdiv,%
+   numerator, numtoperm, O, omega, oo, padicappr, padicfields, padicprec,%
+   parapply, pareval, parfor, parforprime, parforvec, parselect, parsum,%
+   partitions, parvector, permtonum, Pi, plotbox, plotclip, plotcolor,%
+   plotcopy, plotcursor, plotdraw, ploth, plothraw, plothsizes, plotinit,%
+   plot, plotkill, plotlines, plotlinetype, plotmove, plotpointsize,%
+   plotpoints, plotpointtype, plotrbox, plotrecth, plotrecthraw, plotrline,%
+   plotrmove, plotrpoint, plotscale, plotstring, polchebyshev, polclass,%
+   polcoeff, polcompositum, polcyclofactors, polcyclo, poldegree, poldisc,%
+   poldiscreduced, polgalois, polgraeffe, polhensellift, polhermite,%
+   polinterpolate, poliscyclo, poliscycloprod, polisirreducible, Pol,%
+   pollead, pollegendre, polmodular, polrecip, polredabs, polredbest,%
+   polred, polredord, polresultantext, polresultant, Polrev, polrootsff,%
+   polroots, polrootsmod, polrootspadic, polrootsreal, polsturm, polsubcyclo,%
+   polsylvestermatrix, polsym, poltchebi, poltschirnhaus, polylog, polzagier,%
+   powers, precision, precprime, prime, primepi, primes, print1, printf,%
+   print, printsep1, printsep, printtex, prodeuler, prodinf, prod, psdraw,%
+   psi, psploth, psplothraw, qfautoexport, qfauto, qfbclassno, qfbcompraw,%
+   qfbhclassno, qfbil, Qfb, qfbnucomp, qfbnupow, qfbpowraw, qfbprimeform,%
+   qfbred, qfbredsl2, qfbsolve, qfgaussred, qfisominit, qfisom, qfjacobi,%
+   qflllgram, qflll, qfminim, qfnorm, qforbits, qfparam, qfperfection,%
+   qfrep, qfsign, qfsolve, quadclassunit, quaddisc, quadgen, quadhilbert,%
+   quadpoly, quadray, quadregulator, quadunit, quit, ramanujantau, random,%
+   randomprime, read, readstr, readvec, real, removeprimes, return,%
+   rnfalgtobasis, rnfbasis, rnfbasistoalg, rnfcharpoly, rnfconductor,%
+   rnfdedekind, rnfdet, rnfdisc, rnfeltabstorel, rnfeltdown, rnfeltnorm,%
+   rnfeltreltoabs, rnfelttrace, rnfeltup, rnfequation, rnfhnfbasis,%
+   rnfidealabstorel, rnfidealdown, rnfidealfactor, rnfidealhnf,%
+   rnfidealmul, rnfidealnormabs, rnfidealnormrel, rnfidealprimedec,%
+   rnfidealreltoabs, rnfidealtwoelt, rnfidealup, rnfinit, rnfisabelian,%
+   rnfisfree, rnfisnorminit, rnfisnorm, rnfkummer, rnflllgram, rnfnormgroup,%
+   rnfpolredabs, rnfpolredbest, rnfpolred, rnfpseudobasis, rnfsteinitz,%
+   round, select, self, seralgdep, serconvol, Ser, serlaplace, serprec,%
+   serreverse, setbinop, setintersect, setisset, Set, setminus, setrand,%
+   setsearch, setunion, shift, shiftmul, sigma, sign, simplify, sinc, sinh,%
+   sin, sizebyte, sizedigit, solve, solvestep, sqr, sqrtint, sqrt, sqrtnint,%
+   sqrtn, stirling, Strchr, Strexpand, Str, Strprintf, Strtex, subgrouplist,%
+   subst, substpol, substvec, sumalt, sumdedekind, sumdigits, sumdiv,%
+   sumdivmult, sumformal, suminf, sum, sumnuminit, sumnum, sumnummonieninit,%
+   sumnummonien, sumpos, system, tanh, tan, taylor, teichmuller, theta,%
+   thetanullk, thueinit, thue, trace, trap, truncate, type, unclone,%
+   uninline, until, valuation, varhigher, variable, variables, varlower,%
+   vecextract, Vec, vecmax, vecmin, Vecrev, vecsearch, Vecsmall, vecsort,%
+   vecsum, vector, vectorsmall, vectorv, version, warning, weber, whatnow,%
+   while, write1, writebin, write, writetex, zeta, zetamult, zncharinduce,%
+   zncharisodd, znconreychar, znconreyconductor, znconreyexp, znconreylog,%
+   zncoppersmith, znlog, znorder, znprimroot, znstar,%
+   },%
+   sensitive,%
+   morecomment=[s]{/*}{*/},%
+   morecomment=[l]\\\\,% nonstandard
+   morestring=[b]",%
+   morestring=[b]',%
+  }
+
+
+\lstdefinestyle{code}{
+   extendedchars=true,
+   basicstyle=\footnotesize\ttfamily,
+   showstringspaces=false,
+   showspaces=false,
+%   numbers=left,
+%   numberstyle=\scriptsize,
+%   numbersep=5pt,
+   tabsize=2,
+   breaklines=true,
+   showtabs=false,
+%   captionpos=b,
+   xleftmargin=.2\textwidth, xrightmargin=.2\textwidth,
+   frame=lines
+%   texcl= true
+}
+
+\lstdefinestyle{widercode}{
+   extendedchars=true,
+   basicstyle=\footnotesize\ttfamily,
+   showstringspaces=false,
+   showspaces=false,
+%   numbers=left,
+%   numberstyle=\scriptsize,
+%   numbersep=5pt,
+   tabsize=2,
+   breaklines=true,
+   showtabs=false,
+%   captionpos=b,
+   xleftmargin=.05\textwidth, xrightmargin=.05\textwidth,
+   frame=lines
+%   texcl= true
+}
+
+
+\lstnewenvironment{pblisting}[1]
+  {%
+    \lstset{style=widercode,#1}%
+    \mdframed[style=note]%
+  }
+  {%
+    \endmdframed
+  }
+
+
+
+
+
+\ifpdf
+\pdfcompresslevel=9
+\pdfinfo{
+   /Title      (LibTomMath's Algorithms: Integer Logarithm)
+   /Author     (Christoph Zurnieden)
+   /Keywords   (arbitrary-precision algorithm libtommath libtom logarithm)
+}
+\fi
+
+
+\providecommand{\abs}[1]{\left\lvert#1\right\rvert}
+\providecommand{\floor}[1]{\left\lfloor#1\right\rfloor}
+\providecommand{\ceil}[1]{\left\lceil#1\right\rceil}
+
+\DeclareMathOperator{\sgn}{sgn}
+% fixed point logarithm
+\DeclareMathOperator{\fplog}{fplog}
+% bit count function
+\DeclareMathOperator{\bitcount}{bits}
+
+\providecommand{\Mmax}{\textrm{M}_{\textrm{max}}}
+\providecommand{\errore}{\boldsymbol{\epsilon}}
+\providecommand{\errorvare}{\boldsymbol{\varepsilon}}
+
+%Idea shameslessly stolen from https://tex.stackexchange.com/questions/173899/fractions-with-large-elements
+\newcommand\ddfrac[2]{\frac{\displaystyle #1}{\displaystyle #2}}
+
+
+
+% And I wondered if I'll ever need it
+\theoremstyle{plain} % is said to be the default
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem{cor}[thm]{Corollary}
+
+
+\theoremstyle{definition}
+\newtheorem{defn}{Definition}[section]
+\newtheorem{conj}{Conjecture}[section]
+\newtheorem{exmp}{Example}[section]
+\newtheorem{proofsec}{Part}
+\makeatletter
+\@addtoreset{proofsec}{thm}
+\makeatother
+
+\theoremstyle{remark}
+\newtheorem*{rem}{Remark}
+\newtheorem*{note}{Note}
+\newtheorem{case}{Case}
+
+
+
+
+
+% Meh. And it even needs a {} at the end. Or one of the many tricks at tex.stackexchange.com
+\newcommand{\libtommath}{\textsc{Lib\kern -1pt T\kern -1.2pt om\kern -0.6pt M\kern -0.6pt a\kern -0.9pt t\kern -0.4pt h}}
+% to get subsubsection numbered, too
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+
+\begin{document}
+\title{LibTomMath's Algorithms: Integer Logarithm $\floor{\log_b(a)}$}
+\author{Christoph Zurnieden\\
+        \small{\texttt{$<$czurnieden@gmx.de$>$}}}
+\date{Last change: \today}
+\maketitle
+
+
+\begin{abstract}
+Description and proof of correctness of the new algorithm for the function
+\begin{center}
+ \texttt{mp\_log(const mp\_int *a, const mp\_int *base, int *c)}
+\end{center}
+to compute $\floor{\log_b(a)}$.
+\end{abstract}
+
+% \section{Introduction} Nuh, none needed, or do we?
+\section{Reason for the Change of Algorithm}
+\libtommath's function \texttt{mp\_log\_u32(const mp\_int *a, uint32\_t base, uint32\_t *c)} to
+compute $\floor{\log_b(a)}$ has a small bug in its design: the last computation of the trial
+exponent $b^{c'}$ can overflow without a simple way to make use of it. That the function accepts
+small bases only is not as big a bug as the overflow problem but still an unnecessary restriction.
+
+\section{New Algorithm}
+
+\subsection{Summary}\label{sec:summary}
+The common way to compute $\log_b(a)$ is using the identity $\log_b(a) = \log(a)/\log(b)$
+where $\log(x) = \int_1^x t^{-1}\textrm{d}t$, the natural logarithm. This identity also holds
+for other bases $\log_b(a) = \log_x(a) / \log_x(b)$ if $x \in \mathbb{C}\setminus\{0,1\}$ and
+we can use the base that is ideal for a binary number system: base $2$.
+
+With a way to quickly compute an approximation $d + \Delta_d = \floor{\log_b(a)}$ we can
+compare $a$ with $b^d$ and correct by a small amount of multiplications by $b$ or $1/b$
+respectively. This is only useful if $\Delta_d$ is small but
+we will show that $\Delta_d \in \{-1, 0, 1\}$ and only the exponentiation $b^d$ plus at most
+one multiplication by $b$ is necessary.
+
+\subsection{Domain and Range}
+If we work with logarithms we have to obey their rules leading to some restrictions
+regarding the input.
+The absolutely necessary restrictions are the expected mathematical ones.
+\begin{itemize}
+\item{$a,b\in\mathbb{N}$ because it is an integer logarithm}
+\item{$b > 1$ because integer bases smaller than $2$ are problematic}
+\item{$a > 0$ because of $\lim_{x\to 0^+} = -\infty$, the singularity at $\log(0)$}
+\item{$a,b \le \Mmax$ where $\Mmax$ is the largest possible
+      number in \libtommath}
+\item{$b^{\log_b(a)} \le \Mmax$ but we can catch the overflow and use the information}
+\end{itemize}
+There are some shortcuts available, of course. Some of them are necessary to allow the
+algorithm \ref{alg:intlog} to work.
+\begin{itemize}
+\item{$b > 2 \wedge b \not= 2^k \wedge k > 0$ because we can safely assume
+              $\floor{log_2(b)} < \log_2(b)$ in that case because $\floor{log_2(b)}$
+              will be irrational.}
+\item{$a > 1$ because $\log_b(1) = 0$}
+\item{$a > b$ because $\log_b(b) = 1$}
+\item{$a \ge b^2$ because $\floor{\log_b(b^2 - k)} \le 1$. It does not need to be exact,
+                a bit-count with some angst-allowance will do}
+\end{itemize}
+The conditions $b>2$, $a,b \le \Mmax$ and $b^{\log_b(a)} \le \Mmax$ limit
+the range to $[0\ldotp \ldotp \floor{\log_3(\Mmax}]$ which will fit in an \texttt{int}
+in \libtommath{} by the definition of \texttt{size} in \texttt{struct mp\_int} in the file
+\texttt{tommath.h}.
+
+\section{Implementation}
+\subsection{First Version}
+%Algorithm \ref{alg:intlog} as described in section \ref{sec:summary} in pseudocode:
+\begin{center}
+  \captionof{algorithm}{log\label{alg:intlog}}
+  \begin{algorithmic}[1]
+    \Require{$a,b \in\mathbf{N} \wedge b > 2 \wedge a > b \wedge b \not= 2^n$}
+    \Ensure{$\floor{\log_b a}$}
+    \Function{integer\_logarithm}{$a,b,n$}
+       \Let{$p$}{Precision of the fixed point number, See Lemma \ref{lem:fplog2sizeofp} for the appropriate value}
+       \Let{$L_a$}{$\fplog_{(2,p)}\left(a\right)$}
+       \Let{$L_b$}{$\fplog_{(2,p)}\left(b\right)$}
+       \Let{$q$}{$\floor{L_a / L_b}$}\label{alg:line:approxdiv}\Comment{First approximation}
+       \Let{$P$}{$b^q$}
+       \If{$P > \Mmax$}
+          \RETURN{Error: overflow}
+       \EndIf
+       \If{$P = a$} \Comment{Input $a$ is a perfect power}
+          \RETURN{$q$}
+       \EndIf
+       \If{$P < a$}\label{alg:line:cormul}
+          \Do
+             \Let{$P$}{$P\cdot b$}
+             \Let{$q$}{$q + 1$}
+          \doWhile{$P \le a$}
+          \If{$P = a$}\Comment{Input $a$ was a perfect power}
+             \RETURN{$q$}
+          \Else
+             \RETURN{$q - 1$}
+          \EndIf
+       \EndIf
+       \If{$P > a$}\label{alg:line:cordiv}
+          \Do
+             \Let{$P$}{$P / b$} \Comment{Exact division}
+             \Let{$q$}{$q - 1$}
+          \doWhile{$P > a$}
+          \RETURN{$q$}
+       \EndIf
+    \EndFunction
+  \end{algorithmic}
+\end{center}
+A short description of the algorithm of choice for the fixed point logarithm function is in
+appendix \ref{sec:binlogturner}, we only need the formal description for now. The domain of
+the fixed point logarithm function itself is restricted to the input $1 \le x < 2$ and we
+need a form of argument reduction to complete the function. Luckily for a binary logarithm
+function working in a binary number system a simple bit-count will suffice.
+\begin{defn}\label{def:fplog2}
+With $\bitcount(n) = \floor{\log_2(n)}$ the definition of the fixed-point logarithm function is:
+\begin{equation} \label{eq:fixedpointbinlog}
+\fplog_{(2,p)}(n) = \begin{cases} \floor{2^p\log_2\left(n\right)}&\textrm{if } n\le 2^p\\
+ 2^p\bitcount(n) + \biggl\lfloor2^p\log_2\floor{\ddfrac{n}{2^{\bitcount(n) - p}}}\biggr\rfloor & \textrm{if } n > 2^p
+\end{cases}
+\end{equation}
+\end{defn}
+\begin{lem}\label{lem:fperror}
+The function $\fplog_{(2,p)}(n)$ has an error of $\errore < 2^{-p}$ \citep{majithia1973note}
+for the re-scaled fixed point result which ensures $2^p\log_2(x) - \fplog_{(2,p)}(x) < 1$.
+\end{lem}
+\begin{proof}
+For $2^k < x < 2^{k+1}$ and $p > 0$ we have 
+$k2^p = 2^p\floor{\log_2(x)} \le \fplog_{(2,p)}(x) < 2^p\log_2(x) < (k+1)2^p$
+and hence $2^p\log_2(x) - \fplog_{(2,p)}(x) < 1$.
+\end{proof}
+The precision $p$ should be high enough to minimize the error but low enough to keep the
+run-time in an acceptable range.
+\begin{lem}\label{lem:fplog2sizeofp}
+It is sufficient to set $p = \ceil{\log_2 (\ceil{\log_2 (\Mmax)})}$ for $\fplog_{(2,p)}(n)$ to work
+over the whole domain.
+\end{lem}
+\begin{proof}
+The exact size of $\Mmax$ in \libtommath{} is dependent on the architecture because it
+must be able to hold a standard C \texttt{int} which is defined \citep{9899:2018} in \texttt{limits.h}
+as \texttt{INT\_MAX} with a minimum size of $-1 + 2^{15}$ although $-1 + 2^{31}$ is the value for almost
+all modern architectures. Generalizing it to $\Mmax = -1 + 2^{-1 + 2^k}$ with $k>0$ we have 
+$\floor{\log_2(\Mmax+1)} = 2^k$, $\floor{\log_2(\floor{\log_2(\Mmax+1)} +1)} = k$
+for the same reason and because $2^{2^k} > \Mmax$ it is sufficient to set $p=k$.
+\end{proof}
+\begin{note}\label{note:sizeofresult2p}
+The data type to hold the result of $\fplog2_{(2,p)}(\Mmax)$ needs to be able to
+hold $2^{2p}$.
+\end{note}
+
+
+\begin{thm}\label{thm:logba}
+Algorithm \ref{alg:intlog} computes $\floor{\log_b a}$ with $a,b \in\mathbf{N} \wedge b > 2 \wedge a > b$.
+\end{thm}
+\begin{proof}\label{proof:logba}
+\begin{proofsec}\label{proofsec:approximationdefined}
+The conditions $a,b \in\mathbf{N} \wedge b > 2 \wedge a > b$ ensure that $\floor{\log_2 a} > 0$ and $\floor{\log_2 b} > 0$. The division
+computing the first approximation $\floor{L_a / L_b}$ at line \ref{alg:line:approxdiv} is defined because $b > 2$ and 
+hence $L_b = \floor{log_2(b)} > 0$. Also $q=\floor{L_a / L_b} \ge 1$ because $a > b > 2$.
+\end{proofsec}
+\begin{proofsec}\label{proofsec:termination}
+The finite precision of the fixed point binary logarithm together with the truncated division
+introduces the error $a = b^{q + \errore}$ with $\errore \in\mathbf{Z}$.
+\begin{itemize}
+\item{With $\errore = 0$ the input $a$ is a perfect power and we can return $q$ and terminate}
+\item{If $\errore > 0$ than $b^q > a$ and we need to compute $b^{q - \errore}$. The exact value of $\errore$ is unknown,
+       we need to to divide by $b$ iteratively until $b^q \le a$ and return $q$.
+       As shown above $q \ge 1$ and because of $a > b$ we always have $b^1 < a$ and hence the loop terminates}
+\item{If $\errore < 0$ than $b^q < a$ and we need to compute $b^{q + \errore}$. The exact value of $\errore$ is unknown,
+      we need to multiply with $b$ iteratively until $b^q = a$ and return $q$ or until $b^q > a$ and return $q - 1$.
+      At one point $b^q \ge a$ and the iteration-loop terminates}
+\end{itemize}
+\end{proofsec}
+\end{proof}
+
+\begin{cor}\label{cor:deltaisone}
+The numerical value of the error $\errore$ in theorem \ref{thm:logba} is in $\{-1, 0, 1\}$.
+\end{cor}
+\begin{proof}\label{proof:deltaisone}
+\begin{proofsec}\label{proofsec:lalbratio}
+With the conditions $a > b$, $b > 2$, and the size of $p$ chosen as described in
+\ref{lem:fplog2sizeofp} we have $L_a < 2^{2p}$ and $L_b > 2^p$ so $L_b^2 > L_a $.
+\end{proofsec}
+\begin{proofsec}
+The error of $n = \fplog_{(2,p)}(x)$ is $\Delta_n \in {-1, 0}$ according to the
+definition \ref{def:fplog2}, so the largest and the smallest value of
+$(a+\Delta_a)/(b + \Delta_b)$ are $(a)/(b-1)$
+and $(a-1)/(b)$ under the condition $a>b$. The differences to the correct value of $a/b$ are
+\begin{align}
+\frac{a}{b} - \frac{a-1}{b} &= \frac{1}{b}\\
+\frac{a}{b-1} - \frac{a}{b} &= \frac{a}{b^2 - b)}
+\end{align}
+
+
+With $a \le b^2 - b$ the largest difference is at most $1$ and
+\begin{align}
+\abs{\floor{(a-1)/b} - a/b} &\le 1\\
+\abs{\floor{a/(b-1)} - a/b} &\le 1
+\end{align}
+\end{proofsec}
+Replace $b$ in $b^2 - b$ with $2^p$ to get $2^{2p} - 2^p$ and let
+$L_M =\floor{\log_2(\Mmax)} = -2 + 2^k$.
+Apply scaling to get $L_a \le (-2 + 2^k)\cdot 2^p$. With $p = k$ as recommended in
+lemma \ref{lem:fplog2sizeofp} we have $L_a \le (-2 + 2^k)\cdot 2^k$, $L_b \ge 2^k$ and
+finaly
+\begin{alignat}{2}
+ L_M &= (-2 + 2^k)\cdot 2^k &=&\: 2^{2k} - 2^{k + 1}\\ 
+     &< L_b \cdot 2^p &=&\:  2^{2k} - 2^k.
+\end{alignat}
+\end{proof}
+
+
+\begin{lem}
+The computational complexity of algorithm \ref{alg:intlog}  is $\mathcal{O}(M(n \log x))$ with
+$M(m)$ the computational complexity of multiplication.
+\end{lem}
+\begin{proof}
+The computational complexity $E(x^n)$ to compute $x^n$ with the method of
+exponentiation by squaring is $\mathcal{O}(M(n \log x))$ where $M(m)$ is the computational complexity of
+multiplication \citep{knuth97seminum}. Here we compute $E(b^{n+k})$ where $k$ is the number of correcting
+multiplications with $\abs{k} = 1$.
+\end{proof}
+\subsection{Second Version}
+We can optimize algorithm \ref{alg:intlog} based on the fact that the error is at most $\pm 1$ by skipping
+the division in line \ref{alg:line:cordiv}ff.~and correct directly. The multiplication in line \ref{alg:line:cormul}
+is still necessary because there might be a hidden perfect power.
+
+It might also be a good idea to change the rounding mode in the main division in line \ref{alg:line:approxdiv}
+from ``truncating'' to ``to nearest, ties to $+\infty$'' to safe some corrective multiplications---about half
+in a test with random input, small and large.
+
+\begin{center}
+  \captionof{algorithm}{log\_optimized\label{alg:optintlog}}
+  \begin{algorithmic}[1]
+    \Require{$a,b \in\mathbf{N} \wedge b > 2 \wedge a > b \wedge b \not= 2^n$}
+    \Ensure{$\floor{\log_b a}$}
+    \Function{integer\_logarithm}{$a,b,n$}
+       \Let{$f_a$}{$\lfloor\log_2 a\rfloor$}
+       \Let{$f_b$}{$\lfloor\log_2 b\rfloor$}
+       \Let{$p$}{The number of fraction bits in the fixed point number used}
+       \Let{$L_a$}{$\fplog_{(2,p)}\left(a\right)$}
+       \Let{$L_b$}{$\fplog_{(2,p)}\left(b\right)$}
+       % do we even need safety against overflow?
+       \Let{$q$}{$\floor{(L_a - \floor{(L_b + 1)/2}) / L_b} + 1$}%
+           \Comment{Round to nearest without overflow}\label{alg:line:roundingdiv}
+       \Let{$P$}{$b^q$}
+       \If{$P > \Mmax$}
+          \Let{$q$}{$q - 1$}
+          \Let{$P$}{$b^q$} \Comment{Try again one time, cannot be more than one off}
+          \If{$P > \Mmax$}
+             \RETURN{Error: overflow} \Comment{Must be something grave}
+          \EndIf
+       \EndIf
+       \If{$P = a$}
+          \RETURN{$q$}
+       \EndIf
+       \If{$P < a$}
+          \Do
+             \Let{$P$}{$P\cdot b$}
+             \Let{$q$}{$q + 1$}
+          \doWhile{$P \le a$}
+          \If{$P = a$}
+             \RETURN{$q$}
+          \Else
+             \RETURN{$q - 1$}
+          \EndIf
+       \EndIf
+       \If{$P > a$}
+          \Let{$q$}{$q - 1$}\Comment{No actual division needed}
+          \RETURN{$q$}
+       \EndIf
+    \EndFunction
+  \end{algorithmic}
+\end{center}
+\begin{prop}
+The rounding in  algorithm \ref{alg:optintlog} at line \ref{alg:line:roundingdiv}
+does not increase the error $\errore$.
+\end{prop}
+\begin{proof}
+% no, that's a bit lacking, isn't it?
+It follows from corollary \ref{cor:deltaisone} that $\abs{\errore} \le 1$ and that
+any rounding up will not exceed the upper limit $1$ because
+$\floor{x} \le \floor{x + 1/2} \le \ceil{x}$.
+\end{proof}
+\begin{prop}
+The rounding in  algorithm \ref{alg:optintlog} at line \ref{alg:line:roundingdiv}
+does not overflow the data-type used for $L_a$ and $L_b$.
+\end{prop}
+\begin{proof}
+The two points at which $\floor{(L_a - \floor{(L_b + 1)/2}) / L_b} + 1$ can overflow
+are $L_b + 1$ but $L_a > L_b$ by definition. The second chance is the last addition
+of one but that addition happens after the division and cannot overflow because
+again $L_a > L_b$ and also $b > 2$ ensuring $L_a > 1$ and hence $\floor{L_a / L_b} < L_a$.
+\end{proof}
+\pagebreak
+\appendix
+\section{Fixed Point Binary Logarithm}\label{sec:binlogturner}
+
+There is no floating-point library available in \libtommath, it is even optional to include
+floating point data types in the first place we need to do everything in integer arithmetic
+which means fixed point arithmetic if we want to replace floating point types. We do not
+need a complete library; scaling will suffice to implement a working binary logarithm.
+
+There are many ways to do so: very fast algorithms based on the AGM\citep{bernstein2003computing},
+a lot of fast algorithms based on tables, ones based on some form of power series, algorithms
+based on a combination of different approaches which may or may not be fast\citep{mitchell1962computer},
+and also a method that just counts the bits that is not the fastest but it is very flexible with an
+easily determined error\citep{majithia1973note}. It is the last one that is of interest here for
+the very reasons listed above.
+
+Clay Turner described the method in his article \citep{turner2010fast}. It is shown in pseudocode
+\ref{alg:log2turner} and a version using fixed-point arithmetic\footnote{%
+The original algorithm as described by Clay Turner in his article has been designed for
+IEEE floating point numbers as standardized in ISO/IEC 754-2008 \citep{ieee7542008}.
+} in \ref{alg:log2fixedpoint}.
+
+\begin{center}
+  \captionof{algorithm}{log\_2\_turner\label{alg:log2turner}}
+  \begin{algorithmic}[1]
+    \Require{$x$, an IEEE floating point value with radix 2}
+    \Ensure{$\log_2\left(x\right)$}
+    \Function{log\_2\_turner}{$x$}
+    \Let{$y$}{$0$}
+    \Let{$b$}{$1/2$}
+    \Repeat 
+       \While{$x < 1$}
+          \Let{$x$}{$2x$}
+          \Let{$y$}{$y - 1$}
+       \EndWhile
+       \While{$x \ge 1$}
+          \Let{$x$}{$x/2$}
+          \Let{$y$}{$y + 1$}
+       \EndWhile
+    \Until{$1 \ge x < 2$}
+    \Let{$x$}{$x^2$}
+    \Repeat
+       \If{$x \ge 2$}
+          \Let{$x$}{$x/2$}
+          \Let{$y$}{$y + b$}
+       \EndIf
+       \Let{$b$}{$b/2$}
+    \Until { enough mantissa bits were found}
+    \RETURN { $y$}
+    \EndFunction
+  \end{algorithmic}
+\end{center}
+
+Porting it to use fixed point numbers is not a large problem but the number
+of fraction bits has to be given and the maximum size must not overflow
+the data type used. Pseudocode in \ref{alg:log2fixedpoint}.
+
+\begin{center}
+  \captionof{algorithm}{log\_2\_fixed\_point\label{alg:log2fixedpoint}}
+  \begin{algorithmic}[1]
+    \Require{$a > 0$, integer; $p > 0$, precision in bits}
+    \Ensure{$\floor{2^p\log_2\left(a\right)}$}
+    \Function{log\_2\_fixed\_point}{$a, p$}
+    \Let{$L$}{$\floor{\log_2\left(a\right)}$}\Comment{A bit-counting function}
+    \Let{$\overline{a}$}{$2^{\abs{p-L}}a$}
+    \Let{$b$}{$2^{p-1}$}
+    \Let{$L_{\textnormal{out}}$}{$2^{p}L$}
+    \Let{$i$}{$0$}
+    \For{$i < p$}
+       \Let{$\overline{a}$}{$\floor{\frac{\overline{a}^2}{2^p}}$}
+        \If{$\overline{a} \ge 2^{p + 1}$}
+           \Let{$\overline{a}$}{$\floor{\frac{\overline{a}}{2}}$}
+           \Let{$L_{\textnormal{out}}$}{$L_{\textnormal{out}} + b$}
+        \EndIf
+        \Let{$b$}{$\floor{\frac{b}{2}}$}
+        \Let{$i$}{$i + 1$}
+    \EndFor
+    \RETURN { $L_{\textnormal{out}}$}
+    \EndFunction
+  \end{algorithmic}
+\end{center}
+
+\section{Misc}
+
+If both the input $a$ and the precision $p$ are small a short benchmark run
+by the author with a complete big-integer implementation of algorithms \ref{alg:intlog}
+and \ref{alg:log2fixedpoint} showed that the difference is the largest for very small
+bases and in some edge-cases less than twice the run-time of the implementations
+with native data types. It almost evens out for larger input.
+
+The largest number tested was $a = -1 + (65535^134217700)$ with $b = 65535$. It took
+about 44 minutes for an elderly machine to compute $a$ using ca.~1 Gibibyte of memory
+and about 44 minutes to compute the logarithm using ca.~1 Gibibytes of memory.
+
+Pari/GP version 2.13.0 (stable) with x86-64/GMP-6.1.2 kernel needed about 23 seconds
+to compute $a$ but failed to compute the logarithm with the build-in \texttt{logint($a$,$b$)}
+by wanting more than 5 Gibibytes of memory after just 4 minutes, an amount the poor machine
+was not able to offer without sacrifices. A simple Pari/GP script like the one in
+\ref{parilogint} did the deed in the same time Pari/GP needed to compute $a$, as expected.
+
+\lstset{language=pari,style=code}
+\begin{pblisting}{caption={$\floor{\log_b(a)}$ as a Pari/GP script},label=parilogint}
+logintgp(x:int,base:int) = {
+   local(lx:real, lbase:real, flbx_approx:int, bn:int);
+
+   /* 2 * 64 + angst-allowance */
+   localbitprec(130);
+
+   lx = log(x);
+   lbase = log(base);
+
+   /*
+      Rounding is useful when it is proven that at most one
+      division is necessary with the precision above.
+    */
+   flbx_approx = round(lx/lbase);
+
+   bn = base^flbx_approx;
+
+   if(bn == x,
+      return(flbx_approx);
+   );
+   /* 
+      We need *either* at least one multiplication *or* at least
+      one division at this point.
+    */
+   if(bn < x,
+      while(bn < x,
+         bn = bn * base;
+         flbx_approx++;
+      );
+      /* bn == x was still possible here */
+      if(bn > x,
+         flbx_approx--;
+      );
+      return(flbx_approx);
+   );
+   /*
+    If the error is small enough only one division is needed.
+    The precision set above should be good enough for -1 +2^(2^64) bit
+    large numbers but there is some error propagation involved here,
+    a proper error analysis is necessary.
+   */
+   if(bn > x,
+      while(bn > x,
+         /* exact division*/
+         bn = bn / base;
+         flbx_approx--;
+      );
+      return(flbx_approx);
+    );
+    return(-1);
+}
+\end{pblisting}
+
+
+% Nuh, can go?
+%\section{Some Notes on Logarithms}\label{sec:someproofs}
+%\begin{lem}\label{lem:logirr}
+%The binary logarithm of every integer $n \not= 2^k$ is an irrational number.
+%\end{lem}
+%\begin{proof}\label{proof:logirr}
+%Let $\log_2 n = p/q$ with $p,q \in \mathbf{N}_{>0}$. Applying the third law of logarithms gives $n^q = 2^p$.
+%By the Fundamental Theorem of Arithmetic we have $n = 2^s$ with $s \in \mathbf{N}_{>0}$ to get $2^{sb} = 2^p$
+%and therefore $n = 2^s$.
+%\end{proof}
+%\begin{rem}\label{rem:logbirr}
+%It follows from lemma \ref{lem:logirr} that for any $b \in \mathbf{N} \wedge b > 1 \wedge \mu(b) \not= 0$ as a base $\log_b n$ is
+%irrational unless $n = b^k$.
+%\end{rem}
+\listofalgorithms
+%\listoftables
+%\listoffigures
+\lstlistoflistings
+
+\printbibliography[heading=bibintoc]
+\end{document}
+

@@ -414,7 +414,10 @@ mp_err mp_exteuclid(const mp_int *a, const mp_int *b, mp_int *U1, mp_int *U2, mp
 mp_err mp_lcm(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
 
 /* Integer logarithm to integer base */
-mp_err mp_log_n(const mp_int *a, int base, int *c) MP_WUR;
+mp_err mp_log_u32(const mp_int *a, uint32_t base, uint32_t *c) MP_WUR;
+
+/* Integer logarithm to bigint base */
+mp_err mp_log(const mp_int *a, const mp_int *base, int *c) MP_WUR;
 
 /* c = a**b */
 mp_err mp_expt_n(const mp_int *a, int b, mp_int *c) MP_WUR;
