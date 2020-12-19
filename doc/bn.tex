@@ -2343,7 +2343,7 @@ This function generates a random number of \texttt{digits} bits.
 
 The random number generated with these two functions is cryptographically secure if the source of
 random numbers the operating systems offers is cryptographically secure. It will use
-\texttt{arc4random()} if the OS is a BSD flavor, Wincrypt on Windows, or \texttt{/dev urandom} on
+\texttt{arc4random()} if the OS is a BSD flavor, Wincrypt on Windows, or \texttt{/dev/urandom} on
 all operating systems that have it.
 
 If you have a custom random source you might find the function \texttt(mp\_rand\_source) useful.
