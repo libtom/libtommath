@@ -2581,7 +2581,7 @@ mp_err mp_mod_d(const mp_int *a, mp_digit b, mp_digit *c);
 \end{alltt}
 
 These work like the full \texttt{mp\_int} capable variants except the second parameter $b$ is a
-\texttt{mp\_digit}.  These functions fairly handy if you have to work with relatively small numbers
+\texttt{mp\_digit}.  These functions come fairly handy if you have to work with relatively small numbers
 since you will not have to allocate an entire \texttt{mp\_int} to store a number like $1$ or $2$.
 
 The functions \texttt{mp\_incr} and \texttt{mp\_decr} mimic the postfix operators \texttt{++} and
