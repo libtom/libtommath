@@ -2346,7 +2346,7 @@ random numbers the operating systems offers is cryptographically secure. It will
 \texttt{arc4random()} if the OS is a BSD flavor, Wincrypt on Windows, or \texttt{/dev/urandom} on
 all operating systems that have it.
 
-If you have a custom random source you might find the function \texttt(mp\_rand\_source) useful.
+If you have a custom random source you might find the function \texttt{mp\_rand\_source()} useful.
 \index{mp\_rand\_source}
 \begin{alltt}
 void mp_rand_source(mp_err(*source)(void *out, size_t size));
