@@ -1264,7 +1264,7 @@ LBL_ERR:
 }
 /* stripped down version of mp_radix_size. The faster version can be off by up t
 o +3  */
-static mp_err s_rs(const mp_int *a, int radix, uint32_t *size)
+static mp_err s_rs(const mp_int *a, int radix, int *size)
 {
    mp_err res;
    int digs = 0u;
@@ -1292,11 +1292,11 @@ static mp_err s_rs(const mp_int *a, int radix, uint32_t *size)
    *size = digs + 1;
    return MP_OKAY;
 }
-static int test_mp_log_u32(void)
+static int test_mp_log_n(void)
 {
    mp_int a;
    mp_digit d;
-   uint32_t base, lb, size;
+   int base, lb, size;
    const int max_base = MP_MIN(INT_MAX, MP_DIGIT_MAX);
 
    DOR(mp_init(&a));
@@ -1308,9 +1308,9 @@ static int test_mp_log_u32(void)
    */
    mp_set(&a, 42u);
    base = 0u;
-   EXPECT(mp_log_u32(&a, base, &lb) == MP_VAL);
+   EXPECT(mp_log_n(&a, base, &lb) == MP_VAL);
    base = 1u;
-   EXPECT(mp_log_u32(&a, base, &lb) == MP_VAL);
+   EXPECT(mp_log_n(&a, base, &lb) == MP_VAL);
    /*
      base   a    result
       2     0    MP_VAL
@@ -1320,11 +1320,11 @@ static int test_mp_log_u32(void)
    */
    base = 2u;
    mp_zero(&a);
-   EXPECT(mp_log_u32(&a, base, &lb) == MP_VAL);
+   EXPECT(mp_log_n(&a, base, &lb) == MP_VAL);
 
    for (d = 1; d < 4; d++) {
       mp_set(&a, d);
-      DO(mp_log_u32(&a, base, &lb));
+      DO(mp_log_n(&a, base, &lb));
       EXPECT(lb == ((d == 1)?0:1));
    }
    /*
@@ -1336,11 +1336,11 @@ static int test_mp_log_u32(void)
    */
    base = 3u;
    mp_zero(&a);
-   EXPECT(mp_log_u32(&a, base, &lb) == MP_VAL);
+   EXPECT(mp_log_n(&a, base, &lb) == MP_VAL);
    for (d = 1; d < 4; d++) {
       mp_set(&a, d);
-      DO(mp_log_u32(&a, base, &lb));
-      EXPECT(lb == ((d < base)?0:1));
+      DO(mp_log_n(&a, base, &lb));
+      EXPECT(lb == (((int)d < base)?0:1));
    }
 
    /*
@@ -1350,8 +1350,8 @@ static int test_mp_log_u32(void)
    */
    DO(mp_rand(&a, 10));
    for (base = 2; base < 65; base++) {
-      DO(mp_log_u32(&a, base, &lb));
-      DO(s_rs(&a, (int)base, &size));
+      DO(mp_log_n(&a, base, &lb));
+      DO(s_rs(&a,(int)base, &size));
       /* radix_size includes the memory needed for '\0', too*/
       size -= 2;
       EXPECT(lb == size);
@@ -1363,8 +1363,8 @@ static int test_mp_log_u32(void)
    */
    DO(mp_rand(&a, 1));
    for (base = 2; base < 65; base++) {
-      DO(mp_log_u32(&a, base, &lb));
-      DO(s_rs(&a, (int)base, &size));
+      DO(mp_log_n(&a, base, &lb));
+      DO(s_rs(&a,(int)base, &size));
       size -= 2;
       EXPECT(lb == size);
    }
@@ -1373,7 +1373,7 @@ static int test_mp_log_u32(void)
    mp_set(&a, max_base);
    DO(mp_expt_n(&a, 10uL, &a));
    DO(mp_add_d(&a, max_base / 2, &a));
-   DO(mp_log_u32(&a, max_base, &lb));
+   DO(mp_log_n(&a, max_base, &lb));
    EXPECT(lb == 10u);
 
    mp_clear(&a);
@@ -1391,7 +1391,7 @@ static int test_mp_log(void)
    DOR(mp_init_multi(&a, &base, &bn, &t, NULL));
 
    /*
-      The small values got tested above for mp_log_u32 already, leaving the big stuff
+      The small values got tested above for mp_log_n already, leaving the big stuff
       with bases larger than INT_MAX.
    */
 
@@ -1445,6 +1445,7 @@ LBL_ERR:
    mp_clear_multi(&a, &base, &bn, &t, NULL);
    return EXIT_FAILURE;
 }
+
 
 static int test_mp_incr(void)
 {
@@ -2229,7 +2230,7 @@ static int unit_tests(int argc, char **argv)
       T1(mp_get_u32, MP_GET_I32),
       T1(mp_get_u64, MP_GET_I64),
       T1(mp_get_ul, MP_GET_L),
-      T1(mp_log_u32, MP_LOG_U32),
+      T1(mp_log_n, MP_LOG_N),
       T1(mp_log, MP_LOG),
       T1(mp_incr, MP_ADD_D),
       T1(mp_invmod, MP_INVMOD),

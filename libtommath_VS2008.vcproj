@@ -545,6 +545,10 @@
 			>
 		</File>
 		<File
+			RelativePath="mp_log_n.c"
+			>
+		</File>
+		<File
 			RelativePath="mp_log_u32.c"
 			>
 		</File>

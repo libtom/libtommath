@@ -69,6 +69,7 @@
 #   define MP_KRONECKER_C
 #   define MP_LCM_C
 #   define MP_LOG_C
+#   define MP_LOG_N_C
 #   define MP_LOG_U32_C
 #   define MP_LSHD_C
 #   define MP_MOD_C
@@ -497,6 +498,12 @@
 #   define S_MP_FP_LOG_2_C
 #endif
 
+#if defined(MP_LOG_N_C)
+#   define MP_CLEAR_C
+#   define MP_INIT_I32_C
+#   define MP_LOG_C
+#endif
+
 #if defined(MP_LOG_U32_C)
 #   define MP_CLEAR_C
 #   define MP_INIT_U32_C
@@ -709,7 +716,7 @@
 #endif
 
 #if defined(MP_RADIX_SIZE_C)
-#   define MP_LOG_U32_C
+#   define MP_LOG_N_C
 #endif
 
 #if defined(MP_RADIX_SIZE_OVERESTIMATE_C)

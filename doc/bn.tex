@@ -1944,19 +1944,17 @@ to a bigint and calls \texttt{mp\_log\_n}.
 mp_err mp_log(const mp_int *a, const mp_int *base, int *c)
 \end{alltt}
 
-\index{mp\_log\_u32}
+\index{mp\_log\_n}
 \begin{alltt}
 mp_err mp_log_u32(const mp_int *a, uint32_t base, uint32_t *c)
 \end{alltt}
 
 \subsection{Example}
-Example given for \texttt{mp\_log\_u32} only because the single difference is the type of \texttt{base}.
+Example given for \texttt{mp\_log\_n} only because the single difference is the type of \texttt{base}.
 \begin{small}
   \begin{alltt}
 #include <stdlib.h>
 #include <stdio.h>
-#include <stdint.h>
-#include <inttypes.h>
 #include <errno.h>
 
 #include <tommath.h>
@@ -1964,8 +1962,7 @@ Example given for \texttt{mp\_log\_u32} only because the single difference is th
 int main(int argc, char **argv)
 {
    mp_int x;
-   uint32_t base;
-   int output;
+   int base, output;
    mp_err e;
 
    if (argc != 3) {
@@ -1978,7 +1975,7 @@ int main(int argc, char **argv)
               exit(EXIT_FAILURE);
    }
    errno = 0;
-   base = (uint32_t)strtoul(argv[1], NULL, 10);
+   base = (int)strtoul(argv[1], NULL, 10);
 
    if (errno == ERANGE) {
       fprintf(stderr,"strtoul(l) failed: input out of range\textbackslash{}n");
@@ -1989,12 +1986,12 @@ int main(int argc, char **argv)
                       mp_error_to_string(e));
       exit(EXIT_FAILURE);
    }
-   if ((e = mp_log_u32(&x, base, &output)) != MP_OKAY) {
-      fprintf(stderr,"mp_log_u32 failed: \textbackslash{}"%s\textbackslash{}"\textbackslash{}n",
+   if ((e = mp_log_n(&x, base, &output)) != MP_OKAY) {
+      fprintf(stderr,"mp_log_n failed: \textbackslash{}"%s\textbackslash{}"\textbackslash{}n",
                       mp_error_to_string(e));
       exit(EXIT_FAILURE);
    }
-   printf("%" PRIu32 "\n",output);
+   printf("%d\n",output);
 
    mp_clear(&x);
    exit(EXIT_SUCCESS);

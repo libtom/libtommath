@@ -36,7 +36,7 @@ mp_error_to_string.o mp_exch.o mp_expt_n.o mp_exptmod.o mp_exteuclid.o mp_fread.
 mp_from_ubin.o mp_fwrite.o mp_gcd.o mp_get_double.o mp_get_i32.o mp_get_i64.o mp_get_l.o mp_get_mag_u32.o \
 mp_get_mag_u64.o mp_get_mag_ul.o mp_grow.o mp_init.o mp_init_copy.o mp_init_i32.o mp_init_i64.o mp_init_l.o \
 mp_init_multi.o mp_init_set.o mp_init_size.o mp_init_u32.o mp_init_u64.o mp_init_ul.o mp_invmod.o \
-mp_is_square.o mp_kronecker.o mp_lcm.o mp_log.o mp_log_u32.o mp_lshd.o mp_mod.o mp_mod_2d.o \
+mp_is_square.o mp_kronecker.o mp_lcm.o mp_log.o mp_log_n.o mp_log_u32.o mp_lshd.o mp_mod.o mp_mod_2d.o \
 mp_montgomery_calc_normalization.o mp_montgomery_reduce.o mp_montgomery_setup.o mp_mul.o mp_mul_2.o \
 mp_mul_2d.o mp_mul_d.o mp_mulmod.o mp_neg.o mp_or.o mp_pack.o mp_pack_count.o mp_prime_fermat.o \
 mp_prime_frobenius_underwood.o mp_prime_is_prime.o mp_prime_miller_rabin.o mp_prime_next_prime.o \

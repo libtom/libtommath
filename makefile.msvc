@@ -31,7 +31,7 @@ mp_error_to_string.obj mp_exch.obj mp_expt_n.obj mp_exptmod.obj mp_exteuclid.obj
 mp_from_ubin.obj mp_fwrite.obj mp_gcd.obj mp_get_double.obj mp_get_i32.obj mp_get_i64.obj mp_get_l.obj mp_get_mag_u32.obj \
 mp_get_mag_u64.obj mp_get_mag_ul.obj mp_grow.obj mp_init.obj mp_init_copy.obj mp_init_i32.obj mp_init_i64.obj mp_init_l.obj \
 mp_init_multi.obj mp_init_set.obj mp_init_size.obj mp_init_u32.obj mp_init_u64.obj mp_init_ul.obj mp_invmod.obj \
-mp_is_square.obj mp_kronecker.obj mp_lcm.obj mp_log.obj mp_log_u32.obj mp_lshd.obj mp_mod.obj mp_mod_2d.obj \
+mp_is_square.obj mp_kronecker.obj mp_lcm.obj mp_log.obj mp_log_n.obj mp_log_u32.obj mp_lshd.obj mp_mod.obj mp_mod_2d.obj \
 mp_montgomery_calc_normalization.obj mp_montgomery_reduce.obj mp_montgomery_setup.obj mp_mul.obj mp_mul_2.obj \
 mp_mul_2d.obj mp_mul_d.obj mp_mulmod.obj mp_neg.obj mp_or.obj mp_pack.obj mp_pack_count.obj mp_prime_fermat.obj \
 mp_prime_frobenius_underwood.obj mp_prime_is_prime.obj mp_prime_miller_rabin.obj mp_prime_next_prime.obj \
