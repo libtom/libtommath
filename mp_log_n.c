@@ -5,25 +5,15 @@
 
 mp_err mp_log_n(const mp_int *a, int base, int *c)
 {
-   if (mp_isneg(a) || mp_iszero(a) || (base < 2) || (unsigned)base > (unsigned)MP_DIGIT_MAX) {
-      return MP_VAL;
-   }
+   mp_int b;
+   mp_err err;
 
-   if (MP_HAS(S_MP_LOG_2EXPT) && MP_IS_2EXPT((mp_digit)base)) {
-      *c = s_mp_log_2expt(a, (mp_digit)base);
-      return MP_OKAY;
-   }
+   if ((err = mp_init_i32(&b, base)) != MP_OKAY)                                                         goto LTM_ERR;
+   if ((err = mp_log(a, &b, c)) != MP_OKAY)                                                             goto LTM_ERR;
 
-   if (MP_HAS(S_MP_LOG_D) && (a->used == 1)) {
-      *c = s_mp_log_d((mp_digit)base, a->dp[0]);
-      return MP_OKAY;
-   }
-
-   if (MP_HAS(S_MP_LOG)) {
-      return s_mp_log(a, (mp_digit)base, c);
-   }
-
-   return MP_VAL;
+LTM_ERR:
+   mp_clear(&b);
+   return err;
 }
 
 #endif

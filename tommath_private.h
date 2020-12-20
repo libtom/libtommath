@@ -122,6 +122,9 @@ extern void MP_FREE(void *mem, size_t size);
 
 #define MP_IS_2EXPT(x) (((x) != 0u) && (((x) & ((x) - 1u)) == 0u))
 
+/* TODO: same as above for bigint, merge (is it used elsewhere?) or change name */
+#define MP_IS_POWER_OF_TWO(a)    (((mp_count_bits((a)) - 1) ==  mp_cnt_lsb((a))) )
+
 /* Static assertion */
 #define MP_STATIC_ASSERT(msg, cond) typedef char mp_static_assert_##msg[(cond) ? 1 : -1];
 
@@ -132,10 +135,13 @@ extern void MP_FREE(void *mem, size_t size);
 
 #if defined(MP_16BIT)
 typedef uint32_t mp_word;
+#define MP_WORD_SIZE  4
 #elif defined(MP_64BIT)
 typedef unsigned long mp_word __attribute__((mode(TI)));
+#define MP_WORD_SIZE  16
 #else
 typedef uint64_t mp_word;
+#define MP_WORD_SIZE  8
 #endif
 
 MP_STATIC_ASSERT(correct_word_size, sizeof(mp_word) == (2u * sizeof(mp_digit)))
@@ -177,7 +183,7 @@ extern MP_PRIVATE mp_err(*s_mp_rand_source)(void *out, size_t size);
 /* lowlevel functions, do not call! */
 MP_PRIVATE bool s_mp_get_bit(const mp_int *a, int b) MP_WUR;
 MP_PRIVATE int s_mp_log_2expt(const mp_int *a, mp_digit base) MP_WUR;
-MP_PRIVATE int s_mp_log_d(mp_digit base, mp_digit n) MP_WUR;
+
 MP_PRIVATE mp_err s_mp_add(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
 MP_PRIVATE mp_err s_mp_div_3(const mp_int *a, mp_int *c, mp_digit *d) MP_WUR;
 MP_PRIVATE mp_err s_mp_div_recursive(const mp_int *a, const mp_int *b, mp_int *q, mp_int *r) MP_WUR;
@@ -187,7 +193,7 @@ MP_PRIVATE mp_err s_mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P
 MP_PRIVATE mp_err s_mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y, int redmode) MP_WUR;
 MP_PRIVATE mp_err s_mp_invmod(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
 MP_PRIVATE mp_err s_mp_invmod_odd(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
-MP_PRIVATE mp_err s_mp_log(const mp_int *a, mp_digit base, int *c) MP_WUR;
+
 MP_PRIVATE mp_err s_mp_montgomery_reduce_comba(mp_int *x, const mp_int *n, mp_digit rho) MP_WUR;
 MP_PRIVATE mp_err s_mp_mul(const mp_int *a, const mp_int *b, mp_int *c, int digs) MP_WUR;
 MP_PRIVATE mp_err s_mp_mul_balance(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
@@ -207,6 +213,17 @@ MP_PRIVATE void s_mp_copy_digs(mp_digit *d, const mp_digit *s, int digits);
 MP_PRIVATE void s_mp_zero_buf(void *mem, size_t size);
 MP_PRIVATE void s_mp_zero_digs(mp_digit *d, int digits);
 MP_PRIVATE mp_err s_mp_radix_size_overestimate(const mp_int *a, const int radix, size_t *size);
+
+/* Bigint version for the unexpected */
+#if ( (UINT_MAX == UINT32_MAX) && ( MP_WORD_SIZE > 4 ) ) \
+      ||\
+    ( (UINT_MAX == UINT16_MAX) && ( MP_WORD_SIZE > 2 ) )
+MP_PRIVATE mp_err s_mp_fp_log(const mp_int *a, mp_word *c) MP_WUR;
+#else
+MP_PRIVATE mp_err s_mp_fp_log(const mp_int *a, mp_int *c) MP_WUR;
+#endif
+
+
 
 #define MP_RADIX_MAP_REVERSE_SIZE 80u
 extern MP_PRIVATE const char s_mp_radix_map[];
