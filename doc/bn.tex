@@ -2272,7 +2272,7 @@ positive value this function will run $t + 1$ Miller--Rabin tests with random ba
 
 If  $t$ is set to a negative value the test will run the deterministic Miller--Rabin test for the
 primes up to $3\,317\,044\,064\,679\,887\ 385\,961\,981$\footnote{The semiprime $1287836182261\cdot
-    2575672364521$ with both factors smaller than $2^64$. An alternative with all factors smaller
+    2575672364521$ with both factors smaller than $2^{64}$. An alternative with all factors smaller
   than
   $2^32$ is $4290067842\cdot 262853\cdot 1206721\cdot 2134439 + 3$}. That limit has to be checked
 by
@@ -2343,10 +2343,10 @@ This function generates a random number of \texttt{digits} bits.
 
 The random number generated with these two functions is cryptographically secure if the source of
 random numbers the operating systems offers is cryptographically secure. It will use
-\texttt{arc4random()} if the OS is a BSD flavor, Wincrypt on Windows, or \texttt{/dev urandom} on
+\texttt{arc4random()} if the OS is a BSD flavor, Wincrypt on Windows, or \texttt{/dev/urandom} on
 all operating systems that have it.
 
-If you have a custom random source you might find the function \texttt(mp\_rand\_source) useful.
+If you have a custom random source you might find the function \texttt{mp\_rand\_source()} useful.
 \index{mp\_rand\_source}
 \begin{alltt}
 void mp_rand_source(mp_err(*source)(void *out, size_t size));
@@ -2581,7 +2581,7 @@ mp_err mp_mod_d(const mp_int *a, mp_digit b, mp_digit *c);
 \end{alltt}
 
 These work like the full \texttt{mp\_int} capable variants except the second parameter $b$ is a
-\texttt{mp\_digit}.  These functions fairly handy if you have to work with relatively small numbers
+\texttt{mp\_digit}.  These functions come fairly handy if you have to work with relatively small numbers
 since you will not have to allocate an entire \texttt{mp\_int} to store a number like $1$ or $2$.
 
 The functions \texttt{mp\_incr} and \texttt{mp\_decr} mimic the postfix operators \texttt{++} and
@@ -2604,13 +2604,13 @@ macros is \texttt{false} or \texttt{true} respectively.
 \begin{alltt}
 bool mp_iseven(const mp_int *a)
 \end{alltt}
-Checks if $a = 0 mod 2$
+Checks if $a = 0 \;\mathrm{mod}\; 2$
 
 \index{mp\_isodd}
 \begin{alltt}
 bool mp_isodd(const mp_int *a)
 \end{alltt}
-Checks if $a = 1 mod 2$
+Checks if $a = 1 \;\mathrm{mod}\; 2$
 
 \index{mp\_isneg}
 \begin{alltt}
