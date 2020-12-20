@@ -75,7 +75,7 @@ mp_err mp_to_radix(const mp_int *a, char *str, size_t maxlen, size_t *written, i
       ++digs;
    }
    /* reverse the digits of the string.  In this case _s points
-    * to the first digit [exluding the sign] of the number
+    * to the first digit [excluding the sign] of the number
     */
    s_reverse(_s, digs);
 
