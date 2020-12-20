@@ -90,6 +90,7 @@ EXPORTS
     mp_radix_size
     mp_radix_size_overestimate
     mp_rand
+    mp_rand_source
     mp_read_radix
     mp_reduce
     mp_reduce_2k
@@ -125,3 +126,7 @@ EXPORTS
     mp_unpack
     mp_xor
     mp_zero
+    MP_MUL_KARATSUBA_CUTOFF
+    MP_SQR_KARATSUBA_CUTOFF
+    MP_MUL_TOOM_CUTOFF
+    MP_SQR_TOOM_CUTOFF

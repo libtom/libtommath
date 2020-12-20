@@ -96,6 +96,7 @@
 #   define MP_RADIX_SIZE_C
 #   define MP_RADIX_SIZE_OVERESTIMATE_C
 #   define MP_RAND_C
+#   define MP_RAND_SOURCE_C
 #   define MP_READ_RADIX_C
 #   define MP_REDUCE_C
 #   define MP_REDUCE_2K_C
@@ -155,7 +156,6 @@
 #   define S_MP_PRIME_TAB_C
 #   define S_MP_RADIX_MAP_C
 #   define S_MP_RADIX_SIZE_OVERESTIMATE_C
-#   define S_MP_RAND_JENKINS_C
 #   define S_MP_RAND_PLATFORM_C
 #   define S_MP_SQR_C
 #   define S_MP_SQR_COMBA_C
@@ -719,10 +719,12 @@
 
 #if defined(MP_RAND_C)
 #   define MP_GROW_C
-#   define MP_RAND_SOURCE_C
 #   define MP_ZERO_C
-#   define S_MP_RAND_PLATFORM_C
 #   define S_MP_RAND_SOURCE_C
+#endif
+
+#if defined(MP_RAND_SOURCE_C)
+#   define S_MP_RAND_PLATFORM_C
 #endif
 
 #if defined(MP_READ_RADIX_C)
@@ -1195,10 +1197,6 @@
 #   define MP_MUL_C
 #   define MP_SET_U32_C
 #   define S_MP_LOG_2EXPT_C
-#endif
-
-#if defined(S_MP_RAND_JENKINS_C)
-#   define S_MP_RAND_JENKINS_INIT_C
 #endif
 
 #if defined(S_MP_RAND_PLATFORM_C)

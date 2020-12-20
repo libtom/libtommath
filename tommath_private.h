@@ -208,10 +208,6 @@ MP_PRIVATE void s_mp_zero_buf(void *mem, size_t size);
 MP_PRIVATE void s_mp_zero_digs(mp_digit *d, int digits);
 MP_PRIVATE mp_err s_mp_radix_size_overestimate(const mp_int *a, const int radix, size_t *size);
 
-/* TODO: jenkins prng is not thread safe as of now */
-MP_PRIVATE mp_err s_mp_rand_jenkins(void *p, size_t n) MP_WUR;
-MP_PRIVATE void s_mp_rand_jenkins_init(uint64_t seed);
-
 #define MP_RADIX_MAP_REVERSE_SIZE 80u
 extern MP_PRIVATE const char s_mp_radix_map[];
 extern MP_PRIVATE const uint8_t s_mp_radix_map_reverse[];

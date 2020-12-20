@@ -1,10 +1,13 @@
 #include <inttypes.h>
 #include "shared.h"
 
+#define S_MP_RAND_JENKINS_C
+#include "s_mp_rand_jenkins.c"
+
 static long rand_long(void)
 {
    long x;
-   if (s_mp_rand_source(&x, sizeof(x)) != MP_OKAY) {
+   if (s_mp_rand_jenkins(&x, sizeof(x)) != MP_OKAY) {
       fprintf(stderr, "s_mp_rand_source failed\n");
       exit(EXIT_FAILURE);
    }
@@ -14,7 +17,7 @@ static long rand_long(void)
 static int rand_int(void)
 {
    int x;
-   if (s_mp_rand_source(&x, sizeof(x)) != MP_OKAY) {
+   if (s_mp_rand_jenkins(&x, sizeof(x)) != MP_OKAY) {
       fprintf(stderr, "s_mp_rand_source failed\n");
       exit(EXIT_FAILURE);
    }
@@ -24,7 +27,7 @@ static int rand_int(void)
 static int32_t rand_int32(void)
 {
    int32_t x;
-   if (s_mp_rand_source(&x, sizeof(x)) != MP_OKAY) {
+   if (s_mp_rand_jenkins(&x, sizeof(x)) != MP_OKAY) {
       fprintf(stderr, "s_mp_rand_source failed\n");
       exit(EXIT_FAILURE);
    }
@@ -34,7 +37,7 @@ static int32_t rand_int32(void)
 static int64_t rand_int64(void)
 {
    int64_t x;
-   if (s_mp_rand_source(&x, sizeof(x)) != MP_OKAY) {
+   if (s_mp_rand_jenkins(&x, sizeof(x)) != MP_OKAY) {
       fprintf(stderr, "s_mp_rand_source failed\n");
       exit(EXIT_FAILURE);
    }
@@ -2197,15 +2200,20 @@ LBL_ERR:
    return EXIT_FAILURE;
 }
 
+#ifndef LTM_TEST_DYNAMIC
+#define ONLY_PUBLIC_API_C
+#endif
+
 static int unit_tests(int argc, char **argv)
 {
    static const struct {
       const char *name;
       int (*fn)(void);
    } test[] = {
-#define T0(n)           { #n, test_##n }
-#define T1(n, o)        { #n, MP_HAS(o) ? test_##n : NULL }
-#define T2(n, o1, o2)   { #n, (MP_HAS(o1) && MP_HAS(o2)) ? test_##n : NULL }
+#define T0(n)              { #n, test_##n }
+#define T1(n, o)           { #n, MP_HAS(o) ? test_##n : NULL }
+#define T2(n, o1, o2)      { #n, (MP_HAS(o1) && MP_HAS(o2)) ? test_##n : NULL }
+#define T3(n, o1, o2, o3)  { #n, (MP_HAS(o1) && MP_HAS(o2) && MP_HAS(o3)) ? test_##n : NULL }
       T0(feature_detection),
       T0(trivial_stuff),
       T2(mp_get_set_i32, MP_GET_I32, MP_GET_MAG_U32),
@@ -2214,7 +2222,7 @@ static int unit_tests(int argc, char **argv)
       T1(mp_cnt_lsb, MP_CNT_LSB),
       T1(mp_complement, MP_COMPLEMENT),
       T1(mp_decr, MP_SUB_D),
-      T1(s_mp_div_3, S_MP_DIV_3),
+      T2(s_mp_div_3, ONLY_PUBLIC_API, S_MP_DIV_3),
       T1(mp_dr_reduce, MP_DR_REDUCE),
       T2(mp_pack_unpack,MP_PACK, MP_UNPACK),
       T2(mp_fread_fwrite, MP_FREAD, MP_FWRITE),
@@ -2240,7 +2248,7 @@ static int unit_tests(int argc, char **argv)
       T1(mp_reduce_2k, MP_REDUCE_2K),
       T1(mp_reduce_2k_l, MP_REDUCE_2K_L),
       T1(mp_radix_size, MP_RADIX_SIZE),
-      T1(s_mp_radix_size_overestimate, S_MP_RADIX_SIZE_OVERESTIMATE),
+      T2(s_mp_radix_size_overestimate, ONLY_PUBLIC_API, S_MP_RADIX_SIZE_OVERESTIMATE),
 #if defined(MP_HAS_SET_DOUBLE)
       T1(mp_set_double, MP_SET_DOUBLE),
 #endif
@@ -2248,13 +2256,14 @@ static int unit_tests(int argc, char **argv)
       T2(mp_sqrt, MP_SQRT, MP_ROOT_N),
       T1(mp_sqrtmod_prime, MP_SQRTMOD_PRIME),
       T1(mp_xor, MP_XOR),
-      T2(s_mp_div_recursive, S_MP_DIV_RECURSIVE, S_MP_DIV_SCHOOL),
-      T2(s_mp_div_small, S_MP_DIV_SMALL, S_MP_DIV_SCHOOL),
-      T1(s_mp_mul_balance, S_MP_MUL_BALANCE),
-      T1(s_mp_mul_karatsuba, S_MP_MUL_KARATSUBA),
-      T1(s_mp_sqr_karatsuba, S_MP_SQR_KARATSUBA),
-      T1(s_mp_mul_toom, S_MP_MUL_TOOM),
-      T1(s_mp_sqr_toom, S_MP_SQR_TOOM)
+      T3(s_mp_div_recursive, ONLY_PUBLIC_API, S_MP_DIV_RECURSIVE, S_MP_DIV_SCHOOL),
+      T3(s_mp_div_small, ONLY_PUBLIC_API, S_MP_DIV_SMALL, S_MP_DIV_SCHOOL),
+      T2(s_mp_mul_balance, ONLY_PUBLIC_API, S_MP_MUL_BALANCE),
+      T2(s_mp_mul_karatsuba, ONLY_PUBLIC_API, S_MP_MUL_KARATSUBA),
+      T2(s_mp_sqr_karatsuba, ONLY_PUBLIC_API, S_MP_SQR_KARATSUBA),
+      T2(s_mp_mul_toom, ONLY_PUBLIC_API, S_MP_MUL_TOOM),
+      T2(s_mp_sqr_toom, ONLY_PUBLIC_API, S_MP_SQR_TOOM)
+#undef T3
 #undef T2
 #undef T1
    };
