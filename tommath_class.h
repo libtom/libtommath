@@ -90,6 +90,8 @@
 #   define MP_PRIME_MILLER_RABIN_C
 #   define MP_PRIME_NEXT_PRIME_C
 #   define MP_PRIME_RABIN_MILLER_TRIALS_C
+#   define MP_PRIME_RABIN_MILLER_TRIALS_DEA_C
+#   define MP_PRIME_RABIN_MILLER_TRIALS_RSA_C
 #   define MP_PRIME_RAND_C
 #   define MP_PRIME_STRONG_LUCAS_SELFRIDGE_C
 #   define MP_RADIX_SIZE_C
@@ -648,6 +650,13 @@
 #endif
 
 #if defined(MP_PRIME_RABIN_MILLER_TRIALS_C)
+#endif
+
+#if defined(MP_PRIME_RABIN_MILLER_TRIALS_DEA_C)
+#endif
+
+#if defined(MP_PRIME_RABIN_MILLER_TRIALS_RSA_C)
+#   define MP_PRIME_RABIN_MILLER_TRIALS_C
 #endif
 
 #if defined(MP_PRIME_RAND_C)

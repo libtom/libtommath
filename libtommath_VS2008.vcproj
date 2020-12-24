@@ -629,6 +629,14 @@
 			>
 		</File>
 		<File
+			RelativePath="mp_prime_rabin_miller_trials_dea.c"
+			>
+		</File>
+		<File
+			RelativePath="mp_prime_rabin_miller_trials_rsa.c"
+			>
+		</File>
+		<File
 			RelativePath="mp_prime_rand.c"
 			>
 		</File>
