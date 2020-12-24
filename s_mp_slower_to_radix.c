@@ -45,7 +45,7 @@ mp_err s_mp_slower_to_radix(const mp_int *a, char **str,
       ybar--;
    }
 
-   /* Fill in leading zeros if this chunk contains the most significant digits. */
+   /* Fill in leading zeros if this chunk does not contain the most significant digits. */
    if (pad) {
       while ((ybar-- > 0) && (((*part_maxlen)--) > 0)) {
          *s++ = '0';
@@ -60,7 +60,7 @@ mp_err s_mp_slower_to_radix(const mp_int *a, char **str,
    s_reverse(s, digs);
    /* step forward */
    *str += digs;
-   /* Add EOS at teh end of every chunk to allow this function to be used stand-alone */
+   /* Add EOS at the end of every chunk to allow this function to be used stand-alone */
    **str = '\0';
 
    /* TODO: this method to increase "written" is not threadsafe! */
