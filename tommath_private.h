@@ -229,10 +229,27 @@ MP_PRIVATE mp_err s_mp_radix_size_overestimate(const mp_int *a, const int radix,
 MP_PRIVATE mp_err s_mp_fp_log(const mp_int *a, mp_int *c) MP_WUR;
 MP_PRIVATE mp_err s_mp_fp_log_d(const mp_int *a, mp_word *c) MP_WUR;
 
+/* Radix conversion O(M(n) log n) Schoenhage method */
+MP_PRIVATE mp_err s_mp_faster_to_radix(const mp_int *a, char *str, size_t maxlen, size_t *written, int radix) MP_WUR;
+/* Radix conversion O(n^2) method */
+MP_PRIVATE mp_err s_mp_slower_to_radix(const mp_int *a, char **str, size_t *part_maxlen, size_t *part_written,
+                                       int radix, bool pad) MP_WUR;
+
 #define MP_RADIX_MAP_REVERSE_SIZE 80u
+#define MP_RADIX_EXPONENT_Y_SIZE  65u
 extern MP_PRIVATE const char s_mp_radix_map[];
 extern MP_PRIVATE const uint8_t s_mp_radix_map_reverse[];
 extern MP_PRIVATE const mp_digit s_mp_prime_tab[];
+extern MP_PRIVATE const uint8_t s_mp_radix_exponent_y[];
+
+/*
+  There is not much to tune here, the steps are of the form 2^k and too large
+  for tuning to make a alot of sense.
+ */
+#ifndef MP_RADIX_BARRETT_START_MULTIPLICATOR
+#   define MP_RADIX_BARRETT_START_MULTIPLICATOR   8
+#endif
+
 
 /* number of primes */
 #define MP_PRIME_TAB_SIZE 256

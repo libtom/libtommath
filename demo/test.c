@@ -1155,9 +1155,10 @@ static int test_mp_read_radix(void)
 {
    char buf[4096];
    size_t written;
+   int bignum, i;
 
-   mp_int a;
-   DOR(mp_init_multi(&a, NULL));
+   mp_int a, b;
+   DOR(mp_init_multi(&a, &b, NULL));
 
    DO(mp_read_radix(&a, "123456", 10));
 
@@ -1183,6 +1184,30 @@ static int test_mp_read_radix(void)
    DO(mp_to_radix(&a, buf, sizeof(buf), &written, 10));
    printf("\r '0' a == %s, length = %zu", buf, written);
 
+   /* Test the fast method with a slightly larger number */
+
+   /* Must be bigger than the cut-off value, of course */
+   bignum = 2* (2 * s_mp_radix_exponent_y[2] * MP_RADIX_BARRETT_START_MULTIPLICATOR);
+   printf("Size of bignum_size = %d\n", bignum);
+   /* Check if "bignum" is small enough for the result to fit into "buf"
+      otherwise lead tester to this function */
+   if (bignum >= 4096) {
+      fprintf(stderr, "Buffer too small, please check function \"test_mp_read_radix\" in \"test.c\"");
+      goto LBL_ERR;
+   }
+   /* Produce a random number */
+   bignum /= MP_DIGIT_BIT;
+   DO(mp_rand(&b, bignum));
+   /* Check if it makes the round */
+   printf("Number of limbs in &b = %d, bit_count of &b = %d\n", bignum, mp_count_bits(&b));
+   for (i = 2; i < 65; i++) {
+      DO(mp_to_radix(&b, buf, sizeof(buf), &written, i));
+      DO(mp_read_radix(&a, buf, i));
+      EXPECT(mp_cmp(&a, &b) == MP_EQ);
+      /* fprintf(stderr,"radix = %d\n",i); */
+   }
+
+
    while (0) {
       char *s = fgets(buf, sizeof(buf), stdin);
       if (s != buf) break;
@@ -1192,10 +1217,10 @@ static int test_mp_read_radix(void)
       printf("%s, %lu\n", buf, (unsigned long)a.dp[0] & 3uL);
    }
 
-   mp_clear(&a);
+   mp_clear_multi(&a, &b, NULL);
    return EXIT_SUCCESS;
 LBL_ERR:
-   mp_clear(&a);
+   mp_clear_multi(&a, &b, NULL);
    return EXIT_FAILURE;
 }
 

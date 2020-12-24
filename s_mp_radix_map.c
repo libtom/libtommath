@@ -15,5 +15,21 @@ const uint8_t s_mp_radix_map_reverse[] = {
    0x2a, 0x2b, 0x2c, 0x2d, 0x2e, 0x2f, 0x30, 0x31, 0x32, 0x33, /* ghijklmnop */
    0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3a, 0x3b, 0x3c, 0x3d  /* qrstuvwxyz */
 };
+
 MP_STATIC_ASSERT(correct_radix_map_reverse_size, sizeof(s_mp_radix_map_reverse) == MP_RADIX_MAP_REVERSE_SIZE)
+
+/* Exponents chosen such that b^(y) <= 2^20 */
+const uint8_t s_mp_radix_exponent_y[] = {  0, 0,                      /*  0 .. 1*/
+                                           20, 12, 10, 8, 7, 7, 6, 6, /*  2 .. 9 */
+                                           6, 5, 5, 5, 5, 5, 5, 4,    /* 10 .. 17 */
+                                           4, 4, 4, 4, 4, 4, 4, 4,    /* 18 .. 25 */
+                                           4, 4, 4, 4, 4, 4, 4, 3,    /* 26 .. 33 */
+                                           3, 3, 3, 3, 3, 3, 3, 3,    /* 34 .. 41 */
+                                           3, 3, 3, 3, 3, 3, 3, 3,    /* 42 .. 49 */
+                                           3, 3, 3, 3, 3, 3, 3, 3,    /* 51 .. 57 */
+                                           3, 3, 3, 3, 3, 3, 3        /* 58 .. 64 */
+                                        };
+
+MP_STATIC_ASSERT(correct_mp_radix_exponent_y, sizeof(s_mp_radix_exponent_y) == MP_RADIX_EXPONENT_Y_SIZE)
+
 #endif
