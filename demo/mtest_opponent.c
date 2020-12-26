@@ -11,10 +11,49 @@ static void draw(const mp_int *a)
    ndraw(a, "");
 }
 
-#define FGETS(str, size, stream) \
+/*
+   Get tokens. It is just a very(!) simple fgets(3) that does not keep line endings.
+
+   Implementation follows along "man 3 fgets", some of which is quoted.
+ */
+static char *s_mp_get_token(char *s, int size, FILE *stream)
+{
+   char *s_bar = s;
+   int c;
+   bool eol_hit = false;
+
+   /* "fgets [...] reads in at most one less than size characters from stream"  */
+   while (--size)  {
+      /* "Reading stops after an EOF or a newline." We stop only for EOF here */
+      if ((c = fgetc(stream)) == EOF) {
+         /* "Returns [...] NULL on error or when end of file occurs while no characters have been read" */
+         if ((s_bar == s) || (ferror(stream) != 0)) {
+            return NULL;
+         }
+         break;
+      }
+      /* Ignore line-breaks but keep reading to get them out of the stream-buffer */
+      if ((c == '\n') || (c == '\r')) {
+         eol_hit = true;
+         continue;
+      }
+      /* Stop reading after linebreak */
+      if (eol_hit) {
+         /* We already read the character after the linebreak, put it back */
+         ungetc(c, stream);
+         break;
+      }
+      *s_bar++ = c;
+   }
+   /* "A terminating null byte ('\0') is stored after the last character in the buffer" */
+   *s_bar = '\0';
+   return s;
+}
+
+#define GET_TOKEN(str, size, stream) \
    { \
-      char *ret = fgets(str, size, stream); \
-      if (!ret) { fprintf(stderr, "\n%d: fgets failed\n", __LINE__); goto LBL_ERR; } \
+      char *ret = s_mp_get_token((str), (size), (stream)); \
+      if (!ret) { fprintf(stderr, "\n%d: s_mp_get_token failed\n", __LINE__); goto LBL_ERR; } \
    }
 
 static int mtest_opponent(void)
@@ -76,17 +115,16 @@ static int mtest_opponent(void)
       printf("%4lu/%4lu/%4lu/%4lu/%4lu/%4lu/%4lu/%4lu/%4lu/%4lu/%4lu/%4lu/%4lu/%4lu/%4lu ",
              add_n, sub_n, mul_n, div_n, sqr_n, mul2d_n, div2d_n, gcd_n, lcm_n,
              expt_n, inv_n, div2_n, mul2_n, add_d_n, sub_d_n);
-      FGETS(cmd, 4095, stdin);
-      cmd[strlen(cmd) - 1u] = '\0';
+      GET_TOKEN(cmd, 4095, stdin);
       printf("%-6s ]\r", cmd);
       fflush(stdout);
       if (strcmp(cmd, "mul2d") == 0) {
          ++mul2d_n;
-         FGETS(buf, 4095, stdin);
+         GET_TOKEN(buf, 4095, stdin);
          DO(mp_read_radix(&a, buf, 64));
-         FGETS(buf, 4095, stdin);
+         GET_TOKEN(buf, 4095, stdin);
          sscanf(buf, "%u", &rr);
-         FGETS(buf, 4095, stdin);
+         GET_TOKEN(buf, 4095, stdin);
          DO(mp_read_radix(&b, buf, 64));
 
          DO(mp_mul_2d(&a, (int)rr, &a));
@@ -99,11 +137,11 @@ static int mtest_opponent(void)
          }
       } else if (strcmp(cmd, "div2d") == 0) {
          ++div2d_n;
-         FGETS(buf, 4095, stdin);
+         GET_TOKEN(buf, 4095, stdin);
          DO(mp_read_radix(&a, buf, 64));
-         FGETS(buf, 4095, stdin);
+         GET_TOKEN(buf, 4095, stdin);
          sscanf(buf, "%u", &rr);
-         FGETS(buf, 4095, stdin);
+         GET_TOKEN(buf, 4095, stdin);
          DO(mp_read_radix(&b, buf, 64));
 
          DO(mp_div_2d(&a, (int)rr, &a, &e));
@@ -119,11 +157,11 @@ static int mtest_opponent(void)
          }
       } else if (strcmp(cmd, "add") == 0) {
          ++add_n;
-         FGETS(buf, 4095, stdin);
+         GET_TOKEN(buf, 4095, stdin);
          DO(mp_read_radix(&a, buf, 64));
-         FGETS(buf, 4095, stdin);
+         GET_TOKEN(buf, 4095, stdin);
          DO(mp_read_radix(&b, buf, 64));
-         FGETS(buf, 4095, stdin);
+         GET_TOKEN(buf, 4095, stdin);
          DO(mp_read_radix(&c, buf, 64));
          DO(mp_copy(&a, &d));
          DO(mp_add(&d, &b, &d));
@@ -162,11 +200,11 @@ static int mtest_opponent(void)
 
       } else if (strcmp(cmd, "sub") == 0) {
          ++sub_n;
-         FGETS(buf, 4095, stdin);
+         GET_TOKEN(buf, 4095, stdin);
          DO(mp_read_radix(&a, buf, 64));
-         FGETS(buf, 4095, stdin);
+         GET_TOKEN(buf, 4095, stdin);
          DO(mp_read_radix(&b, buf, 64));
-         FGETS(buf, 4095, stdin);
+         GET_TOKEN(buf, 4095, stdin);
          DO(mp_read_radix(&c, buf, 64));
          DO(mp_copy(&a, &d));
          DO(mp_sub(&d, &b, &d));
@@ -180,11 +218,11 @@ static int mtest_opponent(void)
          }
       } else if (strcmp(cmd, "mul") == 0) {
          ++mul_n;
-         FGETS(buf, 4095, stdin);
+         GET_TOKEN(buf, 4095, stdin);
          DO(mp_read_radix(&a, buf, 64));
-         FGETS(buf, 4095, stdin);
+         GET_TOKEN(buf, 4095, stdin);
          DO(mp_read_radix(&b, buf, 64));
-         FGETS(buf, 4095, stdin);
+         GET_TOKEN(buf, 4095, stdin);
          DO(mp_read_radix(&c, buf, 64));
          DO(mp_copy(&a, &d));
          DO(mp_mul(&d, &b, &d));
@@ -198,13 +236,13 @@ static int mtest_opponent(void)
          }
       } else if (strcmp(cmd, "div") == 0) {
          ++div_n;
-         FGETS(buf, 4095, stdin);
+         GET_TOKEN(buf, 4095, stdin);
          DO(mp_read_radix(&a, buf, 64));
-         FGETS(buf, 4095, stdin);
+         GET_TOKEN(buf, 4095, stdin);
          DO(mp_read_radix(&b, buf, 64));
-         FGETS(buf, 4095, stdin);
+         GET_TOKEN(buf, 4095, stdin);
          DO(mp_read_radix(&c, buf, 64));
-         FGETS(buf, 4095, stdin);
+         GET_TOKEN(buf, 4095, stdin);
          DO(mp_read_radix(&d, buf, 64));
 
          DO(mp_div(&a, &b, &e, &f));
@@ -222,9 +260,9 @@ static int mtest_opponent(void)
 
       } else if (strcmp(cmd, "sqr") == 0) {
          ++sqr_n;
-         FGETS(buf, 4095, stdin);
+         GET_TOKEN(buf, 4095, stdin);
          DO(mp_read_radix(&a, buf, 64));
-         FGETS(buf, 4095, stdin);
+         GET_TOKEN(buf, 4095, stdin);
          DO(mp_read_radix(&b, buf, 64));
          DO(mp_copy(&a, &c));
          DO(mp_sqr(&c, &c));
@@ -237,11 +275,11 @@ static int mtest_opponent(void)
          }
       } else if (strcmp(cmd, "gcd") == 0) {
          ++gcd_n;
-         FGETS(buf, 4095, stdin);
+         GET_TOKEN(buf, 4095, stdin);
          DO(mp_read_radix(&a, buf, 64));
-         FGETS(buf, 4095, stdin);
+         GET_TOKEN(buf, 4095, stdin);
          DO(mp_read_radix(&b, buf, 64));
-         FGETS(buf, 4095, stdin);
+         GET_TOKEN(buf, 4095, stdin);
          DO(mp_read_radix(&c, buf, 64));
          DO(mp_copy(&a, &d));
          DO(mp_gcd(&d, &b, &d));
@@ -256,11 +294,11 @@ static int mtest_opponent(void)
          }
       } else if (strcmp(cmd, "lcm") == 0) {
          ++lcm_n;
-         FGETS(buf, 4095, stdin);
+         GET_TOKEN(buf, 4095, stdin);
          DO(mp_read_radix(&a, buf, 64));
-         FGETS(buf, 4095, stdin);
+         GET_TOKEN(buf, 4095, stdin);
          DO(mp_read_radix(&b, buf, 64));
-         FGETS(buf, 4095, stdin);
+         GET_TOKEN(buf, 4095, stdin);
          DO(mp_read_radix(&c, buf, 64));
          DO(mp_copy(&a, &d));
          DO(mp_lcm(&d, &b, &d));
@@ -275,13 +313,13 @@ static int mtest_opponent(void)
          }
       } else if (strcmp(cmd, "expt") == 0) {
          ++expt_n;
-         FGETS(buf, 4095, stdin);
+         GET_TOKEN(buf, 4095, stdin);
          DO(mp_read_radix(&a, buf, 64));
-         FGETS(buf, 4095, stdin);
+         GET_TOKEN(buf, 4095, stdin);
          DO(mp_read_radix(&b, buf, 64));
-         FGETS(buf, 4095, stdin);
+         GET_TOKEN(buf, 4095, stdin);
          DO(mp_read_radix(&c, buf, 64));
-         FGETS(buf, 4095, stdin);
+         GET_TOKEN(buf, 4095, stdin);
          DO(mp_read_radix(&d, buf, 64));
          DO(mp_copy(&a, &e));
          DO(mp_exptmod(&e, &b, &c, &e));
@@ -296,11 +334,11 @@ static int mtest_opponent(void)
          }
       } else if (strcmp(cmd, "invmod") == 0) {
          ++inv_n;
-         FGETS(buf, 4095, stdin);
+         GET_TOKEN(buf, 4095, stdin);
          DO(mp_read_radix(&a, buf, 64));
-         FGETS(buf, 4095, stdin);
+         GET_TOKEN(buf, 4095, stdin);
          DO(mp_read_radix(&b, buf, 64));
-         FGETS(buf, 4095, stdin);
+         GET_TOKEN(buf, 4095, stdin);
          DO(mp_read_radix(&c, buf, 64));
          DO(mp_invmod(&a, &b, &d));
          DO(mp_mulmod(&d, &a, &b, &e));
@@ -318,9 +356,9 @@ static int mtest_opponent(void)
 
       } else if (strcmp(cmd, "div2") == 0) {
          ++div2_n;
-         FGETS(buf, 4095, stdin);
+         GET_TOKEN(buf, 4095, stdin);
          DO(mp_read_radix(&a, buf, 64));
-         FGETS(buf, 4095, stdin);
+         GET_TOKEN(buf, 4095, stdin);
          DO(mp_read_radix(&b, buf, 64));
          DO(mp_div_2(&a, &c));
          if (mp_cmp(&c, &b) != MP_EQ) {
@@ -332,9 +370,9 @@ static int mtest_opponent(void)
          }
       } else if (strcmp(cmd, "mul2") == 0) {
          ++mul2_n;
-         FGETS(buf, 4095, stdin);
+         GET_TOKEN(buf, 4095, stdin);
          DO(mp_read_radix(&a, buf, 64));
-         FGETS(buf, 4095, stdin);
+         GET_TOKEN(buf, 4095, stdin);
          DO(mp_read_radix(&b, buf, 64));
          DO(mp_mul_2(&a, &c));
          if (mp_cmp(&c, &b) != MP_EQ) {
@@ -346,11 +384,11 @@ static int mtest_opponent(void)
          }
       } else if (strcmp(cmd, "add_d") == 0) {
          ++add_d_n;
-         FGETS(buf, 4095, stdin);
+         GET_TOKEN(buf, 4095, stdin);
          DO(mp_read_radix(&a, buf, 64));
-         FGETS(buf, 4095, stdin);
+         GET_TOKEN(buf, 4095, stdin);
          sscanf(buf, "%d", &ix);
-         FGETS(buf, 4095, stdin);
+         GET_TOKEN(buf, 4095, stdin);
          DO(mp_read_radix(&b, buf, 64));
          DO(mp_add_d(&a, (mp_digit)ix, &c));
          if (mp_cmp(&b, &c) != MP_EQ) {
@@ -363,11 +401,11 @@ static int mtest_opponent(void)
          }
       } else if (strcmp(cmd, "sub_d") == 0) {
          ++sub_d_n;
-         FGETS(buf, 4095, stdin);
+         GET_TOKEN(buf, 4095, stdin);
          DO(mp_read_radix(&a, buf, 64));
-         FGETS(buf, 4095, stdin);
+         GET_TOKEN(buf, 4095, stdin);
          sscanf(buf, "%d", &ix);
-         FGETS(buf, 4095, stdin);
+         GET_TOKEN(buf, 4095, stdin);
          DO(mp_read_radix(&b, buf, 64));
          DO(mp_sub_d(&a, (mp_digit)ix, &c));
          if (mp_cmp(&b, &c) != MP_EQ) {
