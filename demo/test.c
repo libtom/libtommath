@@ -1383,6 +1383,70 @@ LBL_ERR:
    return EXIT_FAILURE;
 }
 
+static int test_mp_log(void)
+{
+   mp_int a, base, bn, t;
+   int lb, lb2, i, j;
+
+   DOR(mp_init_multi(&a, &base, &bn, &t, NULL));
+
+   /*
+      The small values got tested above for mp_log_n already, leaving the big stuff
+      with bases larger than INT_MAX.
+   */
+
+   /* Edgecases a^b and -1+a^b (floor(log_2(256^129)) = 1032) */
+   for (i = 2; i < 256; i++) {
+      mp_set_i32(&a,i);
+      for (j = 2; j < ((i/2)+1); j++) {
+         DO(mp_expt_n(&a, j, &bn));
+         mp_set_i32(&base,j);
+         /* i^j a perfect power */
+         DO(mp_log(&bn, &a, &lb));
+         DO(mp_expt_n(&a, lb, &t));
+         if (mp_cmp(&t, &bn) != MP_EQ) {
+            fprintf(stderr,"FAILURE mp_log for perf. power at i = %d, j = %d\n", i, j);
+            goto LBL_ERR;
+         }
+         /* -1 + i^j */
+         DO(mp_decr(&bn));
+         DO(mp_log(&bn, &a, &lb2));
+         if (lb != (lb2+1)) {
+            fprintf(stderr,"FAILURE mp_log for -1 + i^j at i = %d, j = %d\n", i, j);
+            goto LBL_ERR;
+         }
+      }
+   }
+
+   /* Random a, base */
+   for (i = 1; i < 256; i++) {
+      DO(mp_rand(&a, i));
+      for (j = 1; j < ((i/2)+1); j++) {
+         DO(mp_rand(&base, j));
+         DO(mp_log(&a, &base, &lb));
+         DO(mp_expt_n(&base, lb, &bn));
+         /* "bn" must be smaller than or equal to "a" at this point. */
+         if (mp_cmp(&bn, &a) == MP_GT) {
+            fprintf(stderr,"FAILURE mp_log random in GT check");
+            goto LBL_ERR;
+         }
+         DO(mp_mul(&bn, &base, &bn));
+         /* "bn" must be bigger than "a" at this point. */
+         if (mp_cmp(&bn, &a) != MP_GT) {
+            fprintf(stderr,"FAILURE mp_log random in NOT GT check");
+            goto LBL_ERR;
+         }
+      }
+   }
+
+   mp_clear_multi(&a, &base, &bn, &t, NULL);
+   return EXIT_SUCCESS;
+LBL_ERR:
+   mp_clear_multi(&a, &base, &bn, &t, NULL);
+   return EXIT_FAILURE;
+}
+
+
 static int test_mp_incr(void)
 {
    mp_int a, b;
@@ -2167,6 +2231,7 @@ static int unit_tests(int argc, char **argv)
       T1(mp_get_u64, MP_GET_I64),
       T1(mp_get_ul, MP_GET_L),
       T1(mp_log_n, MP_LOG_N),
+      T1(mp_log, MP_LOG),
       T1(mp_incr, MP_ADD_D),
       T1(mp_invmod, MP_INVMOD),
       T1(mp_is_square, MP_IS_SQUARE),

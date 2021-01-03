@@ -541,6 +541,10 @@
 			>
 		</File>
 		<File
+			RelativePath="mp_log.c"
+			>
+		</File>
+		<File
 			RelativePath="mp_log_n.c"
 			>
 		</File>
@@ -793,6 +797,10 @@
 			>
 		</File>
 		<File
+			RelativePath="s_flog2_mp_word.c"
+			>
+		</File>
+		<File
 			RelativePath="s_mp_add.c"
 			>
 		</File>
@@ -825,6 +833,10 @@
 			>
 		</File>
 		<File
+			RelativePath="s_mp_fp_log.c"
+			>
+		</File>
+		<File
 			RelativePath="s_mp_get_bit.c"
 			>
 		</File>
@@ -837,15 +849,7 @@
 			>
 		</File>
 		<File
-			RelativePath="s_mp_log.c"
-			>
-		</File>
-		<File
 			RelativePath="s_mp_log_2expt.c"
-			>
-		</File>
-		<File
-			RelativePath="s_mp_log_d.c"
 			>
 		</File>
 		<File

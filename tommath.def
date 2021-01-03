@@ -62,6 +62,7 @@ EXPORTS
     mp_is_square
     mp_kronecker
     mp_lcm
+    mp_log
     mp_log_n
     mp_lshd
     mp_mod

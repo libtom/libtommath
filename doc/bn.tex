@@ -1932,11 +1932,16 @@ implemented with a faster algorithm.
 \begin{alltt}
 mp_err mp_sqrt(const mp_int *arg, mp_int *ret)
 \end{alltt}
-
 \chapter{Logarithm}
 \section{Integer Logarithm}
 A logarithm function for positive integer input \texttt{a, base} computing  $\floor{\log_bx}$ such
-that $(\log_b x)^b \le x$.
+that $(\log_b x)^b \le x$. The function \texttt{mp\_log\_n} is just a wrapper that converts \texttt{base}
+to a bigint and calls \texttt{mp\_log\_n}.
+
+\index{mp\_log}
+\begin{alltt}
+mp_err mp_log(const mp_int *a, const mp_int *base, int *c)
+\end{alltt}
 
 \index{mp\_log\_n}
 \begin{alltt}
@@ -1944,6 +1949,7 @@ mp_err mp_log_n(const mp_int *a, int base, int *c)
 \end{alltt}
 
 \subsection{Example}
+Example given for \texttt{mp\_log\_n} only because the single difference is the type of \texttt{base}.
 \begin{small}
   \begin{alltt}
 #include <stdlib.h>
@@ -1954,15 +1960,15 @@ mp_err mp_log_n(const mp_int *a, int base, int *c)
 
 int main(int argc, char **argv)
 {
-   mp_int x, output;
-   int base;
+   mp_int x;
+   int base, output;
    mp_err e;
 
    if (argc != 3) {
       fprintf(stderr,"Usage %s base x\textbackslash{}n", argv[0]);
       exit(EXIT_FAILURE);
    }
-   if ((e = mp_init_multi(&x, &output, NULL)) != MP_OKAY) {
+   if ((e = mp_init(&x)) != MP_OKAY) {
       fprintf(stderr,"mp_init failed: \textbackslash{}"%s\textbackslash{}"\textbackslash{}n",
                      mp_error_to_string(e));
               exit(EXIT_FAILURE);
@@ -1984,19 +1990,17 @@ int main(int argc, char **argv)
                       mp_error_to_string(e));
       exit(EXIT_FAILURE);
    }
+   printf("%d\n",output);
 
-   if ((e = mp_fwrite(&output, 10, stdout)) != MP_OKAY) {
-      fprintf(stderr,"mp_fwrite failed: \textbackslash{}"%s\textbackslash{}"\textbackslash{}n",
-                      mp_error_to_string(e));
-      exit(EXIT_FAILURE);
-   }
-   putchar('\textbackslash{}n');
-
-   mp_clear_multi(&x, &output, NULL);
+   mp_clear(&x);
    exit(EXIT_SUCCESS);
 }
 \end{alltt}
 \end{small}
+
+
+
+
 
 \chapter{Prime Numbers}
 
