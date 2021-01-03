@@ -2031,11 +2031,11 @@ to help out.
 \begin{alltt}
 mp_err mp_prime_rabin_miller_trials(int size)
 \end{alltt}
-This returns the number of trials required for a low probability of failure for a given
-\texttt{size} expressed in bits.  This comes in handy specially since larger numbers are slower to
-test. For example, a 512--bit number would require 18 tests for a probability of $2^{-160}$ whereas
-a 1024--bit number would only require 12 tests for a probability of $2^{-192}$. The exact values as
-implemented are listed in table \ref{table:millerrabinrunsimpl}.
+The function returns the number of trials
+required for a low probability of failure for a given \texttt{size} expressed in bits. This comes in
+handy specially since larger numbers are slower to test. For example, a 512--bit number would require
+18 tests for a probability of $2^{-160}$ whereas a 1024--bit number would only require 12 tests for a
+probability of $2^{-192}$. The exact values as implemented are listed in table \ref{table:millerrabinrunsimpl}.
 
 \begin{table}[h]
   \begin{center}
@@ -2206,12 +2206,31 @@ If this version of the library has the strong Lucas--Selfridge and/or the Froben
 implemented only one or two rounds of the Miller--Rabin test with a random base is necessary for
 numbers larger than or equal to $1024$ bits.
 
-This function is meant for RSA. The number of rounds for DSA is $\lceil -log_2(p)/2\rceil$ with $p$
-the probability which is just the half of the absolute value of $p$ if given as a power of two.
-E.g.: with $p = 2^{-128}$, $\lceil -log_2(p)/2\rceil = 64$.
+This function is meant for RSA.
 
-This function can be used to test a DSA prime directly if these rounds are followed by a Lucas
-test.
+\index{mp\_prime\_rabin\_miller\_trials\_rsa}
+\begin{alltt}
+mp_err mp_prime_rabin_miller_trials_rsa(int size)
+\end{alltt}
+This function is synonym to \texttt{mp\_prime\_rabin\_miller\_trials\_rsa(int size)}
+
+\index{mp\_prime\_rabin\_miller\_trials\_dea}
+\begin{alltt}
+mp_err mp_prime_rabin_miller_trials_dea(int error)
+\end{alltt}
+The number of rounds for DSA is $\lceil -log_2(p)/2\rceil$ with $p$
+the probability which is just the half of the absolute value of $p$ if given as a power of two.
+E.g.: with $p = 2^{-128}$, $\lceil -log_2(p)/2\rceil = 64$. This function
+takes the error $p$ and computes $\lceil -p/2\rceil$ to return the necessary number of rounds
+for DEA primes with Miller-Rabin tests alone.
+
+If the Miller-Rabin tests are followed by a Lucas test, the number of rounds computed by the
+functions
+\begin{alltt}
+mp_err mp_prime_rabin_miller_trials(int size)
+mp_err mp_prime_rabin_miller_trials_rsa(int size)
+\end{alltt}
+are sufficient.
 
 See also table C.1 in FIPS 186-4.
 

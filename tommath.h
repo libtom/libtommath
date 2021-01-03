@@ -504,6 +504,19 @@ mp_err mp_prime_miller_rabin(const mp_int *a, const mp_int *b, bool *result) MP_
  * such that Miller-Rabin gives a prob of failure lower than 2^-96
  */
 int mp_prime_rabin_miller_trials(int size) MP_WUR;
+/* This gives [for a given error] the number of trials required
+ * such that Miller-Rabin gives a prob of failure lower than 2^(-error)
+ * for DEA with M.R only. Use mp_prime_rabin_miller_trials_rsa(size)
+ * if the M-R tests are followed by a Lucas test.
+ */
+int mp_prime_rabin_miller_trials_dea(int error) MP_WUR;
+
+/* This gives [for a given bit size] the number of trials required
+ * such that Miller-Rabin gives a prob of failure lower than 2^-96
+ * It is just a shortcut to "mp_prime_rabin_miller_trials" for
+ * symmetry.
+ */
+int mp_prime_rabin_miller_trials_rsa(int size) MP_WUR;
 
 /* performs one strong Lucas-Selfridge test of "a".
  * Sets result to 0 if composite or 1 if probable prime
