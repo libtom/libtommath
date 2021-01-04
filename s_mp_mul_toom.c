@@ -46,13 +46,13 @@ mp_err s_mp_mul_toom(const mp_int *a, const mp_int *b, mp_int *c)
    /** a = a2 * x^2 + a1 * x + a0; */
    if ((err = mp_init_size(&a0, B)) != MP_OKAY)                   goto LBL_ERRa0;
    if ((err = mp_init_size(&a1, B)) != MP_OKAY)                   goto LBL_ERRa1;
-   if ((err = mp_init_size(&a2, a->used - 2 * B)) != MP_OKAY)     goto LBL_ERRa2;
+   if ((err = mp_init_size(&a2, a->used - (2 * B))) != MP_OKAY)   goto LBL_ERRa2;
 
    a0.used = a1.used = B;
-   a2.used = a->used - 2 * B;
+   a2.used = a->used - (2 * B);
    s_mp_copy_digs(a0.dp, a->dp, a0.used);
    s_mp_copy_digs(a1.dp, a->dp + B, a1.used);
-   s_mp_copy_digs(a2.dp, a->dp + 2 * B, a2.used);
+   s_mp_copy_digs(a2.dp, a->dp + (2 * B), a2.used);
    mp_clamp(&a0);
    mp_clamp(&a1);
    mp_clamp(&a2);
@@ -60,13 +60,13 @@ mp_err s_mp_mul_toom(const mp_int *a, const mp_int *b, mp_int *c)
    /** b = b2 * x^2 + b1 * x + b0; */
    if ((err = mp_init_size(&b0, B)) != MP_OKAY)                   goto LBL_ERRb0;
    if ((err = mp_init_size(&b1, B)) != MP_OKAY)                   goto LBL_ERRb1;
-   if ((err = mp_init_size(&b2, b->used - 2 * B)) != MP_OKAY)     goto LBL_ERRb2;
+   if ((err = mp_init_size(&b2, b->used - (2 * B))) != MP_OKAY)   goto LBL_ERRb2;
 
    b0.used = b1.used = B;
-   b2.used = b->used - 2 * B;
+   b2.used = b->used - (2 * B);
    s_mp_copy_digs(b0.dp, b->dp, b0.used);
    s_mp_copy_digs(b1.dp, b->dp + B, b1.used);
-   s_mp_copy_digs(b2.dp, b->dp + 2 * B, b2.used);
+   s_mp_copy_digs(b2.dp, b->dp + (2 * B), b2.used);
    mp_clamp(&b0);
    mp_clamp(&b1);
    mp_clamp(&b2);

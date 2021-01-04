@@ -85,7 +85,7 @@ mp_err mp_kronecker(const mp_int *a, const mp_int *p, int *c)
       }
 
       if ((v & 1) == 1) {
-         k = k * table[p1.dp[0] & 7u];
+         k = k * (int)table[p1.dp[0] & 7u];
       }
 
       if (mp_isneg(&a1)) {
