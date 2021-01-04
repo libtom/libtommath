@@ -59,8 +59,8 @@ static int s_mp_get_token(char *s, int size, FILE *stream)
 
 static int mtest_opponent(void)
 {
-   char cmd[4096];
-   char buf[4096];
+   char cmd[4096] = {0};
+   char buf[4096] = {0};
    int ix;
    unsigned rr;
    mp_int a, b, c, d, e, f;
