@@ -23,7 +23,7 @@ mp_err mp_mul(const mp_int *a, const mp_int *b, mp_int *c)
    } else if ((a == b) &&
               MP_HAS(S_MP_SQR_COMBA) && /* can we use the fast comba multiplier? */
               (((a->used * 2) + 1) < MP_WARRAY) &&
-              (a->used < (MP_MAX_COMBA / 2))) {
+              (a->used < (MP_MAX_COMBA))) {
       err = s_mp_sqr_comba(a, c);
    } else if ((a == b) &&
               MP_HAS(S_MP_SQR)) {
