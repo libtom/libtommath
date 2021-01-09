@@ -473,6 +473,9 @@ int main(int argc, char **argv)
          }
       }
    }
+   if (printpreset == 1) {
+      updated = orig;
+   }
    if (args.terse == 1) {
       printf("%d %d %d %d\n",
              updated.MUL_KARATSUBA,
