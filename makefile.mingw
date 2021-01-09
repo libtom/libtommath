@@ -25,7 +25,7 @@ LTM_LDFLAGS = $(LDFLAGS) -static-libgcc
 #Libraries to be created
 LIBMAIN_S =libtommath.a
 LIBMAIN_I =libtommath.dll.a
-LIBMAIN_D =libtommath.dll
+LIBMAIN_D =tommath2.dll
 
 #List of objects to compile (all goes to libtommath.a)
 OBJECTS=mp_2expt.o mp_abs.o mp_add.o mp_add_d.o mp_addmod.o mp_and.o mp_clamp.o mp_clear.o mp_clear_multi.o \
