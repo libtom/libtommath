@@ -38,9 +38,10 @@ mp_err s_mp_sqr(const mp_int *a, mp_int *b)
          r       = (mp_word)a->dp[ix] * (mp_word)a->dp[iy];
 
          /* now calculate the double precision result, note we use
-          * addition instead of *2 since it's easier to optimize
+          * addition instead of *2 since it's easier to optimize.
           */
-         r       = (mp_word)t.dp[ix + iy] + r + r + (mp_word)u;
+         /* Some architectures and/or compilers seem to prefer a bit-shift nowadays */
+         r       = (mp_word)t.dp[ix + iy] + (r<<1) + (mp_word)u;
 
          /* store lower part */
          t.dp[ix + iy] = (mp_digit)(r & (mp_word)MP_MASK);
@@ -50,9 +51,21 @@ mp_err s_mp_sqr(const mp_int *a, mp_int *b)
       }
       /* propagate upwards */
       while (u != 0uL) {
-         r       = (mp_word)t.dp[ix + iy] + (mp_word)u;
-         t.dp[ix + iy] = (mp_digit)(r & (mp_word)MP_MASK);
-         u       = (mp_digit)(r >> (mp_word)MP_DIGIT_BIT);
+         mp_digit tmp;
+         /*
+            "u" can get bigger than MP_DIGIT_MAX and would need a bigger type
+            for the sum (mp_word). That is costly if mp_word is not a native
+            integer but a bigint from the compiler library. We do a manual
+            multiword addition instead.
+          */
+         /* t.dp[ix + iy] has been masked off by MP_MASK and is hence of the correct size
+            and we can just add the lower part of "u". Carry is guaranteed to fit into
+            the type used for mp_digit, too, so we can extract it later. */
+         tmp = t.dp[ix + iy] + (u & MP_MASK);
+         /* t.dp[ix + iy] is set to the result minus the carry, carry is still in "tmp" */
+         t.dp[ix + iy] = tmp & MP_MASK;
+         /* Add high part of "u" and the carry from "tmp" to get the next "u" */
+         u = (u >> MP_DIGIT_BIT) + (tmp >> MP_DIGIT_BIT);
          ++iy;
       }
    }

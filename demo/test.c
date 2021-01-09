@@ -1695,6 +1695,49 @@ LBL_ERR:
    return EXIT_FAILURE;
 }
 
+static mp_err s_fill_with_ones(mp_int *a, int size)
+{
+   int i;
+   mp_err err = MP_OKAY;
+
+   mp_zero(a);
+   if ((err = mp_grow(a, size)) != MP_OKAY)        goto LTM_ERR;
+   for (i = 0; i < size; i++) {
+      a->dp[i] = MP_MASK;
+      a->used++;
+   }
+
+LTM_ERR:
+   return err;
+}
+
+static int test_s_mp_sqr(void)
+{
+   mp_int a, b, c;
+   int i;
+
+   DOR(mp_init_multi(&a, &b, &c, NULL));
+
+   /* s_mp_mul() has a hardcoded branch to s_mul_comba if s_mul_comba is available,
+      so test another 10 just in case. */
+   for (i = 1; i < MP_MAX_COMBA + 10; i++) {
+      DO(s_fill_with_ones(&a, i));
+      DO(s_mp_sqr(&a, &b));
+      DO(s_mp_mul(&a, &a, &c, 2*i + 1));
+      EXPECT(mp_cmp(&b, &c) == MP_EQ);
+      DO(mp_rand(&a, i));
+      DO(s_mp_sqr(&a, &b));
+      DO(s_mp_mul(&a, &a, &c, 2*i + 1));
+      EXPECT(mp_cmp(&b, &c) == MP_EQ);
+   }
+
+   mp_clear_multi(&a, &b, &c, NULL);
+   return EXIT_SUCCESS;
+LBL_ERR:
+   mp_clear_multi(&a, &b, &c, NULL);
+   return EXIT_FAILURE;
+}
+
 static int test_s_mp_mul_balance(void)
 {
    mp_int a, b, c;
@@ -2194,6 +2237,7 @@ static int unit_tests(int argc, char **argv)
       T1(mp_xor, MP_XOR),
       T3(s_mp_div_recursive, ONLY_PUBLIC_API, S_MP_DIV_RECURSIVE, S_MP_DIV_SCHOOL),
       T3(s_mp_div_small, ONLY_PUBLIC_API, S_MP_DIV_SMALL, S_MP_DIV_SCHOOL),
+      T2(s_mp_sqr, ONLY_PUBLIC_API, S_MP_SQR),
       T2(s_mp_mul_balance, ONLY_PUBLIC_API, S_MP_MUL_BALANCE),
       T2(s_mp_mul_karatsuba, ONLY_PUBLIC_API, S_MP_MUL_KARATSUBA),
       T2(s_mp_sqr_karatsuba, ONLY_PUBLIC_API, S_MP_SQR_KARATSUBA),
