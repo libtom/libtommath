@@ -3,11 +3,23 @@
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
+static size_t s_mp_strlen(const char *s)
+{
+   const char *p;
+   p = s;
+   while (*p != '\0') {
+      p++;
+   }
+   return (size_t)(p - s);
+}
+
 /* read a string [ASCII] in a given radix */
 mp_err mp_read_radix(mp_int *a, const char *str, int radix)
 {
+
    mp_err   err;
    mp_sign  sign = MP_ZPOS;
+   size_t slen;
 
    /* make sure the radix is ok */
    if ((radix < 2) || (radix > 64)) {
@@ -22,48 +34,24 @@ mp_err mp_read_radix(mp_int *a, const char *str, int radix)
       sign = MP_NEG;
    }
 
-   /* set the integer to the default of zero */
+   slen = s_mp_strlen(str);
+
    mp_zero(a);
 
-   /* process each digit of the string */
-   while (*str != '\0') {
-      /* if the radix <= 36 the conversion is case insensitive
-       * this allows numbers like 1AB and 1ab to represent the same  value
-       * [e.g. in hex]
-       */
-      uint8_t y;
-      char ch = (radix <= 36) ? (char)MP_TOUPPER((int)*str) : *str;
-      unsigned pos = (unsigned)(ch - '+');
-      if (MP_RADIX_MAP_REVERSE_SIZE <= pos) {
-         break;
-      }
-      y = s_mp_radix_map_reverse[pos];
-
-      /* if the char was found in the map
-       * and is less than the given radix add it
-       * to the number, otherwise exit the loop.
-       */
-      if (y >= radix) {
-         break;
-      }
-      if ((err = mp_mul_d(a, (mp_digit)radix, a)) != MP_OKAY) {
-         return err;
-      }
-      if ((err = mp_add_d(a, y, a)) != MP_OKAY) {
-         return err;
-      }
-      ++str;
-   }
-
-   /* if an illegal character was found, fail. */
-   if ((*str != '\0') && (*str != '\r') && (*str != '\n')) {
-      return MP_VAL;
+   /* Try faster version first */
+   if (MP_HAS(S_MP_FASTER_READ_RADIX)) {
+      if ((err = s_mp_faster_read_radix(a, str, 0, slen, radix)) != MP_OKAY)                             goto LTM_ERR;
+   } else if (MP_HAS(S_MP_SLOWER_READ_RADIX)) {
+      if ((err = s_mp_slower_read_radix(a, str, 0, slen, radix)) != MP_OKAY)                             goto LTM_ERR;
    }
 
    /* set the sign only if a != 0 */
    if (!mp_iszero(a)) {
       a->sign = sign;
    }
-   return MP_OKAY;
+
+LTM_ERR:
+   return err;
 }
+
 #endif

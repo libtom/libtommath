@@ -208,10 +208,31 @@ MP_PRIVATE void s_mp_zero_buf(void *mem, size_t size);
 MP_PRIVATE void s_mp_zero_digs(mp_digit *d, int digits);
 MP_PRIVATE mp_err s_mp_radix_size_overestimate(const mp_int *a, const int radix, size_t *size);
 
+/* Radix conversion O(M(n) log n) Schoenhage method */
+MP_PRIVATE mp_err s_mp_faster_to_radix(const mp_int *a, char *str, size_t maxlen, size_t *written, int radix) MP_WUR;
+MP_PRIVATE mp_err s_mp_faster_read_radix(mp_int *a, const char *str, size_t start, size_t end, int radix) MP_WUR;
+/* Radix conversion O(n^2) method */
+MP_PRIVATE mp_err s_mp_slower_to_radix(const mp_int *a, char **str, size_t *part_maxlen, size_t *part_written,
+                                       int radix, bool pad) MP_WUR;
+MP_PRIVATE mp_err s_mp_slower_read_radix(mp_int *a, const char *str, size_t start, size_t end, int radix) MP_WUR;
+
+
+
 #define MP_RADIX_MAP_REVERSE_SIZE 80u
+#define MP_RADIX_EXPONENT_Y_SIZE  65u
 extern MP_PRIVATE const char s_mp_radix_map[];
 extern MP_PRIVATE const uint8_t s_mp_radix_map_reverse[];
 extern MP_PRIVATE const mp_digit s_mp_prime_tab[];
+extern MP_PRIVATE const uint8_t s_mp_radix_exponent_y[];
+
+/*
+  This is the value without the Newton-Raphson optimization.
+  Tuneable?
+ */
+#ifndef MP_RADIX_BARRETT_START_MULTIPLICATOR
+#   define MP_RADIX_BARRETT_START_MULTIPLICATOR   50
+#endif
+
 
 /* number of primes */
 #define MP_PRIME_TAB_SIZE 256
