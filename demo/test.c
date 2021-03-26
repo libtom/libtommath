@@ -100,6 +100,7 @@ static int test_feature_detection(void)
 static int test_trivial_stuff(void)
 {
    mp_int a, b, c, d;
+   uint64_t hash;
    DOR(mp_init_multi(&a, &b, &c, &d, NULL));
    EXPECT(mp_error_to_string(MP_OKAY) != NULL);
 
@@ -139,6 +140,8 @@ static int test_trivial_stuff(void)
    DO(mp_neg(&b, &b));
    mp_set(&c, 1u);
    DO(mp_exptmod(&a, &b, &c, &d));
+
+   EXPECT(mp_hash64(&a, &hash) == MP_OKAY);
 
    mp_set(&c, 7u);
    /* same here */
