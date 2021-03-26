@@ -53,6 +53,7 @@
 #   define MP_GET_MAG_U64_C
 #   define MP_GET_MAG_UL_C
 #   define MP_GROW_C
+#   define MP_HASH_C
 #   define MP_INIT_C
 #   define MP_INIT_COPY_C
 #   define MP_INIT_I32_C
@@ -384,6 +385,9 @@
 
 #if defined(MP_GROW_C)
 #   define S_MP_ZERO_DIGS_C
+#endif
+
+#if defined(MP_HASH_C)
 #endif
 
 #if defined(MP_INIT_C)
