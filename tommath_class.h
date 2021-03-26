@@ -39,6 +39,7 @@
 #   define MP_EXCH_C
 #   define MP_EXPT_N_C
 #   define MP_EXPTMOD_C
+#   define MP_HASH64_C
 #   define MP_EXTEUCLID_C
 #   define MP_FREAD_C
 #   define MP_FROM_SBIN_C

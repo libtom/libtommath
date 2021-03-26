@@ -488,6 +488,9 @@ mp_err mp_reduce_2k_l(mp_int *a, const mp_int *n, const mp_int *d) MP_WUR;
 /* Y = G**X (mod P) */
 mp_err mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y) MP_WUR;
 
+/* computes hash */
+mp_err mp_hash64(mp_int *a, uint64_t *hash) MP_WUR;
+
 /* ---> Primes <--- */
 
 /* performs one Fermat test of "a" using base "b".
