@@ -102,7 +102,7 @@ endif
 ifeq ($(PLATFORM), Darwin)
 LTM_CFLAGS += -Wno-nullability-completeness
 endif
-ifeq ($(PLATFORM), CYGWIN)
+ifneq ($(findstring $(PLATFORM),CYGWIN MINGW32 MINGW64 MSYS),)
 LIBTOOLFLAGS += -no-undefined
 endif
 
