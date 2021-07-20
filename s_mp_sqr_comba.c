@@ -16,7 +16,7 @@ After that loop you do the squares and add them in.
 mp_err s_mp_sqr_comba(const mp_int *a, mp_int *b)
 {
    int       oldused, pa, ix;
-   mp_digit  W[MP_WARRAY];
+   mp_digit  *W;
    mp_word   W1;
    mp_err err;
 
@@ -24,6 +24,11 @@ mp_err s_mp_sqr_comba(const mp_int *a, mp_int *b)
    pa = a->used + a->used;
    if ((err = mp_grow(b, pa)) != MP_OKAY) {
       return err;
+   }
+
+   W=MP_MALLOC(MP_WARRAY * sizeof(mp_digit));
+   if (!W) {
+      return MP_MEM;
    }
 
    /* number of output digits to produce */
@@ -77,6 +82,8 @@ mp_err s_mp_sqr_comba(const mp_int *a, mp_int *b)
    for (ix = 0; ix < pa; ix++) {
       b->dp[ix] = W[ix] & MP_MASK;
    }
+
+   MP_FREE(W, MP_WARRAY * sizeof(mp_digit));
 
    /* clear unused digits [that existed in the old copy of c] */
    s_mp_zero_digs(b->dp + b->used, oldused - b->used);
