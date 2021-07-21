@@ -21,7 +21,7 @@
 
 mp_err s_mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y, int redmode)
 {
-   mp_int  M[TAB_SIZE], res;
+   mp_int  *M, res;
    mp_digit buf, mp;
    int     bitbuf, bitcpy, bitcnt, mode, digidx, x, y, winsize;
    mp_err   err;
@@ -53,8 +53,14 @@ mp_err s_mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_i
    winsize = MAX_WINSIZE ? MP_MIN(MAX_WINSIZE, winsize) : winsize;
 
    /* init M array */
+   M=MP_MALLOC(sizeof(mp_int) * TAB_SIZE);
+   if (!M) {
+      return MP_MEM;
+   }
+
    /* init first cell */
    if ((err = mp_init_size(&M[1], P->alloc)) != MP_OKAY) {
+      MP_FREE(M, sizeof(mp_int) * TAB_SIZE);
       return err;
    }
 
@@ -65,6 +71,7 @@ mp_err s_mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_i
             mp_clear(&M[y]);
          }
          mp_clear(&M[1]);
+         MP_FREE(M, sizeof(mp_int) * TAB_SIZE);
          return err;
       }
    }
@@ -249,6 +256,8 @@ LBL_M:
    for (x = 1<<(winsize-1); x < (1 << winsize); x++) {
       mp_clear(&M[x]);
    }
+
+   MP_FREE(M, sizeof(mp_int) * TAB_SIZE);
    return err;
 }
 #endif

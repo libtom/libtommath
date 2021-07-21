@@ -16,13 +16,18 @@ mp_err s_mp_mul_high_comba(const mp_int *a, const mp_int *b, mp_int *c, int digs
 {
    int     oldused, pa, ix;
    mp_err   err;
-   mp_digit W[MP_WARRAY];
+   mp_digit *W;
    mp_word  _W;
 
    /* grow the destination as required */
    pa = a->used + b->used;
    if ((err = mp_grow(c, pa)) != MP_OKAY) {
       return err;
+   }
+
+   W=MP_MALLOC(MP_WARRAY * sizeof(mp_digit));
+   if (!W) {
+      return MP_MEM;
    }
 
    /* number of output digits to produce */
@@ -60,6 +65,8 @@ mp_err s_mp_mul_high_comba(const mp_int *a, const mp_int *b, mp_int *c, int digs
       /* now extract the previous digit [below the carry] */
       c->dp[ix] = W[ix];
    }
+
+   MP_FREE(W, MP_WARRAY * sizeof(mp_digit));
 
    /* clear unused digits [that existed in the old copy of c] */
    s_mp_zero_digs(c->dp + c->used, oldused - c->used);

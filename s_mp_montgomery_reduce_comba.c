@@ -15,7 +15,7 @@ mp_err s_mp_montgomery_reduce_comba(mp_int *x, const mp_int *n, mp_digit rho)
 {
    int     ix, oldused;
    mp_err  err;
-   mp_word W[MP_WARRAY];
+   mp_word *W;
 
    if (x->used > MP_WARRAY) {
       return MP_VAL;
@@ -32,6 +32,11 @@ mp_err s_mp_montgomery_reduce_comba(mp_int *x, const mp_int *n, mp_digit rho)
    /* first we have to get the digits of the input into
     * an array of double precision words W[...]
     */
+
+   W=MP_MALLOC(MP_WARRAY * sizeof(mp_word));
+   if (!W) {
+      return MP_MEM;
+   }
 
    /* copy the digits of a into W[0..a->used-1] */
    for (ix = 0; ix < x->used; ix++) {
@@ -99,6 +104,8 @@ mp_err s_mp_montgomery_reduce_comba(mp_int *x, const mp_int *n, mp_digit rho)
    for (ix = 0; ix < (n->used + 1); ix++) {
       x->dp[ix] = W[n->used + ix] & (mp_word)MP_MASK;
    }
+
+   MP_FREE(W, MP_WARRAY * sizeof(mp_word));
 
    /* set the max used */
    x->used = n->used + 1;
