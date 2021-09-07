@@ -52,7 +52,8 @@ mp_err mp_prime_strong_lucas_selfridge(const mp_int *a, bool *result)
 {
    /* CZ TODO: choose better variable names! */
    mp_int Dz, gcd, Np1, Uz, Vz, U2mz, V2mz, Qmz, Q2mz, Qkdz, T1z, T2z, T3z, T4z, Q2kdz;
-   int32_t D, Ds, J, sign, P, Q, r, s, u, Nbits;
+   int J;
+   int32_t D, Ds, sign, P, Q, r, s, u, Nbits;
    mp_err err;
    bool oddness;
 
