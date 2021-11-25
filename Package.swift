@@ -29,7 +29,7 @@ let package = Package(
             publicHeadersPath: "modulemap",
             cSettings: [
                 .headerSearchPath("."),
-                .unsafeFlags(["-flto=thin"])
+                .unsafeFlags(["-flto=thin"])  // for Dead Code Elimination
             ])
     ],
     cLanguageStandard: .gnu11,
