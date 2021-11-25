@@ -28,7 +28,8 @@ let package = Package(
             sources: ["."],
             publicHeadersPath: "modulemap",
             cSettings: [
-                .headerSearchPath(".")
+                .headerSearchPath("."),
+                .unsafeFlags(["-flto=thin"])
             ])
     ],
     cLanguageStandard: .gnu11,
