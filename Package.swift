@@ -28,9 +28,12 @@ let package = Package(
             sources: ["."],
             publicHeadersPath: "modulemap",
             cSettings: [
-                .headerSearchPath("."),
                 .unsafeFlags(["-flto=thin"])  // for Dead Code Elimination
-            ])
+            ]),
+        .testTarget(name: "TommathTests",
+                    dependencies: ["libtommath"],
+                    path: "demo",
+                    sources: ["tommath_tests.swift"])
     ],
     cLanguageStandard: .gnu11,
     cxxLanguageStandard: .gnucxx14
