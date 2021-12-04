@@ -1,4 +1,4 @@
-module libtommath [extern_c] {
+module TomMath [extern_c] {
     header "tommath.h"
     export *
 }

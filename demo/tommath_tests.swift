@@ -1,5 +1,5 @@
 import XCTest
-import libtommath
+import TomMath
 
 /* ---> Basic Manipulations <--- */
 
@@ -14,7 +14,7 @@ func mp_get_u32(_ a: UnsafePointer<mp_int>) -> UInt32 {
     return UInt32(bitPattern: mp_get_i32(a))
 }
 
-class LibTommathTests: XCTestCase {
+class TomMathTests: XCTestCase {
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
