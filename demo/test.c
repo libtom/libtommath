@@ -677,6 +677,17 @@ static int test_mp_is_square(void)
 
    DOR(mp_init_multi(&a, &b, NULL));
 
+
+   /* Domain is {x \in \mathbb{Z} : x \le 0}  */
+   mp_set_l(&a, -1);
+   EXPECT(mp_is_square(&a, &res) == MP_VAL);
+   EXPECT(!res);
+
+   /* Zero is a perfect square, too */
+   mp_zero(&a);
+   DO(mp_is_square(&a, &res));
+   EXPECT(res);
+
    for (i = 0; i < 1000; ++i) {
       printf("%6d\r", i);
       fflush(stdout);
