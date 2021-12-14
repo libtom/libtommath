@@ -41,6 +41,7 @@ mp_err mp_is_square(const mp_int *arg, bool *ret)
    }
 
    if (mp_iszero(arg)) {
+      *ret = true;
       return MP_OKAY;
    }
 
