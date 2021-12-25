@@ -1,5 +1,5 @@
 import XCTest
-import TomMath
+import libtommath
 
 /* ---> Basic Manipulations <--- */
 
