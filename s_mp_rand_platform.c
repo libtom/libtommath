@@ -26,9 +26,22 @@ static mp_err s_read_arc4random(void *p, size_t n)
 #define WINVER 0x0501
 #endif
 
+#ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
+#endif
+
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable : 4255)
+/* otherwise windef.h from the Windows SDK 7.1 will bomb out here when targeting XP, for example */
+#endif /* _MSC_VER */
+/* clang-format off */
 #include <windows.h>
 #include <wincrypt.h>
+/* clang-format on */
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif /* _MSC_VER */
 
 static mp_err s_read_wincsp(void *p, size_t n)
 {
