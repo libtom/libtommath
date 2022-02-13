@@ -41,6 +41,7 @@ mp_get_mag_u32.c
 mp_get_mag_u64.c
 mp_get_mag_ul.c
 mp_grow.c
+mp_hash.c
 mp_init.c
 mp_init_copy.c
 mp_init_i32.c
@@ -83,6 +84,7 @@ mp_prime_strong_lucas_selfridge.c
 mp_radix_size.c
 mp_radix_size_overestimate.c
 mp_rand.c
+mp_rand_source.c
 mp_read_radix.c
 mp_reduce.c
 mp_reduce_2k.c
@@ -144,7 +146,6 @@ s_mp_prime_is_divisible.c
 s_mp_prime_tab.c
 s_mp_radix_map.c
 s_mp_radix_size_overestimate.c
-s_mp_rand_jenkins.c
 s_mp_rand_platform.c
 s_mp_sqr.c
 s_mp_sqr_comba.c
