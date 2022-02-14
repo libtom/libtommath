@@ -62,7 +62,7 @@ All other options will be tested with all MP_xBIT configurations.
     --with-valgrind
     --with-valgrind=*       Run in valgrind (slow!).
 
-    --with-travis-valgrind  Run with valgrind on Travis on specific branches.
+    --limit-valgrind        Run with valgrind on CI only on specific branches.
 
     --valgrind-options      Additional Valgrind options
                             Some of the options like e.g.:
@@ -246,8 +246,8 @@ do
       fi
       start_alive_printing
     ;;
-    --with-travis-valgrind*)
-      if [[ ("$TRAVIS_BRANCH" == "develop" && "$TRAVIS_PULL_REQUEST" == "false") || "$TRAVIS_BRANCH" == *"valgrind"* || "$TRAVIS_COMMIT_MESSAGE" == *"valgrind"* ]]
+    --limit-valgrind*)
+      if [[ ("$GITHUB_BASE_REF" == "develop" && "$PR_NUMBER" == "") || "$GITHUB_REF_NAME" == *"valgrind"* || "$COMMIT_MESSAGE" == *"valgrind"* ]]
       then
         if [[ ${1#*d} != "" ]]
         then
