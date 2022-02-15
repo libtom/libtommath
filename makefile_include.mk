@@ -48,7 +48,7 @@ endif
 
 LTM_CFLAGS += -I./ -Wall -Wsign-compare -Wextra -Wshadow
 
-ifdef SANITIZER
+ifneq (,$(SANITIZER))
 LTM_CFLAGS += -fsanitize=undefined -fno-sanitize-recover=all -fno-sanitize=float-divide-by-zero
 endif
 
