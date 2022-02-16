@@ -32,4 +32,8 @@ onlyOneBackUp: 1
 modifyLineBreaks:
     textWrapOptions:
         columns: 100
-
+        perCodeBlockBasis: 1
+        all: 1
+    removeParagraphLineBreaks:
+        all: 1
+        beforeTextWrap: 1

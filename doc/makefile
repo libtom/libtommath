@@ -43,6 +43,7 @@ manual:	mandvi
 # Its configuraion is well documented
 # http://mirrors.ctan.org/support/latexindent/documentation/latexindent.pdf
 pretty:
+#	latexindent -s -w -m -l=.latexindent.yaml -y="modifyLineBreaks: removeParagraphLineBreaks: all: 1" bn.tex
 	latexindent -s -w -m -l=.latexindent.yaml bn.tex
 
 clean:
