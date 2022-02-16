@@ -1444,6 +1444,20 @@ This divides $a$ by $b$ and stores the quotient in $c$ and $d$.  The signed quot
 such that $bc + d = a$.  Note that either of $c$ or $d$ can be set to \texttt{NULL} if their value
 is not required.  If $b$ is zero the function returns \texttt{MP\_VAL}.
 
+\section{Hashing}
+To get a non-cryptographic hash of an \texttt{mp\_int} use the following function.
+
+\index{mp\_hash}
+\begin{alltt}
+mp_err mp_hash (mp_int *a, mp_hval *hash);
+\end{alltt}
+
+This will create the hash of $a$ following the \mbox{FNV-1a} algorithm as described on
+\url{http://www.isthe.com/chongo/tech/comp/fnv/index.html#FNV-1a}. With the
+help of this function one can use an \texttt{mp\_int} as a key in a hash table.
+
+NB: The hashing is not stable over different widths of an \texttt{mp\_digit}.
+
 \chapter{Multiplication and Squaring}
 \section{Multiplication}
 A full signed integer multiplication can be performed with the following.
