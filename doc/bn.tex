@@ -205,21 +205,21 @@ gmake: *** [makefile.shared:64: libtommath.la] Error 1
 To build a shared library with OpenBSD\footnote{Tested with OpenBSD version 6.4} the GNU versions
 of \texttt{make} and \texttt{libtool} are needed.
 \begin{alltt}
-$ sudo pkg_add gmake libtool
+\$ sudo pkg_add gmake libtool
 \end{alltt}
 At this time two versions of \texttt{libtool} are installed and both are named \texttt{libtool},
 unfortunately but GNU \texttt{libtool} has been placed in \texttt{/usr/local/bin/} and the native
 version in \texttt{/usr/bin/}. The path might be different in other versions of OpenBSD but both
 programms differ in the output of \texttt{libtool --version}
 \begin{alltt}
-$ /usr/local/bin/libtool --version
+\$ /usr/local/bin/libtool --version
 libtool (GNU libtool) 2.4.2
 Written by Gordon Matzigkeit <gord@gnu.ai.mit.edu>, 1996
 
 Copyright (C) 2011 Free Software Foundation, Inc.
 This is free software; see the source for copying conditions.  There is NO
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-$ libtool --version
+\$ libtool --version
 libtool (not (GNU libtool)) 1.5.26
 \end{alltt}
 
@@ -265,7 +265,7 @@ and simply pipe that into \texttt{mtest}.  For example, if your PRNG program is 
 myprng | mtest/mtest | test
 \end{alltt}
 
-This will output a row of numbers that are increasing.	Each column is a different test (such as
+This will output a row of numbers that are increasing.  Each column is a different test (such as
 addition, multiplication, etc) that is being performed.  The numbers represent how many times the
 test was invoked.  If an error is detected the program will exit with a dump of the relevant
 numbers it was working with.
@@ -353,14 +353,14 @@ which means they are to be defined only if \texttt{LTM\_LAST} has been defined.
 \end{small}
 
 \section{Purpose of LibTomMath}
-Unlike	GNU MP (GMP) Library, LIP, OpenSSL or various other commercial kits (Miracl), LibTomMath
+Unlike GNU MP (GMP) Library, LIP, OpenSSL or various other commercial kits (Miracl), LibTomMath
 was not written with bleeding edge performance in mind.  First and foremost LibTomMath was written
 to be entirely open. Not only is the source code public domain (unlike various other GPL/etc
 licensed code), not only is the code freely downloadable but the source code is also accessible for
 computer science students attempting to learn ``BigNum'' or multiple precision arithmetic
 techniques.
 
-LibTomMath was written to be an instructive collection of source code.	This is why there are many
+LibTomMath was written to be an instructive collection of source code.  This is why there are many
 comments, only one function per source file and often I use a ``middle-road'' approach where I
 don't cut corners for an extra 2\% speed increase.
 
@@ -379,7 +379,7 @@ GnuPG\footnote{GnuPG v1.2.3 versus LibTomMath v0.28}.
         \\
         \hline Few lines of code per file        & X            &              & GnuPG $ = 300.9$
         \\
-                                                 &              &              & LibTomMath	$ =
+                                                 &              &              & LibTomMath $ =
           71.97$\hfill
         \\
         \hline Commented function prototypes     & X            &              & GnuPG function
@@ -428,7 +428,7 @@ environments.  Fast RSA for example can be performed with as little as 8 Kibibyt
 \section{Building Programs}
 In order to use LibTomMath you must include ``tommath.h'' and link against the appropriate library
 file (typically
-libtommath.a).	There is no library initialization required and the entire library is thread safe.
+libtommath.a).  There is no library initialization required and the entire library is thread safe.
 
 \section{Return Codes}
 There are five possible return codes a function may return.
@@ -492,7 +492,7 @@ it must be initialized.
 \section{Function Organization}
 
 The arithmetic functions of the library are all organized to have the same style prototype.  That
-is source operands are passed on the left and the destination is on the right.	For instance,
+is source operands are passed on the left and the destination is on the right.  For instance,
 \begin{alltt}
 mp_add(&a, &b, &c);       /* c = a + b */
 mp_mul(&a, &a, &c);       /* c = a * a */
@@ -546,6 +546,7 @@ int main(void)
 \subsection{Single Free}
 When you are finished with an \texttt{mp\_int} it is ideal to return the heap it used back to the
 system.  The following function provides this functionality.
+
 \index{mp\_clear}
 \begin{alltt}
 void mp_clear (mp_int *a);
@@ -591,7 +592,7 @@ The  \texttt{mp\_init\_multi} function provides this functionality.
 mp_err mp_init_multi(mp_int *mp, ...);
 \end{alltt}
 
-It accepts a \texttt{NULL} terminated list of pointers to \texttt{mp\_int} structures.	It will
+It accepts a \texttt{NULL} terminated list of pointers to \texttt{mp\_int} structures.  It will
 attempt to initialize them all at once.  If the function returns \texttt{MP\_OKAY} then all of the
 \texttt{mp\_int} variables are ready to use, otherwise none of them are available for use.
 
@@ -852,7 +853,7 @@ int mp_count_bits(const mp_int *a);
 
 \section{Small Constants}
 Setting an \texttt{mp\_int} to a small constant is a relatively common operation.  To accommodate
-these instances there is a small constant assignment function.	This function is used to set a
+these instances there is a small constant assignment function.  This function is used to set a
 single digit constant. The reason for this function is efficiency.  Setting a single digit is quick
 but the domain of a digit can change (it's always at least $0 \ldots 127$).
 
@@ -866,7 +867,7 @@ void mp_set (mp_int *a, mp_digit b);
 \end{alltt}
 
 This will zero the contents of $a$ and make it represent an integer equal to the value of $b$. Note
-that this function has a return type of \texttt{void}.	It cannot cause an error so it is safe to
+that this function has a return type of \texttt{void}.  It cannot cause an error so it is safe to
 assume the function succeeded.
 
 \begin{small}
@@ -998,6 +999,7 @@ double mp_get_double(const mp_int *a);
 
 \subsection{Initialize and Setting Constants}
 To both initialize and set small constants the following nine functions are available.
+
 \index{mp\_init\_set} \index{mp\_init\_i32} \index{mp\_init\_i64} \index{mp\_init\_u32} \index{mp\_init\_u64}
 \index{mp\_init\_l} \index{mp\_init\_ul}
 \begin{alltt}
@@ -1052,7 +1054,7 @@ Number1, Number2 == 100, 1023
 
 \section{Comparisons}
 
-Comparisons in LibTomMath are always performed in a ``left to right'' fashion.	There are three
+Comparisons in LibTomMath are always performed in a ``left to right'' fashion.  There are three
 possible return codes for any comparison.
 
 \index{MP\_GT} \index{MP\_EQ} \index{MP\_LT}
@@ -1076,7 +1078,7 @@ be ``to the left'' of $b$. The return codes are of type \texttt{mp\_ord}.
 \subsection{Unsigned comparison}
 
 An unsigned comparison considers only the digits themselves and not the associated \texttt{sign}
-flag of the \texttt{mp\_int} structures.  This is analogous to an absolute comparison.	The
+flag of the \texttt{mp\_int} structures.  This is analogous to an absolute comparison.  The
 function \texttt{mp\_cmp\_mag} will compare two \texttt{mp\_int} variables based on their digits
 only.
 
@@ -1255,6 +1257,7 @@ Multiplications and divisions by any power of two can be performed with quick lo
 left or right depending on the operation.
 
 When multiplying or dividing by two a special case routine can be used which are as follows.
+
 \index{mp\_mul\_2} \index{mp\_div\_2}
 \begin{alltt}
 mp_err mp_mul_2(const mp_int *a, mp_int *b);
@@ -1397,6 +1400,7 @@ mp_err mp_signed_rsh(const mp_int *a, int b, mp_int *c, mp_int *d);
 The function \texttt{mp\_complement} computes a two--complement $b = \sim a$. The function
 \texttt{mp\_signed\_rsh} performs sign extending right shift. For positive numbers it is equivalent
 to \texttt{mp\_div\_2d}.
+
 \section{Addition and Subtraction}
 
 To compute an addition or subtraction the following two functions can be used.
@@ -1447,6 +1451,7 @@ is not required.  If $b$ is zero the function returns \texttt{MP\_VAL}.
 \chapter{Multiplication and Squaring}
 \section{Multiplication}
 A full signed integer multiplication can be performed with the following.
+
 \index{mp\_mul}
 \begin{alltt}
 mp_err mp_mul (const mp_int *a, const mp_int *b, mp_int *c);
@@ -1523,13 +1528,13 @@ squaring algorithms all which can be called from the function \texttt{mp\_sqr}. 
 \section{Tuning Polynomial Basis Routines}
 
 Both of the Toom--Cook and Karatsuba multiplication algorithms are faster than the traditional
-$O(n^2)$ approach that the Comba and baseline algorithms use.	  At $O(n^{1.464973})$ and
+$O(n^2)$ approach that the Comba and baseline algorithms use.  At $O(n^{1.464973})$ and
 $O(n^{1.584962})$ running times respectively they require considerably less work.  For example, a
 $10\,000$-digit multiplication would take roughly $724\,000$ single precision multiplications with
 Toom--Cook or $100\,000\,000$ single precision multiplications with the standard Comba (a factor of
 $138$).
 
-So why not always use Karatsuba or Toom--Cook?	The simple answer is that they have so much
+So why not always use Karatsuba or Toom--Cook?  The simple answer is that they have so much
 overhead that they're not actually faster than Comba until you hit distinct  ``cutoff'' points.
 For Karatsuba with the default configuration, GCC 3.3.1 and an Athlon XP processor the cutoff point
 is roughly 110 digits (about 70 for the Intel P4).  That is, at 110 digits Karatsuba and Comba
@@ -1797,6 +1802,7 @@ This computes the value required for the modulus $a$ and stores it in $d$.  This
 fail and does not return any error codes.
 
 To determine if $a$ is a valid DR modulus:
+
 \index{mp\_dr\_is\_modulus}
 \begin{alltt}
 bool mp_dr_is_modulus(const mp_int *a);
@@ -1860,24 +1866,28 @@ Some of the combinations of an arithmetic operations followed by a modular reduc
 a faster way. The ones implemented are:
 
 Addition $d = (a + b) \mod c$
+
 \index{mp\_addmod}
 \begin{alltt}
 mp_err mp_addmod(const mp_int *a, const mp_int *b, const mp_int *c, mp_int *d);
 \end{alltt}
 
 Subtraction  $d = (a - b) \mod c$
+
 \index{mp\_submod}
 \begin{alltt}
 mp_err mp_submod(const mp_int *a, const mp_int *b, const mp_int *c, mp_int *d);
 \end{alltt}
 
 Multiplication $d = (ab) \mod c$
+
 \index{mp\_mulmod}
 \begin{alltt}
 mp_err mp_mulmod(const mp_int *a, const mp_int *b, const mp_int *c, mp_int *d);
 \end{alltt}
 
 Squaring  $d = (a^2) \mod c$
+
 \index{mp\_sqrmod}
 \begin{alltt}
 mp_err mp_sqrmod(const mp_int *a, const mp_int *b, const mp_int *c, mp_int *d);
@@ -2225,7 +2235,7 @@ Rabin--Miller test with bases $2$ and $3$ resemble the BPSW test. The single int
 compile--time option in \texttt{mp\_prime\_is\_prime} and can be excluded from the Libtommath build
 if not needed.
 
-\section{Frobenius (Underwood)	Test}
+\section{Frobenius (Underwood) Test}
 \index{mp\_prime\_frobenius\_underwood}
 \begin{alltt}
 mp_err mp_prime_frobenius_underwood(const mp_int *N, bool *result)
@@ -2244,6 +2254,7 @@ sequences of odd numbers with a random start point) found only 31 (thirty--one) 
 \section{Primality Testing}
 Testing if a number is a square can be done a bit faster than just by calculating the square root.
 It is used by the primality testing function described below.
+
 \index{mp\_is\_square}
 \begin{alltt}
 mp_err mp_is_square(const mp_int *arg, bool *ret);
@@ -2347,6 +2358,7 @@ random numbers the operating systems offers is cryptographically secure. It will
 all operating systems that have it.
 
 If you have a custom random source you might find the function \texttt{mp\_rand\_source()} useful.
+
 \index{mp\_rand\_source}
 \begin{alltt}
 void mp_rand_source(mp_err(*source)(void *out, size_t size));
@@ -2430,6 +2442,7 @@ $123abc_{16} = 1194684_{10}$ and $123ABC_{16} = 1194684_{10}$ are equivalent but
 The input encoding is currently restricted to ASCII only.
 
 If \texttt{MP\_NO\_FILE} is not defined a function to read from a file is also available.
+
 \index{mp\_fread}
 \begin{alltt}
 mp_err mp_fread(mp_int *a, int radix, FILE *stream);
@@ -2464,6 +2477,7 @@ This will read in an unsigned big--endian array of bytes (octets) from \texttt{b
 
 For those who acknowledge the existence of negative numbers (heretic!) there are ``signed''
 versions of the previous functions.
+
 \index{mp\_sbin\_size} \index{mp\_from\_sbin} \index{mp\_to\_sbin}
 \begin{alltt}
 size_t mp_sbin_size(const mp_int *a);
@@ -2478,6 +2492,7 @@ The two functions \texttt{mp\_unpack} (get your gifts out of the box, import bin
 \texttt{mp\_pack} (put your gifts into the box, export binary data) implement the similarly working
 GMP functions as described at \url{http://gmplib.org/manual/Integer-Import-and-Export.html} with
 the exception that \texttt{mp\_pack} will not allocate memory if \texttt{rop} is \texttt{NULL}.
+
 \index{mp\_unpack} \index{mp\_pack}
 \begin{alltt}
 mp_err mp_unpack(mp_int *rop, size_t count, mp_order order, size_t size,
@@ -2487,6 +2502,7 @@ mp_err mp_pack(void *rop, size_t *countp, mp_order order, size_t size,
 \end{alltt}
 The function \texttt{mp\_pack} has the additional variable \texttt{maxsize} which must hold the
 size of the buffer \texttt{rop} in bytes. Use
+
 \index{mp\_pack\_count}
 \begin{alltt}
 /* Parameters "nails" and "size" are the same as in mp_pack */
@@ -2604,6 +2620,7 @@ The functions \texttt{mp\_incr} and \texttt{mp\_decr} mimic the postfix operator
 \texttt{--} respectively, to increment the input by one. They call the full single--digit functions
 if the addition would carry. Both functions need to be included in a minimized library because they
 call each other in case of a negative input, These functions change the inputs!
+
 \index{mp\_incr} \index{mp\_decr}
 \begin{alltt}
 mp_err mp_incr(mp_int *a);
@@ -2612,6 +2629,7 @@ mp_err mp_decr(mp_int *a);
 
 \chapter{Little Helpers}
 It is never wrong to have some useful little shortcuts at hand.
+
 \section{Function Macros}
 To make this overview simpler the macros are given as function prototypes. The return of logic
 macros is \texttt{false} or \texttt{true} respectively.
