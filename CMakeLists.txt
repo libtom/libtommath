@@ -49,6 +49,19 @@ target_link_libraries(test-target PRIVATE
     ${PROJECT_NAME}
 )
 
+# for the SHARED_LIBRARY build we need some special flags enabled
+# We also allow our users to override our selection by defining their own
+# `CMAKE_C_FLAGS` on generation-phase. CMake itself doesn't allow a user
+# to override settings defined in the CMakeLists.txt so we append it manually
+# again even though CMake prepended it already.
+target_compile_options(test-target BEFORE PRIVATE
+    $<$<STREQUAL:$<TARGET_PROPERTY:${PROJECT_NAME},TYPE>,SHARED_LIBRARY>:-O1 -DLTM_TEST_DYNAMIC>
+    ${CMAKE_C_FLAGS}
+)
+target_link_options(test-target BEFORE PRIVATE
+    $<$<STREQUAL:$<TARGET_PROPERTY:${PROJECT_NAME},TYPE>,SHARED_LIBRARY>:-O1>
+)
+
 #-----------------------------------------------------------------------------
 # demo target
 #-----------------------------------------------------------------------------
