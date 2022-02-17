@@ -25,7 +25,7 @@ on:
       - /^ci\/.*$/
 
 jobs:
-  Build:
+  Testme:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -146,3 +146,26 @@ jobs:
           cat test_*.log || true
           cat valgrind_test.log || true
           cat gcc_errors_*.log || true
+
+  CMake:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ ubuntu-18.04, ubuntu-20.04 ]
+        config:
+          # Static library build
+          - { CMAKEOPTIONS: '',                       TARGET: 'check' }
+          # Shared library build
+          - { CMAKEOPTIONS: '-DBUILD_SHARED_LIBS=On', TARGET: 'check'}
+    steps:
+      - uses: actions/checkout@v2
+      - name: install dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install cmake
+      - name: build
+        run: |
+          mkdir build
+          cd build
+          cmake ${{ matrix.config.CMAKEOPTIONS }} ..
+          make -j$(nproc) ${{ matrix.config.TARGET }}
