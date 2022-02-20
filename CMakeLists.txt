@@ -13,16 +13,124 @@ include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 include(sources.cmake)
 
+# The only direct cmake argument for now
+option(BUILD_SHARED_LIBS "Build shared library and only the shared library if \"ON\", default is static" OFF)
+
 #-----------------------------------------------------------------------------
-# Options
+# Compose CFLAGS
 #-----------------------------------------------------------------------------
-option(BUILD_SHARED_LIBS "Build shared library" FALSE)
+
+# check if there was one already set.
+if(DEFINED ENV{LTM_CFLAGS})
+   set(LTM_C_FLAGS  $ENV{LTM_CFLAGS})
+endif()
+if(DEFINED ENV{LTM_LDFLAGS})
+   set(LTM_LD_FLAGS  $ENV{LTM_LDFLAGS})
+endif()
+
+# Some information copied from makefile_include.mk
+
+# Basic set
+set(LTM_C_FLAGS  "${LTM_C_FLAGS}  -Wall -Wsign-compare -Wextra -Wshadow")
+
+# Do we run the sanitizer?
+if(DEFINED ENV{SANITIZER})
+    set(LTM_C_FLAGS  "${LTM_C_FLAGS} -fsanitize=undefined -fno-sanitize-recover=all -fno-sanitize=float-divide-by-zero")
+endif()
+
+if(NOT DEFINED ENV{NO_ADDTL_WARNINGS})
+    set(LTM_C_FLAGS  "${LTM_C_FLAGS} -Wdeclaration-after-statement -Wbad-function-cast -Wcast-align")
+    set(LTM_C_FLAGS  "${LTM_C_FLAGS} -Wstrict-prototypes -Wpointer-arith")
+endif()
+
+if(DEFINED ENV{CONV_WARNINGS})
+    set(LTM_C_FLAGS  "${LTM_C_FLAGS} -std=c89 -Wconversion -Wsign-conversion")
+    if($ENV{CONV_WARNINGS} EQUAL "strict")
+        set(LTM_C_FLAGS  "${LTM_C_FLAGS} -Wc++-compat")
+    endif()
+else()
+    set(LTM_C_FLAGS  "${LTM_C_FLAGS} -Wsystem-headers")
+endif()
+
+if(DEFINED ENV{COMPILE_DEBUG})
+    set(LTM_C_FLAGS  "${LTM_C_FLAGS} -g3")
+endif()
+
+if(DEFINED ENV{COMPILE_SIZE})
+    set(LTM_C_FLAGS  "${LTM_C_FLAGS} -Os")
+else()
+    if(NOT DEFINED ENV{IGNORE_SPEED})
+        set(LTM_C_FLAGS  "${LTM_C_FLAGS} -O3 -funroll-loops")
+        #x86 optimizations [should be valid for any GCC install though]
+        set(LTM_C_FLAGS  "${LTM_C_FLAGS} -fomit-frame-pointer")
+    endif()
+    # TODO:
+    # if(DEFINED ENV{COMPILE_LTO})
+    #     set(LTM_C_FLAGS  "${LTM_C_FLAGS} -flto")
+    #     set(LTM_LD_FLAGS "${LTM_LD_FLAGS} -flto")
+    #     #AR = $(subst clang,llvm-ar,$(subst gcc,gcc-ar,$(CC)))
+    # endif()
+endif()
+
+# What compiler do we have and what are their...uhm... peculiarities
+# TODO: is the check for a C++ compiler necessary?
+if( (CMAKE_C_COMPILER_ID MATCHES "(C|c?)lang") OR (CMAKE_CXX_COMPILER_ID MATCHES "(C|c?)lang"))
+    set(LTM_C_FLAGS  "${LTM_C_FLAGS} -Wno-typedef-redefinition -Wno-tautological-compare -Wno-builtin-requires-header")
+endif()
+
+if( (CMAKE_C_COMPILER_ID MATCHES "mingw") OR (CMAKE_CXX_COMPILER_ID MATCHES "mingw"))
+    set(LTM_C_FLAGS  "${LTM_C_FLAGS}  -Wno-shadow")
+endif()
+
+if(DEFINED ENV{PLATFORM})
+    if($ENV{PLATFORM} MATCHES "Darwin")
+        set(LTM_C_FLAGS  "${LTM_C_FLAGS}  -Wno-nullability-completeness")
+    endif()
+    if($ENV{PLATFORM} MATCHES "CYGWIN")
+        set(LTM_C_FLAGS  "${LTM_C_FLAGS} -no-undefined")
+    endif()
+endif()
+
+# TODO: coverage (lgcov)
+
+# We have several private functions in the library and the "demo/test" programm
+# needs a littkle note to be able to switch them off. Please use the static build
+# to get a full test.
+if(BUILD_SHARED_LIBS)
+    set(LTM_C_FLAGS  "${LTM_C_FLAGS} -DLTM_TEST_DYNAMIC")
+endif()
+
+# Bring it home
+set(CMAKE_C_FLAGS         "${LTM_C_FLAGS}")
+set(CMAKE_C_FLAGS_DEBUG   "${LTM_C_FLAGS}")
+set(CMAKE_C_FLAGS_RELEASE "${LTM_C_FLAGS}")
 
 #-----------------------------------------------------------------------------
 # library target
 #-----------------------------------------------------------------------------
-add_library(${PROJECT_NAME}
-    ${SOURCES}
+
+# TODO: There may be a way but I found none to build both at once without complication.
+#       It is possible with e.g. Linux where the static library is named libtommath.a
+#       and the dynamic library libtommath.so*, two different names.
+#       That is not the case with e.g. Windows where both types have the same name.
+#       See also:
+#       https://stackoverflow.com/questions/2152077/is-it-possible-to-get-cmake-to-build-both-a-static-and-shared-library-at-the-sam
+if(BUILD_SHARED_LIBS)
+    add_library(${PROJECT_NAME} SHARED
+        ${SOURCES}
+    )
+else()
+    add_library(${PROJECT_NAME} STATIC
+        ${SOURCES}
+    )
+endif()
+
+# Clear cache manually
+unset(BUILD_SHARED_LIBS CACHE)
+
+target_include_directories(${PROJECT_NAME} PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}>
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC
@@ -36,6 +144,8 @@ set_target_properties(${PROJECT_NAME} PROPERTIES SOVERSION ${PROJECT_VERSION_MAJ
 #-----------------------------------------------------------------------------
 # demo target
 #-----------------------------------------------------------------------------
+
+
 add_executable(test-target EXCLUDE_FROM_ALL
     ${CMAKE_CURRENT_SOURCE_DIR}/demo/shared.c
     ${CMAKE_CURRENT_SOURCE_DIR}/demo/test.c
@@ -81,7 +191,6 @@ set(TARGETS_EXPORT_NAME "${PROJECT_NAME}Targets")
 
 install(TARGETS ${PROJECT_NAME}
     EXPORT ${TARGETS_EXPORT_NAME}
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
 )
 
