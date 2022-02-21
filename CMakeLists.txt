@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: Unlicense
 #
 # LibTomMath, a free open source portable number theoretic multiple-precision
 # integer (MPI) library written entirely in C.
