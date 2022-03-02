@@ -171,6 +171,19 @@ install(FILES ${HEADERS}
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
 )
 
+# Install libtommath.pc for pkg-config if we build a shared library
+if(BUILD_SHARED_LIBS)
+    configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/lib${PROJECT_NAME}.pc.in
+        ${CMAKE_CURRENT_BINARY_DIR}/lib${PROJECT_NAME}.pc
+        @ONLY
+    )
+
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/lib${PROJECT_NAME}.pc
+        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pkgconfig
+    )
+endif()
+
 # generate package version file
 write_basic_package_version_file(
     ${PROJECT_VERSION_FILE}
