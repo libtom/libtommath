@@ -153,6 +153,56 @@ LBL_ERR:
    return EXIT_FAILURE;
 }
 
+static int test_mp_hash(void)
+{
+   mp_int a;
+   mp_hval hash;
+   int i;
+   int len = 5;
+
+   const char *input[] = {
+      "0",
+      "///////////////////////////////////////////////////////////////////",
+      "4n9cbk886QtLQmofprid3l2Q0GD8Yv979Lh8BdZkFE8g2pDUUSMBET/+M/YFyVZ3mBp",
+      "5NlgzHhmIX05O5YoW5yW5reAlVNtRAlIcN2dfoATnNdc1Cw5lHZUTwNthmK6/ZLKfY6",
+      "3gweiHDX+ji5utraSe46IJX+uuh7iggs63xIpMP5MriU4Np+LpHI5are8RzS9pKh9xP"
+   };
+   const mp_hval hvals[] = {
+#if (MP_DIGIT_BIT == 15)
+      0x50c5d1f,
+      0x51b3ba04,
+      0xf83febd7,
+      0x2dc8624c,
+      0xf5c2996b
+#elif (MP_DIGIT_BIT == 60)
+      0xaf63bd4c8601b7df,
+      0xdb090f8a5cd75210,
+      0xabae35c7872c107d,
+      0xfec74888bcef5fcd,
+      0x27ba96030abceda5
+#else
+      0xaf63bd4c8601b7df,
+      0x7e868fbf541faf44,
+      0x420cca3a4cb623bb,
+      0x16636d996304ee7f,
+      0x33afc9f1b274fa67
+#endif
+   };
+
+   DOR(mp_init(&a));
+   for (i = 0; i < len; ++i) {
+      DO(mp_read_radix(&a, input[i], 64));
+      DO(mp_hash(&a, &hash));
+      EXPECT(hash == hvals[i]);
+   }
+
+   mp_clear(&a);
+   return EXIT_SUCCESS;
+LBL_ERR:
+   mp_clear(&a);
+   return EXIT_FAILURE;
+}
+
 static int check_get_set_i32(mp_int *a, int32_t b)
 {
    mp_clear(a);
@@ -2164,6 +2214,7 @@ static int unit_tests(int argc, char **argv)
 #define T3(n, o1, o2, o3)  { #n, (MP_HAS(o1) && MP_HAS(o2) && MP_HAS(o3)) ? test_##n : NULL }
       T0(feature_detection),
       T0(trivial_stuff),
+      T1(mp_hash, MP_HASH),
       T2(mp_get_set_i32, MP_GET_I32, MP_GET_MAG_U32),
       T2(mp_get_set_i64, MP_GET_I64, MP_GET_MAG_U64),
       T1(mp_and, MP_AND),

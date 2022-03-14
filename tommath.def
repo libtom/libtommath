@@ -47,6 +47,7 @@ EXPORTS
     mp_get_mag_u64
     mp_get_mag_ul
     mp_grow
+    mp_hash
     mp_init
     mp_init_copy
     mp_init_i32
