@@ -152,6 +152,8 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-18.04, ubuntu-20.04 ]
+        build_type: [ '', -DCMAKE_BUILD_TYPE=Debug, -DCMAKE_BUILD_TYPE=Release, -DCMAKE_BUILD_TYPE=RelWithDebInfo, -DCMAKE_BUILD_TYPE=MinSizeRel ]
+        cc: [ clang, gcc ]
         config:
           # Static library build
           - { CMAKEOPTIONS: '',                       TARGET: 'check' }
@@ -162,10 +164,10 @@ jobs:
       - name: install dependencies
         run: |
           sudo apt-get update -qq
-          sudo apt-get install cmake
+          sudo apt-get install -y cmake gcc clang llvm
       - name: build
         run: |
           mkdir build
           cd build
-          cmake ${{ matrix.config.CMAKEOPTIONS }} ..
+          CC=${{ matrix.cc }} cmake ${{ matrix.config.CMAKEOPTIONS }}  ${{ matrix.build_type }} ..
           make -j$(nproc) ${{ matrix.config.TARGET }}
