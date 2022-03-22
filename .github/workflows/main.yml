@@ -156,9 +156,9 @@ jobs:
         cc: [ clang, gcc ]
         config:
           # Static library build
-          - { CMAKEOPTIONS: '',                       TARGET: 'check' }
+          - { CMAKEOPTIONS: '-DBUILD_SHARED_LIBS=Off' }
           # Shared library build
-          - { CMAKEOPTIONS: '-DBUILD_SHARED_LIBS=On', TARGET: 'check'}
+          - { CMAKEOPTIONS: '-DBUILD_SHARED_LIBS=On'  }
     steps:
       - uses: actions/checkout@v2
       - name: install dependencies
@@ -169,5 +169,18 @@ jobs:
         run: |
           mkdir build
           cd build
-          CC=${{ matrix.cc }} cmake ${{ matrix.config.CMAKEOPTIONS }}  ${{ matrix.build_type }} ..
-          make -j$(nproc) ${{ matrix.config.TARGET }}
+          CC=${{ matrix.cc }} cmake ${{ matrix.config.CMAKEOPTIONS }} ${{ matrix.build_type }} ..
+          make -j$(nproc)
+      - name: test
+        run: |
+          cd build
+          CC=${{ matrix.cc }} cmake ${{ matrix.config.CMAKEOPTIONS }} ${{ matrix.build_type }} -DBUILD_TESTING=On ..
+          make -j$(nproc)
+          ctest
+      - name: test (in demo folder)
+        run: |
+          mkdir -p demo/build
+          cd demo/build
+          CC=${{ matrix.cc }} cmake ${{ matrix.config.CMAKEOPTIONS }} ${{ matrix.build_type }} ..
+          make -j$(nproc)
+          ctest
