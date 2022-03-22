@@ -21,7 +21,11 @@ set(PACKAGE_RELEASE_VERSION 1)
 # Include cmake modules
 #-----------------------------------------------------------------------------
 include(GNUInstallDirs)
+include(CheckIPOSupported)
 include(CMakePackageConfigHelpers)
+# default is "No tests"
+option(BUILD_TESTING "" OFF)
+include(CTest)
 include(sources.cmake)
 
 # The only direct cmake argument for now
@@ -31,42 +35,41 @@ option(BUILD_SHARED_LIBS "Build shared library and only the shared library if \"
 # Compose CFLAGS
 #-----------------------------------------------------------------------------
 
-# Some information copied from makefile_include.mk
+# Some information ported from makefile_include.mk
 
-# Basic set
-set(LTM_C_FLAGS  -Wall -Wsign-compare -Wextra -Wshadow)
-set(LTM_C_FLAGS  ${LTM_C_FLAGS} -Wdeclaration-after-statement -Wbad-function-cast -Wcast-align)
-set(LTM_C_FLAGS  ${LTM_C_FLAGS} -Wstrict-prototypes -Wpointer-arith -Wsystem-headers)
 
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   message(STATUS "Setting build type to 'Release' as none was specified.")
   set(CMAKE_BUILD_TYPE "Release")
 endif()
 
-set(CMAKE_C_FLAGS_DEBUG "-g3")
-set(CMAKE_C_FLAGS_RELEASE "-O3 -funroll-loops -fomit-frame-pointer")
-set(CMAKE_C_FLAGS_RELWITHDEBINFO "-g3 -O2")
-set(CMAKE_C_FLAGS_MINSIZEREL "-Os")
-
-if(COMPILE_LTO)
-    set(LTM_C_FLAGS  ${LTM_C_FLAGS} -flto)
-    set(LTM_LD_FLAGS ${LTM_LD_FLAGS} -flto)
+# We only differentiate between MSVC and GCC-compatible compilers
+if(MSVC)
+    set(LTM_C_FLAGS -W3)
+else()
+    set(LTM_C_FLAGS -Wall -Wsign-compare -Wextra -Wshadow
+                    -Wdeclaration-after-statement -Wbad-function-cast -Wcast-align
+                    -Wstrict-prototypes -Wpointer-arith -Wsystem-headers)
+    set(CMAKE_C_FLAGS_DEBUG "-g3")
+    set(CMAKE_C_FLAGS_RELEASE "-O3 -funroll-loops -fomit-frame-pointer")
+    set(CMAKE_C_FLAGS_RELWITHDEBINFO "-g3 -O2")
+    set(CMAKE_C_FLAGS_MINSIZEREL "-Os")
 endif()
 
 # What compiler do we have and what are their...uhm... peculiarities
 if(CMAKE_C_COMPILER_ID MATCHES "(C|c?)lang")
-    set(LTM_C_FLAGS  ${LTM_C_FLAGS} -Wno-typedef-redefinition -Wno-tautological-compare -Wno-builtin-requires-header)
+    list(APPEND LTM_C_FLAGS -Wno-typedef-redefinition -Wno-tautological-compare -Wno-builtin-requires-header)
     # Clang requires at least '-O1' for dead code eliminiation
-    set(CMAKE_C_FLAGS_DEBUG  "${CMAKE_C_FLAGS_DEBUG} -O1")
+    set(CMAKE_C_FLAGS_DEBUG "-O1 ${CMAKE_C_FLAGS_DEBUG}")
 endif()
 if(CMAKE_C_COMPILER MATCHES "mingw")
-    set(LTM_C_FLAGS  ${LTM_C_FLAGS}  -Wno-shadow)
+    list(APPEND LTM_C_FLAGS -Wno-shadow -Wno-expansion-to-defined -Wno-declaration-after-statement -Wno-bad-function-cast)
 endif()
 if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
-    set(LTM_C_FLAGS  ${LTM_C_FLAGS}  -Wno-nullability-completeness)
+    list(APPEND LTM_C_FLAGS -Wno-nullability-completeness)
 endif()
 if(CMAKE_SYSTEM_NAME MATCHES "CYGWIN")
-    set(LTM_C_FLAGS  ${LTM_C_FLAGS} -no-undefined)
+    list(APPEND LTM_C_FLAGS -no-undefined)
 endif()
 
 # TODO: coverage (lgcov)
@@ -75,14 +78,15 @@ endif()
 # in order to allow overriding our defaults.
 # ${LTM_CFLAGS} means the user passed it via sth like:
 # $ cmake -DLTM_CFLAGS="foo"
-set(LTM_C_FLAGS  ${LTM_C_FLAGS} ${LTM_CFLAGS})
-set(LTM_LD_FLAGS  ${LTM_LD_FLAGS} ${LTM_LDFLAGS})
+list(APPEND LTM_C_FLAGS ${LTM_CFLAGS})
+list(APPEND LTM_LD_FLAGS ${LTM_LDFLAGS})
 
 #-----------------------------------------------------------------------------
 # library target
 #-----------------------------------------------------------------------------
 add_library(${PROJECT_NAME}
     ${SOURCES}
+    ${HEADERS}
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC
@@ -100,13 +104,27 @@ target_link_options(${PROJECT_NAME} BEFORE PRIVATE
 set_target_properties(${PROJECT_NAME} PROPERTIES
     VERSION ${PROJECT_VERSION}
     SOVERSION ${PROJECT_VERSION_MAJOR}
+    PUBLIC_HEADER tommath.h
 )
 
+option(COMPILE_LTO "Build with LTO enabled")
+if(COMPILE_LTO)
+    check_ipo_supported(RESULT COMPILER_SUPPORTS_LTO)
+    if(COMPILER_SUPPORTS_LTO)
+        set_property(TARGET ${PROJECT_NAME} PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)
+    else()
+        message(SEND_ERROR "This compiler does not support LTO. Reconfigure ${PROJECT_NAME} with -DCOMPILE_LTO=OFF.")
+    endif()
+endif()
 
 #-----------------------------------------------------------------------------
 # demo target
 #-----------------------------------------------------------------------------
-add_subdirectory(demo)
+
+if(BUILD_TESTING)
+    enable_testing()
+    add_subdirectory(demo)
+endif()
 
 #-----------------------------------------------------------------------------
 # Install/export targets and files
@@ -120,14 +138,15 @@ install(TARGETS ${PROJECT_NAME}
     EXPORT ${TARGETS_EXPORT_NAME}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-)
-
-install(FILES ${HEADERS}
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
 )
 
 # Install libtommath.pc for pkg-config if we build a shared library
 if(BUILD_SHARED_LIBS)
+    # Let the user override the default directory of the pkg-config file (usually this shouldn't be required to be changed)
+    set(CMAKE_INSTALL_PKGCONFIGDIR "${CMAKE_INSTALL_LIBDIR}/pkgconfig" CACHE PATH "Folder where to install .pc files")
+
     configure_file(
         ${CMAKE_CURRENT_SOURCE_DIR}/lib${PROJECT_NAME}.pc.in
         ${CMAKE_CURRENT_BINARY_DIR}/lib${PROJECT_NAME}.pc
@@ -135,7 +154,7 @@ if(BUILD_SHARED_LIBS)
     )
 
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/lib${PROJECT_NAME}.pc
-        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pkgconfig
+        DESTINATION ${CMAKE_INSTALL_PKGCONFIGDIR}
     )
 endif()
 
@@ -171,8 +190,16 @@ export(PACKAGE ${PROJECT_NAME})
 
 # determine distribution and architecture
 find_program(LSB_RELEASE lsb_release)
+find_program(SYSCTL sysctl)
+find_program(UNAME uname)
 
-execute_process(COMMAND uname -m OUTPUT_VARIABLE MACHINE_ARCH OUTPUT_STRIP_TRAILING_WHITESPACE)
+if(UNAME)
+    execute_process(COMMAND uname -m OUTPUT_VARIABLE MACHINE_ARCH OUTPUT_STRIP_TRAILING_WHITESPACE)
+elseif(SYSCTL)
+    execute_process(COMMAND sysctl -b hw.machine_arch OUTPUT_VARIABLE MACHINE_ARCH OUTPUT_STRIP_TRAILING_WHITESPACE)
+else()
+    string(TOLOWER ${CMAKE_SYSTEM_NAME} MACHINE_ARCH)
+endif()
 
 if(LSB_RELEASE)
     execute_process(COMMAND lsb_release -si OUTPUT_VARIABLE LINUX_DISTRO OUTPUT_STRIP_TRAILING_WHITESPACE)
