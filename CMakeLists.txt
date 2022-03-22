@@ -102,41 +102,11 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     SOVERSION ${PROJECT_VERSION_MAJOR}
 )
 
-#-----------------------------------------------------------------------------
-# demo target
-#-----------------------------------------------------------------------------
-
-
-add_executable(test-target EXCLUDE_FROM_ALL
-    ${CMAKE_CURRENT_SOURCE_DIR}/demo/shared.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/demo/test.c
-)
-
-target_include_directories(test-target PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}
-)
-
-target_link_libraries(test-target PRIVATE
-    ${PROJECT_NAME}
-)
-
-target_compile_options(test-target BEFORE PRIVATE
-    $<$<STREQUAL:$<TARGET_PROPERTY:${PROJECT_NAME},TYPE>,SHARED_LIBRARY>:-O1 -DLTM_TEST_DYNAMIC>
-    ${LTM_C_FLAGS}
-)
-target_link_options(test-target BEFORE PRIVATE
-    $<$<STREQUAL:$<TARGET_PROPERTY:${PROJECT_NAME},TYPE>,SHARED_LIBRARY>:-O1>
-    ${LTM_LD_FLAGS}
-)
 
 #-----------------------------------------------------------------------------
 # demo target
 #-----------------------------------------------------------------------------
-add_custom_target(check
-    COMMAND ${CMAKE_CURRENT_BINARY_DIR}/test-target
-)
-
-add_dependencies(check test-target)
+add_subdirectory(demo)
 
 #-----------------------------------------------------------------------------
 # Install/export targets and files
