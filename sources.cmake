@@ -161,4 +161,9 @@ s_mp_zero_digs.c
 
 set(HEADERS
 tommath.h
+tommath_c89.h
+tommath_class.h
+tommath_cutoffs.h
+tommath_private.h
+tommath_superclass.h
 )
