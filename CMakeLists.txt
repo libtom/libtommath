@@ -103,11 +103,17 @@ target_link_options(${PROJECT_NAME} BEFORE PRIVATE
     ${LTM_LD_FLAGS}
 )
 
+set(PUBLIC_HEADERS tommath.h)
+set(C89 False CACHE BOOL "(Usually maintained automatically) Enable when the library is in c89 mode to package the correct header files on install")
+if(C89)
+    list(APPEND PUBLIC_HEADERS tommath_c89.h)
+endif()
+
 set_target_properties(${PROJECT_NAME} PROPERTIES
     OUTPUT_NAME tommath
     VERSION ${PROJECT_VERSION}
     SOVERSION ${PROJECT_VERSION_MAJOR}
-    PUBLIC_HEADER tommath.h
+    PUBLIC_HEADER "${PUBLIC_HEADERS}"
 )
 
 option(COMPILE_LTO "Build with LTO enabled")
