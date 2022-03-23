@@ -15,7 +15,7 @@ else()
     # Define an independent project and all the necessary stuff around
     project(${LTM_TEST}
         LANGUAGES C)
-    set(LIBRARY_NAME tommath)
+    set(LIBRARY_NAME libtommath)
     find_package(${LIBRARY_NAME})
     include(CTest)
     if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)

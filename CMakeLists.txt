@@ -6,7 +6,7 @@
 
 cmake_minimum_required(VERSION 3.10)
 
-project(tommath
+project(libtommath
     VERSION 1.2.0
     DESCRIPTION "A free open source portable number theoretic multiple-precision integer (MPI) library written entirely in C."
     HOMEPAGE_URL "https://www.libtom.net/LibTomMath"
@@ -102,6 +102,7 @@ target_link_options(${PROJECT_NAME} BEFORE PRIVATE
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
+    OUTPUT_NAME tommath
     VERSION ${PROJECT_VERSION}
     SOVERSION ${PROJECT_VERSION_MAJOR}
     PUBLIC_HEADER tommath.h
@@ -148,12 +149,12 @@ if(BUILD_SHARED_LIBS)
     set(CMAKE_INSTALL_PKGCONFIGDIR "${CMAKE_INSTALL_LIBDIR}/pkgconfig" CACHE PATH "Folder where to install .pc files")
 
     configure_file(
-        ${CMAKE_CURRENT_SOURCE_DIR}/lib${PROJECT_NAME}.pc.in
-        ${CMAKE_CURRENT_BINARY_DIR}/lib${PROJECT_NAME}.pc
+        ${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}.pc.in
+        ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.pc
         @ONLY
     )
 
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/lib${PROJECT_NAME}.pc
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.pc
         DESTINATION ${CMAKE_INSTALL_PKGCONFIGDIR}
     )
 endif()
@@ -231,7 +232,11 @@ endif()
 # general CPack config
 set(CPACK_PACKAGE_DIRECTORY ${CMAKE_BINARY_DIR}/packages/${DISTRO_PACK_PATH})
 message(STATUS "CPack: packages will be generated under ${CPACK_PACKAGE_DIRECTORY}")
-set(CPACK_PACKAGE_NAME "lib${PROJECT_NAME}")
+if(BUILD_SHARED_LIBS)
+    set(CPACK_PACKAGE_NAME "${PROJECT_NAME}${PROJECT_VERSION_MAJOR}")
+else()
+    set(CPACK_PACKAGE_NAME "${PROJECT_NAME}-devel")
+endif()
 set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "LibTomMath")
 set(CPACK_PACKAGE_VENDOR "libtom projects")
@@ -246,10 +251,9 @@ set(CPACK_DEBIAN_FILE_NAME DEB-DEFAULT)
 set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
 set(CPACK_DEBIAN_PACKAGE_RELEASE ${PACKAGE_RELEASE_VERSION})
 if(BUILD_SHARED_LIBS)
-    set(CPACK_DEBIAN_PACKAGE_NAME "${CPACK_PACKAGE_NAME}1")
     set(CPACK_DEBIAN_PACKAGE_SECTION "libs")
 else()
-    set(CPACK_DEBIAN_PACKAGE_NAME "${CPACK_PACKAGE_NAME}-dev")
+    set(CPACK_DEBIAN_PACKAGE_NAME "${PROJECT_NAME}-dev")
     set(CPACK_DEBIAN_PACKAGE_SECTION "devel")
 endif()
 
