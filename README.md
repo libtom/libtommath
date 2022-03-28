@@ -6,9 +6,9 @@ This is the git repository for [LibTomMath](http://www.libtom.net/LibTomMath/), 
 
 ### Travis CI
 
-master: [![Build Status](https://api.travis-ci.org/libtom/libtommath.png?branch=master)](https://travis-ci.org/libtom/libtommath)
+master: [![Build Status](https://github.com/libtom/libtommath/actions/workflows/main.yml/badge.svg?branch=master)](https://github.com/libtom/libtommath/actions/workflows/main.yml?query=branch%3Amaster+++)
 
-develop: [![Build Status](https://api.travis-ci.org/libtom/libtommath.png?branch=develop)](https://travis-ci.org/libtom/libtommath)
+develop: [![Build Status](https://github.com/libtom/libtommath/actions/workflows/main.yml/badge.svg?branch=develop)](https://github.com/libtom/libtommath/actions/workflows/main.yml?query=branch%3Adevelop+++)
 
 ### AppVeyor
 
@@ -42,3 +42,17 @@ Tests are located in `demo/` and can be built in two flavors.
 ## Building and Installing
 
 Building is straightforward for GNU Linux only, the section "Building LibTomMath" in the documentation in `doc/bn.pdf` has the details.
+
+### CMake support
+
+The project provides support for the CMake build system.
+
+```
+git clone https://github.com/libtom/libtommath.git
+mkdir -p libtommath/build
+cd libtommath/build
+cmake ..
+make -j$(nproc)
+```
+
+A shared library build can be done by setting `-DBUILD_SHARED_LIBS=On` when invoking the `cmake` command.

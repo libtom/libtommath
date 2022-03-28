@@ -25,7 +25,7 @@ on:
       - /^ci\/.*$/
 
 jobs:
-  Build:
+  Testme:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -146,3 +146,41 @@ jobs:
           cat test_*.log || true
           cat valgrind_test.log || true
           cat gcc_errors_*.log || true
+
+  CMake:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ ubuntu-18.04, ubuntu-20.04 ]
+        build_type: [ '', -DCMAKE_BUILD_TYPE=Debug, -DCMAKE_BUILD_TYPE=Release, -DCMAKE_BUILD_TYPE=RelWithDebInfo, -DCMAKE_BUILD_TYPE=MinSizeRel ]
+        cc: [ clang, gcc ]
+        config:
+          # Static library build
+          - { CMAKEOPTIONS: '-DBUILD_SHARED_LIBS=Off' }
+          # Shared library build
+          - { CMAKEOPTIONS: '-DBUILD_SHARED_LIBS=On'  }
+    steps:
+      - uses: actions/checkout@v2
+      - name: install dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y cmake gcc clang llvm
+      - name: build
+        run: |
+          mkdir build
+          cd build
+          CC=${{ matrix.cc }} cmake ${{ matrix.config.CMAKEOPTIONS }} ${{ matrix.build_type }} ..
+          make -j$(nproc)
+      - name: test
+        run: |
+          cd build
+          CC=${{ matrix.cc }} cmake ${{ matrix.config.CMAKEOPTIONS }} ${{ matrix.build_type }} -DBUILD_TESTING=On ..
+          make -j$(nproc)
+          ctest
+      - name: test (in demo folder)
+        run: |
+          mkdir -p demo/build
+          cd demo/build
+          CC=${{ matrix.cc }} cmake ${{ matrix.config.CMAKEOPTIONS }} ${{ matrix.build_type }} ..
+          make -j$(nproc)
+          ctest
