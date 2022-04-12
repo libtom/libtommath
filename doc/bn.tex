@@ -352,6 +352,20 @@ which means they are to be defined only if \texttt{LTM\_LAST} has been defined.
   \end{center}
 \end{small}
 
+\subsection{Small-Stack option}
+\label{ch:SMALL_STACK_INTRO}
+The library can be compiled with the symbol \texttt{MP\_SMALL\_STACK\_SIZE} defined, which results in
+the temporary \texttt{MP\_WARRAY}-sized stack buffers being put on the heap.
+This comes with one problem, namely: formerly promised thread-safety isn't given anymore.
+Therefore if the Small-Stack option is enabled while doing multi threading, the provided locking
+mechanism shall be used.
+For some use cases it can be desired to use the Small-Stack option, but there are no threads and
+therefore we provide the possibility to disable locking by defining the symbol \texttt{MP\_NO\_LOCKING}.
+
+In case one already knows how many threads must be supported, the symbol \texttt{MP\_WARRAY\_NUM} can
+be useful. It can be pre-defined at compile time to the number of heap buffers created on automatic
+initialisation. C.f. \ref{ch:SMALL_STACK_API} for the dynamic API and further details.
+
 \section{Purpose of LibTomMath}
 Unlike	GNU MP (GMP) Library, LIP, OpenSSL or various other commercial kits (Miracl), LibTomMath
 was not written with bleeding edge performance in mind.  First and foremost LibTomMath was written
@@ -428,7 +442,9 @@ environments.  Fast RSA for example can be performed with as little as 8 Kibibyt
 \section{Building Programs}
 In order to use LibTomMath you must include ``tommath.h'' and link against the appropriate library
 file (typically
-libtommath.a).	There is no library initialization required and the entire library is thread safe.
+libtommath.a).	There is no library initialization required and the entire library is thread safe
+if it is used in its default configuration. Locking is recommended if the small-stack option
+is enabled and multiple threads are used, c.f. \ref{ch:SMALL_STACK_INTRO} resp. \ref{ch:SMALL_STACK_API}
 
 \section{Return Codes}
 There are five possible return codes a function may return.
@@ -812,6 +828,52 @@ int main(void)
 \}
 \end{alltt}
 \end{small}
+
+\section{Small-Stack option}
+\label{ch:SMALL_STACK_API}
+
+In case the \texttt{MP\_SMALL\_STACK\_SIZE} symbol is defined the following functions
+can be useful.
+
+To initialize the internal structure the following function shall be called.
+
+\index{mp\_warray\_init}
+\begin{alltt}
+mp_err mp_warray_init(size_t n_alloc, bool preallocate, mp_lock *lock);
+\end{alltt}
+
+The flag \texttt{preallocate} controls whether the internal buffers --
+\texttt{n\_alloc} buffers of size \texttt{MP\_WARRAY} -- will be allocated when
+\texttt{mp\_warray\_init()} is called, or whether they will be allocated when required.
+The \texttt{mp\_lock} struct looks as follows and shall be used to protect the
+internal structure when using the library in a multi-threaded application.
+
+\index{mp\_lock}
+\begin{alltt}
+typedef struct {
+   int (*lock)(void *ctx);
+   int (*unlock)(void *ctx);
+   void *ctx;
+} mp_lock;
+\end{alltt}
+
+The \texttt{mp\_lock.lock} resp. \texttt{mp\_lock.unlock} functions will be called before resp.
+after modifying the internal struct.
+The \texttt{mp\_lock.ctx} element will be passed to those functions.
+
+To free the internally allocated memory the following function shall be called.
+
+\index{mp\_warray\_free}
+\begin{alltt}
+int mp_warray_free(void);
+\end{alltt}
+
+
+Those two API functions are always available, even if the \texttt{MP\_SMALL\_STACK\_SIZE} option
+has been disabled at compile time.
+In that case \texttt{mp\_warray\_init()} will return \texttt{MP\_ERR} and \texttt{mp\_warray\_free()}
+will return $-1$.
+
 
 \chapter{Basic Operations}
 \section{Copying}

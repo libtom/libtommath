@@ -138,7 +138,7 @@ if(COMPILE_LTO)
     if(COMPILER_SUPPORTS_LTO)
         set_property(TARGET ${PROJECT_NAME} PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)
     else()
-        message(SEND_ERROR "This compiler does not support LTO. Reconfigure ${PROJECT_NAME} with -DCOMPILE_LTO=OFF.")
+        message(FATAL_ERROR "This compiler does not support LTO. Reconfigure ${PROJECT_NAME} with -DCOMPILE_LTO=OFF.")
     endif()
 endif()
 

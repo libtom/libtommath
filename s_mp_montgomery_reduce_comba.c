@@ -15,9 +15,12 @@ mp_err s_mp_montgomery_reduce_comba(mp_int *x, const mp_int *n, mp_digit rho)
 {
    int     ix, oldused;
    mp_err  err;
-   mp_word W[MP_WARRAY];
+   mp_word MP_ALLOC_WARRAY(W);
+
+   MP_CHECK_WARRAY(W);
 
    if (x->used > MP_WARRAY) {
+      MP_FREE_WARRAY(W);
       return MP_VAL;
    }
 
@@ -26,6 +29,7 @@ mp_err s_mp_montgomery_reduce_comba(mp_int *x, const mp_int *n, mp_digit rho)
 
    /* grow a as required */
    if ((err = mp_grow(x, n->used + 1)) != MP_OKAY) {
+      MP_FREE_WARRAY(W);
       return err;
    }
 
@@ -110,6 +114,7 @@ mp_err s_mp_montgomery_reduce_comba(mp_int *x, const mp_int *n, mp_digit rho)
 
    mp_clamp(x);
 
+   MP_FREE_WARRAY(W);
    /* if A >= m then A = A - m */
    if (mp_cmp_mag(x, n) != MP_LT) {
       return s_mp_sub(x, n, x);
