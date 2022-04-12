@@ -234,6 +234,42 @@ MP_PRIVATE mp_err s_mp_radix_size_overestimate(const mp_int *a, const int radix,
 MP_PRIVATE mp_err s_mp_fp_log(const mp_int *a, mp_int *c) MP_WUR;
 MP_PRIVATE mp_err s_mp_fp_log_d(const mp_int *a, mp_word *c) MP_WUR;
 
+#ifdef MP_SMALL_STACK_SIZE
+#define MP_SMALL_STACK_SIZE_C
+#define MP_ALLOC_WARRAY(name) *name = s_mp_warray_get()
+#define MP_FREE_WARRAY(name) s_mp_warray_put(name)
+#define MP_CHECK_WARRAY(name) do { if ((name) == NULL) { return MP_MEM; } } while(0)
+#else
+#define MP_ALLOC_WARRAY(name) name[MP_WARRAY]
+#define MP_FREE_WARRAY(name)
+#define MP_CHECK_WARRAY(name)
+#endif
+
+#ifdef MP_USE_LOCKING
+#define MP_USE_LOCKING_C
+#define S_MP_WARRAY_LOCK() do { if (s_mp_warray.locking_enabled) { s_mp_warray.lock.lock(s_mp_warray.lock.ctx); } } while(0)
+#define S_MP_WARRAY_UNLOCK() do { if (s_mp_warray.locking_enabled) { s_mp_warray.lock.unlock(s_mp_warray.lock.ctx); } } while(0)
+#else
+#define S_MP_WARRAY_LOCK()
+#define S_MP_WARRAY_UNLOCK()
+#endif
+
+struct warray {
+   void *warray;
+};
+typedef struct {
+   struct warray *l_free, *l_used;
+   size_t allocated, usable;
+   bool locking_enabled;
+   mp_lock lock;
+} st_warray;
+
+extern MP_PRIVATE st_warray s_mp_warray;
+
+MP_PRIVATE void *s_mp_warray_get(void);
+MP_PRIVATE void s_mp_warray_put(void *w);
+MP_PRIVATE void s_mp_warray_free(size_t n);
+
 #define MP_RADIX_MAP_REVERSE_SIZE 80u
 extern MP_PRIVATE const char s_mp_radix_map[];
 extern MP_PRIVATE const uint8_t s_mp_radix_map_reverse[];
