@@ -46,6 +46,8 @@ endif()
 # We only differentiate between MSVC and GCC-compatible compilers
 if(MSVC)
     set(LTM_C_FLAGS -W3)
+elseif(WATCOM)
+    set(LTM_C_FLAGS -fo=.obj -oaxt -3r -w3)
 else()
     set(LTM_C_FLAGS -Wall -Wsign-compare -Wextra -Wshadow
                     -Wdeclaration-after-statement -Wbad-function-cast -Wcast-align
