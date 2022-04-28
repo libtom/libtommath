@@ -61,3 +61,6 @@ target_link_options(${LTM_TEST} BEFORE PUBLIC
 # CTest
 #-----------------------------------------------------------------------------
 add_test(NAME ${LTM_TEST} COMMAND ${LTM_TEST})
+
+find_program(MEMORYCHECK_COMMAND valgrind)
+set(MEMORYCHECK_COMMAND_OPTIONS "--trace-children=yes --leak-check=full")
