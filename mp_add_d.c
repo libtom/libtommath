@@ -70,7 +70,7 @@ mp_err mp_add_d(const mp_int *a, mp_digit b, mp_int *c)
       c->used = 1;
 
       /* the result is a single digit */
-      c->dp[0] = (a->used == 1) ? b - a->dp[0] : b;
+      c->dp[0] = (a->used == 1) ? (b - a->dp[0]) : b;
    }
 
    /* sign always positive */

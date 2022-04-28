@@ -1328,12 +1328,12 @@ o +3  */
 static mp_err s_rs(const mp_int *a, int radix, int *size)
 {
    mp_err res;
-   int digs = 0u;
+   int digs = 0;
    mp_int  t;
    mp_digit d;
-   *size = 0u;
+   *size = 0;
    if (mp_iszero(a)) {
-      *size = 2u;
+      *size = 2;
       return MP_OKAY;
    }
    if (radix == 2) {
@@ -1368,9 +1368,9 @@ static int test_mp_log_n(void)
       1     x    MP_VAL
    */
    mp_set(&a, 42u);
-   base = 0u;
+   base = 0;
    EXPECT(mp_log_n(&a, base, &lb) == MP_VAL);
-   base = 1u;
+   base = 1;
    EXPECT(mp_log_n(&a, base, &lb) == MP_VAL);
    /*
      base   a    result
@@ -1379,7 +1379,7 @@ static int test_mp_log_n(void)
       2     2    1
       2     3    1
    */
-   base = 2u;
+   base = 2;
    mp_zero(&a);
    EXPECT(mp_log_n(&a, base, &lb) == MP_VAL);
 
@@ -1395,7 +1395,7 @@ static int test_mp_log_n(void)
      3     2    0
      3     3    1
    */
-   base = 3u;
+   base = 3;
    mp_zero(&a);
    EXPECT(mp_log_n(&a, base, &lb) == MP_VAL);
    for (d = 1; d < 4; d++) {
@@ -1432,10 +1432,10 @@ static int test_mp_log_n(void)
 
    /*Test upper edgecase with base UINT32_MAX and number (UINT32_MAX/2)*UINT32_MAX^10  */
    mp_set(&a, max_base);
-   DO(mp_expt_n(&a, 10uL, &a));
+   DO(mp_expt_n(&a, 10u, &a));
    DO(mp_add_d(&a, max_base / 2, &a));
    DO(mp_log_n(&a, max_base, &lb));
-   EXPECT(lb == 10u);
+   EXPECT(lb == 10);
 
    mp_clear(&a);
    return EXIT_SUCCESS;

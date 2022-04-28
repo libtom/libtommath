@@ -28,7 +28,7 @@ int mp_cnt_lsb(const mp_int *a)
       mp_digit p;
       do {
          p = q & 15u;
-         x += lnz[p];
+         x += (int)lnz[p];
          q >>= 4;
       } while (p == 0u);
    }
