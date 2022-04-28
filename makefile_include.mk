@@ -95,6 +95,10 @@ endif # COMPILE_SIZE
 
 ifneq ($(findstring clang,$(CC)),)
 LTM_CFLAGS += -Wno-typedef-redefinition -Wno-tautological-compare -Wno-builtin-requires-header
+ifdef IGNORE_SPEED
+#for dead code eliminiation
+LTM_CFLAGS += -O1
+endif
 endif
 ifneq ($(findstring mingw,$(CC)),)
 LTM_CFLAGS += -Wno-shadow
