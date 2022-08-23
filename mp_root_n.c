@@ -35,7 +35,7 @@ mp_err mp_root_n(const mp_int *a, int b, mp_int *c)
    a_ = *a;
    a_.sign = MP_ZPOS;
 
-   /* Compute seed: 2^(log_2(n)/b + 2)*/
+   /* Compute seed: 2^(log_2(n)/b + 1)*/
    ilog2 = mp_count_bits(a);
 
    /*
@@ -65,8 +65,13 @@ mp_err mp_root_n(const mp_int *a, int b, mp_int *c)
       goto LBL_ERR;
    }
    /* Start value must be larger than root */
-   ilog2 += 2;
+   ilog2 += 1;
    if ((err = mp_2expt(&t2,ilog2)) != MP_OKAY)                    goto LBL_ERR;
+   /*
+      Due to the convexity of the region and the upward rounding of the x[i] values, 
+      the series will be monotonically decreasing and x[i] remain larger than
+      the exact value of the root (if the sarting value was larger).
+   */
    do {
       /* t1 = t2 */
       if ((err = mp_copy(&t2, &t1)) != MP_OKAY)                   goto LBL_ERR;
@@ -92,31 +97,9 @@ mp_err mp_root_n(const mp_int *a, int b, mp_int *c)
 
       if ((err = mp_sub(&t1, &t3, &t2)) != MP_OKAY)               goto LBL_ERR;
 
-      /*
-          Number of rounds is at most log_2(root). If it is more it
-          got stuck, so break out of the loop and do the rest manually.
-       */
-      if (ilog2-- == 0) {
-         break;
-      }
    }  while (mp_cmp(&t1, &t2) != MP_EQ);
 
    /* result can be off by a few so check */
-   /* Loop beneath can overshoot by one if found root is smaller than actual root */
-   for (;;) {
-      mp_ord cmp;
-      if ((err = mp_expt_n(&t1, b, &t2)) != MP_OKAY)            goto LBL_ERR;
-      cmp = mp_cmp(&t2, &a_);
-      if (cmp == MP_EQ) {
-         err = MP_OKAY;
-         goto LBL_ERR;
-      }
-      if (cmp == MP_LT) {
-         if ((err = mp_add_d(&t1, 1uL, &t1)) != MP_OKAY)          goto LBL_ERR;
-      } else {
-         break;
-      }
-   }
    /* correct overshoot from above or from recurrence */
    for (;;) {
       if ((err = mp_expt_n(&t1, b, &t2)) != MP_OKAY)            goto LBL_ERR;
