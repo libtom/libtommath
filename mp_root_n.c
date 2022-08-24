@@ -57,7 +57,7 @@ mp_err mp_root_n(const mp_int *a, int b, mp_int *c)
       err = MP_OKAY;
       goto LBL_ERR;
    }
-   ilog2 =  ilog2 / b;
+   ilog2 =  (ilog2 - 1) / b;
    if (ilog2 == 0) {
       mp_set(c, 1uL);
       c->sign = a->sign;
@@ -100,6 +100,23 @@ mp_err mp_root_n(const mp_int *a, int b, mp_int *c)
    }  while (mp_cmp(&t1, &t2) != MP_EQ);
 
    /* result can be off by a few so check */
+   /* Loop beneath can overshoot by one if found root is smaller than actual root */
+   for (;;) {
+      mp_ord cmp;
+      if ((err = mp_expt_n(&t1, b, &t2)) != MP_OKAY)            goto LBL_ERR;
+      cmp = mp_cmp(&t2, &a_);
+      if (cmp == MP_EQ) {
+         err = MP_OKAY;
+         mp_exch(&t1, c);
+         c->sign = a->sign;
+         goto LBL_ERR;
+      }
+      if (cmp == MP_LT) {
+         if ((err = mp_add_d(&t1, 1uL, &t1)) != MP_OKAY)          goto LBL_ERR;
+      } else {
+         break;
+      }
+   }
    /* correct overshoot from above or from recurrence */
    for (;;) {
       if ((err = mp_expt_n(&t1, b, &t2)) != MP_OKAY)            goto LBL_ERR;
