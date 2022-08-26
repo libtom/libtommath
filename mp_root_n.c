@@ -98,20 +98,15 @@ mp_err mp_root_n(const mp_int *a, int b, mp_int *c)
       /* t3 = (t1**b - a)/(b * t1**(b-1)) */
       if ((err = mp_div(&t2, &t3, &t3, &d)) != MP_OKAY)           goto LBL_ERR;
       /* round up t3 - so t1 will be rounded down */
-      if(mp_cmp_d(&d, 0) != MP_EQ) {
+      if(!mp_iszero(&d)) {
          if ((err = mp_add_d(&t3, 1uL, &t3)) != MP_OKAY)  goto LBL_ERR;
-      }
-      cmp = mp_cmp_d(&t3, 0);
-      if (cmp == MP_EQ || cmp == MP_LT) {
-         /* this should never happen */
-         err = MP_ERR;
-         goto LBL_ERR;
       }
 
       /* t1 = t1 - t3 */
       if ((err = mp_sub(&t1, &t3, &t1)) != MP_OKAY)               goto LBL_ERR;
 
-   } while (mp_cmp_d(&t3, 1uL) == MP_GT);
+      /* while t3 != 1 */
+   } while (!((t3.used == 1u) && (t3.dp[0] == 1u)));
 
    /* result can be off by a few so check */
    /* correct overshoot from above or from recurrence */
