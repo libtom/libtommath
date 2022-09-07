@@ -98,7 +98,7 @@ mp_err s_mp_invmod(const mp_int *a, const mp_int *b, mp_int *c)
    }
 
    /* if its too low */
-   while (mp_cmp_d(&C, 0uL) == MP_LT) {
+   while (mp_isneg(&C)) {
       if ((err = mp_add(&C, b, &C)) != MP_OKAY)                   goto LBL_ERR;
    }
 
