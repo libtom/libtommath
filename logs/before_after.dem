@@ -23,8 +23,8 @@ plot 'sqr-before.log' smooth bezier title "Squaring (without Karatsuba) (before)
 set output "expt-ba.png"
 plot 'expt-before.log' smooth bezier title "Exptmod (Montgomery) (before)", \
       'expt-after.log' smooth bezier title "Exptmod (Montgomery) (after)", \
-      'expt_dr-before.log' smooth bezier title "Exptmod (Dimminished Radix) (before)", \
-      'expt_dr-after.log' smooth bezier title "Exptmod (Dimminished Radix) (after)", \
+      'expt_dr-before.log' smooth bezier title "Exptmod (Diminished Radix) (before)", \
+      'expt_dr-after.log' smooth bezier title "Exptmod (Diminished Radix) (after)", \
       'expt_2k-before.log' smooth bezier title "Exptmod (2k Reduction) (before)", \
       'expt_2k-after.log' smooth bezier title "Exptmod (2k Reduction) (after)", \
       'expt_2kl-before.log' smooth bezier title "Exptmod (2k-l Reduction) (before)", \

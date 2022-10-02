@@ -418,7 +418,7 @@ void mp_exch(mp_int *mp1, mp_int *mp2)
 
   Release the storage used by an mp_int, and void its fields so that
   if someone calls mp_clear() again for the same int later, we won't
-  get tollchocked.
+  get tolchocked.
  */
 
 void   mp_clear(mp_int *mp)

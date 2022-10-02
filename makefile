@@ -130,7 +130,7 @@ zipup: clean astyle new_file docs
 	@#   As the pdf creation modifies the tex files, git sometimes detects the
 	@#   modified files, but misses that it's put back to its original version.
 	@git update-index --refresh
-	@git diff-index --quiet HEAD -- || ( echo "FAILURE: uncommited changes or not a git" && exit 1 )
+	@git diff-index --quiet HEAD -- || ( echo "FAILURE: uncommitted changes or not a git" && exit 1 )
 	rm -rf libtommath-$(VERSION) ltm-$(VERSION).*
 	@# files/dirs excluded from "git archive" are defined in .gitattributes
 	git archive --format=tar --prefix=libtommath-$(VERSION)/ HEAD | tar x

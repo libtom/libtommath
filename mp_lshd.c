@@ -27,7 +27,7 @@ mp_err mp_lshd(mp_int *a, int b)
    a->used += b;
 
    /* much like mp_rshd this is implemented using a sliding window
-    * except the window goes the otherway around.  Copying from
+    * except the window goes the other way around.  Copying from
     * the bottom to the top.  see mp_rshd.c for more info.
     */
    for (x = a->used; x --> b;) {

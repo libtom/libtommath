@@ -35,7 +35,7 @@ mp_err s_mp_mul_high_comba(const mp_int *a, const mp_int *b, mp_int *c, int digs
       ty = MP_MIN(b->used-1, ix);
       tx = ix - ty;
 
-      /* this is the number of times the loop will iterrate, essentially its
+      /* this is the number of times the loop will iterate, essentially its
          while (tx++ < a->used && ty-- >= 0) { ... }
        */
       iy = MP_MIN(a->used-tx, ty+1);

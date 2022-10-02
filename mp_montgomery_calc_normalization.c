@@ -7,7 +7,7 @@
  * shifts with subtractions when the result is greater than b.
  *
  * The method is slightly modified to shift B unconditionally upto just under
- * the leading bit of b.  This saves alot of multiple precision shifting.
+ * the leading bit of b.  This saves a lot of multiple precision shifting.
  */
 mp_err mp_montgomery_calc_normalization(mp_int *a, const mp_int *b)
 {

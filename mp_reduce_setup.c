@@ -4,7 +4,7 @@
 /* SPDX-License-Identifier: Unlicense */
 
 /* pre-calculate the value required for Barrett reduction
- * For a given modulus "b" it calulates the value required in "a"
+ * For a given modulus "b" it calculates the value required in "a"
  */
 mp_err mp_reduce_setup(mp_int *a, const mp_int *b)
 {

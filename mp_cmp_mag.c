@@ -3,7 +3,7 @@
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
-/* compare maginitude of two ints (unsigned) */
+/* compare magnitude of two ints (unsigned) */
 mp_ord mp_cmp_mag(const mp_int *a, const mp_int *b)
 {
    int n;

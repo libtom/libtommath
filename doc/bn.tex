@@ -210,7 +210,7 @@ $ sudo pkg_add gmake libtool
 At this time two versions of \texttt{libtool} are installed and both are named \texttt{libtool},
 unfortunately but GNU \texttt{libtool} has been placed in \texttt{/usr/local/bin/} and the native
 version in \texttt{/usr/bin/}. The path might be different in other versions of OpenBSD but both
-programms differ in the output of \texttt{libtool --version}
+programs differ in the output of \texttt{libtool --version}
 \begin{alltt}
 $ /usr/local/bin/libtool --version
 libtool (GNU libtool) 2.4.2
@@ -519,7 +519,7 @@ mp_err mp_init (mp_int *a);
 \end{alltt}
 
 This function expects a pointer to an \texttt{mp\_int} structure and will initialize the members
-ofthe structure so the \texttt{mp\_int} represents the default integer which is zero.  If the
+of the structure so the \texttt{mp\_int} represents the default integer which is zero.  If the
 functions returns \texttt{MP\_OKAY} then the \texttt{mp\_int} is ready to be used by the other
 LibTomMath functions.
 
@@ -2213,7 +2213,7 @@ is actually a composite. There is a deterministic test for numbers smaller than 
 Determining the probability needed to pick the right column is a bit harder. Fips 186.4, for
 example has $2^{-80}$ for $512$ bit large numbers, $2^{-112}$ for $1024$ bits, and $2^{128}$ for
 $1536$ bits. It can be seen in table \ref{table:millerrabinrunsp1} that those combinations follow
-the diagonal from $(512,2^{-80})$ downwards and to the right to gain a lower probabilty of getting
+the diagonal from $(512,2^{-80})$ downwards and to the right to gain a lower probability of getting
 a composite declared a pseudoprime for the same amount of work or less.
 
 If this version of the library has the strong Lucas--Selfridge and/or the Frobenius--Underwood test

@@ -61,7 +61,7 @@ endif()
 # What compiler do we have and what are their...uhm... peculiarities
 if(CMAKE_C_COMPILER_ID MATCHES "(C|c?)lang")
     list(APPEND LTM_C_FLAGS -Wno-typedef-redefinition -Wno-tautological-compare -Wno-builtin-requires-header)
-    # Clang requires at least '-O1' for dead code eliminiation
+    # Clang requires at least '-O1' for dead code elimination
     set(CMAKE_C_FLAGS_DEBUG "-O1 ${CMAKE_C_FLAGS_DEBUG}")
 endif()
 if(CMAKE_C_COMPILER MATCHES "mingw")

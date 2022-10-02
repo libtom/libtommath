@@ -82,7 +82,7 @@ static int mtest_opponent(void)
 #endif
 
    for (;;) {
-      /* randomly clear and re-init one variable, this has the affect of triming the alloc space */
+      /* randomly clear and re-init one variable, this has the effect of trimming the alloc space */
       switch (abs(rand()) % 7) {
       case 0:
          mp_clear(&a);
