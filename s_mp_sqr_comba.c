@@ -39,7 +39,7 @@ mp_err s_mp_sqr_comba(const mp_int *a, mp_int *b)
       ty = MP_MIN(a->used-1, ix);
       tx = ix - ty;
 
-      /* this is the number of times the loop will iterrate, essentially
+      /* this is the number of times the loop will iterate, essentially
          while (tx++ < a->used && ty-- >= 0) { ... }
        */
       iy = MP_MIN(a->used-tx, ty+1);

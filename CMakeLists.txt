@@ -61,7 +61,7 @@ endif()
 # What compiler do we have and what are their...uhm... peculiarities
 if(CMAKE_C_COMPILER_ID MATCHES "(C|c?)lang")
     list(APPEND LTM_C_FLAGS -Wno-typedef-redefinition -Wno-tautological-compare -Wno-builtin-requires-header)
-    # Clang requires at least '-O1' for dead code eliminiation
+    # Clang requires at least '-O1' for dead code elimination
     set(CMAKE_C_FLAGS_DEBUG "-O1 ${CMAKE_C_FLAGS_DEBUG}")
 endif()
 if(CMAKE_C_COMPILER MATCHES "mingw")
@@ -103,11 +103,17 @@ target_link_options(${PROJECT_NAME} BEFORE PRIVATE
     ${LTM_LD_FLAGS}
 )
 
+set(PUBLIC_HEADERS tommath.h)
+set(C89 False CACHE BOOL "(Usually maintained automatically) Enable when the library is in c89 mode to package the correct header files on install")
+if(C89)
+    list(APPEND PUBLIC_HEADERS tommath_c89.h)
+endif()
+
 set_target_properties(${PROJECT_NAME} PROPERTIES
     OUTPUT_NAME tommath
     VERSION ${PROJECT_VERSION}
     SOVERSION ${PROJECT_VERSION_MAJOR}
-    PUBLIC_HEADER tommath.h
+    PUBLIC_HEADER "${PUBLIC_HEADERS}"
 )
 
 option(COMPILE_LTO "Build with LTO enabled")

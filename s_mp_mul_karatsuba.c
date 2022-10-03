@@ -27,7 +27,7 @@
  * are saved.  Note also that the call to mp_mul can end up back
  * in this function if the a0, a1, b0, or b1 are above the threshold.
  * This is known as divide-and-conquer and leads to the famous
- * O(N**lg(3)) or O(N**1.584) work which is asymptopically lower than
+ * O(N**lg(3)) or O(N**1.584) work which is asymptotically lower than
  * the standard O(N**2) that the baseline/comba methods use.
  * Generally though the overhead of this method doesn't pay off
  * until a certain size (N ~ 80) is reached.

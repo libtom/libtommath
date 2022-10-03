@@ -1548,7 +1548,7 @@ LBL_ERR:
    default(realprecision,1000);
    for(n=3,100,r = floor(a^(1/n));printf("\"" r "\", "))
 
-   All numbers as strings to simplifiy things, especially for the
+   All numbers as strings to simplify things, especially for the
    low-mp branch.
 */
 
@@ -2166,7 +2166,7 @@ static int test_mp_pack_unpack(void)
    uint8_t *buf = NULL;
 
    mp_order order = MP_LSB_FIRST;
-   mp_endian endianess = MP_NATIVE_ENDIAN;
+   mp_endian endianness = MP_NATIVE_ENDIAN;
 
    DOR(mp_init_multi(&a, &b, NULL));
    DO(mp_rand(&a, 15));
@@ -2180,9 +2180,9 @@ static int test_mp_pack_unpack(void)
    }
 
    DO(mp_pack((void *)buf, count, &written, order, 1uL,
-              endianess, 0uL, &a));
+              endianness, 0uL, &a));
    DO(mp_unpack(&b, count, order, 1uL,
-                endianess, 0uL, (const void *)buf));
+                endianness, 0uL, (const void *)buf));
 
    if (mp_cmp(&a, &b) != MP_EQ) {
       fprintf(stderr, "pack/unpack cycle failed\n");

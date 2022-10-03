@@ -10,7 +10,7 @@ mp_err mp_mul_2(const mp_int *a, mp_int *b)
    int x, oldused;
    mp_digit r;
 
-   /* grow to accomodate result */
+   /* grow to accommodate result */
    if ((err = mp_grow(b, a->used + 1)) != MP_OKAY) {
       return err;
    }

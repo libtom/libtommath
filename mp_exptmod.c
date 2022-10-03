@@ -5,7 +5,7 @@
 
 /* this is a shell function that calls either the normal or Montgomery
  * exptmod functions.  Originally the call to the montgomery code was
- * embedded in the normal function but that wasted alot of stack space
+ * embedded in the normal function but that wasted a lot of stack space
  * for nothing (since 99% of the time the Montgomery code would be called)
  */
 mp_err mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y)

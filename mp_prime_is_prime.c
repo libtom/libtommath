@@ -181,7 +181,7 @@ mp_err mp_prime_is_prime(const mp_int *a, int t, bool *result)
        * The mp_digit's have a defined bit-size but the size of the
        * array a.dp is a simple 'int' and this library can not assume full
        * compliance to the current C-standard (ISO/IEC 9899:2011) because
-       * it gets used for small embeded processors, too. Some of those MCUs
+       * it gets used for small embedded processors, too. Some of those MCUs
        * have compilers that one cannot call standard compliant by any means.
        * Hence the ugly type-fiddling in the following code.
        */
@@ -213,12 +213,12 @@ mp_err mp_prime_is_prime(const mp_int *a, int t, bool *result)
         The function mp_rand() goes to some length to use a cryptographically
         good PRNG. That also means that the chance to always get the same base
         in the loop is non-zero, although very low.
-        If the BPSW test and/or the addtional Frobenious test have been
+        If the BPSW test and/or the additional Frobenious test have been
         performed instead of just the Miller-Rabin test with the bases 2 and 3,
         a single extra test should suffice, so such a very unlikely event
         will not do much harm.
 
-        To preemptivly answer the dangling question: no, a witness does not
+        To preemptively answer the dangling question: no, a witness does not
         need to be prime.
       */
       for (ix = 0; ix < t; ix++) {

@@ -15,7 +15,7 @@ mp_err mp_2expt(mp_int *a, int b)
    /* zero a as per default */
    mp_zero(a);
 
-   /* grow a to accomodate the single bit */
+   /* grow a to accommodate the single bit */
    if ((err = mp_grow(a, (b / MP_DIGIT_BIT) + 1)) != MP_OKAY) {
       return err;
    }

@@ -40,7 +40,7 @@ manual:	mandvi
 
 # The file latexindent.pl is in several LaTeX distributions, if not:
 # https://ctan.org/pkg/latexindent
-# Its configuraion is well documented
+# Its configuration is well documented
 # http://mirrors.ctan.org/support/latexindent/documentation/latexindent.pdf
 pretty:
 	latexindent -s -w -m -l=.latexindent.yaml bn.tex
