@@ -613,7 +613,7 @@
 			>
 		</File>
 		<File
-			RelativePath="mp_prime_fermat.c"
+			RelativePath="mp_prime_extra_strong_lucas.c"
 			>
 		</File>
 		<File

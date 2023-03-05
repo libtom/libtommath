@@ -38,7 +38,7 @@ mp_get_mag_u64.o mp_get_mag_ul.o mp_grow.o mp_hash.o mp_init.o mp_init_copy.o mp
 mp_init_l.o mp_init_multi.o mp_init_set.o mp_init_size.o mp_init_u32.o mp_init_u64.o mp_init_ul.o \
 mp_invmod.o mp_is_square.o mp_kronecker.o mp_lcm.o mp_log.o mp_log_n.o mp_lshd.o mp_mod.o mp_mod_2d.o \
 mp_montgomery_calc_normalization.o mp_montgomery_reduce.o mp_montgomery_setup.o mp_mul.o mp_mul_2.o \
-mp_mul_2d.o mp_mul_d.o mp_mulmod.o mp_neg.o mp_or.o mp_pack.o mp_pack_count.o mp_prime_fermat.o \
+mp_mul_2d.o mp_mul_d.o mp_mulmod.o mp_neg.o mp_or.o mp_pack.o mp_pack_count.o mp_prime_extra_strong_lucas.o \
 mp_prime_frobenius_underwood.o mp_prime_is_prime.o mp_prime_miller_rabin.o mp_prime_next_prime.o \
 mp_prime_rabin_miller_trials.o mp_prime_rand.o mp_prime_strong_lucas_selfridge.o mp_radix_size.o \
 mp_radix_size_overestimate.o mp_rand.o mp_rand_source.o mp_read_radix.o mp_reduce.o mp_reduce_2k.o \
