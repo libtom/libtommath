@@ -889,7 +889,7 @@ static int test_mp_prime_rand(void)
 
    /* test for size */
    for (ix = 10; ix < 128; ix++) {
-      printf("Testing (not safe-prime): %9d bits    \n", ix);
+      printf("\rTesting (not safe-prime): %9d bits    ", ix);
       fflush(stdout);
       DO(mp_prime_rand(&a, 8, ix, (rand_int() & 1) ? 0 : MP_PRIME_2MSB_ON));
       EXPECT(mp_count_bits(&a) == ix);
@@ -902,14 +902,263 @@ LBL_ERR:
    return EXIT_FAILURE;
 }
 
+/* Some small pseudoprimes to test the individual implementations */
+
+/* Miller-Rabin base 2 */
+static const uint32_t SPSP_2[] = {
+   2047, 3277, 4033, 4681, 8321, 15841, 29341, 42799,
+   49141, 52633, 65281, 74665, 80581, 85489, 88357, 90751
+};
+
+/* Miller-Rabin base 3 */
+static const uint32_t SPSP_3[] = {
+   121, 703, 1891, 3281, 8401, 8911, 10585, 12403, 16531,
+   18721, 19345, 23521, 31621, 44287, 47197, 55969, 63139,
+   74593, 79003, 82513, 87913, 88573, 97567
+};
+
+/* SPSP to all bases < 100 */
+static const char *SPSP_2_100_LARGE[4] = {
+   "3L2x7YRmz7g4q+DwxESBacAClxrNiuspLCf8BUEphtky+5VNHLAb2ZZLLI0bu6cAOtNkUXenakBCCL"
+   "Vn7gqOpkcrQ/ptxZdk+4gnI99wFjgcfM512N71ZzbwvLe+5Pzat2k+nHIjE0w/WbQvzk4a2/syAY8S"
+   "i1B5XRjXYVAQOLyNWhsFpXeWXUgqiNzv7avfwBA3ZOXt", /* bases 2 - 100 */
+   "JOcSIwxGqGEjeQ2GsdlnFMwhc+xY7EtZo5Kf4BglOuakxTJaP8qrdZyduXaAZUdzyPgQLf7B8vqvVE"
+   "VLJwH7dLkLEiw19tfu3naT6DgQWzk+b5WuwWJzsTMdgWWH86M1h/Gjt2J/qABtTTH26C8bS4v/q9Fh"
+   "R8jqHNOiufUgHkDQdW9Z+BLlf6OVVh2VwPIOGVc7kFF",  /* bases 2 - 107 */
+   "1ZCddPKHO7yeqI5ZeKG5ssTnzJeIDpWElJEZnHwejl4tsyly44JgwdiRmXgsi9FQfYhMzFZMgV6qWZZ"
+   "sIJl4RNgpD/PDb3nam++ECkzMBuNIXVpmZzw+Gj5xQmpKK+OX8pFSy2IQiKyKAOfSaivXEb2/dga2J/"
+   "Pc2d23lw+eP3WtBbfHc7TAQGgNI/6Xmcpl1G64eXCrJ",  /* bases 2 - 103 */
+   "cCax282DurA+2Z54W3VLKSC2mwgpilQpGydCDHvXHNRKbJQRa5NtLLfa3sXvCmUWZ9okP2ZSsPDnw0X"
+   "dUQLzaz59vnw0rKbfsoA4nDBjMXR78Q889+KS4HFKfXkzxsiIKYo0kSfwPKYxFUi4Zj185kwwAPTAr2"
+   "IjegdWjQLeX1ZQM0HVUUF3WEVhHXcFzF0sMiJU5hl"     /* bases 2 - 101 */
+};
+
+#ifndef LTM_USE_ONLY_MR
+/* Extra strong Lucas test with Baillie's parameters Q = 1, P = 3 */
+static const uint32_t ESLPSP[] =  {
+   989, 3239, 5777, 10877, 27971, 29681, 30739, 31631, 39059, 72389,
+   73919, 75077, 100127, 113573, 125249, 137549, 137801, 153931, 155819,
+   161027, 162133, 189419, 218321, 231703, 249331, 370229, 429479, 430127,
+   459191, 473891, 480689, 600059, 621781, 632249, 635627
+};
+
+/*
+   Almost extra strong Lucas test with Baillie's parameters Q = 1, P = 3
+   Only those that are not in ESLPSP.
+ */
+static const uint32_t AESLPSP[] = {
+   10469, 154697, 233659, 472453, 629693, 852389, 1091093, 1560437,
+   1620673, 1813601, 1969109, 2415739, 2595329, 2756837, 3721549,
+   4269341, 5192309, 7045433, 7226669, 7265561
+};
+#endif
+
+/* Some randomly choosen 200 decimal digit large primes (https://primes.utm.edu/lists/small/small2.html) */
+static const char *medium_primes[10] = {
+   "C8Ckh0vviS3HUPdB1NSrSm+gOodw/f1aQ5+aaH1W6RMB0jVkO6lTaL54O3o7U5BSGUFGxm5gAvisbJamasuLZS8g3ZsJ2JM4Vtn9cQZRfkP6b8V",
+   "64xDN9FqLBiovZ/9q/EPm0DONpIfn5MbJKHa+IjT0fjAzkg34FpAmad+CwhcpKaiTbZEpErut+DhpVyiQfqBFrgcGnGhhIrMF/XkyY3aVx6E96B",
+   "8cyuMlENm0vh/eWwgHUpDKqmLyCSsRQZRWvbHpA2jHDZv1EhHkVhceg3OFRZn/aXRBnbdtsc2xO6sWh9KZ5Mo7u9rJgBJMVtDnu094MCExj1YvB",
+   "BRFZFsYjSz45un8qptnuSqEsy9wV0BzbMpVAB1TrwImENOVIc1cASZNQ/mXG2xtazqgn/juVzFo91XLx9PtIlkcK0L2T6fBNgy8Lc7dSVoKQ+XP",
+   "Ez/mDl+to2gm69+VdIHI9Q7vaO3DuIdLVT69myM3HYwVBE+G24KffAOUAp3FGrSOU+LtERMiIYIEtxPI7n/DRJtmL2i0+REwGpTMge2d2EpabfB",
+   "5+Uz1gPFjZJ/nNdEOmOaMouJSGzygo42qz7xOwXn/moSUvBpPjo4twRGbK0+qaeU/RI8yYYxXr3OBP4w+/jgL3mN9GiENDM5LtEKMiQrZ9jIVEb",
+   "AQ5nD1+G1grv41s/XlK+0YTGyZgr/88PzdQJ8QT9tavisTgyG6k8/80A4HQhnFndskHNAaB2EW5fE7KH3kk7m89s8JnVqkJyGZWSfs1+JlmHLPf",
+   "3F19vPmM0Ih89KZ04Xmd62QB9F6E2sztT10A7Kcqc44eKvsNHh+JY6Z6gJXkbWg1Iw7xr29QAhEF/o1YAgfutQtpdzHkex06Yd71kPsaZdKXiC5",
+   "2fIcJ1t/VYCColXGs+ji/txNMEXn2FXdowLzlo7QKqzAWHdAbwtltSO5qpSp3OUiEOGUUi3hbyw3iQRE8nFJaikJ89Wdox6vpPtIsc3QRjexMnv",
+   "8aOicQ5gIbFCarFUgSgzh40LpuZ0jjK1u48/YT+C0h1dAQ8CIEgZjHZT+5/7cCRGmJlo+XCp7S41MSQ2ZNRSJh2texRYtvAXBAZfR8A8twl316P"
+};
+
+const mp_digit prime_tab[] = {
+   0x0002, 0x0003, 0x0005, 0x0007, 0x000B, 0x000D, 0x0011, 0x0013,
+   0x0017, 0x001D, 0x001F, 0x0025, 0x0029, 0x002B, 0x002F, 0x0035,
+   0x003B, 0x003D, 0x0043, 0x0047, 0x0049, 0x004F, 0x0053, 0x0059,
+   0x0061, 0x0065, 0x0067, 0x006B, 0x006D, 0x0071, 0x007F, 0x0083,
+   0x0089, 0x008B, 0x0095, 0x0097, 0x009D, 0x00A3, 0x00A7, 0x00AD,
+   0x00B3, 0x00B5, 0x00BF, 0x00C1, 0x00C5, 0x00C7, 0x00D3, 0x00DF,
+   0x00E3, 0x00E5, 0x00E9, 0x00EF, 0x00F1, 0x00FB, 0x0101, 0x0107,
+   0x010D, 0x010F, 0x0115, 0x0119, 0x011B, 0x0125, 0x0133, 0x0137,
+
+   0x0139, 0x013D, 0x014B, 0x0151, 0x015B, 0x015D, 0x0161, 0x0167,
+   0x016F, 0x0175, 0x017B, 0x017F, 0x0185, 0x018D, 0x0191, 0x0199,
+   0x01A3, 0x01A5, 0x01AF, 0x01B1, 0x01B7, 0x01BB, 0x01C1, 0x01C9,
+   0x01CD, 0x01CF, 0x01D3, 0x01DF, 0x01E7, 0x01EB, 0x01F3, 0x01F7,
+   0x01FD, 0x0209, 0x020B, 0x021D, 0x0223, 0x022D, 0x0233, 0x0239,
+   0x023B, 0x0241, 0x024B, 0x0251, 0x0257, 0x0259, 0x025F, 0x0265,
+   0x0269, 0x026B, 0x0277, 0x0281, 0x0283, 0x0287, 0x028D, 0x0293,
+   0x0295, 0x02A1, 0x02A5, 0x02AB, 0x02B3, 0x02BD, 0x02C5, 0x02CF,
+
+   0x02D7, 0x02DD, 0x02E3, 0x02E7, 0x02EF, 0x02F5, 0x02F9, 0x0301,
+   0x0305, 0x0313, 0x031D, 0x0329, 0x032B, 0x0335, 0x0337, 0x033B,
+   0x033D, 0x0347, 0x0355, 0x0359, 0x035B, 0x035F, 0x036D, 0x0371,
+   0x0373, 0x0377, 0x038B, 0x038F, 0x0397, 0x03A1, 0x03A9, 0x03AD,
+   0x03B3, 0x03B9, 0x03C7, 0x03CB, 0x03D1, 0x03D7, 0x03DF, 0x03E5,
+   0x03F1, 0x03F5, 0x03FB, 0x03FD, 0x0407, 0x0409, 0x040F, 0x0419,
+   0x041B, 0x0425, 0x0427, 0x042D, 0x043F, 0x0443, 0x0445, 0x0449,
+   0x044F, 0x0455, 0x045D, 0x0463, 0x0469, 0x047F, 0x0481, 0x048B,
+
+   0x0493, 0x049D, 0x04A3, 0x04A9, 0x04B1, 0x04BD, 0x04C1, 0x04C7,
+   0x04CD, 0x04CF, 0x04D5, 0x04E1, 0x04EB, 0x04FD, 0x04FF, 0x0503,
+   0x0509, 0x050B, 0x0511, 0x0515, 0x0517, 0x051B, 0x0527, 0x0529,
+   0x052F, 0x0551, 0x0557, 0x055D, 0x0565, 0x0577, 0x0581, 0x058F,
+   0x0593, 0x0595, 0x0599, 0x059F, 0x05A7, 0x05AB, 0x05AD, 0x05B3,
+   0x05BF, 0x05C9, 0x05CB, 0x05CF, 0x05D1, 0x05D5, 0x05DB, 0x05E7,
+   0x05F3, 0x05FB, 0x0607, 0x060D, 0x0611, 0x0617, 0x061F, 0x0623,
+   0x062B, 0x062F, 0x063D, 0x0641, 0x0647, 0x0649, 0x064D, 0x0653
+};
+
+#define ARR_LENGTH(a) ((int)(sizeof((a))/sizeof((a)[0])))
+
+static int test_mp_prime_miller_rabin(void)
+{
+   mp_int a, b, c;
+   bool result;
+   int i;
+   mp_digit j;
+   DOR(mp_init_multi(&a, &b, &c, NULL));
+
+   /* SPSP to base 2 */
+   mp_set(&b, 2u);
+   for (i = 0; i < ARR_LENGTH(SPSP_2); i++) {
+      result = false;
+      mp_set_u32(&a, SPSP_2[i]);
+      DO(mp_prime_miller_rabin(&a, &b, &result));
+      EXPECT(result == true);
+   }
+
+   /* Some larger primes to check for false negatives */
+   for (i = 0; i < 10; i++) {
+      result = false;
+      DO(mp_read_radix(&a, medium_primes[i], 64));
+      DO(mp_prime_miller_rabin(&a, &b, &result));
+      EXPECT(result == true);
+   }
+   /* Some semi-primes */
+   for (i = 0; i < 5; i += 2) {
+      result = false;
+      DO(mp_read_radix(&a, medium_primes[i], 64));
+      DO(mp_read_radix(&c, medium_primes[i+1], 64));
+      DO(mp_mul(&a, &c, &a));
+      DO(mp_prime_miller_rabin(&a, &b, &result));
+      EXPECT(result == false);
+   }
+
+   /* SPSP to base 3 */
+   mp_set(&b, 3u);
+   for (i = 0; i < ARR_LENGTH(SPSP_3); i++) {
+      result = false;
+      mp_set_u32(&a, SPSP_3[i]);
+      DO(mp_prime_miller_rabin(&a, &b, &result));
+      EXPECT(result == true);
+   }
+
+   /* SPSP to bases 2 -- 100 */
+   mp_set(&b, 2u);
+   for (i = 0; i < 4; i++) {
+      DO(mp_read_radix(&a, SPSP_2_100_LARGE[i], 64));
+      for (j = 2u; j <= 100u; j++) {
+         result = false;
+         mp_set(&b, j);
+         DO(mp_prime_miller_rabin(&a, &b, &result));
+         EXPECT(result == true);
+      }
+      /* 107 is a prime that works */
+      mp_set(&b, 107u);
+      DO(mp_prime_miller_rabin(&a, &b, &result));
+      EXPECT(result == false);
+   }
+
+   /* SPSP to bases 2 -- 100, automatic */
+   mp_set(&b, 2u);
+   for (i = 0; i < 4; i++) {
+      DO(mp_read_radix(&a, SPSP_2_100_LARGE[i], 64));
+      for (j = 2u; j <= (mp_digit)mp_prime_rabin_miller_trials(mp_count_bits(&a)); j++) {
+         result = false;
+         mp_set(&b, (mp_digit)prime_tab[j]);
+         DO(mp_prime_miller_rabin(&a, &b, &result));
+      }
+      /* These numbers are not big enough for the heuristics to work */
+      EXPECT(result == true);
+   }
+
+   mp_clear_multi(&a, &b, &c, NULL);
+   return EXIT_SUCCESS;
+LBL_ERR:
+   mp_clear_multi(&a, &b, &c, NULL);
+   return EXIT_FAILURE;
+}
+
+#ifndef LTM_USE_ONLY_MR
+static int test_mp_prime_extra_strong_lucas(void)
+{
+   mp_int a, b;
+   bool result;
+   int i;
+
+   DOR(mp_init_multi(&a, &b, NULL));
+
+   /* Check Extra Strong pseudoprimes */
+   for (i = 0; i < ARR_LENGTH(ESLPSP); i++) {
+      result = false;
+      mp_set_u32(&a, ESLPSP[i]);
+      DO(mp_prime_extra_strong_lucas(&a, &result));
+      EXPECT(result == true);
+   }
+
+   /* Check Almost Extra Strong pseudoprimes (not in ESLPSP) */
+   for (i = 0; i < ARR_LENGTH(AESLPSP); i++) {
+      result = false;
+      mp_set_u32(&a, AESLPSP[i]);
+      DO(mp_prime_extra_strong_lucas(&a, &result));
+      EXPECT(result == false);
+   }
+
+   /* Some larger primes to check for false negatives */
+   for (i = 0; i < 10; i++) {
+      result = false;
+      DO(mp_read_radix(&a, medium_primes[i], 64));
+      DO(mp_prime_extra_strong_lucas(&a, &result));
+      EXPECT(result == true);
+   }
+
+   /* Some semi-primes */
+   for (i = 0; i < 5; i++) {
+      result = false;
+      DO(mp_read_radix(&a, medium_primes[i], 64));
+      DO(mp_read_radix(&a, medium_primes[i+1], 64));
+      DO(mp_mul(&a, &b, &a));
+      DO(mp_prime_extra_strong_lucas(&a, &result));
+      EXPECT(result == false);
+   }
+
+   mp_clear_multi(&a, &b, NULL);
+   return EXIT_SUCCESS;
+LBL_ERR:
+   mp_clear_multi(&a, &b, NULL);
+   return EXIT_FAILURE;
+}
+#endif
+
 static int test_mp_prime_is_prime(void)
 {
    int ix;
    mp_err e;
-   bool cnt, fu;
+   bool cnt;
+#ifndef LTM_USE_ONLY_MR
+   bool fu;
+#endif
 
    mp_int a, b;
    DOR(mp_init_multi(&a, &b, NULL));
+
+   /* strong Miller-Rabin pseudoprimes to the first 100 primes (gernerated with Arnault's method) */
+   printf("Testing mp_prime_is_prime() with SPSPs to the first 100 primes\n");
+   for (ix = 0; ix < 4; ix++) {
+      DO(mp_read_radix(&a,SPSP_2_100_LARGE[ix],64));
+      DO(mp_prime_is_prime(&a, mp_prime_rabin_miller_trials(mp_count_bits(&a)), &cnt));
+      if (cnt) {
+         printf("SPSP_2_100_LARGE[%d] is not prime but mp_prime_is_prime says it is.\n", ix);
+         goto LBL_ERR;
+      }
+   }
 
    /* strong Miller-Rabin pseudoprime to the first 200 primes (F. Arnault) */
    printf("Testing mp_prime_is_prime() with Arnault's pseudoprime  803...901");
@@ -954,6 +1203,7 @@ static int test_mp_prime_is_prime(void)
       DO(mp_prime_is_prime(&b, mp_prime_rabin_miller_trials(mp_count_bits(&b)), &cnt));
       /* large problem */
       EXPECT(cnt);
+#ifndef LTM_USE_ONLY_MR
       DO(mp_prime_frobenius_underwood(&b, &fu));
       EXPECT(fu);
       if ((e != MP_OKAY) || !cnt) {
@@ -965,13 +1215,14 @@ static int test_mp_prime_is_prime(void)
          putchar('\n');
          goto LBL_ERR;
       }
-
+#endif
    }
+#ifndef LTM_USE_ONLY_MR
    /* Check regarding problem #143 */
    DO(mp_read_radix(&a,
                     "FFFFFFFFFFFFFFFFC90FDAA22168C234C4C6628B80DC1CD129024E088A67CC74020BBEA63B139B22514A08798E3404DDEF9519B3CD3A431B302B0A6DF25F14374FE1356D6D51C245E485B576625E7EC6F44C42E9A63A3620FFFFFFFFFFFFFFFF",
                     16));
-   DO(mp_prime_strong_lucas_selfridge(&a, &cnt));
+   DO(mp_prime_extra_strong_lucas(&a, &cnt));
    /* large problem */
    EXPECT(cnt);
    if ((e != MP_OKAY) || !cnt) {
@@ -980,6 +1231,47 @@ static int test_mp_prime_is_prime(void)
       putchar('\n');
       goto LBL_ERR;
    }
+#endif
+   /* Check deterministic tests */
+#ifdef LTM_USE_ONLY_MR
+#if ((defined S_MP_PRIME_IS_DIVISIBLE_C) && (MP_PRIME_TAB_SIZE >= 256))
+   /* 2-SPRP 4188889 = 431 * 9719 < 2^22 */
+   DO(mp_read_radix(&a,"4188889",10));
+   DO(mp_prime_is_prime(&a, 0, &cnt));
+   EXPECT(cnt == false);
+   /* Last prime < 2^22 */
+   DO(mp_read_radix(&a,"4194301",10));
+   DO(mp_prime_is_prime(&a, 0, &cnt));
+   EXPECT(cnt == true);
+   /* 2,3-SPRP 6787327 = 1303 * 5209 < 2^23 */
+   DO(mp_read_radix(&a,"6787327",10));
+   DO(mp_prime_is_prime(&a, 0, &cnt));
+   EXPECT(cnt == false);
+   /* Last prime < 2^23 */
+   DO(mp_read_radix(&a,"8388593",10));
+   DO(mp_prime_is_prime(&a, 0, &cnt));
+   EXPECT(cnt == true);
+
+   /* 2,3,1459-SPRP < 2^32*/
+   DO(mp_read_radix(&a,"1518290707",10));
+   DO(mp_prime_is_prime(&a, -1, &cnt));
+   EXPECT(cnt == false);
+#endif
+   /* 2,3,7,61-SPRP < 2^43*/
+   DO(mp_read_radix(&a,"7038007247701",10));
+   DO(mp_prime_is_prime(&a, -1, &cnt));
+   EXPECT(cnt == false);
+
+   /* 2,325,9375,28178,450775,9780504-SPRP < 2^64
+      which is also a
+      2,3,325,9375,28178,450775,9780504-SPRP
+    */
+   DO(mp_read_radix(&a,"18411296009130176041",10));
+   DO(mp_prime_is_prime(&a, -1, &cnt));
+   EXPECT(cnt == false);
+
+#endif
+
 
    mp_clear_multi(&a, &b, NULL);
    return EXIT_SUCCESS;
@@ -2475,6 +2767,10 @@ static int unit_tests(int argc, char **argv)
       T1(mp_montgomery_reduce, MP_MONTGOMERY_REDUCE),
       T1(mp_root_n, MP_ROOT_N),
       T1(mp_or, MP_OR),
+#ifndef LTM_USE_ONLY_MR
+      T1(mp_prime_extra_strong_lucas, MP_PRIME_EXTRA_STRONG_LUCAS),
+#endif
+      T1(mp_prime_miller_rabin, MP_PRIME_MILLER_RABIN),
       T1(mp_prime_is_prime, MP_PRIME_IS_PRIME),
       T1(mp_prime_next_prime, MP_PRIME_NEXT_PRIME),
       T1(mp_prime_rand, MP_PRIME_RAND),

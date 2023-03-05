@@ -502,11 +502,6 @@ mp_err mp_hash(mp_int *a, mp_hval *hash) MP_WUR;
 
 /* ---> Primes <--- */
 
-/* performs one Fermat test of "a" using base "b".
- * Sets result to 0 if composite or 1 if probable prime
- */
-mp_err mp_prime_fermat(const mp_int *a, const mp_int *b, bool *result) MP_WUR;
-
 /* performs one Miller-Rabin test of "a" using base "b".
  * Sets result to 0 if composite or 1 if probable prime
  */
@@ -517,10 +512,11 @@ mp_err mp_prime_miller_rabin(const mp_int *a, const mp_int *b, bool *result) MP_
  */
 int mp_prime_rabin_miller_trials(int size) MP_WUR;
 
-/* performs one strong Lucas-Selfridge test of "a".
+
+/* performs one extra strong Lucas-Selfridge test of "a".
  * Sets result to 0 if composite or 1 if probable prime
  */
-mp_err mp_prime_strong_lucas_selfridge(const mp_int *a, bool *result) MP_WUR;
+mp_err mp_prime_extra_strong_lucas(const mp_int *a, bool *result) MP_WUR;
 
 /* performs one Frobenius test of "a" as described by Paul Underwood.
  * Sets result to 0 if composite or 1 if probable prime

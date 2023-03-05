@@ -86,7 +86,7 @@
 #   define MP_OR_C
 #   define MP_PACK_C
 #   define MP_PACK_COUNT_C
-#   define MP_PRIME_FERMAT_C
+#   define MP_PRIME_EXTRA_STRONG_LUCAS_C
 #   define MP_PRIME_FROBENIUS_UNDERWOOD_C
 #   define MP_PRIME_IS_PRIME_C
 #   define MP_PRIME_MILLER_RABIN_C
@@ -605,12 +605,27 @@
 #   define MP_COUNT_BITS_C
 #endif
 
-#if defined(MP_PRIME_FERMAT_C)
-#   define MP_CLEAR_C
+#if defined(MP_PRIME_EXTRA_STRONG_LUCAS_C)
+#   define MP_ADD_C
+#   define MP_ADD_D_C
+#   define MP_CLEAR_MULTI_C
 #   define MP_CMP_C
 #   define MP_CMP_D_C
-#   define MP_EXPTMOD_C
-#   define MP_INIT_C
+#   define MP_CNT_LSB_C
+#   define MP_COPY_C
+#   define MP_COUNT_BITS_C
+#   define MP_DIV_2D_C
+#   define MP_INIT_MULTI_C
+#   define MP_KRONECKER_C
+#   define MP_MOD_C
+#   define MP_MUL_2_C
+#   define MP_MUL_C
+#   define MP_MUL_D_C
+#   define MP_SET_C
+#   define MP_SET_U32_C
+#   define MP_SUB_C
+#   define MP_SUB_D_C
+#   define S_MP_GET_BIT_C
 #endif
 
 #if defined(MP_PRIME_FROBENIUS_UNDERWOOD_C)
@@ -642,8 +657,8 @@
 #   define MP_DIV_2D_C
 #   define MP_INIT_SET_C
 #   define MP_IS_SQUARE_C
+#   define MP_PRIME_EXTRA_STRONG_LUCAS_C
 #   define MP_PRIME_MILLER_RABIN_C
-#   define MP_PRIME_STRONG_LUCAS_SELFRIDGE_C
 #   define MP_RAND_C
 #   define MP_READ_RADIX_C
 #   define MP_SET_C
