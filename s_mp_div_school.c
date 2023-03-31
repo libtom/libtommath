@@ -19,6 +19,7 @@
 mp_err s_mp_div_school(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d)
 {
    mp_int q, x, y, t1, t2;
+   mp_digit xdpi;
    int n, t, i, norm;
    bool neg;
    mp_err err;
@@ -68,14 +69,16 @@ mp_err s_mp_div_school(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d)
       if (i > x.used) {
          continue;
       }
+      /* Do not assume that more than enough memory is automatically allocated and set to '0' */
+      xdpi = (i == x.used) ? 0u : x.dp[i];
 
       /* step 3.1 if xi == yt then set q{i-t-1} to b-1,
        * otherwise set q{i-t-1} to (xi*b + x{i-1})/yt */
-      if (x.dp[i] == y.dp[t]) {
+      if (xdpi == y.dp[t]) {
          q.dp[(i - t) - 1] = ((mp_digit)1 << (mp_digit)MP_DIGIT_BIT) - (mp_digit)1;
       } else {
          mp_word tmp;
-         tmp = (mp_word)x.dp[i] << (mp_word)MP_DIGIT_BIT;
+         tmp = (mp_word)xdpi << (mp_word)MP_DIGIT_BIT;
          tmp |= (mp_word)x.dp[i - 1];
          tmp /= (mp_word)y.dp[t];
          if (tmp > (mp_word)MP_MASK) {
@@ -103,7 +106,7 @@ mp_err s_mp_div_school(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d)
          /* find right hand */
          t2.dp[0] = ((i - 2) < 0) ? 0u : x.dp[i - 2];
          t2.dp[1] = x.dp[i - 1]; /* i >= 1 always holds */
-         t2.dp[2] = x.dp[i];
+         t2.dp[2] = xdpi;
          t2.used = 3;
       } while (mp_cmp_mag(&t1, &t2) == MP_GT);
 
