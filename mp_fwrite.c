@@ -20,6 +20,7 @@ mp_err mp_fwrite(const mp_int *a, int radix, FILE *stream)
    }
 
    if ((err = mp_to_radix(a, buf, size, &written, radix)) == MP_OKAY) {
+      written--;
       if (fwrite(buf, written, 1uL, stream) != 1uL) {
          err = MP_ERR;
       }
