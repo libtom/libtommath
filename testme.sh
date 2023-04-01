@@ -105,10 +105,29 @@ _die()
   fi
 }
 
+_fixup_cflags() {
+  compiler_version=$(echo "$1="$($1 -dumpversion))
+  case "$compiler_version" in
+    clang*=4.2.1)
+      # one of my versions of clang complains about some stuff in stdio.h and stdarg.h ...
+      TEST_CFLAGS="-Wno-typedef-redefinition"
+    ;;
+    gcc*=9)
+      # gcc 9 seems to sometimes think that variables are uninitialized, but they are.
+      TEST_CFLAGS="-Wno-maybe-uninitialized"
+    ;;
+    *)
+      TEST_CFLAGS=""
+    ;;
+  esac
+  echo $compiler_version
+}
+
 _make()
 {
   echo -ne " Compile $1 $2"
   suffix=$(echo ${1}${2}  | tr ' ' '_')
+  _fixup_cflags "$1"
   CC="$1" CFLAGS="$2 $TEST_CFLAGS" make -j$MAKE_JOBS $3 $MAKE_OPTIONS 2>gcc_errors_${suffix}.log
   errcnt=$(wc -l < gcc_errors_${suffix}.log)
   if [[ ${errcnt} -gt 1 ]]; then
@@ -400,15 +419,6 @@ do
     echo "Skipped compiler $i, file not found"
     continue
   fi
-  compiler_version=$(echo "$i="$($i -dumpversion))
-  if [ "$compiler_version" == "clang=4.2.1" ]
-  then
-    # one of my versions of clang complains about some stuff in stdio.h and stdarg.h ...
-    TEST_CFLAGS="-Wno-typedef-redefinition"
-  else
-    TEST_CFLAGS=""
-  fi
-  echo $compiler_version
 
   for a in "${archflags[@]}"
   do
