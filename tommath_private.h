@@ -104,6 +104,23 @@ extern void *MP_CALLOC(size_t nmemb, size_t size);
 extern void MP_FREE(void *mem, size_t size);
 #endif
 
+/* Size of the base sieve of mp_sieve*/
+
+#define MP_SIEVE_PRIME_MAX          0xFFFFFFFFlu
+#define MP_SIEVE_PRIME_MAX_SQRT     0xFFFFlu
+#ifdef MP_64BIT
+#define MP_SIEVE_FILL               0xFFFFFFFFFFFFFFFFllu
+#else
+#define MP_SIEVE_FILL               0xFFFFFFFFlu
+#endif
+
+/* Size is in bits and must be of the form (2^n)-1! */
+#define MP_SIEVE_RANGE_A_B 0xFFF
+#define MP_SIEVE_PRIME_NUM_BITS (sizeof(mp_sieve_prime)*CHAR_BIT)
+#define MP_SIEVE_BASE_SIEVE_SIZE  ((mp_sieve_prime)MP_SIEVE_PRIME_MAX_SQRT)
+
+
+
 /* feature detection macro */
 #ifdef _MSC_VER
 /* Prevent false positive: not enough arguments for function-like macro invocation */
@@ -207,6 +224,21 @@ MP_PRIVATE void s_mp_copy_digs(mp_digit *d, const mp_digit *s, int digits);
 MP_PRIVATE void s_mp_zero_buf(void *mem, size_t size);
 MP_PRIVATE void s_mp_zero_digs(mp_digit *d, int digits);
 MP_PRIVATE mp_err s_mp_radix_size_overestimate(const mp_int *a, const int radix, size_t *size);
+
+MP_PRIVATE void s_mp_sieve_setall(mp_single_sieve *bst);
+MP_PRIVATE void s_mp_sieve_clear(mp_single_sieve *bst, mp_sieve_prime n);
+MP_PRIVATE mp_sieve_prime s_mp_sieve_get(mp_single_sieve *bst, mp_sieve_prime n) MP_WUR;
+MP_PRIVATE mp_sieve_prime s_mp_sieve_nextset(mp_single_sieve *bst, mp_sieve_prime n) MP_WUR;
+MP_PRIVATE mp_sieve_prime s_mp_isqrt(mp_sieve_prime n) MP_WUR;
+MP_PRIVATE void s_mp_eratosthenes(mp_single_sieve *bst);
+MP_PRIVATE mp_err  s_mp_eratosthenes_init(mp_sieve_prime n, mp_single_sieve *bst) MP_WUR;
+MP_PRIVATE void s_mp_eratosthenes_segment(mp_sieve_prime a, mp_sieve_prime b, mp_single_sieve *base,
+      mp_single_sieve *segment);
+MP_PRIVATE mp_err s_mp_eratosthenes_segment_init(mp_sieve_prime a, mp_sieve_prime b, mp_single_sieve *base,
+      mp_single_sieve *segment) MP_WUR;
+MP_PRIVATE mp_err s_mp_init_single_segment_with_start(mp_sieve_prime a, mp_single_sieve *base_sieve,
+      mp_single_sieve *single_segment, mp_sieve_prime *single_segment_a) MP_WUR;
+
 
 #define MP_RADIX_MAP_REVERSE_SIZE 80u
 extern MP_PRIVATE const char s_mp_radix_map[];

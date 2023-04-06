@@ -95,13 +95,14 @@ typedef enum {
 } mp_ord;
 
 typedef enum {
-   MP_OKAY  = 0,   /* no error */
-   MP_ERR   = -1,  /* unknown error */
-   MP_MEM   = -2,  /* out of mem */
-   MP_VAL   = -3,  /* invalid input */
-   MP_ITER  = -4,  /* maximum iterations reached */
-   MP_BUF   = -5,  /* buffer overflow, supplied buffer too small */
-   MP_OVF   = -6   /* mp_int overflow, too many digits */
+   MP_OKAY  = 0,               /* no error */
+   MP_ERR   = -1,              /* unknown error */
+   MP_MEM   = -2,              /* out of mem */
+   MP_VAL   = -3,              /* invalid input */
+   MP_ITER  = -4,              /* maximum iterations reached */
+   MP_BUF   = -5,              /* buffer overflow, supplied buffer too small */
+   MP_OVF   = -6,              /* mp_int overflow, too many digits */
+   MP_SIEVE_MAX_REACHED = -7   /* Upper limit of prime sieve reached */
 } mp_err;
 
 typedef enum {
@@ -540,6 +541,7 @@ mp_err mp_prime_frobenius_underwood(const mp_int *N, bool *result) MP_WUR;
  */
 mp_err mp_prime_is_prime(const mp_int *a, int t, bool *result) MP_WUR;
 
+
 /* finds the next prime after the number "a" using "t" trials
  * of Miller-Rabin.
  *
@@ -561,6 +563,57 @@ mp_err mp_prime_next_prime(mp_int *a, int t, bool bbs_style) MP_WUR;
  *
  */
 mp_err mp_prime_rand(mp_int *a, int t, int size, int flags) MP_WUR;
+
+/* ---> full prime sieve <--- */
+
+/* Segmented version of an Eratosthenes sieve, optimized for random access */
+
+#ifdef MP_64BIT
+typedef  uint64_t mp_sieve_prime;
+#   define MP_SIEVE_PR_UINT            PRIu64
+#else
+typedef  uint32_t mp_sieve_prime;
+#   define MP_SIEVE_PR_UINT            PRIu32
+#endif
+
+#define MP_SIEVE_BIGGEST_PRIME      4294967291lu
+
+typedef struct mp_single_sieve_t {
+   mp_sieve_prime *content;   /* bitset holding the sieve */
+   mp_sieve_prime size;       /* number of entries (which is a slightly misleading description) */
+   mp_sieve_prime alloc;      /* size in bytes */
+} mp_single_sieve;
+
+typedef struct mp_sieve_t {
+   mp_single_sieve base;            /* base sieve (0..MP_SIEVE_PRIME_MAX_SQRT) */
+   mp_single_sieve segment;         /* segment (range_a_b) */
+   mp_sieve_prime single_segment_a; /* startpoint of segment */
+} mp_sieve;
+
+
+/* Init a sieve. Sets the necessary defaults */
+void mp_sieve_init(mp_sieve *sieve);
+
+/* Clear a sieve. Frees the memory for the contents of base and segment */
+void mp_sieve_clear(mp_sieve *sieve);
+
+/*
+   Deterministicaly checks if a small prime (< MP_SIEVE_PRIME_MAX) is prime.
+   Optimized for random access.
+ */
+mp_err mp_is_small_prime(mp_sieve_prime n, bool *result, mp_sieve *sieve) MP_WUR;
+/*
+   Puts the next prime >= n in "result". May return MP_SIEVE_MAX_REACHED to flag the content
+   of "result" as the last valid one.
+*/
+mp_err mp_next_small_prime(mp_sieve_prime n, mp_sieve_prime *result, mp_sieve *sieve) MP_WUR;
+/*
+   Puts the prime preceeding "n" in "result"
+*/
+mp_err mp_prec_small_prime(mp_sieve_prime n, mp_sieve_prime *result, mp_sieve *sieve) MP_WUR;
+
+
+
 
 /* ---> radix conversion <--- */
 int mp_count_bits(const mp_int *a) MP_WUR;

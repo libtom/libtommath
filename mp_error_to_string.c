@@ -21,6 +21,8 @@ const char *mp_error_to_string(mp_err code)
       return "Buffer overflow";
    case MP_OVF:
       return "Integer overflow";
+   case MP_SIEVE_MAX_REACHED:
+      return "Upper limit of prime sieve reached";
    default:
       return "Invalid error code";
    }
