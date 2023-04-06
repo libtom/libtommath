@@ -1846,6 +1846,33 @@ LTM_ERR:
    return err;
 }
 
+static int test_s_mp_sqr(void)
+{
+   mp_int a, b, c;
+   int i;
+
+   DOR(mp_init_multi(&a, &b, &c, NULL));
+
+   /* s_mp_mul() has a hardcoded branch to s_mul_comba if s_mul_comba is available,
+      so test another 10 just in case. */
+   for (i = 1; i < MP_MAX_COMBA + 10; i++) {
+      DO(s_fill_with_ones(&a, i));
+      DO(s_mp_sqr(&a, &b));
+      DO(s_mp_mul(&a, &a, &c, 2*i + 1));
+      EXPECT(mp_cmp(&b, &c) == MP_EQ);
+      DO(mp_rand(&a, i));
+      DO(s_mp_sqr(&a, &b));
+      DO(s_mp_mul(&a, &a, &c, 2*i + 1));
+      EXPECT(mp_cmp(&b, &c) == MP_EQ);
+   }
+
+   mp_clear_multi(&a, &b, &c, NULL);
+   return EXIT_SUCCESS;
+LBL_ERR:
+   mp_clear_multi(&a, &b, &c, NULL);
+   return EXIT_FAILURE;
+}
+
 static int test_s_mp_sqr_comba(void)
 {
    mp_int a, r1, r2;
@@ -2373,6 +2400,7 @@ static int unit_tests(int argc, char **argv)
       T1(mp_xor, MP_XOR),
       T3(s_mp_div_recursive, ONLY_PUBLIC_API, S_MP_DIV_RECURSIVE, S_MP_DIV_SCHOOL),
       T3(s_mp_div_small, ONLY_PUBLIC_API, S_MP_DIV_SMALL, S_MP_DIV_SCHOOL),
+      T2(s_mp_sqr, ONLY_PUBLIC_API, S_MP_SQR),
       /* s_mp_mul_comba not (yet) testable because s_mp_mul branches to s_mp_mul_comba automatically */
       T2(s_mp_sqr_comba, ONLY_PUBLIC_API, S_MP_SQR_COMBA),
       T2(s_mp_mul_balance, ONLY_PUBLIC_API, S_MP_MUL_BALANCE),
