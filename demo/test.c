@@ -1395,8 +1395,7 @@ LBL_ERR:
    return EXIT_SUCCESS;
 #   endif /* LTM_DEMO_TEST_REDUCE_2K_L */
 }
-/* stripped down version of mp_radix_size. The faster version can be off by up t
-o +3  */
+/* stripped down version of mp_radix_size. The faster version can be off by up to +3  */
 static mp_err s_rs(const mp_int *a, int radix, int *size)
 {
    mp_err res;
@@ -1425,6 +1424,32 @@ static mp_err s_rs(const mp_int *a, int radix, int *size)
    *size = digs + 1;
    return MP_OKAY;
 }
+
+/* The internal functions that compute the logarithm base two with MP_PRECISION_FIXED_LOG */
+static int test_s_mp_fp_log(void)
+{
+   // s_mp_fp_log(const mp_int *a, mp_int *c)
+
+
+   /*
+     "a" some large constants.
+     No random values because it would be quite involved to check the results
+
+     Some checks are made earlier so no tests with "a" a power of two are needed.
+   */
+
+
+   return MP_OKAY;
+}
+static int test_s_mp_fp_log_d(void)
+{
+   // s_mp_fp_log_d(const mp_int *a, mp_word *c)
+   /* See test_s_mp_fp_log() for details */
+   return MP_OKAY;
+}
+
+
+/* TODO: Cleanup (not everything is still needed) and  construct (find) testvalues for each correction loop  */
 static int test_mp_log_n(void)
 {
    mp_int a;
@@ -2436,6 +2461,8 @@ static int unit_tests(int argc, char **argv)
       T1(mp_get_u32, MP_GET_I32),
       T1(mp_get_u64, MP_GET_I64),
       T1(mp_get_ul, MP_GET_L),
+      T1(s_mp_fp_log_d, S_MP_FP_LOG_D),
+      T1(s_mp_fp_log, S_MP_FP_LOG),
       T1(mp_log_n, MP_LOG_N),
       T1(mp_log, MP_LOG),
       T1(mp_incr, MP_ADD_D),
