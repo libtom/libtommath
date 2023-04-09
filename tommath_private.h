@@ -214,14 +214,11 @@ MP_PRIVATE void s_mp_zero_buf(void *mem, size_t size);
 MP_PRIVATE void s_mp_zero_digs(mp_digit *d, int digits);
 MP_PRIVATE mp_err s_mp_radix_size_overestimate(const mp_int *a, const int radix, size_t *size);
 
-/* Bigint version for the unexpected */
-#if ( (UINT_MAX == UINT32_MAX) && ( MP_WORD_SIZE > 4 ) ) \
-      ||\
-    ( (UINT_MAX == UINT16_MAX) && ( MP_WORD_SIZE > 2 ) )
-MP_PRIVATE mp_err s_mp_fp_log(const mp_int *a, mp_word *c) MP_WUR;
-#else
+#define MP_PRECISION_FIXED_LOG   ( (int) (((sizeof(mp_word) * CHAR_BIT) / 2) - 1))
+#define MP_UPPER_LIMIT_FIXED_LOG ( (int) ( (sizeof(mp_word) * CHAR_BIT) - 1))
 MP_PRIVATE mp_err s_mp_fp_log(const mp_int *a, mp_int *c) MP_WUR;
-#endif
+MP_PRIVATE mp_err s_mp_fp_log_d(const mp_int *a, mp_word *c) MP_WUR;
+
 
 
 

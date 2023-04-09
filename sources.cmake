@@ -134,6 +134,7 @@ s_mp_exptmod.c
 s_mp_exptmod_fast.c
 s_mp_flog2_mp_word.c
 s_mp_fp_log.c
+s_mp_fp_log_d.c
 s_mp_get_bit.c
 s_mp_invmod.c
 s_mp_invmod_odd.c

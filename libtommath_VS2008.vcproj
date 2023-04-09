@@ -841,6 +841,10 @@
 			>
 		</File>
 		<File
+			RelativePath="s_mp_fp_log_d.c"
+			>
+		</File>
+		<File
 			RelativePath="s_mp_get_bit.c"
 			>
 		</File>

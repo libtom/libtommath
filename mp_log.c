@@ -3,61 +3,24 @@
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
-
 #define MP_LOG2_EXPT(a,b) ((mp_count_bits((a)) - 1) / mp_cnt_lsb((b)))
 
-/*
-  This functions rely on the size of mp_word being larger than INT_MAX and in case
-  there is a really weird architecture we try to check for it. Not a 100% reliable
-  test but it has a safe fallback.
- */
-#if ( (UINT_MAX == UINT32_MAX) && ( MP_WORD_SIZE > 4 ) ) \
-      ||\
-    ( (UINT_MAX == UINT16_MAX) && ( MP_WORD_SIZE > 2 ) )
-
-mp_err mp_log(const mp_int *a, const mp_int *b, int *lb)
+static mp_err s_approx_log_d(const mp_int *a, const mp_int *b, int *lb)
 {
    mp_int bn, La, Lb;
-   int n, fla, flb;
+   int n;
    mp_word la_word, lb_word;
 
    mp_err err;
    mp_ord cmp;
-
-   if (mp_isneg(a) || mp_iszero(a) || (mp_cmp_d(b, 2u) == MP_LT)) {
-      return MP_VAL;
-   }
-
-   if (MP_HAS(S_MP_LOG_2EXPT) && MP_IS_POWER_OF_TWO(b)) {
-      *lb = MP_LOG2_EXPT(a, b);
-      return MP_OKAY;
-   }
-
-   /* floor(log_2(x)) for cut-off */
-   fla = mp_count_bits(a) - 1;
-   flb = mp_count_bits(b) - 1;
-
-   cmp = mp_cmp(a, b);
-
-   /* "a < b -> 0" and "(b == a) -> 1" */
-   if ((cmp == MP_LT) || (cmp == MP_EQ)) {
-      *lb = (cmp == MP_EQ);
-      return MP_OKAY;
-   }
-
-   /* "a < b^2 -> 1" (bit-count is sufficient, doesn't need to be exact) */
-   if (((2 * flb)-1) > fla) {
-      *lb = 1;
-      return MP_OKAY;
-   }
 
    if ((err = mp_init_multi(&La, &Lb, &bn, NULL)) != MP_OKAY) {
       return err;
    }
 
    /* Approximation of the individual logarithms with low precision */
-   if ((err = s_mp_fp_log(a, &la_word)) != MP_OKAY)                                       goto LTM_ERR;
-   if ((err = s_mp_fp_log(b, &lb_word)) != MP_OKAY)                                       goto LTM_ERR;
+   if ((err = s_mp_fp_log_d(a, &la_word)) != MP_OKAY)                                                     goto LTM_ERR;
+   if ((err = s_mp_fp_log_d(b, &lb_word)) != MP_OKAY)                                                     goto LTM_ERR;
 
    /* Approximation of log_b(a) with low precision. */
    n = (int)(((la_word - (lb_word + 1)/2) / lb_word) + 1);
@@ -117,10 +80,10 @@ mp_err mp_log(const mp_int *a, const mp_int *b, int *lb)
       do {
          if (b->used == 1) {
             /* These are cheaper exact divisions, but that function is not available in LTM */
-            if ((err = mp_div_d(&bn, b->dp[0], &bn, NULL)) != MP_OKAY)       goto LTM_ERR;
+            if ((err = mp_div_d(&bn, b->dp[0], &bn, NULL)) != MP_OKAY)                                    goto LTM_ERR;
 
          } else {
-            if ((err = mp_div(&bn, b, &bn, NULL)) != MP_OKAY)                goto LTM_ERR;
+            if ((err = mp_div(&bn, b, &bn, NULL)) != MP_OKAY)                                             goto LTM_ERR;
          }
          n--;
       } while ((cmp = mp_cmp(&bn, a)) == MP_GT);
@@ -134,61 +97,34 @@ LTM_ERR:
    return err;
 }
 
-
-#else
-/* Bigint version. A bit slower but not _that_ much  */
-mp_err mp_log(const mp_int *a, const mp_int *b, int *lb)
+static mp_err s_approx_log(const mp_int *a, const mp_int *b, int *lb)
 {
    mp_int bn, La, Lb, t;
 
-   int n, fla, flb;
+   int n;
 
    mp_err err;
    mp_ord cmp;
-
-   if (mp_isneg(a) || mp_iszero(a) || (mp_cmp_d(b, 2u) == MP_LT)) {
-      return MP_VAL;
-   }
-
-   if (MP_HAS(S_MP_LOG_2EXPT) && MP_IS_POWER_OF_TWO(b)) {
-      *lb = MP_LOG2_EXPT(a, b);
-      return MP_OKAY;
-   }
-
-   fla = mp_count_bits(a) - 1;
-   flb = mp_count_bits(b) - 1;
-
-   cmp = mp_cmp(a, b);
-
-   if ((cmp == MP_LT) || (cmp == MP_EQ)) {
-      *lb = (cmp == MP_EQ);
-      return MP_OKAY;
-   }
-
-   if ((2 * flb) > fla) {
-      *lb = 1;
-      return MP_OKAY;
-   }
 
    if ((err = mp_init_multi(&La, &Lb, &bn, &t, NULL)) != MP_OKAY) {
       return err;
    }
 
-   if ((err = s_mp_fp_log(a, &La)) != MP_OKAY)                                                          goto LTM_ERR;
-   if ((err = s_mp_fp_log(b, &Lb)) != MP_OKAY)                                                          goto LTM_ERR;
+   if ((err = s_mp_fp_log(a, &La)) != MP_OKAY)                                                            goto LTM_ERR;
+   if ((err = s_mp_fp_log(b, &Lb)) != MP_OKAY)                                                            goto LTM_ERR;
 
-   if ((err = mp_add_d(&Lb, 1u, &t)) != MP_OKAY)                                                       goto LTM_ERR;
-   if ((err = mp_div_2(&t, &t)) != MP_OKAY)                                                             goto LTM_ERR;
-   if ((err = mp_sub(&La, &t, &t)) != MP_OKAY)                                                         goto LTM_ERR;
-   if ((err = mp_div(&t, &Lb, &t, NULL)) != MP_OKAY)                                                    goto LTM_ERR;
-   if ((err = mp_add_d(&t, 1u, &t)) != MP_OKAY)                                                        goto LTM_ERR;
+   if ((err = mp_add_d(&Lb, 1u, &t)) != MP_OKAY)                                                          goto LTM_ERR;
+   if ((err = mp_div_2(&t, &t)) != MP_OKAY)                                                               goto LTM_ERR;
+   if ((err = mp_sub(&La, &t, &t)) != MP_OKAY)                                                            goto LTM_ERR;
+   if ((err = mp_div(&t, &Lb, &t, NULL)) != MP_OKAY)                                                      goto LTM_ERR;
+   if ((err = mp_add_d(&t, 1u, &t)) != MP_OKAY)                                                           goto LTM_ERR;
 
    n = mp_get_i32(&t);
 
    if ((err = mp_expt_n(b, n, &bn)) != MP_OKAY) {
       if (err == MP_OVF) {
          n--;
-         if ((err = mp_expt_n(b, n, &bn)) != MP_OKAY)                                                   goto LTM_ERR;
+         if ((err = mp_expt_n(b, n, &bn)) != MP_OKAY)                                                     goto LTM_ERR;
       } else {
          goto LTM_ERR;
       }
@@ -244,8 +180,45 @@ LTM_ERR:
    mp_clear_multi(&La, &Lb, &bn, &t, NULL);
    return err;
 }
-#endif
 
 
+mp_err mp_log(const mp_int *a, const mp_int *b, int *lb)
+{
+   int fla, flb;
+   mp_ord cmp;
+
+   if (mp_isneg(a) || mp_iszero(a) || (mp_cmp_d(b, 2u) == MP_LT)) {
+      return MP_VAL;
+   }
+
+   if (MP_IS_POWER_OF_TWO(b)) {
+      *lb = MP_LOG2_EXPT(a, b);
+      return MP_OKAY;
+   }
+
+   /* floor(log_2(x)) for cut-off */
+   fla = mp_count_bits(a) - 1;
+   flb = mp_count_bits(b) - 1;
+
+   cmp = mp_cmp(a, b);
+
+   /* "a < b -> 0" and "(b == a) -> 1" */
+   if ((cmp == MP_LT) || (cmp == MP_EQ)) {
+      *lb = (cmp == MP_EQ);
+      return MP_OKAY;
+   }
+
+   /* "a < b^2 -> 1" (bit-count is sufficient, doesn't need to be exact) */
+   if (((2 * flb)-1) > fla) {
+      *lb = 1;
+      return MP_OKAY;
+   }
+
+
+   if (MP_HAS(S_MP_LOG_D_POSSIBLE)) {
+      return s_approx_log_d(a, b, lb);
+   }
+   return s_approx_log(a, b, lb);
+}
 
 #endif
