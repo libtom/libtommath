@@ -141,7 +141,6 @@
 #   define S_MP_DIV_SMALL_C
 #   define S_MP_EXPTMOD_C
 #   define S_MP_EXPTMOD_FAST_C
-#   define S_MP_FLOG2_MP_WORD_C
 #   define S_MP_FP_LOG_C
 #   define S_MP_FP_LOG_D_C
 #   define S_MP_GET_BIT_C
@@ -484,6 +483,7 @@
 
 #if defined(MP_LOG_C)
 #   define MP_ADD_D_C
+#   define MP_CLEAR_C
 #   define MP_CLEAR_MULTI_C
 #   define MP_CMP_C
 #   define MP_CMP_D_C
@@ -494,6 +494,7 @@
 #   define MP_DIV_D_C
 #   define MP_EXPT_N_C
 #   define MP_GET_I32_C
+#   define MP_INIT_C
 #   define MP_INIT_MULTI_C
 #   define MP_MUL_C
 #   define MP_MUL_D_C
@@ -1066,9 +1067,6 @@
 #   define MP_REDUCE_2K_SETUP_C
 #   define MP_SET_C
 #   define S_MP_MONTGOMERY_REDUCE_COMBA_C
-#endif
-
-#if defined(S_MP_FLOG2_MP_WORD_C)
 #endif
 
 #if defined(S_MP_FP_LOG_C)

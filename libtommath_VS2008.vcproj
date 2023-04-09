@@ -833,10 +833,6 @@
 			>
 		</File>
 		<File
-			RelativePath="s_mp_flog2_mp_word.c"
-			>
-		</File>
-		<File
 			RelativePath="s_mp_fp_log.c"
 			>
 		</File>
