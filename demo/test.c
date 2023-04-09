@@ -1428,7 +1428,7 @@ static mp_err s_rs(const mp_int *a, int radix, int *size)
 /* The internal functions that compute the logarithm base two with MP_PRECISION_FIXED_LOG */
 static int test_s_mp_fp_log(void)
 {
-   // s_mp_fp_log(const mp_int *a, mp_int *c)
+   /* s_mp_fp_log(const mp_int *a, mp_int *c) */
 
 
    /*
@@ -1443,7 +1443,7 @@ static int test_s_mp_fp_log(void)
 }
 static int test_s_mp_fp_log_d(void)
 {
-   // s_mp_fp_log_d(const mp_int *a, mp_word *c)
+   /* s_mp_fp_log_d(const mp_int *a, mp_word *c) */
    /* See test_s_mp_fp_log() for details */
    return MP_OKAY;
 }
