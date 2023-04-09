@@ -413,17 +413,6 @@ mp_err mp_exteuclid(const mp_int *a, const mp_int *b, mp_int *U1, mp_int *U2, mp
 /* c = [a, b] or (a*b)/(a, b) */
 mp_err mp_lcm(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
 
-/*
-  The mp_log functions rely on the size of mp_word being larger than INT_MAX and in case
-  there is a really weird architecture we try to check for it. Not a 100% reliable
-  test but it has a safe fallback.
- */
-
-#if ((UINT_MAX == UINT32_MAX) && (MP_WORD_SIZE > 4)) \
-      || ((UINT_MAX == UINT16_MAX) && (MP_WORD_SIZE > 2))
-#define S_MP_FP_LOG_D_POSSIBLE_C
-#endif
-
 /* Integer logarithm to integer base */
 mp_err mp_log_n(const mp_int *a, int base, int *c) MP_WUR;
 

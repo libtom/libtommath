@@ -177,6 +177,16 @@ MP_STATIC_ASSERT(prec_geq_min_prec, MP_DEFAULT_DIGIT_COUNT >= MP_MIN_DIGIT_COUNT
 #define MP_HAS_SET_DOUBLE
 #endif
 
+/*
+  The mp_log functions rely on the size of mp_word being larger than INT_MAX and in case
+  there is a really weird architecture we try to check for it. Not a 100% reliable
+  test but it has a safe fallback.
+ */
+#if ((UINT_MAX == UINT32_MAX) && (MP_WORD_SIZE > 4)) \
+      || ((UINT_MAX == UINT16_MAX) && (MP_WORD_SIZE > 2))
+#define S_MP_FP_LOG_D_POSSIBLE_C
+#endif
+
 /* random number source */
 extern MP_PRIVATE mp_err(*s_mp_rand_source)(void *out, size_t size);
 
