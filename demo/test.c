@@ -1425,37 +1425,19 @@ static mp_err s_rs(const mp_int *a, int radix, int *size)
    return MP_OKAY;
 }
 
-/* The internal functions that compute the logarithm base two with MP_PRECISION_FIXED_LOG */
-static int test_s_mp_fp_log(void)
-{
-   /* s_mp_fp_log(const mp_int *a, mp_int *c) */
 
-
-   /*
-     "a" some large constants.
-     No random values because it would be quite involved to check the results
-
-     Some checks are made earlier so no tests with "a" a power of two are needed.
-   */
-
-
-   return MP_OKAY;
-}
-static int test_s_mp_fp_log_d(void)
-{
-   /* s_mp_fp_log_d(const mp_int *a, mp_word *c) */
-   /* See test_s_mp_fp_log() for details */
-   return MP_OKAY;
-}
-
-
-/* TODO: Cleanup (not everything is still needed) and  construct (find) testvalues for each correction loop  */
 static int test_mp_log_n(void)
 {
    mp_int a;
    mp_digit d;
-   int base, lb, size;
+   int base, lb, size, i;
    const int max_base = MP_MIN(INT_MAX, MP_DIGIT_MAX);
+
+   if (MP_HAS(S_MP_WORD_TOO_SMALL)) {
+      fprintf(stderr, "Testing mp_log_n with restricted size of mp_word.\n");
+   } else {
+      fprintf(stderr, "Testing mp_log_n with normal size of mp_word.\n");
+   }
 
    DOR(mp_init(&a));
 
@@ -1509,25 +1491,32 @@ static int test_mp_log_n(void)
    DO(mp_rand(&a, 10));
    for (base = 2; base < 65; base++) {
       DO(mp_log_n(&a, base, &lb));
-      DO(s_rs(&a,(int)base, &size));
+      DO(s_rs(&a,base, &size));
       /* radix_size includes the memory needed for '\0', too*/
       size -= 2;
       EXPECT(lb == size);
    }
 
    /*
-     bases 2..64 with "a" a random small constant to
-     test the part of mp_ilogb that uses native types.
+     bases 2..64 with "a" a small constant and a small exponent "n" to test
+     in the range a^n - 10 .. a^n + 10. That will check the correction loops
+     and the test for perfect power.
+     For simplicity a = base and n = 23 (64^23 == 2^138 > 2^128)
    */
-   DO(mp_rand(&a, 1));
    for (base = 2; base < 65; base++) {
-      DO(mp_log_n(&a, base, &lb));
-      DO(s_rs(&a,(int)base, &size));
-      size -= 2;
-      EXPECT(lb == size);
+      mp_set(&a,(mp_digit)base);
+      DO(mp_expt_n(&a, 23, &a));
+      DO(mp_sub_d(&a, 10u, &a));
+      for (i = 0; i < 20; i++) {
+         DO(mp_log_n(&a, base, &lb));
+         DO(s_rs(&a, base, &size));
+         size -= 2;
+         EXPECT(lb == size);
+         DO(mp_add_d(&a, 1u, &a));
+      }
    }
 
-   /*Test upper edgecase with base UINT32_MAX and number (UINT32_MAX/2)*UINT32_MAX^10  */
+   /*Test base upper edgecase with base = UINT32_MAX and number = (UINT32_MAX/2)*UINT32_MAX^10  */
    mp_set(&a, max_base);
    DO(mp_expt_n(&a, 10uL, &a));
    DO(mp_add_d(&a, max_base / 2, &a));
@@ -1545,6 +1534,12 @@ static int test_mp_log(void)
 {
    mp_int a, base, bn, t;
    int lb, lb2, i, j;
+
+   if (MP_HAS(S_MP_WORD_TOO_SMALL)) {
+      fprintf(stdout, "Testing mp_log with restricted size of mp_word.\n");
+   } else {
+      fprintf(stdout, "Testing mp_log with normal size of mp_word.\n");
+   }
 
    DOR(mp_init_multi(&a, &base, &bn, &t, NULL));
 
@@ -2461,8 +2456,6 @@ static int unit_tests(int argc, char **argv)
       T1(mp_get_u32, MP_GET_I32),
       T1(mp_get_u64, MP_GET_I64),
       T1(mp_get_ul, MP_GET_L),
-      T1(s_mp_fp_log_d, S_MP_FP_LOG_D),
-      T1(s_mp_fp_log, S_MP_FP_LOG),
       T1(mp_log_n, MP_LOG_N),
       T1(mp_log, MP_LOG),
       T1(mp_incr, MP_ADD_D),

@@ -48,7 +48,6 @@ LTM_ERR:
    return err;
 }
 
-
 mp_err mp_log(const mp_int *a, const mp_int *b, int *lb)
 {
    mp_int bn;
@@ -83,11 +82,10 @@ mp_err mp_log(const mp_int *a, const mp_int *b, int *lb)
       return MP_OKAY;
    }
 
-
-   if (MP_HAS(S_MP_LOG_D_POSSIBLE)) {
-      err = s_approx_log_d(a, b, &n);
-   } else {
+   if (MP_HAS(S_MP_WORD_TOO_SMALL)) {
       err = s_approx_log(a, b, &n);
+   } else {
+      err = s_approx_log_d(a, b, &n);
    }
    if (err != MP_OKAY) {
       return err;

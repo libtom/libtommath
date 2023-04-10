@@ -182,9 +182,9 @@ MP_STATIC_ASSERT(prec_geq_min_prec, MP_DEFAULT_DIGIT_COUNT >= MP_MIN_DIGIT_COUNT
   there is a really weird architecture we try to check for it. Not a 100% reliable
   test but it has a safe fallback.
  */
-#if ((UINT_MAX == UINT32_MAX) && (MP_WORD_SIZE > 4)) \
-      || ((UINT_MAX == UINT16_MAX) && (MP_WORD_SIZE > 2))
-#define S_MP_FP_LOG_D_POSSIBLE_C
+#if !(((UINT_MAX == UINT32_MAX) && (MP_WORD_SIZE > 4)) \
+      || ((UINT_MAX == UINT16_MAX) && (MP_WORD_SIZE > 2)))
+#define S_MP_WORD_TOO_SMALL_C
 #endif
 
 /* random number source */
