@@ -1091,8 +1091,8 @@
 #   define MP_DIV_2D_C
 #   define MP_GET_I64_C
 #   define MP_INIT_C
-#   define S_MP_FLOG2_MP_WORD_C
-#   define S_MP_FP_LOG_FRACTION_C
+#   define S_MP_FLOG2_MP_WORD_D_C
+#   define S_MP_FP_LOG_FRACTION_D_C
 #endif
 
 #if defined(S_MP_GET_BIT_C)
