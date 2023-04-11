@@ -3,6 +3,11 @@
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
+#ifdef MP_USE_MEMOPS
+#  include <string.h>
+
+#  define MP_STRLEN(s) strlen(s)
+#else
 static size_t s_mp_strlen(const char *s)
 {
    const char *p;
@@ -12,6 +17,8 @@ static size_t s_mp_strlen(const char *s)
    }
    return (size_t)(p - s);
 }
+#  define MP_STRLEN(s) s_mp_strlen(s)
+#endif
 
 /* read a string [ASCII] in a given radix */
 mp_err mp_read_radix(mp_int *a, const char *str, int radix)
@@ -34,7 +41,7 @@ mp_err mp_read_radix(mp_int *a, const char *str, int radix)
       sign = MP_NEG;
    }
 
-   slen = s_mp_strlen(str);
+   slen = MP_STRLEN(str);
 
    mp_zero(a);
 
