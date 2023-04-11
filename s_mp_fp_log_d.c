@@ -3,7 +3,7 @@
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
-static mp_word s_mp_flog2_mp_word(mp_word value)
+static mp_word s_mp_flog2_mp_word_d(mp_word value)
 {
    mp_word r = 0u;
    while ((value >>= 1) != 0u) {
@@ -13,12 +13,12 @@ static mp_word s_mp_flog2_mp_word(mp_word value)
 }
 
 /* Fixed point bitwise logarithm base two of "x" with precision "p"  */
-static mp_err s_mp_fp_log_fraction(mp_word x, int p, mp_word *c)
+static mp_err s_mp_fp_log_fraction_d(mp_word x, int p, mp_word *c)
 {
    mp_word b, L_out, L, a_bar, twoep;
    int i;
 
-   L = s_mp_flog2_mp_word(x);
+   L = s_mp_flog2_mp_word_d(x);
 
    if ((L + (mp_word)p) > MP_UPPER_LIMIT_FIXED_LOG) {
       return MP_VAL;
@@ -60,14 +60,14 @@ mp_err s_mp_fp_log_d(const mp_int *a, mp_word *c)
       if ((err = mp_div_2d(a, la - prec, &t, NULL)) != MP_OKAY)                                           goto LTM_ERR;
       tmp = mp_get_u64(&t);
       /* Compute the low precision approximation for the fractional part */
-      if ((err = s_mp_fp_log_fraction(tmp, prec, &la_word)) != MP_OKAY)                                   goto LTM_ERR;
+      if ((err = s_mp_fp_log_fraction_d(tmp, prec, &la_word)) != MP_OKAY)                                   goto LTM_ERR;
       /* Compute the integer part and add it */
       tmp = ((mp_word)(la - prec))<<prec;
       la_word += tmp;
       mp_clear(&t);
    } else {
       tmp = mp_get_u64(a);
-      if ((err = s_mp_fp_log_fraction(tmp, prec, &la_word)) != MP_OKAY) {
+      if ((err = s_mp_fp_log_fraction_d(tmp, prec, &la_word)) != MP_OKAY) {
          return err;
       }
    }
