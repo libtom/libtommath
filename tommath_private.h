@@ -223,6 +223,7 @@ MP_PRIVATE void s_mp_copy_digs(mp_digit *d, const mp_digit *s, int digits);
 MP_PRIVATE void s_mp_zero_buf(void *mem, size_t size);
 MP_PRIVATE void s_mp_zero_digs(mp_digit *d, int digits);
 MP_PRIVATE mp_err s_mp_radix_size_overestimate(const mp_int *a, const int radix, size_t *size);
+MP_PRIVATE size_t s_mp_floor_ilog2(mp_word value);
 
 #define MP_PRECISION_FIXED_LOG   ( (int) (((sizeof(mp_word) * CHAR_BIT) / 2) - 1))
 #define MP_UPPER_LIMIT_FIXED_LOG ( (int) ( (sizeof(mp_word) * CHAR_BIT) - 1))

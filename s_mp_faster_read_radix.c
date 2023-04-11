@@ -18,20 +18,11 @@ static const uint8_t s_read_radix_cutoff[65] = { 0, 0,                          
                                                  18, 17, 17, 17, 17, 17, 17       /* 58 .. 64 */
                                                };
 
-/* This is in mp_prime_is_prime.c and can be reused */
-static int s_floor_ilog2(int value)
-{
-   int r = 0;
-   while ((value >>= 1) != 0) {
-      r++;
-   }
-   return r;
-}
-
 mp_err s_mp_faster_read_radix(mp_int *a, const char *str, size_t start, size_t end, int radix)
 {
    size_t len, mid;
    mp_int A, B, m;
+   mp_digit radix_ = (mp_digit)radix;
    mp_err err = MP_OKAY;
 
    len = end - start;
@@ -42,7 +33,7 @@ mp_err s_mp_faster_read_radix(mp_int *a, const char *str, size_t start, size_t e
 
    mid = len / 2u;
 
-   if ((err = mp_init_set(&m, (mp_digit)radix)) != MP_OKAY) {
+   if ((err = mp_init_set(&m, radix_)) != MP_OKAY) {
       return err;
    }
    if ((err = mp_init_multi(&A, &B, NULL)) != MP_OKAY) {
@@ -53,8 +44,8 @@ mp_err s_mp_faster_read_radix(mp_int *a, const char *str, size_t start, size_t e
    if ((err = s_mp_slower_read_radix(&A, str, start, start + mid + 1, radix)) != MP_OKAY)                goto LTM_ERR;
    if ((err = s_mp_slower_read_radix(&B, str, start + mid +1, end, radix)) != MP_OKAY)                   goto LTM_ERR;
 
-   if (MP_IS_2EXPT((unsigned int)radix)) {
-      if ((err = mp_mul_2d(&A, (int)(((len - mid) - 1u) * (size_t)s_floor_ilog2(radix)), &A)) != MP_OKAY)goto LTM_ERR;
+   if (MP_IS_2EXPT(radix_)) {
+      if ((err = mp_mul_2d(&A, (int)(((len - mid) - 1u) * s_mp_floor_ilog2(radix_)), &A)) != MP_OKAY)    goto LTM_ERR;
    } else {
       if ((err = mp_expt_n(&m, (int)((len - mid) - 1u), &m)) != MP_OKAY)                                 goto LTM_ERR;
       if ((err = mp_mul(&A, &m, &A)) != MP_OKAY)                                                         goto LTM_ERR;

@@ -3,22 +3,13 @@
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
-static mp_word s_mp_flog2_mp_word_d(mp_word value)
-{
-   mp_word r = 0u;
-   while ((value >>= 1) != 0u) {
-      r++;
-   }
-   return r;
-}
-
 /* Fixed point bitwise logarithm base two of "x" with precision "p"  */
 static mp_err s_mp_fp_log_fraction_d(mp_word x, int p, mp_word *c)
 {
    mp_word b, L_out, L, a_bar, twoep;
    int i;
 
-   L = s_mp_flog2_mp_word_d(x);
+   L = s_mp_floor_ilog2(x);
 
    if ((L + (mp_word)p) > MP_UPPER_LIMIT_FIXED_LOG) {
       return MP_VAL;
