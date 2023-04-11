@@ -69,9 +69,11 @@ profiled:
 	make CFLAGS="$(CFLAGS) -fbranch-probabilities"
 
 #make a single object profiled library
-profiled_single: pre_gen
+amalgamated_timing: pre_gen
 	$(CC) $(LTM_CFLAGS) -fprofile-arcs -c pre_gen/tommath_amalgam.c -o tommath_amalgam.o
 	$(CC) $(LTM_CFLAGS) -DMP_VERSION=\"before\" demo/timing.c tommath_amalgam.o -lgcov -o timing
+
+profiled_single: amalgamated_timing
 	./timing
 	rm -f *.o timing
 	$(CC) $(LTM_CFLAGS) -fbranch-probabilities -c pre_gen/tommath_amalgam.c -o tommath_amalgam.o
