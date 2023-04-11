@@ -60,6 +60,7 @@ mp_invmod.c
 mp_is_square.c
 mp_kronecker.c
 mp_lcm.c
+mp_log.c
 mp_log_n.c
 mp_lshd.c
 mp_mod.c
@@ -131,12 +132,12 @@ s_mp_div_school.c
 s_mp_div_small.c
 s_mp_exptmod.c
 s_mp_exptmod_fast.c
+s_mp_fp_log.c
+s_mp_fp_log_d.c
 s_mp_get_bit.c
 s_mp_invmod.c
 s_mp_invmod_odd.c
-s_mp_log.c
 s_mp_log_2expt.c
-s_mp_log_d.c
 s_mp_montgomery_reduce_comba.c
 s_mp_mul.c
 s_mp_mul_balance.c

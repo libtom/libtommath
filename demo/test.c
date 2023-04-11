@@ -1395,8 +1395,7 @@ LBL_ERR:
    return EXIT_SUCCESS;
 #   endif /* LTM_DEMO_TEST_REDUCE_2K_L */
 }
-/* stripped down version of mp_radix_size. The faster version can be off by up t
-o +3  */
+/* stripped down version of mp_radix_size. The faster version can be off by up to +3  */
 static mp_err s_rs(const mp_int *a, int radix, int *size)
 {
    mp_err res;
@@ -1425,12 +1424,20 @@ static mp_err s_rs(const mp_int *a, int radix, int *size)
    *size = digs + 1;
    return MP_OKAY;
 }
+
+
 static int test_mp_log_n(void)
 {
    mp_int a;
    mp_digit d;
-   int base, lb, size;
+   int base, lb, size, i;
    const int max_base = MP_MIN(INT_MAX, MP_DIGIT_MAX);
+
+   if (MP_HAS(S_MP_WORD_TOO_SMALL)) {
+      fprintf(stderr, "Testing mp_log_n with restricted size of mp_word.\n");
+   } else {
+      fprintf(stderr, "Testing mp_log_n with normal size of mp_word.\n");
+   }
 
    DOR(mp_init(&a));
 
@@ -1484,25 +1491,32 @@ static int test_mp_log_n(void)
    DO(mp_rand(&a, 10));
    for (base = 2; base < 65; base++) {
       DO(mp_log_n(&a, base, &lb));
-      DO(s_rs(&a,(int)base, &size));
+      DO(s_rs(&a,base, &size));
       /* radix_size includes the memory needed for '\0', too*/
       size -= 2;
       EXPECT(lb == size);
    }
 
    /*
-     bases 2..64 with "a" a random small constant to
-     test the part of mp_ilogb that uses native types.
+     bases 2..64 with "a" a small constant and a small exponent "n" to test
+     in the range a^n - 10 .. a^n + 10. That will check the correction loops
+     and the test for perfect power.
+     For simplicity a = base and n = 23 (64^23 == 2^138 > 2^128)
    */
-   DO(mp_rand(&a, 1));
    for (base = 2; base < 65; base++) {
-      DO(mp_log_n(&a, base, &lb));
-      DO(s_rs(&a,(int)base, &size));
-      size -= 2;
-      EXPECT(lb == size);
+      mp_set(&a,(mp_digit)base);
+      DO(mp_expt_n(&a, 23, &a));
+      DO(mp_sub_d(&a, 10u, &a));
+      for (i = 0; i < 20; i++) {
+         DO(mp_log_n(&a, base, &lb));
+         DO(s_rs(&a, base, &size));
+         size -= 2;
+         EXPECT(lb == size);
+         DO(mp_add_d(&a, 1u, &a));
+      }
    }
 
-   /*Test upper edgecase with base UINT32_MAX and number (UINT32_MAX/2)*UINT32_MAX^10  */
+   /*Test base upper edgecase with base = UINT32_MAX and number = (UINT32_MAX/2)*UINT32_MAX^10  */
    mp_set(&a, max_base);
    DO(mp_expt_n(&a, 10uL, &a));
    DO(mp_add_d(&a, max_base / 2, &a));
@@ -1515,6 +1529,76 @@ LBL_ERR:
    mp_clear(&a);
    return EXIT_FAILURE;
 }
+
+static int test_mp_log(void)
+{
+   mp_int a, base, bn, t;
+   int lb, lb2, i, j;
+
+   if (MP_HAS(S_MP_WORD_TOO_SMALL)) {
+      fprintf(stdout, "Testing mp_log with restricted size of mp_word.\n");
+   } else {
+      fprintf(stdout, "Testing mp_log with normal size of mp_word.\n");
+   }
+
+   DOR(mp_init_multi(&a, &base, &bn, &t, NULL));
+
+   /*
+      The small values got tested above for mp_log_n already, leaving the big stuff
+      with bases larger than INT_MAX.
+   */
+
+   /* Edgecases a^b and -1+a^b (floor(log_2(256^129)) = 1032) */
+   for (i = 2; i < 256; i++) {
+      mp_set_i32(&a,i);
+      for (j = 2; j < ((i/2)+1); j++) {
+         DO(mp_expt_n(&a, j, &bn));
+         mp_set_i32(&base,j);
+         /* i^j a perfect power */
+         DO(mp_log(&bn, &a, &lb));
+         DO(mp_expt_n(&a, lb, &t));
+         if (mp_cmp(&t, &bn) != MP_EQ) {
+            fprintf(stderr,"FAILURE mp_log for perf. power at i = %d, j = %d\n", i, j);
+            goto LBL_ERR;
+         }
+         /* -1 + i^j */
+         DO(mp_decr(&bn));
+         DO(mp_log(&bn, &a, &lb2));
+         if (lb != (lb2+1)) {
+            fprintf(stderr,"FAILURE mp_log for -1 + i^j at i = %d, j = %d\n", i, j);
+            goto LBL_ERR;
+         }
+      }
+   }
+
+   /* Random a, base */
+   for (i = 1; i < 256; i++) {
+      DO(mp_rand(&a, i));
+      for (j = 1; j < ((i/2)+1); j++) {
+         DO(mp_rand(&base, j));
+         DO(mp_log(&a, &base, &lb));
+         DO(mp_expt_n(&base, lb, &bn));
+         /* "bn" must be smaller than or equal to "a" at this point. */
+         if (mp_cmp(&bn, &a) == MP_GT) {
+            fprintf(stderr,"FAILURE mp_log random in GT check");
+            goto LBL_ERR;
+         }
+         DO(mp_mul(&bn, &base, &bn));
+         /* "bn" must be bigger than "a" at this point. */
+         if (mp_cmp(&bn, &a) != MP_GT) {
+            fprintf(stderr,"FAILURE mp_log random in NOT GT check");
+            goto LBL_ERR;
+         }
+      }
+   }
+
+   mp_clear_multi(&a, &base, &bn, &t, NULL);
+   return EXIT_SUCCESS;
+LBL_ERR:
+   mp_clear_multi(&a, &base, &bn, &t, NULL);
+   return EXIT_FAILURE;
+}
+
 
 static int test_mp_incr(void)
 {
@@ -2373,6 +2457,7 @@ static int unit_tests(int argc, char **argv)
       T1(mp_get_u64, MP_GET_I64),
       T1(mp_get_ul, MP_GET_L),
       T1(mp_log_n, MP_LOG_N),
+      T1(mp_log, MP_LOG),
       T1(mp_incr, MP_ADD_D),
       T1(mp_invmod, MP_INVMOD),
       T1(mp_is_square, MP_IS_SQUARE),
