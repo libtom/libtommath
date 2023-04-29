@@ -114,11 +114,12 @@ mp_err mp_prime_is_prime(const mp_int *a, int t, bool *result)
 
    /* If the whole prime table up to p = 1619 has been tested, than  all
       numbers below 1621^2 = 2,627,641 are prime now. log_2(1621^2) ~ 21.33 */
-   if (bits < 21) {
+#if ((defined S_MP_PRIME_IS_DIVISIBLE_C) && (MP_PRIME_TAB_SIZE >= 256))
+   if (bits < 2) {
       *result = true;
       return MP_OKAY;
    }
-
+#endif
    /*
        Run the Miller-Rabin test with base 2 for the BPSW test.
     */
@@ -266,7 +267,7 @@ mp_err mp_prime_is_prime(const mp_int *a, int t, bool *result)
          goto LBL_B;
       }
 #endif
-      if (bits < 43) {
+      if ((bits >= 32) && (bits < 43)) {
          for (ix = 0; ix < 3; ix++) {
             mp_set(&b, bases32[ix]);
             if ((err = mp_prime_miller_rabin(a, &b, &res)) != MP_OKAY) {
