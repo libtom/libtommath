@@ -13,6 +13,10 @@ mp_err s_mp_mul(const mp_int *a, const mp_int *b, mp_int *c, int digs)
    mp_err  err;
    int     pa, ix;
 
+   if (digs < 0) {
+      return MP_VAL;
+   }
+
    /* can we use the fast multiplier? */
    if ((digs < MP_WARRAY) &&
        (MP_MIN(a->used, b->used) < MP_MAX_COMBA)) {

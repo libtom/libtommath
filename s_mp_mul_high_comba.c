@@ -19,6 +19,10 @@ mp_err s_mp_mul_high_comba(const mp_int *a, const mp_int *b, mp_int *c, int digs
    mp_digit W[MP_WARRAY];
    mp_word  _W;
 
+   if (digs < 0) {
+      return MP_VAL;
+   }
+
    /* grow the destination as required */
    pa = a->used + b->used;
    if ((err = mp_grow(c, pa)) != MP_OKAY) {

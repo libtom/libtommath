@@ -6,6 +6,10 @@
 /* init an mp_init for a given size */
 mp_err mp_init_size(mp_int *a, int size)
 {
+   if (size < 0) {
+      return MP_VAL;
+   }
+
    size = MP_MAX(MP_MIN_DIGIT_COUNT, size);
 
    if (size > MP_MAX_DIGIT_COUNT) {

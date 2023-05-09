@@ -6,6 +6,10 @@
 /* grow as required */
 mp_err mp_grow(mp_int *a, int size)
 {
+   if (size < 0) {
+      return MP_VAL;
+   }
+
    /* if the alloc size is smaller alloc more ram */
    if (a->alloc < size) {
       mp_digit *dp;
