@@ -26,7 +26,7 @@ mp_err mp_prime_rand(mp_int *a, int t, int size, int flags)
    mp_err err;
 
    /* sanity check the input */
-   if ((size <= 1) || (t <= 0)) {
+   if (size <= 1) {
       return MP_VAL;
    }
 
