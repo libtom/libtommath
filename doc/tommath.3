@@ -1,0 +1,1697 @@
+.TH LIBTOMMATH 3 "2023-04-26"
+.SH NAME
+libtommath - a big integer library
+.SH SYNOPSIS
+.sp
+.ft B
+.nf
+#include <tommath\&.h>
+.fi
+.ft
+.SH DESCRIPTION
+.I LibTomMath 
+provides a series of efficient and carefully written functions
+for manipulating large integer numbers.
+.br
+Functions are in alphabetical order.
+.LP
+\fBNOTE:\fP The errors listed are not the only ones possible, just the interesting ones.
+
+.LP
+.BI "mp_err mp_2expt(mp_int * " a ", int " b ")"
+.in 1i
+Computes 2^b with b >= 0 and puts the result in \fIa\fP. This functions uses a faster method than \fBmp_mul_2\fP.
+.br
+Returns \fBMP_OVF\fP if the result would be larger than a \fBmp_int\fP can hold. The macro \fBMP_MAX_DIGIT_COUNT\fP holds
+the maximal number of limbs: ((INT_MAX - 2) / MP_DIGIT_BIT).
+.br
+Returns \fBMP_VAL\fP if b < 0
+.in -1i
+
+
+.LP 
+.BI "mp_err mp_abs (const mp_int *" a ", mp_int *" b ")"
+.in 1i
+Computes the absolute value of \fBa\fP and puts the result in \fBb\fP.
+.in -1i
+
+.LP 
+.BI "mp_err mp_add (const mp_int *" a ", const mp_int *" b ", mp_int *" c ")"
+.in 1i
+Computes \fBa + b = c\fP.
+.in -1i
+
+.LP 
+.BI "mp_err mp_add_d(const mp_int *" a ", mp_digit " b ", mp_int *" c ")"
+.in 1i
+Computes \fBa + b = c\fP where \fBb\fP is of type \fBmp_digit\fP.
+.in -1i
+
+.LP 
+.BI "mp_err mp_addmod(const mp_int *" a ", const mp_int *" b ", const mp_int *" c ", mp_int *" d ")"
+.in 1i
+Computes \fB(a + b) % c = d\fP. No optimizations.
+.in -1i
+
+.LP 
+.BI "mp_err mp_and (const mp_int *" a ", mp_int *" b ", mp_int *" c ")"
+.in 1i
+Computes bitwise or \fBa & b = c\fP. Negative numbers
+are treated as if they are in two-complement representation.
+.in -1i
+
+.LP 
+.BI "void mp_clamp(mp_int *" a ");
+.in 1i
+This is used to ensure that leading zero digits are trimmed and the leading \fBused\fP digit will be
+non-zero. It also fixes the sign if there are no more leading digits.
+.in -1i
+
+.LP 
+.BI "void mp_clear (mp_int *" a ")"
+.in 1i
+Frees the heap memory of \fBa\fP.
+.in -1i
+
+.LP 
+.BI "int mp_cnt_lsb(const mp_int *" a ")"
+.in 1i
+Returns the position of the lowest bit set.
+.in -1i
+
+.LP 
+.BI "mp_err mp_complement(const mp_int *" a ", mp_int *" b ")"
+.in 1i
+Computes the 2-complement \fIb = ~a\fP.
+.in -1i
+
+.LP 
+.BI "mp_err mp_copy (const mp_int *" a ", mp_int *" b ")"
+.in 1i
+Makes a deep copy of \fBa\fP into \fBb\fP.
+.in -1i
+
+.LP 
+.BI "int mp_count_bits(const mp_int *" a ")"
+.in 1i
+Returns the position of the highest bit set.
+.in -1i
+
+.LP 
+.BI "mp_err mp_decr(mp_int *" a ")"
+.in 1i
+Computes \fBa--\fP.
+.in -1i
+
+.LP 
+.BI "mp_err mp_div_2(const mp_int *" a ", mp_int *" b ");
+.in 1i
+Computes \fBa >> 1 = b\fP.
+.in -1i
+
+.LP 
+.BI "mp_err mp_div_2d (const mp_int *" a ", int " b ", mp_int *" c ", mp_int *" d ");
+.in 1i
+Computes \fBa >> b = c + d\fP with \fBc\fP the optional quotient and \fBd\fP the optional remainder.
+.br
+Set the argument for quotient and/or remainder to \fBNULL\fP to ignore the respective output.
+.br
+Returns \fBMP_VAL\fP if \fBb < 0\fP
+.in -1i
+
+.LP 
+.BI "mp_err mp_div (const mp_int *" a ", const mp_int *" b ", mp_int *" c ", mp_int *" d ")"
+.in 1i
+Computes  \fBa / b = c + d\fP with \fBc\fP the optional quotient and \fBd\fP the optional remainder.
+.br
+Set the argument for quotient and/or remainder to \fBNULL\fP to ignore the respective output.
+.br
+This function calls one of either: \fBs_mp_div_recursive\fP, \fBs_mp_div_school\fP, or
+\fBs_mp_div_small\fP.
+.br
+Returns \fBMP_VAL\fP if \fBb = 0\fP
+.in -1i
+
+.LP 
+.BI "mp_err mp_div_d(const mp_int *" a ", mp_digit " b ", mp_int *" c ", mp_digit *" d ")"
+.in 1i
+Computes  \fBa / b = c + d\fP with \fBc\fP the optional quotient and \fBd\fP the optional remainder.
+.br
+Set the argument for quotient and/or remainder to \fBNULL\fP to ignore the respective output.
+Returns \fBMP_VAL\fP if \fBb = 0\fP.
+.in -1i
+
+.LP 
+.BI "bool mp_dr_is_modulus(const mp_int *" a ")"
+.in 1i
+Returns \fBtrue\fP if the modulus \fBa\fP is of the form below that allows for a diminished radix reduction, \fBfalse\fP otherwise.
+.br
+\fB\[*b]^k - p\fP for some \fBk >= 0\fP and \fB0 < p < \[*b]\fP where \fB\[*b]\fP is the radix.
+.in -1i
+
+.LP 
+.BI "mp_err mp_dr_reduce(mp_int *" a ", const mp_int *" b ", mp_digit " mp ")"
+.in 1i
+This reduces \fBa\fP in place modulo \fBb\fP with the pre-computed value \fBmp\fP. \fBb\fP must be of a restricted
+diminished radix form and \fBa\fP must be in the range \fB0 <= a < b^2\fP
+.in -1i
+
+.LP 
+.BI "void mp_dr_setup(const mp_int *" a ", mp_digit *" d ")"
+.in 1i
+This computes the value required for the modulus \fBa\fP and stores it in \fBd\fP.
+.in -1i
+
+.LP 
+.BI "void mp_exch (mp_int *" a ", mp_int *" b ")"
+.in 1i
+Swaps, but just the pointers.
+.in -1i
+
+.LP 
+.BI "const char *mp_error_to_string(mp_err " code ")"
+.in 1i
+Returns a short ASCII message describing the error code given in \fBcode\fP.
+.in -1i
+
+.LP 
+.BI "mp_err mp_exptmod (const mp_int *" G ", const mp_int *" X ", const mp_int *" P ", mp_int *" Y ")"
+.in 1i
+This computes \fBY \[==] G^X (mod P)\fP using a variable width sliding window
+algorithm.  This function will automatically detect the fastest modular reduction technique to use
+during the operation. For negative values of \fBX\fP the operation is performed as \fBY \[==] (G^-1 mod P)^(|X| (mod P))\fP
+provided that \fBgcd(G, P) = 1\fP.
+.br
+This function is actually a shell around the two internal exponentiation functions.  This routine
+will automatically detect when Barrett, Montgomery, Restricted and Unrestricted Diminished Radix
+based exponentiation can be used.  Generally moduli of the a "restricted diminished radix" form
+lead to the fastest modular exponentiations. Followed by Montgomery and the other two algorithms.
+.br
+Returns \fBMP_VAL\fP if \fBP < 0\fP.
+.br
+Returns \fBMP_VAL\fP if none of the underlying internal functions have been compiled in.
+.in -1i
+
+.LP 
+.BI "mp_err mp_expt_n(const mp_int *" a ", int " b ", int *" c ")"
+.in 1i
+Computes \fBa^b = c\fP. Simple binary exponentiation, no further optimizations.
+.br
+\fBb\fP must be positive.
+.in -1i
+
+.LP 
+.BI "mp_err mp_exteuclid(const mp_int *" a ", const mp_int *" b ", mp_int *" U1 ", mp_int *" U2 ", mp_int *" U3 ")"
+.in 1i
+Computes the extended Euclidean algorithm: \fBa * U1 + b * U2 = U3\fP
+.br
+Set the argument for \fBU1, U2, U3\fP to \fBNULL\fP to ignore the respective output.
+.in -1i
+
+.LP 
+.BI "mp_err mp_fread(mp_int *" a ", int " radix ", FILE *" stream ")"
+.in 1i
+Reads a number in radix \fBradix\fP from file \fBstream\fP and converts it into the big integer \fBa\fP.
+.br
+Returns \fBMP_VAL\fP if radix is not in the range \fB2 <= radix <= 64\fP.
+.br
+Returns \fBMP_ERR\fP if no digits were found in \fBstream\fP.
+.in -1i
+
+.LP 
+.BI "mp_err mp_from_sbin(mp_int *" a ", const uint8_t *" b ", size_t " size ")"
+.in 1i
+This will read in an big-endian array of octets from \fBb\fP of length
+\fBsize\fP into \fBa\fP.
+.br
+If the first octet of the data is zero, the sign of the big-integer will be \fBMP_NEG\fP and \fBMP_ZPOS\fP otherwise.
+.in -1i
+
+.LP 
+.BI "mp_err mp_from_ubin(mp_int *" a ", uint8_t *" b ", size_t " size ")"
+.in 1i
+This will read in an big-endian array of octets from \fBb\fP of length
+\fBsize\fP into \fBa\fP.  The resulting big-integer \fBa\fP will always be positive.
+.in -1i
+
+.LP 
+.BI "mp_err mp_fwrite(const mp_int *" a ", int " radix ", FILE *" stream ")"
+.in 1i
+Writes \fBa\fP as a string representing the big integer in radix \fBradix\fP to file \fBstream\fP.
+.br
+Returns \fBMP_MEM\fP if the functions fails to allocate memory for the buffer.
+.br
+Returns \fBMP_ERR\fP if there was a problem writing to the file.
+.br
+Returns \fBMP_VAL\fP if radix is not in the range \fB2 <= radix <= 64\fP.
+.in -1i
+
+.LP 
+.BI "mp_err mp_gcd (const mp_int *" a ", const mp_int *" b ", mp_int *" c ")"
+.in 1i
+Compute the greatest common divisor of \fBa\fP and \fBb\fP and store it in \fBc\fP.
+.in -1i
+
+.LP 
+.BI "double mp_get_double(const mp_int *" a ")"
+.in 1i
+Returns a float of type \fBdouble\fP (binary64).
+.br
+Will overflow if the big integer is too big.
+.br
+\fBNOTE:\fP rounding mode is not set just taken. Use e.g.: \fBfesetround(3)\fP in \fBfenv.h\fP to
+change the rounding mode.
+.in -1i
+
+.LP 
+.BI "int32_t mp_get_i32 (const mp_int *" a ")"
+.in 1i
+Returns a signed 32-bit integer from big-integer \fBa\fP.
+.br
+\fBNOTE:\fP This group of functions is truncating. Example:
+.br
+.TS
+tab(;), allbox;
+l r.
+Input;123456789101112131415161718192021222324252627282930
+mp_get_i32;-1073632270
+mp_get_i64;5543444065158278130
+mp_get_mag_u32;3221335026
+mp_get_mag_u64;5543444065158278130
+mp_get_l;5543444065158278130
+mp_get_mag_ul;5543444065158278130
+.TE
+.in -1i
+
+.LP 
+.BI "int64_t mp_get_i64 (const mp_int *" a ")"
+.in 1i
+Returns a signed 64-bit integer from big-integer \fBa\fP.
+.br
+\fBNOTE:\fP This function is truncating. See \fBmp_get_i32\fP for details.
+.in -1i
+
+.LP 
+.BI "long mp_get_l (const mp_int *" a ")"
+.in 1i
+Returns a signed \fBlong\fP from big-integer \fBa\fP.
+.br
+\fBNOTE:\fP This function is truncating. See \fBmp_get_i32\fP for details.
+.in -1i
+
+.LP 
+.BI "uint32_t mp_get_mag_u32 (const mp_int *" a ")"
+.in 1i
+Returns an unsigned 32 bit integer from big-integer \fBa\fP.
+.br
+\fBNOTE:\fP This function is truncating. See \fBmp_get_i32\fP for details.
+.in -1i
+
+.LP 
+.BI "uint64_t mp_get_mag_u64 (const mp_int *" a ")"
+.in 1i
+Returns an unsigned 64 bit integer from big-integer \fBa\fP.
+.br
+\fBNOTE:\fP This function is truncating. See \fBmp_get_i32\fP for details.
+.in -1i
+
+.LP 
+.BI "uint32_t mp_get_u32 (const mp_int *" a ")"
+.in 1i
+Convenience macro for \fBmp_get_mag_u32()\fP.
+.in -1i
+
+.LP 
+.BI "uint64_t mp_get_u64 (const mp_int *" a ")"
+.in 1i
+Convenience macro for \fBmp_get_mag_u64()\fP.
+.in -1i
+
+.LP 
+.BI "mp_err mp_grow (mp_int *" a ", int " size ")"
+.in 1i
+This will grow the array of digits of \fBa\fP to \fBsize\fP.
+.br
+Returns \fBMP_MEM\fP if the functions fails to allocate enough memory.
+.in -1i
+
+.LP 
+.BI "mp_err mp_hash (mp_int *" a ", mp_hval *" hash ")"
+.in 1i
+This will create the hash of \fBa\fP following the \fIFNV-1a\fP algorithm as described on
+\fIhttp://www.isthe.com/chongo/tech/comp/fnv/index.html#FNV-1a\fP. With the
+help of this function one can use an \fBmp_int\fP as a key in a hash table.
+.br
+\fBNOTE:\fP The hashing is not stable over different widths of a \fBmp_digit\fP.
+.in -1i
+
+.LP 
+.BI "mp_err mp_incr(mp_int *" a ")"
+.in 1i
+Computes \fBa++\fP.
+.br
+Returns \fBMP_MEM\fP if the reallocation of memory in \fBmp_grow\fP failed.
+.in -1i
+
+.LP 
+.BI "mp_err mp_init_copy (mp_int *" a ", mp_int *" b ")"
+.in 1i
+Initializes \fBa\fP and copies \fBb\fP into \fBa\fP.
+.in -1i
+
+.LP 
+.BI "mp_err mp_init_i32 (mp_int *" a ", int32_t " b ");
+.in 1i
+Initializes \fBa\fP and copies the signed 32 bit integer \fBb\fP into \fBa\fP.
+.in -1i
+
+.LP 
+.BI "mp_err mp_init_i64 (mp_int *" a ", int64_t " b ")"
+.in 1i
+Initializes \fBa\fP and copies the signed 64 bit integer \fBb\fP into \fBa\fP.
+.in -1i
+
+.LP 
+.BI "mp_err mp_init_l (mp_int *" a ", long " b ")"
+.in 1i
+Initializes \fBa\fP and copies the signed integer \fBb\fP of type \fBlong\fP into \fBa\fP.
+.in -1i
+
+.LP 
+.BI "mp_err mp_init (mp_int *" a ")"
+.in 1i
+Initializes \fBa\fP.
+.br
+It allocates a certain amount of memory such that the \fBmp_set_u64\fP setter can
+store an \fBuint64_t\fP in the \fBmp_int\fP. To be able to take advantage of the algorithm used for
+\fBmp_school_div\fP the \fBmp_int\fP must have at least three limbs.
+.br
+It actively sets all limbs to zero, overwriting what was there before, sets the \fBa.sign\fP to \fBMP_ZPOS\fP,
+and \fBa.used\fP to zero.
+.in -1i
+
+.LP 
+.BI "mp_err mp_init_multi(mp_int *" mp ", " ... ")"
+.in 1i
+Initialize a \fBNULL\fP terminated series of \fBmp_int\fPs.
+.in -1i
+
+.LP 
+.BI "mp_err mp_init_set (mp_int *" a ", mp_digit " b ")"
+.in 1i
+Initializes \fBa\fP and sets it to the \fBmp_digit\fP \fBb\fP
+.in -1i
+
+.LP 
+.BI "mp_err mp_init_size (mp_int *" a ", int " size ")"
+.in 1i
+Initializes \fBa\fP with pre-grown to a \fBsize\fP number of limbs.
+.br
+If \fBsize\fP is smaller than the minimum (see \fBmp_init\fP for details)  \fBsize\fP will be increased to that minimum.
+.br
+Returns \fBMP_OVF\fP if \fBsize\fP is larger than an \fBmp_int\fP is able to hold.
+.in -1i
+
+.LP 
+.BI "mp_err mp_init_u32 (mp_int *" a ", uint32_t " b ")"
+.in 1i
+Initializes \fBa\fP and copies the unsigned 32 bit integer \fBb\fP into \fBa\fP.
+.in -1i
+
+.LP 
+.BI "mp_err mp_init_u64 (mp_int *" a ", uint64_t " b ")"
+.in 1i
+Initializes \fBa\fP and copies the unsigned 64 bit integer \fBb\fP into \fBa\fP.
+.in -1i
+
+.LP 
+.BI "mp_err mp_init_ul (mp_int *" a ", unsigned long " b ")"
+.in 1i
+Initializes \fBa\fP and copies the unsigned integer \fBb\fP of type \fBunsigned long\fP into \fBa\fP.
+.in -1i
+
+.LP 
+.BI "mp_err mp_invmod (const mp_int *" a ", const mp_int *" b ", mp_int *" c ")"
+.in 1i
+Computes the multiplicative inverse of \fBa\fP modulo \fBb\fP and stores the result in \fBv\fP such that
+\fBac \[==] 1 (mod b)\fP.
+.br
+Does use a faster algorithm if the modulus \fBb\fP is odd.
+.br
+Returns \fBMP_VAL\fP if \fBb <= 1\fP
+.in -1i
+
+.LP
+.BI "bool mp_iseven(const mp_int *" a ")"
+.in 1i
+Returns \fBtrue\fP if \fBa\fP is even, \fBfalse\fP otherwise.
+.in -1i
+
+.LP 
+.BI "bool mp_isneg(mp_int *" a ")"
+.in 1i
+Returns \fBtrue\fP if \fBa < 0\fP, \fBfalse\fP otherwise.
+.in -1i
+
+.LP 
+.BI "bool mp_isodd(const mp_int *" a ")"
+.in 1i
+Returns \fBtrue\fP if \fBa\fP is odd, \fBfalse\fP otherwise.
+.in -1i
+
+.LP 
+.BI "mp_err mp_is_square(const mp_int *" arg ", bool *" ret ")"
+.in 1i
+Sets \fBret\fP to \fBtrue\fP if \fBarg\fP is a square, \fBfalse\fP otherwise.
+.in -1i
+
+.LP 
+.BI "bool mp_iszero(mp_int *" a ")"
+.in 1i
+Returns \fBtrue\fP if \fBa = 0\fP, \fBfalse\fP otherwise.
+.in -1i
+
+.LP 
+.BI "mp_err mp_kronecker (const mp_int *" a ", const mp_int *" p ", int *" c ")"
+.in 1i
+Computes the Kronecker symbol (an extension of the Jacobi symbol) for \fBa\fP with respect to
+\fBp\fP with \fB(a, p) in Z\fP.  If \fBp\fP is prime this essentially computes the
+Legendre symbol. The result is stored in \fBc\fP and can take on one of three values \fB{-1, 0, 1}\fP. 
+.TS
+tab(;);
+r l.
+-1 ;if \fBa\fP is not a quadratic residue modulo \fBp\fP and \fBp\fP is prime.
+0 ;if \fBa\fP divides \fBp\fP
+1 ;if \fBa\fP is a quadratic residue modulo \fBp\fP.
+.TE
+.in -1i
+
+.LP 
+.BI "mp_err mp_lcm (const mp_int *" a ", const mp_int *" b ", mp_int *" c ")"
+.in 1i
+Computes the least common multiple as \fB|a * b|/gcd(a, b)\fP.
+.in -1i
+
+.LP 
+.BI "mp_err mp_log(const mp_int *" a ", const mp_int *" base ", int *" c ")"
+.in 1i
+Computes \fBlog_b(a)\fP such that \fB(log_b a)^b <= a\fP.
+.br
+Returns \fBMP_VAL\fP if \fBa <= 0\fP or \fBb < 2\fP.
+.in -1i
+
+.LP 
+.BI "mp_err mp_log_n(const mp_int *" a ", int " base ", int *" c ")"
+.in 1i
+Computes \fBlog_b(a)\fP such that \fB(log_b a)^b <= a\fP.
+.br
+Convenience function that is a wrapper for \fBmp_log\fP doing the conversion of \fBb\fP
+to a big integer.
+.in -1i
+
+.LP 
+.BI "mp_err mp_lshd (mp_int *" a ", int " b ")"
+.in 1i
+Shift \fBa\fP left by \fBb\fP limbs: \fBa * 2^(b*MP_DIGIT_BIT)\fP.
+.in -1i
+
+.LP 
+.BI "mp_err mp_mod_2d(const mp_int *" a ", int " b ", mp_int *" c ")"
+.in 1i
+Compute \fBa % 2^b\fP.
+.br
+
+.in -1i
+
+.LP 
+.BI "mp_err mp_mod(const mp_int *" a ",const mp_int *" b ", mp_int *" c ")"
+.in 1i
+Compute \fBa \[==] c mod b\fP.
+.br
+\fB0 <= c < b\fP if \fBb > 0\fP and \fBb < c <= 0\fP if \fBb < 0\fP.
+.in -1i
+
+.LP 
+.BI "mp_err mp_mod_d(const mp_int *" a ", mp_digit " b ", mp_digit *" c ")"
+.in 1i
+Computes the remainder of \fBa / b\fP.
+.in -1i
+
+.LP 
+.BI "mp_err mp_montgomery_calc_normalization(mp_int *" a ", mp_int *" b ")"
+.in 1i
+Computes \fBR = r^n\fP for Montgomery reduction where \fBn\fP is size of \fBa\fP in bits and
+\fBr\fP is the radix (\fBMP_DIGIT_MAX + 1\fP).
+.br
+See \fBmp_montgomery_reduce\fP for some example code.
+.in -1i
+
+.LP 
+.BI "mp_err mp_montgomery_reduce(mp_int *" a ", mp_int *" m ", mp_digit " mp ")"
+.in 1i
+Reduces \fBa\fP in place modulo \fBm\fP with the pre-computed value \fBmp\fP (\fBa*mp^(-1) \[==] x (mod m) \fP).
+Pre-computation of \fBmp\fP can be done with \fBmp_montgomery_setup\fP. Example:
+
+.nf
+int main(void)
+{
+   mp_int   a, b, c, R;
+   mp_digit mp;
+   mp_err      result;
+
+   /* initialize a,b to desired values,
+    * mp_init R, c and set c to 1....
+    */
+
+   /* get normalization */
+   if ((result = mp_montgomery_calc_normalization(&R, b)) != MP_OKAY) {
+      printf("Error getting norm.  %s",
+             mp_error_to_string(result));
+      return EXIT_FAILURE;
+   }
+   /* get mp value */
+   if ((result = mp_montgomery_setup(&c, &mp)) != MP_OKAY) {
+      printf("Error setting up montgomery.  %s",
+             mp_error_to_string(result));
+      return EXIT_FAILURE;
+   }
+
+   /* normalize `a' so now a is equal to aR */
+   if ((result = mp_mulmod(&a, &R, &b, &a)) != MP_OKAY) {
+      printf("Error computing aR.  %s",
+             mp_error_to_string(result));
+      return EXIT_FAILURE;
+   }
+
+   /* square a to get c = a^2R^2 */
+   if ((result = mp_sqr(&a, &c)) != MP_OKAY) {
+      printf("Error squaring.  %s",
+             mp_error_to_string(result));
+      return EXIT_FAILURE;
+   }
+   /* now reduce `c' back down to c = a^2R^2 * R^-1 == a^2R */
+   if ((result = mp_montgomery_reduce(&c, &b, mp)) != MP_OKAY) {
+      printf("Error reducing.  %s",
+             mp_error_to_string(result));
+      return EXIT_FAILURE;
+   }
+
+   /* multiply a to get c = a^3R^2 */
+   if ((result = mp_mul(&a, &c, &c)) != MP_OKAY) {
+      printf("Error reducing.  %s",
+             mp_error_to_string(result));
+      return EXIT_FAILURE;
+   }
+
+   /* now reduce `c' back down to c = a^3R^2 * R^-1 == a^3R */
+   if ((result = mp_montgomery_reduce(&c, &b, mp)) != MP_OKAY) {
+      printf("Error reducing.  %s",
+             mp_error_to_string(result));
+      return EXIT_FAILURE;
+   }
+
+   /* now reduce (again) `c' back down to c = a^3R * R^-1 == a^3 */
+   if ((result = mp_montgomery_reduce(&c, &b, mp)) != MP_OKAY) {
+      printf("Error reducing.  %s",
+             mp_error_to_string(result));
+      return EXIT_FAILURE;
+   }
+
+   /* c now equals a^3 mod b */
+
+   return EXIT_SUCCESS;
+\}
+.in -1i
+
+.LP 
+.BI "mp_err mp_montgomery_setup(const mp_int *" a ", mp_digit *" mp ")"
+.in 1i
+For the given odd modulus \fBa\fP the pre-computation value is placed in \fBmp\fP.
+.br
+\fBmp = 1/a mod 2^k\fP with \fBk\fP the number of bits in the underlying native type used for \fBmp_digit\fP.
+.br
+See \fBmp_montgomery_reduce\fP for some example code.
+.in -1i
+
+.LP 
+.BI "mp_err mp_mul_2(const mp_int *" a ", mp_int *" b ")"
+.in 1i
+Computes \fBb = 2 * a\fP.
+.in -1i
+
+.LP 
+.BI "mp_err mp_mul_2d(const mp_int *" a ", int " b ", mp_int *" c ")"
+.in 1i
+Shifts \fBa\fP left by \fBb\fP bits \fBb = a * 2^b\fP.
+.br
+Condition: \fBb >= 0\fP
+.in -1i
+
+.LP 
+.BI "mp_err mp_mul (const mp_int *" a ", const mp_int *" b ", mp_int *" c ")"
+.in 1i
+Computes \fBc = a * b\fP.
+.in -1i
+
+.LP 
+.BI "mp_err mp_mul_d(const mp_int *" a ", mp_digit " b ", mp_int *" c ")"
+.in 1i
+Computes \fBc = a * b\fP with \fBb\fP and \fBmp_digit\fP.
+.in -1i
+
+.LP 
+.BI "mp_err mp_mulmod(const mp_int *" a ", const mp_int *" b ", const mp_int *" c ", mp_int *" d ")"
+.in 1i
+Computes \fBd = a * b (mod c)\fP. No optimizations.
+.br
+For special forms of the input libtommath offers other, optimized algorithms. See for example
+\fBmp_montgomery_reduce\fP for some example code with Montgomery reduction. There is also Barret
+reduction, which is more generic (\fBmp_reduce\fP), diminished radix reduction (\fBmp_dr_reduce\fP) and
+unrestricted diminished radix reduction (\fBmp_reduce_2k\fP)
+.br
+.in -1i
+
+.LP 
+.BI "mp_err mp_neg (const mp_int *" a ", mp_int *" b ")"
+.in 1i
+Computes \fBb = -a\fP.
+.in -1i
+
+.LP 
+.BI "mp_err mp_or  (const mp_int *" a ", mp_int *" b ", mp_int *" c ")"
+.in 1i
+Computes bit-wise or \fBa | b = c\fP. Negative numbers
+are treated as if they are in two-complement representation.
+.in -1i
+
+.LP 
+.BI "size_t mp_pack_count(const mp_int *" a ", size_t " nails ", size_t " size ")"
+.in 1i
+Returns the size in bytes necessary to be put in \fBmp_pack\fP's \fBmaxsize\fP. See \fBmp_pack\fP for details.
+.in -1i
+
+.LP 
+.BI "mp_err mp_pack(void *" rop ", size_t *" countp ", mp_order " order ", size_t " size ", mp_endian " endian ", size_t " nails ", const mp_int *" op ")"
+.in 1i
+Export binary data.
+.br
+Implements the similarly working GMP functions as described at \fIhttp://gmplib.org/manual/Integer-Import-and-Export.html\fP with
+the exception that \fBmp_pack\fP will not allocate memory if \fBrop\fP is \fBNULL\fP.
+.br
+To make things a bit more comfortable libtommath offers two \fBenum\fPs:
+
+.br
+.in 1.5i
+typedef enum {
+   MP_LSB_FIRST = -1,
+   MP_MSB_FIRST =  1
+} mp_order;
+
+.br
+
+typedef enum {
+   MP_LITTLE_ENDIAN  = -1,
+   MP_NATIVE_ENDIAN  =  0,
+   MP_BIG_ENDIAN     =  1
+} mp_ndian;
+.in -1.5i
+.in -1i
+
+.LP 
+.BI "mp_err mp_prime_strong_lucas_selfridge(const mp_int *" a ", bool *" result ")"
+.in 1i
+Sets \fBresult\fP to \fBtrue\fP if \fBa\fP is a strong Lucas-Selfridge pseudoprime, \fBfalse\fP otherwise.
+.br
+It has been verified that this function together with one round of Miller-Rabin to the base 2 (two) is
+deterministic up to 2^64.
+.in -1i
+
+.LP 
+.BI "mp_err mp_prime_frobenius_underwood(const mp_int *" N ", bool *" result ")"
+.in 1i
+Sets \fBresult\fP to \fBtrue\fP if \fBa\fP is a Frobenius-Underwood pseudoprime, \fBfalse\fP otherwise.
+.br
+It has been verified that this function (as a stand-alone) is deterministic up to at least 2^50.
+.in -1i
+
+.LP 
+.BI "mp_err mp_prime_is_prime(const mp_int *" a ", int " t ", bool *" result ")"
+.in 1i
+Sets \fBresult\fP to \fBtrue\fP if \fBa\fP is a pseudoprime, \fBfalse\fP otherwise.
+.br
+The argument \fBt\fP holds the number of random Miller-Rabin tests to be executed.
+.br
+.nr step 1 1
+Uses a stack of different tests to detect composites:
+.RS
+.IP \n[step]  0.3i
+Direct test: checks if input is one of the values 0, 1, 2.
+.IP \n+[step]
+The only even prime has been handled, reject even input from now on
+.IP \n+[step]
+Check if input is a square. (some of the algorithms used later do not like square input)
+.IP \n+[step]
+Check if input is equal to one of the primes in the table \fBs_mp_prime_tab\fP
+.IP \n+[step]
+Check if input is divisible by one of the primes in the table \fBs_mp_prime_tab\fP
+.IP \n+[step]
+Run a Miller-Rabin test with base 2
+.IP \n+[step]
+Run a Miller-Rabin test with base 3
+.IP \n+[step]
+If \fBt <= 0\fP and the macro \fBLTM_USE_ONLY_MR\fP is not defined we run either a Frobenius-Underwood
+test if the macro \fBLTM_USE_FROBENIUS_TEST\fP is defined or a Lucas-Selfridge test.
+.br
+The Lucas-Selfridge test together with the two Miller-Rabin tests earlier is deterministic up to at least 2^64.
+.br
+The Frobenius-Underwood test as a stand-alone is deterministic up to at least 2^50. But it is different from
+the Lucas-Selfridge test so the additional cost (about two times the time a Lucas-Selfridge test would need) might be worthwhile.
+.IP \n+[step]
+Even if \fBt = 0\fP we run at least one Miler-Rabin test with a random base.
+.IP \n+[step]
+If \fBt < 0\fP and input smaller than 3,317,044,064,679,887,385,961,981 (< 82 bits) several Miller-Rabin tests
+are run with bases according to Sorenson, Jonathan; Webster, Jonathan (2015) "Strong Pseudoprimes to Twelve Prime Bases".
+.br
+Here ends the deterministic part of this function.
+.IP \n+[step]
+If \fBt > 0\fP: run the given number of Miller-Rabin tests with random bases.
+.RE
+.in -1i
+
+.LP 
+.BI "mp_err mp_prime_miller_rabin (const mp_int *" a ", const mp_int *" b ", int *" result ")"
+.in 1i
+Run the Miller-Rabin pseudoprime test of \fBa\fP with base \fBb\fP and set \fBresult\fP to \fBtrue\fP
+if \fBa\fP is a strong pseudprime for base \fBb\fP and \fBfalse\fP otherwise.
+.in -1i
+
+.LP 
+.BI "mp_err mp_prime_next_prime(mp_int *" a ", int " t ", bool " bbs_style ")"
+.in 1i
+Sets \fBa\fP to the next prime, even if \fBa\fP is prime itself.
+.br
+Argument \fBt\fP holds the number of Miller-Rabin tests to random bases and can also be used to steer
+\fBmp_prime_is_prime\fP as described there.
+.br
+Argument \fBbbs_style\fP returns only primes \fBa \[==] 3 (mod 4)\fP if set to \fBtrue\fP.
+.in -1i
+
+.LP 
+.BI "mp_err mp_prime_rabin_miller_trials(int " size ")"
+.in 1i
+Returns the number of Miller-Rabin tests to random bases necessary for RSA according to 
+FIPS 186-4.
+.br
+\fBsize\fP is the size of the prime in bits.
+.br
+The entries are pre-computed:
+.br
+.TS
+tab(;), allbox;
+c c c
+r r l.
+\fB<=size\fP;\fB#tests\fP ;\fBError\fP
+.SP
+ 80;-1;Use deterministic algorithm for size <= 80 bits
+ 81;37;2^(-96)
+ 96;32;2^(-96)
+ 128;40;2^(-112)
+ 160;35;2^(-112)
+ 256;27;2^(-128)
+ 384;16;2^(-128)
+ 512;18;2^(-160)
+ 768;11;2^(-160)
+ 896;10;2^(-160)
+ 1024;12;2^(-192)
+ 1536;8;2^(-192)
+ 2048;6;2^(-192)
+ 3072;4;2^(-192)
+ 4096;5;2^(-256)
+ 5120;4;2^(-256)
+ 6144;4;2^(-256)
+ 8192;3;2^(-256)
+ 9216;3;2^(-256)
+ 10240;2;For bigger keysizes use always at least 2 Rounds
+.TE
+.in -1i
+
+.LP 
+.BI "mp_err mp_prime_rand(mp_int *" a ", int " t ", int " size ", int " flags ")"
+.in 1i
+Generates a random big prime \fBa\fP with \fBsize\fP bits.
+.br
+Argument \fBt\fP holds the number of Miller-Rabin tests to random bases and can also be used to steer
+\fBmp_prime_is_prime\fP as described there.
+.br
+Argument \fBflags\fP determines the kind of prime:
+.br
+.TS
+tab(;), allbox;
+c c
+l l.
+\fBFlag\fP;\fBCondition\fP
+MP_PRIME_BBS;make prime congruent to 3 mod 4
+MP_PRIME_SAFE;make sure (p-1)/2 is prime as well (implies MP_PRIME_BBS)
+MP_PRIME_2MSB_ON;make the 2nd highest bit one
+.TE
+.in -1i
+
+.LP 
+.BI "mp_err mp_radix_size (const mp_int *" a ", int " radix ", int *" size ")"
+.in 1i
+Sets \fBsize\fP to the length of the ASCII string of the representation of big integer \fBa\fP in radix \fBradix\fP.
+This includes the sign and the terminatong \fBNUL\fP.
+.br
+Returns \fBMP_VAL\fP if \fBradix\fP is not in the range \fB2 <= radix <= 64\fP
+.in -1i
+
+.LP 
+.BI "mp_err mp_radix_size_overestimate (const mp_int *" a ", int " radix ", int *" size ")"
+.in 1i
+Same as \fBmp_radix_size\fP but uses a rough, table based approximation instead of calling \fBmp_log_n\fP.
+.br
+Overestimates the result by some units: relative error is about \fB10^(-8)\fP. Experiments showed that
+the absolute error should not go pass \fB5\fP.
+.in -1i
+
+.LP 
+.BI "mp_err mp_rand(mp_int *" a ", int " digits ")"
+.in 1i
+Generates a random big integer \fBa\fP with a \fBdigits\fP number of limbs.
+.br
+\fBNOTE:\fP This function uses the same (P)RNG as the prime generating/testing functions. If that entropy
+is precious see \fBmp_rand_source\fP to set another (P)RNG.
+.in -1i
+
+.LP 
+.BI "void mp_rand_source(mp_err(*" source ")(void *" out ", size_t " size "));
+.in 1i
+Sets the (P)RNG used for \fIall\fP functions in Libtommath, that need some random bytes.
+.br
+Set \fBsource\fP to \fBNULL\fP to get the original (Libtommath) source back.
+.br
+Example:
+.br
+.in +.5i
+.nf
+uint32_t prng_state = 0xdeadbeef;
+uint32_t bad_prng(void) {
+   prng_state = (1103515245ul * prng_state  + 12345ul) % 2147483648ul;
+   return prng_state;
+}
+mp_err myprng(void *p, size_t n)
+{
+   char *q = (char *)p;
+   while (n > 0u) {
+      int i;
+      uint32_t x = bad_prng();
+      for (i = 0; (i < 4) && (n > 0u); ++i, --n) {
+         *q++ = (char)(x & 0xFFu);
+         x >>= 8;
+      }
+   }
+   return MP_OKAY;
+}
+mp_err some_monte_carlo_function(...)
+{
+   /* Use the the bad but fast P(R)NG */
+   mp_rand_source(myprng);
+   ...
+   while(big_number--) {
+      mp_rand(a_bigint, n_bits);
+      ...
+   }
+   /* Reset and use (P)RNG provided by the platform */
+   mp_rand_source(NULL);
+   ...
+}
+.in -.5i
+.in -1i
+
+.LP 
+.BI "mp_err mp_read_radix (mp_int *" a ", const char *" str ", int " radix ")"
+.in 1i
+This will read a \fBNUL\fP terminated string in base \fBradix\fP from \fBstr\fP into \fBa\fP.
+.br
+Returns \fBMP_VAL\fP if \fBradix\fP is not in the range \fB2 <= radix <= 64\fP.
+.in -1i
+
+.LP 
+.BI "mp_err mp_reduce_2k_l(mp_int *" a ", const mp_int *" n ", const mp_int *" d ")"
+.in 1i
+Reduces \fBa\fP modulo \fBn\fP where \fBn\fP is of the form \fB2^p - d\fP where \fBd\fP
+is a big integer.
+.br
+Belongs to the "unrestricted diminished radix reduction" method.
+.in -1i
+
+.LP 
+.BI "mp_err mp_reduce_2k(mp_int *" a ", const mp_int *" n ", mp_digit " d ")"
+.in 1i
+Reduces \fBa\fP modulo \fBn\fP where \fBn\fP is of the form \fB2^p - d\fP where \fBd\fP
+is a \fBmp_digit\fP.
+.br
+Belongs to the "unrestricted diminished radix reduction" method.
+.in -1i
+
+.LP 
+.BI "mp_err mp_reduce_2k_setup(const mp_int *" a ", mp_digit *" d ")"
+.in 1i
+This will compute the required \fBd\fP value in \fB2^p - d\fP for the given moduli \fBa\fP where \fBd\fP
+is a \fBmp_digit\fP.
+.br
+Belongs to the "unrestricted diminished radix reduction" method.
+.in -1i
+
+.LP 
+.BI "mp_err mp_reduce_2k_setup_l(const mp_int *" a ", mp_int *" d ")"
+.in 1i
+This will compute the required \fBd\fP value in \fB2^p - d\fP for the given moduli \fBa\fP where \fBd\fP
+is a big integer.
+.br
+Belongs to the "unrestricted diminished radix reduction" method.
+.in -1i
+
+.LP 
+.BI "mp_err mp_reduce(const mp_int *" a ", const mp_int *" b ", mp_int *" c ")"
+.in 1i
+This will reduce \fBa\fP in place modulo \fBb\fP with the precomputed \fBmu\fP value in \fBc\fP.  \fBa\fPmust be in
+the range \fB0 <= a < b^2\fP.
+.br
+Belongs to the "Barrett reduction" method.
+.in -1i
+
+.LP 
+.BI "bool mp_reduce_is_2k(const mp_int *" a ")"
+.in 1i
+Determines if \fBmp_reduce_2k\fP can be used with a \fBmp_digit\fP.
+.br
+Belongs to the "unrestricted diminished radix reduction" method.
+.in -1i
+
+.LP 
+.BI "bool mp_reduce_is_2k_l(const mp_int *" a ")"
+.in 1i
+Determines if \fBmp_reduce_2k\fP can be used with a big integer.
+.br
+Belongs to the "unrestricted diminished radix reduction" method.
+.in -1i
+
+.LP 
+.BI "mp_err mp_reduce_setup(const mp_int *" a ", mp_int *" b ")"
+.in 1i
+Compute \fBmu\fP for Barrett reduction.
+.in -1i
+
+.LP 
+.BI "mp_err mp_root_n(const mp_int *" a ", int " b ", mp_int *" c ")"
+.in 1i
+This computes \fBc = a^(1/b)\fP such that \fBc^b <= a\fP and \fB(c+1)^b > a\fP. Will return a positive root
+only for even roots and return a root with the sign of the input for odd roots.  For example,
+performing \fB4^(1/2)\fP will return \fB2\fP whereas \fB(-8)^(1/3)\fP will return \fB-2\fP.
+.br
+Returns \fBMP_VAL\fP if \fBb < 0\fP or \fBb > MP_DIGIT_MAX\fP or when \fBb\fP is even and \fBa < 0\fP.
+.in -1i
+
+.LP 
+.BI "void mp_rshd (mp_int *" a ", int " b ")"
+.in 1i
+Shift \fBa\fP right by \fBb\fP limbs: \fBa / 2^(b*MP_DIGIT_BIT)\fP.
+.in -1i
+
+.LP 
+.BI "size_t mp_sbin_size(const mp_int *" a ")"
+.in 1i
+Returns the number of bytes (octets) required to store the signed copy of the integer \fBa\fP.
+.in -1i
+
+.LP 
+.BI "mp_err mp_set_double(mp_int *" a ", double " b ")"
+.in 1i
+If the platform supports the floating point data type \fBdouble\fP (binary64) this function will
+assign the integer part of \fBb\fP to the big integer \fBa\fP.
+.br
+Returns \fBMP_VAL\fP if \fBb\fP is \fB+/-infinity\fP or \fBNaN\fP
+.in -1i
+
+.LP 
+.BI "void mp_set_i32 (mp_int *" a ", int32_t " b ")"
+.in 1i
+Sets big integer \fBa\fP to the value of the signed 32 bit integer \fBb\fP.
+.in -1i
+
+.LP 
+.BI "void mp_set_i64 (mp_int *" a ", int64_t " b ")"
+.in 1i
+Sets big integer \fBa\fP to the value of the signed 64 bit integer \fBb\fP.
+.in -1i
+
+.LP 
+.BI "void mp_set_l (mp_int *" a ", long " b ")"
+.in 1i
+Sets big integer \fBa\fP to the value of the integer \fBb\fP of type \fIsigned long\fP.
+.in -1i
+
+.LP 
+.BI "void mp_set (mp_int *" a ", mp_digit " b ")"
+.in 1i
+Sets big integer \fBa\fP to the value of the integer \fBb\fP of type \fImp_digit\fP.
+.in -1i
+
+.LP 
+.BI "void mp_set_u32 (mp_int *" a ", uint32_t " b ")"
+.in 1i
+Sets big integer \fBa\fP to the value of the unsigned 32 bit integer \fBb\fP.
+.in -1i
+
+.LP 
+.BI "void mp_set_u64 (mp_int *" a ", uint64_t " b ")"
+.in 1i
+Sets big integer \fBa\fP to the value of the unsigned 64 bit integer \fBb\fP.
+.in -1i
+
+.LP 
+.BI "void mp_set_ul (mp_int *" a ", unsigned long " b ")"
+.in 1i
+Sets big integer \fBa\fP to the value of the integer \fBb\fP of type \fIunsigned long\fP.
+.in -1i
+
+.LP 
+.BI "mp_err mp_shrink (mp_int *" a ")"
+.in 1i
+This will remove excess digits of the \fImp_int\fP \fBa\fP.
+.br
+This method uses \fBrealloc\fP with all its problems, use with caution.
+.in -1i
+
+.LP 
+.BI "mp_err mp_signed_rsh(const mp_int *" a ", int " b ", mp_int *" c ")"
+.in 1i
+Shifts right \fBa\fP by \fBb\fP bits with sign extension.
+.in -1i
+
+.LP 
+.BI "mp_err mp_sqr (const mp_int *" a ", mp_int *" b ")"
+.in 1i
+Computes \fBa^2 = b\fP
+.in -1i
+
+.LP 
+.BI "mp_err mp_sqrmod(const mp_int *" a ", const mp_int *" b ", const mp_int *" c ")"
+.in 1i
+Computes \fBa^2 % b = c\fP. No optimization.
+.in -1i
+
+.LP 
+.BI "mp_err mp_sqrt(const mp_int *" arg ", mp_int *" ret ")"
+.in 1i
+Computes \fBa^(1/2) = b\fP such that \fBb^2 <= a\fP.
+.in -1i
+
+.LP 
+.BI "mp_err mp_sqrtmod_prime(const mp_int *" n ", const mp_int *" p ", mp_int *" r ")"
+.in 1i
+Computes\fBa^(1/2) % p = r\fP with \fBp\fP prime. Uses the Tonelli-Shanks algorithm.
+.br
+Does do some checks for \fBp\fP but no actual primality test.
+.br
+The prime \fBp\fP must be odd.
+.in -1i
+
+.LP 
+.BI "mp_err mp_sub (const mp_int *" a ", const mp_int *" b ", mp_int *" c ")"
+.in 1i
+Computes \fBa - b = c\fP with \fBb\fP a big integer.
+.in -1i
+
+.LP 
+.BI "mp_err mp_sub_d(const mp_int *" a ", mp_digit " b ", mp_int *" c ")"
+.in 1i
+Computes \fBa - b = c\fP with \fBb\fP of type \fImp_digit\fP.
+.in -1i
+
+.LP 
+.BI "mp_err mp_submod(const mp_int *" a ", const mp_int *" b ", const mp_int *" c ", mp_int *" d ")"
+.in 1i
+Computes \fB(a - b) % c = d\fP. No optimization.
+.in -1i
+
+.LP 
+.BI "mp_to_binary(" M ", " S ", " N ")"
+.in 1i
+Macro that calls \fBmp_to_radix\fP with fixed \fBradix = 2\fP.
+.in -1i
+
+.LP 
+.BI "mp_to_decimal(" M ", " S ", " N ")"
+.in 1i
+Macro that calls \fBmp_to_radix\fP with fixed \fBradix = 10\fP.
+.in -1i
+
+.LP 
+.BI "mp_to_hex(" M ", " S ", " N ")"
+.in 1i
+Macro that calls \fBmp_to_radix\fP with fixed \fBradix = 16\fP.
+.in -1i
+
+.LP 
+.BI "mp_to_octal(" M ", " S ", " N ")"
+.in 1i
+Macro that calls \fBmp_to_radix\fP with fixed \fBradix = 8\fP.
+.in -1i
+
+.LP 
+.BI "mp_err mp_to_radix (const mp_int *" a ", char *" str ", size_t " maxlen ", size_t *" written ", int " radix ")"
+.in 1i
+Stores upto \fBsize - 1\fP chars and always a \fBNULL\fP byte in \fBstr\fP and puts the number of characters written,
+including \fBNUL\fP, in \fBwritten\fP.
+.br
+The caller is responsible to allocate a sufficient amount of memory for the buffer \fBstr\fP. Use \fBmp_radix_size\fP or
+\fBmp_radix_size_overestimate\fP to have that number computed.
+.br
+Returns \fBMP_BUF\fP if \fBmaxlen < 2\fP
+.br
+Return \fBMP_VAL\fP if \fBradix\fP is not in the range \fB2 <= radix <= 64\fP.
+.in -1i
+
+.LP 
+.BI "mp_err mp_to_sbin(const mp_int *" a ", uint8_t *" b ", size_t " maxsize ", size_t *" len ")"
+.in 1i
+Store a \fBmaxlen\fP amount of the big integer in buffer \fBb\fP and puts the number of bytes written in \fBlen\fP.
+.br
+If \fBa\fP is negative \fBb0] = 1\fP and \fBb[0] = 0\fP otherwise.
+.br
+Returns \fBMP_BUF\fP if \fBmaxlen\fP is too small. Use \fBmp_sbin_size\fP to have that number computed.
+.in -1i
+
+.LP 
+.BI "mp_err mp_to_ubin(const mp_int *" a ", uint8_t *" buf ", size_t " maxlen ", size_t *" written ")"
+.in 1i
+Store a \fBmaxlen\fP amount of the big integer in buffer \fBb\fP and puts the number of bytes written in \fBlen\fP.
+.br
+Returns \fBMP_BUF\fP if \fBmaxlen\fP is too small. Use \fBmp_sbin_size\fP to have that number computed.
+.in -1i
+
+.LP 
+.BI "size_t mp_ubin_size(const mp_int *" a ")"
+.in 1i
+Returns the number of bytes (octets) required to store the unsigned copy of the big integer \fBa\fP.
+.in -1i
+
+.LP 
+.BI "mp_err mp_unpack(mp_int *" rop ", size_t " count ", mp_order " order ", size_t " size ", mp_endian " endian ", size_t " nails ", const void *" op ")"
+.in 1i
+Implements the similarly working GMP functions as described at \fIhttp://gmplib.org/manual/Integer-Import-and-Export.html\fP.
+See also: \fBmp_pack\fP for more details.
+.in -1i
+
+.LP 
+.BI "mp_err mp_xor (const mp_int *" a ", mp_int *" b ", mp_int *" c ")"
+.in 1i
+Computes bit-wise xor \fBa ^ b = c\fP. Negative numbers are treated as if they are in two-complement representation.
+.br
+Returns \fBMP_MEM\fP if the reallocation of memory in \fBmp_grow\fP failed.
+.in -1i
+
+.LP 
+.BI "void mp_zero(mp_int *" a ")"
+.in 1i
+Sets \fBa\fP to zero.
+.in -1i
+
+.LP
+.SS "TYPES"
+.\"TODO: sort alphabetically
+.BI mp_digit
+.in 1i
+An unsigned machine integer able to hold \fBMP_DIGIT_BIT + 1\fP bits.
+.br
+This type is defined in \fBtommath.h\fP
+.in -1i
+.LP
+.BI mp_word
+.in 1i
+An unsigned integer able to hold a value of size \fB2 * MP_DIGIT_MAX + 1\fP.
+This type is defined in \fBtommath_private.h\fP
+.in -1i
+.LP
+.BI mp_int
+.in 1i
+The internal structure of Libtommath's big integer type \fBmp_int\fP.
+
+.in 1.5i
+.nf
+typedef struct  {
+   int used, alloc;
+   mp_sign sign;
+   mp_digit *dp;
+} mp_int;
+.in -1.5i
+.in -1i
+.LP
+.BI mp_sign
+.in 1i
+The sign of Libtommath's big integer type \fBmp_int\fP
+
+.in 1.5i
+.nf
+typedef enum {
+   MP_ZPOS = 0,   /* positive */
+   MP_NEG = 1     /* negative */
+} mp_sign;
+.in -1.5i
+.in -1i
+
+.LP
+.BI mp_ord
+.in 1i
+Results of comparing with the functions \fBmp_cmp()\fP and  \fBmp_cmp_d()\fP.
+
+.in 1.5i
+.nf
+typedef enum {
+   MP_LT = -1,    /* less than */
+   MP_EQ = 0,     /* equal */
+   MP_GT = 1      /* greater than */
+} mp_ord;
+.in -1.5i
+.in -1i
+
+.LP
+.BI mp_err
+.in 1i
+The handful of different errors Libtommath can throw.
+
+.in 1.5i
+.nf
+typedef enum {
+   MP_OKAY  = 0,   /* no error */
+   MP_ERR   = -1,  /* unknown error */
+   MP_MEM   = -2,  /* out of mem */
+   MP_VAL   = -3,  /* invalid input */
+   MP_ITER  = -4,  /* maximum iterations reached */
+   MP_BUF   = -5,  /* buffer overflow, supplied buffer too small */
+   MP_OVF   = -6   /* mp_int overflow, too many digits */
+} mp_err;
+.in -1.5i
+.in -1i
+
+.LP
+.BI mp_order
+.in 1i
+Bit order. If the most signifcant bit comes first or the least significant one.
+.br
+Not to be mistaken for \fBmp_ord\fP.
+
+.in 1.5i
+.nf
+typedef enum {
+   MP_LSB_FIRST = -1,
+   MP_MSB_FIRST =  1
+} mp_order;
+.in -1.5i
+.in -1i
+
+.LP
+.BI mp_endian
+.in 1i
+Byte order. Only big and little endian are supported. \fBMP_NATIVE_ENDIAN\fP refers to the local (detected)
+endianess.
+
+.in 1.5i
+.nf
+typedef enum {
+   MP_LITTLE_ENDIAN  = -1,
+   MP_NATIVE_ENDIAN  =  0,
+   MP_BIG_ENDIAN     =  1
+} mp_endian;
+.in -1.5i
+.in -1i
+
+.LP
+.BI hval
+.in 1i
+Type holding the hash produced by \fBmp_hash\fP. Either a 32 bit or a 64 bit unsigned type.
+.in -1i
+
+.LP
+.SS "MACROS"
+.LP
+.BI MP_DIGIT_BIT
+.in 1i
+The size in bits of a limb.
+.br
+The value depends on the size of the biggest available native integer type.
+.TS
+tab(;) allbox;
+c c c
+c l l.
+\fBarch bits\fP;\fBMP_DIGIT_BIT\fP;\fBMACRO\fP
+16;15;MP_16BIT
+32;28, (31);MP_32BIT, (MP_31BIT) (1)
+64;60, (28);MP_64BIT, (MP_64BIT) (2)
+32/64;28;MP_28BIT (3)
+.TE
+
+(1) The size 31 bit reduces some of the optimizations, especially COMBA.
+.br
+(2) Some C-compilers do not offer 16 byte integers. One of them is very famous.
+.br
+(3) Default when all tests to search for something better fail.
+
+.br
+\fBNOTE:\fP ISO C 23 introduced \fB_BitInt(n)\fP which would allow 16 byte integers even
+on non 64 bit architectures. Not much support as of the time of this writing (LLVM does, for example).
+.in -1i
+
+.LP
+.BI MP_PRIME_BBS
+.in 1i
+Generate a BBS style prime. (See: mp_prime_rand)
+.in -1i
+
+.LP
+.BI MP_PRIME_SAFE
+.in 1i
+Generate a safe prime such that (p-1)/2 == prime. (See: mp_prime_rand)
+.in -1i
+
+.LP
+.BI MP_PRIME_2MSB_ON
+.in 1i
+Force 2nd most siginficant bit to be 1 (one). when generating primes. (See: mp_prime_rand)
+.in -1i
+
+.LP
+.BI MP_DIGIT_MAX
+.in 1i
+Largest value a \fBmp_digit\fP can hold: \fB-1 + 2^MP_DIGIT_BIT\fP.
+.in -1i
+
+.LP
+.BI MP_MASK
+.in 1i
+Holds the same value as \fBMP_DIGIT_MAX\fP.
+.br
+\fBNOTE:\fP this macro computes the value, \fBMP_DIGIT_MAX\fP is a copy.
+.in -1i
+
+
+.LP
+.SS "GLOBAL VARIABLES"
+.\" TODO: change if COMBA gets its heap alternative
+Libtommath uses no global variables, it is threadsafe.
+.br
+But some global variables are there to allow for e.g.: tuning and can hence be abused. But shouldn't.
+
+.LP
+.BI "extern int MP_MUL_KARATSUBA_CUTOFF"
+.in 1i
+Sets the cutoff value when Karatsuba multiplication comes in if the macro \fBMP_FIXED_CUTOFFS\fP is not defined.
+.in -1i
+
+
+.LP
+.BI "extern int MP_SQR_KARATSUBA_CUTOFF"
+.in 1i
+Sets the cutoff value when Karatsuba squaring comes in if the macro \fBMP_FIXED_CUTOFFS\fP is not defined.
+.in -1i
+
+
+.LP
+.BI "extern int MP_MUL_TOOM_CUTOFF"
+.in 1i
+Sets the cutoff value when Toom-Cook 3-way multiplication comes in if the macro \fBMP_FIXED_CUTOFFS\fP is not defined.
+.in -1i
+
+
+.LP
+.BI "extern int MP_SQR_TOOM_CUTOFF"
+.in 1i
+Sets the cutoff value when Toom-Cook 3-way squaring comes in if the macro \fBMP_FIXED_CUTOFFS\fP is not defined.
+.in -1i
+
+.LP
+.SH "EXAMPLES"
+.\" TODO: does it even make sense to have examples?
+.LP
+.SS "Is \fIn\fP a Perfect Power"
+A function that uses a mix of libtommath's functions.
+
+.nf
+static mp_err mp_is_perfect_power(const mp_int *n, bool *result,
+                                    mp_int *rootout, mp_int *exponent)
+{
+   mp_int root, power, prime, max;
+   int highbit, lowbit, p;
+   mp_err err = MP_OKAY;
+
+   *result = false;
+
+   /* No negative numbers. For now. */
+   if (mp_cmp_d(n, 4) == MP_LT) {
+      err = MP_VAL;
+      goto LTM_OUT;
+   }
+
+   /* Compute floor(log_2(n)) */
+   highbit = mp_count_bits(n) - 1;
+
+   /* MP_IS_POWER_OF_TWO(n) is a macro in tommath_private.h */
+   if (MP_IS_POWER_OF_TWO(n)) {
+      *result = true;
+      if (exponent != NULL) {
+         if ((err = mp_set_l(exponent, (long)highbit)) != MP_OKAY) {
+            return err;
+         }
+      }
+      if (rootout != NULL) {
+         if ((err = mp_set_l(rootout, 2l)) != MP_OKAY) {
+            return err;
+         }
+      }
+      return err;
+   }
+   /* Initialize the needed variables all at once */
+   if ((err = mp_init_multi(&root, &power, &prime, &max, NULL)) != MP_OKAY) {
+      return err;
+   }
+   /* a long is at least as big as an int */
+   if( (err = mp_set_l(&max, (long)highbit) ) != MP_OKAY)                goto LTM_ERR;
+
+   /* mp_prime_next_prime() returns the next prime, so start with a preceding value */
+   mp_set(&prime, 2u);
+
+   while (mp_cmp(&prime, &max) != MP_GT) {
+      /* Deterministic up to 2^82 but the largest value possible is < INT_MAX       */
+      if ((err = mp_prime_next_prime(&prime, -1, false)) != MP_OKAY)     goto LTM_ERR;
+      p = (int)mp_get_l(&prime);
+      if ((err = mp_root_n(n, p, &root)) != MP_OKAY)                     goto LTM_ERR;
+      if ((err = mp_expt_n(&root, p, &power)) != MP_OKAY)                goto LTM_ERR;
+
+      if (mp_cmp(n, &power) == MP_EQ) {
+         *result = true;
+         if (rootout != NULL) {
+            mp_exch(&root, rootout);
+         }
+         if (exponent != NULL) {
+            if ((e = mp_set_l(exponent, (long)p)) != MP_OKAY)            goto LTM_ERR;
+         }
+      }
+   }
+
+LTM_OUT:
+   if (rootout != NULL) {
+      if ((err = mp_set(rootout, 0u)) != MP_OKAY)                        goto LTM_ERR;
+   }
+   if (exponent != NULL) {
+      if ((err = mp_set(exponent, 0u)) != MP_OKAY)                       goto LTM_ERR;
+   }
+LTM_ERR:
+   mp_clear_multi(&root, &power,&prime,  NULL);
+   return err;
+}
+.LP
+.SS "Pi by Binary Splitting"
+Compute digits of pi using Manchin's formula from 1706. A classic.
+
+.nf
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <string.h>
+#include <limits.h>
+#include <tommath.h>
+
+static int mp_acot_binary_splitting(
+             mp_int * q, mp_int * a, mp_int * b, mp_int * P,
+             mp_int * Q, mp_int * R, int * idx)
+{
+    mp_err err;
+    mp_int p1, q1, r1, p2, q2, r2, t1, t2, one;
+    if ((err = mp_init_multi(
+                  &p1, &q1, &r1, &p2, &q2,
+                  &r2, &t1, &t2, &one, NULL)) != MP_OKAY) {
+        return err;
+    }
+
+    err = MP_OKAY;
+    mp_set(&one, 1);
+
+    if ((err = mp_sub(b, a, &t1)) != MP_OKAY)                 goto LTM_ERR;
+    if (mp_cmp(&t1, &one) == MP_EQ) {
+        if ((err = mp_mul_2d(a, 1, &t1)) != MP_OKAY)          goto LTM_ERR;
+        if ((err = mp_add_d(&t1, 3, &t1)) != MP_OKAY)         goto LTM_ERR;
+        mp_set(P, 1);
+        if ( ((*idx) & 1) == 0 ) {
+            P->sign = MP_NEG;
+        }
+        (*idx)++;
+        if ((err = mp_mul(&t1, q, Q)) != MP_OKAY)             goto LTM_ERR;
+        if ((err = mp_copy(&t1, R)) != MP_OKAY)               goto LTM_ERR;
+        /* Done */
+        goto LTM_ERR;
+    }
+
+    if ((err = mp_add(a, b, &t1)) != MP_OKAY)                 goto LTM_ERR;
+    if ((err = mp_div_2d(&t1, 1, &t1, NULL)) != MP_OKAY)      goto LTM_ERR;
+
+
+    if ((err = mp_acot_binary_splitting(
+                  q, a, &t1, &p1, &q1, &r1, idx)) != MP_OKAY) goto LTM_ERR;
+    if ((err = mp_acot_binary_splitting(
+                  q, &t1, b, &p2, &q2, &r2, idx)) != MP_OKAY) goto LTM_ERR;
+
+    /* P = q2*p1 + r1*p2 */
+    if ((err = mp_mul(&q2, &p1, &t1)) != MP_OKAY)             goto LTM_ERR;
+    if ((err = mp_mul(&r1, &p2, &t2)) != MP_OKAY)             goto LTM_ERR;
+    if ((err = mp_add(&t1, &t2, P)) != MP_OKAY)               goto LTM_ERR;
+    /* Q =  q1*q2 */
+    if ((err = mp_mul(&q1, &q2, Q)) != MP_OKAY)               goto LTM_ERR;
+    /* R = r1*r2 */
+    if ((err = mp_mul(&r1, &r2, R)) != MP_OKAY)               goto LTM_ERR;
+
+  LTM_ERR:
+    mp_clear_multi(&p1, &q1, &r1, &p2, &q2, &r2, &t1, &t2, &one, NULL);
+    return err;
+}
+
+
+int main(int argc, char **argv)
+{
+   mp_int N, P, Q, R, zero, EPS, t1, t2, t5, t239;
+   mp_err err = MP_OKAY;
+   int idx = 0;
+   long eps, dec;
+
+   if(argc != 2) {
+     fprintf(stderr, "Usage %s bits of precision", argv[0]);
+     exit(EXIT_FAILURE);
+   }
+
+   errno = 0;
+   eps = strtol(argv[1],NULL,10);
+   if ((errno == ERANGE && (eps == LONG_MAX || eps == LONG_MIN))
+       || (errno != 0 && eps == 0)) {
+      fprintf(stderr,"Error reading precision. Reason: %s\n",
+                     strerror(errno));
+      exit(EXIT_FAILURE);
+   }
+
+   if( (err = mp_init_multi(
+       &N, &P, &Q, &R, &zero, &EPS, &t1, &t2, &t5, &t239, NULL) ) != MP_OKAY) {
+      fprintf(stderr,"Error initializing mp_ints. Reason: %s\n",
+                     mp_error_to_string(err));
+      exit(EXIT_FAILURE);
+   }
+
+   /* Machin's 1706 */
+   mp_set(&t5, 5u);
+   mp_set(&t239, 239u);
+   mp_set_l(&EPS, eps);
+
+   if( (err = mp_sqr(&t5, &t1) ) != MP_OKAY)                      goto LTM_ERR;
+   if( (err = mp_acot_binary_splitting(
+             &t1, &zero, &EPS, &P, &Q, &R, &idx) ) != MP_OKAY)    goto LTM_ERR;
+   if( (err = mp_add(&P, &Q, &t1) ) != MP_OKAY)                   goto LTM_ERR;
+   if( (err = mp_mul_2d(&t1, (int)eps, &t1) ) != MP_OKAY)         goto LTM_ERR;
+   if( (err = mp_mul(&Q, &t5, &t2) ) != MP_OKAY)                  goto LTM_ERR;
+   if( (err = mp_div(&t1, &t2, &t5, NULL) ) != MP_OKAY)           goto LTM_ERR;
+
+   if( (err = mp_sqr(&t239, &t1) ) != MP_OKAY)                    goto LTM_ERR;
+   if( (err = mp_acot_binary_splitting(
+             &t1, &zero, &EPS, &P, &Q, &R, &idx) ) != MP_OKAY)    goto LTM_ERR;
+   if( (err = mp_add(&P, &Q, &t1) ) != MP_OKAY)                   goto LTM_ERR;
+   if( (err = mp_mul_2d(&t1, (int)eps, &t1) ) != MP_OKAY)         goto LTM_ERR;
+   if( (err = mp_mul(&Q, &t239, &t2) ) != MP_OKAY)                goto LTM_ERR;
+   if( (err = mp_div(&t1, &t2, &t239, NULL) ) != MP_OKAY)         goto LTM_ERR;
+
+   if( (err = mp_mul_2d(&t5, 2, &t5) ) != MP_OKAY)                goto LTM_ERR;
+   if( (err = mp_sub(&t5, &t239, &t1) ) != MP_OKAY)               goto LTM_ERR;
+   if( (err = mp_mul_2d(&t1, 2, &t1) ) != MP_OKAY)                goto LTM_ERR;
+
+   /* 146/485 ~ 1/log_2(10) for about 7 decimal digits */
+   dec = (eps * 146) / 485;
+   mp_set(&t2, 10);
+   if( (err = mp_expt_n(&t2, (int)dec, &t2) ) != MP_OKAY)         goto LTM_ERR;
+   if( (err = mp_mul(&t1,&t2,&t1) ) != MP_OKAY)                   goto LTM_ERR;
+   if( (err = mp_div_2d(&t1, (int)eps, &t1, NULL) ) != MP_OKAY)   goto LTM_ERR;
+
+   if( (err = mp_fwrite(&t1,10,stdout) ) != MP_OKAY)              goto LTM_ERR;
+     
+   mp_clear_multi(&N, &P, &Q, &R, &zero, &EPS, &t1, &t2, &t5, &t239, NULL);
+   exit(EXIT_SUCCESS);
+LTM_ERR:
+   mp_clear_multi(&N, &P, &Q, &R, &zero, &EPS, &t1, &t2, &t5, &t239, NULL);
+   exit(EXIT_FAILURE);
+}
+
+
+
+.LP
+.SH "SEE ALSO"
+
+.IR https://github.com/libtom/libtommath
+
+.SH BUGS
+
+Please report all bugs and other incommodities at
+.IR https://github.com/libtom/libtommath/issues
+
+.SH AUTHORS AND LICENSE
+Version 1.2.0
+.LP
+Copyright (C) 2002 Tom St Denis
+
+.ad c
+
+The LibTom license
+
+.ad n
+.LP
+This is free and unencumbered software released into the public domain.
+.LP
+Anyone is free to copy, modify, publish, use, compile, sell, or
+distribute this software, either in source code form or as a compiled
+binary, for any purpose, commercial or non-commercial, and by any
+means.
+.LP
+In jurisdictions that recognize copyright laws, the author or authors
+of this software dedicate any and all copyright interest in the
+software to the public domain. We make this dedication for the benefit
+of the public at large and to the detriment of our heirs and
+successors. We intend this dedication to be an overt act of
+relinquishment in perpetuity of all present and future rights to this
+software under copyright law.
+.LP
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
+.LP
+For more information, please refer to <http://unlicense.org/>
+
+." end of man page
