@@ -8,7 +8,7 @@ static long rand_long(void)
 {
    long x;
    if (s_mp_rand_jenkins(&x, sizeof(x)) != MP_OKAY) {
-      fprintf(stderr, "s_mp_rand_source failed\n");
+      fprintf(stderr, "s_mp_rand_jenkins failed\n");
       exit(EXIT_FAILURE);
    }
    return x;
@@ -18,7 +18,7 @@ static int rand_int(void)
 {
    int x;
    if (s_mp_rand_jenkins(&x, sizeof(x)) != MP_OKAY) {
-      fprintf(stderr, "s_mp_rand_source failed\n");
+      fprintf(stderr, "s_mp_rand_jenkins failed\n");
       exit(EXIT_FAILURE);
    }
    return x;
@@ -28,7 +28,7 @@ static int32_t rand_int32(void)
 {
    int32_t x;
    if (s_mp_rand_jenkins(&x, sizeof(x)) != MP_OKAY) {
-      fprintf(stderr, "s_mp_rand_source failed\n");
+      fprintf(stderr, "s_mp_rand_jenkins failed\n");
       exit(EXIT_FAILURE);
    }
    return x;
@@ -38,7 +38,7 @@ static int64_t rand_int64(void)
 {
    int64_t x;
    if (s_mp_rand_jenkins(&x, sizeof(x)) != MP_OKAY) {
-      fprintf(stderr, "s_mp_rand_source failed\n");
+      fprintf(stderr, "s_mp_rand_jenkins failed\n");
       exit(EXIT_FAILURE);
    }
    return x;
