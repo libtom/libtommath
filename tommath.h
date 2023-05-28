@@ -55,7 +55,7 @@ extern "C" {
 #if defined(MP_16BIT)
 typedef uint16_t             mp_digit;
 #   define MP_DIGIT_BIT 15
-#elif defined(MP_64BIT)
+#elif ((defined (MP_64BIT)) && !(defined(MP_31BIT)) )
 typedef uint64_t mp_digit;
 #   define MP_DIGIT_BIT 60
 #else

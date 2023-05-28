@@ -180,6 +180,12 @@ static int test_mp_hash(void)
       0xabae35c7872c107d,
       0xfec74888bcef5fcd,
       0x27ba96030abceda5
+#elif (MP_DIGIT_BIT == 31)
+      0xaf63bd4c8601b7df,
+      0xec1be1c4749a7b86,
+      0x138ac13639116f2e,
+      0xdd317b32ac9dd90f,
+      0x6f87eaac03140738
 #else
       0xaf63bd4c8601b7df,
       0x7e868fbf541faf44,
