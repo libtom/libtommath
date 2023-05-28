@@ -2414,12 +2414,52 @@ largest possible number in LibTomMath. Experiments gave no absolute error over $
 The result is \emph{always} either exact or too large but it is \emph{never} too small.
 
 
-If \texttt{MP\_NO\_FILE} is not defined a function to write to a file is also available.
+If \texttt{MP\_NO\_FILE} is not defined several functions to write to a file are also available.
 
 \index{mp\_fwrite}
 \begin{alltt}
 mp_err mp_fwrite(const mp_int *a, int radix, FILE *stream);
 \end{alltt}
+The function \texttt{mp\_fwrite} writes the radix \texttt{radix} representation of \texttt{a}
+to the file stream \texttt{stream}.
+
+
+\index{mp\_fprintf}
+\begin{alltt}
+int mp_fprintf(FILE *stream, const char *format, ...);
+\end{alltt}
+
+\index{mp\_printf}
+\begin{alltt}
+int mp_fprintf(FILE *stream, const char *format, ...);
+\end{alltt}
+
+The functions \texttt{mp\_fprintf} and \texttt{mp\_printf} behave like \texttt{(f)printf} with
+the additional type modifiers \texttt{Z} for a big integer, \texttt{M} for a single limb, and
+\texttt{N} for a comma separated list of the raw limb-array of an \texttt{mp\_int} in the order
+it comes in.
+
+Most of the functions of \texttt{printf} are implemented except thousands-separators for big
+integers because they are locale dependent and zero-padding for big integers is also missing.
+
+If there is no floating point available (the check for type \texttt{float} failed) trying to
+print one fails silently\footnot{The compiler should have complained in the first place, though.}.
+
+If there is no type \texttt{long double} available the modifier \texttt{L} will silently
+print a  \texttt{double} instead.
+
+If there is no type \texttt{double} available either, the modifier \texttt{L} will silently
+print a  \texttt{float} instead.
+
+If there is no type \texttt{double} available when printing without the modifier \texttt{L} 
+this function will silently print a  \texttt{float} instead.
+
+It is quite useful for debugging to have a binary representation of the big integers and their
+innards, so the type modifier \texttt{b} had been added to print all of \texttt{Z, M, N} with
+zeros and ones only. 
+
+Printing the big integer in base-64 is done with \texttt{%Z@}.
+
 
 \subsection{From ASCII}
 \index{mp\_read\_radix}

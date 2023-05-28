@@ -2436,6 +2436,234 @@ LBL_ERR:
    return EXIT_FAILURE;
 }
 
+#ifndef MP_NO_FILE
+
+#define LTM_TEST_BUFSIZ 4096
+#include <string.h>
+static int test_mp_fprintf(void)
+{
+   FILE *test_file = NULL;
+
+   char line_buffer[LTM_TEST_BUFSIZ] = {0};
+   int i;
+   bool write_only = false;
+   size_t slen = 0;
+   int characters_printed = 0;
+   char *fgets_return;
+
+   const char *test_values[2] = {
+      "4DDCFDE0D20EF8663B34D19F829FDD",
+      "-51D9769BDAE5B38121F2A31D881E5F"
+   };
+
+   const char *test_strings[] = {
+#ifdef LTM_HAVE_FLOAT_TYPE
+      "START 0x0000007b      123.123 -424986725583297217766029037085924959 0x4DDCFDE0D20EF8663B34D19F829FDD END\n",
+#endif
+      "START -0b10100011101100101110110100110111101101011100101101100111000000100100001111100101010001100011101100010000001111001011111 END\n",
+      "START @ -KTbsczhbiu4XygCTY1vV  @ END\n",
+#if (MP_DIGIT_BIT == 60)
+      "START 0x63b34d19f829fdd,0x4ddcfde0d20ef86 END\n",
+#elif (MP_DIGIT_BIT == 31)
+      "START 0x1f829fdd,0x4c7669a3,0x3483be1,0x26ee7ef END\n",
+#elif (MP_DIGIT_BIT == 28)
+      "START 0xf829fdd,0x3b34d19,0x20ef866,0xdcfde0d,0x4d END\n",
+#elif (MP_DIGIT_BIT == 15)
+      "START 0x1fdd,0x3f05,0x5346,0x31d9,0x6f86,0x1a41,0x3f78,0x26ee END\n",
+#else
+      "undefined limb size\n",
+#endif
+
+
+#if (MP_DIGIT_BIT == 60)
+      "START 0x000000000000063b34d19f829fdd END\n"
+#elif (MP_DIGIT_BIT == 31)
+      "START 0x000000000000000000001f829fdd END\n"
+#elif (MP_DIGIT_BIT == 28)
+      "START 0x000000000000000000000f829fdd END\n"
+#elif (MP_DIGIT_BIT == 15)
+      "START 0x0000000000000000000000001fdd END\n"
+#else
+      "undefined limb size\n"
+#endif
+   };
+
+   mp_int p, q;
+   int n;
+   /* Only stream printing available, no mp_sprintf or the like. File needs a path for repeated truncating */
+   test_file = fopen("ltm_testing_mp_fprintf_88a43603fcfc2f7e7c6646cd4b89180a", "w+");
+   if (test_file == NULL) {
+      /* use logfile instead to have at least sth. in case of an error */
+      test_file = stdout;
+      write_only = true;
+   }
+
+   DOR(mp_init_multi(&p, &q, NULL));
+
+   DO(mp_read_radix(&p, test_values[0], 16));
+   DO(mp_read_radix(&q, test_values[1], 16));
+
+   /* No loop here, too much hassle */
+   i = 0;
+   /* Defined by CMake and is not in any of the generic Makefiles */
+#ifdef LTM_HAVE_FLOAT_TYPE
+   characters_printed = mp_fprintf(test_file, "START %#010x %12.12g %10Zd %#10Zx END\n",123,123.123,&q,&p,&q);
+   slen = strlen(test_strings[i]);
+   if ((characters_printed - (int)slen) != 0) {
+      fprintf(stderr, "0 test_mp_fprintf: failed to print o:%zu t:%d\n", slen, characters_printed);
+      goto LBL_ERR;
+   }
+   if (!write_only) {
+      rewind(test_file);
+      fgets_return = fgets(line_buffer, LTM_TEST_BUFSIZ, test_file);
+      if (fgets_return == NULL) {
+         fprintf(stderr, "1 test_mp_fprintf: failed to read from file\n");
+         goto LBL_ERR;
+      }
+      if (strcmp(line_buffer, test_strings[i]) != 0) {
+         fprintf(stderr, "test_mp_fprintf: file content is not equal to test string #%d\n",i);
+         goto LBL_ERR;
+      }
+   }
+   i++;
+   /* Clear file content */
+   test_file = freopen("ltm_testing_mp_fprintf_88a43603fcfc2f7e7c6646cd4b89180a","w+", test_file);
+   if (test_file == NULL) {
+      /* use logfile instead to have at least sth. in case of an error */
+      test_file = stdout;
+      write_only = true;
+   }
+#endif
+
+   characters_printed = mp_fprintf(test_file, "START %#Zb END\n",&q);
+   slen = strlen(test_strings[i]);
+   if ((characters_printed - (int)slen) != 0) {
+      fprintf(stderr, "1 test_mp_fprintf: failed to print o:%zu t:%d\n", slen, characters_printed);
+      goto LBL_ERR;
+   }
+   if (!write_only) {
+      rewind(test_file);
+      fgets_return = fgets(line_buffer, LTM_TEST_BUFSIZ, test_file);
+      if (fgets_return == NULL) {
+         fprintf(stderr, "test_mp_fprintf: failed to read from file\n");
+         goto LBL_ERR;
+      }
+      if (strcmp(line_buffer, test_strings[i]) != 0) {
+         fprintf(stderr, "test_mp_fprintf: file content is not equal to test string #%d\n",i);
+         goto LBL_ERR;
+      }
+   }
+   i++;
+   /* Clear file content */
+   test_file = freopen("ltm_testing_mp_fprintf_88a43603fcfc2f7e7c6646cd4b89180a","w+", test_file);
+   if (test_file == NULL) {
+      /* use logfile instead to have at least sth. in case of an error */
+      test_file = stdout;
+      write_only = true;
+   }
+
+   characters_printed = mp_fprintf(test_file, "START @ %#Z@  @ END\n",&q);
+   slen = strlen(test_strings[i]);
+   if ((characters_printed - (int)slen) != 0) {
+      fprintf(stderr, "1 test_mp_fprintf: failed to print o:%zu t:%d\n", slen, characters_printed);
+      goto LBL_ERR;
+   }
+   if (!write_only) {
+      rewind(test_file);
+      fgets_return = fgets(line_buffer, LTM_TEST_BUFSIZ, test_file);
+      if (fgets_return == NULL) {
+         fprintf(stderr, "test_mp_fprintf: failed to read from file\n");
+         goto LBL_ERR;
+      }
+      if (strcmp(line_buffer, test_strings[i]) != 0) {
+         fprintf(stderr, "test_mp_fprintf: file content is not equal to test string #%d\n",i);
+         goto LBL_ERR;
+      }
+   }
+   i++;
+   /* Clear file content */
+   test_file = freopen("ltm_testing_mp_fprintf_88a43603fcfc2f7e7c6646cd4b89180a","w+", test_file);
+   if (test_file == NULL) {
+      /* use logfile instead to have at least sth. in case of an error */
+      test_file = stdout;
+      write_only = true;
+   }
+
+   /* TODO: add entries for the smaller mp_digits */
+   characters_printed = mp_fprintf(test_file,"START %#Nx END\n",&p);
+   slen = strlen(test_strings[i]);
+   if ((characters_printed - (int)slen) != 0) {
+      fprintf(stderr, "2 test_mp_fprintf: failed to print o:%zu t:%d\n", slen, characters_printed);
+      goto LBL_ERR;
+   }
+   if (!write_only) {
+      rewind(test_file);
+      fgets_return = fgets(line_buffer, LTM_TEST_BUFSIZ, test_file);
+      if (fgets_return == NULL) {
+         fprintf(stderr, "test_mp_fprintf: failed to read from file\n");
+         goto LBL_ERR;
+      }
+      if (strcmp(line_buffer, test_strings[i]) != 0) {
+         fprintf(stderr, "test_mp_fprintf: file content is not equal to test string #%d\n",i);
+         goto LBL_ERR;
+      }
+   }
+   i++;
+   /* Clear file content */
+   test_file = freopen("ltm_testing_mp_fprintf_88a43603fcfc2f7e7c6646cd4b89180a","w+", test_file);
+   if (test_file == NULL) {
+      /* use logfile instead to have at least sth. in case of an error */
+      test_file = stdout;
+      write_only = true;
+   }
+
+   characters_printed = mp_fprintf(test_file,"START %0#30Mx END\n",p.dp[0]);
+   slen = strlen(test_strings[i]);
+   if ((characters_printed - (int)slen) != 0) {
+      fprintf(stderr, "3 test_mp_fprintf: failed to print o:%zu t:%d\n", slen, characters_printed);
+      goto LBL_ERR;
+   }
+   if (!write_only) {
+      rewind(test_file);
+      fgets_return = fgets(line_buffer, LTM_TEST_BUFSIZ, test_file);
+      if (fgets_return == NULL) {
+         fprintf(stderr, "test_mp_fprintf: failed to read from file\n");
+         goto LBL_ERR;
+      }
+      if (strcmp(line_buffer, test_strings[i]) != 0) {
+         fprintf(stderr, "test_mp_fprintf: file content is not equal to test string #%d\n",i);
+         goto LBL_ERR;
+      }
+   }
+
+   /* It's more or less implementation defined but must be the same. */
+   characters_printed = mp_fprintf(stdout,"START %p END\n",&p);
+   i = fprintf(stdout,"START %p END\n",&p);
+   if ((characters_printed - i) != 0) {
+      fprintf(stderr, "test_mp_fprintf: failed to print pointer\n");
+      goto LBL_ERR;
+   }
+
+   characters_printed = mp_fprintf(stdout,"START %n END\n",&n);
+   if (n != 6) {
+      fprintf(stderr, "test_mp_fprintf: failed to count 6 characters properly\n");
+      goto LBL_ERR;
+   }
+
+   mp_clear_multi(&p, &q, NULL);
+   fclose(test_file);
+   if (remove("ltm_testing_mp_fprintf_88a43603fcfc2f7e7c6646cd4b89180a") != 0) {
+      fprintf(stderr, "Could not delete file ltm_testing_mp_fprintf_88a43603fcfc2f7e7c6646cd4b89180a\n");
+   }
+   return EXIT_SUCCESS;
+LBL_ERR:
+   mp_clear_multi(&p, &q, NULL);
+   fclose(test_file);
+   /* We don't delete the testfile in case of error, conrtent might be helpful.  */
+   return EXIT_FAILURE;
+}
+#endif
+
 #ifndef LTM_TEST_DYNAMIC
 #define ONLY_PUBLIC_API_C
 #endif
@@ -2463,6 +2691,7 @@ static int unit_tests(int argc, char **argv)
       T1(mp_dr_reduce, MP_DR_REDUCE),
       T2(mp_pack_unpack,MP_PACK, MP_UNPACK),
       T2(mp_fread_fwrite, MP_FREAD, MP_FWRITE),
+      T1(mp_fprintf, S_MP_FPRINTF),
       T1(mp_get_u32, MP_GET_I32),
       T1(mp_get_u64, MP_GET_I64),
       T1(mp_get_ul, MP_GET_L),

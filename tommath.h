@@ -585,6 +585,8 @@ mp_err mp_radix_size_overestimate(const mp_int *a, const int radix, size_t *size
 #ifndef MP_NO_FILE
 mp_err mp_fread(mp_int *a, int radix, FILE *stream) MP_WUR;
 mp_err mp_fwrite(const mp_int *a, int radix, FILE *stream) MP_WUR;
+int mp_fprintf(FILE *stream, const char *format, ...);
+int mp_printf(const char *format, ...);
 #endif
 
 #define mp_to_binary(M, S, N)  mp_to_radix((M), (S), (N), NULL, 2)

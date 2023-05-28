@@ -40,6 +40,7 @@
 #   define MP_EXPT_N_C
 #   define MP_EXPTMOD_C
 #   define MP_EXTEUCLID_C
+#   define MP_FPRINTF_C
 #   define MP_FREAD_C
 #   define MP_FROM_SBIN_C
 #   define MP_FROM_UBIN_C
@@ -94,6 +95,7 @@
 #   define MP_PRIME_RABIN_MILLER_TRIALS_C
 #   define MP_PRIME_RAND_C
 #   define MP_PRIME_STRONG_LUCAS_SELFRIDGE_C
+#   define MP_PRINTF_C
 #   define MP_RADIX_SIZE_C
 #   define MP_RADIX_SIZE_OVERESTIMATE_C
 #   define MP_RAND_C
@@ -143,6 +145,7 @@
 #   define S_MP_EXPTMOD_FAST_C
 #   define S_MP_FP_LOG_C
 #   define S_MP_FP_LOG_D_C
+#   define S_MP_FPRINTF_C
 #   define S_MP_GET_BIT_C
 #   define S_MP_INVMOD_C
 #   define S_MP_INVMOD_ODD_C
@@ -323,6 +326,10 @@
 #   define MP_NEG_C
 #   define MP_SET_C
 #   define MP_SUB_C
+#endif
+
+#if defined(MP_FPRINTF_C)
+#   define S_MP_FPRINTF_C
 #endif
 
 #if defined(MP_FREAD_C)
@@ -714,6 +721,10 @@
 #   define S_MP_GET_BIT_C
 #endif
 
+#if defined(MP_PRINTF_C)
+#   define S_MP_FPRINTF_C
+#endif
+
 #if defined(MP_RADIX_SIZE_C)
 #   define MP_LOG_N_C
 #endif
@@ -1093,6 +1104,19 @@
 #   define MP_INIT_C
 #   define S_MP_FLOG2_MP_WORD_D_C
 #   define S_MP_FP_LOG_FRACTION_D_C
+#endif
+
+#if defined(S_MP_FPRINTF_C)
+#   define MP_CLEAR_C
+#   define MP_INIT_COPY_C
+#   define MP_RADIX_SIZE_OVERESTIMATE_C
+#   define MP_TO_RADIX_C
+#   define S_MP_PRINT_BIGINT_C
+#   define S_MP_PRINT_LIMB_ARRAY_C
+#   define S_MP_PRINT_LIMB_C
+#   define S_MP_PRINT_MP_DIGIT_BINARY_C
+#   define S_MP_STR_REVERSE_C
+#   define S_MP_ZERO_BUF_C
 #endif
 
 #if defined(S_MP_GET_BIT_C)

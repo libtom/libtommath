@@ -31,6 +31,7 @@ mp_exch.c
 mp_expt_n.c
 mp_exptmod.c
 mp_exteuclid.c
+mp_fprintf.c
 mp_fread.c
 mp_from_sbin.c
 mp_from_ubin.c
@@ -85,6 +86,7 @@ mp_prime_next_prime.c
 mp_prime_rabin_miller_trials.c
 mp_prime_rand.c
 mp_prime_strong_lucas_selfridge.c
+mp_printf.c
 mp_radix_size.c
 mp_radix_size_overestimate.c
 mp_rand.c
@@ -134,6 +136,7 @@ s_mp_exptmod.c
 s_mp_exptmod_fast.c
 s_mp_fp_log.c
 s_mp_fp_log_d.c
+s_mp_fprintf.c
 s_mp_get_bit.c
 s_mp_invmod.c
 s_mp_invmod_odd.c
