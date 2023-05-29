@@ -94,6 +94,8 @@
 #   define MP_PRIME_RABIN_MILLER_TRIALS_C
 #   define MP_PRIME_RAND_C
 #   define MP_PRIME_STRONG_LUCAS_SELFRIDGE_C
+#   define MP_PRINTF_EXTENSION_CLEAR_C
+#   define MP_PRINTF_EXTENSION_INIT_C
 #   define MP_RADIX_SIZE_C
 #   define MP_RADIX_SIZE_OVERESTIMATE_C
 #   define MP_RAND_C
@@ -146,6 +148,7 @@
 #   define S_MP_GET_BIT_C
 #   define S_MP_INVMOD_C
 #   define S_MP_INVMOD_ODD_C
+#   define S_MP_ISNEG_C
 #   define S_MP_LOG_2EXPT_C
 #   define S_MP_MONTGOMERY_REDUCE_COMBA_C
 #   define S_MP_MUL_C
@@ -157,6 +160,7 @@
 #   define S_MP_MUL_TOOM_C
 #   define S_MP_PRIME_IS_DIVISIBLE_C
 #   define S_MP_PRIME_TAB_C
+#   define S_MP_PRINT_MP_DIGIT_C
 #   define S_MP_RADIX_MAP_C
 #   define S_MP_RADIX_SIZE_OVERESTIMATE_C
 #   define S_MP_RAND_PLATFORM_C
@@ -164,6 +168,7 @@
 #   define S_MP_SQR_COMBA_C
 #   define S_MP_SQR_KARATSUBA_C
 #   define S_MP_SQR_TOOM_C
+#   define S_MP_STR_REVERSE_C
 #   define S_MP_SUB_C
 #   define S_MP_ZERO_BUF_C
 #   define S_MP_ZERO_DIGS_C
@@ -714,6 +719,18 @@
 #   define S_MP_GET_BIT_C
 #endif
 
+#if defined(MP_PRINTF_EXTENSION_CLEAR_C)
+#endif
+
+#if defined(MP_PRINTF_EXTENSION_INIT_C)
+#   define MP_RADIX_SIZE_OVERESTIMATE_C
+#   define MP_TO_RADIX_C
+#   define S_MP_ISNEG_C
+#   define S_MP_PRINT_MP_DIGIT_C
+#   define S_MP_PRINT_MP_INT_ARGINFO_C
+#   define S_MP_PRINT_MP_INT_C
+#endif
+
 #if defined(MP_RADIX_SIZE_C)
 #   define MP_LOG_N_C
 #endif
@@ -1128,6 +1145,9 @@
 #   define MP_SUB_C
 #endif
 
+#if defined(S_MP_ISNEG_C)
+#endif
+
 #if defined(S_MP_LOG_2EXPT_C)
 #   define MP_COUNT_BITS_C
 #endif
@@ -1217,6 +1237,10 @@
 #if defined(S_MP_PRIME_TAB_C)
 #endif
 
+#if defined(S_MP_PRINT_MP_DIGIT_C)
+#   define S_MP_STR_REVERSE_C
+#endif
+
 #if defined(S_MP_RADIX_MAP_C)
 #endif
 
@@ -1271,6 +1295,9 @@
 #   define MP_MUL_C
 #   define MP_SUB_C
 #   define S_MP_COPY_DIGS_C
+#endif
+
+#if defined(S_MP_STR_REVERSE_C)
 #endif
 
 #if defined(S_MP_SUB_C)

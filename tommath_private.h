@@ -234,6 +234,12 @@ extern MP_PRIVATE const char s_mp_radix_map[];
 extern MP_PRIVATE const uint8_t s_mp_radix_map_reverse[];
 extern MP_PRIVATE const mp_digit s_mp_prime_tab[];
 
+#ifndef MP_NO_FILE
+MP_PRIVATE void s_mp_str_reverse(char *s, int len);
+MP_PRIVATE int s_mp_print_mp_digit(mp_digit number, mp_digit base, bool fill, char *buffer);
+MP_PRIVATE bool s_mp_isneg(const mp_int *a);
+#endif
+
 /* number of primes */
 #define MP_PRIME_TAB_SIZE 256
 

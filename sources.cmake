@@ -85,6 +85,8 @@ mp_prime_next_prime.c
 mp_prime_rabin_miller_trials.c
 mp_prime_rand.c
 mp_prime_strong_lucas_selfridge.c
+mp_printf_extension_clear.c
+mp_printf_extension_init.c
 mp_radix_size.c
 mp_radix_size_overestimate.c
 mp_rand.c
@@ -137,6 +139,7 @@ s_mp_fp_log_d.c
 s_mp_get_bit.c
 s_mp_invmod.c
 s_mp_invmod_odd.c
+s_mp_isneg.c
 s_mp_log_2expt.c
 s_mp_montgomery_reduce_comba.c
 s_mp_mul.c
@@ -148,6 +151,7 @@ s_mp_mul_karatsuba.c
 s_mp_mul_toom.c
 s_mp_prime_is_divisible.c
 s_mp_prime_tab.c
+s_mp_print_mp_digit.c
 s_mp_radix_map.c
 s_mp_radix_size_overestimate.c
 s_mp_rand_platform.c
@@ -155,6 +159,7 @@ s_mp_sqr.c
 s_mp_sqr_comba.c
 s_mp_sqr_karatsuba.c
 s_mp_sqr_toom.c
+s_mp_str_reverse.c
 s_mp_sub.c
 s_mp_zero_buf.c
 s_mp_zero_digs.c

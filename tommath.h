@@ -16,6 +16,13 @@
 extern "C" {
 #endif
 
+
+/* Build GLibC version */
+#if ((defined(__GLIBC__)) && (defined(__GLIBC_MINOR__)) )
+#define GLIBC_VERSION (__GLIBC__ * 1000  + __GLIBC_MINOR__)
+#endif
+
+
 /* MS Visual C++ doesn't have a 128bit type for words, so fall back to 32bit MPI's (where words are 64bit) */
 #if (defined(_MSC_VER) || defined(__LLP64__) || defined(__e2k__) || defined(__LCC__)) && !defined(MP_64BIT)
 #   define MP_32BIT
@@ -585,6 +592,19 @@ mp_err mp_radix_size_overestimate(const mp_int *a, const int radix, size_t *size
 #ifndef MP_NO_FILE
 mp_err mp_fread(mp_int *a, int radix, FILE *stream) MP_WUR;
 mp_err mp_fwrite(const mp_int *a, int radix, FILE *stream) MP_WUR;
+
+
+#if ((defined(__GLIBC__)) && (defined(__GLIBC_MINOR__)) )
+#define GLIBC_VERSION (__GLIBC__ * 1000  + __GLIBC_MINOR__)
+#endif
+
+/* Function for the output to a stream, adjust to your needs */
+#ifndef MP_FPUTC
+#define MP_FPUTC(c, stream) fputc((c), (stream))
+#endif
+
+mp_err mp_printf_extension_init(void) MP_WUR;
+void mp_printf_extension_clear(void);
 #endif
 
 #define mp_to_binary(M, S, N)  mp_to_radix((M), (S), (N), NULL, 2)

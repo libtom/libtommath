@@ -446,7 +446,7 @@ EOS
 
 sub generate_def {
     my @files = glob '*mp_*.c';
-    @files = map { my $x = $_; $x =~ s/\.c$//g; $x; } @files;
+    @files = map { my $x = $_; $x =~ s/\.c$//g;$x; } @files;
     @files = grep(!/mp_cutoffs/, @files);
 
     my $files = join("\n    ", sort(grep(/^mp_/, @files)));
