@@ -9,6 +9,13 @@
 #include <string.h>
 
 
+#ifdef _MSC_VER
+/* Ignore warning: "'fprintf' : format string expected in argument 2 is not a string"
+   because that's how this function works in the first place */
+#pragma warning(disable: 4774)
+#endif
+
+
 /* Step to the next character, throw error if there is none  */
 #define LTM_NEXT_ERROR(x) do{(x)++;if(*(x) == '\0'){goto LTM_ERR;}}while(0)
 /* Step to the next character, got to end if there is none  */
