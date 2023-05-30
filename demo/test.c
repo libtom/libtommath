@@ -1573,9 +1573,13 @@ static int test_mp_log(void)
 
    /* Random a, base */
    for (i = 1; i < 256; i++) {
-      DO(mp_rand(&a, i));
+      do {
+         DO(mp_rand(&a, i));
+      } while (mp_cmp_d(&a,2u) == MP_LT);
       for (j = 1; j < ((i/2)+1); j++) {
-         DO(mp_rand(&base, j));
+         do {
+            DO(mp_rand(&base, j));
+         } while (mp_cmp_d(&base,2u) == MP_LT);
          DO(mp_log(&a, &base, &lb));
          DO(mp_expt_n(&base, lb, &bn));
          /* "bn" must be smaller than or equal to "a" at this point. */
