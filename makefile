@@ -171,6 +171,8 @@ c89:
 	-e 's/INT64_MAX/(mp_i64)(((mp_u64)1<<63)-1)/g' \
 	-e 's/INT64_MIN/(mp_i64)((mp_u64)1<<63)/g' \
 	-e 's/SIZE_MAX/((size_t)-1)/g' \
+        -e 's/\([^u]\)intmax_t/\1__intmax_t/g'  \
+        -e 's/uintmax_t/__uintmax_t/g'  \
 	-e 's/\(PRI[ioux]64\)/MP_\1/g' \
 	-e 's/uint\([0-9][0-9]*\)_t/mp_u\1/g' \
 	-e 's/int\([0-9][0-9]*\)_t/mp_i\1/g' \
@@ -195,7 +197,15 @@ c99:
 	-e 's/(mp_i64)((mp_u64)1<<63)/INT64_MIN/g' \
 	-e 's/(mp_i64)(((mp_u64)1<<63)-1)/INT64_MAX/g' \
 	-e 's/((size_t)-1)/SIZE_MAX/g' \
+<<<<<<< HEAD
 	-e 's/MP_\(PRI[ioux]64\)/\1/g' \
+||||||| constructed merge base
+	-e 's/MP_\(PRI[iux]64\)/\1/g' \
+=======
+        -e 's/__intmax_t/intmax_t/g'  \
+        -e 's/__uintmax_t/uintmax_t/g'  \
+	-e 's/MP_\(PRI[iuox]64\)/\1/g' \
+>>>>>>> Extended c89 handling
 	-e 's/mp_u\([0-9][0-9]*\)/uint\1_t/g' \
 	-e 's/mp_i\([0-9][0-9]*\)/int\1_t/g' \
 	-e 's/MP_FUNCTION_NAME/__func__/g' \

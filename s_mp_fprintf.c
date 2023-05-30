@@ -165,8 +165,8 @@ static int s_mp_print_limb(const mp_digit d, const char *format, int base, bool 
 #elif defined(MP_64BIT)
       switch (base) {
       case 8:
-/*
-its defined in the local inttype.h as
+         /*
+         its defined in the local inttype.h as
 # if __WORDSIZE == 64
 #  define __PRI64_PREFIX        "l"
 #  define __PRIPTR_PREFIX       "l"
@@ -175,11 +175,11 @@ its defined in the local inttype.h as
 #  define __PRIPTR_PREFIX
 # endif
 
-   ...
+            ...
 
 # define PRIo64 __PRI64_PREFIX "o"
 
-*/
+         */
          f = strcat(f, PRIo64);
          break;
       case 10:
@@ -362,7 +362,7 @@ int s_mp_fprintf(FILE *stream, const char *format, va_list args)
                      }
                      break;
                   case 'j':
-                     printed_characters += fprintf(stream, format_out, va_arg(args, intmax_t));
+                     printed_characters += fprintf(stream, format_out, va_arg(args,intmax_t));
                      break;
                   case 't':
                      printed_characters += fprintf(stream, format_out, va_arg(args, ptrdiff_t));
