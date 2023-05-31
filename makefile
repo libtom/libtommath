@@ -171,7 +171,7 @@ c89:
 	-e 's/INT64_MAX/(mp_i64)(((mp_u64)1<<63)-1)/g' \
 	-e 's/INT64_MIN/(mp_i64)((mp_u64)1<<63)/g' \
 	-e 's/SIZE_MAX/((size_t)-1)/g' \
-	-e 's/\(PRI[iux]64\)/MP_\1/g' \
+	-e 's/\(PRI[ioux]64\)/MP_\1/g' \
 	-e 's/uint\([0-9][0-9]*\)_t/mp_u\1/g' \
 	-e 's/int\([0-9][0-9]*\)_t/mp_i\1/g' \
 	-e 's/__func__/MP_FUNCTION_NAME/g' \
@@ -195,7 +195,7 @@ c99:
 	-e 's/(mp_i64)((mp_u64)1<<63)/INT64_MIN/g' \
 	-e 's/(mp_i64)(((mp_u64)1<<63)-1)/INT64_MAX/g' \
 	-e 's/((size_t)-1)/SIZE_MAX/g' \
-	-e 's/MP_\(PRI[iux]64\)/\1/g' \
+	-e 's/MP_\(PRI[ioux]64\)/\1/g' \
 	-e 's/mp_u\([0-9][0-9]*\)/uint\1_t/g' \
 	-e 's/mp_i\([0-9][0-9]*\)/int\1_t/g' \
 	-e 's/MP_FUNCTION_NAME/__func__/g' \
