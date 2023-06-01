@@ -136,7 +136,7 @@ extern void MP_FREE(void *mem, size_t size);
 #if defined(MP_16BIT)
 typedef uint32_t mp_word;
 #define MP_WORD_SIZE  4
-#elif defined(MP_64BIT)
+#elif ((defined (MP_64BIT)) && !(defined(MP_31BIT)) )
 typedef unsigned long mp_word __attribute__((mode(TI)));
 #define MP_WORD_SIZE  16
 #else
@@ -228,9 +228,6 @@ MP_PRIVATE mp_err s_mp_radix_size_overestimate(const mp_int *a, const int radix,
 #define MP_UPPER_LIMIT_FIXED_LOG ( (int) ( (sizeof(mp_word) * CHAR_BIT) - 1))
 MP_PRIVATE mp_err s_mp_fp_log(const mp_int *a, mp_int *c) MP_WUR;
 MP_PRIVATE mp_err s_mp_fp_log_d(const mp_int *a, mp_word *c) MP_WUR;
-
-
-
 
 #define MP_RADIX_MAP_REVERSE_SIZE 80u
 extern MP_PRIVATE const char s_mp_radix_map[];
