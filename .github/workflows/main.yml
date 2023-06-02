@@ -106,13 +106,16 @@ jobs:
           # formerly started with the option "--with-low-mp" to testme.sh
           # but testing all three in one run took to long and timed out.
           - { BUILDOPTIONS: '--with-cc=gcc --cflags=-DMP_16BIT --limit-valgrind',                                                SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: '' }
+          - { BUILDOPTIONS: '--with-cc=gcc --cflags=-DMP_31BIT --limit-valgrind',                                                SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: '' }
           - { BUILDOPTIONS: '--with-cc=gcc --cflags=-DMP_32BIT --limit-valgrind',                                                SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: '' }
           # Alternative big-int version of mp_log(_n)
           - { BUILDOPTIONS: '--with-cc=gcc --cflags=-DMP_16BIT --cflags=-DS_MP_WORD_TOO_SMALL_C="" --limit-valgrind',            SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: '' }
+          - { BUILDOPTIONS: '--with-cc=gcc --cflags=-DMP_31BIT --cflags=-DS_MP_WORD_TOO_SMALL_C="" --limit-valgrind',            SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: '' }
           - { BUILDOPTIONS: '--with-cc=gcc --cflags=-DMP_32BIT --cflags=-DS_MP_WORD_TOO_SMALL_C="" --limit-valgrind',            SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: '' }
 
           # clang for the x86-64 architecture with restricted limb sizes
           - { BUILDOPTIONS: '--with-cc=clang --cflags=-DMP_16BIT --limit-valgrind',                                              SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: 'clang llvm' }
+          - { BUILDOPTIONS: '--with-cc=clang --cflags=-DMP_31BIT --limit-valgrind',                                              SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: 'clang llvm' }
           - { BUILDOPTIONS: '--with-cc=clang --cflags=-DMP_32BIT --limit-valgrind',                                              SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: 'clang llvm' }
     steps:
       - uses: actions/checkout@v2
