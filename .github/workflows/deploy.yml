@@ -37,7 +37,7 @@ jobs:
           cmake -DBUILD_SHARED_LIBS=On -DCMAKE_BUILD_TYPE=RelWithDebInfo ..
           make -j$(nproc)
           cpack -G DEB
-      - name: push package to packagecloud.io
+      - name: push deb packages to packagecloud.io
         uses: computology/packagecloud-github-action@v0.6
         with:
           PACKAGE-NAME: build/packages/ubuntu/${{ env.ubuntu_codename }}/*.deb
