@@ -18,7 +18,7 @@
 
 /* Step to the next character, throw error if there is none  */
 #define LTM_NEXT_ERROR(x) do{(x)++;if(*(x) == '\0'){goto LTM_ERR;}}while(0)
-/* Step to the next character, got to end if there is none  */
+/* Step to the next character, go to end if there is none  */
 #define LTM_NEXT(x) do{(x)++;if(*(x) == '\0')break;}while(0)
 
 /* The size of the string "%..." is not very large */
