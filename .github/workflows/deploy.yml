@@ -31,10 +31,10 @@ jobs:
         run: |
           mkdir -p build
           cd build
-          cmake -DBUILD_SHARED_LIBS=Off -DCMAKE_BUILD_TYPE=RelWithDebInfo ..
+          cmake -DBUILD_SHARED_LIBS=Off -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX="/usr" ..
           make -j$(nproc)
           cpack -G DEB
-          cmake -DBUILD_SHARED_LIBS=On -DCMAKE_BUILD_TYPE=RelWithDebInfo ..
+          cmake -DBUILD_SHARED_LIBS=On -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX="/usr" ..
           make -j$(nproc)
           cpack -G DEB
       - name: push deb packages to packagecloud.io
