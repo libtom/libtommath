@@ -27,21 +27,21 @@ jobs:
           echo "deb [signed-by=/usr/share/keyrings/kitware-archive-keyring.gpg] https://apt.kitware.com/ubuntu/ ${{ env.ubuntu_codename }} main" | sudo tee /etc/apt/sources.list.d/kitware.list >/dev/null
           sudo apt-get update -qq
           sudo apt-get install -y cmake gcc
-      - name: build static
+      - name: build packages
         run: |
           mkdir -p build
           cd build
-          cmake -DBUILD_SHARED_LIBS=Off -DCMAKE_BUILD_TYPE=RelWithDebInfo ..
+          cmake -DBUILD_SHARED_LIBS=Off -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX="/usr" ..
           make -j$(nproc)
           cpack -G DEB
-          cmake -DBUILD_SHARED_LIBS=On -DCMAKE_BUILD_TYPE=RelWithDebInfo ..
+          cmake -DBUILD_SHARED_LIBS=On -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX="/usr" ..
           make -j$(nproc)
           cpack -G DEB
-      - name: push package to packagecloud.io
+      - name: push deb packages to packagecloud.io
         uses: computology/packagecloud-github-action@v0.6
         with:
-          PACKAGE-NAME: packages/ubuntu/${{ env.ubuntu_codename }}/*.deb
+          PACKAGE-NAME: build/packages/ubuntu/${{ env.ubuntu_codename }}/*.deb
           PACKAGECLOUD-USERNAME: libtom
-          PACKAGECLOUD-REPONAME: libtom
+          PACKAGECLOUD-REPONAME: packages
           PACKAGECLOUD-DISTRO: ubuntu/${{ env.ubuntu_codename }}
           PACKAGECLOUD-TOKEN: ${{ secrets.PACKAGECLOUD_TOKEN }}

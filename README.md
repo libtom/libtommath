@@ -20,6 +20,12 @@ develop: [![Build status](https://ci.appveyor.com/api/projects/status/b80lpolw3i
 
 API/ABI changes: [check here](https://abi-laboratory.pro/tracker/timeline/libtommath/)
 
+### Pre-built packages
+
+We sometimes upload `deb` packages of the latest state from the develop branch to [packagecloud.io](https://packagecloud.io/libtom/packages).
+
+Use those packages with caution and at your own discretion.
+
 ## Summary
 
 The `develop` branch contains the in-development version. Stable releases are tagged.
