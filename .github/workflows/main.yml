@@ -25,6 +25,20 @@ on:
       - /^ci\/.*$/
 
 jobs:
+  Docs:
+    runs-on: ubuntu-20.04
+    container: texlive/texlive:latest-full
+    steps:
+      - uses: actions/checkout@v2
+      - name: generate PDF
+        run: |
+          make docs V=1
+          cp doc/bn.pdf bn-${{ github.run_id }}.pdf
+      - name: upload PDF
+        uses: actions/upload-artifact@v3
+        with:
+          name: bn-${{ github.run_id }}.pdf
+          path: bn-${{ github.run_id }}.pdf
   Testme:
     runs-on: ${{ matrix.os }}
     strategy:
