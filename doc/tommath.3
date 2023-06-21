@@ -80,6 +80,24 @@ Returns the position of the lowest bit set.
 .in -1i
 
 .LP
+.BI "mp_ord mp_cmp(const mp_int *" a ", const mp_int *" b ")"
+.in 1i
+Compare \fBa\fP to \fBb\fP.
+.in -1i
+
+.LP
+.BI "mp_ord mp_cmp_d(const mp_int *" a ", mp_digit " b ")"
+.in 1i
+Compare \fBa\fP to a single digit \fBb\fP.
+.in -1i
+
+.LP
+.BI "mp_ord mp_cmp_mag(const mp_int *" a ", const mp_int *" b ")"
+.in 1i
+Compares the absolute values of \fBa\fP and \fBb\fP.
+.in -1i
+
+.LP
 .BI "mp_err mp_complement(const mp_int *" a ", mp_int *" b ")"
 .in 1i
 Computes the 2-complement \fIb = ~a\fP.
@@ -279,6 +297,7 @@ mp_get_i64;5543444065158278130
 mp_get_mag_u32;3221335026
 mp_get_mag_u64;5543444065158278130
 mp_get_l;5543444065158278130
+mp_get_ul;5543444065158278130
 mp_get_mag_ul;5543444065158278130
 .TE
 .in -1i
@@ -316,6 +335,14 @@ Returns an unsigned 64 bit integer from big-integer \fBa\fP.
 .in -1i
 
 .LP
+.BI "unsigned long mp_get_mag_ul (const mp_int *" a ")"
+.in 1i
+Returns an unsigned long from big-integer \fBa\fP.
+.br
+\fBNOTE:\fP This function is truncating. See \fBmp_get_i32\fP for details.
+.in -1i
+
+.LP
 .BI "uint32_t mp_get_u32 (const mp_int *" a ")"
 .in 1i
 Convenience macro for \fBmp_get_mag_u32()\fP.
@@ -325,6 +352,12 @@ Convenience macro for \fBmp_get_mag_u32()\fP.
 .BI "uint64_t mp_get_u64 (const mp_int *" a ")"
 .in 1i
 Convenience macro for \fBmp_get_mag_u64()\fP.
+.in -1i
+
+.LP
+.BI "unsigned long mp_get_ul (const mp_int *" a ")"
+.in 1i
+Convenience macro for \fBmp_get_mag_ul()\fP.
 .in -1i
 
 .LP
@@ -469,6 +502,12 @@ Sets \fBret\fP to \fBtrue\fP if \fBarg\fP is a square, \fBfalse\fP otherwise.
 .BI "bool mp_iszero(mp_int *" a ")"
 .in 1i
 Returns \fBtrue\fP if \fBa = 0\fP, \fBfalse\fP otherwise.
+.in -1i
+
+.LP
+.BI "bool mp_isone(mp_int *" a ")"
+.in 1i
+Returns \fBtrue\fP if \fBa = 1\fP, \fBfalse\fP otherwise.
 .in -1i
 
 .LP
@@ -715,6 +754,14 @@ typedef enum {
    MP_BIG_ENDIAN     =  1
 } mp_ndian;
 .in -1.5i
+.in -1i
+
+.LP
+.BI "mp_err mp_prime_fermat(const mp_int *" a ", const mp_int *" b ", bool *" result ")"
+.in 1i
+Performs one Fermat test of \fBa\fP using base \fBb\fP.
+.br
+Sets \fBresult\fP to \fBtrue\fP if \fBa\fP is probably prime, \fBfalse\fP if composite.
 .in -1i
 
 .LP
