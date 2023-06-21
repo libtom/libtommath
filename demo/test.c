@@ -1223,12 +1223,13 @@ static int test_mp_read_radix(void)
    t_slow = stop - start;
 
    /* It is "long int" in GLibC but can be bigger and/or even a floating point elsewhere */
-   printf("SLOW: %.10f, FAST: %.10f\n", (double)t_slow/(double)CLOCKS_PER_SEC, (double)t_fast/(double)CLOCKS_PER_SEC);
+   fprintf(stderr,"SLOW: %.10f, FAST: %.10f\n", (double)t_slow/(double)CLOCKS_PER_SEC, (double)t_fast/(double)CLOCKS_PER_SEC);
 
    /* Check if the branching works. */
    if (MP_HAS(S_MP_FASTER_READ_RADIX) && MP_HAS(S_MP_FASTER_TO_RADIX)) {
       if (t_fast > t_slow) {
          fprintf(stderr, "Timing suspicious in test_mp_read_radix. No fast multiplication? Cut-off too low?\n");
+         DO(mp_fwrite(&a, 16, stderr));
          goto LBL_ERR;
       }
    }
