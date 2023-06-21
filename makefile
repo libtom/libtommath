@@ -107,6 +107,10 @@ tune: $(LIBNAME)
 	$(MAKE) -C etc tune CFLAGS="$(LTM_CFLAGS) -I../"
 	$(MAKE)
 
+etc-all: $(LIBNAME)
+	$(MAKE) -C etc all CFLAGS="$(LTM_CFLAGS) -I../"
+	$(MAKE)
+
 # You have to create a file .coveralls.yml with the content "repo_token: <the token>"
 # in the base folder to be able to submit to coveralls
 coveralls: lcov
