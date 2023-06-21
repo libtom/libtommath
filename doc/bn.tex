@@ -2658,6 +2658,12 @@ bool mp_iszero(mp_int *a)
 \end{alltt}
 Checks if $a = 0$. It does not check if the amount of memory allocated for $a$ is also minimal.
 
+\index{mp\_isone}
+\begin{alltt}
+bool mp_isone(mp_int *a)
+\end{alltt}
+Checks if $a = 1$.
+
 Other macros which are either shortcuts to normal functions or just other names for them do have
 their place in a programmer's life, too!
 
