@@ -79,9 +79,7 @@ profiled_single: amalgamated_timing
 	$(CC) $(LTM_CFLAGS) -fbranch-probabilities -c pre_gen/tommath_amalgam.c -o tommath_amalgam.o
 	$(AR) $(ARFLAGS) $(LIBNAME) tommath_amalgam.o
 
-install: $(LIBNAME)
-	install -d $(DESTDIR)$(LIBPATH)
-	install -d $(DESTDIR)$(INCPATH)
+install: $(LIBNAME) .install_common
 	install -m 644 $(LIBNAME) $(DESTDIR)$(LIBPATH)
 	install -m 644 $(HEADERS_PUB) $(DESTDIR)$(INCPATH)
 
@@ -114,9 +112,6 @@ tune: $(LIBNAME)
 coveralls: lcov
 	coveralls-lcov
 
-docs manual:
-	$(MAKE) -C doc/ $@ V=$(V)
-
 .PHONY: pre_gen cmp
 pre_gen:
 	mkdir -p pre_gen
@@ -127,6 +122,7 @@ cmp: profiled_single
 	./timing
 	$(MAKE) -C logs/ cmp
 
+TODAY=$(shell date -I)
 zipup: clean astyle new_file docs
 	@# Update the index, so diff-index won't fail in case the pdf has been created.
 	@#   As the pdf creation modifies the tex files, git sometimes detects the
@@ -140,6 +136,7 @@ zipup: clean astyle new_file docs
 	-@(find libtommath-$(VERSION)/ -type f | xargs grep 'FIXM[E]') && echo '############## BEWARE: the "fixme" marker was found !!! ##############' || true
 	mkdir -p libtommath-$(VERSION)/doc
 	cp doc/bn.pdf libtommath-$(VERSION)/doc/
+	sed -e "s,^Version.*,Version $(VERSION)," -e "s,2003-28-02,$(TODAY)," doc/tommath.3 > libtommath-$(VERSION)/doc/tommath.3
 	$(MAKE) -C libtommath-$(VERSION)/ pre_gen
 	tar -c libtommath-$(VERSION)/ | xz -6e -c - > ltm-$(VERSION).tar.xz
 	zip -9rq ltm-$(VERSION).zip libtommath-$(VERSION)

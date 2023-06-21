@@ -105,6 +105,7 @@ MARKER
 
 sub check_doc {
   my $fails = 0;
+  my $man = read_file('doc/tommath.3');
   my $tex = read_file('doc/bn.tex');
   my $tmh = read_file('tommath.h');
   my @functions = $tmh =~ /\n\s*[a-zA-Z0-9_* ]+?(mp_[a-z0-9_]+)\s*\([^\)]+\)\s*[MP_WUR]+?;/sg;
@@ -120,6 +121,18 @@ sub check_doc {
     (my $nn = $n) =~ s/_/\\_/g; # mp_iszero >> mp\_iszero
     if ($tex !~ /index\Q{$nn}\E/) {
       warn "[missing_doc_for_macro] $n\n";
+      $fails++
+    }
+  }
+  for my $n (sort @functions) {
+    if ($man !~ /.BI.*$n/) {
+      warn "[missing_man_entry_for_function] $n\n";
+      $fails++
+    }
+  }
+  for my $n (sort @macros) {
+    if ($man !~ /.BI.*$n/) {
+      warn "[missing_man_entry_for_macro] $n\n";
       $fails++
     }
   }
