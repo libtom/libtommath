@@ -138,11 +138,27 @@ HEADERS=tommath_private.h tommath_class.h tommath_superclass.h tommath_cutoffs.h
 #LIBPATH  The directory for libtommath to be installed to.
 #INCPATH  The directory to install the header files for libtommath.
 #DATAPATH The directory to install the pdf docs.
+#MANPATH The directory to install the manfile.
 DESTDIR  ?=
 PREFIX   ?= /usr/local
 LIBPATH  ?= $(PREFIX)/lib
 INCPATH  ?= $(PREFIX)/include
 DATAPATH ?= $(PREFIX)/share/doc/libtommath/pdf
+MANPATH ?= $(PREFIX)/share/man
+
+.install_common:
+	install -d $(DESTDIR)$(LIBPATH)
+	install -d $(DESTDIR)$(INCPATH)
+
+install_docs: manual
+	install -d $(DESTDIR)$(DATAPATH)
+	install -p -m 644 doc/bn.pdf $(DESTDIR)$(DATAPATH)
+	install -d $(DESTDIR)$(MANPATH)
+	install -p -m 644 doc/tommath.3 $(DESTDIR)$(MANPATH)/man3
+
+
+docs manual:
+	$(MAKE) -C doc/ $@ V=$(V)
 
 # build & run test-suite
 check: test
