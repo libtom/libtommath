@@ -8,20 +8,29 @@
 #include <time.h>
 #include "../tommath_private.h"
 
-static mp_digit prime_digit(void)
+static void mp_print(const char *s, const mp_int *a, int radix, FILE *stream)
 {
-   int n;
+   mp_err err;
+   fputs(s, stream);
+   err = mp_fwrite(a, radix, stream);
+   if (err != MP_OKAY) {
+      fprintf(stderr,"mp_fwrite in mp_print failed. error = %s\n", mp_error_to_string(err));
+      exit(EXIT_FAILURE);
+   }
+   fputc('\n',stream);
+}
+
+static mp_digit prime_digit(int bits)
+{
    mp_digit d = 0;
    mp_int a;
    mp_err err;
 
-   n = abs(rand()) % MP_MASK;
-   if ((err = mp_init_ul(&a, (unsigned long)n)) != MP_OKAY)                                                goto LTM_ERR;
-   if ((err = mp_prime_next_prime(&a, -1, false)) != MP_OKAY)                                              goto LTM_ERR;
-   while (a.used > 1) {
-      if ((err = mp_div_2(&a, &a)) != MP_OKAY)                                                             goto LTM_ERR;
-      if ((err = mp_prime_next_prime(&a, -1, false)) != MP_OKAY)                                           goto LTM_ERR;
+   if ((err = mp_init(&a)) != MP_OKAY)  {
+      return 0;
    }
+
+   if ((err = mp_prime_rand(&a, 1, bits, false)) != MP_OKAY)                                               goto LTM_ERR;
    d = a.dp[0];
 
 LTM_ERR:
@@ -35,12 +44,14 @@ static mp_err pprime(int k, int li, mp_int *p, mp_int *q)
 {
    mp_int  a, b, c, n, x, y, z, v;
    mp_err  err = MP_OKAY;
-   int     ii;
-   static const mp_digit bases[] = { 2, 3, 5, 7, 11, 13, 17, 19 };
+   int     ii, bits;
 
    /* single digit ? */
-   if (k <= (int) MP_DIGIT_BIT) {
-      mp_set(p, prime_digit());
+   if (k < (int) MP_DIGIT_BIT) {
+      mp_set(p, prime_digit(k));
+      if (mp_iszero(p)) {
+         return MP_VAL;
+      }
       return MP_OKAY;
    }
 
@@ -54,14 +65,27 @@ static mp_err pprime(int k, int li, mp_int *p, mp_int *q)
    }
 
    /* set the prime */
-   mp_set(&a, prime_digit());
+   mp_set(&a, prime_digit(MP_DIGIT_BIT));
+   if (mp_iszero(&a)) {
+      err = MP_VAL;
+      goto LTM_ERR;
+   }
 
    /* now loop making the single digit */
    while (mp_count_bits(&a) < k) {
-      fprintf(stderr, "prime has %4d bits left\r", k - mp_count_bits(&a));
+      bits = k - mp_count_bits(&a);
+      fprintf(stderr, "prime has %4d bits left\r", bits);
       fflush(stderr);
 top:
-      mp_set(&b, prime_digit());
+      if (bits < MP_DIGIT_BIT) {
+         mp_set(&b, prime_digit(bits));
+      } else {
+         mp_set(&b, prime_digit(MP_DIGIT_BIT));
+      }
+      if (mp_iszero(&b)) {
+         err = MP_VAL;
+         goto LTM_ERR;
+      }
 
       /* now compute z = a * b * 2 */
       /* z = a * b */
@@ -78,10 +102,10 @@ top:
       if (mp_cmp_d(&y, 1uL) != MP_EQ) {
          goto top;
       }
-
+      mp_set(&x, 2u);
       /* now try base x=bases[ii]  */
       for (ii = 0; ii < li; ii++) {
-         mp_set(&x, bases[ii]);
+         if ((err = mp_prime_next_prime(&x, -1, false)) != MP_OKAY)                                        goto LTM_ERR;
 
          /* compute x^a mod n; y = x^a mod n */
          if ((err = mp_exptmod(&x, &a, &n, &y)) != MP_OKAY)                                                goto LTM_ERR;
@@ -132,17 +156,11 @@ top:
          goto top;
       }
 
-      {
-         char buf[4096];
-
-         if ((err = mp_to_decimal(&n, buf, sizeof(buf))) != MP_OKAY)                                       goto LTM_ERR;
-         printf("Certificate of primality for:\n%s\n\n", buf);
-         if ((err = mp_to_decimal(&a, buf, sizeof(buf))) != MP_OKAY)                                       goto LTM_ERR;
-         printf("A == \n%s\n\n", buf);
-         if ((err = mp_to_decimal(&b, buf, sizeof(buf))) != MP_OKAY)                                       goto LTM_ERR;
-         printf("B == \n%s\n\nG == %lu\n", buf, bases[ii]);
-         printf("----------------------------------------------------------------\n");
-      }
+      mp_print("Certificate of primality for:\n ", &n, 10, stdout);
+      mp_print("A == ", &a, 10, stdout);
+      mp_print("B == ", &b, 10, stdout);
+      mp_print("G == ", &x, 10, stdout);
+      printf("----------------------------------------------------------------\n");
 
       /* a = n */
       if ((err = mp_copy(&n, &a)) != MP_OKAY)                                                              goto LTM_ERR;
@@ -170,29 +188,28 @@ int main(void)
    int     k, li;
    clock_t t1;
 
-   srand(time(NULL));
-
    printf("Enter # of bits: \n");
    fgets(buf, sizeof(buf), stdin);
    sscanf(buf, "%d", &k);
 
-   printf("Enter number of bases to try (1 to 8):\n");
+   printf("Enter number of bases to try\n");
    fgets(buf, sizeof(buf), stdin);
    sscanf(buf, "%d", &li);
 
 
-   if ((err = mp_init_multi(&p, &q, NULL)) != MP_OKAY)                                                    goto LTM_ERR;
+   if ((err = mp_init_multi(&p, &q, NULL)) != MP_OKAY)                                                     goto LTM_ERR;
 
    t1 = clock();
-   pprime(k, li, &p, &q);
+   if ((err = pprime(k, li, &p, &q)) != MP_OKAY) {
+      fprintf(stderr, "Something went wrong in function pprime: %s\n", mp_error_to_string(err));
+      goto LTM_ERR;
+   }
    t1 = clock() - t1;
 
    printf("\n\nTook %lu ticks, %d bits\n", t1, mp_count_bits(&p));
 
-   if ((err = mp_to_decimal(&p, buf, sizeof(buf))) != MP_OKAY)                                            goto LTM_ERR;
-   printf("P == %s\n", buf);
-   if ((err = mp_to_decimal(&q, buf, sizeof(buf))) != MP_OKAY)                                            goto LTM_ERR;
-   printf("Q == %s\n", buf);
+   mp_print("P == ", &p, 10, stdout);
+   mp_print("Q == ", &q, 10, stdout);
 
    mp_clear_multi(&p, &q, NULL);
    exit(EXIT_SUCCESS);
