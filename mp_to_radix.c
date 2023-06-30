@@ -47,7 +47,9 @@ mp_err mp_to_radix(const mp_int *a, char *str, size_t maxlen, size_t *written, i
       if ((err = s_mp_faster_to_radix(&a_bar, str, maxlen, &part_written, radix)) != MP_OKAY)            goto LBL_ERR;
    } else {
       if (MP_HAS(S_MP_SLOWER_TO_RADIX)) {
+         char *start = str;
          if ((err = s_mp_slower_to_radix(&a_bar, &str, &maxlen, &part_written, radix, false)) != MP_OKAY) goto LBL_ERR;
+         str = start;
          /* part_written does not count EOS */
          part_written++;
       }

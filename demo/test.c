@@ -1158,7 +1158,7 @@ static int test_mp_read_radix(void)
    size_t written, maxlen;
    int bignum, i;
 
-   char *buffer, *bcpy;
+   char *buffer, *bcpy, *startb;
 
    clock_t start, stop, t_slow, t_fast;
 
@@ -1191,18 +1191,19 @@ static int test_mp_read_radix(void)
 
    /* Test the fast method with a slightly larger number */
 
-   /* Must be bigger than the cut-off value, of course */
-   bignum = (2 * 20 * MP_RADIX_BARRETT_START_MULTIPLICATOR)  * 10;
+   /* Needs to be big enough to make a sufficiently large timing difference */
+   bignum = 30000;
    buffer = (char *)malloc((size_t)(bignum + 2));
    if (buffer == NULL) {
       goto LBL_ERR;
    }
    DO(mp_rand(&a, bignum / MP_DIGIT_BIT));
-   printf("\nNumber of limbs in &b = %d, bit_count of &b = %d\n", bignum / MP_DIGIT_BIT, mp_count_bits(&a));
+   fprintf(stderr,"\nNumber of limbs in &b = %d, bit_count of &b = %d\n", bignum / MP_DIGIT_BIT, mp_count_bits(&a));
    start = clock();
    for (i = 2; i < 65; i++) {
       /* printf("FAST radix = %d\n",i); */
       DO(mp_to_radix(&a, buffer, (size_t)(bignum + 1), &written, i));
+      mp_zero(&b);
       DO(mp_read_radix(&b, buffer, i));
       EXPECT(mp_cmp(&a, &b) == MP_EQ);
    }
@@ -1215,7 +1216,11 @@ static int test_mp_read_radix(void)
       /* printf("SLOW radix = %d\n",i); */
       maxlen = (size_t)(bignum + 1);
       bcpy = buffer;
+      /* s_mp_slower_to_radix is very rudimentary as a stand-alone */
+      startb = bcpy;
       DO(s_mp_slower_to_radix(&a, &bcpy, &maxlen, &written, i, false));
+      bcpy = startb;
+      mp_zero(&b);
       DO(s_mp_slower_read_radix(&b, bcpy, 0, strlen(bcpy), i));
       EXPECT(mp_cmp(&a, &b) == MP_EQ);
    }
@@ -1226,7 +1231,7 @@ static int test_mp_read_radix(void)
    fprintf(stderr,"SLOW: %.10f, FAST: %.10f\n", (double)t_slow/(double)CLOCKS_PER_SEC,
            (double)t_fast/(double)CLOCKS_PER_SEC);
 
-   /* Check if the branching works.
+   /* Check if the branching works. */
    if (MP_HAS(S_MP_FASTER_READ_RADIX) && MP_HAS(S_MP_FASTER_TO_RADIX)) {
       if (t_fast > t_slow) {
          fprintf(stderr, "Timing suspicious in test_mp_read_radix. No fast multiplication? Cut-off too low?\n");
@@ -1234,7 +1239,6 @@ static int test_mp_read_radix(void)
          goto LBL_ERR;
       }
    }
-   */
 
    free(buffer);
 

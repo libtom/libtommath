@@ -3,7 +3,7 @@
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
-/* TODO: It is tunable */
+/* TODO: It is tunable. Or is it? */
 #define MP_READ_RADIX_CUTOFF_MULTIPLICATOR 3
 
 /* for(n=2,64,t = ceil(log(2^100)/log(n)); printf(t", "); ) */
@@ -41,8 +41,8 @@ mp_err s_mp_faster_read_radix(mp_int *a, const char *str, size_t start, size_t e
       return err;
    }
 
-   if ((err = s_mp_slower_read_radix(&A, str, start, start + mid + 1, radix)) != MP_OKAY)                goto LTM_ERR;
-   if ((err = s_mp_slower_read_radix(&B, str, start + mid +1, end, radix)) != MP_OKAY)                   goto LTM_ERR;
+   if ((err = s_mp_faster_read_radix(&A, str, start, start + mid + 1, radix)) != MP_OKAY)                goto LTM_ERR;
+   if ((err = s_mp_faster_read_radix(&B, str, start + mid +1, end, radix)) != MP_OKAY)                   goto LTM_ERR;
 
    if (MP_IS_2EXPT(radix_)) {
       if ((err = mp_mul_2d(&A, (int)(((len - mid) - 1u) * s_mp_floor_ilog2(radix_)), &A)) != MP_OKAY)    goto LTM_ERR;

@@ -20,29 +20,30 @@ mp_err s_mp_slower_to_radix(const mp_int *a, char **str,
    mp_int t;
    mp_digit d;
    mp_err err = MP_OKAY;
-
-   /* The number of digits of "radix" to be filled if this chunk is not the most significant one. */
-   int ybar = s_mp_radix_exponent_y[radix] * MP_RADIX_BARRETT_START_MULTIPLICATOR;
+   int ybar = 0;
 
    /* A temporary pointer to the output string to make reversal simpler */
    char *s = *str;
 
-   /* TODO: input a is already a copy of the original and we could use it destructively? */
+   /* The number of digits of "radix" to be filled if this chunk is not the most significant one. */
+   if (pad) {
+      ybar = s_mp_radix_exponent_y[radix] * MP_RADIX_BARRETT_START_MULTIPLICATOR;
+   }
+
    if ((err = mp_init_copy(&t, a)) != MP_OKAY)                                                           goto LTM_ERR;
 
    while (!mp_iszero(&t)) {
-      /* TODO: this method to decrease "maxlen" is not threadsafe! */
       if ((--(*part_maxlen)) < 1u) {
          /* no more room */
          err = MP_BUF;
          goto LTM_ERR;
       }
-      if ((err = mp_div_d(&t, (mp_digit)radix, &t, &d)) != MP_OKAY) {
-         goto LTM_ERR;
-      }
+      if ((err = mp_div_d(&t, (mp_digit)radix, &t, &d)) != MP_OKAY)                                      goto LTM_ERR;
       *s++ = s_mp_radix_map[d];
       ++digs;
-      ybar--;
+      if (pad) {
+         ybar--;
+      }
    }
 
    /* Fill in leading zeros if this chunk does not contain the most significant digits. */
@@ -53,7 +54,6 @@ mp_err s_mp_slower_to_radix(const mp_int *a, char **str,
       }
    }
 
-   /* TODO: I think that can be done more elegantly */
    /* "rewind" */
    s = *str;
    /* reverse */
@@ -63,7 +63,6 @@ mp_err s_mp_slower_to_radix(const mp_int *a, char **str,
    /* Add EOS at the end of every chunk to allow this function to be used stand-alone */
    **str = '\0';
 
-   /* TODO: this method to increase "written" is not threadsafe! */
    if (part_written != NULL) {
       *part_written = *part_written + digs;
    }
