@@ -1229,11 +1229,20 @@ LBL_ERR:
 static int test_mp_reduce_2k(void)
 {
    int ix, cnt;
+   bool is2k;
 
    mp_int a, b, c, d;
    DOR(mp_init_multi(&a, &b, &c, &d, NULL));
 
    /* test mp_reduce_2k */
+
+   /* Algorithm as implemented does not work if the least significant digit is zero */
+   DO(mp_2expt(&a, 100));
+   DO(mp_sub_d(&a, 1, &a));
+   DO(mp_sub_d(&a, MP_MASK, &a));
+   is2k = mp_reduce_is_2k(&a);
+   EXPECT(!is2k);
+
    for (cnt = 3; cnt <= 128; ++cnt) {
       mp_digit tmp;
 
