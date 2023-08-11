@@ -499,7 +499,7 @@ typedef uint64_t mp_hval;
 #endif
 
 /* computes hash */
-mp_err mp_hash(mp_int *a, mp_hval *hash) MP_WUR;
+mp_err mp_hash(const mp_int *a, mp_hval *hash) MP_WUR;
 
 /* ---> Primes <--- */
 
