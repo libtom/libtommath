@@ -369,7 +369,7 @@ Returns \fBMP_MEM\fP if the functions fails to allocate enough memory.
 .in -1i
 
 .LP
-.BI "mp_err mp_hash (mp_int *" a ", mp_hval *" hash ")"
+.BI "mp_err mp_hash (const mp_int *" a ", mp_hval *" hash ")"
 .in 1i
 This will create the hash of \fBa\fP following the \fIFNV-1a\fP algorithm as described on
 \fIhttp://www.isthe.com/chongo/tech/comp/fnv/index.html#FNV-1a\fP. With the
