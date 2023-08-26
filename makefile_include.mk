@@ -86,8 +86,11 @@ LTM_CFLAGS  += -fomit-frame-pointer
 endif
 
 ifdef COMPILE_LTO
-LTM_CFLAGS += -flto
-LTM_LDFLAGS += -flto
+ifeq ($(findstring clang,$(CC)),)
+LTO_ARG = "=auto"
+endif
+LTM_CFLAGS += -flto$(LTO_ARG)
+LTM_LDFLAGS += -flto$(LTO_ARG)
 AR = $(subst clang,llvm-ar,$(subst gcc,gcc-ar,$(CC)))
 endif
 
