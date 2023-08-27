@@ -12,7 +12,7 @@
 #endif
 
 /* computes hash of mp_int. */
-mp_err mp_hash(mp_int *a, mp_hval *hash)
+mp_err mp_hash(const mp_int *a, mp_hval *hash)
 {
    int  x;
    mp_hval hval = FNV_1A_INIT;
