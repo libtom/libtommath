@@ -20,7 +20,7 @@ ARFLAGS   = rcs
 CFLAGS    = -O2
 LDFLAGS   =
 
-VERSION   = 1.2.0
+VERSION   = 1.2.1
 
 #Compilation flags
 LTM_CFLAGS  = -I. $(CFLAGS)
