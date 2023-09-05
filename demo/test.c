@@ -14,14 +14,19 @@ static long rand_long(void)
    return x;
 }
 
-static int rand_int(void)
+static unsigned int rand_uint(void)
 {
-   int x;
+   unsigned int x;
    if (s_mp_rand_jenkins(&x, sizeof(x)) != MP_OKAY) {
       fprintf(stderr, "s_mp_rand_source failed\n");
       exit(EXIT_FAILURE);
    }
    return x;
+}
+
+static int rand_int(void)
+{
+   return (int)rand_uint();
 }
 
 static int32_t rand_int32(void)
@@ -448,7 +453,7 @@ static int test_mp_signed_rsh(void)
       l = rand_long();
       mp_set_l(&a, l);
 
-      em = abs(rand_int()) % 32;
+      em = rand_uint() % 32;
 
       mp_set_l(&d, l >> em);
 
@@ -1091,7 +1096,8 @@ LBL_ERR:
 static int test_mp_montgomery_reduce(void)
 {
    mp_digit mp;
-   int ix, i, n;
+   int ix, n;
+   unsigned int i;
    char buf[4096];
 
    /* size_t written; */
@@ -1106,7 +1112,7 @@ static int test_mp_montgomery_reduce(void)
       printf(" digit size: %2d\r", i);
       fflush(stdout);
       for (n = 0; n < 1000; n++) {
-         DO(mp_rand(&a, i));
+         DO(mp_rand(&a, (int)i));
          a.dp[0] |= 1;
 
          /* let's see if R is right */
@@ -1115,7 +1121,7 @@ static int test_mp_montgomery_reduce(void)
 
          /* now test a random reduction */
          for (ix = 0; ix < 100; ix++) {
-            DO(mp_rand(&c, 1 + (abs(rand_int()) % (2*i))));
+            DO(mp_rand(&c, 1 + (int)(rand_uint() % (2*i))));
             DO(mp_copy(&c, &d));
             DO(mp_copy(&c, &e));
 
@@ -1274,7 +1280,7 @@ static int test_s_mp_div_3(void)
          printf("\r %9d", cnt);
          fflush(stdout);
       }
-      DO(mp_rand(&a, (abs(rand_int()) % 128) + 1));
+      DO(mp_rand(&a, (int)(rand_uint() % 128) + 1));
       DO(mp_div(&a, &d, &b, &e));
       DO(s_mp_div_3(&a, &c, &r2));
 
