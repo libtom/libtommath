@@ -160,8 +160,13 @@ MP_STATIC_ASSERT(correct_word_size, sizeof(mp_word) == (2u * sizeof(mp_digit)))
  * - Must be large enough such that the mp_set_u64 setter can
  *   store uint64_t in the mp_int without growing
  */
-#define MP_MIN_DIGIT_COUNT MP_MAX(3, (((int)MP_SIZEOF_BITS(uint64_t) + MP_DIGIT_BIT) - 1) / MP_DIGIT_BIT)
+#ifndef MP_MIN_DIGIT_COUNT
+#    define MP_MIN_DIGIT_COUNT MP_MAX(3, (((int)MP_SIZEOF_BITS(uint64_t) + MP_DIGIT_BIT) - 1) / MP_DIGIT_BIT)
+#endif
 MP_STATIC_ASSERT(prec_geq_min_prec, MP_DEFAULT_DIGIT_COUNT >= MP_MIN_DIGIT_COUNT)
+MP_STATIC_ASSERT(min_prec_geq_3, MP_MIN_DIGIT_COUNT >= 3)
+MP_STATIC_ASSERT(min_prec_geq_uint64size,
+                 MP_MIN_DIGIT_COUNT >= ((((int)MP_SIZEOF_BITS(uint64_t) + MP_DIGIT_BIT) - 1) / MP_DIGIT_BIT))
 
 /* Maximum number of digits.
  * - Must be small enough such that mp_bit_count does not overflow.
