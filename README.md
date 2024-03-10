@@ -30,8 +30,14 @@ Use those packages with caution and at your own discretion.
 
 The `develop` branch contains the in-development version. Stable releases are tagged.
 
-Documentation is built from the LaTeX file `bn.tex`. There is also limited documentation in `tommath.h`.
-There is also a document, `tommath.pdf`, which describes the goals of the project and many of the algorithms used.
+Documentation is built from the LaTeX file `doc/bn.tex` and available as PDF for each release.
+This PDF is also created as build artifact on each CI run.
+
+There is also limited documentation in `tommath.h`.
+
+Originally the library contained a document, `tommath.pdf`, which describes the goals of the project and many of the algorithms used at the time.
+This document has been removed since it can't be built anymore and nobody spent the time to fix and update it.
+The latest valid update to that document was done in version [`0.39`](https://github.com/libtom/libtommath/releases/tag/0.39) of the library and it is contained within that tarball.
 
 The project can be build by using `make`. Along with the usual `make`, `make clean` and `make install`,
 there are several other build targets, see the makefile for details.
