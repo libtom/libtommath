@@ -57,7 +57,9 @@ static mp_err is_mersenne(long s, bool *pp)
 
    /* if u == 0 then its prime */
    if (mp_iszero(&u)) {
-      mp_prime_is_prime(&n, 8, pp);
+      if ((res = mp_prime_is_prime(&n, 8, pp)) != MP_OKAY) {
+         goto LBL_MU;
+      }
       if (!*pp) printf("FAILURE\n");
    }
 

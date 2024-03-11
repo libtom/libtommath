@@ -6,6 +6,8 @@ LTM_TUNE_CFLAGS = $(CFLAGS) $(LTM_CFLAGS) -Wall -W -Wextra -Wshadow -O3 -I../
 # libname when you can't install the lib with install
 LIBNAME=../libtommath.a
 
+all: pprime tune test_standalone mersenne drprime 2kprime mont
+
 #provable primes
 pprime: pprime.o
 	$(CC) $(LTM_TUNE_CFLAGS) pprime.o $(LIBNAME) -o pprime

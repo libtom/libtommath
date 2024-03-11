@@ -10,16 +10,17 @@ int main(void)
    char buf[4096];
    FILE *out;
    mp_int a, b;
+   mp_err err;
 
-   mp_init(&a);
-   mp_init(&b);
+   if ((err = mp_init(&a)) != MP_OKAY)                                                                     goto LTM_ERR;
+   if ((err = mp_init(&b)) != MP_OKAY)                                                                     goto LTM_ERR;
 
    out = fopen("drprimes.txt", "w");
    if (out != NULL) {
       for (x = 0; x < (int)(sizeof(sizes)/sizeof(sizes[0])); x++) {
 top:
          printf("Seeking a %d-bit safe prime\n", sizes[x] * MP_DIGIT_BIT);
-         mp_grow(&a, sizes[x]);
+         if ((err = mp_grow(&a, sizes[x])) != MP_OKAY)                                                     goto LTM_ERR;
          mp_zero(&a);
          for (y = 1; y < sizes[x]; y++) {
             a.dp[y] = MP_MASK;
@@ -34,15 +35,15 @@ top:
          for (;;) {
             a.dp[0] += 4uL;
             if (a.dp[0] >= MP_MASK) break;
-            mp_prime_is_prime(&a, 1, &res);
+            if ((err = mp_prime_is_prime(&a, 1, &res)) != MP_OKAY)                                         goto LTM_ERR;
             if (!res) continue;
             printf(".");
             fflush(stdout);
-            mp_sub_d(&a, 1uL, &b);
-            mp_div_2(&b, &b);
-            mp_prime_is_prime(&b, 3, &res);
+            if ((err = mp_sub_d(&a, 1uL, &b)) != MP_OKAY)                                                  goto LTM_ERR;
+            if ((err = mp_div_2(&b, &b)) != MP_OKAY)                                                       goto LTM_ERR;
+            if ((err = mp_prime_is_prime(&b, 3, &res)) != MP_OKAY)                                         goto LTM_ERR;
             if (!res) continue;
-            mp_prime_is_prime(&a, 3, &res);
+            if ((err = mp_prime_is_prime(&a, 3, &res)) != MP_OKAY)                                         goto LTM_ERR;
             if (res) break;
          }
 
@@ -51,7 +52,7 @@ top:
             sizes[x] += 1;
             goto top;
          } else {
-            mp_to_decimal(&a, buf, sizeof(buf));
+            if ((err = mp_to_decimal(&a, buf, sizeof(buf))) != MP_OKAY)                                    goto LTM_ERR;
             printf("\n\np == %s\n\n", buf);
             fprintf(out, "%d-bit prime:\np == %s\n\n", mp_count_bits(&a), buf);
             fflush(out);
@@ -60,6 +61,7 @@ top:
       fclose(out);
    }
 
+LTM_ERR:
    mp_clear(&a);
    mp_clear(&b);
 
