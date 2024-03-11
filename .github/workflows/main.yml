@@ -29,7 +29,7 @@ jobs:
     runs-on: ubuntu-20.04
     container: texlive/texlive:latest-full
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: generate PDF
         run: |
           make docs V=1
@@ -129,7 +129,7 @@ jobs:
           - { BUILDOPTIONS: '--with-cc=clang --cflags=-DMP_16BIT --limit-valgrind',                                              SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: 'clang llvm' }
           - { BUILDOPTIONS: '--with-cc=clang --cflags=-DMP_32BIT --limit-valgrind',                                              SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: 'clang llvm' }
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: install dependencies
         run: |
           sudo apt-get update -qq
@@ -172,7 +172,7 @@ jobs:
   amalgam:
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: install dependencies
         run: |
           make amalgamated_timing
@@ -190,7 +190,7 @@ jobs:
           # Shared library build
           - { CMAKEOPTIONS: '-DBUILD_SHARED_LIBS=On'  }
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: install dependencies
         run: |
           sudo apt-get update -qq
