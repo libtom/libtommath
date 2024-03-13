@@ -389,6 +389,11 @@ EOS
                 push @deps, $a;
             }
         }
+        if ($filename =~ "BN_DEPRECATED") {
+            push(@deps, qw(BN_MP_GET_LL_C BN_MP_INIT_LL_C BN_MP_SET_LL_C));
+            push(@deps, qw(BN_MP_GET_MAG_ULL_C BN_MP_INIT_ULL_C BN_MP_SET_ULL_C));
+            push(@deps, qw(BN_MP_DIV_3_C BN_MP_EXPT_U32_C BN_MP_ROOT_U32_C BN_MP_LOG_U32_C));
+        }
         @deps = sort(@deps);
         foreach my $a (@deps) {
             if ($list !~ /$a/) {
@@ -435,6 +440,8 @@ sub generate_def {
     @files = grep(!/mp_radix_smap/, @files);
 
     push(@files, qw(mp_set_int mp_set_long mp_set_long_long mp_get_int mp_get_long mp_get_long_long mp_init_set_int));
+    push(@files, qw(mp_get_ll mp_get_mag_ull mp_init_ll mp_set_ll mp_init_ull mp_set_ull));
+    push(@files, qw(mp_div_3 mp_expt_u32 mp_root_u32 mp_log_u32));
 
     my $files = join("\n    ", sort(grep(/^mp_/, @files)));
     write_file "tommath.def", "; libtommath

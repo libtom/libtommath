@@ -1578,8 +1578,7 @@ static mp_err s_rs(const mp_int *a, int radix, int *size)
 static int test_mp_log_n(void)
 {
    mp_int a;
-   mp_digit d;
-   int base, lb, size;
+   int base, lb, size, d;
    const int max_base = MP_MIN(INT_MAX, MP_DIGIT_MAX);
 
    if (mp_init(&a) != MP_OKAY) {
@@ -1614,11 +1613,11 @@ static int test_mp_log_n(void)
    }
 
    for (d = 1; d < 4; d++) {
-      mp_set(&a, d);
-      if (mp_root_n(&a, base, &lb) != MP_OKAY) {
+      mp_set_i32(&a, d);
+      if (mp_log_n(&a, base, &lb) != MP_OKAY) {
          goto LBL_ERR;
       }
-      if (lb != ((d == 1)?0uL:1uL)) {
+      if (lb != ((d == 1)?0:1)) {
          goto LBL_ERR;
       }
    }
@@ -1635,11 +1634,11 @@ static int test_mp_log_n(void)
       goto LBL_ERR;
    }
    for (d = 1; d < 4; d++) {
-      mp_set(&a, d);
-      if (mp_root_n(&a, base, &lb) != MP_OKAY) {
+      mp_set_i32(&a, d);
+      if (mp_log_n(&a, base, &lb) != MP_OKAY) {
          goto LBL_ERR;
       }
-      if (lb != ((d < base)?0uL:1uL)) {
+      if (lb != ((d < base)?0:1)) {
          goto LBL_ERR;
       }
    }
@@ -1652,8 +1651,8 @@ static int test_mp_log_n(void)
    if (mp_rand(&a, 10) != MP_OKAY) {
       goto LBL_ERR;
    }
-   for (base = 2u; base < 65u; base++) {
-      if (mp_root_n(&a, base, &lb) != MP_OKAY) {
+   for (base = 2; base < 65; base++) {
+      if (mp_log_n(&a, base, &lb) != MP_OKAY) {
          goto LBL_ERR;
       }
       if (s_rs(&a,(int)base, &size) != MP_OKAY) {
@@ -1673,8 +1672,8 @@ static int test_mp_log_n(void)
    if (mp_rand(&a, 1) != MP_OKAY) {
       goto LBL_ERR;
    }
-   for (base = 2u; base < 65u; base++) {
-      if (mp_root_n(&a, base, &lb) != MP_OKAY) {
+   for (base = 2; base < 65; base++) {
+      if (mp_log_n(&a, base, &lb) != MP_OKAY) {
          goto LBL_ERR;
       }
       if (s_rs(&a,(int)base, &size) != MP_OKAY) {
@@ -1688,16 +1687,16 @@ static int test_mp_log_n(void)
 
    /*Test upper edgecase with base UINT32_MAX and number (UINT32_MAX/2)*UINT32_MAX^10  */
    mp_set(&a, max_base);
-   if (mp_root_n(&a, 10u, &a) != MP_OKAY) {
+   if (mp_expt_n(&a, 10, &a) != MP_OKAY) {
       goto LBL_ERR;
    }
    if (mp_add_d(&a, max_base / 2, &a) != MP_OKAY) {
       goto LBL_ERR;
    }
-   if (mp_log_u32(&a, max_base, &lb) != MP_OKAY) {
+   if (mp_log_n(&a, max_base, &lb) != MP_OKAY) {
       goto LBL_ERR;
    }
-   if (lb != 10u) {
+   if (lb != 10) {
       goto LBL_ERR;
    }
 
@@ -2465,7 +2464,7 @@ static int unit_tests(int argc, char **argv)
       T1(mp_set_double, MP_SET_DOUBLE),
 #endif
       T1(mp_signed_rsh, MP_SIGNED_RSH),
-      T2(mp_sqrt, MP_SQRT, mp_root_n),
+      T2(mp_sqrt, MP_SQRT, MP_ROOT_N),
       T1(mp_sqrtmod_prime, MP_SQRTMOD_PRIME),
       T1(mp_xor, MP_XOR),
       T1(s_mp_balance_mul, S_MP_BALANCE_MUL),

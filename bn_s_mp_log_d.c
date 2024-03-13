@@ -1,5 +1,5 @@
 #include "tommath_private.h"
-#ifdef S_MP_LOG_D_C
+#ifdef BN_S_MP_LOG_D_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
