@@ -1383,7 +1383,7 @@ LBL_ERR:
    return EXIT_FAILURE;
 }
 
-static int test_mp_div_3(void)
+static int test_s_mp_div_3(void)
 {
    int cnt;
 
@@ -1392,7 +1392,7 @@ static int test_mp_div_3(void)
       return EXIT_FAILURE;
    }
 
-   /* test mp_div_3  */
+   /* test s_mp_div_3  */
    mp_set(&d, 3uL);
    for (cnt = 0; cnt < 10000;) {
       mp_digit r2;
@@ -1403,10 +1403,10 @@ static int test_mp_div_3(void)
       }
       mp_rand(&a, abs(rand_int()) % 128 + 1);
       mp_div(&a, &d, &b, &e);
-      mp_div_3(&a, &c, &r2);
+      s_mp_div_3(&a, &c, &r2);
 
       if (mp_cmp(&b, &c) || mp_cmp_d(&e, r2)) {
-         printf("\nmp_div_3 => Failure\n");
+         printf("\ns_mp_div_3 => Failure\n");
          goto LBL_ERR;
       }
    }
@@ -2437,7 +2437,7 @@ static int unit_tests(int argc, char **argv)
       T1(mp_cnt_lsb, MP_CNT_LSB),
       T1(mp_complement, MP_COMPLEMENT),
       T1(mp_decr, MP_DECR),
-      T1(mp_div_3, MP_DIV_3),
+      T1(s_mp_div_3, S_MP_DIV_3),
       T1(mp_dr_reduce, MP_DR_REDUCE),
       T2(mp_pack_unpack,MP_PACK, MP_UNPACK),
       T2(mp_fread_fwrite, MP_FREAD, MP_FWRITE),
