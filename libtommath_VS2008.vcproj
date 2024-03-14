@@ -813,6 +813,10 @@
 			>
 		</File>
 		<File
+			RelativePath="s_mp_cmpexch_n.c"
+			>
+		</File>
+		<File
 			RelativePath="s_mp_copy_digs.c"
 			>
 		</File>
