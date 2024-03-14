@@ -2451,21 +2451,6 @@ LBL_ERR:
    return EXIT_FAILURE;
 }
 
-
-#ifdef MP_TEST_LOCKING
-#ifdef MP_NO_LOCKING
-#error "Can't test locking when locking is disabled"
-#endif
-static mp_lock lock_ctx;
-static int noop_lock_unlock(void *ctx)
-{
-   EXPECT(ctx == &lock_ctx);
-   return 0;
-LBL_ERR:
-   return -1;
-}
-#endif
-
 #ifndef LTM_TEST_DYNAMIC
 #define ONLY_PUBLIC_API_C
 #endif
@@ -2540,14 +2525,6 @@ static int unit_tests(int argc, char **argv)
    unsigned long i, ok, fail, nop;
    uint64_t t;
    int j;
-#ifdef MP_TEST_LOCKING
-   lock_ctx.lock = noop_lock_unlock;
-   lock_ctx.unlock = noop_lock_unlock;
-   lock_ctx.ctx = &lock_ctx;
-
-   if (mp_warray_init(MP_WARRAY_NUM, true, &lock_ctx) != MP_OKAY)
-      return EXIT_FAILURE;
-#endif
    ok = fail = nop = 0;
 
    t = (uint64_t)time(NULL);

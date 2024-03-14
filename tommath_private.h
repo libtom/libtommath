@@ -104,6 +104,10 @@ extern void *MP_CALLOC(size_t nmemb, size_t size);
 extern void MP_FREE(void *mem, size_t size);
 #endif
 
+#ifndef MP_CMPEXCH
+#define MP_CMPEXCH(ptr, expected, desired) __atomic_compare_exchange_n(ptr, expected, desired, true, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE)
+#endif
+
 /* feature detection macro */
 #ifdef _MSC_VER
 /* Prevent false positive: not enough arguments for function-like macro invocation */
@@ -245,23 +249,12 @@ MP_PRIVATE mp_err s_mp_fp_log_d(const mp_int *a, mp_word *c) MP_WUR;
 #define MP_CHECK_WARRAY(name)
 #endif
 
-#ifdef MP_USE_LOCKING
-#define MP_USE_LOCKING_C
-#define S_MP_WARRAY_LOCK() do { if (s_mp_warray.locking_enabled) { s_mp_warray.lock.lock(s_mp_warray.lock.ctx); } } while(0)
-#define S_MP_WARRAY_UNLOCK() do { if (s_mp_warray.locking_enabled) { s_mp_warray.lock.unlock(s_mp_warray.lock.ctx); } } while(0)
-#else
-#define S_MP_WARRAY_LOCK()
-#define S_MP_WARRAY_UNLOCK()
-#endif
-
 struct warray {
    void *warray;
 };
 typedef struct {
    struct warray *l_free, *l_used;
    size_t allocated, usable;
-   bool locking_enabled;
-   mp_lock lock;
 } st_warray;
 
 extern MP_PRIVATE st_warray s_mp_warray;

@@ -969,7 +969,6 @@
 
 #if defined(MP_WARRAY_INIT_C)
 #   define S_MP_WARRAY_FREE_C
-#   define S_MP_ZERO_BUF_C
 #endif
 
 #if defined(MP_XOR_C)

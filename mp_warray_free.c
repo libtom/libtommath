@@ -10,7 +10,6 @@ static int s_warray_free(void)
 {
    int ret = 0;
    size_t n;
-   S_MP_WARRAY_LOCK();
    for (n = 0; n < s_mp_warray.allocated; ++n) {
       if (s_mp_warray.l_used[n].warray) {
          ret = -2;
@@ -23,7 +22,6 @@ static int s_warray_free(void)
    }
    s_mp_warray_free(s_mp_warray.usable);
 ERR_OUT:
-   S_MP_WARRAY_UNLOCK();
    return ret;
 }
 
