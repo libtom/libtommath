@@ -104,10 +104,6 @@ extern void *MP_CALLOC(size_t nmemb, size_t size);
 extern void MP_FREE(void *mem, size_t size);
 #endif
 
-#ifndef MP_CMPEXCH
-#define MP_CMPEXCH(ptr, expected, desired) __atomic_compare_exchange_n(ptr, expected, desired, true, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE)
-#endif
-
 /* feature detection macro */
 #ifdef _MSC_VER
 /* Prevent false positive: not enough arguments for function-like macro invocation */
@@ -237,6 +233,8 @@ MP_PRIVATE mp_err s_mp_radix_size_overestimate(const mp_int *a, const int radix,
 #define MP_UPPER_LIMIT_FIXED_LOG ( (int) ( (sizeof(mp_word) * CHAR_BIT) - 1))
 MP_PRIVATE mp_err s_mp_fp_log(const mp_int *a, mp_int *c) MP_WUR;
 MP_PRIVATE mp_err s_mp_fp_log_d(const mp_int *a, mp_word *c) MP_WUR;
+
+MP_PRIVATE bool s_mp_cmpexch_n(void **ptr, void **expected, void *desired);
 
 #ifdef MP_SMALL_STACK_SIZE
 #define MP_SMALL_STACK_SIZE_C
