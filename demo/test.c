@@ -804,7 +804,7 @@ static int test_mp_sqrt(void)
          printf("\nmp_sqrt() error!");
          goto LBL_ERR;
       }
-      mp_root_u32(&a, 2uL, &c);
+      mp_root_n(&a, 2u, &c);
       if (mp_cmp_mag(&b, &c) != MP_EQ) {
          printf("mp_sqrt() bad result!\n");
          goto LBL_ERR;
@@ -1383,7 +1383,7 @@ LBL_ERR:
    return EXIT_FAILURE;
 }
 
-static int test_mp_div_3(void)
+static int test_s_mp_div_3(void)
 {
    int cnt;
 
@@ -1392,7 +1392,7 @@ static int test_mp_div_3(void)
       return EXIT_FAILURE;
    }
 
-   /* test mp_div_3  */
+   /* test s_mp_div_3  */
    mp_set(&d, 3uL);
    for (cnt = 0; cnt < 10000;) {
       mp_digit r2;
@@ -1403,10 +1403,10 @@ static int test_mp_div_3(void)
       }
       mp_rand(&a, abs(rand_int()) % 128 + 1);
       mp_div(&a, &d, &b, &e);
-      mp_div_3(&a, &c, &r2);
+      s_mp_div_3(&a, &c, &r2);
 
       if (mp_cmp(&b, &c) || mp_cmp_d(&e, r2)) {
-         printf("\nmp_div_3 => Failure\n");
+         printf("\ns_mp_div_3 => Failure\n");
          goto LBL_ERR;
       }
    }
@@ -1545,10 +1545,10 @@ LBL_ERR:
 /* stripped down version of mp_radix_size. The faster version can be off by up t
 o +3  */
 /* TODO: This function should be removed, replaced by mp_radix_size, mp_radix_size_overestimate in 2.0 */
-static mp_err s_rs(const mp_int *a, int radix, uint32_t *size)
+static mp_err s_rs(const mp_int *a, int radix, int *size)
 {
    mp_err res;
-   uint32_t digs = 0u;
+   int digs = 0u;
    mp_int  t;
    mp_digit d;
    *size = 0u;
@@ -1557,7 +1557,7 @@ static mp_err s_rs(const mp_int *a, int radix, uint32_t *size)
       return MP_OKAY;
    }
    if (radix == 2) {
-      *size = (uint32_t)mp_count_bits(a) + 1u;
+      *size = mp_count_bits(a) + 1;
       return MP_OKAY;
    }
    if ((res = mp_init_copy(&t, a)) != MP_OKAY) {
@@ -1575,12 +1575,11 @@ static mp_err s_rs(const mp_int *a, int radix, uint32_t *size)
    *size = digs + 1;
    return MP_OKAY;
 }
-static int test_mp_log_u32(void)
+static int test_mp_log_n(void)
 {
    mp_int a;
-   mp_digit d;
-   uint32_t base, lb, size;
-   const uint32_t max_base = MP_MIN(UINT32_MAX, MP_DIGIT_MAX);
+   int base, lb, size, d;
+   const int max_base = MP_MIN(INT_MAX, MP_DIGIT_MAX);
 
    if (mp_init(&a) != MP_OKAY) {
       goto LBL_ERR;
@@ -1593,11 +1592,11 @@ static int test_mp_log_u32(void)
    */
    mp_set(&a, 42uL);
    base = 0u;
-   if (mp_log_u32(&a, base, &lb) != MP_VAL) {
+   if (mp_log_n(&a, base, &lb) != MP_VAL) {
       goto LBL_ERR;
    }
    base = 1u;
-   if (mp_log_u32(&a, base, &lb) != MP_VAL) {
+   if (mp_log_n(&a, base, &lb) != MP_VAL) {
       goto LBL_ERR;
    }
    /*
@@ -1609,16 +1608,16 @@ static int test_mp_log_u32(void)
    */
    base = 2u;
    mp_zero(&a);
-   if (mp_log_u32(&a, base, &lb) != MP_VAL) {
+   if (mp_log_n(&a, base, &lb) != MP_VAL) {
       goto LBL_ERR;
    }
 
    for (d = 1; d < 4; d++) {
-      mp_set(&a, d);
-      if (mp_log_u32(&a, base, &lb) != MP_OKAY) {
+      mp_set_i32(&a, d);
+      if (mp_log_n(&a, base, &lb) != MP_OKAY) {
          goto LBL_ERR;
       }
-      if (lb != ((d == 1)?0uL:1uL)) {
+      if (lb != ((d == 1)?0:1)) {
          goto LBL_ERR;
       }
    }
@@ -1631,15 +1630,15 @@ static int test_mp_log_u32(void)
    */
    base = 3u;
    mp_zero(&a);
-   if (mp_log_u32(&a, base, &lb) != MP_VAL) {
+   if (mp_log_n(&a, base, &lb) != MP_VAL) {
       goto LBL_ERR;
    }
    for (d = 1; d < 4; d++) {
-      mp_set(&a, d);
-      if (mp_log_u32(&a, base, &lb) != MP_OKAY) {
+      mp_set_i32(&a, d);
+      if (mp_log_n(&a, base, &lb) != MP_OKAY) {
          goto LBL_ERR;
       }
-      if (lb != ((d < base)?0uL:1uL)) {
+      if (lb != ((d < base)?0:1)) {
          goto LBL_ERR;
       }
    }
@@ -1652,8 +1651,8 @@ static int test_mp_log_u32(void)
    if (mp_rand(&a, 10) != MP_OKAY) {
       goto LBL_ERR;
    }
-   for (base = 2u; base < 65u; base++) {
-      if (mp_log_u32(&a, base, &lb) != MP_OKAY) {
+   for (base = 2; base < 65; base++) {
+      if (mp_log_n(&a, base, &lb) != MP_OKAY) {
          goto LBL_ERR;
       }
       if (s_rs(&a,(int)base, &size) != MP_OKAY) {
@@ -1673,8 +1672,8 @@ static int test_mp_log_u32(void)
    if (mp_rand(&a, 1) != MP_OKAY) {
       goto LBL_ERR;
    }
-   for (base = 2u; base < 65u; base++) {
-      if (mp_log_u32(&a, base, &lb) != MP_OKAY) {
+   for (base = 2; base < 65; base++) {
+      if (mp_log_n(&a, base, &lb) != MP_OKAY) {
          goto LBL_ERR;
       }
       if (s_rs(&a,(int)base, &size) != MP_OKAY) {
@@ -1688,16 +1687,16 @@ static int test_mp_log_u32(void)
 
    /*Test upper edgecase with base UINT32_MAX and number (UINT32_MAX/2)*UINT32_MAX^10  */
    mp_set(&a, max_base);
-   if (mp_expt_u32(&a, 10uL, &a) != MP_OKAY) {
+   if (mp_expt_n(&a, 10, &a) != MP_OKAY) {
       goto LBL_ERR;
    }
    if (mp_add_d(&a, max_base / 2, &a) != MP_OKAY) {
       goto LBL_ERR;
    }
-   if (mp_log_u32(&a, max_base, &lb) != MP_OKAY) {
+   if (mp_log_n(&a, max_base, &lb) != MP_OKAY) {
       goto LBL_ERR;
    }
-   if (lb != 10u) {
+   if (lb != 10) {
       goto LBL_ERR;
    }
 
@@ -1841,7 +1840,7 @@ LTM_ERR:
 }
 
 /*
-   Cannot test mp_exp(_d) without mp_root and vice versa.
+   Cannot test mp_exp(_d) without mp_root_n and vice versa.
    So one of the two has to be tested from scratch.
 
    Numbers generated by
@@ -1863,7 +1862,7 @@ LTM_ERR:
    low-mp branch.
 */
 
-static int test_mp_root_u32(void)
+static int test_mp_root_n(void)
 {
    mp_int a, c, r;
    mp_err e;
@@ -2066,10 +2065,10 @@ static int test_mp_root_u32(void)
 #else
       for (j = 3; j < 100; j++) {
 #endif
-         mp_root_u32(&a, (uint32_t)j, &c);
+         mp_root_n(&a, j, &c);
          mp_read_radix(&r, root[i][j-3], 10);
          if (mp_cmp(&r, &c) != MP_EQ) {
-            fprintf(stderr, "mp_root_u32 failed at input #%d, root #%d\n", i, j);
+            fprintf(stderr, "mp_root_n failed at input #%d, root #%d\n", i, j);
             goto LTM_ERR;
          }
       }
@@ -2437,20 +2436,20 @@ static int unit_tests(int argc, char **argv)
       T1(mp_cnt_lsb, MP_CNT_LSB),
       T1(mp_complement, MP_COMPLEMENT),
       T1(mp_decr, MP_DECR),
-      T1(mp_div_3, MP_DIV_3),
+      T1(s_mp_div_3, S_MP_DIV_3),
       T1(mp_dr_reduce, MP_DR_REDUCE),
       T2(mp_pack_unpack,MP_PACK, MP_UNPACK),
       T2(mp_fread_fwrite, MP_FREAD, MP_FWRITE),
       T1(mp_get_u32, MP_GET_I32),
       T1(mp_get_u64, MP_GET_I64),
       T1(mp_get_ul, MP_GET_L),
-      T1(mp_log_u32, MP_LOG_U32),
+      T1(mp_log_n, MP_LOG_N),
       T1(mp_incr, MP_INCR),
       T1(mp_invmod, MP_INVMOD),
       T1(mp_is_square, MP_IS_SQUARE),
       T1(mp_kronecker, MP_KRONECKER),
       T1(mp_montgomery_reduce, MP_MONTGOMERY_REDUCE),
-      T1(mp_root_u32, MP_ROOT_U32),
+      T1(mp_root_n, MP_ROOT_N),
       T1(mp_or, MP_OR),
       T1(mp_prime_is_prime, MP_PRIME_IS_PRIME),
       T1(mp_prime_next_prime, MP_PRIME_NEXT_PRIME),
@@ -2465,7 +2464,7 @@ static int unit_tests(int argc, char **argv)
       T1(mp_set_double, MP_SET_DOUBLE),
 #endif
       T1(mp_signed_rsh, MP_SIGNED_RSH),
-      T1(mp_sqrt, MP_SQRT),
+      T2(mp_sqrt, MP_SQRT, MP_ROOT_N),
       T1(mp_sqrtmod_prime, MP_SQRTMOD_PRIME),
       T1(mp_xor, MP_XOR),
       T1(s_mp_balance_mul, S_MP_BALANCE_MUL),
