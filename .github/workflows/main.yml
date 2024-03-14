@@ -72,9 +72,7 @@ jobs:
 
           # Build with small stack-size
           - { BUILDOPTIONS: '--with-cc=gcc --with-m32 --with-m64 --cflags=-DMP_SMALL_STACK_SIZE',                                SANITIZER: '',  COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: 'gcc-multilib' }
-          - { BUILDOPTIONS: '--with-cc=gcc --with-m32 --with-m64 --cflags=-DMP_SMALL_STACK_SIZE --cflags=-DMP_NO_LOCKING',       SANITIZER: '',  COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: 'gcc-multilib' }
           - { BUILDOPTIONS: '--with-cc=clang-10 --with-m32 --with-m64 --cflags=-DMP_SMALL_STACK_SIZE',                           SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: 'clang-10 llvm-10 gcc-multilib' }
-          - { BUILDOPTIONS: '--with-cc=clang-10 --with-m32 --with-m64 --cflags=-DMP_SMALL_STACK_SIZE --cflags=-DMP_TEST_LOCKING', SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',       OTHERDEPS: 'clang-10 llvm-10 gcc-multilib' }
 
           # Test "autotuning", the automatic evaluation and setting of the Toom-Cook cut-offs.
           #- env: SANITIZER=1 BUILDOPTIONS='--with-cc=gcc-5 --cflags=-DMP_16BIT --limit-valgrind --make-option=tune'

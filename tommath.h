@@ -88,15 +88,6 @@ typedef uint32_t             mp_digit;
 #endif
 #endif /* MP_SMALL_STACK_SIZE */
 
-/* The user can define how many WARRAY instances are allocated,
- * usually this should equal the number of parallel threads that
- * use LTM functionality.
- * This has no effect if `MP_SMALL_STACK_SIZE` is not defined.
- */
-#ifndef MP_WARRAY_NUM
-#define MP_WARRAY_NUM 1
-#endif
-
 /* Primality generation flags */
 #define MP_PRIME_BBS      0x0001 /* BBS style prime */
 #define MP_PRIME_SAFE     0x0002 /* Safe prime (p-1)/2 == prime */
@@ -607,13 +598,7 @@ mp_err mp_fread(mp_int *a, int radix, FILE *stream) MP_WUR;
 mp_err mp_fwrite(const mp_int *a, int radix, FILE *stream) MP_WUR;
 #endif
 
-typedef struct {
-   int (*lock)(void *ctx);
-   int (*unlock)(void *ctx);
-   void *ctx;
-} mp_lock;
-
-mp_err mp_warray_init(size_t n_alloc, bool preallocate, mp_lock *lock);
+mp_err mp_warray_init(size_t n_alloc, bool preallocate);
 int mp_warray_free(void);
 
 #define mp_to_binary(M, S, N)  mp_to_radix((M), (S), (N), NULL, 2)

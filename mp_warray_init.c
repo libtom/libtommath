@@ -3,20 +3,11 @@
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
-static mp_err s_warray_init(size_t n_alloc, bool preallocate, mp_lock *lock)
+static mp_err s_warray_init(size_t n_alloc, bool preallocate)
 {
    size_t n;
    if (s_mp_warray.l_free != NULL || s_mp_warray.l_used != NULL) {
       return MP_VAL;
-   }
-
-   if (MP_HAS(MP_USE_LOCKING) && (lock != NULL)) {
-      if (lock->lock == NULL || lock->unlock == NULL)
-         return MP_VAL;
-      s_mp_warray.lock = *lock;
-      s_mp_warray.locking_enabled = true;
-   } else {
-      s_mp_zero_buf(&s_mp_warray.lock, sizeof(s_mp_warray.lock));
    }
 
    s_mp_warray.l_free = MP_CALLOC(n_alloc, sizeof(*(s_mp_warray.l_free)));
@@ -46,9 +37,9 @@ static mp_err s_warray_init(size_t n_alloc, bool preallocate, mp_lock *lock)
    return MP_OKAY;
 }
 
-mp_err mp_warray_init(size_t n_alloc, bool preallocate, mp_lock *lock)
+mp_err mp_warray_init(size_t n_alloc, bool preallocate)
 {
-   if (MP_HAS(MP_SMALL_STACK_SIZE)) return s_warray_init(n_alloc, preallocate, lock);
+   if (MP_HAS(MP_SMALL_STACK_SIZE)) return s_warray_init(n_alloc, preallocate);
    return MP_ERR;
 }
 
