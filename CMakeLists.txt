@@ -7,7 +7,7 @@
 cmake_minimum_required(VERSION 3.10)
 
 project(libtommath
-    VERSION 1.2.0
+    VERSION 1.2.1
     DESCRIPTION "A free open source portable number theoretic multiple-precision integer (MPI) library written entirely in C."
     HOMEPAGE_URL "https://www.libtom.net/LibTomMath"
     LANGUAGES C)
