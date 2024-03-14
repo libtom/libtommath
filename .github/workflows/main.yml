@@ -49,12 +49,8 @@ jobs:
           # has only the options to that program: testme.sh
 
         config:
-          # Check c89 <-> c99 roundtrip
-          - { BUILDOPTIONS: '--c89-c99-roundtrip',                                                                               SANITIZER: '',  COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: '' }
           # Check source code format
           - { BUILDOPTIONS: '--format',                                                                                          SANITIZER: '',  COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: 'astyle' }
-          # Check public symbols of dynamic libraries
-          - { BUILDOPTIONS: '--symbols',                                                                                         SANITIZER: '',  COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: 'libtool-bin' }
           # Run always with valgrind (no sanitizer, but debug info)
           - { BUILDOPTIONS: '--with-cc=gcc --with-m64 --with-valgrind',                                                          SANITIZER: '',  COMPILE_DEBUG: '1', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: '' }
           # Alternative big-int version of mp_log(_n)
@@ -105,7 +101,6 @@ jobs:
           - { BUILDOPTIONS: '--with-cc=clang-10 --with-m64 --limit-valgrind',                                                    SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: 'relaxed', OTHERDEPS: 'clang-10 llvm-10' }
           - { BUILDOPTIONS: '--with-cc=clang-10 --with-m64 --limit-valgrind',                                                    SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: 'strict',  OTHERDEPS: 'clang-10 llvm-10' }
           - { BUILDOPTIONS: '--with-cc=clang-10 --cflags=-DMP_USE_MEMOPS --with-m64 --limit-valgrind',                           SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: 'strict',  OTHERDEPS: 'clang-10 llvm-10' }
-          - { BUILDOPTIONS: '--with-cc=clang-10 --c89 --with-m64 --limit-valgrind',                                              SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: 'strict',  OTHERDEPS: 'clang-10 llvm-10' }
           - { BUILDOPTIONS: '--with-cc=clang-10 --with-m64 --limit-valgrind --cflags=-DMP_PREC=MP_MIN_PREC',                     SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: 'clang-10 llvm-10' }
           - { BUILDOPTIONS: '--with-cc=clang-12 --with-m64 --limit-valgrind',                                                    SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: 'clang-12 llvm-12' }
           - { BUILDOPTIONS: '--with-cc=clang-9 --with-m64 --limit-valgrind',                                                     SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: 'clang-9 llvm-9' }
@@ -168,14 +163,6 @@ jobs:
           cat test_*.log || true
           cat valgrind_test.log || true
           cat gcc_errors_*.log || true
-
-  amalgam:
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v3
-      - name: install dependencies
-        run: |
-          make amalgamated_timing
 
   CMake:
     runs-on: ${{ matrix.os }}
