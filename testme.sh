@@ -20,71 +20,73 @@ TEST_CFLAGS=""
 
 _help()
 {
-  echo "Usage options for $(basename $0) [--with-cc=arg [other options]]"
-  echo
-  echo "Executing this script without any parameter will only run the default"
-  echo "configuration that has automatically been determined for the"
-  echo "architecture you're running."
-  echo
-  echo "    --with-cc=*             The compiler(s) to use for the tests"
-  echo "                            This is an option that will be iterated."
-  echo
-  echo "    --test-vs-mtest=*       Run test vs. mtest for '*' operations."
-  echo "                            Only the first of each options will be"
-  echo "                            taken into account."
-  echo
-  echo "To be able to specify options a compiler has to be given with"
-  echo "the option --with-cc=compilername"
-  echo "All other options will be tested with all MP_xBIT configurations."
-  echo
-  echo "    --with-{m64,m32,mx32}   The architecture(s) to build and test"
-  echo "                            for, e.g. --with-mx32."
-  echo "                            This is an option that will be iterated,"
-  echo "                            multiple selections are possible."
-  echo "                            The mx32 architecture is not supported"
-  echo "                            by clang and will not be executed."
-  echo
-  echo "    --cflags=*              Give an option to the compiler,"
-  echo "                            e.g. --cflags=-g"
-  echo "                            This is an option that will always be"
-  echo "                            passed as parameter to CC."
-  echo
-  echo "    --make-option=*         Give an option to make,"
-  echo "                            e.g. --make-option=\"-f makefile.shared\""
-  echo "                            This is an option that will always be"
-  echo "                            passed as parameter to make."
-  echo
-  echo "    --with-low-mp           Also build&run tests with -DMP_{8,16,32}BIT."
-  echo
-  echo "    --mtest-real-rand       Use real random data when running mtest."
-  echo
-  echo "    --with-valgrind"
-  echo "    --with-valgrind=*       Run in valgrind (slow!)."
-  echo
-  echo "    --with-travis-valgrind  Run with valgrind on Travis on specific branches."
-  echo
-  echo "    --valgrind-options      Additional Valgrind options"
-  echo "                            Some of the options like e.g.:"
-  echo "                            --track-origins=yes add a lot of extra"
-  echo "                            runtime and may trigger the 30 minutes"
-  echo "                            timeout."
-  echo
-  echo "Godmode:"
-  echo
-  echo "    --all                   Choose all architectures and gcc and clang"
-  echo "                            as compilers but does not run valgrind."
-  echo
-  echo "    --format                Runs the various source-code formatters"
-  echo "                            and generators and checks if the sources"
-  echo "                            are clean."
-  echo
-  echo "    -h"
-  echo "    --help                  This message"
-  echo
-  echo "    -v"
-  echo "    --version               Prints the version. It is just the number"
-  echo "                            of git commits to this file, no deeper"
-  echo "                            meaning attached"
+  cat << EOF
+Usage options for $(basename $0) [--with-cc=arg [other options]]
+
+Executing this script without any parameter will only run the default
+configuration that has automatically been determined for the
+architecture you're running.
+
+    --with-cc=*             The compiler(s) to use for the tests
+                            This is an option that will be iterated.
+
+    --test-vs-mtest=*       Run test vs. mtest for '*' operations.
+                            Only the first of each options will be
+                            taken into account.
+
+To be able to specify options a compiler has to be given with
+the option --with-cc=compilername
+All other options will be tested with all MP_xBIT configurations.
+
+    --with-{m64,m32,mx32}   The architecture(s) to build and test
+                            for, e.g. --with-mx32.
+                            This is an option that will be iterated,
+                            multiple selections are possible.
+                            The mx32 architecture is not supported
+                            by clang and will not be executed.
+
+    --cflags=*              Give an option to the compiler,
+                            e.g. --cflags=-g
+                            This is an option that will always be
+                            passed as parameter to CC.
+
+    --make-option=*         Give an option to make,
+                            e.g. --make-option="-f makefile.shared"
+                            This is an option that will always be
+                            passed as parameter to make.
+
+    --with-low-mp           Also build&run tests with -DMP_{8,16,32}BIT.
+
+    --mtest-real-rand       Use real random data when running mtest.
+
+    --with-valgrind
+    --with-valgrind=*       Run in valgrind (slow!).
+
+    --limit-valgrind        Run with valgrind on CI only on specific branches.
+
+    --valgrind-options      Additional Valgrind options
+                            Some of the options like e.g.:
+                            --track-origins=yes add a lot of extra
+                            runtime and may trigger the 30 minutes
+                            timeout.
+
+Godmode:
+
+    --all                   Choose all architectures and gcc and clang
+                            as compilers but does not run valgrind.
+
+    --format                Runs the various source-code formatters
+                            and generators and checks if the sources
+                            are clean.
+
+    -h
+    --help                  This message
+
+    -v
+    --version               Prints the version. It is just the number
+                            of git commits to this file, no deeper
+                            meaning attached
+EOF
   exit 0
 }
 
@@ -103,11 +105,30 @@ _die()
   fi
 }
 
+_fixup_cflags() {
+  compiler_version=$(echo "$1="$($1 -dumpversion))
+  case "$compiler_version" in
+    clang*=4.2.1)
+      # one of my versions of clang complains about some stuff in stdio.h and stdarg.h ...
+      TEST_CFLAGS="-Wno-typedef-redefinition"
+    ;;
+    gcc*=9)
+      # gcc 9 seems to sometimes think that variables are uninitialized, but they are.
+      TEST_CFLAGS="-Wno-maybe-uninitialized"
+    ;;
+    *)
+      TEST_CFLAGS=""
+    ;;
+  esac
+  echo $compiler_version
+}
+
 _make()
 {
   echo -ne " Compile $1 $2"
   suffix=$(echo ${1}${2}  | tr ' ' '_')
-  CC="$1" CFLAGS="$2 $TEST_CFLAGS" make -j$MAKE_JOBS $3 $MAKE_OPTIONS > /dev/null 2>gcc_errors_${suffix}.log
+  _fixup_cflags "$1"
+  CC="$1" CFLAGS="$2 $TEST_CFLAGS" make -j$MAKE_JOBS $3 $MAKE_OPTIONS 2>gcc_errors_${suffix}.log
   errcnt=$(wc -l < gcc_errors_${suffix}.log)
   if [[ ${errcnt} -gt 1 ]]; then
     echo " failed"
@@ -195,6 +216,9 @@ VALGRIND_OPTS=" --leak-check=full --show-leak-kinds=all --error-exitcode=1 "
 #VALGRIND_OPTS=""
 VALGRIND_BIN=""
 CHECK_FORMAT=""
+CHECK_SYMBOLS=""
+C89=""
+C89_C99_ROUNDTRIP=""
 TUNE_CMD="./etc/tune -t -r 10 -L 3"
 
 alive_pid=0
@@ -217,6 +241,12 @@ do
     "--with-m64" | "--with-m32" | "--with-mx32")
       ARCHFLAGS="$ARCHFLAGS ${1:6}"
     ;;
+    --c89)
+      C89="1"
+    ;;
+    --c89-c99-roundtrip)
+      C89_C99_ROUNDTRIP="1"
+    ;;
     --with-cc=*)
       COMPILERS="$COMPILERS ${1#*=}"
     ;;
@@ -235,8 +265,8 @@ do
       fi
       start_alive_printing
     ;;
-    --with-travis-valgrind*)
-      if [[ ("$TRAVIS_BRANCH" == "develop" && "$TRAVIS_PULL_REQUEST" == "false") || "$TRAVIS_BRANCH" == *"valgrind"* || "$TRAVIS_COMMIT_MESSAGE" == *"valgrind"* ]]
+    --limit-valgrind*)
+      if [[ ("$GITHUB_BASE_REF" == "develop" && "$PR_NUMBER" == "") || "$GITHUB_REF_NAME" == *"valgrind"* || "$COMMIT_MESSAGE" == *"valgrind"* ]]
       then
         if [[ ${1#*d} != "" ]]
         then
@@ -268,6 +298,9 @@ do
     --format)
       CHECK_FORMAT="1"
     ;;
+    --symbols)
+      CHECK_SYMBOLS="1"
+    ;;
     --all)
       COMPILERS="gcc clang"
       ARCHFLAGS="-m64 -m32 -mx32"
@@ -291,6 +324,35 @@ function _check_git() {
   git diff-index --quiet HEAD -- . || ( echo "FAILURE: $*" && exit 1 )
 }
 
+[[ "$C89" == "1" ]] && make c89
+
+if [[ "$C89_C99_ROUNDTRIP" == "1" ]]
+then
+  make c89
+  make c99
+  _check_git "make c89; make c99"
+  exit $?
+fi
+
+if [[ "$CHECK_SYMBOLS" == "1" ]]
+then
+  make -f makefile.shared
+  cat << EOF
+
+
+The following list shows the discrepancy between
+the shared library and the Windows dynamic library.
+To fix this error, one of the following things
+has to be done:
+* the script which generates tommath.def has to be modified
+    (function generate_def() in helper.pl).
+* The exported symbols are really different for some reason
+    This has to be manually investigated.
+
+EOF
+  exit $(comm -3 <(nm -D --defined-only .libs/libtommath.so | cut -d' ' -f3 | grep -v '^_' | sort) <(tail -n+9 tommath.def | tr -d ' ' | sort) | tee /dev/tty | wc -l)
+fi
+
 if [[ "$CHECK_FORMAT" == "1" ]]
 then
   make astyle
@@ -307,7 +369,7 @@ fi
 # default to CC environment variable if no compiler is defined but some other options
 if [[ "$COMPILERS" == "" ]] && [[ "$ARCHFLAGS$MAKE_OPTIONS$CFLAGS" != "" ]]
 then
-   COMPILERS="$CC"
+   COMPILERS="${CC:-cc}"
 # default to CC environment variable and run only default config if no option is given
 elif [[ "$COMPILERS" == "" ]]
 then
@@ -336,7 +398,7 @@ _banner
 if [[ "$TEST_VS_MTEST" != "" ]]
 then
    make clean > /dev/null
-   _make "${compilers[0]} ${archflags[0]}" "$CFLAGS" "mtest_opponent"
+   _make "${compilers[0]}" "${archflags[0]} $CFLAGS" "mtest_opponent"
    echo
    _make "gcc" "$MTEST_RAND" "mtest"
    echo
@@ -357,15 +419,6 @@ do
     echo "Skipped compiler $i, file not found"
     continue
   fi
-  compiler_version=$(echo "$i="$($i -dumpversion))
-  if [ "$compiler_version" == "clang=4.2.1" ]
-  then
-    # one of my versions of clang complains about some stuff in stdio.h and stdarg.h ...
-    TEST_CFLAGS="-Wno-typedef-redefinition"
-  else
-    TEST_CFLAGS=""
-  fi
-  echo $compiler_version
 
   for a in "${archflags[@]}"
   do
@@ -376,17 +429,15 @@ do
     fi
     if [[ "$VALGRIND_BIN" != "" ]]
     then
-      _runvalgrind "$i $a" "$CFLAGS"
+      _runvalgrind "$i" "$a $CFLAGS"
       [ "$WITH_LOW_MP" != "1" ] && continue
-      _runvalgrind "$i $a" "-DMP_8BIT $CFLAGS"
-      _runvalgrind "$i $a" "-DMP_16BIT $CFLAGS"
-      _runvalgrind "$i $a" "-DMP_32BIT $CFLAGS"
+      _runvalgrind "$i" "$a -DMP_16BIT $CFLAGS"
+      _runvalgrind "$i" "$a -DMP_32BIT $CFLAGS"
     else
-      _runtest "$i $a" "$CFLAGS"
+      _runtest "$i" "$a $CFLAGS"
       [ "$WITH_LOW_MP" != "1" ] && continue
-      _runtest "$i $a" "-DMP_8BIT $CFLAGS"
-      _runtest "$i $a" "-DMP_16BIT $CFLAGS"
-      _runtest "$i $a" "-DMP_32BIT $CFLAGS"
+      _runtest "$i" "$a -DMP_16BIT $CFLAGS"
+      _runtest "$i" "$a -DMP_32BIT $CFLAGS"
     fi
   done
 done

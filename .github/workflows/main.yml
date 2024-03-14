@@ -1,0 +1,216 @@
+#############################################################################
+#                                                                           #
+#      GitHub Actions test-suite for LibTomMath                             #
+#      (https://github.com/libtom/libtommath.git)                           #
+#                                                                           #
+#############################################################################
+
+name: CI
+
+# Tests restricted to the following branches of LTM.
+on:
+  push:
+    branches:
+      - master
+      - develop
+      - /^release\/.*$/
+      - /^support\/.*$/
+      - /^ci\/.*$/
+  pull_request:
+    branches:
+      - master
+      - develop
+      - /^release\/.*$/
+      - /^support\/.*$/
+      - /^ci\/.*$/
+
+jobs:
+  Docs:
+    runs-on: ubuntu-20.04
+    container: texlive/texlive:latest-full
+    steps:
+      - uses: actions/checkout@v3
+      - name: generate PDF
+        run: |
+          make docs V=1
+          cp doc/bn.pdf bn-${{ github.run_id }}.pdf
+      - name: upload PDF
+        uses: actions/upload-artifact@v3
+        with:
+          name: bn-${{ github.run_id }}.pdf
+          path: bn-${{ github.run_id }}.pdf
+  Testme:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ ubuntu-20.04 ]
+          # The environment given to the programs in the build
+          # We have only one program and the variable $BUILDOPTIONS
+          # has only the options to that program: testme.sh
+
+        config:
+          # Check c89 <-> c99 roundtrip
+          - { BUILDOPTIONS: '--c89-c99-roundtrip',                                                                               SANITIZER: '',  COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: '' }
+          # Check source code format
+          - { BUILDOPTIONS: '--format',                                                                                          SANITIZER: '',  COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: 'astyle' }
+          # Check public symbols of dynamic libraries
+          - { BUILDOPTIONS: '--symbols',                                                                                         SANITIZER: '',  COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: 'libtool-bin' }
+          # Run always with valgrind (no sanitizer, but debug info)
+          - { BUILDOPTIONS: '--with-cc=gcc --with-m64 --with-valgrind',                                                          SANITIZER: '',  COMPILE_DEBUG: '1', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: '' }
+          # Alternative big-int version of mp_log(_n)
+          - { BUILDOPTIONS: '--with-cc=gcc --with-m64 --cflags=-DS_MP_WORD_TOO_SMALL_C=""  --with-valgrind',                     SANITIZER: '',  COMPILE_DEBUG: '1', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: '' }
+          # Shared library build
+          - { BUILDOPTIONS: '--with-cc=gcc --make-option=-f --make-option=makefile.shared',                                      SANITIZER: '',  COMPILE_DEBUG: '0', COMPILE_LTO: '1', CONV_WARNINGS: '',        OTHERDEPS: 'libtool-bin' }
+          # GCC for the 32-bit architecture (no valgrind)
+          - { BUILDOPTIONS: '--with-cc=gcc --with-m32',                                                                          SANITIZER: '',  COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: 'libc6-dev-i386 gcc-multilib' }
+          # Alternative big-int version of mp_log(_n) for the 32-bit architecture (no valgrind)
+          - { BUILDOPTIONS: '--with-cc=gcc --with-m32 --cflags=-DS_MP_WORD_TOO_SMALL_C="" ',                                     SANITIZER: '',  COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: 'libc6-dev-i386 gcc-multilib' }
+          # clang for the 32-bit architecture (no valgrind)
+          - { BUILDOPTIONS: '--with-cc=clang-10 --with-m32',                                                                     SANITIZER: '',  COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: 'clang-10 llvm-10 gcc-multilib' }
+          # RSA superclass with tests (no sanitizer, but debug info)
+          - { BUILDOPTIONS: '--with-cc=gcc --with-m64 --cflags=-DLTM_NOTHING --cflags=-DSC_RSA_1_WITH_TESTS --limit-valgrind',   SANITIZER: '',  COMPILE_DEBUG: '1', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: '' }
+
+          # Test "autotuning", the automatic evaluation and setting of the Toom-Cook cut-offs.
+          #- env: SANITIZER=1 BUILDOPTIONS='--with-cc=gcc-5 --cflags=-DMP_16BIT --limit-valgrind --make-option=tune'
+          #- env: SANITIZER=1 BUILDOPTIONS='--with-cc=gcc-5 --cflags=-DMP_32BIT --limit-valgrind --make-option=tune'
+          #- env: SANITIZER=1 BUILDOPTIONS='--with-cc=gcc-5 --limit-valgrind --make-option=tune'
+          #- env: SANITIZER=1 BUILDOPTIONS='--with-cc=clang-7 --cflags=-DMP_16BIT --limit-valgrind --make-option=tune'
+          #- env: SANITIZER=1 BUILDOPTIONS='--with-cc=clang-7 --cflags=-DMP_32BIT --limit-valgrind --make-option=tune'
+          - { BUILDOPTIONS: '--with-cc=clang-10 --limit-valgrind --make-option=tune',                                            SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: 'clang-10 llvm-10' }
+
+          # GCC for the x86-64 architecture testing against a different Bigint-implementation
+          # with 333333 different inputs.
+          #- env: BUILDOPTIONS='--with-cc=gcc --test-vs-mtest=333333 --limit-valgrind'
+          # ...  and a better random source.
+          - { BUILDOPTIONS: '--with-cc=gcc --test-vs-mtest=333333 --mtest-real-rand --limit-valgrind',                           SANITIZER: '',  COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: '' }
+
+          # clang for the x86-64 architecture testing against a different Bigint-implementation
+          # with 333333 different inputs
+          - { BUILDOPTIONS: '--with-cc=clang-10 --test-vs-mtest=333333 --limit-valgrind',                                        SANITIZER: '',  COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: 'clang-10 llvm-10' }
+          # ...  and a better random source.
+          - { BUILDOPTIONS: '--with-cc=clang-10 --test-vs-mtest=333333 --mtest-real-rand --limit-valgrind',                      SANITIZER: '',  COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: 'clang-10 llvm-10' }
+
+          # GCC for the x64_32 architecture (32-bit longs and 32-bit pointers)
+          # TODO: Probably not possible to run anything in x32 in GH actions
+          #       but needs to be checked to be sure.
+          - { BUILDOPTIONS: '--with-cc=gcc --with-mx32',                                                                         SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: 'libc6-dev-x32 gcc-multilib' }
+
+          # GCC for the x86-64 architecture (64-bit longs and 64-bit pointers)
+          - { BUILDOPTIONS: '--with-cc=gcc --with-m64 --limit-valgrind',                                                         SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: '' }
+          - { BUILDOPTIONS: '--with-cc=gcc-10 --with-m64 --limit-valgrind',                                                      SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: 'gcc-10' }
+          - { BUILDOPTIONS: '--with-cc=gcc-8 --with-m64 --limit-valgrind',                                                       SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: 'gcc-8' }
+          - { BUILDOPTIONS: '--with-cc=gcc-7 --with-m64 --limit-valgrind',                                                       SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: 'gcc-7' }
+
+          # clang for x86-64 architecture (64-bit longs and 64-bit pointers)
+          - { BUILDOPTIONS: '--with-cc=clang-10 --with-m64 --limit-valgrind',                                                    SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: 'relaxed', OTHERDEPS: 'clang-10 llvm-10' }
+          - { BUILDOPTIONS: '--with-cc=clang-10 --with-m64 --limit-valgrind',                                                    SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: 'strict',  OTHERDEPS: 'clang-10 llvm-10' }
+          - { BUILDOPTIONS: '--with-cc=clang-10 --cflags=-DMP_USE_MEMOPS --with-m64 --limit-valgrind',                           SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: 'strict',  OTHERDEPS: 'clang-10 llvm-10' }
+          - { BUILDOPTIONS: '--with-cc=clang-10 --c89 --with-m64 --limit-valgrind',                                              SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: 'strict',  OTHERDEPS: 'clang-10 llvm-10' }
+          - { BUILDOPTIONS: '--with-cc=clang-10 --with-m64 --limit-valgrind --cflags=-DMP_PREC=MP_MIN_PREC',                     SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: 'clang-10 llvm-10' }
+          - { BUILDOPTIONS: '--with-cc=clang-12 --with-m64 --limit-valgrind',                                                    SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: 'clang-12 llvm-12' }
+          - { BUILDOPTIONS: '--with-cc=clang-9 --with-m64 --limit-valgrind',                                                     SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: 'clang-9 llvm-9' }
+          - { BUILDOPTIONS: '--with-cc=clang-8 --with-m64 --limit-valgrind',                                                     SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: 'clang-8 llvm-8' }
+          - { BUILDOPTIONS: '--with-cc=clang-7 --with-m64 --limit-valgrind',                                                     SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: 'clang-7 llvm-7' }
+          - { BUILDOPTIONS: '--with-cc=clang-6.0 --with-m64 --limit-valgrind',                                                   SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: 'clang-6.0 llvm-6.0' }
+          # Link time optimization
+          - { BUILDOPTIONS: '--with-cc=gcc --with-m64 --limit-valgrind',                                                         SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '1', CONV_WARNINGS: '',        OTHERDEPS: '' }
+          #- { BUILDOPTIONS: '--with-cc=clang-7 --with-m64 --limit-valgrind',                                                     SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '1', CONV_WARNINGS: '',        OTHERDEPS: '' }
+
+          # GCC for the x86-64 architecture with restricted limb sizes
+          # formerly started with the option "--with-low-mp" to testme.sh
+          # but testing all three in one run took to long and timed out.
+          - { BUILDOPTIONS: '--with-cc=gcc --cflags=-DMP_16BIT --limit-valgrind',                                                SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: '' }
+          - { BUILDOPTIONS: '--with-cc=gcc --cflags=-DMP_32BIT --limit-valgrind',                                                SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: '' }
+          # Alternative big-int version of mp_log(_n)
+          - { BUILDOPTIONS: '--with-cc=gcc --cflags=-DMP_16BIT --cflags=-DS_MP_WORD_TOO_SMALL_C="" --limit-valgrind',            SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: '' }
+          - { BUILDOPTIONS: '--with-cc=gcc --cflags=-DMP_32BIT --cflags=-DS_MP_WORD_TOO_SMALL_C="" --limit-valgrind',            SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: '' }
+
+          # clang for the x86-64 architecture with restricted limb sizes
+          - { BUILDOPTIONS: '--with-cc=clang --cflags=-DMP_16BIT --limit-valgrind',                                              SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: 'clang llvm' }
+          - { BUILDOPTIONS: '--with-cc=clang --cflags=-DMP_32BIT --limit-valgrind',                                              SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: 'clang llvm' }
+    steps:
+      - uses: actions/checkout@v3
+      - name: install dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y valgrind ${{ matrix.config.OTHERDEPS }}
+          sudo apt-cache search gcc | grep '^gcc-[0-9\.]* '
+          sudo apt-cache search clang | grep compiler
+      - name: run tests
+        env:
+          SANITIZER: ${{ matrix.config.SANITIZER }}
+          COMPILE_DEBUG: ${{ matrix.config.COMPILE_DEBUG }}
+          COMPILE_LTO: ${{ matrix.config.COMPILE_LTO }}
+          CONV_WARNINGS: ${{ matrix.config.CONV_WARNINGS }}
+          COMMIT_MESSAGE: ${{ github.event.commits[0].message }}
+          PR_NUMBER: ${{ github.event.number }}
+      # The actual script the jobs run.
+        run: |
+          ./testme.sh ${{ matrix.config.BUILDOPTIONS }}
+      # In case of a CI error a success might get signaled
+      # even without any test run. This file also keeps any notes
+      # printed from the tests which might come handy from time
+      # to time.
+      # Valgrid will print its output to stderr which will not show up
+      # in test_*.log. testme.sh accepts one additional option to
+      # valgrind and "--valgrind-options=--log-fd=1" sends the output
+      # of Valgrind to stdout instead.
+      - name: regular logs
+        if: ${{ !failure() }}
+        run: |
+          cat test_*.log || true
+      # Compilation failures are in gcc_errors_*.log
+      # Failed tests in test_*.log
+      # Files do not exist in case of success
+      - name: error logs
+        if: ${{ failure() }}
+        run: |
+          cat test_*.log || true
+          cat valgrind_test.log || true
+          cat gcc_errors_*.log || true
+
+  amalgam:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - name: install dependencies
+        run: |
+          make amalgamated_timing
+
+  CMake:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ ubuntu-20.04, ubuntu-22.04 ]
+        build_type: [ '', -DCMAKE_BUILD_TYPE=Debug, -DCMAKE_BUILD_TYPE=Release, -DCMAKE_BUILD_TYPE=RelWithDebInfo, -DCMAKE_BUILD_TYPE=MinSizeRel ]
+        cc: [ clang, gcc ]
+        config:
+          # Static library build
+          - { CMAKEOPTIONS: '-DBUILD_SHARED_LIBS=Off' }
+          # Shared library build
+          - { CMAKEOPTIONS: '-DBUILD_SHARED_LIBS=On'  }
+    steps:
+      - uses: actions/checkout@v3
+      - name: install dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y cmake gcc clang llvm
+      - name: build
+        run: |
+          mkdir build
+          cd build
+          CC=${{ matrix.cc }} cmake ${{ matrix.config.CMAKEOPTIONS }} ${{ matrix.build_type }} ..
+          make -j$(nproc)
+      - name: test
+        run: |
+          cd build
+          CC=${{ matrix.cc }} cmake ${{ matrix.config.CMAKEOPTIONS }} ${{ matrix.build_type }} -DBUILD_TESTING=On ..
+          make -j$(nproc)
+          ctest
+      - name: test (in demo folder)
+        run: |
+          mkdir -p demo/build
+          cd demo/build
+          CC=${{ matrix.cc }} cmake ${{ matrix.config.CMAKEOPTIONS }} ${{ matrix.build_type }} ..
+          make -j$(nproc)
+          ctest

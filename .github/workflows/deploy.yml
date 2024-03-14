@@ -1,0 +1,47 @@
+#############################################################################
+#                                                                           #
+#  Packagecloud deployment via GH actions for LibTomMath                    #
+#      (https://github.com/libtom/libtommath.git)                           #
+#                                                                           #
+#############################################################################
+
+name: Deploy
+
+on:
+  workflow_dispatch
+
+jobs:
+  deploy-to-packagecloud:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ ubuntu-20.04, ubuntu-22.04 ]
+    steps:
+      - uses: actions/checkout@v2
+      - name: set Ubuntu codename
+        run: |
+          echo "ubuntu_codename="$(lsb_release -sc) >> "$GITHUB_ENV"
+      - name: install dependencies
+        run: |
+          wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | sudo tee /usr/share/keyrings/kitware-archive-keyring.gpg >/dev/null
+          echo "deb [signed-by=/usr/share/keyrings/kitware-archive-keyring.gpg] https://apt.kitware.com/ubuntu/ ${{ env.ubuntu_codename }} main" | sudo tee /etc/apt/sources.list.d/kitware.list >/dev/null
+          sudo apt-get update -qq
+          sudo apt-get install -y cmake gcc
+      - name: build packages
+        run: |
+          mkdir -p build
+          cd build
+          cmake -DBUILD_SHARED_LIBS=Off -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX="/usr" ..
+          make -j$(nproc)
+          cpack -G DEB
+          cmake -DBUILD_SHARED_LIBS=On -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX="/usr" ..
+          make -j$(nproc)
+          cpack -G DEB
+      - name: push deb packages to packagecloud.io
+        uses: computology/packagecloud-github-action@v0.6
+        with:
+          PACKAGE-NAME: build/packages/ubuntu/${{ env.ubuntu_codename }}/*.deb
+          PACKAGECLOUD-USERNAME: libtom
+          PACKAGECLOUD-REPONAME: packages
+          PACKAGECLOUD-DISTRO: ubuntu/${{ env.ubuntu_codename }}
+          PACKAGECLOUD-TOKEN: ${{ secrets.PACKAGECLOUD_TOKEN }}
