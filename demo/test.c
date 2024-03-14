@@ -2455,12 +2455,39 @@ LBL_ERR:
 #define ONLY_PUBLIC_API_C
 #endif
 
+#if !defined(LTM_TEST_MULTITHREAD) || !defined(MP_SMALL_STACK_SIZE)
+#define SINGLE_THREADED_C
+typedef unsigned long int pthread_t;
+extern int pthread_create(pthread_t *, const void *, void *(*)(void *), void *);
+extern int pthread_join(pthread_t, void **);
+#else
+#define MULTI_THREADED_C
+#include <pthread.h>
+#endif
+
+struct test_fn {
+   const char *name;
+   int (*fn)(void);
+};
+
+struct thread_info {
+   pthread_t thread_id;
+   const struct test_fn *t;
+   int ret;
+};
+
+static void *run(void *arg)
+{
+   struct thread_info *tinfo = arg;
+
+   tinfo->ret = tinfo->t->fn();
+
+   return arg;
+}
+
 static int unit_tests(int argc, char **argv)
 {
-   static const struct {
-      const char *name;
-      int (*fn)(void);
-   } test[] = {
+   static const struct test_fn test[] = {
 #define T0(n)              { #n, test_##n }
 #define T1(n, o)           { #n, MP_HAS(o) ? test_##n : NULL }
 #define T2(n, o1, o2)      { #n, (MP_HAS(o1) && MP_HAS(o2)) ? test_##n : NULL }
@@ -2522,9 +2549,10 @@ static int unit_tests(int argc, char **argv)
 #undef T2
 #undef T1
    };
+   struct thread_info test_threads[sizeof(test)/sizeof(test[0])], *res;
    unsigned long i, ok, fail, nop;
    uint64_t t;
-   int j;
+   int j = -1;
    ok = fail = nop = 0;
 
    t = (uint64_t)time(NULL);
@@ -2532,21 +2560,39 @@ static int unit_tests(int argc, char **argv)
    s_mp_rand_jenkins_init(t);
    mp_rand_source(s_mp_rand_jenkins);
 
+   if (MP_HAS(MULTI_THREADED)) {
+      printf("Multi-threading enabled\n\n");
+      DO(mp_warray_init(sizeof(test) / sizeof(test[0]), 1));
+      /* we ignore the fact that jenkings is not thread safe */
+      for (i = 0; i < (sizeof(test) / sizeof(test[0])); ++i) {
+         test_threads[i].t = &test[i];
+         EXPECT(pthread_create(&test_threads[i].thread_id, NULL, run, &test_threads[i]) == 0);
+      }
+   }
 
    for (i = 0; i < (sizeof(test) / sizeof(test[0])); ++i) {
-      if (argc > 1) {
-         for (j = 1; j < argc; ++j) {
-            if (strstr(test[i].name, argv[j]) != NULL) {
-               break;
+      if (MP_HAS(SINGLE_THREADED)) {
+         if (argc > 1) {
+            for (j = 1; j < argc; ++j) {
+               if (strstr(test[i].name, argv[j]) != NULL) {
+                  break;
+               }
             }
+            if (j == argc) continue;
          }
-         if (j == argc) continue;
+
+         if (test[i].fn)
+            j = test[i].fn();
+      } else if (MP_HAS(MULTI_THREADED)) {
+         EXPECT(pthread_join(test_threads[i].thread_id, (void **)&res) == 0);
+         j = res->ret;
       }
       printf("TEST %s\n", test[i].name);
+
       if (test[i].fn == NULL) {
          nop++;
          printf("NOP %s\n\n", test[i].name);
-      } else if (test[i].fn() == EXIT_SUCCESS) {
+      } else if (j == EXIT_SUCCESS) {
          ok++;
          printf("\n");
       } else {

@@ -70,6 +70,8 @@ All other options will be tested with all MP_xBIT configurations.
                             runtime and may trigger the 30 minutes
                             timeout.
 
+    --multithread           Run tests in multi-threaded mode (via pthread).
+
 Godmode:
 
     --all                   Choose all architectures and gcc and clang
@@ -128,7 +130,7 @@ _make()
   echo -ne " Compile $1 $2"
   suffix=$(echo ${1}${2}  | tr ' ' '_')
   _fixup_cflags "$1"
-  CC="$1" CFLAGS="$2 $TEST_CFLAGS" make -j$MAKE_JOBS $3 $MAKE_OPTIONS 2>gcc_errors_${suffix}.log
+  CC="$1" CFLAGS="$2 $TEST_CFLAGS" LFLAGS="$4" LDFLAGS="$5" make -j$MAKE_JOBS $3 $MAKE_OPTIONS 2>gcc_errors_${suffix}.log
   errcnt=$(wc -l < gcc_errors_${suffix}.log)
   if [[ ${errcnt} -gt 1 ]]; then
     echo " failed"
@@ -148,10 +150,10 @@ _runtest()
     # "make tune" will run "tune_it.sh" automatically, hence "autotune", but it cannot
     # get switched off without some effort, so we just let it run twice for testing purposes
     echo -e "\rRun autotune $1 $2"
-    _make "$1" "$2" ""
+    _make "$1" "$2" "" "$3" "$4"
     $_timeout $TUNE_CMD > test_${suffix}.log || _die "running autotune" $?
   else
-    _make "$1" "$2" "test"
+    _make "$1" "$2" "test" "$3" "$4"
     echo -e "\rRun test $1 $2"
     $_timeout ./test > test_${suffix}.log || _die "running tests" $?
   fi
@@ -171,13 +173,13 @@ echo "MAKE_OPTIONS = \"$MAKE_OPTIONS\""
   if [[ "$MAKE_OPTIONS" =~ "tune"  ]]
   then
 echo "autotune branch"
-    _make "$1" "$2" ""
+    _make "$1" "$2" "" "$3" "$4"
     # The shell used for /bin/sh is DASH 0.5.7-4ubuntu1 on the author's machine which fails valgrind, so
     # we just run on instance of etc/tune with the same options as in etc/tune_it.sh
     echo -e "\rRun etc/tune $1 $2 once inside valgrind"
     $_timeout $VALGRIND_BIN $VALGRIND_OPTS $TUNE_CMD > test_${suffix}.log || _die "running etc/tune" $?
   else
-    _make "$1" "$2" "test"
+    _make "$1" "$2" "test" "$3" "$4"
     echo -e "\rRun test $1 $2 inside valgrind"
     $_timeout $VALGRIND_BIN $VALGRIND_OPTS ./test > test_${suffix}.log || _die "running tests" $?
   fi
@@ -301,6 +303,11 @@ do
     --symbols)
       CHECK_SYMBOLS="1"
     ;;
+    --multithread)
+      CFLAGS="$CFLAGS -DLTM_TEST_MULTITHREAD"
+      LFLAGS="$LFLAGS -pthread"
+      LDFLAGS="$LDFLAGS -pthread"
+    ;;
     --all)
       COMPILERS="gcc clang"
       ARCHFLAGS="-m64 -m32 -mx32"
@@ -376,9 +383,9 @@ then
   _banner "$CC"
   if [[ "$VALGRIND_BIN" != "" ]]
   then
-    _runvalgrind "$CC" ""
+    _runvalgrind "$CC" "" "$LFLAGS"  "$LDFLAGS"
   else
-    _runtest "$CC" ""
+    _runtest "$CC" ""  "$LFLAGS"  "$LDFLAGS"
   fi
   _exit
 fi
@@ -398,9 +405,9 @@ _banner
 if [[ "$TEST_VS_MTEST" != "" ]]
 then
    make clean > /dev/null
-   _make "${compilers[0]}" "${archflags[0]} $CFLAGS" "mtest_opponent"
+   _make "${compilers[0]}" "${archflags[0]} $CFLAGS" "mtest_opponent" "$LFLAGS" "$LDFLAGS"
    echo
-   _make "gcc" "$MTEST_RAND" "mtest"
+   _make "gcc" "$MTEST_RAND" "mtest" "$LFLAGS" "$LDFLAGS"
    echo
    echo "Run test vs. mtest for $TEST_VS_MTEST iterations"
    _timeout=""
@@ -429,15 +436,15 @@ do
     fi
     if [[ "$VALGRIND_BIN" != "" ]]
     then
-      _runvalgrind "$i" "$a $CFLAGS"
+      _runvalgrind "$i" "$a $CFLAGS" "$LFLAGS" "$LDFLAGS"
       [ "$WITH_LOW_MP" != "1" ] && continue
-      _runvalgrind "$i" "$a -DMP_16BIT $CFLAGS"
-      _runvalgrind "$i" "$a -DMP_32BIT $CFLAGS"
+      _runvalgrind "$i" "$a -DMP_16BIT $CFLAGS" "$LFLAGS" "$LDFLAGS"
+      _runvalgrind "$i" "$a -DMP_32BIT $CFLAGS" "$LFLAGS" "$LDFLAGS"
     else
-      _runtest "$i" "$a $CFLAGS"
+      _runtest "$i" "$a $CFLAGS" "$LFLAGS" "$LDFLAGS"
       [ "$WITH_LOW_MP" != "1" ] && continue
-      _runtest "$i" "$a -DMP_16BIT $CFLAGS"
-      _runtest "$i" "$a -DMP_32BIT $CFLAGS"
+      _runtest "$i" "$a -DMP_16BIT $CFLAGS" "$LFLAGS" "$LDFLAGS"
+      _runtest "$i" "$a -DMP_32BIT $CFLAGS" "$LFLAGS" "$LDFLAGS"
     fi
   done
 done
