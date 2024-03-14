@@ -15,7 +15,7 @@ void *s_mp_warray_get(void)
       if (s_mp_warray.l_free[n].warray == NULL)
          continue;
       ret = s_mp_warray.l_free[n].warray;
-      if (MP_CMPEXCH(&s_mp_warray.l_free[n].warray, &ret, NULL)) {
+      if (s_mp_cmpexch_n(&s_mp_warray.l_free[n].warray, &ret, NULL)) {
          s_mp_warray.l_used[n].warray = ret;
          goto LBL_OUT;
       }
