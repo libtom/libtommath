@@ -96,3 +96,7 @@ test_*.txt
 doc/pics/*.ps
 
 callgraph.txt
+
+# cmake build directories
+build*/
+

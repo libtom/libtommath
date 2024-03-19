@@ -203,7 +203,7 @@ MP_GET_MAG(mp_get_mag_ull, unsigned long long)
 MP_INIT_INT(mp_init_ll, mp_set_i64, long long)
 #endif
 #ifdef BN_MP_SET_LL_C
-MP_SET_SIGNED(mp_set_ll, mp_set_i64, long long, unsigned long long)
+MP_SET_SIGNED(mp_set_ll, mp_set_i64, long long, long long)
 #endif
 #ifdef BN_MP_INIT_ULL_C
 MP_INIT_INT(mp_init_ull, mp_set_u64, unsigned long long)
@@ -226,7 +226,7 @@ mp_err mp_log_u32(const mp_int *a, uint32_t base, uint32_t *c)
       return MP_VAL;
    }
    e = mp_log_n(a, (int)base, &c_);
-   *c = c_;
+   *c = (uint32_t)c_;
    return e;
 }
 #endif
