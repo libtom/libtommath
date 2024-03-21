@@ -58,13 +58,13 @@ jobs:
           # Run always with valgrind (no sanitizer, but debug info)
           - { BUILDOPTIONS: '--with-cc=gcc --with-m64 --with-valgrind',                                                          SANITIZER: '',  COMPILE_DEBUG: '1', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: '' }
           # Alternative big-int version of mp_log(_n)
-          - { BUILDOPTIONS: '--with-cc=gcc --with-m64 --cflags=-DS_MP_WORD_TOO_SMALL_C=""  --with-valgrind',                     SANITIZER: '',  COMPILE_DEBUG: '1', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: '' }
+          - { BUILDOPTIONS: '--with-cc=gcc --with-m64 --cflags=-DS_MP_WORD_TOO_SMALL_C="" --cflags=-DLTM_USE_ONLY_MR --with-valgrind',   SANITIZER: '',  COMPILE_DEBUG: '1', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: '' }
           # Shared library build
           - { BUILDOPTIONS: '--with-cc=gcc --make-option=-f --make-option=makefile.shared',                                      SANITIZER: '',  COMPILE_DEBUG: '0', COMPILE_LTO: '1', CONV_WARNINGS: '',        OTHERDEPS: 'libtool-bin' }
           # GCC for the 32-bit architecture (no valgrind)
           - { BUILDOPTIONS: '--with-cc=gcc --with-m32',                                                                          SANITIZER: '',  COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: 'libc6-dev-i386 gcc-multilib' }
           # Alternative big-int version of mp_log(_n) for the 32-bit architecture (no valgrind)
-          - { BUILDOPTIONS: '--with-cc=gcc --with-m32 --cflags=-DS_MP_WORD_TOO_SMALL_C="" ',                                     SANITIZER: '',  COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: 'libc6-dev-i386 gcc-multilib' }
+          - { BUILDOPTIONS: '--with-cc=gcc --with-m32 --cflags=-DS_MP_WORD_TOO_SMALL_C=""  --cflags=-DLTM_USE_ONLY_MR  ',                                     SANITIZER: '',  COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: 'libc6-dev-i386 gcc-multilib' }
           # clang for the 32-bit architecture (no valgrind)
           - { BUILDOPTIONS: '--with-cc=clang-10 --with-m32',                                                                     SANITIZER: '',  COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: 'clang-10 llvm-10 gcc-multilib' }
           # RSA superclass with tests (no sanitizer, but debug info)
@@ -122,8 +122,8 @@ jobs:
           - { BUILDOPTIONS: '--with-cc=gcc --cflags=-DMP_16BIT --limit-valgrind',                                                SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: '' }
           - { BUILDOPTIONS: '--with-cc=gcc --cflags=-DMP_32BIT --limit-valgrind',                                                SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: '' }
           # Alternative big-int version of mp_log(_n)
-          - { BUILDOPTIONS: '--with-cc=gcc --cflags=-DMP_16BIT --cflags=-DS_MP_WORD_TOO_SMALL_C="" --limit-valgrind',            SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: '' }
-          - { BUILDOPTIONS: '--with-cc=gcc --cflags=-DMP_32BIT --cflags=-DS_MP_WORD_TOO_SMALL_C="" --limit-valgrind',            SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: '' }
+          - { BUILDOPTIONS: '--with-cc=gcc --cflags=-DMP_16BIT --cflags=-DS_MP_WORD_TOO_SMALL_C="" --cflags=-DLTM_USE_ONLY_MR  --limit-valgrind', SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: '' }
+          - { BUILDOPTIONS: '--with-cc=gcc --cflags=-DMP_32BIT --cflags=-DS_MP_WORD_TOO_SMALL_C="" --cflags=-DLTM_USE_ONLY_MR  --limit-valgrind', SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: '' }
 
           # clang for the x86-64 architecture with restricted limb sizes
           - { BUILDOPTIONS: '--with-cc=clang --cflags=-DMP_16BIT --limit-valgrind',                                              SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: 'clang llvm' }

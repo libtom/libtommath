@@ -113,7 +113,7 @@ Intel's C-compiler (ICC) is sufficiently compatible with GCC, at least the newer
 replace GCC for building the static and the shared library. Editing the makefiles is not needed,
 just set the shell variable \texttt{CC} as shown below.
 \begin{alltt}
-CC=/home/czurnieden/intel/bin/icc make
+CC=/home/$USER/intel/bin/icc make
 \end{alltt}
 
 ICC does not know all options available for GCC and LibTomMath uses two diagnostics
@@ -1343,8 +1343,7 @@ passed as a \texttt{NULL} value to signal that the remainder is not desired.  Th
 is implemented as a left--shift operation of $a$ by $b$ bits.
 
 It is also not very uncommon to need just the power of two $2^b$;  for example as a start--value
-for
-the Newton method.
+for the Newton method.
 
 \index{mp\_2expt}
 \begin{alltt}
@@ -1440,7 +1439,7 @@ To perform a complete and general integer division with remainder use the follow
 mp_err mp_div (const mp_int *a, const mp_int *b, mp_int *c, mp_int *d);
 \end{alltt}
 
-This divides $a$ by $b$ and stores the quotient in $c$ and $d$.  The signed quotient is computed
+This divides $a$ by $b$ and stores the quotient in $c$ and the remainder in $d$.  The signed quotient is computed
 such that $bc + d = a$.  Note that either of $c$ or $d$ can be set to \texttt{NULL} if their value
 is not required.  If $b$ is zero the function returns \texttt{MP\_VAL}.
 
@@ -2018,15 +2017,6 @@ int main(int argc, char **argv)
 
 \chapter{Prime Numbers}
 
-\section{Fermat Test}
-\index{mp\_prime\_fermat}
-\begin{alltt}
-mp_err mp_prime_fermat (const mp_int *a, const mp_int *b, int *result)
-\end{alltt}
-Performs a Fermat primality test to the base $b$.  That is it computes $b^a \mbox{ mod }a$ and
-tests whether the value is equal to $b$ or not.  If the values are equal then $a$ is probably prime
-and $result$ is set to one. Otherwise $result$ is set to zero.
-
 \section{Miller--Rabin Test}
 \index{mp\_prime\_miller\_rabin}
 \begin{alltt}
@@ -2035,9 +2025,6 @@ mp_err mp_prime_miller_rabin (const mp_int *a, const mp_int *b, int *result)
 Performs a Miller--Rabin test to the base $b$ of $a$.  This test is much stronger than the Fermat
 test and is very hard to fool (besides with Carmichael numbers).  If $a$ passes the test (therefore
 is probably prime) $result$ is set to one. Otherwise $result$ is set to zero.
-
-Note that it is suggested that you use the Miller--Rabin test instead of the Fermat test since all
-of the failures of Miller--Rabin are a subset of the failures of the Fermat test.
 
 \subsection{Required Number of Tests}
 Generally to ensure a number is very likely to be prime you have to perform the Miller--Rabin with
@@ -2220,9 +2207,8 @@ $1536$ bits. It can be seen in table \ref{table:millerrabinrunsp1} that those co
 the diagonal from $(512,2^{-80})$ downwards and to the right to gain a lower probability of getting
 a composite declared a pseudoprime for the same amount of work or less.
 
-If this version of the library has the strong Lucas--Selfridge and/or the Frobenius--Underwood test
-implemented only one or two rounds of the Miller--Rabin test with a random base is necessary for
-numbers larger than or equal to $1024$ bits.
+If this version of the library has the extra strong Lucas test implemented only one or two rounds
+of the Miller--Rabin test with a random base is necessary for numbers larger than or equal to $1024$ bits.
 
 This function is meant for RSA. The number of rounds for DSA is $\lceil -log_2(p)/2\rceil$ with $p$
 the probability which is just the half of the absolute value of $p$ if given as a power of two.
@@ -2233,13 +2219,13 @@ test.
 
 See also table C.1 in FIPS 186-4.
 
-\section{Strong Lucas--Selfridge Test}
-\index{mp\_prime\_strong\_lucas\_selfridge}
+\section{Extra Strong Lucas Test}
+\index{mp\_prime\_extra\_strong\_lucas}
 \begin{alltt}
-mp_err mp_prime_strong_lucas_selfridge(const mp_int *a, bool *result)
+mp_err mp_prime_extra_strong_lucas(const mp_int *a, bool *result)
 \end{alltt}
-Performs a strong Lucas--Selfridge test. The strong Lucas--Selfridge test together with the
-Rabin--Miller test with bases $2$ and $3$ resemble the BPSW test. The single internal use is a
+Performs a extra strong Lucas test. The extra strong Lucas test together with the
+Rabin--Miller test with base $2$ resembles the BPSW test. The single internal use is a
 compile--time option in \texttt{mp\_prime\_is\_prime} and can be excluded from the Libtommath build
 if not needed.
 
@@ -2250,8 +2236,7 @@ mp_err mp_prime_frobenius_underwood(const mp_int *N, bool *result)
 \end{alltt}
 Performs the variant of the Frobenius test as described by Paul Underwood. It can be included at
 build--time if the preprocessor macro \texttt{LTM\_USE\_FROBENIUS\_TEST} is defined and will be
-used
-instead of the Lucas--Selfridge test.
+used after the extra strong Lucas test.
 
 It returns \texttt{MP\_ITER} if the number of iterations is exhausted, assumes a composite as the
 input and sets \texttt{result} accordingly. This will reduce the set of available pseudoprimes by a
@@ -2271,13 +2256,8 @@ mp_err mp_is_square(const mp_int *arg, bool *ret);
 \begin{alltt}
 mp_err mp_prime_is_prime(const mp_int *a, int t, bool *result)
 \end{alltt}
-This will perform a trial division followed by two rounds of Miller--Rabin with bases 2 and 3 and a
-Lucas--Selfridge test. The Frobenius--Underwood is available as a compile--time option with the
-preprocessor macro \texttt{LTM\_USE\_FROBENIUS\_TEST}. See file \texttt{bn\_mp\_prime\_is\_prime.c}
-for the necessary details. It shall be noted that both functions are much slower than the
-Miller--Rabin test and if speed is an essential issue, the macro \texttt{LTM\_USE\_ONLY\_MR}
-switches the Frobenius--Underwood test and the Lucas--Selfridge test off and their code will not
-even be compiled into the library.
+This will perform a trial division followed by two rounds of Miller--Rabin to bases 2 and 3 and an
+extra strong Lucas test.
 
 If $t$ is set to a positive value $t$ additional rounds of the Miller--Rabin test with random bases
 will be performed to allow for Fips 186.4 (vid.~p.~126ff) compliance. The function
@@ -2289,15 +2269,32 @@ One Miller--Rabin tests with a random base will be run automatically, so by sett
 positive value this function will run $t + 1$ Miller--Rabin tests with random bases.
 
 If  $t$ is set to a negative value the test will run the deterministic Miller--Rabin test for the
-primes up to $3\,317\,044\,064\,679\,887\ 385\,961\,981$\footnote{The semiprime $1287836182261\cdot
-    2575672364521$ with both factors smaller than $2^{64}$. An alternative with all factors smaller
-  than
-  $2^32$ is $4290067842\cdot 262853\cdot 1206721\cdot 2134439 + 3$}. That limit has to be checked
-by
-the caller.
+primes up to $3\,317\,044\,064\,679\,887\ 385\,961\,981$ Input larger than the above limit
+will return \texttt{MP\_VAL}.
 
 If $a$ passes all of the tests $result$ is set to \texttt{true}, otherwise it is set to
 \texttt{false}.
+
+\subsection{Compile Time Switches}
+There are several compile-time branches available.
+\begin{description}
+\item[\texttt{LTM\_USE\_ONLY\_MR}]\hfill \\
+Neither run the Frobenius--Underwood nor the Extra--Strong--Lucas test, only Miller-Rabin.
+This does not change the deterministic tests with \texttt{t < 0} but the probabilistic test might
+be a bit weaker.
+
+\item[\texttt{LTM\_USE\_FROBENIUS\_TEST}]\hfill \\
+This runs the Frobenius--Underwood test after the the Extra--Strong--Lucas test. This macro is not
+compatible with the macro \texttt{LTM\_USE\_ONLY\_MR}.
+
+\item[\texttt{LTM\_USE\_ZHANG}]\hfill \\
+This macro allows the code to use larger bounds up to 
+$1\,543\,267\,864\,443\,420\,616\,877\,677\,640\,751\,301$ computed by Zhenxiang Zhang in
+``Two Kinds of Strong Pseudoprimes up to $10^36$'' (Mathematics of computation, 76(260), 2095-2107)
+but they have not been verified independently yet, use with caution.
+\end{description}
+
+
 
 \section{Next Prime}
 \index{mp\_prime\_next\_prime}
@@ -2751,5 +2748,7 @@ fips_f1_1(prime_length, ptarget)={
 \end{alltt}
 \end{appendices}
 \input{bn.ind}
+
+
 
 \end{document}
