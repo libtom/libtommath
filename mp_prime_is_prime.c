@@ -3,16 +3,6 @@
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
-/* portable integer log of two with small footprint */
-static unsigned int s_floor_ilog2(int value)
-{
-   unsigned int r = 0;
-   while ((value >>= 1) != 0) {
-      r++;
-   }
-   return r;
-}
-
 mp_err mp_prime_is_prime(const mp_int *a, int t, bool *result)
 {
    mp_int  b;
@@ -186,7 +176,7 @@ mp_err mp_prime_is_prime(const mp_int *a, int t, bool *result)
        * Hence the ugly type-fiddling in the following code.
        */
       size_a = mp_count_bits(a);
-      mask = (1u << s_floor_ilog2(size_a)) - 1u;
+      mask = (1u << s_mp_floor_ilog2((unsigned int)size_a)) - 1u;
       /*
          Assuming the General Rieman hypothesis (never thought to write that in a
          comment) the upper bound can be lowered to  2*(log a)^2.

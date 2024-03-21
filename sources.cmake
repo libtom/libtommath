@@ -132,6 +132,9 @@ s_mp_div_school.c
 s_mp_div_small.c
 s_mp_exptmod.c
 s_mp_exptmod_fast.c
+s_mp_faster_read_radix.c
+s_mp_faster_to_radix.c
+s_mp_floor_ilog2.c
 s_mp_fp_log.c
 s_mp_fp_log_d.c
 s_mp_get_bit.c
@@ -151,6 +154,8 @@ s_mp_prime_tab.c
 s_mp_radix_map.c
 s_mp_radix_size_overestimate.c
 s_mp_rand_platform.c
+s_mp_slower_read_radix.c
+s_mp_slower_to_radix.c
 s_mp_sqr.c
 s_mp_sqr_comba.c
 s_mp_sqr_karatsuba.c

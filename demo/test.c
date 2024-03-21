@@ -1157,13 +1157,19 @@ LBL_ERR:
 
 }
 
+#include <time.h>
 static int test_mp_read_radix(void)
 {
    char buf[4096];
-   size_t written;
+   size_t written, maxlen;
+   int bignum, i;
 
-   mp_int a;
-   DOR(mp_init_multi(&a, NULL));
+   char *buffer, *bcpy, *startb;
+
+   clock_t start, stop, t_slow, t_fast;
+
+   mp_int a, b;
+   DOR(mp_init_multi(&a, &b, NULL));
 
    DO(mp_read_radix(&a, "123456", 10));
 
@@ -1189,6 +1195,84 @@ static int test_mp_read_radix(void)
    DO(mp_to_radix(&a, buf, sizeof(buf), &written, 10));
    printf("\r '0' a == %s, length = %zu", buf, written);
 
+   /* Test the fast method with a slightly larger number */
+
+   /* Needs to be big enough to make a sufficiently large timing difference */
+   bignum = 30000;
+   buffer = (char *)malloc((size_t)(bignum + 2));
+   if (buffer == NULL) {
+      goto LBL_ERR;
+   }
+   DO(mp_rand(&a, bignum / MP_DIGIT_BIT));
+   fprintf(stderr,"\nNumber of limbs in &b = %d, bit_count of &b = %d\n", bignum / MP_DIGIT_BIT, mp_count_bits(&a));
+   start = clock();
+   for (i = 2; i < 65; i++) {
+      /* printf("FAST radix = %d\n",i); */
+      DO(mp_to_radix(&a, buffer, (size_t)(bignum + 1), &written, i));
+      mp_zero(&b);
+      DO(mp_read_radix(&b, buffer, i));
+      EXPECT(mp_cmp(&a, &b) == MP_EQ);
+   }
+   stop = clock();
+   t_fast = stop - start;
+
+   printf("Same number, slow radix conversions\n");
+   start = clock();
+   for (i = 2; i < 65; i++) {
+      /* printf("SLOW radix = %d\n",i); */
+      maxlen = (size_t)(bignum + 1);
+      bcpy = buffer;
+      /* s_mp_slower_to_radix is very rudimentary as a stand-alone */
+      startb = bcpy;
+      DO(s_mp_slower_to_radix(&a, &bcpy, &maxlen, &written, i, false));
+      bcpy = startb;
+      mp_zero(&b);
+      DO(s_mp_slower_read_radix(&b, bcpy, 0, strlen(bcpy), i));
+      EXPECT(mp_cmp(&a, &b) == MP_EQ);
+   }
+   stop = clock();
+   t_slow = stop - start;
+
+   /* It is "long int" in GLibC but can be bigger and/or even a floating point elsewhere */
+   fprintf(stderr,"SLOW: %.10f, FAST: %.10f\n", (double)t_slow/(double)CLOCKS_PER_SEC,
+           (double)t_fast/(double)CLOCKS_PER_SEC);
+
+   /* Check if the branching works. */
+   if (MP_HAS(S_MP_FASTER_READ_RADIX) && MP_HAS(S_MP_FASTER_TO_RADIX)) {
+      if (t_fast > t_slow) {
+         fprintf(stderr, "Timing suspicious in test_mp_read_radix. No fast multiplication? Cut-off too low?\n");
+         DO(mp_fwrite(&a, 16, stderr));
+         goto LBL_ERR;
+      }
+   }
+
+   free(buffer);
+
+#if ((MP_DIGIT_BIT <= 16) && (defined MP_CHECK_RADIX_OVF))
+   /* Check a number of size (MP_MAX_DIGIT_COUNT * MP_DIGIT_BIT - 1) at fixed radix "10". */
+   /* Will not work if test is run on platforms with larger int's because
+         #define MP_MAX_DIGIT_COUNT ((INT_MAX - 2) / MP_DIGIT_BIT)
+      So we have to replace the value for INT_MAX with 2^15 - 1 = 32767 to test 16-bit int's. Not
+      very elegant but it works.
+   */
+   bignum = ((32767 - 2) / MP_DIGIT_BIT);
+   bignum = ((bignum - 1) * MP_DIGIT_BIT) + (MP_DIGIT_BIT - 1);
+   /* Manual computation because the automatic methods might not have been included in the build */
+   buffer = (char *)malloc(((bignum + 2)/1000) * 333);
+   if (buffer == NULL) {
+      goto LBL_ERR;
+   }
+   DO(mp_2expt(&a, bignum));
+   DO(mp_decr(&a));
+   printf("Number of limbs in &b = %d, bit_count of &b = %d\n", bignum / MP_DIGIT_BIT, mp_count_bits(&a));
+   DO(mp_to_radix(&a, buffer, ((bignum + 2)/1000) * 333, &written, 10));
+   DO(mp_read_radix(&b, buffer, 10));
+   EXPECT(mp_cmp(&a, &b) == MP_EQ);
+   free(buffer);
+#endif
+
+
+
    while (0) {
       char *s = fgets(buf, sizeof(buf), stdin);
       if (s != buf) break;
@@ -1198,10 +1282,10 @@ static int test_mp_read_radix(void)
       printf("%s, %lu\n", buf, (unsigned long)a.dp[0] & 3uL);
    }
 
-   mp_clear(&a);
+   mp_clear_multi(&a, &b, NULL);
    return EXIT_SUCCESS;
 LBL_ERR:
-   mp_clear(&a);
+   mp_clear_multi(&a, &b, NULL);
    return EXIT_FAILURE;
 }
 
@@ -2494,7 +2578,7 @@ static int unit_tests(int argc, char **argv)
       T1(mp_prime_next_prime, MP_PRIME_NEXT_PRIME),
       T1(mp_prime_rand, MP_PRIME_RAND),
       T1(mp_rand, MP_RAND),
-      T1(mp_read_radix, MP_READ_RADIX),
+      T3(mp_read_radix, ONLY_PUBLIC_API, MP_READ_RADIX, MP_TO_RADIX),
       T1(mp_read_write_ubin, MP_TO_UBIN),
       T1(mp_read_write_sbin, MP_TO_SBIN),
       T1(mp_reduce_2k, MP_REDUCE_2K),
