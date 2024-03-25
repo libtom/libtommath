@@ -2625,6 +2625,9 @@ static int unit_tests(int argc, char **argv)
          test_threads[i].t = &test[i];
          EXPECT(thread_start(&test_threads[i]) == 0);
       }
+   } else if (MP_HAS(MP_SMALL_STACK_SIZE)) {
+      printf("Small-stack enabled\n\n");
+      DO(mp_warray_init(1, 1));
    }
 
    for (i = 0; i < (sizeof(test) / sizeof(test[0])); ++i) {
