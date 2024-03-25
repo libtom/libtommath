@@ -2455,14 +2455,39 @@ LBL_ERR:
 #define ONLY_PUBLIC_API_C
 #endif
 
-#if !defined(LTM_TEST_MULTITHREAD) || !defined(MP_SMALL_STACK_SIZE)
+#if !defined(LTM_TEST_MULTITHREAD)
 #define SINGLE_THREADED_C
-typedef unsigned long int pthread_t;
-extern int pthread_create(pthread_t *, const void *, void *(*)(void *), void *);
-extern int pthread_join(pthread_t, void **);
+typedef uintptr_t pthread_t;
 #else
 #define MULTI_THREADED_C
+#if !defined(_WIN32)
+#define MULTI_THREADED_PTHREAD_C
 #include <pthread.h>
+#else
+#define MULTI_THREADED_MSVC_C
+
+#ifndef _WIN32_WINNT
+#define _WIN32_WINNT 0x0501
+#endif
+#ifndef WINVER
+#define WINVER 0x0501
+#endif
+
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+typedef HANDLE pthread_t;
+#endif
+#endif
+
+#if !defined(MULTI_THREADED_PTHREAD_C)
+extern int pthread_create(pthread_t *, const void *, void *(*)(void *), void *);
+extern int pthread_join(pthread_t, void **);
+#endif
+
+#if !defined(MULTI_THREADED_MSVC_C)
+extern pthread_t CreateThread(void *, size_t, unsigned long (*)(void *), void *, unsigned long, void *);
+extern unsigned long WaitForSingleObject(pthread_t hHandle, unsigned long dwMilliseconds);
+#define INFINITE ((unsigned long)-1)
 #endif
 
 struct test_fn {
@@ -2476,13 +2501,45 @@ struct thread_info {
    int ret;
 };
 
-static void *run(void *arg)
+static void *run_pthread(void *arg)
 {
    struct thread_info *tinfo = arg;
 
    tinfo->ret = tinfo->t->fn();
 
    return arg;
+}
+
+static unsigned long run_msvc(void *arg)
+{
+   struct thread_info *tinfo = arg;
+
+   tinfo->ret = tinfo->t->fn();
+
+   return 0;
+}
+
+static int thread_start(struct thread_info *info)
+{
+   if (MP_HAS(MULTI_THREADED_PTHREAD))
+      return pthread_create(&info->thread_id, NULL, run_pthread, info);
+   if (MP_HAS(MULTI_THREADED_MSVC)) {
+      info->thread_id = CreateThread(NULL, 0, run_msvc, info, 0, NULL);
+      return info->thread_id == (pthread_t)NULL ? -1 : 0;
+   }
+   return -1;
+}
+
+static int thread_join(struct thread_info *info, struct thread_info **res)
+{
+   if (MP_HAS(MULTI_THREADED_PTHREAD))
+      return pthread_join(info->thread_id, (void **)res);
+   if (MP_HAS(MULTI_THREADED_MSVC)) {
+      WaitForSingleObject(info->thread_id, INFINITE);
+      *res = info;
+      return 0;
+   }
+   return -1;
 }
 
 static int unit_tests(int argc, char **argv)
@@ -2552,7 +2609,7 @@ static int unit_tests(int argc, char **argv)
    struct thread_info test_threads[sizeof(test)/sizeof(test[0])], *res;
    unsigned long i, ok, fail, nop;
    uint64_t t;
-   int j = -1;
+   int j;
    ok = fail = nop = 0;
 
    t = (uint64_t)time(NULL);
@@ -2563,14 +2620,15 @@ static int unit_tests(int argc, char **argv)
    if (MP_HAS(MULTI_THREADED)) {
       printf("Multi-threading enabled\n\n");
       DO(mp_warray_init(sizeof(test) / sizeof(test[0]), 1));
-      /* we ignore the fact that jenkings is not thread safe */
+      /* we ignore the fact that jenkins is not thread safe */
       for (i = 0; i < (sizeof(test) / sizeof(test[0])); ++i) {
          test_threads[i].t = &test[i];
-         EXPECT(pthread_create(&test_threads[i].thread_id, NULL, run, &test_threads[i]) == 0);
+         EXPECT(thread_start(&test_threads[i]) == 0);
       }
    }
 
    for (i = 0; i < (sizeof(test) / sizeof(test[0])); ++i) {
+      j = -1;
       if (MP_HAS(SINGLE_THREADED)) {
          if (argc > 1) {
             for (j = 1; j < argc; ++j) {
@@ -2584,7 +2642,7 @@ static int unit_tests(int argc, char **argv)
          if (test[i].fn)
             j = test[i].fn();
       } else if (MP_HAS(MULTI_THREADED)) {
-         EXPECT(pthread_join(test_threads[i].thread_id, (void **)&res) == 0);
+         EXPECT(thread_join(&test_threads[i], &res) == 0);
          j = res->ret;
       }
       printf("TEST %s\n", test[i].name);
