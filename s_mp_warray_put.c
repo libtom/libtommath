@@ -10,6 +10,7 @@ void s_mp_warray_put(void *w)
       if (s_mp_warray.l_used[n].warray == w) {
          s_mp_warray.l_used[n].warray = NULL;
          s_mp_warray.l_free[n].warray = w;
+         s_mp_zero_buf(w, MP_WARRAY * sizeof(mp_word));
          break;
       }
    }
