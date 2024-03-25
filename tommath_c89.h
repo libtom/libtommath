@@ -26,6 +26,11 @@ typedef __UINT8_TYPE__  mp_u8;
 typedef __UINT16_TYPE__ mp_u16;
 typedef __UINT32_TYPE__ mp_u32;
 typedef __UINT64_TYPE__ mp_u64;
+# if __WORDSIZE == 64
+typedef __UINT64_TYPE__ mp_uintptr;
+# else
+typedef __UINT32_TYPE__ mp_uintptr;
+# endif
 
 /* inttypes.h replacement, printf format specifier */
 # if __WORDSIZE == 64

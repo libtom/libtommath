@@ -26,8 +26,7 @@ static bool s_cmpexch_n_gcc(void **ptr, void **expected, void *desired)
 
 static bool s_cmpexch_n_msvc(void **ptr, void **expected, void *desired)
 {
-   InterlockedCompareExchangePointer(ptr, desired, *(expected));
-   return *ptr == desired;
+   return InterlockedCompareExchangePointer(ptr, desired, *(expected));
 }
 #endif
 
