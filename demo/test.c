@@ -2455,7 +2455,7 @@ LBL_ERR:
 #define ONLY_PUBLIC_API_C
 #endif
 
-#if !defined(LTM_TEST_MULTITHREAD)
+#if !defined(LTM_TEST_MULTITHREAD) || !defined(MP_SMALL_STACK_SIZE)
 #define SINGLE_THREADED_C
 typedef uintptr_t pthread_t;
 #else
@@ -2524,7 +2524,7 @@ static int thread_start(struct thread_info *info)
    if (MP_HAS(MULTI_THREADED_PTHREAD))
       return pthread_create(&info->thread_id, NULL, run_pthread, info);
    if (MP_HAS(MULTI_THREADED_MSVC)) {
-      info->thread_id = CreateThread(NULL, 0, run_msvc, info, 0, NULL);
+      info->thread_id = CreateThread(NULL, 10*1024*1024, run_msvc, info, 0, NULL);
       return info->thread_id == (pthread_t)NULL ? -1 : 0;
    }
    return -1;
