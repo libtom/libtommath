@@ -2455,14 +2455,15 @@ LBL_ERR:
 #define ONLY_PUBLIC_API_C
 #endif
 
-#if !defined(LTM_TEST_MULTITHREAD) || !defined(MP_SMALL_STACK_SIZE)
+#if !defined(LTM_TEST_MULTITHREAD)
 #define SINGLE_THREADED_C
-typedef uintptr_t pthread_t;
+typedef uintptr_t thread_id_t;
 #else
 #define MULTI_THREADED_C
 #if !defined(_WIN32)
 #define MULTI_THREADED_PTHREAD_C
 #include <pthread.h>
+typedef pthread_t thread_id_t;
 #else
 #define MULTI_THREADED_MSVC_C
 
@@ -2475,18 +2476,18 @@ typedef uintptr_t pthread_t;
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-typedef HANDLE pthread_t;
+typedef HANDLE thread_id_t;
 #endif
 #endif
 
 #if !defined(MULTI_THREADED_PTHREAD_C)
-extern int pthread_create(pthread_t *, const void *, void *(*)(void *), void *);
-extern int pthread_join(pthread_t, void **);
+extern int pthread_create(thread_id_t *, const void *, void *(*)(void *), void *);
+extern int pthread_join(thread_id_t, void **);
 #endif
 
 #if !defined(MULTI_THREADED_MSVC_C)
-extern pthread_t CreateThread(void *, size_t, unsigned long (*)(void *), void *, unsigned long, void *);
-extern unsigned long WaitForSingleObject(pthread_t hHandle, unsigned long dwMilliseconds);
+extern thread_id_t CreateThread(void *, size_t, unsigned long (*)(void *), void *, unsigned long, void *);
+extern unsigned long WaitForSingleObject(thread_id_t hHandle, unsigned long dwMilliseconds);
 #define INFINITE ((unsigned long)-1)
 #endif
 
@@ -2496,7 +2497,7 @@ struct test_fn {
 };
 
 struct thread_info {
-   pthread_t thread_id;
+   thread_id_t thread_id;
    const struct test_fn *t;
    int ret;
 };
@@ -2524,8 +2525,8 @@ static int thread_start(struct thread_info *info)
    if (MP_HAS(MULTI_THREADED_PTHREAD))
       return pthread_create(&info->thread_id, NULL, run_pthread, info);
    if (MP_HAS(MULTI_THREADED_MSVC)) {
-      info->thread_id = CreateThread(NULL, 10*1024*1024, run_msvc, info, 0, NULL);
-      return info->thread_id == (pthread_t)NULL ? -1 : 0;
+      info->thread_id = CreateThread(NULL, 0, run_msvc, info, 0, NULL);
+      return info->thread_id == (thread_id_t)NULL ? -1 : 0;
    }
    return -1;
 }
@@ -2608,6 +2609,7 @@ static int unit_tests(int argc, char **argv)
    };
    struct thread_info test_threads[sizeof(test)/sizeof(test[0])], *res;
    unsigned long i, ok, fail, nop;
+   size_t n_threads = MP_HAS(MULTI_THREADED) ? sizeof(test) / sizeof(test[0]) : 1;
    uint64_t t;
    int j;
    ok = fail = nop = 0;
@@ -2617,17 +2619,18 @@ static int unit_tests(int argc, char **argv)
    s_mp_rand_jenkins_init(t);
    mp_rand_source(s_mp_rand_jenkins);
 
+   if (MP_HAS(MP_SMALL_STACK_SIZE)) {
+      printf("Small-stack enabled with %zu warray buffers\n\n", n_threads);
+      DO(mp_warray_init(n_threads, 1));
+   }
+
    if (MP_HAS(MULTI_THREADED)) {
       printf("Multi-threading enabled\n\n");
-      DO(mp_warray_init(sizeof(test) / sizeof(test[0]), 1));
       /* we ignore the fact that jenkins is not thread safe */
       for (i = 0; i < (sizeof(test) / sizeof(test[0])); ++i) {
          test_threads[i].t = &test[i];
          EXPECT(thread_start(&test_threads[i]) == 0);
       }
-   } else if (MP_HAS(MP_SMALL_STACK_SIZE)) {
-      printf("Small-stack enabled\n\n");
-      DO(mp_warray_init(1, 1));
    }
 
    for (i = 0; i < (sizeof(test) / sizeof(test[0])); ++i) {
