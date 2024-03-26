@@ -11,14 +11,18 @@ void *s_mp_warray_get(void)
       if (mp_warray_init(1, false) != MP_OKAY)
          return NULL;
    }
-   for (n = 0; n < s_mp_warray.allocated; ++n) {
-      if (s_mp_warray.l_free[n].warray == NULL)
+   for (n = 0; n < s_mp_warray.allocated;) {
+      if (s_mp_warray.l_free[n].warray == NULL) {
+         n++;
          continue;
+      }
       ret = s_mp_warray.l_free[n].warray;
       if (s_mp_cmpexch_n(&s_mp_warray.l_free[n].warray, &ret, NULL)) {
          s_mp_warray.l_used[n].warray = ret;
          goto LBL_OUT;
       }
+      /* restart from the beginning if we missed a potential slot */
+      n = 0;
    }
    ret = NULL;
    if (s_mp_warray.allocated + 1 > s_mp_warray.usable)
