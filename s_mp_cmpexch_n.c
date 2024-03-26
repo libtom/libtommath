@@ -24,7 +24,7 @@ static bool s_cmpexch_n_gcc(void **ptr, void **expected, void *desired)
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
-static bool s_cmpexch_n_msvc(void **ptr, void **expected, void *desired)
+static bool s_cmpexch_n_msvc(void * volatile *ptr, void **expected, void *desired)
 {
    InterlockedCompareExchangePointer(ptr, desired, *(expected));
    return *ptr == desired;
@@ -32,7 +32,7 @@ static bool s_cmpexch_n_msvc(void **ptr, void **expected, void *desired)
 #endif
 
 bool s_cmpexch_n_gcc(void **ptr, void **expected, void *desired);
-bool s_cmpexch_n_msvc(void **ptr, void **expected, void *desired);
+bool s_cmpexch_n_msvc(void * volatile *ptr, void **expected, void *desired);
 
 bool s_mp_cmpexch_n(void **ptr, void **expected, void *desired)
 {
