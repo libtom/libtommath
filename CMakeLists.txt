@@ -7,7 +7,7 @@
 cmake_minimum_required(VERSION 3.10)
 
 project(libtommath
-    VERSION 1.2.1
+    VERSION 1.3.0
     DESCRIPTION "A free open source portable number theoretic multiple-precision integer (MPI) library written entirely in C."
     HOMEPAGE_URL "https://www.libtom.net/LibTomMath"
     LANGUAGES C)
@@ -164,7 +164,7 @@ install(TARGETS ${PROJECT_NAME}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Libraries
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
+    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
 
 # Install libtommath.pc for pkg-config if we build a shared library
@@ -189,14 +189,6 @@ write_basic_package_version_file(
     VERSION ${PROJECT_VERSION}
     COMPATIBILITY SameMajorVersion
 )
-
-# Windows uses a different help sytem.
-if((NOT WIN32) AND (NOT CMAKE_HOST_WIN32))
-# install manpage (not gzipped, some BSD's do not want it compressed?)
-install(FILES ${CMAKE_SOURCE_DIR}/doc/tommath.3
-        DESTINATION ${CMAKE_INSTALL_MANDIR}/man3/
-)
-endif()
 
 # install version file
 install(FILES ${PROJECT_VERSION_FILE}
