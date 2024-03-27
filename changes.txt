@@ -1,4 +1,4 @@
-Mar 14th, 2024
+Mar 27th, 2024
 v1.3.0
        -- Deprecate more APIs which are replaced in develop (PR #572)
        -- Add support for CMake (PR #573)

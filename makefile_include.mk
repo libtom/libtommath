@@ -3,7 +3,7 @@
 #
 
 #version of library
-VERSION=1.3.0-rc1
+VERSION=1.3.0
 VERSION_PC=1.3.0
 VERSION_SO=4:0:3
 
