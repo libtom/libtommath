@@ -326,6 +326,481 @@ LBL_ERR:
    return EXIT_FAILURE;
 }
 
+#if (!(defined LTM_NOTHING) && !(defined MP_NO_FILE) && (defined __GLIBC__))
+#include <printf.h>
+#define MP_TEST_BUFSIZ 1024
+static int test_mp_printf_extension(void)
+{
+   FILE *test_file = NULL;
+
+   char line_buffer[MP_TEST_BUFSIZ] = {0};
+   bool write_only = false;
+   size_t slen = 0;
+   int characters_printed = 0;
+   char *fgets_return;
+   int idx = 0;
+   /* TODO: test printing of all three flavours of mp_digit and the array */
+   const char *test_values[41] = {
+      "4DDCFDE0D20EF8663B34D19F829FDD",
+      "-51D9769BDAE5B38121F2A31D881E5F"
+   };
+   const char *test_strings[] = {
+      "Right aligned AAA               404289102523688521157725445716877277 BBB\n",
+      "Left aligned  AAA 404289102523688521157725445716877277               BBB\n",
+      "Right aligned AAA              +404289102523688521157725445716877277 BBB\n",
+      "Left aligned  AAA +404289102523688521157725445716877277              BBB\n",
+      "Right aligned AAA               404289102523688521157725445716877277 BBB\n",
+      "Left aligned  AAA  404289102523688521157725445716877277              BBB\n",         /* 5 */
+      "hex with right align  AAA                     4DDCFDE0D20EF8663B34D19F829FDD BBB\n",
+      "hex with left align   AAA 4DDCFDE0D20EF8663B34D19F829FDD                     BBB\n",
+      "hex with right align  AAA                    +4DDCFDE0D20EF8663B34D19F829FDD BBB\n",
+      "hex with left align   AAA +4DDCFDE0D20EF8663B34D19F829FDD                    BBB\n",
+      "hex with right align  AAA                     4DDCFDE0D20EF8663B34D19F829FDD BBB\n", /* 10 */
+      "hex with left align   AAA  4DDCFDE0D20EF8663B34D19F829FDD                    BBB\n",
+      "hex with right align  AAA                   0x4DDCFDE0D20EF8663B34D19F829FDD BBB\n",
+      "hex with left align   AAA 0x4DDCFDE0D20EF8663B34D19F829FDD                   BBB\n",
+      "hex with right align  AAA                  +0x4DDCFDE0D20EF8663B34D19F829FDD BBB\n",
+      "hex with left align   AAA +0x4DDCFDE0D20EF8663B34D19F829FDD                  BBB\n", /* 15 */
+      "hex with right align  AAA                   0x4DDCFDE0D20EF8663B34D19F829FDD BBB\n",
+      "hex with left align   AAA  0x4DDCFDE0D20EF8663B34D19F829FDD                  BBB\n",
+      "Right aligned AAA              -424986725583297217766029037085924959 BBB\n",
+      "Left aligned  AAA -424986725583297217766029037085924959              BBB\n",
+      "Right aligned AAA              -424986725583297217766029037085924959 BBB\n",         /* 20 */
+      "Left aligned  AAA -424986725583297217766029037085924959              BBB\n",
+      "Right aligned AAA              -424986725583297217766029037085924959 BBB\n",
+      "Left aligned  AAA -424986725583297217766029037085924959              BBB\n",
+      "hex with right align  AAA                    -51D9769BDAE5B38121F2A31D881E5F BBB\n",
+      "hex with left align   AAA -51D9769BDAE5B38121F2A31D881E5F                    BBB\n", /* 25 */
+      "hex with right align  AAA                    -51D9769BDAE5B38121F2A31D881E5F BBB\n",
+      "hex with left align   AAA -51D9769BDAE5B38121F2A31D881E5F                    BBB\n",
+      "hex with right align  AAA                    -51D9769BDAE5B38121F2A31D881E5F BBB\n",
+      "hex with left align   AAA -51D9769BDAE5B38121F2A31D881E5F                    BBB\n",
+      "hex with right align  AAA                  -0x51D9769BDAE5B38121F2A31D881E5F BBB\n", /* 30 */
+      "hex with left align   AAA -0x51D9769BDAE5B38121F2A31D881E5F                  BBB\n",
+      "hex with right align  AAA                  -0x51D9769BDAE5B38121F2A31D881E5F BBB\n",
+      "hex with left align   AAA -0x51D9769BDAE5B38121F2A31D881E5F                  BBB\n",
+      "hex with right align  AAA                  -0x51D9769BDAE5B38121F2A31D881E5F BBB\n",
+      "hex with left align   AAA -0x51D9769BDAE5B38121F2A31D881E5F                  BBB\n", /* 35 */
+      "Right aligned AAA                                                  0 BBB\n",
+      "Left aligned  AAA 0                                                  BBB\n",
+      "hex with right align  AAA                                                0x0 BBB\n",
+      "hex with left align   AAA 0x0                                                BBB\n",
+      "Right aligned AAA 10011011101110011111101111000001101001000001110111110000110011000111011001101001101000110011111100000101001111111011101 BBB\n", /* 40 */
+      "Left aligned  AAA 10011011101110011111101111000001101001000001110111110000110011000111011001101001101000110011111100000101001111111011101 BBB\n",
+      "Right aligned AAA +10011011101110011111101111000001101001000001110111110000110011000111011001101001101000110011111100000101001111111011101 BBB\n",
+      "Left aligned  AAA +10011011101110011111101111000001101001000001110111110000110011000111011001101001101000110011111100000101001111111011101 BBB\n",
+      "Right aligned AAA  10011011101110011111101111000001101001000001110111110000110011000111011001101001101000110011111100000101001111111011101 BBB\n",
+      "Left aligned  AAA  10011011101110011111101111000001101001000001110111110000110011000111011001101001101000110011111100000101001111111011101 BBB\n", /* 45 */
+      "Right aligned AAA                               JTpzuD8E+6OxDD6VWf/T BBB\n",
+      "Left aligned  AAA JTpzuD8E+6OxDD6VWf/T                               BBB\n",
+      "Right aligned AAA                              +JTpzuD8E+6OxDD6VWf/T BBB\n",
+      "Left aligned  AAA +JTpzuD8E+6OxDD6VWf/T                              BBB\n",
+      "Right aligned AAA                               JTpzuD8E+6OxDD6VWf/T BBB\n",         /* 50 */
+      "Left aligned  AAA  JTpzuD8E+6OxDD6VWf/T                              BBB\n",
+      "Right aligned AAA                             0@JTpzuD8E+6OxDD6VWf/T BBB\n",
+      "Left aligned  AAA 0@JTpzuD8E+6OxDD6VWf/T                             BBB\n",
+      "Right aligned AAA                            +0@JTpzuD8E+6OxDD6VWf/T BBB\n",
+      "Left aligned  AAA +0@JTpzuD8E+6OxDD6VWf/T                            BBB\n",         /* 55 */
+      "Right aligned AAA                             0@JTpzuD8E+6OxDD6VWf/T BBB\n",
+      "Left aligned  AAA  0@JTpzuD8E+6OxDD6VWf/T                            BBB\n",
+#if (MP_DIGIT_BIT == 60)
+      "Right aligned AAA                                  449010662782443485 BBB\n",
+      "Left aligned  AAA 449010662782443485                                  BBB\n",
+      "Right aligned AAA                                 +449010662782443485 BBB\n",        /* 60 */
+      "Left aligned  AAA +449010662782443485                                 BBB\n",
+      "Right aligned AAA                                  449010662782443485 BBB\n",
+      "Left aligned  AAA  449010662782443485                                 BBB\n",
+      "Right aligned AAA                                     63B34D19F829FDD BBB\n",
+      "Left aligned  AAA 63B34D19F829FDD                                     BBB\n",        /* 65 */
+      "Right aligned AAA                                    +63B34D19F829FDD BBB\n",
+      "Left aligned  AAA +63B34D19F829FDD                                    BBB\n",
+      "Right aligned AAA                                     63B34D19F829FDD BBB\n",
+      "Left aligned  AAA  63B34D19F829FDD                                    BBB\n",
+      "Right aligned AAA                                   0x63B34D19F829FDD BBB\n",        /* 70 */
+      "Left aligned  AAA 0x63B34D19F829FDD                                   BBB\n",
+      "Right aligned AAA                                  +0x63B34D19F829FDD BBB\n",
+      "Left aligned  AAA +0x63B34D19F829FDD                                  BBB\n",
+      "Right aligned AAA                                   0x63B34D19F829FDD BBB\n",
+      "Left aligned  AAA  0x63B34D19F829FDD                                  BBB\n",        /* 75 */
+      "Right aligned AAA 11000111011001101001101000110011111100000101001111111011101 BBB\n",
+      "Left aligned  AAA 11000111011001101001101000110011111100000101001111111011101 BBB\n",
+      "Right aligned AAA +11000111011001101001101000110011111100000101001111111011101 BBB\n",
+      "Left aligned  AAA +11000111011001101001101000110011111100000101001111111011101 BBB\n",
+      "Right aligned AAA  11000111011001101001101000110011111100000101001111111011101 BBB\n",        /* 80 */
+      "Left aligned  AAA  11000111011001101001101000110011111100000101001111111011101 BBB\n",
+      "Right aligned AAA                                          OxDD6VWf/T BBB\n",
+      "Left aligned  AAA OxDD6VWf/T                                          BBB\n",
+      "Right aligned AAA                                         +OxDD6VWf/T BBB\n",
+      "Left aligned  AAA +OxDD6VWf/T                                         BBB\n",        /* 85 */
+      "Right aligned AAA                                          OxDD6VWf/T BBB\n",
+      "Left aligned  AAA  OxDD6VWf/T                                         BBB\n",
+      "Right aligned AAA                                        0@OxDD6VWf/T BBB\n",
+      "Left aligned  AAA 0@OxDD6VWf/T                                        BBB\n",
+      "Right aligned AAA                                       +0@OxDD6VWf/T BBB\n",        /* 90 */
+      "Left aligned  AAA +0@OxDD6VWf/T                                       BBB\n",
+      "Right aligned AAA                                        0@OxDD6VWf/T BBB\n",
+      "Left aligned  AAA  0@OxDD6VWf/T                                       BBB\n",
+      "Right aligned AAA 63B34D19F829FDD,4DDCFDE0D20EF86, BBB\n",
+      "Left aligned  AAA 63B34D19F829FDD,4DDCFDE0D20EF86, BBB\n",                           /* 95 */
+      "Right aligned AAA 63B34D19F829FDD,4DDCFDE0D20EF86, BBB\n",
+      "Left aligned  AAA 63B34D19F829FDD,4DDCFDE0D20EF86, BBB\n",
+      "Right aligned AAA 63B34D19F829FDD,4DDCFDE0D20EF86, BBB\n",
+      "Left aligned  AAA 63B34D19F829FDD,4DDCFDE0D20EF86, BBB\n",
+      "Right aligned AAA 000011000111011001101001101000110011111100000101001111111011101,000010011011101110011111101111000001101001000001110111110000110, BBB\n",        /* 100 */
+      "Left aligned  AAA 000011000111011001101001101000110011111100000101001111111011101,000010011011101110011111101111000001101001000001110111110000110, BBB\n",
+      "Right aligned AAA 000011000111011001101001101000110011111100000101001111111011101,000010011011101110011111101111000001101001000001110111110000110, BBB\n",
+      "Left aligned  AAA 000011000111011001101001101000110011111100000101001111111011101,000010011011101110011111101111000001101001000001110111110000110, BBB\n",
+      "Right aligned AAA 000011000111011001101001101000110011111100000101001111111011101,000010011011101110011111101111000001101001000001110111110000110, BBB\n",
+      "Left aligned  AAA 000011000111011001101001101000110011111100000101001111111011101,000010011011101110011111101111000001101001000001110111110000110, BBB\n"         /* 105 */
+#elif (MP_DIGIT_BIT == 31)
+      "Right aligned AAA                                           528654301 BBB\n",
+      "Left aligned  AAA 528654301                                           BBB\n",
+      "Right aligned AAA                                          +528654301 BBB\n",
+      "Left aligned  AAA +528654301                                          BBB\n",
+      "Right aligned AAA                                           528654301 BBB\n",
+      "Left aligned  AAA  528654301                                          BBB\n",
+      "Right aligned AAA                                            1F829FDD BBB\n",
+      "Left aligned  AAA 1F829FDD                                            BBB\n",
+      "Right aligned AAA                                           +1F829FDD BBB\n",
+      "Left aligned  AAA +1F829FDD                                           BBB\n",
+      "Right aligned AAA                                            1F829FDD BBB\n",
+      "Left aligned  AAA  1F829FDD                                           BBB\n",
+      "Right aligned AAA                                          0x1F829FDD BBB\n",
+      "Left aligned  AAA 0x1F829FDD                                          BBB\n",
+      "Right aligned AAA                                         +0x1F829FDD BBB\n",
+      "Left aligned  AAA +0x1F829FDD                                         BBB\n",
+      "Right aligned AAA                                          0x1F829FDD BBB\n",
+      "Left aligned  AAA  0x1F829FDD                                         BBB\n",
+      "Right aligned AAA                       11111100000101001111111011101 BBB\n",
+      "Left aligned  AAA 11111100000101001111111011101                       BBB\n",
+      "Right aligned AAA                      +11111100000101001111111011101 BBB\n",
+      "Left aligned  AAA +11111100000101001111111011101                      BBB\n",
+      "Right aligned AAA                       11111100000101001111111011101 BBB\n",
+      "Left aligned  AAA  11111100000101001111111011101                      BBB\n",
+      "Right aligned AAA                                               VWf/T BBB\n",
+      "Left aligned  AAA VWf/T                                               BBB\n",
+      "Right aligned AAA                                              +VWf/T BBB\n",
+      "Left aligned  AAA +VWf/T                                              BBB\n",
+      "Right aligned AAA                                               VWf/T BBB\n",
+      "Left aligned  AAA  VWf/T                                              BBB\n",
+      "Right aligned AAA                                             0@VWf/T BBB\n",
+      "Left aligned  AAA 0@VWf/T                                             BBB\n",
+      "Right aligned AAA                                            +0@VWf/T BBB\n",
+      "Left aligned  AAA +0@VWf/T                                            BBB\n",
+      "Right aligned AAA                                             0@VWf/T BBB\n",
+      "Left aligned  AAA  0@VWf/T                                            BBB\n",
+      "Right aligned AAA 1F829FDD,4C7669A3,3483BE1,26EE7EF, BBB\n",
+      "Left aligned  AAA 1F829FDD,4C7669A3,3483BE1,26EE7EF, BBB\n",
+      "Right aligned AAA 1F829FDD,4C7669A3,3483BE1,26EE7EF, BBB\n",
+      "Left aligned  AAA 1F829FDD,4C7669A3,3483BE1,26EE7EF, BBB\n",
+      "Right aligned AAA 1F829FDD,4C7669A3,3483BE1,26EE7EF, BBB\n",
+      "Left aligned  AAA 1F829FDD,4C7669A3,3483BE1,26EE7EF, BBB\n",
+      "Right aligned AAA 0011111100000101001111111011101,1001100011101100110100110100011,0000011010010000011101111100001,0000010011011101110011111101111, BBB\n",
+      "Left aligned  AAA 0011111100000101001111111011101,1001100011101100110100110100011,0000011010010000011101111100001,0000010011011101110011111101111, BBB\n",
+      "Right aligned AAA 0011111100000101001111111011101,1001100011101100110100110100011,0000011010010000011101111100001,0000010011011101110011111101111, BBB\n",
+      "Left aligned  AAA 0011111100000101001111111011101,1001100011101100110100110100011,0000011010010000011101111100001,0000010011011101110011111101111, BBB\n",
+      "Right aligned AAA 0011111100000101001111111011101,1001100011101100110100110100011,0000011010010000011101111100001,0000010011011101110011111101111, BBB\n",
+      "Left aligned  AAA 0011111100000101001111111011101,1001100011101100110100110100011,0000011010010000011101111100001,0000010011011101110011111101111, BBB\n"
+#elif ( MP_DIGIT_BIT == 28 )
+      "Right aligned AAA                                           260218845 BBB\n",
+      "Left aligned  AAA 260218845                                           BBB\n",
+      "Right aligned AAA                                          +260218845 BBB\n",
+      "Left aligned  AAA +260218845                                          BBB\n",
+      "Right aligned AAA                                           260218845 BBB\n",
+      "Left aligned  AAA  260218845                                          BBB\n",
+      "Right aligned AAA                                             F829FDD BBB\n",
+      "Left aligned  AAA F829FDD                                             BBB\n",
+      "Right aligned AAA                                            +F829FDD BBB\n",
+      "Left aligned  AAA +F829FDD                                            BBB\n",
+      "Right aligned AAA                                             F829FDD BBB\n",
+      "Left aligned  AAA  F829FDD                                            BBB\n",
+      "Right aligned AAA                                           0xF829FDD BBB\n",
+      "Left aligned  AAA 0xF829FDD                                           BBB\n",
+      "Right aligned AAA                                          +0xF829FDD BBB\n",
+      "Left aligned  AAA +0xF829FDD                                          BBB\n",
+      "Right aligned AAA                                           0xF829FDD BBB\n",
+      "Left aligned  AAA  0xF829FDD                                          BBB\n",
+      "Right aligned AAA                        1111100000101001111111011101 BBB\n",
+      "Left aligned  AAA 1111100000101001111111011101                        BBB\n",
+      "Right aligned AAA                       +1111100000101001111111011101 BBB\n",
+      "Left aligned  AAA +1111100000101001111111011101                       BBB\n",
+      "Right aligned AAA                        1111100000101001111111011101 BBB\n",
+      "Left aligned  AAA  1111100000101001111111011101                       BBB\n",
+      "Right aligned AAA                                               FWf/T BBB\n",
+      "Left aligned  AAA FWf/T                                               BBB\n",
+      "Right aligned AAA                                              +FWf/T BBB\n",
+      "Left aligned  AAA +FWf/T                                              BBB\n",
+      "Right aligned AAA                                               FWf/T BBB\n",
+      "Left aligned  AAA  FWf/T                                              BBB\n",
+      "Right aligned AAA                                             0@FWf/T BBB\n",
+      "Left aligned  AAA 0@FWf/T                                             BBB\n",
+      "Right aligned AAA                                            +0@FWf/T BBB\n",
+      "Left aligned  AAA +0@FWf/T                                            BBB\n",
+      "Right aligned AAA                                             0@FWf/T BBB\n",
+      "Left aligned  AAA  0@FWf/T                                            BBB\n",
+      "Right aligned AAA F829FDD,3B34D19,20EF866,DCFDE0D,000004D, BBB\n",
+      "Left aligned  AAA F829FDD,3B34D19,20EF866,DCFDE0D,000004D, BBB\n",
+      "Right aligned AAA F829FDD,3B34D19,20EF866,DCFDE0D,000004D, BBB\n",
+      "Left aligned  AAA F829FDD,3B34D19,20EF866,DCFDE0D,000004D, BBB\n",
+      "Right aligned AAA F829FDD,3B34D19,20EF866,DCFDE0D,000004D, BBB\n",
+      "Left aligned  AAA F829FDD,3B34D19,20EF866,DCFDE0D,000004D, BBB\n",
+      "Right aligned AAA 0001111100000101001111111011101,0000011101100110100110100011001,0000010000011101111100001100110,0001101110011111101111000001101,0000000000000000000000001001101, BBB\n",
+      "Left aligned  AAA 0001111100000101001111111011101,0000011101100110100110100011001,0000010000011101111100001100110,0001101110011111101111000001101,0000000000000000000000001001101, BBB\n",
+      "Right aligned AAA 0001111100000101001111111011101,0000011101100110100110100011001,0000010000011101111100001100110,0001101110011111101111000001101,0000000000000000000000001001101, BBB\n",
+      "Left aligned  AAA 0001111100000101001111111011101,0000011101100110100110100011001,0000010000011101111100001100110,0001101110011111101111000001101,0000000000000000000000001001101, BBB\n",
+      "Right aligned AAA 0001111100000101001111111011101,0000011101100110100110100011001,0000010000011101111100001100110,0001101110011111101111000001101,0000000000000000000000001001101, BBB\n",
+      "Left aligned  AAA 0001111100000101001111111011101,0000011101100110100110100011001,0000010000011101111100001100110,0001101110011111101111000001101,0000000000000000000000001001101, BBB\n"
+#elif (MP_DIGIT_BIT == 15)
+      "Right aligned AAA                                                8157 BBB\n",
+      "Left aligned  AAA 8157                                                BBB\n",
+      "Right aligned AAA                                               +8157 BBB\n",
+      "Left aligned  AAA +8157                                               BBB\n",
+      "Right aligned AAA                                                8157 BBB\n",
+      "Left aligned  AAA  8157                                               BBB\n",
+      "Right aligned AAA                                                1FDD BBB\n",
+      "Left aligned  AAA 1FDD                                                BBB\n",
+      "Right aligned AAA                                               +1FDD BBB\n",
+      "Left aligned  AAA +1FDD                                               BBB\n",
+      "Right aligned AAA                                                1FDD BBB\n",
+      "Left aligned  AAA  1FDD                                               BBB\n",
+      "Right aligned AAA                                              0x1FDD BBB\n",
+      "Left aligned  AAA 0x1FDD                                              BBB\n",
+      "Right aligned AAA                                             +0x1FDD BBB\n",
+      "Left aligned  AAA +0x1FDD                                             BBB\n",
+      "Right aligned AAA                                              0x1FDD BBB\n",
+      "Left aligned  AAA  0x1FDD                                             BBB\n",
+      "Right aligned AAA                                       1111111011101 BBB\n",
+      "Left aligned  AAA 1111111011101                                       BBB\n",
+      "Right aligned AAA                                      +1111111011101 BBB\n",
+      "Left aligned  AAA +1111111011101                                      BBB\n",
+      "Right aligned AAA                                       1111111011101 BBB\n",
+      "Left aligned  AAA  1111111011101                                      BBB\n",
+      "Right aligned AAA                                                 1/T BBB\n",
+      "Left aligned  AAA 1/T                                                 BBB\n",
+      "Right aligned AAA                                                +1/T BBB\n",
+      "Left aligned  AAA +1/T                                                BBB\n",
+      "Right aligned AAA                                                 1/T BBB\n",
+      "Left aligned  AAA  1/T                                                BBB\n",
+      "Right aligned AAA                                               0@1/T BBB\n",
+      "Left aligned  AAA 0@1/T                                               BBB\n",
+      "Right aligned AAA                                              +0@1/T BBB\n",
+      "Left aligned  AAA +0@1/T                                              BBB\n",
+      "Right aligned AAA                                               0@1/T BBB\n",
+      "Left aligned  AAA  0@1/T                                              BBB\n",
+      "Right aligned AAA 1FDD,3F05,5346,31D9,6F86,1A41,3F78,26EE, BBB\n",
+      "Left aligned  AAA 1FDD,3F05,5346,31D9,6F86,1A41,3F78,26EE, BBB\n",
+      "Right aligned AAA 1FDD,3F05,5346,31D9,6F86,1A41,3F78,26EE, BBB\n",
+      "Left aligned  AAA 1FDD,3F05,5346,31D9,6F86,1A41,3F78,26EE, BBB\n",
+      "Right aligned AAA 1FDD,3F05,5346,31D9,6F86,1A41,3F78,26EE, BBB\n",
+      "Left aligned  AAA 1FDD,3F05,5346,31D9,6F86,1A41,3F78,26EE, BBB\n",
+      "Right aligned AAA 001111111011101,011111100000101,101001101000110,011000111011001,110111110000110,001101001000001,011111101111000,010011011101110, BBB\n",
+      "Left aligned  AAA 001111111011101,011111100000101,101001101000110,011000111011001,110111110000110,001101001000001,011111101111000,010011011101110, BBB\n",
+      "Right aligned AAA 001111111011101,011111100000101,101001101000110,011000111011001,110111110000110,001101001000001,011111101111000,010011011101110, BBB\n",
+      "Left aligned  AAA 001111111011101,011111100000101,101001101000110,011000111011001,110111110000110,001101001000001,011111101111000,010011011101110, BBB\n",
+      "Right aligned AAA 001111111011101,011111100000101,101001101000110,011000111011001,110111110000110,001101001000001,011111101111000,010011011101110, BBB\n",
+      "Left aligned  AAA 001111111011101,011111100000101,101001101000110,011000111011001,110111110000110,001101001000001,011111101111000,010011011101110, BBB\n"
+#endif
+   };
+
+   const char *print_strings[106] = {
+      "Right aligned AAA %50Zd BBB\n",
+      "Left aligned  AAA %-50Zd BBB\n",
+      "Right aligned AAA %+50Zd BBB\n",
+      "Left aligned  AAA %+-50Zd BBB\n",
+      "Right aligned AAA %' '50Zd BBB\n",
+      "Left aligned  AAA %' '-50Zd BBB\n",          /* 5 */
+
+      "hex with right align  AAA %50Zx BBB\n",
+      "hex with left align   AAA %-50Zx BBB\n",
+      "hex with right align  AAA %+50Zx BBB\n",
+      "hex with left align   AAA %+-50Zx BBB\n",
+      "hex with right align  AAA %' '50Zx BBB\n",   /* 10 */
+      "hex with left align   AAA %' '-50Zx BBB\n",
+
+      "hex with right align  AAA %#50Zx BBB\n",
+      "hex with left align   AAA %#-50Zx BBB\n",
+      "hex with right align  AAA %#+50Zx BBB\n",
+      "hex with left align   AAA %#+-50Zx BBB\n",   /* 15 */
+      "hex with right align  AAA %#' '50Zx BBB\n",
+      "hex with left align   AAA %#' '-50Zx BBB\n",
+      /* at idx == 18   mp_exch(&p,&q); */
+      "Right aligned AAA %50Zd BBB\n",
+      "Left aligned  AAA %-50Zd BBB\n",
+      "Right aligned AAA %+50Zd BBB\n",             /* 20 */
+      "Left aligned  AAA %+-50Zd BBB\n",
+      "Right aligned AAA %' '50Zd BBB\n",
+      "Left aligned  AAA %' '-50Zd BBB\n",
+
+      "hex with right align  AAA %50Zx BBB\n",
+      "hex with left align   AAA %-50Zx BBB\n",     /* 25 */
+      "hex with right align  AAA %+50Zx BBB\n",
+      "hex with left align   AAA %+-50Zx BBB\n",
+      "hex with right align  AAA %' '50Zx BBB\n",
+      "hex with left align   AAA %' '-50Zx BBB\n",
+
+      "hex with right align  AAA %#50Zx BBB\n",     /* 30 */
+      "hex with left align   AAA %#-50Zx BBB\n",
+      "hex with right align  AAA %#+50Zx BBB\n",
+      "hex with left align   AAA %#+-50Zx BBB\n",
+      "hex with right align  AAA %#' '50Zx BBB\n",
+      "hex with left align   AAA %#' '-50Zx BBB\n", /* 35 */
+      /* at idx == 36   mp_zero(&p); */
+      "Right aligned AAA %50Zd BBB\n",
+      "Left aligned  AAA %-50Zd BBB\n",
+      "hex with right align  AAA %#50Zx BBB\n",
+      "hex with left align   AAA %#-50Zx BBB\n",
+      /* at idx == 40  mp_exch(&p,&q);  */
+      "Right aligned AAA %50Zb BBB\n",              /* 40 */
+      "Left aligned  AAA %-50Zb BBB\n",
+      "Right aligned AAA %+50Zb BBB\n",
+      "Left aligned  AAA %+-50Zb BBB\n",
+      "Right aligned AAA %' '50Zb BBB\n",
+      "Left aligned  AAA %' '-50Zb BBB\n",          /* 45 */
+      "Right aligned AAA %50Z@ BBB\n",
+      "Left aligned  AAA %-50Z@ BBB\n",
+      "Right aligned AAA %+50Z@ BBB\n",
+      "Left aligned  AAA %+-50Z@ BBB\n",
+      "Right aligned AAA %' '50Z@ BBB\n",           /* 50 */
+      "Left aligned  AAA %' '-50Z@ BBB\n",
+      "Right aligned AAA %#50Z@ BBB\n",
+      "Left aligned  AAA %#-50Z@ BBB\n",
+      "Right aligned AAA %#+50Z@ BBB\n",
+      "Left aligned  AAA %#+-50Z@ BBB\n",           /* 55 */
+      "Right aligned AAA %#' '50Z@ BBB\n",
+      "Left aligned  AAA %#' '-50Z@ BBB\n",
+      /* Starting mp_digit tests at pos. 58 */
+      "Right aligned AAA %50Md BBB\n",
+      "Left aligned  AAA %-50Md BBB\n",
+      "Right aligned AAA %+50Md BBB\n",             /* 60 */
+      "Left aligned  AAA %+-50Md BBB\n",
+      "Right aligned AAA %' '50Md BBB\n",
+      "Left aligned  AAA %' '-50Md BBB\n",
+      "Right aligned AAA %50Mx BBB\n",
+      "Left aligned  AAA %-50Mx BBB\n",             /* 65 */
+      "Right aligned AAA %+50Mx BBB\n",
+      "Left aligned  AAA %+-50Mx BBB\n",
+      "Right aligned AAA %' '50Mx BBB\n",
+      "Left aligned  AAA %' '-50Mx BBB\n",
+      "Right aligned AAA %#50Mx BBB\n",             /* 70 */
+      "Left aligned  AAA %#-50Mx BBB\n",
+      "Right aligned AAA %#+50Mx BBB\n",
+      "Left aligned  AAA %#+-50Mx BBB\n",
+      "Right aligned AAA %#' '50Mx BBB\n",
+      "Left aligned  AAA %#' '-50Mx BBB\n",         /* 75 */
+      "Right aligned AAA %50Mb BBB\n",
+      "Left aligned  AAA %-50Mb BBB\n",
+      "Right aligned AAA %+50Mb BBB\n",
+      "Left aligned  AAA %+-50Mb BBB\n",
+      "Right aligned AAA %' '50Mb BBB\n",           /* 80 */
+      "Left aligned  AAA %' '-50Mb BBB\n",
+      "Right aligned AAA %50M@ BBB\n",
+      "Left aligned  AAA %-50M@ BBB\n",
+      "Right aligned AAA %+50M@ BBB\n",
+      "Left aligned  AAA %+-50M@ BBB\n",            /* 85 */
+      "Right aligned AAA %' '50M@ BBB\n",
+      "Left aligned  AAA %' '-50M@ BBB\n",
+      "Right aligned AAA %#50M@ BBB\n",
+      "Left aligned  AAA %#-50M@ BBB\n",
+      "Right aligned AAA %#+50M@ BBB\n",            /* 90 */
+      "Left aligned  AAA %#+-50M@ BBB\n",
+      "Right aligned AAA %#' '50M@ BBB\n",
+      "Left aligned  AAA %#' '-50M@ BBB\n",
+      /* Array printing starts at pos. 94 */
+      "Right aligned AAA %#50Nx BBB\n",
+      "Left aligned  AAA %#-50Nx BBB\n",            /* 95 */
+      "Right aligned AAA %#+50Nx BBB\n",
+      "Left aligned  AAA %#+-50Nx BBB\n",
+      "Right aligned AAA %#' '50Nx BBB\n",
+      "Left aligned  AAA %#' '-50Nx BBB\n",
+      "Right aligned AAA %#50Nb BBB\n",             /* 100 */
+      "Left aligned  AAA %#-50Nb BBB\n",
+      "Right aligned AAA %#+50Nb BBB\n",
+      "Left aligned  AAA %#+-50Nb BBB\n",
+      "Right aligned AAA %#' '50Nb BBB\n",
+      "Left aligned  AAA %#' '-50Nb BBB\n"          /* 105 */
+   };
+
+   mp_int p, q;
+
+   test_file = fopen("ltm_testing_mp_fprintf_88a43603fcfc2f7e7c6646cd4b89180a", "w+");
+   if (test_file == NULL) {
+      /* use logfile instead to have at least sth. in case of an error */
+      test_file = stdout;
+      write_only = true;
+   }
+
+   DOR(mp_init_multi(&p, &q, NULL));
+
+   DO(mp_read_radix(&p, test_values[0], 16));
+   DO(mp_read_radix(&q, test_values[1], 16));
+
+   DO(mp_printf_extension_init());
+
+   for (idx = 0; idx < 106; idx++) {
+      if (idx == 18) {
+         mp_exch(&p,&q);
+      }
+      if (idx == 36) {
+         mp_zero(&p);
+      }
+      if (idx == 40) {
+         mp_exch(&p,&q);
+      }
+      if ((idx > 57) && (idx < 94)) {
+         characters_printed = fprintf(test_file, print_strings[idx], p.dp[0]);
+      } else {
+         characters_printed = fprintf(test_file, print_strings[idx], &p);
+      }
+      slen = strlen(test_strings[idx]);
+      if ((characters_printed - (int)slen) != 0) {
+         mp_printf_extension_clear();
+         fprintf(stderr, "%d test_mp_print_extension: failed to print o:%zu t:%d\n",
+                 idx, slen, characters_printed);
+         fprintf(stderr,"\"%s\"\n",test_strings[idx]);
+         fprintf(stderr,"\"%s\"\n",print_strings[idx]);
+         goto LBL_ERR;
+      }
+      if (!write_only) {
+         rewind(test_file);
+         fgets_return = fgets(line_buffer, MP_TEST_BUFSIZ, test_file);
+         if (fgets_return == NULL) {
+            mp_printf_extension_clear();
+            fprintf(stderr, "%d test_mp_fprintf: failed to read from file\n", idx);
+            goto LBL_ERR;
+         }
+         if (strcmp(line_buffer, test_strings[idx]) != 0) {
+            mp_printf_extension_clear();
+            fprintf(stderr, "test_mp_fprintf: file content is not equal to test string #%d\n",idx);
+            fprintf(stderr, "%s",line_buffer);
+            fprintf(stderr, "%s",test_strings[idx]);
+            goto LBL_ERR;
+         }
+      }
+      /* Clear file content */
+      test_file = freopen("ltm_testing_mp_fprintf_88a43603fcfc2f7e7c6646cd4b89180a","w+", test_file);
+      if (test_file == NULL) {
+         /* use logfile instead to have at least sth. in case of an error */
+         test_file = stderr;
+         write_only = true;
+      }
+   }
+
+   mp_clear_multi(&p, &q, NULL);
+   fclose(test_file);
+   mp_printf_extension_clear();
+   if (remove("ltm_testing_mp_fprintf_88a43603fcfc2f7e7c6646cd4b89180a") != 0) {
+      fprintf(stderr, "Could not delete file ltm_testing_mp_fprintf_88a43603fcfc2f7e7c6646cd4b89180a\n");
+   }
+   return EXIT_SUCCESS;
+LBL_ERR:
+   mp_clear_multi(&p, &q, NULL);
+   fclose(test_file);
+   mp_printf_extension_clear();
+   /* We don't delete the testfile in case of error, content might be helpful.  */
+   return EXIT_FAILURE;
+}
+#endif
+
 static mp_err very_random_source(void *out, size_t size)
 {
    memset(out, 0xff, size);
@@ -1601,6 +2076,10 @@ static int test_mp_log(void)
          do {
             DO(mp_rand(&base, j));
          } while (mp_cmp_d(&base,2u) == MP_LT);
+         DO(mp_rand(&base, j));
+         if (mp_cmp_d(&base,2u) == MP_LT) {
+            continue;
+         }
          DO(mp_log(&a, &base, &lb));
          DO(mp_expt_n(&base, lb, &bn));
          /* "bn" must be smaller than or equal to "a" at this point. */
@@ -2478,6 +2957,9 @@ static int unit_tests(int argc, char **argv)
       T1(mp_dr_reduce, MP_DR_REDUCE),
       T2(mp_pack_unpack,MP_PACK, MP_UNPACK),
       T2(mp_fread_fwrite, MP_FREAD, MP_FWRITE),
+#if (!(defined LTM_NOTHING) && !(defined MP_NO_FILE) && (defined __GLIBC__))
+      T1(mp_printf_extension, MP_READ_RADIX),
+#endif
       T1(mp_get_u32, MP_GET_I32),
       T1(mp_get_u64, MP_GET_I64),
       T1(mp_get_ul, MP_GET_L),

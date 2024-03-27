@@ -88,6 +88,8 @@ EXPORTS
     mp_prime_rabin_miller_trials
     mp_prime_rand
     mp_prime_strong_lucas_selfridge
+    mp_printf_extension_clear
+    mp_printf_extension_init
     mp_radix_size
     mp_radix_size_overestimate
     mp_rand

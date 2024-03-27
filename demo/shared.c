@@ -36,7 +36,7 @@ void print_header(void)
 #ifdef MP_16BIT
    printf("Digit size 16 Bit \n");
 #endif
-#ifdef MP_32BIT
+#if ((defined MP_32BIT) || (defined MP_31BIT))
    printf("Digit size 32 Bit \n");
 #endif
 #ifdef MP_64BIT
@@ -44,6 +44,10 @@ void print_header(void)
 #endif
    printf("Size of mp_digit: %u\n", (unsigned int)sizeof(mp_digit));
    printf("Size of mp_word: %u\n", (unsigned int)sizeof(mp_word));
+   /* Some of the architectures are mixed e.g. -mx32 */
+   printf("Size of int: %u\n", (unsigned int)sizeof(int));
+   printf("Size of long: %u\n", (unsigned int)sizeof(long));
+   printf("Size of pointers: %u\n", (unsigned int)sizeof(int *));
    printf("MP_DIGIT_BIT: %d\n", MP_DIGIT_BIT);
    printf("MP_DEFAULT_DIGIT_COUNT: %d\n", MP_DEFAULT_DIGIT_COUNT);
 }

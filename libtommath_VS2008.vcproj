@@ -645,6 +645,14 @@
 			>
 		</File>
 		<File
+			RelativePath="mp_printf_extension_clear.c"
+			>
+		</File>
+		<File
+			RelativePath="mp_printf_extension_init.c"
+			>
+		</File>
+		<File
 			RelativePath="mp_radix_size.c"
 			>
 		</File>
@@ -853,6 +861,10 @@
 			>
 		</File>
 		<File
+			RelativePath="s_mp_isneg.c"
+			>
+		</File>
+		<File
 			RelativePath="s_mp_log_2expt.c"
 			>
 		</File>
@@ -897,6 +909,10 @@
 			>
 		</File>
 		<File
+			RelativePath="s_mp_print_mp_digit.c"
+			>
+		</File>
+		<File
 			RelativePath="s_mp_radix_map.c"
 			>
 		</File>
@@ -922,6 +938,10 @@
 		</File>
 		<File
 			RelativePath="s_mp_sqr_toom.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_str_reverse.c"
 			>
 		</File>
 		<File

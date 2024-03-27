@@ -2421,6 +2421,66 @@ If \texttt{MP\_NO\_FILE} is not defined a function to write to a file is also av
 mp_err mp_fwrite(const mp_int *a, int radix, FILE *stream);
 \end{alltt}
 
+Also available in that case is a small extension to \texttt{printf(3)} to print
+a big integer in a formated way. Not every formating is supported (e.g.: no
+thousands separator) but normal alignment works well.
+
+Modifiers are \texttt{Z} for a big integer \texttt{M} for a \texttt{mp\_digit} and
+\texttt{N} to print the array \texttt{a->dp} of a \texttt{mp\_int a}.
+
+Specifiers are \texttt{d, x, o, b, @} for decimal, hexadecimal, octal, binary, and
+base-64 representations respectively. These specifiers are bound to the extensions
+but can be unregistered individually or all together
+
+See example below for the necessary details.
+
+This functions are not threadsafe!
+\index{mp\_printf\_extension\_init}
+\index{mp\_printf\_extension\_clear}
+\begin{alltt}
+mp_err mp_printf_extension_init(void);
+void mp_printf_extension_clear(void);
+\end{alltt}
+
+
+Example:
+\begin{alltt}
+
+/* Switch on the extension */
+if((err = mp_printf_extension_init()) != MP_OKAY)   goto LTM_ERR;
+   ...
+/* Do some calculation with big integer a */
+   ...
+
+printf("Bigint decimal: %Zd \textbackslash{}n", &a);
+printf("Bigint hexadecimal: %Zx \textbackslash{}n", &a);
+printf("Bigint octal: %Zo \textbackslash{}n", &a);
+printf("Bigint binary: %Zb \textbackslash{}n", &a);
+printf("Bigint base-64: %Z@ \textbackslash{}n", &a);
+
+printf("Limb decimal: %Md \textbackslash{}n", a.dp[0]);
+printf("Limb hexdecimal: %Mx \textbackslash{}n", a.dp[0]);
+/* and so on */
+
+printf("Array decimal: %Nd \textbackslash{}n", &a);
+printf("Array hexadecimal: %Nx \textbackslash{}n", &a);
+
+#include <printf.h>
+register_printf_specifier('d', NULL, NULL);
+printf("Bigint number %d: %Zx \textbackslash{}n", 123, &a);
+
+/* re-registering is only possible completely */
+if((err = mp_printf_extension_init()) != MP_OKAY)   goto LTM_ERR;
+printf("Bigint number %i: %Zd \textbackslash{}n", 123, &a);
+
+/* and so on */
+
+/* Switch off all extension */
+mp_printf_extension_clear()
+
+\end{alltt}
+\textttt{mp\_printf\_extension\_init} returns \texttt{MP\_VAL} if those functions are not supported.
+
 \subsection{From ASCII}
 \index{mp\_read\_radix}
 \begin{alltt}
