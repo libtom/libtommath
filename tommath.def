@@ -34,6 +34,7 @@ EXPORTS
     mp_expt_n
     mp_exptmod
     mp_exteuclid
+    mp_fprintf
     mp_fread
     mp_from_sbin
     mp_from_ubin
@@ -88,6 +89,7 @@ EXPORTS
     mp_prime_rabin_miller_trials
     mp_prime_rand
     mp_prime_strong_lucas_selfridge
+    mp_printf
     mp_radix_size
     mp_radix_size_overestimate
     mp_rand

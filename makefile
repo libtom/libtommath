@@ -29,27 +29,27 @@ LCOV_ARGS=--directory .
 OBJECTS=mp_2expt.o mp_abs.o mp_add.o mp_add_d.o mp_addmod.o mp_and.o mp_clamp.o mp_clear.o mp_clear_multi.o \
 mp_cmp.o mp_cmp_d.o mp_cmp_mag.o mp_cnt_lsb.o mp_complement.o mp_copy.o mp_count_bits.o mp_cutoffs.o \
 mp_div.o mp_div_2.o mp_div_2d.o mp_div_d.o mp_dr_is_modulus.o mp_dr_reduce.o mp_dr_setup.o \
-mp_error_to_string.o mp_exch.o mp_expt_n.o mp_exptmod.o mp_exteuclid.o mp_fread.o mp_from_sbin.o \
-mp_from_ubin.o mp_fwrite.o mp_gcd.o mp_get_double.o mp_get_i32.o mp_get_i64.o mp_get_l.o mp_get_mag_u32.o \
-mp_get_mag_u64.o mp_get_mag_ul.o mp_grow.o mp_hash.o mp_init.o mp_init_copy.o mp_init_i32.o mp_init_i64.o \
-mp_init_l.o mp_init_multi.o mp_init_set.o mp_init_size.o mp_init_u32.o mp_init_u64.o mp_init_ul.o \
-mp_invmod.o mp_is_square.o mp_kronecker.o mp_lcm.o mp_log.o mp_log_n.o mp_lshd.o mp_mod.o mp_mod_2d.o \
-mp_montgomery_calc_normalization.o mp_montgomery_reduce.o mp_montgomery_setup.o mp_mul.o mp_mul_2.o \
-mp_mul_2d.o mp_mul_d.o mp_mulmod.o mp_neg.o mp_or.o mp_pack.o mp_pack_count.o mp_prime_fermat.o \
-mp_prime_frobenius_underwood.o mp_prime_is_prime.o mp_prime_miller_rabin.o mp_prime_next_prime.o \
-mp_prime_rabin_miller_trials.o mp_prime_rand.o mp_prime_strong_lucas_selfridge.o mp_radix_size.o \
-mp_radix_size_overestimate.o mp_rand.o mp_rand_source.o mp_read_radix.o mp_reduce.o mp_reduce_2k.o \
-mp_reduce_2k_l.o mp_reduce_2k_setup.o mp_reduce_2k_setup_l.o mp_reduce_is_2k.o mp_reduce_is_2k_l.o \
-mp_reduce_setup.o mp_root_n.o mp_rshd.o mp_sbin_size.o mp_set.o mp_set_double.o mp_set_i32.o mp_set_i64.o \
-mp_set_l.o mp_set_u32.o mp_set_u64.o mp_set_ul.o mp_shrink.o mp_signed_rsh.o mp_sqrmod.o mp_sqrt.o \
-mp_sqrtmod_prime.o mp_sub.o mp_sub_d.o mp_submod.o mp_to_radix.o mp_to_sbin.o mp_to_ubin.o mp_ubin_size.o \
-mp_unpack.o mp_xor.o mp_zero.o s_mp_add.o s_mp_copy_digs.o s_mp_div_3.o s_mp_div_recursive.o \
-s_mp_div_school.o s_mp_div_small.o s_mp_exptmod.o s_mp_exptmod_fast.o s_mp_fp_log.o s_mp_fp_log_d.o \
-s_mp_get_bit.o s_mp_invmod.o s_mp_invmod_odd.o s_mp_log_2expt.o s_mp_montgomery_reduce_comba.o s_mp_mul.o \
-s_mp_mul_balance.o s_mp_mul_comba.o s_mp_mul_high.o s_mp_mul_high_comba.o s_mp_mul_karatsuba.o \
-s_mp_mul_toom.o s_mp_prime_is_divisible.o s_mp_prime_tab.o s_mp_radix_map.o \
-s_mp_radix_size_overestimate.o s_mp_rand_platform.o s_mp_sqr.o s_mp_sqr_comba.o s_mp_sqr_karatsuba.o \
-s_mp_sqr_toom.o s_mp_sub.o s_mp_zero_buf.o s_mp_zero_digs.o
+mp_error_to_string.o mp_exch.o mp_expt_n.o mp_exptmod.o mp_exteuclid.o mp_fprintf.o mp_fread.o \
+mp_from_sbin.o mp_from_ubin.o mp_fwrite.o mp_gcd.o mp_get_double.o mp_get_i32.o mp_get_i64.o mp_get_l.o \
+mp_get_mag_u32.o mp_get_mag_u64.o mp_get_mag_ul.o mp_grow.o mp_hash.o mp_init.o mp_init_copy.o \
+mp_init_i32.o mp_init_i64.o mp_init_l.o mp_init_multi.o mp_init_set.o mp_init_size.o mp_init_u32.o \
+mp_init_u64.o mp_init_ul.o mp_invmod.o mp_is_square.o mp_kronecker.o mp_lcm.o mp_log.o mp_log_n.o mp_lshd.o \
+mp_mod.o mp_mod_2d.o mp_montgomery_calc_normalization.o mp_montgomery_reduce.o mp_montgomery_setup.o \
+mp_mul.o mp_mul_2.o mp_mul_2d.o mp_mul_d.o mp_mulmod.o mp_neg.o mp_or.o mp_pack.o mp_pack_count.o \
+mp_prime_fermat.o mp_prime_frobenius_underwood.o mp_prime_is_prime.o mp_prime_miller_rabin.o \
+mp_prime_next_prime.o mp_prime_rabin_miller_trials.o mp_prime_rand.o mp_prime_strong_lucas_selfridge.o \
+mp_printf.o mp_radix_size.o mp_radix_size_overestimate.o mp_rand.o mp_rand_source.o mp_read_radix.o \
+mp_reduce.o mp_reduce_2k.o mp_reduce_2k_l.o mp_reduce_2k_setup.o mp_reduce_2k_setup_l.o mp_reduce_is_2k.o \
+mp_reduce_is_2k_l.o mp_reduce_setup.o mp_root_n.o mp_rshd.o mp_sbin_size.o mp_set.o mp_set_double.o \
+mp_set_i32.o mp_set_i64.o mp_set_l.o mp_set_u32.o mp_set_u64.o mp_set_ul.o mp_shrink.o mp_signed_rsh.o \
+mp_sqrmod.o mp_sqrt.o mp_sqrtmod_prime.o mp_sub.o mp_sub_d.o mp_submod.o mp_to_radix.o mp_to_sbin.o \
+mp_to_ubin.o mp_ubin_size.o mp_unpack.o mp_xor.o mp_zero.o s_mp_add.o s_mp_copy_digs.o s_mp_div_3.o \
+s_mp_div_recursive.o s_mp_div_school.o s_mp_div_small.o s_mp_exptmod.o s_mp_exptmod_fast.o s_mp_fp_log.o \
+s_mp_fp_log_d.o s_mp_fprintf.o s_mp_get_bit.o s_mp_invmod.o s_mp_invmod_odd.o s_mp_log_2expt.o \
+s_mp_montgomery_reduce_comba.o s_mp_mul.o s_mp_mul_balance.o s_mp_mul_comba.o s_mp_mul_high.o \
+s_mp_mul_high_comba.o s_mp_mul_karatsuba.o s_mp_mul_toom.o s_mp_prime_is_divisible.o s_mp_prime_tab.o \
+s_mp_radix_map.o s_mp_radix_size_overestimate.o s_mp_rand_platform.o s_mp_sqr.o s_mp_sqr_comba.o \
+s_mp_sqr_karatsuba.o s_mp_sqr_toom.o s_mp_sub.o s_mp_zero_buf.o s_mp_zero_digs.o
 
 #END_INS
 
@@ -176,6 +176,8 @@ c89:
 	-e 's/INT64_MAX/(mp_i64)(((mp_u64)1<<63)-1)/g' \
 	-e 's/INT64_MIN/(mp_i64)((mp_u64)1<<63)/g' \
 	-e 's/SIZE_MAX/((size_t)-1)/g' \
+        -e 's/\([^u]\)intmax_t/\1__intmax_t/g'  \
+        -e 's/uintmax_t/__uintmax_t/g'  \
 	-e 's/\(PRI[ioux]64\)/MP_\1/g' \
 	-e 's/uint\([0-9][0-9]*\)_t/mp_u\1/g' \
 	-e 's/int\([0-9][0-9]*\)_t/mp_i\1/g' \
@@ -200,7 +202,9 @@ c99:
 	-e 's/(mp_i64)((mp_u64)1<<63)/INT64_MIN/g' \
 	-e 's/(mp_i64)(((mp_u64)1<<63)-1)/INT64_MAX/g' \
 	-e 's/((size_t)-1)/SIZE_MAX/g' \
-	-e 's/MP_\(PRI[ioux]64\)/\1/g' \
+        -e 's/__intmax_t/intmax_t/g'  \
+        -e 's/__uintmax_t/uintmax_t/g'  \
+	-e 's/MP_\(PRI[iuox]64\)/\1/g' \
 	-e 's/mp_u\([0-9][0-9]*\)/uint\1_t/g' \
 	-e 's/mp_i\([0-9][0-9]*\)/int\1_t/g' \
 	-e 's/MP_FUNCTION_NAME/__func__/g' \

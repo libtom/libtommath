@@ -234,6 +234,10 @@ MP_PRIVATE mp_err s_mp_radix_size_overestimate(const mp_int *a, const int radix,
 MP_PRIVATE mp_err s_mp_fp_log(const mp_int *a, mp_int *c) MP_WUR;
 MP_PRIVATE mp_err s_mp_fp_log_d(const mp_int *a, mp_word *c) MP_WUR;
 
+#ifndef MP_NO_FILE
+MP_PRIVATE int s_mp_fprintf(FILE *stream, const char *format, va_list args);
+#endif
+
 #define MP_RADIX_MAP_REVERSE_SIZE 80u
 extern MP_PRIVATE const char s_mp_radix_map[];
 extern MP_PRIVATE const uint8_t s_mp_radix_map_reverse[];

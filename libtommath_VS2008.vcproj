@@ -429,6 +429,10 @@
 			>
 		</File>
 		<File
+			RelativePath="mp_fprintf.c"
+			>
+		</File>
+		<File
 			RelativePath="mp_fread.c"
 			>
 		</File>
@@ -645,6 +649,10 @@
 			>
 		</File>
 		<File
+			RelativePath="mp_printf.c"
+			>
+		</File>
+		<File
 			RelativePath="mp_radix_size.c"
 			>
 		</File>
@@ -838,6 +846,10 @@
 		</File>
 		<File
 			RelativePath="s_mp_fp_log_d.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_fprintf.c"
 			>
 		</File>
 		<File

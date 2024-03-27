@@ -90,6 +90,34 @@ if(CMAKE_SYSTEM_NAME MATCHES "CYGWIN")
     list(APPEND LTM_C_FLAGS -no-undefined)
 endif()
 
+#-----------------------------------------------------------------------------
+# Check for floating point intrinsics
+#-----------------------------------------------------------------------------
+
+# TODO: add checks to mp_[gs]et_double if this works well
+include(CheckTypeSize)
+CHECK_TYPE_SIZE("float" FLOAT_SIZE)
+CHECK_TYPE_SIZE("double" DOUBLE_SIZE)
+CHECK_TYPE_SIZE("long double" LONG_DOUBLE_SIZE)
+
+# Do we have anything even vaguely resembling floating points at all?
+if(FLOAT_SIZE GREATER 0)
+    list(APPEND LTM_C_FLAGS -DLTM_HAVE_FLOAT_TYPE)
+    # float.h may or may not exist, even with floats avaibl
+    list(APPEND LTM_C_FLAGS -DLTM_FLOAT_SIZE=${FLOAT_SIZE})
+endif()
+
+if(DOUBLE_SIZE GREATER 0)
+    list(APPEND LTM_C_FLAGS -DLTM_HAVE_DOUBLE_TYPE)
+    list(APPEND LTM_C_FLAGS -DLTM_DOUBLE_SIZE=${DOUBLE_SIZE})
+endif()
+
+if(LONG_DOUBLE_SIZE GREATER 0)
+    list(APPEND LTM_C_FLAGS -DLTM_HAVE_LONG_DOUBLE_TYPE)
+    list(APPEND LTM_C_FLAGS -DLTM_LONG_DOUBLE_SIZE=${LONG_DOUBLE_SIZE})
+endif()
+
+
 # TODO: coverage (lgcov)
 
 # If the user set the environment variables at generate-time, append them
