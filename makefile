@@ -43,13 +43,14 @@ mp_reduce_2k_l.o mp_reduce_2k_setup.o mp_reduce_2k_setup_l.o mp_reduce_is_2k.o m
 mp_reduce_setup.o mp_root_n.o mp_rshd.o mp_sbin_size.o mp_set.o mp_set_double.o mp_set_i32.o mp_set_i64.o \
 mp_set_l.o mp_set_u32.o mp_set_u64.o mp_set_ul.o mp_shrink.o mp_signed_rsh.o mp_sqrmod.o mp_sqrt.o \
 mp_sqrtmod_prime.o mp_sub.o mp_sub_d.o mp_submod.o mp_to_radix.o mp_to_sbin.o mp_to_ubin.o mp_ubin_size.o \
-mp_unpack.o mp_xor.o mp_zero.o s_mp_add.o s_mp_copy_digs.o s_mp_div_3.o s_mp_div_recursive.o \
-s_mp_div_school.o s_mp_div_small.o s_mp_exptmod.o s_mp_exptmod_fast.o s_mp_fp_log.o s_mp_fp_log_d.o \
-s_mp_get_bit.o s_mp_invmod.o s_mp_invmod_odd.o s_mp_log_2expt.o s_mp_montgomery_reduce_comba.o s_mp_mul.o \
-s_mp_mul_balance.o s_mp_mul_comba.o s_mp_mul_high.o s_mp_mul_high_comba.o s_mp_mul_karatsuba.o \
-s_mp_mul_toom.o s_mp_prime_is_divisible.o s_mp_prime_tab.o s_mp_radix_map.o \
-s_mp_radix_size_overestimate.o s_mp_rand_platform.o s_mp_sqr.o s_mp_sqr_comba.o s_mp_sqr_karatsuba.o \
-s_mp_sqr_toom.o s_mp_sub.o s_mp_zero_buf.o s_mp_zero_digs.o
+mp_unpack.o mp_warray_free.o mp_warray_init.o mp_xor.o mp_zero.o s_mp_add.o s_mp_cmpexch_n.o \
+s_mp_copy_digs.o s_mp_div_3.o s_mp_div_recursive.o s_mp_div_school.o s_mp_div_small.o s_mp_exptmod.o \
+s_mp_exptmod_fast.o s_mp_fp_log.o s_mp_fp_log_d.o s_mp_get_bit.o s_mp_invmod.o s_mp_invmod_odd.o \
+s_mp_log_2expt.o s_mp_montgomery_reduce_comba.o s_mp_mul.o s_mp_mul_balance.o s_mp_mul_comba.o \
+s_mp_mul_high.o s_mp_mul_high_comba.o s_mp_mul_karatsuba.o s_mp_mul_toom.o s_mp_prime_is_divisible.o \
+s_mp_prime_tab.o s_mp_radix_map.o s_mp_radix_size_overestimate.o s_mp_rand_platform.o s_mp_sqr.o \
+s_mp_sqr_comba.o s_mp_sqr_karatsuba.o s_mp_sqr_toom.o s_mp_sub.o s_mp_warray.o s_mp_warray_free.o \
+s_mp_warray_get.o s_mp_warray_put.o s_mp_zero_buf.o s_mp_zero_digs.o
 
 #END_INS
 
@@ -172,9 +173,10 @@ c89:
 	-e 's/UINT32_MAX/0xFFFFFFFFu/g' \
 	-e 's/UINT64_MAX/(mp_u64)-1/g' \
 	-e 's/INT32_MAX/0x7FFFFFFF/g' \
-        -e 's/INT32_MIN/(-2147483647-1)/g' \
+	-e 's/INT32_MIN/(-2147483647-1)/g' \
 	-e 's/INT64_MAX/(mp_i64)(((mp_u64)1<<63)-1)/g' \
 	-e 's/INT64_MIN/(mp_i64)((mp_u64)1<<63)/g' \
+	-e 's/uintptr_t/mp_uintptr/g' \
 	-e 's/SIZE_MAX/((size_t)-1)/g' \
 	-e 's/\(PRI[ioux]64\)/MP_\1/g' \
 	-e 's/uint\([0-9][0-9]*\)_t/mp_u\1/g' \
@@ -195,10 +197,11 @@ c99:
 	-e 's/false_/MP_NO_/g' \
 	-e 's/0xFFFFFFFFu/UINT32_MAX/g' \
 	-e 's/(mp_u64)-1/UINT64_MAX/g' \
-        -e 's/(-2147483647-1)/INT32_MIN/g' \
+	-e 's/(-2147483647-1)/INT32_MIN/g' \
 	-e 's/0x7FFFFFFF/INT32_MAX/g' \
 	-e 's/(mp_i64)((mp_u64)1<<63)/INT64_MIN/g' \
 	-e 's/(mp_i64)(((mp_u64)1<<63)-1)/INT64_MAX/g' \
+	-e 's/mp_uintptr/uintptr_t/g' \
 	-e 's/((size_t)-1)/SIZE_MAX/g' \
 	-e 's/MP_\(PRI[ioux]64\)/\1/g' \
 	-e 's/mp_u\([0-9][0-9]*\)/uint\1_t/g' \

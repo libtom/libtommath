@@ -2455,12 +2455,97 @@ LBL_ERR:
 #define ONLY_PUBLIC_API_C
 #endif
 
+#if !defined(LTM_TEST_MULTITHREAD)
+#define SINGLE_THREADED_C
+typedef uintptr_t thread_id_t;
+#else
+#define MULTI_THREADED_C
+#if !defined(_WIN32)
+#define MULTI_THREADED_PTHREAD_C
+#include <pthread.h>
+typedef pthread_t thread_id_t;
+#else
+#define MULTI_THREADED_MSVC_C
+
+#ifndef _WIN32_WINNT
+#define _WIN32_WINNT 0x0501
+#endif
+#ifndef WINVER
+#define WINVER 0x0501
+#endif
+
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+typedef HANDLE thread_id_t;
+#endif
+#endif
+
+#if !defined(MULTI_THREADED_PTHREAD_C)
+extern int pthread_create(thread_id_t *, const void *, void *(*)(void *), void *);
+extern int pthread_join(thread_id_t, void **);
+#endif
+
+#if !defined(MULTI_THREADED_MSVC_C)
+extern thread_id_t CreateThread(void *, size_t, unsigned long (*)(void *), void *, unsigned long, void *);
+extern unsigned long WaitForSingleObject(thread_id_t hHandle, unsigned long dwMilliseconds);
+#define INFINITE ((unsigned long)-1)
+#endif
+
+struct test_fn {
+   const char *name;
+   int (*fn)(void);
+};
+
+struct thread_info {
+   thread_id_t thread_id;
+   const struct test_fn *t;
+   int ret;
+};
+
+static void *run_pthread(void *arg)
+{
+   struct thread_info *tinfo = arg;
+
+   tinfo->ret = tinfo->t->fn();
+
+   return arg;
+}
+
+static unsigned long run_msvc(void *arg)
+{
+   struct thread_info *tinfo = arg;
+
+   tinfo->ret = tinfo->t->fn();
+
+   return 0;
+}
+
+static int thread_start(struct thread_info *info)
+{
+   if (MP_HAS(MULTI_THREADED_PTHREAD))
+      return pthread_create(&info->thread_id, NULL, run_pthread, info);
+   if (MP_HAS(MULTI_THREADED_MSVC)) {
+      info->thread_id = CreateThread(NULL, 0, run_msvc, info, 0, NULL);
+      return info->thread_id == (thread_id_t)NULL ? -1 : 0;
+   }
+   return -1;
+}
+
+static int thread_join(struct thread_info *info, struct thread_info **res)
+{
+   if (MP_HAS(MULTI_THREADED_PTHREAD))
+      return pthread_join(info->thread_id, (void **)res);
+   if (MP_HAS(MULTI_THREADED_MSVC)) {
+      WaitForSingleObject(info->thread_id, INFINITE);
+      *res = info;
+      return 0;
+   }
+   return -1;
+}
+
 static int unit_tests(int argc, char **argv)
 {
-   static const struct {
-      const char *name;
-      int (*fn)(void);
-   } test[] = {
+   static const struct test_fn test[] = {
 #define T0(n)              { #n, test_##n }
 #define T1(n, o)           { #n, MP_HAS(o) ? test_##n : NULL }
 #define T2(n, o1, o2)      { #n, (MP_HAS(o1) && MP_HAS(o2)) ? test_##n : NULL }
@@ -2522,10 +2607,11 @@ static int unit_tests(int argc, char **argv)
 #undef T2
 #undef T1
    };
+   struct thread_info test_threads[sizeof(test)/sizeof(test[0])], *res;
    unsigned long i, ok, fail, nop;
+   size_t n_threads = MP_HAS(MULTI_THREADED) ? sizeof(test) / sizeof(test[0]) : 1;
    uint64_t t;
    int j;
-
    ok = fail = nop = 0;
 
    t = (uint64_t)time(NULL);
@@ -2533,20 +2619,44 @@ static int unit_tests(int argc, char **argv)
    s_mp_rand_jenkins_init(t);
    mp_rand_source(s_mp_rand_jenkins);
 
+   if (MP_HAS(MP_SMALL_STACK_SIZE)) {
+      printf("Small-stack enabled with %zu warray buffers\n\n", n_threads);
+      DO(mp_warray_init(n_threads, 1));
+   }
+
+   if (MP_HAS(MULTI_THREADED)) {
+      printf("Multi-threading enabled\n\n");
+      /* we ignore the fact that jenkins is not thread safe */
+      for (i = 0; i < (sizeof(test) / sizeof(test[0])); ++i) {
+         test_threads[i].t = &test[i];
+         EXPECT(thread_start(&test_threads[i]) == 0);
+      }
+   }
+
    for (i = 0; i < (sizeof(test) / sizeof(test[0])); ++i) {
-      if (argc > 1) {
-         for (j = 1; j < argc; ++j) {
-            if (strstr(test[i].name, argv[j]) != NULL) {
-               break;
+      j = -1;
+      if (MP_HAS(SINGLE_THREADED)) {
+         if (argc > 1) {
+            for (j = 1; j < argc; ++j) {
+               if (strstr(test[i].name, argv[j]) != NULL) {
+                  break;
+               }
             }
+            if (j == argc) continue;
          }
-         if (j == argc) continue;
+
+         if (test[i].fn)
+            j = test[i].fn();
+      } else if (MP_HAS(MULTI_THREADED)) {
+         EXPECT(thread_join(&test_threads[i], &res) == 0);
+         j = res->ret;
       }
       printf("TEST %s\n", test[i].name);
+
       if (test[i].fn == NULL) {
          nop++;
          printf("NOP %s\n\n", test[i].name);
-      } else if (test[i].fn() == EXIT_SUCCESS) {
+      } else if (j == EXIT_SUCCESS) {
          ok++;
          printf("\n");
       } else {
@@ -2556,8 +2666,12 @@ static int unit_tests(int argc, char **argv)
    }
    fprintf(fail?stderr:stdout, "Tests OK/NOP/FAIL: %lu/%lu/%lu\n", ok, nop, fail);
 
-   if (fail != 0) return EXIT_FAILURE;
-   else return EXIT_SUCCESS;
+   EXPECT(mp_warray_free() != -2);
+
+   if (fail == 0)
+      return EXIT_SUCCESS;
+LBL_ERR:
+   return EXIT_FAILURE;
 }
 
 int main(int argc, char **argv)

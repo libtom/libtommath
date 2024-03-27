@@ -793,6 +793,14 @@
 			>
 		</File>
 		<File
+			RelativePath="mp_warray_free.c"
+			>
+		</File>
+		<File
+			RelativePath="mp_warray_init.c"
+			>
+		</File>
+		<File
 			RelativePath="mp_xor.c"
 			>
 		</File>
@@ -802,6 +810,10 @@
 		</File>
 		<File
 			RelativePath="s_mp_add.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_cmpexch_n.c"
 			>
 		</File>
 		<File
@@ -926,6 +938,22 @@
 		</File>
 		<File
 			RelativePath="s_mp_sub.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_warray.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_warray_free.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_warray_get.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_warray_put.c"
 			>
 		</File>
 		<File

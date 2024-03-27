@@ -122,9 +122,12 @@ mp_to_sbin.c
 mp_to_ubin.c
 mp_ubin_size.c
 mp_unpack.c
+mp_warray_free.c
+mp_warray_init.c
 mp_xor.c
 mp_zero.c
 s_mp_add.c
+s_mp_cmpexch_n.c
 s_mp_copy_digs.c
 s_mp_div_3.c
 s_mp_div_recursive.c
@@ -156,6 +159,10 @@ s_mp_sqr_comba.c
 s_mp_sqr_karatsuba.c
 s_mp_sqr_toom.c
 s_mp_sub.c
+s_mp_warray.c
+s_mp_warray_free.c
+s_mp_warray_get.c
+s_mp_warray_put.c
 s_mp_zero_buf.c
 s_mp_zero_digs.c
 )

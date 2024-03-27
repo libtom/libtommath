@@ -16,13 +16,16 @@ After that loop you do the squares and add them in.
 mp_err s_mp_sqr_comba(const mp_int *a, mp_int *b)
 {
    int       oldused, pa, ix;
-   mp_digit  W[MP_WARRAY];
+   mp_digit  MP_ALLOC_WARRAY(W);
    mp_word   W1;
    mp_err err;
+
+   MP_CHECK_WARRAY(W);
 
    /* grow the destination as required */
    pa = a->used + a->used;
    if ((err = mp_grow(b, pa)) != MP_OKAY) {
+      MP_FREE_WARRAY(W);
       return err;
    }
 
@@ -82,6 +85,7 @@ mp_err s_mp_sqr_comba(const mp_int *a, mp_int *b)
    s_mp_zero_digs(b->dp + b->used, oldused - b->used);
 
    mp_clamp(b);
+   MP_FREE_WARRAY(W);
    return MP_OKAY;
 }
 #endif

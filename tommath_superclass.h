@@ -42,6 +42,8 @@
 #   define MP_SBIN_SIZE_C
 #   define MP_TO_RADIX_C
 #   define MP_TO_SBIN_C
+#   define MP_WARRAY_FREE_C
+#   define MP_WARRAY_INIT_C
 #   define S_MP_RAND_JENKINS_C
 #   define S_MP_RAND_PLATFORM_C
 #endif

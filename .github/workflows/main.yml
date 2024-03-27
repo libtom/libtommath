@@ -70,6 +70,12 @@ jobs:
           # RSA superclass with tests (no sanitizer, but debug info)
           - { BUILDOPTIONS: '--with-cc=gcc --with-m64 --cflags=-DLTM_NOTHING --cflags=-DSC_RSA_1_WITH_TESTS --limit-valgrind',   SANITIZER: '',  COMPILE_DEBUG: '1', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: '' }
 
+          # Build with small stack-size
+          - { BUILDOPTIONS: '--with-cc=gcc --with-m32 --with-m64 --cflags=-DMP_SMALL_STACK_SIZE',                                SANITIZER: '',  COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: 'gcc-multilib' }
+          - { BUILDOPTIONS: '--with-cc=clang-10 --with-m32 --with-m64 --cflags=-DMP_SMALL_STACK_SIZE',                           SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: 'clang-10 llvm-10 gcc-multilib' }
+          - { BUILDOPTIONS: '--with-cc=gcc --with-m32 --with-m64 --cflags=-DMP_SMALL_STACK_SIZE --multithread',                  SANITIZER: '',  COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',  OTHERDEPS: 'gcc-multilib' }
+          - { BUILDOPTIONS: '--with-cc=clang-10 --with-m32 --with-m64 --cflags=-DMP_SMALL_STACK_SIZE --multithread',             SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',  OTHERDEPS: 'clang-10 llvm-10 gcc-multilib' }
+
           # Test "autotuning", the automatic evaluation and setting of the Toom-Cook cut-offs.
           #- env: SANITIZER=1 BUILDOPTIONS='--with-cc=gcc-5 --cflags=-DMP_16BIT --limit-valgrind --make-option=tune'
           #- env: SANITIZER=1 BUILDOPTIONS='--with-cc=gcc-5 --cflags=-DMP_32BIT --limit-valgrind --make-option=tune'

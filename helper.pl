@@ -394,7 +394,7 @@ EOS
     foreach my $filename (glob '*mp_*.c') {
         my $content;
         my $cc = $ENV{'CC'} || 'gcc';
-        $content = `$cc -E -x c -DLTM_ALL $filename`;
+        $content = `$cc -E -x c -DLTM_ALL -DMP_SMALL_STACK_SIZE $filename`;
         $content =~ s/^# 1 "$filename".*?^# 2 "$filename"//ms;
 
         # convert filename to upper case so we can use it as a define
