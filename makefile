@@ -126,8 +126,12 @@ cmp: profiled_single
 	./timing
 	$(MAKE) -C logs/ cmp
 
+zipup:
+	$(MAKE) clean
+	$(MAKE) .zipup
+
 TODAY=$(shell date -I)
-zipup: clean astyle new_file docs
+.zipup: astyle new_file docs
 	@# Update the index, so diff-index won't fail in case the pdf has been created.
 	@#   As the pdf creation modifies the tex files, git sometimes detects the
 	@#   modified files, but misses that it's put back to its original version.
