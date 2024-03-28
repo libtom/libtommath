@@ -46,11 +46,11 @@ target_include_directories(${LTM_TEST} PRIVATE
 )
 
 target_link_libraries(${LTM_TEST} PRIVATE
-    ${LIBRARY_NAME}
+    ${LIBRARY_NAME}_static
 )
 
 target_compile_options(${LTM_TEST} PRIVATE
-    $<$<STREQUAL:$<TARGET_PROPERTY:${LIBRARY_NAME},TYPE>,SHARED_LIBRARY>:-DLTM_TEST_DYNAMIC>
+    $<$<STREQUAL:$<TARGET_PROPERTY:${LIBRARY_NAME}_static,TYPE>,SHARED_LIBRARY>:-DLTM_TEST_DYNAMIC>
     ${LTM_C_FLAGS}
 )
 target_link_options(${LTM_TEST} BEFORE PUBLIC

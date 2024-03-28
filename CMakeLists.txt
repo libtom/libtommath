@@ -29,11 +29,6 @@ include(CTest)
 include(sources.cmake)
 
 #-----------------------------------------------------------------------------
-# Options
-#-----------------------------------------------------------------------------
-option(BUILD_SHARED_LIBS "Build shared library and only the shared library if \"ON\", default is static" OFF)
-
-#-----------------------------------------------------------------------------
 # Add support for ccache if desired
 #-----------------------------------------------------------------------------
 find_program(CCACHE ccache)
@@ -103,6 +98,7 @@ list(APPEND LTM_LD_FLAGS ${LTM_LDFLAGS})
 # library target
 #-----------------------------------------------------------------------------
 add_library(${PROJECT_NAME}
+    OBJECT
     ${SOURCES}
     ${HEADERS}
 )
@@ -125,10 +121,19 @@ if(C89)
     list(APPEND PUBLIC_HEADERS tommath_c89.h)
 endif()
 
+add_library(${PROJECT_NAME}_shared SHARED $<TARGET_OBJECTS:${PROJECT_NAME}>)
+add_library(${PROJECT_NAME}_static STATIC $<TARGET_OBJECTS:${PROJECT_NAME}>)
 set_target_properties(${PROJECT_NAME} PROPERTIES
+    POSITION_INDEPENDENT_CODE TRUE
+)
+set_target_properties(${PROJECT_NAME}_shared PROPERTIES
     OUTPUT_NAME tommath
     VERSION ${PROJECT_VERSION}
     SOVERSION ${PROJECT_VERSION_MAJOR}
+    PUBLIC_HEADER "${PUBLIC_HEADERS}"
+)
+set_target_properties(${PROJECT_NAME}_static PROPERTIES
+    OUTPUT_NAME tommath
     PUBLIC_HEADER "${PUBLIC_HEADERS}"
 )
 
@@ -159,29 +164,27 @@ set(PROJECT_VERSION_FILE "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config-ver
 set(PROJECT_CONFIG_FILE "${PROJECT_NAME}-config.cmake")
 set(TARGETS_EXPORT_NAME "${PROJECT_NAME}Targets")
 
-install(TARGETS ${PROJECT_NAME}
+install(TARGETS ${PROJECT_NAME}_static ${PROJECT_NAME}_shared
     EXPORT ${TARGETS_EXPORT_NAME}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Libraries
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
+    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
 
 # Install libtommath.pc for pkg-config if we build a shared library
-if(BUILD_SHARED_LIBS)
-    # Let the user override the default directory of the pkg-config file (usually this shouldn't be required to be changed)
-    set(CMAKE_INSTALL_PKGCONFIGDIR "${CMAKE_INSTALL_LIBDIR}/pkgconfig" CACHE PATH "Folder where to install .pc files")
+# Let the user override the default directory of the pkg-config file (usually this shouldn't be required to be changed)
+set(CMAKE_INSTALL_PKGCONFIGDIR "${CMAKE_INSTALL_LIBDIR}/pkgconfig" CACHE PATH "Folder where to install .pc files")
 
-    configure_file(
-        ${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}.pc.in
-        ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.pc
-        @ONLY
-    )
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}.pc.in
+    ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.pc
+    @ONLY
+)
 
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.pc
-        DESTINATION ${CMAKE_INSTALL_PKGCONFIGDIR}
-    )
-endif()
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.pc
+    DESTINATION ${CMAKE_INSTALL_PKGCONFIGDIR}
+)
 
 # generate package version file
 write_basic_package_version_file(
@@ -189,14 +192,6 @@ write_basic_package_version_file(
     VERSION ${PROJECT_VERSION}
     COMPATIBILITY SameMajorVersion
 )
-
-# Windows uses a different help sytem.
-if((NOT WIN32) AND (NOT CMAKE_HOST_WIN32))
-# install manpage (not gzipped, some BSD's do not want it compressed?)
-install(FILES ${CMAKE_SOURCE_DIR}/doc/tommath.3
-        DESTINATION ${CMAKE_INSTALL_MANDIR}/man3/
-)
-endif()
 
 # install version file
 install(FILES ${PROJECT_VERSION_FILE}
@@ -270,18 +265,11 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "FreeBSD")
     list(APPEND CPACK_GENERATOR FREEBSD)
 endif()
 
-set(LTM_DEBIAN_SHARED_PACKAGE_NAME "${PROJECT_NAME}${PACKAGE_NAME_SUFFIX}${PROJECT_VERSION_MAJOR}")
-
 # general CPack config
 set(CPACK_PACKAGE_DIRECTORY ${CMAKE_BINARY_DIR}/packages/${DISTRO_PACK_PATH})
 message(STATUS "CPack: packages will be generated under ${CPACK_PACKAGE_DIRECTORY}")
-if(BUILD_SHARED_LIBS)
-    set(CPACK_PACKAGE_NAME "${PROJECT_NAME}${PROJECT_VERSION_MAJOR}")
-    set(CPACK_DEBIAN_PACKAGE_NAME "${LTM_DEBIAN_SHARED_PACKAGE_NAME}")
-else()
-    set(CPACK_PACKAGE_NAME "${PROJECT_NAME}-devel")
-    set(CPACK_DEBIAN_LIBRARIES_PACKAGE_NAME "${PROJECT_NAME}${PACKAGE_NAME_SUFFIX}-dev")
-endif()
+set(CPACK_PACKAGE_NAME "${PROJECT_NAME}${PROJECT_VERSION_MAJOR}")
+set(CPACK_DEBIAN_PACKAGE_NAME "${PROJECT_NAME}${PACKAGE_NAME_SUFFIX}${PROJECT_VERSION_MAJOR}")
 set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "LibTomMath")
 set(CPACK_PACKAGE_VENDOR "libtom projects")
@@ -295,15 +283,7 @@ set(CPACK_DEBIAN_FILE_NAME DEB-DEFAULT)
 set(CPACK_DEBIAN_DEBUGINFO_PACKAGE ON)
 set(CPACK_DEBIAN_PACKAGE_RELEASE ${PACKAGE_RELEASE_VERSION})
 set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
-if(BUILD_SHARED_LIBS)
-    set(CPACK_DEBIAN_PACKAGE_SECTION "libs")
-else()
-    set(CPACK_DEBIAN_PACKAGE_SECTION "devel")
-    set(CPACK_DEBIAN_PACKAGE_DEPENDS ${LTM_DEBIAN_SHARED_PACKAGE_NAME})
-    set(CPACK_DEB_COMPONENT_INSTALL ON)
-    set(CPACK_ARCHIVE_COMPONENT_INSTALL ON)
-    set(CPACK_COMPONENTS_ALL Libraries)
-endif()
+set(CPACK_DEBIAN_PACKAGE_SECTION "libs")
 
 # rpm specific CPack config
 set(CPACK_RPM_PACKAGE_RELEASE ${PACKAGE_RELEASE_VERSION})
