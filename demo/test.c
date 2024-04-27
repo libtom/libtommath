@@ -4,6 +4,19 @@
 #define S_MP_RAND_JENKINS_C
 #include "s_mp_rand_jenkins.c"
 
+/* TODO: Make it an environment variable via main.yml?
+         This is for testing only, so no reason to add checks to the build process. */
+#ifdef __has_include
+#   if __has_include (<valgrind/valgrind.h>)
+#      include <valgrind/valgrind.h>
+#   else
+#      define RUNNING_ON_VALGRIND 1
+#   endif
+#else
+#   define RUNNING_ON_VALGRIND 1
+#endif
+
+
 static long rand_long(void)
 {
    long x;
@@ -1157,30 +1170,27 @@ LBL_ERR:
 
 }
 
+#include <time.h>
 static int test_mp_read_radix(void)
 {
    char buf[4096];
-   size_t written;
+   size_t written, maxlen;
 
-   mp_int a;
-   DOR(mp_init_multi(&a, NULL));
+   int bignum, i, j, k, limit_test;
+   char *buffer, *bcpy, *startb;
+   clock_t start, stop, t_slow, t_fast;
+   double slow = 0.0, fast = 0.0, sum_slow = 0.0, sum_fast = 0.0;
+   double s_bases_slow[65] = {0.0};
+   double s_bases_fast[65] = {0.0};
+
+   mp_int a, b, c;
+   DOR(mp_init_multi(&a, &b, &c, NULL));
 
    DO(mp_read_radix(&a, "123456", 10));
 
    DO(mp_to_radix(&a, buf, sizeof(buf), &written, 10));
    printf(" '123456' a == %s, length = %zu", buf, written);
 
-   /* See comment in mp_to_radix.c */
-   /*
-      if( (err = mp_to_radix(&a, buf, 3u, &written, 10) ) != MP_OKAY)              goto LBL_ERR;
-      printf(" '56' a == %s, length = %zu\n", buf, written);
-
-      if( (err = mp_to_radix(&a, buf, 4u, &written, 10) ) != MP_OKAY)              goto LBL_ERR;
-      printf(" '456' a == %s, length = %zu\n", buf, written);
-      if( (err = mp_to_radix(&a, buf, 30u, &written, 10) ) != MP_OKAY)             goto LBL_ERR;
-      printf(" '123456' a == %s, length = %zu, error = %s\n",
-             buf, written, mp_error_to_string(err));
-   */
    DO(mp_read_radix(&a, "-123456", 10));
    DO(mp_to_radix(&a, buf, sizeof(buf), &written, 10));
    printf("\r '-123456' a == %s, length = %zu", buf, written);
@@ -1198,10 +1208,81 @@ static int test_mp_read_radix(void)
       printf("%s, %lu\n", buf, (unsigned long)a.dp[0] & 3uL);
    }
 
-   mp_clear(&a);
+   /* Safe a bit of testing time */
+   if (RUNNING_ON_VALGRIND != 0) {
+      limit_test = 2000;
+   } else {
+      limit_test = 6000;
+   }
+
+   /* Test the fast method with a slightly larger number (about a minute on an older machine) */
+   for (k = 100; k < limit_test; k += 1000) {
+      bignum = k;
+      buffer = (char *)malloc((size_t)(bignum + 2));
+      if (buffer == NULL) {
+         goto LBL_ERR;
+      }
+      DO(mp_rand(&a, bignum / MP_DIGIT_BIT));
+      for (i = 2; i < 65; i++) {
+         start = clock();
+         for (j = 0; j < 100; j++) {
+            DO(mp_to_radix(&a, buffer, (size_t)(bignum + 1), &written, i));
+            mp_zero(&b);
+            DO(mp_read_radix(&b, buffer, i));
+            /* Check roundabout */
+            EXPECT(mp_cmp(&a, &b) == MP_EQ);
+         }
+         stop = clock();
+         t_fast = stop - start;
+
+         start = clock();
+         for (j = 0; j < 100; j++) {
+            maxlen = (size_t)(bignum + 1);
+            bcpy = buffer;
+            /* s_mp_slower_to_radix is very rudimentary and needs some help to work as a stand-alone */
+            startb = bcpy;
+            DO(s_mp_slower_to_radix(&a, &bcpy, &maxlen, &written, i, false));
+            bcpy = startb;
+            mp_zero(&c);
+            DO(s_mp_slower_read_radix(&c, bcpy, 0, strlen(bcpy), i));
+            /* Check roundabout */
+            EXPECT(mp_cmp(&a, &c) == MP_EQ);
+            /* Check against result of fast algorithms above */
+            EXPECT(mp_cmp(&b, &c) == MP_EQ);
+         }
+         stop = clock();
+         t_slow = stop - start;
+
+         slow = (double)t_slow/(double)CLOCKS_PER_SEC;
+         fast = (double)t_fast/(double)CLOCKS_PER_SEC;
+
+         fprintf(stderr,"Bits %d Base %d SLOW: %.10f, FAST: %.10f\n", mp_count_bits(&a), i, slow, fast);
+
+         sum_slow += slow;
+         sum_fast += fast;
+         s_bases_slow[i] += slow;
+         s_bases_fast[i] += fast;
+      }
+      free(buffer);
+   }
+
+   fprintf(stderr,"\nSUM: SLOW: %.10f, FAST: %.10f\n",sum_slow, sum_fast);
+
+   for (i = 2; i < 65; i++) {
+      fprintf(stderr,"Sums for Base %d SLOW: %.10f, FAST: %.10f\n",i, s_bases_slow[i], s_bases_fast[i]);
+   }
+
+   /* Valgrind overhead does not allow for timings. */
+   if ((RUNNING_ON_VALGRIND == 0) && (MP_DIGIT_BIT >= 20)) {
+      /* Very basic check if the fast algorithms are actually faster. */
+      EXPECT(sum_slow > sum_fast);
+   }
+
+
+   mp_clear_multi(&a, &b, &c, NULL);
    return EXIT_SUCCESS;
 LBL_ERR:
-   mp_clear(&a);
+   mp_clear_multi(&a, &b, &c, NULL);
    return EXIT_FAILURE;
 }
 
@@ -2583,7 +2664,7 @@ static int unit_tests(int argc, char **argv)
       T1(mp_prime_next_prime, MP_PRIME_NEXT_PRIME),
       T1(mp_prime_rand, MP_PRIME_RAND),
       T1(mp_rand, MP_RAND),
-      T1(mp_read_radix, MP_READ_RADIX),
+      T2(mp_read_radix,ONLY_PUBLIC_API, MP_READ_RADIX),
       T1(mp_read_write_ubin, MP_TO_UBIN),
       T1(mp_read_write_sbin, MP_TO_SBIN),
       T1(mp_reduce_2k, MP_REDUCE_2K),
@@ -2600,13 +2681,16 @@ static int unit_tests(int argc, char **argv)
       T3(s_mp_div_recursive, ONLY_PUBLIC_API, S_MP_DIV_RECURSIVE, S_MP_DIV_SCHOOL),
       T3(s_mp_div_small, ONLY_PUBLIC_API, S_MP_DIV_SMALL, S_MP_DIV_SCHOOL),
       T2(s_mp_sqr, ONLY_PUBLIC_API, S_MP_SQR),
+
       /* s_mp_mul_comba not (yet) testable because s_mp_mul branches to s_mp_mul_comba automatically */
+
       T2(s_mp_sqr_comba, ONLY_PUBLIC_API, S_MP_SQR_COMBA),
       T2(s_mp_mul_balance, ONLY_PUBLIC_API, S_MP_MUL_BALANCE),
       T2(s_mp_mul_karatsuba, ONLY_PUBLIC_API, S_MP_MUL_KARATSUBA),
       T2(s_mp_sqr_karatsuba, ONLY_PUBLIC_API, S_MP_SQR_KARATSUBA),
       T2(s_mp_mul_toom, ONLY_PUBLIC_API, S_MP_MUL_TOOM),
       T2(s_mp_sqr_toom, ONLY_PUBLIC_API, S_MP_SQR_TOOM)
+
 #undef T3
 #undef T2
 #undef T1

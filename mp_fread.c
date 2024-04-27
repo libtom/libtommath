@@ -4,10 +4,11 @@
 /* SPDX-License-Identifier: Unlicense */
 
 #ifndef MP_NO_FILE
+
 /* read a bigint from a file stream in ASCII */
 mp_err mp_fread(mp_int *a, int radix, FILE *stream)
 {
-   mp_err err;
+   mp_err err = MP_OKAY;
    mp_sign sign = MP_ZPOS;
    int ch;
 
@@ -47,19 +48,17 @@ mp_err mp_fread(mp_int *a, int radix, FILE *stream)
       }
 
       /* shift up and add */
-      if ((err = mp_mul_d(a, (mp_digit)radix, a)) != MP_OKAY) {
-         return err;
-      }
-      if ((err = mp_add_d(a, y, a)) != MP_OKAY) {
-         return err;
-      }
+      if ((err = mp_mul_d(a, (mp_digit)radix, a)) != MP_OKAY)                                          goto LBL_ERR;
+      if ((err = mp_add_d(a, y, a)) != MP_OKAY)                                                        goto LBL_ERR;
+
    } while ((ch = fgetc(stream)) != EOF);
 
    if (!mp_iszero(a)) {
       a->sign = sign;
    }
 
-   return MP_OKAY;
+LBL_ERR:
+   return err;
 }
 #endif
 
