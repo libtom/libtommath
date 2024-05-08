@@ -7,6 +7,7 @@
 mp_err mp_montgomery_setup(const mp_int *n, mp_digit *rho)
 {
    mp_digit x, b;
+   mp_err err = MP_OKAY;
 
    /* fast inversion mod 2**k
     *
@@ -19,7 +20,8 @@ mp_err mp_montgomery_setup(const mp_int *n, mp_digit *rho)
    b = n->dp[0];
 
    if ((b & 1u) == 0u) {
-      return MP_VAL;
+      err = MP_VAL;
+      MP_TRACE_ERROR(err, LTM_ERR);
    }
 
    x = (((b + 2u) & 4u) << 1) + b; /* here x*a==1 mod 2**4 */
@@ -35,6 +37,7 @@ mp_err mp_montgomery_setup(const mp_int *n, mp_digit *rho)
    /* rho = -1/m mod b */
    *rho = (mp_digit)(((mp_word)1 << (mp_word)MP_DIGIT_BIT) - x) & MP_MASK;
 
-   return MP_OKAY;
+LTM_ERR:
+   return err;
 }
 #endif

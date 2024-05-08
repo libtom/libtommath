@@ -29,11 +29,13 @@ mp_err mp_init_multi(mp_int *mp, ...)
             cur_arg = va_arg(clean_args, mp_int *);
          }
          va_end(clean_args);
-         break;
+         MP_TRACE_ERROR(err, LTM_ERR);
       }
       n++;
       cur_arg = va_arg(args, mp_int *);
    }
+
+LTM_ERR:
    va_end(args);
    return err;
 }

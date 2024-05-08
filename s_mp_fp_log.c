@@ -11,40 +11,39 @@ static mp_err s_mp_fp_log_fraction(const mp_int *a, int p, mp_int *c)
    int i;
    mp_err err;
 
-   if ((err = mp_init_multi(&b, &L_out, &twoep, &a_bar, NULL)) != MP_OKAY) {
-      return err;
-   }
+   if ((err = mp_init_multi(&b, &L_out, &twoep, &a_bar, NULL)) != MP_OKAY)         MP_TRACE_ERROR(err, LTM_ERR);
 
    L = mp_count_bits(a) - 1;
    pmL = (p < L) ? L - p: p - L;
-   if ((err = mp_mul_2d(a, pmL, &a_bar)) != MP_OKAY)                                                      goto LTM_ERR;
-   if ((err = mp_2expt(&b, p - 1)) != MP_OKAY)                                                            goto LTM_ERR;
+   if ((err = mp_mul_2d(a, pmL, &a_bar)) != MP_OKAY)                               MP_TRACE_ERROR(err, LTM_ERR_1);
+   if ((err = mp_2expt(&b, p - 1)) != MP_OKAY)                                     MP_TRACE_ERROR(err, LTM_ERR_1);
    mp_set_i32(&L_out, L);
-   if ((err = mp_mul_2d(&L_out, p, &L_out)) != MP_OKAY)                                                   goto LTM_ERR;
+   if ((err = mp_mul_2d(&L_out, p, &L_out)) != MP_OKAY)                            MP_TRACE_ERROR(err, LTM_ERR_1);
 
-   if ((err = mp_2expt(&twoep, p + 1)) != MP_OKAY)                                                        goto LTM_ERR;
+   if ((err = mp_2expt(&twoep, p + 1)) != MP_OKAY)                                 MP_TRACE_ERROR(err, LTM_ERR_1);
 
    for (i = 0; i < p; i++) {
-      if ((err = mp_sqr(&a_bar, &a_bar)) != MP_OKAY)                                                      goto LTM_ERR;
-      if ((err = mp_div_2d(&a_bar, p, &a_bar, NULL)) != MP_OKAY)                                          goto LTM_ERR;
+      if ((err = mp_sqr(&a_bar, &a_bar)) != MP_OKAY)                               MP_TRACE_ERROR(err, LTM_ERR_1);
+      if ((err = mp_div_2d(&a_bar, p, &a_bar, NULL)) != MP_OKAY)                   MP_TRACE_ERROR(err, LTM_ERR_1);
       if (mp_cmp(&a_bar, &twoep) != MP_LT) {
-         if ((err = mp_div_2(&a_bar, &a_bar)) != MP_OKAY)                                                 goto LTM_ERR;
-         if ((err = mp_add(&L_out, &b, &L_out)) != MP_OKAY)                                               goto LTM_ERR;
+         if ((err = mp_div_2(&a_bar, &a_bar)) != MP_OKAY)                          MP_TRACE_ERROR(err, LTM_ERR_1);
+         if ((err = mp_add(&L_out, &b, &L_out)) != MP_OKAY)                        MP_TRACE_ERROR(err, LTM_ERR_1);
       }
-      if ((err = mp_div_2(&b, &b)) != MP_OKAY)                                                            goto LTM_ERR;
+      if ((err = mp_div_2(&b, &b)) != MP_OKAY)                                     MP_TRACE_ERROR(err, LTM_ERR_1);
    }
 
    mp_exch(c, &L_out);
 
-LTM_ERR:
+LTM_ERR_1:
    mp_clear_multi(&b, &L_out, &twoep, &a_bar, NULL);
+LTM_ERR:
    return err;
 }
 
 mp_err s_mp_fp_log(const mp_int *a, mp_int *c)
 {
    mp_int La, t;
-   mp_err err;
+   mp_err err = MP_OKAY;
    int fla;
    /*
       We have arbitrary precision here and could adapt "prec" to actual precision,
@@ -56,26 +55,23 @@ mp_err s_mp_fp_log(const mp_int *a, mp_int *c)
 
    fla = mp_count_bits(a) - 1;
 
-   if ((err = mp_init_multi(&La, &t, NULL)) != MP_OKAY) {
-      return err;
-   }
+   if ((err = mp_init_multi(&La, &t, NULL)) != MP_OKAY)                            MP_TRACE_ERROR(err, LTM_ERR);
 
    if (fla > prec) {
-      if ((err = mp_div_2d(a, fla - prec, &t, NULL)) != MP_OKAY)                                          goto LTM_ERR;
-      if ((err = s_mp_fp_log_fraction(&t, prec,
-                                      &La)) != MP_OKAY)                                                   goto LTM_ERR;
+      if ((err = mp_div_2d(a, fla - prec, &t, NULL)) != MP_OKAY)                   MP_TRACE_ERROR(err, LTM_ERR_1);
+      if ((err = s_mp_fp_log_fraction(&t, prec, &La)) != MP_OKAY)                  MP_TRACE_ERROR(err, LTM_ERR_1);
       mp_set_i32(&t,fla - prec);
-      if ((err = mp_mul_2d(&t,prec, &t)) != MP_OKAY)                                                      goto LTM_ERR;
-      if ((err = mp_add(&La, &t, &La)) != MP_OKAY)                                                        goto LTM_ERR;
+      if ((err = mp_mul_2d(&t,prec, &t)) != MP_OKAY)                               MP_TRACE_ERROR(err, LTM_ERR_1);
+      if ((err = mp_add(&La, &t, &La)) != MP_OKAY)                                 MP_TRACE_ERROR(err, LTM_ERR_1);
    } else {
-      if ((err = s_mp_fp_log_fraction(a, prec,
-                                      &La)) != MP_OKAY)                                                   goto LTM_ERR;
+      if ((err = s_mp_fp_log_fraction(a, prec, &La)) != MP_OKAY)                   MP_TRACE_ERROR(err, LTM_ERR_1);
    }
 
    mp_exch(&La, c);
 
-LTM_ERR:
+LTM_ERR_1:
    mp_clear_multi(&La, &t, NULL);
+LTM_ERR:
    return err;
 }
 

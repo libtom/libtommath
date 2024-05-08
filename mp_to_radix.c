@@ -22,17 +22,19 @@ static void s_reverse(char *s, size_t len)
 mp_err mp_to_radix(const mp_int *a, char *str, size_t maxlen, size_t *written, int radix)
 {
    size_t  digs;
-   mp_err  err;
+   mp_err  err = MP_OKAY;
    mp_int  t;
    mp_digit d;
    char   *_s = str;
 
    /* check range of radix and size*/
    if (maxlen < 2u) {
-      return MP_BUF;
+      err =  MP_BUF;
+      MP_TRACE_ERROR(err, LTM_ERR);
    }
    if ((radix < 2) || (radix > 64)) {
-      return MP_VAL;
+      err = MP_VAL;
+      MP_TRACE_ERROR(err, LTM_ERR);
    }
 
    /* quick out if its zero */
@@ -42,12 +44,10 @@ mp_err mp_to_radix(const mp_int *a, char *str, size_t maxlen, size_t *written, i
       if (written != NULL) {
          *written = 2u;
       }
-      return MP_OKAY;
+      goto LTM_ERR;
    }
 
-   if ((err = mp_init_copy(&t, a)) != MP_OKAY) {
-      return err;
-   }
+   if ((err = mp_init_copy(&t, a)) != MP_OKAY)                           MP_TRACE_ERROR(err, LTM_ERR);
 
    /* if it is negative output a - */
    if (mp_isneg(&t)) {
@@ -66,11 +66,9 @@ mp_err mp_to_radix(const mp_int *a, char *str, size_t maxlen, size_t *written, i
       if (--maxlen < 1u) {
          /* no more room */
          err = MP_BUF;
-         goto LBL_ERR;
+         MP_TRACE_ERROR(err, LTM_ERR_1);
       }
-      if ((err = mp_div_d(&t, (mp_digit)radix, &t, &d)) != MP_OKAY) {
-         goto LBL_ERR;
-      }
+      if ((err = mp_div_d(&t, (mp_digit)radix, &t, &d)) != MP_OKAY)      MP_TRACE_ERROR(err, LTM_ERR_1);
       *str++ = s_mp_radix_map[d];
       ++digs;
    }
@@ -87,8 +85,9 @@ mp_err mp_to_radix(const mp_int *a, char *str, size_t maxlen, size_t *written, i
       *written = mp_isneg(a) ? (digs + 1u): digs;
    }
 
-LBL_ERR:
+LTM_ERR_1:
    mp_clear(&t);
+LTM_ERR:
    return err;
 }
 

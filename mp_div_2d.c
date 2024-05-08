@@ -6,23 +6,20 @@
 /* shift right by a certain bit count (store quotient in c, optional remainder in d) */
 mp_err mp_div_2d(const mp_int *a, int b, mp_int *c, mp_int *d)
 {
-   mp_err err;
+   mp_err err = MP_OKAY;
 
    if (b < 0) {
-      return MP_VAL;
+      err =  MP_VAL;
+      MP_TRACE_ERROR(err, LTM_ERR);
    }
 
-   if ((err = mp_copy(a, c)) != MP_OKAY) {
-      return err;
-   }
+   if ((err = mp_copy(a, c)) != MP_OKAY)                                 MP_TRACE_ERROR(err, LTM_ERR);
 
    /* 'a' should not be used after here - it might be the same as d */
 
    /* get the remainder */
    if (d != NULL) {
-      if ((err = mp_mod_2d(a, b, d)) != MP_OKAY) {
-         return err;
-      }
+      if ((err = mp_mod_2d(a, b, d)) != MP_OKAY)                         MP_TRACE_ERROR(err, LTM_ERR);
    }
 
    /* shift by as many digits in the bit count */
@@ -56,6 +53,8 @@ mp_err mp_div_2d(const mp_int *a, int b, mp_int *c, mp_int *d)
       }
    }
    mp_clamp(c);
-   return MP_OKAY;
+
+LTM_ERR:
+   return err;
 }
 #endif

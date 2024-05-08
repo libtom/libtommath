@@ -10,22 +10,22 @@ mp_err s_mp_mul_high(const mp_int *a, const mp_int *b, mp_int *c, int digs)
 {
    mp_int   t;
    int      pa, pb, ix;
-   mp_err   err;
+   mp_err   err = MP_OKAY;
 
    if (digs < 0) {
-      return MP_VAL;
+      err = MP_VAL;
+      MP_TRACE_ERROR(err, LTM_ERR);
    }
 
    /* can we use the fast multiplier? */
    if (MP_HAS(S_MP_MUL_HIGH_COMBA)
        && ((a->used + b->used + 1) < MP_WARRAY)
        && (MP_MIN(a->used, b->used) < MP_MAX_COMBA)) {
-      return s_mp_mul_high_comba(a, b, c, digs);
-   }
-
-   if ((err = mp_init_size(&t, a->used + b->used + 1)) != MP_OKAY) {
+      if ((err = s_mp_mul_high_comba(a, b, c, digs)) != MP_OKAY)        MP_TRACE_ERROR(err, LTM_ERR);
       return err;
    }
+
+   if ((err = mp_init_size(&t, a->used + b->used + 1)) != MP_OKAY)       MP_TRACE_ERROR(err, LTM_ERR);
    t.used = a->used + b->used + 1;
 
    pa = a->used;
@@ -51,6 +51,8 @@ mp_err s_mp_mul_high(const mp_int *a, const mp_int *b, mp_int *c, int digs)
    mp_clamp(&t);
    mp_exch(&t, c);
    mp_clear(&t);
-   return MP_OKAY;
+
+LTM_ERR:
+   return err;
 }
 #endif

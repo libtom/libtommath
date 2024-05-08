@@ -8,12 +8,10 @@ mp_err s_mp_sqr(const mp_int *a, mp_int *b)
 {
    mp_int   t;
    int      ix, pa;
-   mp_err   err;
+   mp_err   err = MP_OKAY;
 
    pa = a->used;
-   if ((err = mp_init_size(&t, (2 * pa) + 1)) != MP_OKAY) {
-      return err;
-   }
+   if ((err = mp_init_size(&t, (2 * pa) + 1)) != MP_OKAY)                MP_TRACE_ERROR(err, LTM_ERR);
 
    /* default used is maximum possible size */
    t.used = (2 * pa) + 1;
@@ -73,6 +71,8 @@ mp_err s_mp_sqr(const mp_int *a, mp_int *b)
    mp_clamp(&t);
    mp_exch(&t, b);
    mp_clear(&t);
-   return MP_OKAY;
+
+LTM_ERR:
+   return err;
 }
 #endif

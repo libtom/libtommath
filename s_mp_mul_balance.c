@@ -7,17 +7,15 @@
 mp_err s_mp_mul_balance(const mp_int *a, const mp_int *b, mp_int *c)
 {
    mp_int a0, tmp, r;
-   mp_err err;
+   mp_err err = MP_OKAY;
    int i, j,
        nblocks = MP_MAX(a->used, b->used) / MP_MIN(a->used, b->used),
        bsize = MP_MIN(a->used, b->used);
 
-   if ((err = mp_init_size(&a0, bsize + 2)) != MP_OKAY) {
-      return err;
-   }
+   if ((err = mp_init_size(&a0, bsize + 2)) != MP_OKAY)                  MP_TRACE_ERROR(err, LTM_ERR);
    if ((err = mp_init_multi(&tmp, &r, NULL)) != MP_OKAY) {
       mp_clear(&a0);
-      return err;
+      MP_TRACE_ERROR(err, LTM_ERR);
    }
 
    /* Make sure that A is the larger one*/
@@ -33,17 +31,11 @@ mp_err s_mp_mul_balance(const mp_int *a, const mp_int *b, mp_int *c)
       mp_clamp(&a0);
 
       /* Multiply with b */
-      if ((err = mp_mul(&a0, b, &tmp)) != MP_OKAY) {
-         goto LBL_ERR;
-      }
+      if ((err = mp_mul(&a0, b, &tmp)) != MP_OKAY)                       MP_TRACE_ERROR(err, LTM_ERR_1);
       /* Shift tmp to the correct position */
-      if ((err = mp_lshd(&tmp, bsize * i)) != MP_OKAY) {
-         goto LBL_ERR;
-      }
+      if ((err = mp_lshd(&tmp, bsize * i)) != MP_OKAY)                   MP_TRACE_ERROR(err, LTM_ERR_1);
       /* Add to output. No carry needed */
-      if ((err = mp_add(&r, &tmp, &r)) != MP_OKAY) {
-         goto LBL_ERR;
-      }
+      if ((err = mp_add(&r, &tmp, &r)) != MP_OKAY)                       MP_TRACE_ERROR(err, LTM_ERR_1);
    }
    /* The left-overs; there are always left-overs */
    if (j < a->used) {
@@ -52,20 +44,15 @@ mp_err s_mp_mul_balance(const mp_int *a, const mp_int *b, mp_int *c)
       j += a0.used;
       mp_clamp(&a0);
 
-      if ((err = mp_mul(&a0, b, &tmp)) != MP_OKAY) {
-         goto LBL_ERR;
-      }
-      if ((err = mp_lshd(&tmp, bsize * i)) != MP_OKAY) {
-         goto LBL_ERR;
-      }
-      if ((err = mp_add(&r, &tmp, &r)) != MP_OKAY) {
-         goto LBL_ERR;
-      }
+      if ((err = mp_mul(&a0, b, &tmp)) != MP_OKAY)                       MP_TRACE_ERROR(err, LTM_ERR_1);
+      if ((err = mp_lshd(&tmp, bsize * i)) != MP_OKAY)                   MP_TRACE_ERROR(err, LTM_ERR_1);
+      if ((err = mp_add(&r, &tmp, &r)) != MP_OKAY)                       MP_TRACE_ERROR(err, LTM_ERR_1);
    }
 
    mp_exch(&r,c);
-LBL_ERR:
+LTM_ERR_1:
    mp_clear_multi(&a0, &tmp, &r,NULL);
+LTM_ERR:
    return err;
 }
 #endif

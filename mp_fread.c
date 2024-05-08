@@ -7,13 +7,14 @@
 /* read a bigint from a file stream in ASCII */
 mp_err mp_fread(mp_int *a, int radix, FILE *stream)
 {
-   mp_err err;
+   mp_err err = MP_OKAY;
    mp_sign sign = MP_ZPOS;
    int ch;
 
    /* make sure the radix is ok */
    if ((radix < 2) || (radix > 64)) {
-      return MP_VAL;
+      err = MP_VAL;
+      MP_TRACE_ERROR(err, LTM_ERR);
    }
 
    /* if first digit is - then set negative */
@@ -25,7 +26,8 @@ mp_err mp_fread(mp_int *a, int radix, FILE *stream)
 
    /* no digits, return error */
    if (ch == EOF) {
-      return MP_ERR;
+      err = MP_ERR;
+      MP_TRACE_ERROR(err, LTM_ERR);
    }
 
    /* clear a */
@@ -47,19 +49,16 @@ mp_err mp_fread(mp_int *a, int radix, FILE *stream)
       }
 
       /* shift up and add */
-      if ((err = mp_mul_d(a, (mp_digit)radix, a)) != MP_OKAY) {
-         return err;
-      }
-      if ((err = mp_add_d(a, y, a)) != MP_OKAY) {
-         return err;
-      }
+      if ((err = mp_mul_d(a, (mp_digit)radix, a)) != MP_OKAY)            MP_TRACE_ERROR(err, LTM_ERR);
+      if ((err = mp_add_d(a, y, a)) != MP_OKAY)                          MP_TRACE_ERROR(err, LTM_ERR);
    } while ((ch = fgetc(stream)) != EOF);
 
    if (!mp_iszero(a)) {
       a->sign = sign;
    }
 
-   return MP_OKAY;
+LTM_ERR:
+   return err;
 }
 #endif
 

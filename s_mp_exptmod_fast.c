@@ -24,7 +24,7 @@ mp_err s_mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_i
    mp_int  M[TAB_SIZE], res;
    mp_digit buf, mp;
    int     bitbuf, bitcpy, bitcnt, mode, digidx, x, y, winsize;
-   mp_err   err;
+   mp_err   err = MP_OKAY;
 
    /* use a pointer to the reduction algorithm.  This allows us to use
     * one of many reduction algorithms without modding the guts of
@@ -54,9 +54,7 @@ mp_err s_mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_i
 
    /* init M array */
    /* init first cell */
-   if ((err = mp_init_size(&M[1], P->alloc)) != MP_OKAY) {
-      return err;
-   }
+   if ((err = mp_init_size(&M[1], P->alloc)) != MP_OKAY)                 MP_TRACE_ERROR(err, LTM_ERR);
 
    /* now init the second half of the array */
    for (x = 1<<(winsize-1); x < (1 << winsize); x++) {
@@ -65,7 +63,7 @@ mp_err s_mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_i
             mp_clear(&M[y]);
          }
          mp_clear(&M[1]);
-         return err;
+         MP_TRACE_ERROR(err, LTM_ERR);
       }
    }
 
@@ -73,10 +71,10 @@ mp_err s_mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_i
    if (redmode == 0) {
       if (MP_HAS(MP_MONTGOMERY_SETUP)) {
          /* now setup montgomery  */
-         if ((err = mp_montgomery_setup(P, &mp)) != MP_OKAY)      goto LBL_M;
+         if ((err = mp_montgomery_setup(P, &mp)) != MP_OKAY)             MP_TRACE_ERROR(err, LTM_ERR_M);
       } else {
          err = MP_VAL;
-         goto LBL_M;
+         MP_TRACE_ERROR(err, LTM_ERR_M);
       }
 
       /* automatically pick the comba one if available (saves quite a few calls/ifs) */
@@ -89,7 +87,7 @@ mp_err s_mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_i
          redux = mp_montgomery_reduce;
       } else {
          err = MP_VAL;
-         goto LBL_M;
+         MP_TRACE_ERROR(err, LTM_ERR_M);
       }
    } else if (redmode == 1) {
       if (MP_HAS(MP_DR_SETUP) && MP_HAS(MP_DR_REDUCE)) {
@@ -98,19 +96,19 @@ mp_err s_mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_i
          redux = mp_dr_reduce;
       } else {
          err = MP_VAL;
-         goto LBL_M;
+         MP_TRACE_ERROR(err, LTM_ERR_M);
       }
    } else if (MP_HAS(MP_REDUCE_2K_SETUP) && MP_HAS(MP_REDUCE_2K)) {
       /* setup DR reduction for moduli of the form 2**k - b */
-      if ((err = mp_reduce_2k_setup(P, &mp)) != MP_OKAY)          goto LBL_M;
+      if ((err = mp_reduce_2k_setup(P, &mp)) != MP_OKAY)                 MP_TRACE_ERROR(err, LTM_ERR_M);
       redux = mp_reduce_2k;
    } else {
       err = MP_VAL;
-      goto LBL_M;
+      MP_TRACE_ERROR(err, LTM_ERR_M);
    }
 
    /* setup result */
-   if ((err = mp_init_size(&res, P->alloc)) != MP_OKAY)           goto LBL_M;
+   if ((err = mp_init_size(&res, P->alloc)) != MP_OKAY)                  MP_TRACE_ERROR(err, LTM_ERR_M);
 
    /* create M table
     *
@@ -122,31 +120,35 @@ mp_err s_mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_i
    if (redmode == 0) {
       if (MP_HAS(MP_MONTGOMERY_CALC_NORMALIZATION)) {
          /* now we need R mod m */
-         if ((err = mp_montgomery_calc_normalization(&res, P)) != MP_OKAY) goto LBL_RES;
+         if ((err = mp_montgomery_calc_normalization(&res, P)) != MP_OKAY)
+            MP_TRACE_ERROR(err, LTM_ERR_RES);
 
          /* now set M[1] to G * R mod m */
-         if ((err = mp_mulmod(G, &res, P, &M[1])) != MP_OKAY)     goto LBL_RES;
+         if ((err = mp_mulmod(G, &res, P, &M[1])) != MP_OKAY)            MP_TRACE_ERROR(err, LTM_ERR_RES);
       } else {
          err = MP_VAL;
-         goto LBL_RES;
+         MP_TRACE_ERROR(err, LTM_ERR_RES);
       }
    } else {
       mp_set(&res, 1uL);
-      if ((err = mp_mod(G, P, &M[1])) != MP_OKAY)                 goto LBL_RES;
+      if ((err = mp_mod(G, P, &M[1])) != MP_OKAY)                        MP_TRACE_ERROR(err, LTM_ERR_RES);
    }
 
    /* compute the value at M[1<<(winsize-1)] by squaring M[1] (winsize-1) times */
-   if ((err = mp_copy(&M[1], &M[(size_t)1 << (winsize - 1)])) != MP_OKAY) goto LBL_RES;
+   if ((err = mp_copy(&M[1], &M[(size_t)1 << (winsize - 1)])) != MP_OKAY)
+      MP_TRACE_ERROR(err, LTM_ERR_RES);
 
    for (x = 0; x < (winsize - 1); x++) {
-      if ((err = mp_sqr(&M[(size_t)1 << (winsize - 1)], &M[(size_t)1 << (winsize - 1)])) != MP_OKAY) goto LBL_RES;
-      if ((err = redux(&M[(size_t)1 << (winsize - 1)], P, mp)) != MP_OKAY) goto LBL_RES;
+      if ((err = mp_sqr(&M[(size_t)1 << (winsize - 1)], &M[(size_t)1 << (winsize - 1)])) != MP_OKAY)
+         MP_TRACE_ERROR(err, LTM_ERR_RES);
+      if ((err = redux(&M[(size_t)1 << (winsize - 1)], P, mp)) != MP_OKAY)
+         MP_TRACE_ERROR(err, LTM_ERR_RES);
    }
 
    /* create upper table */
    for (x = (1 << (winsize - 1)) + 1; x < (1 << winsize); x++) {
-      if ((err = mp_mul(&M[x - 1], &M[1], &M[x])) != MP_OKAY)     goto LBL_RES;
-      if ((err = redux(&M[x], P, mp)) != MP_OKAY)                 goto LBL_RES;
+      if ((err = mp_mul(&M[x - 1], &M[1], &M[x])) != MP_OKAY)            MP_TRACE_ERROR(err, LTM_ERR_RES);
+      if ((err = redux(&M[x], P, mp)) != MP_OKAY)                        MP_TRACE_ERROR(err, LTM_ERR_RES);
    }
 
    /* set initial mode and bit cnt */
@@ -184,8 +186,8 @@ mp_err s_mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_i
 
       /* if the bit is zero and mode == 1 then we square */
       if ((mode == 1) && (y == 0)) {
-         if ((err = mp_sqr(&res, &res)) != MP_OKAY)               goto LBL_RES;
-         if ((err = redux(&res, P, mp)) != MP_OKAY)               goto LBL_RES;
+         if ((err = mp_sqr(&res, &res)) != MP_OKAY)                      MP_TRACE_ERROR(err, LTM_ERR_RES);
+         if ((err = redux(&res, P, mp)) != MP_OKAY)                      MP_TRACE_ERROR(err, LTM_ERR_RES);
          continue;
       }
 
@@ -197,13 +199,13 @@ mp_err s_mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_i
          /* ok window is filled so square as required and multiply  */
          /* square first */
          for (x = 0; x < winsize; x++) {
-            if ((err = mp_sqr(&res, &res)) != MP_OKAY)            goto LBL_RES;
-            if ((err = redux(&res, P, mp)) != MP_OKAY)            goto LBL_RES;
+            if ((err = mp_sqr(&res, &res)) != MP_OKAY)                   MP_TRACE_ERROR(err, LTM_ERR_RES);
+            if ((err = redux(&res, P, mp)) != MP_OKAY)                   MP_TRACE_ERROR(err, LTM_ERR_RES);
          }
 
          /* then multiply */
-         if ((err = mp_mul(&res, &M[bitbuf], &res)) != MP_OKAY)   goto LBL_RES;
-         if ((err = redux(&res, P, mp)) != MP_OKAY)               goto LBL_RES;
+         if ((err = mp_mul(&res, &M[bitbuf], &res)) != MP_OKAY)          MP_TRACE_ERROR(err, LTM_ERR_RES);
+         if ((err = redux(&res, P, mp)) != MP_OKAY)                      MP_TRACE_ERROR(err, LTM_ERR_RES);
 
          /* empty window and reset */
          bitcpy = 0;
@@ -216,15 +218,15 @@ mp_err s_mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_i
    if ((mode == 2) && (bitcpy > 0)) {
       /* square then multiply if the bit is set */
       for (x = 0; x < bitcpy; x++) {
-         if ((err = mp_sqr(&res, &res)) != MP_OKAY)               goto LBL_RES;
-         if ((err = redux(&res, P, mp)) != MP_OKAY)               goto LBL_RES;
+         if ((err = mp_sqr(&res, &res)) != MP_OKAY)                      MP_TRACE_ERROR(err, LTM_ERR_RES);
+         if ((err = redux(&res, P, mp)) != MP_OKAY)                      MP_TRACE_ERROR(err, LTM_ERR_RES);
 
          /* get next bit of the window */
          bitbuf <<= 1;
          if ((bitbuf & (1 << winsize)) != 0) {
             /* then multiply */
-            if ((err = mp_mul(&res, &M[1], &res)) != MP_OKAY)     goto LBL_RES;
-            if ((err = redux(&res, P, mp)) != MP_OKAY)            goto LBL_RES;
+            if ((err = mp_mul(&res, &M[1], &res)) != MP_OKAY)            MP_TRACE_ERROR(err, LTM_ERR_RES);
+            if ((err = redux(&res, P, mp)) != MP_OKAY)                   MP_TRACE_ERROR(err, LTM_ERR_RES);
          }
       }
    }
@@ -236,19 +238,20 @@ mp_err s_mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_i
        * to reduce one more time to cancel out the factor
        * of R.
        */
-      if ((err = redux(&res, P, mp)) != MP_OKAY)                  goto LBL_RES;
+      if ((err = redux(&res, P, mp)) != MP_OKAY)                         MP_TRACE_ERROR(err, LTM_ERR_RES);
    }
 
    /* swap res with Y */
    mp_exch(&res, Y);
-   err = MP_OKAY;
-LBL_RES:
+
+LTM_ERR_RES:
    mp_clear(&res);
-LBL_M:
+LTM_ERR_M:
    mp_clear(&M[1]);
    for (x = 1<<(winsize-1); x < (1 << winsize); x++) {
       mp_clear(&M[x]);
    }
+LTM_ERR:
    return err;
 }
 #endif

@@ -20,7 +20,7 @@
 mp_err mp_kronecker(const mp_int *a, const mp_int *p, int *c)
 {
    mp_int a1, p1, r;
-   mp_err err;
+   mp_err err = MP_OKAY;
    int v, k;
 
    static const char table[] = {0, 1, 0, -1, 0, -1, 0, 1};
@@ -39,17 +39,11 @@ mp_err mp_kronecker(const mp_int *a, const mp_int *p, int *c)
       return MP_OKAY;
    }
 
-   if ((err = mp_init_copy(&a1, a)) != MP_OKAY) {
-      return err;
-   }
-   if ((err = mp_init_copy(&p1, p)) != MP_OKAY) {
-      goto LBL_KRON_0;
-   }
+   if ((err = mp_init_copy(&a1, a)) != MP_OKAY)                          MP_TRACE_ERROR(err, LTM_ERR);
+   if ((err = mp_init_copy(&p1, p)) != MP_OKAY)                          MP_TRACE_ERROR(err, LTM_ERR_KRON_0);
 
    v = mp_cnt_lsb(&p1);
-   if ((err = mp_div_2d(&p1, v, &p1, NULL)) != MP_OKAY) {
-      goto LBL_KRON_1;
-   }
+   if ((err = mp_div_2d(&p1, v, &p1, NULL)) != MP_OKAY)                  MP_TRACE_ERROR(err, LTM_ERR_KRON_1);
 
    if ((v & 1) == 0) {
       k = 1;
@@ -64,25 +58,21 @@ mp_err mp_kronecker(const mp_int *a, const mp_int *p, int *c)
       }
    }
 
-   if ((err = mp_init(&r)) != MP_OKAY) {
-      goto LBL_KRON_1;
-   }
+   if ((err = mp_init(&r)) != MP_OKAY)                                   MP_TRACE_ERROR(err, LTM_ERR_KRON_1);
 
    for (;;) {
       if (mp_iszero(&a1)) {
          if (mp_cmp_d(&p1, 1uL) == MP_EQ) {
             *c = k;
-            goto LBL_KRON;
+            goto LTM_ERR_KRON;
          } else {
             *c = 0;
-            goto LBL_KRON;
+            goto LTM_ERR_KRON;
          }
       }
 
       v = mp_cnt_lsb(&a1);
-      if ((err = mp_div_2d(&a1, v, &a1, NULL)) != MP_OKAY) {
-         goto LBL_KRON;
-      }
+      if ((err = mp_div_2d(&a1, v, &a1, NULL)) != MP_OKAY)               MP_TRACE_ERROR(err, LTM_ERR_KRON);
 
       if ((v & 1) == 1) {
          k = k * table[p1.dp[0] & 7u];
@@ -104,25 +94,19 @@ mp_err mp_kronecker(const mp_int *a, const mp_int *p, int *c)
          }
       }
 
-      if ((err = mp_copy(&a1, &r)) != MP_OKAY) {
-         goto LBL_KRON;
-      }
+      if ((err = mp_copy(&a1, &r)) != MP_OKAY)                           MP_TRACE_ERROR(err, LTM_ERR_KRON);
       r.sign = MP_ZPOS;
-      if ((err = mp_mod(&p1, &r, &a1)) != MP_OKAY) {
-         goto LBL_KRON;
-      }
-      if ((err = mp_copy(&r, &p1)) != MP_OKAY) {
-         goto LBL_KRON;
-      }
+      if ((err = mp_mod(&p1, &r, &a1)) != MP_OKAY)                       MP_TRACE_ERROR(err, LTM_ERR_KRON);
+      if ((err = mp_copy(&r, &p1)) != MP_OKAY)                           MP_TRACE_ERROR(err, LTM_ERR_KRON);
    }
 
-LBL_KRON:
+LTM_ERR_KRON:
    mp_clear(&r);
-LBL_KRON_1:
+LTM_ERR_KRON_1:
    mp_clear(&p1);
-LBL_KRON_0:
+LTM_ERR_KRON_0:
    mp_clear(&a1);
-
+LTM_ERR:
    return err;
 }
 

@@ -6,12 +6,13 @@
 /* read a string [ASCII] in a given radix */
 mp_err mp_read_radix(mp_int *a, const char *str, int radix)
 {
-   mp_err   err;
-   mp_sign  sign = MP_ZPOS;
+   mp_err err = MP_OKAY;
+   mp_sign sign = MP_ZPOS;
 
    /* make sure the radix is ok */
    if ((radix < 2) || (radix > 64)) {
-      return MP_VAL;
+      err = MP_VAL;
+      MP_TRACE_ERROR(err, LTM_ERR);
    }
 
    /* if the leading digit is a
@@ -46,24 +47,23 @@ mp_err mp_read_radix(mp_int *a, const char *str, int radix)
       if (y >= radix) {
          break;
       }
-      if ((err = mp_mul_d(a, (mp_digit)radix, a)) != MP_OKAY) {
-         return err;
-      }
-      if ((err = mp_add_d(a, y, a)) != MP_OKAY) {
-         return err;
-      }
+      if ((err = mp_mul_d(a, (mp_digit)radix, a)) != MP_OKAY)            MP_TRACE_ERROR(err, LTM_ERR);
+      if ((err = mp_add_d(a, y, a)) != MP_OKAY)                          MP_TRACE_ERROR(err, LTM_ERR);
       ++str;
    }
 
    /* if an illegal character was found, fail. */
    if ((*str != '\0') && (*str != '\r') && (*str != '\n')) {
-      return MP_VAL;
+      err = MP_VAL;
+      MP_TRACE_ERROR(err, LTM_ERR);
    }
 
    /* set the sign only if a != 0 */
    if (!mp_iszero(a)) {
       a->sign = sign;
    }
-   return MP_OKAY;
+
+LTM_ERR:
+   return err;
 }
 #endif

@@ -6,17 +6,21 @@
 /* shrink a bignum */
 mp_err mp_shrink(mp_int *a)
 {
+   mp_err err = MP_OKAY;
    int alloc = MP_MAX(MP_MIN_DIGIT_COUNT, a->used);
    if (a->alloc != alloc) {
       mp_digit *dp = (mp_digit *) MP_REALLOC(a->dp,
                                              (size_t)a->alloc * sizeof(mp_digit),
                                              (size_t)alloc * sizeof(mp_digit));
       if (dp == NULL) {
-         return MP_MEM;
+         err = MP_MEM;
+         MP_TRACE_ERROR(err, LTM_ERR);
       }
       a->dp    = dp;
       a->alloc = alloc;
    }
-   return MP_OKAY;
+
+LTM_ERR:
+   return err;
 }
 #endif

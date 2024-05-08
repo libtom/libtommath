@@ -7,32 +7,27 @@
 mp_err s_mp_invmod(const mp_int *a, const mp_int *b, mp_int *c)
 {
    mp_int  x, y, u, v, A, B, C, D;
-   mp_err  err;
+   mp_err  err = MP_OKAY;
 
    /* b cannot be negative */
-   if ((b->sign == MP_NEG) || mp_iszero(b)) {
-      return MP_VAL;
-   }
+   if ((b->sign == MP_NEG) || mp_iszero(b))                                        MP_TRACE_ERROR(err, LTM_ERR);
 
    /* init temps */
-   if ((err = mp_init_multi(&x, &y, &u, &v,
-                            &A, &B, &C, &D, NULL)) != MP_OKAY) {
-      return err;
-   }
+   if ((err = mp_init_multi(&x, &y, &u, &v, &A, &B, &C, &D, NULL)) != MP_OKAY)     MP_TRACE_ERROR(err, LTM_ERR);
 
    /* x = a, y = b */
-   if ((err = mp_mod(a, b, &x)) != MP_OKAY)                       goto LBL_ERR;
-   if ((err = mp_copy(b, &y)) != MP_OKAY)                         goto LBL_ERR;
+   if ((err = mp_mod(a, b, &x)) != MP_OKAY)                                        MP_TRACE_ERROR(err, LTM_ERR_1);
+   if ((err = mp_copy(b, &y)) != MP_OKAY)                                          MP_TRACE_ERROR(err, LTM_ERR_1);
 
    /* 2. [modified] if x,y are both even then return an error! */
    if (mp_iseven(&x) && mp_iseven(&y)) {
       err = MP_VAL;
-      goto LBL_ERR;
+      MP_TRACE_ERROR(err, LTM_ERR_1);
    }
 
    /* 3. u=x, v=y, A=1, B=0, C=0,D=1 */
-   if ((err = mp_copy(&x, &u)) != MP_OKAY)                        goto LBL_ERR;
-   if ((err = mp_copy(&y, &v)) != MP_OKAY)                        goto LBL_ERR;
+   if ((err = mp_copy(&x, &u)) != MP_OKAY)                                         MP_TRACE_ERROR(err, LTM_ERR_1);
+   if ((err = mp_copy(&y, &v)) != MP_OKAY)                                         MP_TRACE_ERROR(err, LTM_ERR_1);
    mp_set(&A, 1uL);
    mp_set(&D, 1uL);
 
@@ -40,50 +35,50 @@ mp_err s_mp_invmod(const mp_int *a, const mp_int *b, mp_int *c)
       /* 4.  while u is even do */
       while (mp_iseven(&u)) {
          /* 4.1 u = u/2 */
-         if ((err = mp_div_2(&u, &u)) != MP_OKAY)                    goto LBL_ERR;
+         if ((err = mp_div_2(&u, &u)) != MP_OKAY)                                  MP_TRACE_ERROR(err, LTM_ERR_1);
 
          /* 4.2 if A or B is odd then */
          if (mp_isodd(&A) || mp_isodd(&B)) {
             /* A = (A+y)/2, B = (B-x)/2 */
-            if ((err = mp_add(&A, &y, &A)) != MP_OKAY)               goto LBL_ERR;
-            if ((err = mp_sub(&B, &x, &B)) != MP_OKAY)               goto LBL_ERR;
+            if ((err = mp_add(&A, &y, &A)) != MP_OKAY)                             MP_TRACE_ERROR(err, LTM_ERR_1);
+            if ((err = mp_sub(&B, &x, &B)) != MP_OKAY)                             MP_TRACE_ERROR(err, LTM_ERR_1);
          }
          /* A = A/2, B = B/2 */
-         if ((err = mp_div_2(&A, &A)) != MP_OKAY)                    goto LBL_ERR;
-         if ((err = mp_div_2(&B, &B)) != MP_OKAY)                    goto LBL_ERR;
+         if ((err = mp_div_2(&A, &A)) != MP_OKAY)                                  MP_TRACE_ERROR(err, LTM_ERR_1);
+         if ((err = mp_div_2(&B, &B)) != MP_OKAY)                                  MP_TRACE_ERROR(err, LTM_ERR_1);
       }
 
       /* 5.  while v is even do */
       while (mp_iseven(&v)) {
          /* 5.1 v = v/2 */
-         if ((err = mp_div_2(&v, &v)) != MP_OKAY)                    goto LBL_ERR;
+         if ((err = mp_div_2(&v, &v)) != MP_OKAY)                                  MP_TRACE_ERROR(err, LTM_ERR_1);
 
          /* 5.2 if C or D is odd then */
          if (mp_isodd(&C) || mp_isodd(&D)) {
             /* C = (C+y)/2, D = (D-x)/2 */
-            if ((err = mp_add(&C, &y, &C)) != MP_OKAY)               goto LBL_ERR;
-            if ((err = mp_sub(&D, &x, &D)) != MP_OKAY)               goto LBL_ERR;
+            if ((err = mp_add(&C, &y, &C)) != MP_OKAY)                             MP_TRACE_ERROR(err, LTM_ERR_1);
+            if ((err = mp_sub(&D, &x, &D)) != MP_OKAY)                             MP_TRACE_ERROR(err, LTM_ERR_1);
          }
          /* C = C/2, D = D/2 */
-         if ((err = mp_div_2(&C, &C)) != MP_OKAY)                    goto LBL_ERR;
-         if ((err = mp_div_2(&D, &D)) != MP_OKAY)                    goto LBL_ERR;
+         if ((err = mp_div_2(&C, &C)) != MP_OKAY)                                  MP_TRACE_ERROR(err, LTM_ERR_1);
+         if ((err = mp_div_2(&D, &D)) != MP_OKAY)                                  MP_TRACE_ERROR(err, LTM_ERR_1);
       }
 
       /* 6.  if u >= v then */
       if (mp_cmp(&u, &v) != MP_LT) {
          /* u = u - v, A = A - C, B = B - D */
-         if ((err = mp_sub(&u, &v, &u)) != MP_OKAY)                  goto LBL_ERR;
+         if ((err = mp_sub(&u, &v, &u)) != MP_OKAY)                                MP_TRACE_ERROR(err, LTM_ERR_1);
 
-         if ((err = mp_sub(&A, &C, &A)) != MP_OKAY)                  goto LBL_ERR;
+         if ((err = mp_sub(&A, &C, &A)) != MP_OKAY)                                MP_TRACE_ERROR(err, LTM_ERR_1);
 
-         if ((err = mp_sub(&B, &D, &B)) != MP_OKAY)                  goto LBL_ERR;
+         if ((err = mp_sub(&B, &D, &B)) != MP_OKAY)                                MP_TRACE_ERROR(err, LTM_ERR_1);
       } else {
          /* v - v - u, C = C - A, D = D - B */
-         if ((err = mp_sub(&v, &u, &v)) != MP_OKAY)                  goto LBL_ERR;
+         if ((err = mp_sub(&v, &u, &v)) != MP_OKAY)                                MP_TRACE_ERROR(err, LTM_ERR_1);
 
-         if ((err = mp_sub(&C, &A, &C)) != MP_OKAY)                  goto LBL_ERR;
+         if ((err = mp_sub(&C, &A, &C)) != MP_OKAY)                                MP_TRACE_ERROR(err, LTM_ERR_1);
 
-         if ((err = mp_sub(&D, &B, &D)) != MP_OKAY)                  goto LBL_ERR;
+         if ((err = mp_sub(&D, &B, &D)) != MP_OKAY)                                MP_TRACE_ERROR(err, LTM_ERR_1);
       }
 
       /* if not zero goto step 4 */
@@ -94,24 +89,25 @@ mp_err s_mp_invmod(const mp_int *a, const mp_int *b, mp_int *c)
    /* if v != 1 then there is no inverse */
    if (mp_cmp_d(&v, 1uL) != MP_EQ) {
       err = MP_VAL;
-      goto LBL_ERR;
+      MP_TRACE_ERROR(err, LTM_ERR_1);
    }
 
    /* if its too low */
    while (mp_isneg(&C)) {
-      if ((err = mp_add(&C, b, &C)) != MP_OKAY)                   goto LBL_ERR;
+      if ((err = mp_add(&C, b, &C)) != MP_OKAY)                                    MP_TRACE_ERROR(err, LTM_ERR_1);
    }
 
    /* too big */
    while (mp_cmp_mag(&C, b) != MP_LT) {
-      if ((err = mp_sub(&C, b, &C)) != MP_OKAY)                   goto LBL_ERR;
+      if ((err = mp_sub(&C, b, &C)) != MP_OKAY)                                    MP_TRACE_ERROR(err, LTM_ERR_1);
    }
 
    /* C is now the inverse */
    mp_exch(&C, c);
 
-LBL_ERR:
+LTM_ERR_1:
    mp_clear_multi(&x, &y, &u, &v, &A, &B, &C, &D, NULL);
+LTM_ERR:
    return err;
 }
 #endif

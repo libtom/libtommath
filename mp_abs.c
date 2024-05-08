@@ -9,16 +9,15 @@
  */
 mp_err mp_abs(const mp_int *a, mp_int *b)
 {
-   mp_err err;
+   mp_err err = MP_OKAY;
 
    /* copy a to b */
-   if ((err = mp_copy(a, b)) != MP_OKAY) {
-      return err;
-   }
+   if ((err = mp_copy(a, b)) != MP_OKAY)                       MP_TRACE_ERROR(err, LTM_ERR);
 
    /* force the sign of b to positive */
    b->sign = MP_ZPOS;
 
-   return MP_OKAY;
+LTM_ERR:
+   return err;
 }
 #endif

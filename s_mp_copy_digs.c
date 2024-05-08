@@ -11,6 +11,7 @@ void s_mp_copy_digs(mp_digit *d, const mp_digit *s, int digits)
 {
 #ifdef MP_USE_MEMOPS
    if (digits > 0) {
+      /* TODO: Make a note somewhere that "d" and "s" must not overlap or use memmove instead */
       memcpy(d, s, (size_t)digits * sizeof(mp_digit));
    }
 #else

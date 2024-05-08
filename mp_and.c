@@ -7,13 +7,11 @@
 mp_err mp_and(const mp_int *a, const mp_int *b, mp_int *c)
 {
    int used = MP_MAX(a->used, b->used) + 1, i;
-   mp_err err;
+   mp_err err = MP_OKAY;
    mp_digit ac = 1, bc = 1, cc = 1;
    bool neg = (mp_isneg(a) && mp_isneg(b));
 
-   if ((err = mp_grow(c, used)) != MP_OKAY) {
-      return err;
-   }
+   if ((err = mp_grow(c, used)) != MP_OKAY)                              MP_TRACE_ERROR(err, LTM_ERR);
 
    for (i = 0; i < used; i++) {
       mp_digit x, y;
@@ -49,6 +47,8 @@ mp_err mp_and(const mp_int *a, const mp_int *b, mp_int *c)
    c->used = used;
    c->sign = (neg ? MP_NEG : MP_ZPOS);
    mp_clamp(c);
-   return MP_OKAY;
+
+LTM_ERR:
+   return err;
 }
 #endif

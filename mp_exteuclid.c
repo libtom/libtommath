@@ -9,49 +9,48 @@
 mp_err mp_exteuclid(const mp_int *a, const mp_int *b, mp_int *U1, mp_int *U2, mp_int *U3)
 {
    mp_int u1, u2, u3, v1, v2, v3, t1, t2, t3, q, tmp;
-   mp_err err;
+   mp_err err = MP_OKAY;
 
-   if ((err = mp_init_multi(&u1, &u2, &u3, &v1, &v2, &v3, &t1, &t2, &t3, &q, &tmp, NULL)) != MP_OKAY) {
-      return err;
-   }
+   if ((err = mp_init_multi(&u1, &u2, &u3, &v1, &v2, &v3, &t1, &t2, &t3, &q, &tmp, NULL)) != MP_OKAY)
+      MP_TRACE_ERROR(err, LTM_ERR);
 
    /* initialize, (u1,u2,u3) = (1,0,a) */
    mp_set(&u1, 1uL);
-   if ((err = mp_copy(a, &u3)) != MP_OKAY)                        goto LBL_ERR;
+   if ((err = mp_copy(a, &u3)) != MP_OKAY)                        MP_TRACE_ERROR(err, LTM_ERR);
 
    /* initialize, (v1,v2,v3) = (0,1,b) */
    mp_set(&v2, 1uL);
-   if ((err = mp_copy(b, &v3)) != MP_OKAY)                        goto LBL_ERR;
+   if ((err = mp_copy(b, &v3)) != MP_OKAY)                        MP_TRACE_ERROR(err, LTM_ERR);
 
    /* loop while v3 != 0 */
    while (!mp_iszero(&v3)) {
       /* q = u3/v3 */
-      if ((err = mp_div(&u3, &v3, &q, NULL)) != MP_OKAY)          goto LBL_ERR;
+      if ((err = mp_div(&u3, &v3, &q, NULL)) != MP_OKAY)          MP_TRACE_ERROR(err, LTM_ERR);
 
       /* (t1,t2,t3) = (u1,u2,u3) - (v1,v2,v3)q */
-      if ((err = mp_mul(&v1, &q, &tmp)) != MP_OKAY)               goto LBL_ERR;
-      if ((err = mp_sub(&u1, &tmp, &t1)) != MP_OKAY)              goto LBL_ERR;
-      if ((err = mp_mul(&v2, &q, &tmp)) != MP_OKAY)               goto LBL_ERR;
-      if ((err = mp_sub(&u2, &tmp, &t2)) != MP_OKAY)              goto LBL_ERR;
-      if ((err = mp_mul(&v3, &q, &tmp)) != MP_OKAY)               goto LBL_ERR;
-      if ((err = mp_sub(&u3, &tmp, &t3)) != MP_OKAY)              goto LBL_ERR;
+      if ((err = mp_mul(&v1, &q, &tmp)) != MP_OKAY)               MP_TRACE_ERROR(err, LTM_ERR);
+      if ((err = mp_sub(&u1, &tmp, &t1)) != MP_OKAY)              MP_TRACE_ERROR(err, LTM_ERR);
+      if ((err = mp_mul(&v2, &q, &tmp)) != MP_OKAY)               MP_TRACE_ERROR(err, LTM_ERR);
+      if ((err = mp_sub(&u2, &tmp, &t2)) != MP_OKAY)              MP_TRACE_ERROR(err, LTM_ERR);
+      if ((err = mp_mul(&v3, &q, &tmp)) != MP_OKAY)               MP_TRACE_ERROR(err, LTM_ERR);
+      if ((err = mp_sub(&u3, &tmp, &t3)) != MP_OKAY)              MP_TRACE_ERROR(err, LTM_ERR);
 
       /* (u1,u2,u3) = (v1,v2,v3) */
-      if ((err = mp_copy(&v1, &u1)) != MP_OKAY)                   goto LBL_ERR;
-      if ((err = mp_copy(&v2, &u2)) != MP_OKAY)                   goto LBL_ERR;
-      if ((err = mp_copy(&v3, &u3)) != MP_OKAY)                   goto LBL_ERR;
+      if ((err = mp_copy(&v1, &u1)) != MP_OKAY)                   MP_TRACE_ERROR(err, LTM_ERR);
+      if ((err = mp_copy(&v2, &u2)) != MP_OKAY)                   MP_TRACE_ERROR(err, LTM_ERR);
+      if ((err = mp_copy(&v3, &u3)) != MP_OKAY)                   MP_TRACE_ERROR(err, LTM_ERR);
 
       /* (v1,v2,v3) = (t1,t2,t3) */
-      if ((err = mp_copy(&t1, &v1)) != MP_OKAY)                   goto LBL_ERR;
-      if ((err = mp_copy(&t2, &v2)) != MP_OKAY)                   goto LBL_ERR;
-      if ((err = mp_copy(&t3, &v3)) != MP_OKAY)                   goto LBL_ERR;
+      if ((err = mp_copy(&t1, &v1)) != MP_OKAY)                   MP_TRACE_ERROR(err, LTM_ERR);
+      if ((err = mp_copy(&t2, &v2)) != MP_OKAY)                   MP_TRACE_ERROR(err, LTM_ERR);
+      if ((err = mp_copy(&t3, &v3)) != MP_OKAY)                   MP_TRACE_ERROR(err, LTM_ERR);
    }
 
    /* make sure U3 >= 0 */
    if (mp_isneg(&u3)) {
-      if ((err = mp_neg(&u1, &u1)) != MP_OKAY)                    goto LBL_ERR;
-      if ((err = mp_neg(&u2, &u2)) != MP_OKAY)                    goto LBL_ERR;
-      if ((err = mp_neg(&u3, &u3)) != MP_OKAY)                    goto LBL_ERR;
+      if ((err = mp_neg(&u1, &u1)) != MP_OKAY)                    MP_TRACE_ERROR(err, LTM_ERR);
+      if ((err = mp_neg(&u2, &u2)) != MP_OKAY)                    MP_TRACE_ERROR(err, LTM_ERR);
+      if ((err = mp_neg(&u3, &u3)) != MP_OKAY)                    MP_TRACE_ERROR(err, LTM_ERR);
    }
 
    /* copy result out */
@@ -65,7 +64,7 @@ mp_err mp_exteuclid(const mp_int *a, const mp_int *b, mp_int *U1, mp_int *U2, mp
       mp_exch(U3, &u3);
    }
 
-LBL_ERR:
+LTM_ERR:
    mp_clear_multi(&u1, &u2, &u3, &v1, &v2, &v3, &t1, &t2, &t3, &q, &tmp, NULL);
    return err;
 }

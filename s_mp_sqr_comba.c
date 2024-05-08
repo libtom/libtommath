@@ -18,7 +18,7 @@ mp_err s_mp_sqr_comba(const mp_int *a, mp_int *b)
    int       oldused, pa, ix;
    mp_digit  MP_ALLOC_WARRAY(W);
    mp_word   W1;
-   mp_err err;
+   mp_err err = MP_OKAY;
 
    MP_CHECK_WARRAY(W);
 
@@ -26,7 +26,7 @@ mp_err s_mp_sqr_comba(const mp_int *a, mp_int *b)
    pa = a->used + a->used;
    if ((err = mp_grow(b, pa)) != MP_OKAY) {
       MP_FREE_WARRAY(W);
-      return err;
+      MP_TRACE_ERROR(err, LTM_ERR);
    }
 
    /* number of output digits to produce */
@@ -86,6 +86,8 @@ mp_err s_mp_sqr_comba(const mp_int *a, mp_int *b)
 
    mp_clamp(b);
    MP_FREE_WARRAY(W);
-   return MP_OKAY;
+
+LTM_ERR:
+   return err;
 }
 #endif

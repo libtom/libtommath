@@ -19,15 +19,13 @@
  */
 mp_err mp_dr_reduce(mp_int *x, const mp_int *n, mp_digit k)
 {
-   mp_err err;
+   mp_err err = MP_OKAY;
 
    /* m = digits in modulus */
    int m = n->used;
 
    /* ensure that "x" has at least 2m digits */
-   if ((err = mp_grow(x, m + m)) != MP_OKAY) {
-      return err;
-   }
+   if ((err = mp_grow(x, m + m)) != MP_OKAY)                                      MP_TRACE_ERROR(err, LTM_ERR);
 
    /* top of loop, this is where the code resumes if
     * another reduction pass is required.
@@ -59,10 +57,10 @@ mp_err mp_dr_reduce(mp_int *x, const mp_int *n, mp_digit k)
          break;
       }
 
-      if ((err = s_mp_sub(x, n, x)) != MP_OKAY) {
-         return err;
-      }
+      if ((err = s_mp_sub(x, n, x)) != MP_OKAY)                                   MP_TRACE_ERROR(err, LTM_ERR);
    }
-   return MP_OKAY;
+
+LTM_ERR:
+   return err;
 }
 #endif

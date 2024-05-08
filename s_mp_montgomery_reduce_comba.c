@@ -14,14 +14,15 @@
 mp_err s_mp_montgomery_reduce_comba(mp_int *x, const mp_int *n, mp_digit rho)
 {
    int     ix, oldused;
-   mp_err  err;
+   mp_err  err = MP_OKAY;
    mp_word MP_ALLOC_WARRAY(W);
 
    MP_CHECK_WARRAY(W);
 
    if (x->used > MP_WARRAY) {
       MP_FREE_WARRAY(W);
-      return MP_VAL;
+      err = MP_VAL;
+      MP_TRACE_ERROR(err, LTM_ERR);
    }
 
    /* get old used count */
@@ -30,7 +31,7 @@ mp_err s_mp_montgomery_reduce_comba(mp_int *x, const mp_int *n, mp_digit rho)
    /* grow a as required */
    if ((err = mp_grow(x, n->used + 1)) != MP_OKAY) {
       MP_FREE_WARRAY(W);
-      return err;
+      MP_TRACE_ERROR(err, LTM_ERR);
    }
 
    /* first we have to get the digits of the input into
@@ -117,8 +118,10 @@ mp_err s_mp_montgomery_reduce_comba(mp_int *x, const mp_int *n, mp_digit rho)
    MP_FREE_WARRAY(W);
    /* if A >= m then A = A - m */
    if (mp_cmp_mag(x, n) != MP_LT) {
-      return s_mp_sub(x, n, x);
+      if ((err = s_mp_sub(x, n, x)) != MP_OKAY)                         MP_TRACE_ERROR(err, LTM_ERR);
    }
-   return MP_OKAY;
+
+LTM_ERR:
+   return err;
 }
 #endif

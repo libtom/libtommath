@@ -24,11 +24,10 @@ mp_err mp_prime_frobenius_underwood(const mp_int *N, bool *result)
 {
    mp_int T1z, T2z, Np1z, sz, tz;
    int a, ap2, i;
-   mp_err err;
+   mp_err err = MP_OKAY;
 
-   if ((err = mp_init_multi(&T1z, &T2z, &Np1z, &sz, &tz, NULL)) != MP_OKAY) {
-      return err;
-   }
+   if ((err = mp_init_multi(&T1z, &T2z, &Np1z, &sz, &tz, NULL)) != MP_OKAY)
+      MP_TRACE_ERROR(err, LTM_ERR);
 
    for (a = 0; a < LTM_FROBENIUS_UNDERWOOD_A; a++) {
       int j;
@@ -41,7 +40,7 @@ mp_err mp_prime_frobenius_underwood(const mp_int *N, bool *result)
 
       mp_set_i32(&T1z, (int32_t)((a * a) - 4));
 
-      if ((err = mp_kronecker(&T1z, N, &j)) != MP_OKAY)           goto LBL_END;
+      if ((err = mp_kronecker(&T1z, N, &j)) != MP_OKAY)                  MP_TRACE_ERROR(err, LTM_ERR_END);
 
       if (j == -1) {
          break;
@@ -50,27 +49,27 @@ mp_err mp_prime_frobenius_underwood(const mp_int *N, bool *result)
       if (j == 0) {
          /* composite */
          *result = false;
-         goto LBL_END;
+         goto LTM_ERR_END;
       }
    }
    /* Tell it a composite and set return value accordingly */
    if (a >= LTM_FROBENIUS_UNDERWOOD_A) {
       err = MP_ITER;
-      goto LBL_END;
+      MP_TRACE_ERROR(err, LTM_ERR_END);
    }
    /* Composite if N and (a+4)*(2*a+5) are not coprime */
    mp_set_u32(&T1z, (uint32_t)((a+4)*((2*a)+5)));
 
-   if ((err = mp_gcd(N, &T1z, &T1z)) != MP_OKAY)                  goto LBL_END;
+   if ((err = mp_gcd(N, &T1z, &T1z)) != MP_OKAY)                         MP_TRACE_ERROR(err, LTM_ERR_END);
 
    if (!((T1z.used == 1) && (T1z.dp[0] == 1u))) {
       /* composite */
       *result = false;
-      goto LBL_END;
+      goto LTM_ERR_END;
    }
 
    ap2 = a + 2;
-   if ((err = mp_add_d(N, 1uL, &Np1z)) != MP_OKAY)                goto LBL_END;
+   if ((err = mp_add_d(N, 1uL, &Np1z)) != MP_OKAY)                       MP_TRACE_ERROR(err, LTM_ERR_END);
 
    mp_set(&sz, 1uL);
    mp_set(&tz, 2uL);
@@ -81,20 +80,20 @@ mp_err mp_prime_frobenius_underwood(const mp_int *N, bool *result)
        * tz   = ((tz-sz)*(tz+sz))%N;
        * sz   = temp;
        */
-      if ((err = mp_mul_2(&tz, &T2z)) != MP_OKAY)                 goto LBL_END;
+      if ((err = mp_mul_2(&tz, &T2z)) != MP_OKAY)                        MP_TRACE_ERROR(err, LTM_ERR_END);
 
       /* a = 0 at about 50% of the cases (non-square and odd input) */
       if (a != 0) {
-         if ((err = mp_mul_d(&sz, (mp_digit)a, &T1z)) != MP_OKAY) goto LBL_END;
-         if ((err = mp_add(&T1z, &T2z, &T2z)) != MP_OKAY)         goto LBL_END;
+         if ((err = mp_mul_d(&sz, (mp_digit)a, &T1z)) != MP_OKAY)        MP_TRACE_ERROR(err, LTM_ERR_END);
+         if ((err = mp_add(&T1z, &T2z, &T2z)) != MP_OKAY)                MP_TRACE_ERROR(err, LTM_ERR_END);
       }
 
-      if ((err = mp_mul(&T2z, &sz, &T1z)) != MP_OKAY)             goto LBL_END;
-      if ((err = mp_sub(&tz, &sz, &T2z)) != MP_OKAY)              goto LBL_END;
-      if ((err = mp_add(&sz, &tz, &sz)) != MP_OKAY)               goto LBL_END;
-      if ((err = mp_mul(&sz, &T2z, &tz)) != MP_OKAY)              goto LBL_END;
-      if ((err = mp_mod(&tz, N, &tz)) != MP_OKAY)                 goto LBL_END;
-      if ((err = mp_mod(&T1z, N, &sz)) != MP_OKAY)                goto LBL_END;
+      if ((err = mp_mul(&T2z, &sz, &T1z)) != MP_OKAY)                    MP_TRACE_ERROR(err, LTM_ERR_END);
+      if ((err = mp_sub(&tz, &sz, &T2z)) != MP_OKAY)                     MP_TRACE_ERROR(err, LTM_ERR_END);
+      if ((err = mp_add(&sz, &tz, &sz)) != MP_OKAY)                      MP_TRACE_ERROR(err, LTM_ERR_END);
+      if ((err = mp_mul(&sz, &T2z, &tz)) != MP_OKAY)                     MP_TRACE_ERROR(err, LTM_ERR_END);
+      if ((err = mp_mod(&tz, N, &tz)) != MP_OKAY)                        MP_TRACE_ERROR(err, LTM_ERR_END);
+      if ((err = mp_mod(&T1z, N, &sz)) != MP_OKAY)                       MP_TRACE_ERROR(err, LTM_ERR_END);
       if (s_mp_get_bit(&Np1z, i)) {
          /*
           *  temp = (a+2) * sz + tz
@@ -102,24 +101,25 @@ mp_err mp_prime_frobenius_underwood(const mp_int *N, bool *result)
           *  sz   = temp
           */
          if (a == 0) {
-            if ((err = mp_mul_2(&sz, &T1z)) != MP_OKAY)           goto LBL_END;
+            if ((err = mp_mul_2(&sz, &T1z)) != MP_OKAY)                  MP_TRACE_ERROR(err, LTM_ERR_END);
          } else {
-            if ((err = mp_mul_d(&sz, (mp_digit)ap2, &T1z)) != MP_OKAY) goto LBL_END;
+            if ((err = mp_mul_d(&sz, (mp_digit)ap2, &T1z)) != MP_OKAY)   MP_TRACE_ERROR(err, LTM_ERR_END);
          }
-         if ((err = mp_add(&T1z, &tz, &T1z)) != MP_OKAY)          goto LBL_END;
-         if ((err = mp_mul_2(&tz, &T2z)) != MP_OKAY)              goto LBL_END;
-         if ((err = mp_sub(&T2z, &sz, &tz)) != MP_OKAY)           goto LBL_END;
+         if ((err = mp_add(&T1z, &tz, &T1z)) != MP_OKAY)                 MP_TRACE_ERROR(err, LTM_ERR_END);
+         if ((err = mp_mul_2(&tz, &T2z)) != MP_OKAY)                     MP_TRACE_ERROR(err, LTM_ERR_END);
+         if ((err = mp_sub(&T2z, &sz, &tz)) != MP_OKAY)                  MP_TRACE_ERROR(err, LTM_ERR_END);
          mp_exch(&sz, &T1z);
       }
    }
 
    mp_set_u32(&T1z, (uint32_t)((2 * a) + 5));
-   if ((err = mp_mod(&T1z, N, &T1z)) != MP_OKAY)                  goto LBL_END;
+   if ((err = mp_mod(&T1z, N, &T1z)) != MP_OKAY)                         MP_TRACE_ERROR(err, LTM_ERR_END);
 
    *result = mp_iszero(&sz) && (mp_cmp(&tz, &T1z) == MP_EQ);
 
-LBL_END:
+LTM_ERR_END:
    mp_clear_multi(&tz, &sz, &Np1z, &T2z, &T1z, NULL);
+LTM_ERR:
    return err;
 }
 

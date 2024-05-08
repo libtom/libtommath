@@ -22,17 +22,15 @@ mp_err s_mp_div_school(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d)
    mp_digit xdpi;
    int n, t, i, norm;
    bool neg;
-   mp_err err;
+   mp_err err = MP_OKAY;
 
-   if ((err = mp_init_size(&q, a->used + 2)) != MP_OKAY) {
-      return err;
-   }
+   if ((err = mp_init_size(&q, a->used + 2)) != MP_OKAY)                 MP_TRACE_ERROR(err, LTM_ERR);
    q.used = a->used + 2;
 
-   if ((err = mp_init(&t1)) != MP_OKAY)                           goto LBL_Q;
-   if ((err = mp_init(&t2)) != MP_OKAY)                           goto LBL_T1;
-   if ((err = mp_init_copy(&x, a)) != MP_OKAY)                    goto LBL_T2;
-   if ((err = mp_init_copy(&y, b)) != MP_OKAY)                    goto LBL_X;
+   if ((err = mp_init(&t1)) != MP_OKAY)                                  MP_TRACE_ERROR(err, LTM_ERR_Q);
+   if ((err = mp_init(&t2)) != MP_OKAY)                                  MP_TRACE_ERROR(err, LTM_ERR_T1);
+   if ((err = mp_init_copy(&x, a)) != MP_OKAY)                           MP_TRACE_ERROR(err, LTM_ERR_T2);
+   if ((err = mp_init_copy(&y, b)) != MP_OKAY)                           MP_TRACE_ERROR(err, LTM_ERR_X);
 
    /* fix the sign */
    neg = (a->sign != b->sign);
@@ -42,8 +40,8 @@ mp_err s_mp_div_school(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d)
    norm = mp_count_bits(&y) % MP_DIGIT_BIT;
    if (norm < (MP_DIGIT_BIT - 1)) {
       norm = (MP_DIGIT_BIT - 1) - norm;
-      if ((err = mp_mul_2d(&x, norm, &x)) != MP_OKAY)             goto LBL_Y;
-      if ((err = mp_mul_2d(&y, norm, &y)) != MP_OKAY)             goto LBL_Y;
+      if ((err = mp_mul_2d(&x, norm, &x)) != MP_OKAY)                    MP_TRACE_ERROR(err, LTM_ERR_Y);
+      if ((err = mp_mul_2d(&y, norm, &y)) != MP_OKAY)                    MP_TRACE_ERROR(err, LTM_ERR_Y);
    } else {
       norm = 0;
    }
@@ -54,11 +52,11 @@ mp_err s_mp_div_school(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d)
 
    /* while (x >= y*b**n-t) do { q[n-t] += 1; x -= y*b**{n-t} } */
    /* y = y*b**{n-t} */
-   if ((err = mp_lshd(&y, n - t)) != MP_OKAY)                     goto LBL_Y;
+   if ((err = mp_lshd(&y, n - t)) != MP_OKAY)                            MP_TRACE_ERROR(err, LTM_ERR_Y);
 
    while (mp_cmp(&x, &y) != MP_LT) {
       ++(q.dp[n - t]);
-      if ((err = mp_sub(&x, &y, &x)) != MP_OKAY)                  goto LBL_Y;
+      if ((err = mp_sub(&x, &y, &x)) != MP_OKAY)                         MP_TRACE_ERROR(err, LTM_ERR_Y);
    }
 
    /* reset y by shifting it back down */
@@ -101,7 +99,7 @@ mp_err s_mp_div_school(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d)
          t1.dp[0] = ((t - 1) < 0) ? 0u : y.dp[t - 1];
          t1.dp[1] = y.dp[t];
          t1.used = 2;
-         if ((err = mp_mul_d(&t1, q.dp[(i - t) - 1], &t1)) != MP_OKAY)   goto LBL_Y;
+         if ((err = mp_mul_d(&t1, q.dp[(i - t) - 1], &t1)) != MP_OKAY)   MP_TRACE_ERROR(err, LTM_ERR_Y);
 
          /* find right hand */
          t2.dp[0] = ((i - 2) < 0) ? 0u : x.dp[i - 2];
@@ -111,15 +109,15 @@ mp_err s_mp_div_school(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d)
       } while (mp_cmp_mag(&t1, &t2) == MP_GT);
 
       /* step 3.3 x = x - q{i-t-1} * y * b**{i-t-1} */
-      if ((err = mp_mul_d(&y, q.dp[(i - t) - 1], &t1)) != MP_OKAY)       goto LBL_Y;
-      if ((err = mp_lshd(&t1, (i - t) - 1)) != MP_OKAY)                  goto LBL_Y;
-      if ((err = mp_sub(&x, &t1, &x)) != MP_OKAY)                        goto LBL_Y;
+      if ((err = mp_mul_d(&y, q.dp[(i - t) - 1], &t1)) != MP_OKAY)       MP_TRACE_ERROR(err, LTM_ERR_Y);
+      if ((err = mp_lshd(&t1, (i - t) - 1)) != MP_OKAY)                  MP_TRACE_ERROR(err, LTM_ERR_Y);
+      if ((err = mp_sub(&x, &t1, &x)) != MP_OKAY)                        MP_TRACE_ERROR(err, LTM_ERR_Y);
 
       /* if x < 0 then { x = x + y*b**{i-t-1}; q{i-t-1} -= 1; } */
       if (mp_isneg(&x)) {
-         if ((err = mp_copy(&y, &t1)) != MP_OKAY)                        goto LBL_Y;
-         if ((err = mp_lshd(&t1, (i - t) - 1)) != MP_OKAY)               goto LBL_Y;
-         if ((err = mp_add(&x, &t1, &x)) != MP_OKAY)                     goto LBL_Y;
+         if ((err = mp_copy(&y, &t1)) != MP_OKAY)                        MP_TRACE_ERROR(err, LTM_ERR_Y);
+         if ((err = mp_lshd(&t1, (i - t) - 1)) != MP_OKAY)               MP_TRACE_ERROR(err, LTM_ERR_Y);
+         if ((err = mp_add(&x, &t1, &x)) != MP_OKAY)                     MP_TRACE_ERROR(err, LTM_ERR_Y);
 
          q.dp[(i - t) - 1] = (q.dp[(i - t) - 1] - 1uL) & MP_MASK;
       }
@@ -139,20 +137,21 @@ mp_err s_mp_div_school(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d)
    }
 
    if (d != NULL) {
-      if ((err = mp_div_2d(&x, norm, &x, NULL)) != MP_OKAY)       goto LBL_Y;
+      if ((err = mp_div_2d(&x, norm, &x, NULL)) != MP_OKAY)              MP_TRACE_ERROR(err, LTM_ERR_Y);
       mp_exch(&x, d);
    }
 
-LBL_Y:
+LTM_ERR_Y:
    mp_clear(&y);
-LBL_X:
+LTM_ERR_X:
    mp_clear(&x);
-LBL_T2:
+LTM_ERR_T2:
    mp_clear(&t2);
-LBL_T1:
+LTM_ERR_T1:
    mp_clear(&t1);
-LBL_Q:
+LTM_ERR_Q:
    mp_clear(&q);
+LTM_ERR:
    return err;
 }
 

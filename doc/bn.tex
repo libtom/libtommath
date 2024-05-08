@@ -362,6 +362,24 @@ the library by calling \texttt{mp\_warray\_init()} once with the correct number 
 
 C.f. \ref{ch:SMALL_STACK_API} for the API description and further details.
 
+\subsection{Error tracing}
+\label{ch:ERROR_TRACING}
+One error leads to another error and it might be a bit tedious to trace all of the errors up to the
+source, especially in deeply recursive functions. The macro \texttt{MP\_TRACE\_ERROR} defined in 
+\texttt{tommath\_private.h} tries to help with it by printing the name of the source file, the line number,
+and the name of the function to \texttt{stderr}.
+
+Include this functionality by defining \texttt{MP\_ADD\_ERROR\_TRACING} with \texttt{make} or \texttt{cmake}.
+
+\index{MP\_TRACE\_ERROR}
+\begin{alltt}
+make "LCFLAGS= -DMP_ADD_ERROR_TRACING "
+or
+cmake -DMP_ADD_ERROR_TRACING=ON .
+\end{alltt}
+
+
+
 \section{Purpose of LibTomMath}
 Unlike	GNU MP (GMP) Library, LIP, OpenSSL or various other commercial kits (Miracl), LibTomMath
 was not written with bleeding edge performance in mind.  First and foremost LibTomMath was written

@@ -14,28 +14,26 @@
 mp_err mp_prime_fermat(const mp_int *a, const mp_int *b, bool *result)
 {
    mp_int  t;
-   mp_err  err;
+   mp_err  err = MP_OKAY;
 
    /* ensure b > 1 */
    if (mp_cmp_d(b, 1uL) != MP_GT) {
-      return MP_VAL;
+      err = MP_VAL;
+      MP_TRACE_ERROR(err, LTM_ERR);
    }
 
    /* init t */
-   if ((err = mp_init(&t)) != MP_OKAY) {
-      return err;
-   }
+   if ((err = mp_init(&t)) != MP_OKAY)                                   MP_TRACE_ERROR(err, LTM_ERR);
 
    /* compute t = b**a mod a */
-   if ((err = mp_exptmod(b, a, a, &t)) != MP_OKAY) {
-      goto LBL_ERR;
-   }
+   if ((err = mp_exptmod(b, a, a, &t)) != MP_OKAY)                       MP_TRACE_ERROR(err, LTM_ERR_1);
 
    /* is it equal to b? */
    *result = mp_cmp(&t, b) == MP_EQ;
 
-LBL_ERR:
+LTM_ERR_1:
    mp_clear(&t);
+LTM_ERR:
    return err;
 }
 #endif
