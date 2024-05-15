@@ -38,7 +38,6 @@ mp_err s_mp_mul_comba(const mp_int *a, const mp_int *b, mp_int *c, int digs)
    if ((err = mp_grow(c, digs)) != MP_OKAY) {
       MP_FREE_WARRAY(W);
       MP_TRACE_ERROR(err, LTM_ERR);
-      return err;
    }
 
    /* number of output digits to produce */
