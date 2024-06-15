@@ -148,6 +148,169 @@ LBL_ERR:
    return t1;
 }
 
+/* Set cutoff for radix conversion (base 10 only for now but should be good enough) */
+#include <stdlib.h>
+static mp_err random_number(char **string, size_t length)
+{
+   char alphabet[] = "0123456789", *str_cpy;
+
+   *string = malloc(length + 1);
+   if (*string == NULL) {
+      return MP_MEM;
+   }
+   str_cpy = *string;
+   /* No leading zeros */
+   do {
+      *str_cpy = alphabet[rand() % 10];
+   } while (*str_cpy == '0');
+   length--;
+   str_cpy++;
+
+   do {
+      *str_cpy = alphabet[rand() % 10];
+      str_cpy++;
+   } while (--length > 0);
+
+   *str_cpy = '\0';
+
+   return MP_OKAY;
+}
+
+#include <string.h>
+static uint64_t s_time_radix_conversion_read(int size)
+{
+   int x;
+   size_t length;
+   size_t written;
+   mp_err  err;
+   mp_int  a;
+   char *str_a, *str_b;
+   uint64_t t1;
+
+   /* "size" is given as "number of limbs" and starts at 8 */
+   length = (size_t)(size * MP_DIGIT_BIT);
+
+   /* Over-estimate number of base 10 digits
+      Magick number: 28/93 = CF(log_10(2))_(p_3, q_3)
+    */
+   written = (length * 28u);
+   /* May happen e.g. if size > 2184  with MP_16BIT
+      but cutoff should be about a couple of thousand bits
+      at most (around or above Karatsuba cutoff).
+    */
+   if (length != written / 28u) {
+      t1 = UINT64_MAX;
+      goto LBL_ERR_1;
+   }
+   length = written / 93u + 2u;
+
+   if ((err = random_number(&str_a, length)) != MP_OKAY) {
+      t1 = UINT64_MAX;
+      goto LBL_ERR_1;
+   }
+
+   if ((err = mp_init(&a)) != MP_OKAY) {
+      t1 = UINT64_MAX;
+      goto LBL_ERR_2;
+   }
+   s_timer_start();
+   for (x = 0; x < s_number_of_test_loops; x++) {
+      if ((err = mp_read_radix(&a, str_a, 10)) != MP_OKAY) {
+         t1 = UINT64_MAX;
+         goto LBL_ERR_3;
+      }
+   }
+   t1 = s_timer_stop();
+
+   if ((err = mp_radix_size(&a, 10, &length)) != MP_OKAY) {
+      t1 = UINT64_MAX;
+      goto LBL_ERR_3;
+   }
+
+   str_b = malloc(length + 1);
+   if (str_b == NULL) {
+      t1 = UINT64_MAX;
+      goto LBL_ERR_3;
+   }
+   if ((err = mp_to_radix(&a, str_b, length, &written, 10)) != MP_OKAY) {
+      t1 = UINT64_MAX;
+      goto LBL_ERR;
+   }
+
+   if (strcmp(str_a, str_b) != 0) {
+      t1 = 0u;
+      goto LBL_ERR;
+   }
+
+LBL_ERR:
+   free(str_b);
+LBL_ERR_3:
+   mp_clear(&a);
+LBL_ERR_2:
+   free(str_a);
+LBL_ERR_1:
+   return t1;
+}
+
+static uint64_t s_time_radix_conversion_write(int size)
+{
+   int x;
+   size_t written, length;
+   mp_err  err;
+   mp_int  a, b;
+   char *str_a;
+   uint64_t t1;
+
+
+   if ((err = mp_init_multi(&a, &b, NULL)) != MP_OKAY) {
+      t1 = UINT64_MAX;
+      goto LBL_ERR_1;
+   }
+   if ((err = mp_rand(&a, size)) != MP_OKAY) {
+      t1 = UINT64_MAX;
+      goto LBL_ERR_2;
+   }
+
+   if ((err = mp_radix_size(&a, 10, &length)) != MP_OKAY) {
+      t1 = UINT64_MAX;
+      goto LBL_ERR_2;
+   }
+
+   str_a = malloc(length + 1);
+   if (str_a == NULL) {
+      t1 = UINT64_MAX;
+      goto LBL_ERR_2;
+   }
+
+   s_timer_start();
+   for (x = 0; x < s_number_of_test_loops; x++) {
+      if ((err =  mp_to_radix(&a, str_a, length, &written, 10)) != MP_OKAY) {
+         t1 = UINT64_MAX;
+         goto LBL_ERR_2;
+      }
+   }
+   t1 = s_timer_stop();
+
+   if ((err = mp_read_radix(&b, str_a, 10)) != MP_OKAY) {
+      t1 = UINT64_MAX;
+      goto LBL_ERR;
+   }
+
+   if (mp_cmp(&a, &b) != MP_EQ) {
+      t1 = 0u;
+      goto LBL_ERR;
+   }
+
+
+LBL_ERR:
+   free(str_a);
+LBL_ERR_2:
+   mp_clear_multi(&a, &b, NULL);
+LBL_ERR_1:
+   return t1;
+}
+
+
 struct tune_args {
    int testmode;
    int verbose;
@@ -223,8 +386,8 @@ static void s_usage(char *s)
    fprintf(stderr,"          -T testmode, for use with testme.sh\n");
    fprintf(stderr,"          -v verbose, print all timings\n");
    fprintf(stderr,"          -c check results\n");
-   fprintf(stderr,"          -p print benchmark of final cutoffs in files \"multiplying\"\n");
-   fprintf(stderr,"             and \"squaring\"\n");
+   fprintf(stderr,"          -p print benchmark of final cutoffs in files \"multiplying\",\n");
+   fprintf(stderr,"             \"squaring\", \"readradix\", and  \"writeradix\" \n");
    fprintf(stderr,"          -G [string] suffix for the filenames listed above\n");
    fprintf(stderr,"             Implies '-p'\n");
    fprintf(stderr,"          -b print benchmark of bncore.c\n");
@@ -238,11 +401,13 @@ static void s_usage(char *s)
    fprintf(stderr,"             (Not for computing the cut-offs!)\n");
    fprintf(stderr,"          -s 'preset' use values in 'preset' for printing.\n");
    fprintf(stderr,"             'preset' is a comma separated string with cut-offs for\n");
-   fprintf(stderr,"             ksm, kss, tc3m, tc3s in that order\n");
+   fprintf(stderr,"             ksm, kss, tc3m, tc3s, rcr, rcw in that order\n");
    fprintf(stderr,"             ksm  = karatsuba multiplication\n");
    fprintf(stderr,"             kss  = karatsuba squaring\n");
    fprintf(stderr,"             tc3m = Toom-Cook 3-way multiplication\n");
    fprintf(stderr,"             tc3s = Toom-Cook 3-way squaring\n");
+   fprintf(stderr,"             rcr = Fast radix conversion, reading\n");
+   fprintf(stderr,"             rcw = Fast radix conversion, writing\n");
    fprintf(stderr,"             Implies '-p'\n");
    fprintf(stderr,"          -h this message\n");
    exit(s_exit_code);
@@ -251,10 +416,11 @@ static void s_usage(char *s)
 struct cutoffs {
    int MUL_KARATSUBA, SQR_KARATSUBA;
    int MUL_TOOM, SQR_TOOM;
+   int RADIX_READ, RADIX_WRITE;
 };
 
 const struct cutoffs max_cutoffs =
-{ INT_MAX, INT_MAX, INT_MAX, INT_MAX };
+{ INT_MAX, INT_MAX, INT_MAX, INT_MAX,INT_MAX, INT_MAX };
 
 static void set_cutoffs(const struct cutoffs *c)
 {
@@ -262,6 +428,8 @@ static void set_cutoffs(const struct cutoffs *c)
    MP_SQR_KARATSUBA_CUTOFF = c->SQR_KARATSUBA;
    MP_MUL_TOOM_CUTOFF = c->MUL_TOOM;
    MP_SQR_TOOM_CUTOFF = c->SQR_TOOM;
+   MP_RADIX_READ_CUTOFF = c->RADIX_READ;
+   MP_RADIX_WRITE_CUTOFF = c->RADIX_WRITE;
 }
 
 static void get_cutoffs(struct cutoffs *c)
@@ -270,7 +438,8 @@ static void get_cutoffs(struct cutoffs *c)
    c->SQR_KARATSUBA  = MP_SQR_KARATSUBA_CUTOFF;
    c->MUL_TOOM = MP_MUL_TOOM_CUTOFF;
    c->SQR_TOOM = MP_SQR_TOOM_CUTOFF;
-
+   c->RADIX_READ = MP_RADIX_READ_CUTOFF;
+   c->RADIX_WRITE = MP_RADIX_WRITE_CUTOFF;
 }
 
 int main(int argc, char **argv)
@@ -288,9 +457,11 @@ int main(int argc, char **argv)
    int opt;
    struct cutoffs orig, updated;
 
-   FILE *squaring, *multiplying;
+   FILE *squaring, *multiplying, *readradix, *writeradix;
    char mullog[256] = "multiplying";
    char sqrlog[256] = "squaring";
+   char rcreadlog[256] = "readradix";
+   char rcwritelog[256] = "writeradix";
    s_number_of_test_loops = 64;
    s_stabilization_extra = 3;
 
@@ -356,6 +527,31 @@ int main(int argc, char **argv)
                   break;
                }
             }
+
+            for (i = 0; i < 255; i++) {
+               if (rcreadlog[i] == '\0') {
+                  break;
+               }
+            }
+            for (j = 0; i < 255; j++, i++) {
+               rcreadlog[i] = argv[opt][j];
+               if (argv[opt][j] == '\0') {
+                  break;
+               }
+            }
+
+            for (i = 0; i < 255; i++) {
+               if (rcwritelog[i] == '\0') {
+                  break;
+               }
+            }
+            for (j = 0; i < 255; j++, i++) {
+               rcwritelog[i] = argv[opt][j];
+               if (argv[opt][j] == '\0') {
+                  break;
+               }
+            }
+
             break;
          case 'b':
             args.bncore = 1;
@@ -416,13 +612,17 @@ int main(int argc, char **argv)
                s_usage(argv[0]);
             }
             str = argv[opt];
-            MP_MUL_KARATSUBA_CUTOFF = (int)s_strtol(str, &endptr, "[1/4] No value for MP_MUL_KARATSUBA_CUTOFF given");
+            MP_MUL_KARATSUBA_CUTOFF = (int)s_strtol(str, &endptr, "[1/6] No value for MP_MUL_KARATSUBA_CUTOFF given");
             str = endptr + 1;
-            MP_SQR_KARATSUBA_CUTOFF = (int)s_strtol(str, &endptr, "[2/4] No value for MP_SQR_KARATSUBA_CUTOFF given");
+            MP_SQR_KARATSUBA_CUTOFF = (int)s_strtol(str, &endptr, "[2/6] No value for MP_SQR_KARATSUBA_CUTOFF given");
             str = endptr + 1;
-            MP_MUL_TOOM_CUTOFF = (int)s_strtol(str, &endptr, "[3/4] No value for MP_MUL_TOOM_CUTOFF given");
+            MP_MUL_TOOM_CUTOFF = (int)s_strtol(str, &endptr, "[3/6] No value for MP_MUL_TOOM_CUTOFF given");
             str = endptr + 1;
-            MP_SQR_TOOM_CUTOFF = (int)s_strtol(str, &endptr, "[4/4] No value for MP_SQR_TOOM_CUTOFF given");
+            MP_SQR_TOOM_CUTOFF = (int)s_strtol(str, &endptr, "[4/6] No value for MP_SQR_TOOM_CUTOFF given");
+            str = endptr + 1;
+            MP_RADIX_READ_CUTOFF = (int)s_strtol(str, &endptr, "[5/6] No value for MP_RADIX_READ_CUTOFF given");
+            str = endptr + 1;
+            MP_RADIX_WRITE_CUTOFF = (int)s_strtol(str, &endptr, "[6/6] No value for MP_RADIX_WRITE_CUTOFF given");
             break;
          case 'h':
             s_exit_code = EXIT_SUCCESS;
@@ -461,33 +661,66 @@ int main(int argc, char **argv)
          T_MUL_SQR("Karatsuba squaring", SQR_KARATSUBA, s_time_sqr),
          T_MUL_SQR("Toom-Cook 3-way multiplying", MUL_TOOM, s_time_mul),
          T_MUL_SQR("Toom-Cook 3-way squaring", SQR_TOOM, s_time_sqr),
+         /* TODO: adapt macro above (or the names of the cutoffs and/or functions) */
+         {
+            "\"Faster radix conversion (reading)\"", &MP_RADIX_READ_CUTOFF,
+            &(updated.RADIX_READ),MP_HAS(S_MP_FASTER_READ_RADIX) ? s_time_radix_conversion_read : NULL
+         },
+         {
+            "\"Faster radix conversion (writing)\"", &MP_RADIX_WRITE_CUTOFF,
+            &(updated.RADIX_WRITE),MP_HAS(S_MP_FASTER_TO_RADIX) ? s_time_radix_conversion_write : NULL
+         }
+
 #undef T_MUL_SQR
       };
       /* Turn all limits from bncore.c to the max */
       set_cutoffs(&max_cutoffs);
-      for (n = 0; n < sizeof(test)/sizeof(test[0]); ++n) {
+
+      for (n = 0; n < (sizeof(test)/sizeof(test[0]) - 2); ++n) {
          if (test[n].fn != NULL) {
             s_run(test[n].name, test[n].fn, test[n].cutoff);
             *test[n].update = *test[n].cutoff;
+         };
+      }
+
+      /* Cutoffs for radix conversions are in bits to make handling of 62 different radices easier  */
+      for (; n < sizeof(test)/sizeof(test[0]); ++n) {
+         if (test[n].fn != NULL) {
+            s_run(test[n].name, test[n].fn, test[n].cutoff);
+            *test[n].update = (*test[n].cutoff) * MP_DIGIT_BIT;
             *test[n].cutoff = INT_MAX;
          }
       }
+
+   }
+   if (printpreset == 1) {
+      updated.MUL_KARATSUBA = MP_MUL_KARATSUBA_CUTOFF;
+      updated.SQR_KARATSUBA = MP_SQR_KARATSUBA_CUTOFF;
+      updated.MUL_TOOM = MP_MUL_TOOM_CUTOFF;
+      updated.SQR_TOOM = MP_SQR_TOOM_CUTOFF;
+      updated.RADIX_READ = MP_RADIX_READ_CUTOFF;
+      updated.RADIX_WRITE = MP_RADIX_WRITE_CUTOFF;
    }
    if (args.terse == 1) {
-      printf("%d %d %d %d\n",
+      printf("%d %d %d %d %d %d\n",
              updated.MUL_KARATSUBA,
              updated.SQR_KARATSUBA,
              updated.MUL_TOOM,
-             updated.SQR_TOOM);
+             updated.SQR_TOOM,
+             updated.RADIX_READ,
+             updated.RADIX_WRITE);
    } else {
       printf("MUL_KARATSUBA_CUTOFF = %d\n", updated.MUL_KARATSUBA);
       printf("SQR_KARATSUBA_CUTOFF = %d\n", updated.SQR_KARATSUBA);
       printf("MUL_TOOM_CUTOFF = %d\n", updated.MUL_TOOM);
       printf("SQR_TOOM_CUTOFF = %d\n", updated.SQR_TOOM);
+      printf("RADIX_READ_CUTOFF = %d\n", updated.RADIX_READ);
+      printf("RADIX_WRITE_CUTOFF = %d\n", updated.RADIX_WRITE);
    }
-
+   /* TODO: add graphs for radix conversion, too? */
    if (args.print == 1) {
-      printf("Printing data for graphing to \"%s\" and \"%s\"\n",mullog, sqrlog);
+      printf("Printing up to %d datapoints for graphing to \"%s\", \"%s\", \"%s\", and \"%s\"\n",args.upper_limit_print,
+             mullog, sqrlog, rcreadlog, rcwritelog);
 
       multiplying = fopen(mullog, "w+");
       if (multiplying == NULL) {
@@ -501,7 +734,22 @@ int main(int argc, char **argv)
          exit(EXIT_FAILURE);
       }
 
-      for (x = 8; x < args.upper_limit_print; x += args.increment_print) {
+      readradix = fopen(rcreadlog, "w+");
+      if (readradix == NULL) {
+         fprintf(stderr, "Opening file \"%s\" failed\n",rcreadlog);
+         exit(EXIT_FAILURE);
+      }
+
+      writeradix = fopen(rcwritelog, "w+");
+      if (readradix == NULL) {
+         fprintf(stderr, "Opening file \"%s\" failed\n",rcwritelog);
+         exit(EXIT_FAILURE);
+      }
+
+
+      for (x = 1; x < args.upper_limit_print; x += args.increment_print) {
+         printf("\r%d", x);
+         fflush(stdout);
          set_cutoffs(&max_cutoffs);
          t1 = s_time_mul(x);
          set_cutoffs(&orig);
@@ -522,23 +770,57 @@ int main(int argc, char **argv)
             printf("SQR %d: %9" PRIu64 " %9" PRIu64 ", %9" PRIi64 "\n", x, t1, t2, (int64_t)t2 - (int64_t)t1);
             fflush(stdout);
          }
+         /* The cutoffs are so low, we would see nothing interesting in the graphs with the default args.upper_limit_print */
+         if ((x * MP_DIGIT_BIT) < (3 * updated.RADIX_READ)) {
+            set_cutoffs(&max_cutoffs);
+            t1 = s_time_radix_conversion_read(x);
+            set_cutoffs(&orig);
+            t2 = s_time_radix_conversion_read(x);
+            fprintf(readradix,"%d: %9" PRIu64 " %9" PRIu64 ", %9" PRIi64 "\n", x * MP_DIGIT_BIT, t1, t2, (int64_t)t2 - (int64_t)t1);
+            fflush(readradix);
+            if (args.verbose == 1) {
+               printf("RCR %d: %9" PRIu64 " %9" PRIu64 ", %9" PRIi64 "\n", x * MP_DIGIT_BIT, t1, t2, (int64_t)t2 - (int64_t)t1);
+               fflush(stdout);
+            }
+         }
+
+         if ((x * MP_DIGIT_BIT) < (5 * updated.RADIX_WRITE)) {
+            set_cutoffs(&max_cutoffs);
+            t1 = s_time_radix_conversion_write(x);
+            set_cutoffs(&orig);
+            t2 = s_time_radix_conversion_write(x);
+            fprintf(writeradix,"%d: %9" PRIu64 " %9" PRIu64 ", %9" PRIi64 "\n", x * MP_DIGIT_BIT, t1, t2,
+                    (int64_t)t2 - (int64_t)t1);
+            fflush(writeradix);
+            if (args.verbose == 1) {
+               printf("RCW %d: %9" PRIu64 " %9" PRIu64 ", %9" PRIi64 "\n", x * MP_DIGIT_BIT, t1, t2, (int64_t)t2 - (int64_t)t1);
+               fflush(stdout);
+            }
+         }
+
       }
-      printf("Finished. Data for graphing in \"%s\" and \"%s\"\n",mullog, sqrlog);
+      printf("Finished. Data for graphing in \"%s\", \"%s\", \"%s\", and \"%s\"\n",mullog, sqrlog, rcreadlog, rcwritelog);
       if (args.verbose == 1) {
          set_cutoffs(&orig);
          if (args.terse == 1) {
-            printf("%d %d %d %d\n",
+            printf("%d %d %d %d %d %d\n",
                    MP_MUL_KARATSUBA_CUTOFF,
                    MP_SQR_KARATSUBA_CUTOFF,
                    MP_MUL_TOOM_CUTOFF,
-                   MP_SQR_TOOM_CUTOFF);
+                   MP_SQR_TOOM_CUTOFF,
+                   MP_RADIX_READ_CUTOFF,
+                   MP_RADIX_WRITE_CUTOFF);
          } else {
             printf("MUL_KARATSUBA_CUTOFF = %d\n", MP_MUL_KARATSUBA_CUTOFF);
             printf("SQR_KARATSUBA_CUTOFF = %d\n", MP_SQR_KARATSUBA_CUTOFF);
             printf("MUL_TOOM_CUTOFF = %d\n", MP_MUL_TOOM_CUTOFF);
             printf("SQR_TOOM_CUTOFF = %d\n", MP_SQR_TOOM_CUTOFF);
+            printf("MP_RADIX_READ_CUTOFF = %d\n", MP_RADIX_READ_CUTOFF);
+            printf("MP_RADIX_WRITE_CUTOFF = %d\n", MP_RADIX_WRITE_CUTOFF);
          }
       }
+      fclose(readradix);
+      fclose(writeradix);
    }
    exit(EXIT_SUCCESS);
 }

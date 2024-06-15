@@ -6,7 +6,7 @@ LTM_TUNE_CFLAGS = $(CFLAGS) $(LTM_CFLAGS) -Wall -W -Wextra -Wshadow -O3 -I../
 # libname when you can't install the lib with install
 LIBNAME=../libtommath.a
 
-all: pprime tune test_standalone mersenne drprime 2kprime mont
+all: pprime tune test_standalone mersenne drprime 2kprime mont getlimbsize graph
 
 #provable primes
 pprime: pprime.o
@@ -36,10 +36,20 @@ drprime: drprime.o
 mont: mont.o
 	$(CC) $(LTM_TUNE_CFLAGS) mont.o $(LIBNAME) -o mont
 
+# Reads MP_DIGIT_BIT from tommath.h, so take care that there is the correct MP_xxBIT
+# in CFLAGS and/or LTM_CFLAGS when compiling from this directory ("libtommath/etc").
+getlimbsize: get_limbsize.o
+	$(CC) $(LTM_TUNE_CFLAGS) get_limbsize.o $(LIBNAME) -o get_limbsize
+
+# Make pretty pictures (3000 is the maximum number of limbs to print for mul/sqr)
+# "tune" runs twice because it runs automatically when build.
+graphs: tune get_limbsize
+	./tune_it.sh 3000
+	gnuplot -c plot_graphs.gp `./get_limbsize`
 
 clean:
 	rm -f *.log *.o *.obj *.exe pprime tune mersenne drprime mont 2kprime pprime.dat \
-        tuning_list multiplying squaring test *.da *.dyn *.dpi *~
+        tuning_list get_limbsize *.da *.dyn *.dpi *~
 	rm -rf .libs
 
 .PHONY: tune

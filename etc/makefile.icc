@@ -32,6 +32,18 @@ tune: tune.o
 	$(CC) $(CFLAGS) tune.o $(LIBNAME) -o tune
 	./tune_it.sh
 
+# Reads MP_DIGIT_BIT from tommath.h, so take care that there is the correct MP_xxBIT
+# in CFLAGS and/or LTM_CFLAGS when compiling from this directory ("libtommath/etc").
+getlimbsize: get_limbsize.o
+	$(CC) $(LTM_TUNE_CFLAGS) get_limbsize.o $(LIBNAME) -o get_limbsize
+
+# Make pretty pictures (3000 is the maximum number of limbs to print for mul/sqr)
+# "tune" runs twice because it runs automatically when build.
+graphs: tune get_limbsize
+	./tune_it.sh 3000
+	gnuplot -c plot_graphs.gp `./get_limbsize`
+
+
 # same app but using RDTSC for higher precision [requires 80586+], coff based gcc installs [e.g. ming, cygwin, djgpp]
 tune86: tune.c
 	nasm -f coff timer.asm
@@ -64,4 +76,4 @@ mont: mont.o
 
 
 clean:
-	rm -f *.log *.o *.obj *.exe pprime tune mersenne drprime tune86 tune86l mont 2kprime pprime.dat *.il tuning_list
+	rm -f *.log *.o *.obj *.exe pprime tune mersenne drprime tune86 tune86l mont 2kprime pprime.dat multiplying squaring readradix writeradix test get_limbsize *png *.il tuning_list

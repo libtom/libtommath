@@ -86,7 +86,25 @@ do {                                                    \
 #  define MP_SQR_KARATSUBA_CUTOFF MP_DEFAULT_SQR_KARATSUBA_CUTOFF
 #  define MP_MUL_TOOM_CUTOFF      MP_DEFAULT_MUL_TOOM_CUTOFF
 #  define MP_SQR_TOOM_CUTOFF      MP_DEFAULT_SQR_TOOM_CUTOFF
+#  define MP_RADIX_READ_CUTOFF    MP_DEFAULT_RADIX_READ_CUTOFF
+#  define MP_RADIX_WRITE_CUTOFF   MP_DEFAULT_RADIX_WRITE_CUTOFF
 #endif
+
+/* Changing it has not much effect on speed but will reduce the tree height/stack use if incremented */
+#ifndef MP_RADIX_BARRETT_START_MULTIPLICATOR
+#   define MP_RADIX_BARRETT_START_MULTIPLICATOR  10
+/* Better safe than sorry */
+#  if (MP_RADIX_BARRETT_START_MULTIPLICATOR <= 0)
+#     ifdef _MSC_VER
+#        pragma message("MP_RADIX_BARRETT_START_MULTIPLICATOR must be bigger than zero, setting it to one")
+#     else
+#        warning "MP_RADIX_BARRETT_START_MULTIPLICATOR must be bigger than zero, setting it to one"
+#     endif
+#  define MP_RADIX_BARRETT_START_MULTIPLICATOR   1
+#  endif
+#endif
+
+
 
 /* define heap macros */
 #ifndef MP_MALLOC
@@ -234,6 +252,14 @@ MP_PRIVATE mp_err s_mp_radix_size_overestimate(const mp_int *a, const int radix,
 MP_PRIVATE mp_err s_mp_fp_log(const mp_int *a, mp_int *c) MP_WUR;
 MP_PRIVATE mp_err s_mp_fp_log_d(const mp_int *a, mp_word *c) MP_WUR;
 
+MP_PRIVATE unsigned int s_mp_floor_ilog2(int value);
+
+MP_PRIVATE mp_err s_mp_faster_read_radix(mp_int *a, const char *str, size_t start, size_t end, int radix) MP_WUR;
+MP_PRIVATE mp_err s_mp_slower_read_radix(mp_int *a, const char *str, size_t start, size_t end, int radix) MP_WUR;
+MP_PRIVATE mp_err s_mp_faster_to_radix(const mp_int *a, char *str, size_t maxlen, size_t *written, int radix) MP_WUR;
+MP_PRIVATE mp_err s_mp_slower_to_radix(const mp_int *a, char **str, size_t *part_maxlen, size_t *part_written,
+                                       int radix, bool pad) MP_WUR;
+
 #ifdef MP_SMALL_STACK_SIZE
 
 #if defined(__GNUC__)
@@ -276,9 +302,14 @@ MP_PRIVATE void *s_mp_warray_get(void);
 MP_PRIVATE void s_mp_warray_put(void *w);
 
 #define MP_RADIX_MAP_REVERSE_SIZE 80u
+#define MP_RADIX_EXPONENT_Y_SIZE  65u
+#define MP_LOG2_RADIX_SIZE        65u
 extern MP_PRIVATE const char s_mp_radix_map[];
 extern MP_PRIVATE const uint8_t s_mp_radix_map_reverse[];
 extern MP_PRIVATE const mp_digit s_mp_prime_tab[];
+extern MP_PRIVATE const uint8_t s_mp_radix_exponent_y[];
+extern MP_PRIVATE const uint8_t s_mp_log2_radix[];
+
 
 /* number of primes */
 #define MP_PRIME_TAB_SIZE 256

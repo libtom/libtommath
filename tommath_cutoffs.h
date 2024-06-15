@@ -6,8 +6,9 @@
    be aware that it may take a long time. It took 2:30 minutes
    on the aforementioned machine for example.
  */
-
-#define MP_DEFAULT_MUL_KARATSUBA_CUTOFF 80
-#define MP_DEFAULT_SQR_KARATSUBA_CUTOFF 120
-#define MP_DEFAULT_MUL_TOOM_CUTOFF      350
-#define MP_DEFAULT_SQR_TOOM_CUTOFF      400
+#define MP_DEFAULT_MUL_KARATSUBA_CUTOFF 116
+#define MP_DEFAULT_SQR_KARATSUBA_CUTOFF 160
+#define MP_DEFAULT_MUL_TOOM_CUTOFF      139
+#define MP_DEFAULT_SQR_TOOM_CUTOFF      193
+#define MP_DEFAULT_RADIX_READ_CUTOFF    3000
+#define MP_DEFAULT_RADIX_WRITE_CUTOFF   480

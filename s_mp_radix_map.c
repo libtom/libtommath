@@ -16,4 +16,46 @@ const uint8_t s_mp_radix_map_reverse[] = {
    0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3a, 0x3b, 0x3c, 0x3d  /* qrstuvwxyz */
 };
 MP_STATIC_ASSERT(correct_radix_map_reverse_size, sizeof(s_mp_radix_map_reverse) == MP_RADIX_MAP_REVERSE_SIZE)
+
+/* TODO: Branch out (preproc) if not used */
+/* Exponents chosen such that b^(y) < 2^15 */
+#if ((INT_MAX < 1048576) || (MP_DIGIT_BIT <= 20) )
+const uint8_t s_mp_radix_exponent_y[] = {  0, 0,                      /*  0 .. 1*/
+                                           14,  9,  7, 6, 5, 5, 4, 4, /*  2 .. 9 */
+                                           4, 4, 4, 3, 3, 3, 3, 3,    /* 10 .. 17 */
+                                           3, 3, 3, 3, 3, 3, 3, 3,    /* 18 .. 25 */
+                                           3, 3, 3, 3, 3, 3, 2, 2,    /* 26 .. 33 */
+                                           2, 2, 2, 2, 2, 2, 2, 2,    /* 34 .. 41 */
+                                           2, 2, 2, 2, 2, 2, 2, 2,    /* 42 .. 49 */
+                                           2, 2, 2, 2, 2, 2, 2, 2,    /* 51 .. 57 */
+                                           2, 2, 2, 2, 2, 2, 2        /* 58 .. 64 */
+                                        };
+#else
+/* Exponents chosen such that b^(y) <= 2^20 */
+const uint8_t s_mp_radix_exponent_y[] = {  0, 0,                      /*  0 .. 1*/
+                                           20, 12, 10, 8, 7, 7, 6, 6, /*  2 .. 9 */
+                                           6, 5, 5, 5, 5, 5, 5, 4,    /* 10 .. 17 */
+                                           4, 4, 4, 4, 4, 4, 4, 4,    /* 18 .. 25 */
+                                           4, 4, 4, 4, 4, 4, 4, 3,    /* 26 .. 33 */
+                                           3, 3, 3, 3, 3, 3, 3, 3,    /* 34 .. 41 */
+                                           3, 3, 3, 3, 3, 3, 3, 3,    /* 42 .. 49 */
+                                           3, 3, 3, 3, 3, 3, 3, 3,    /* 51 .. 57 */
+                                           3, 3, 3, 3, 3, 3, 3        /* 58 .. 64 */
+                                        };
+#endif
+MP_STATIC_ASSERT(correct_radix_exponent_y, sizeof(s_mp_radix_exponent_y) == MP_RADIX_EXPONENT_Y_SIZE)
+
+/* floor(log_2(radix)) */
+const uint8_t s_mp_log2_radix[] = { 0, 0,                   /*  0 .. 1*/
+                                    1, 1, 2, 2, 2, 2, 3, 3, /*  2 .. 9 */
+                                    3, 3, 3, 3, 3, 3, 4, 4, /* 10 .. 17 */
+                                    4, 4, 4, 4, 4, 4, 4, 4, /* 18 .. 25 */
+                                    4, 4, 4, 4, 4, 4, 5, 5, /* 26 .. 33 */
+                                    5, 5, 5, 5, 5, 5, 5, 5, /* 34 .. 41 */
+                                    5, 5, 5, 5, 5, 5, 5, 5, /* 42 .. 49 */
+                                    5, 5, 5, 5, 5, 5, 5, 5, /* 51 .. 57 */
+                                    5, 5, 5, 5, 5, 5, 6     /* 58 .. 64 */
+                                  };
+MP_STATIC_ASSERT(correct_log2_radix, sizeof(s_mp_log2_radix) == MP_LOG2_RADIX_SIZE)
+
 #endif

@@ -121,7 +121,9 @@ extern int
 MP_MUL_KARATSUBA_CUTOFF,
 MP_SQR_KARATSUBA_CUTOFF,
 MP_MUL_TOOM_CUTOFF,
-MP_SQR_TOOM_CUTOFF;
+MP_SQR_TOOM_CUTOFF,
+MP_RADIX_READ_CUTOFF,
+MP_RADIX_WRITE_CUTOFF;
 #endif
 
 /* define this to use lower memory usage routines (exptmods mostly) */
