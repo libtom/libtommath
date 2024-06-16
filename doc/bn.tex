@@ -102,6 +102,7 @@ to do with them as they see fit.
 
 \section{Building LibTomMath}
 
+
 LibTomMath is meant to be very ``GCC friendly'' as it comes with a makefile well suited for GCC.
 However, the library will also build in MSVC, Borland C out of the box.  For any other ISO C
 compiler a makefile will have to be made by the end
@@ -269,6 +270,53 @@ This will output a row of numbers that are increasing.	Each column is a differen
 addition, multiplication, etc) that is being performed.  The numbers represent how many times the
 test was invoked.  If an error is detected the program will exit with a dump of the relevant
 numbers it was working with.
+
+\subsection{CMake}
+Some of the options above are also available with CMake.
+
+\subsubsection{Shared Library}
+The default is a static library. To produce a shared library use the CMake option
+\begin{alltt}
+-DBUILD_SHARED_LIBS=ON
+\end{alltt}
+
+\subsubsection{Testing}
+To run the testsuite use option
+\begin{alltt}
+-DBUILD_TESTING=ON
+\end{alltt}
+
+\subsubsection{Tuning}
+To run the tuning itself use option
+\begin{alltt}
+-DBUILD_TUNING=ON
+\end{alltt}
+
+To run a benchmark with the tuned library and print plots of the benchmark tables use option
+\begin{alltt}
+-DBUILD_GRAPHS=ON
+\end{alltt}
+
+To compile with LTO (Link Time Optimization) use option
+\begin{alltt}
+-DCOMPILE_LTO=ON
+\end{alltt}
+
+There are several build types available:
+\begin{description}
+\item[Debug] Build a library with debugging symbols (\texttt{-g3}) and no extra optimization
+\item[Release] Build the normal release version (\texttt{-O3 -funroll-loops -fomit-frame-pointer}) (default)
+\item[RelWithDebInfo] Build a library with debugging symbols (\texttt{-g3 -O2}) and a bit of optimization
+\item[MinSizeRel] Build a small sized library (\texttt{-Os})
+\end{description}
+The build types are case-sensitive!
+
+Choose one with:
+\begin{alltt}
+-DCMAKE_BUILD_TYPE=buildtype
+\end{alltt}
+
+
 
 \section{Build Configuration}
 LibTomMath can configured at build time in two phases we shall call ``depends'' and
@@ -1600,13 +1648,35 @@ To get reasonable values for the cut--off points for your architecture, type
 make tune
 \end{alltt}
 
-This will run a benchmark, computes the medians, rewrites \texttt{bncore.c}, and recompiles
-\texttt{bncore.c} and relinks the library.
+With CMake
+\begin{alltt}
+cmake --build /path/to/build/dir -DBUILD_TUNING=ON
+\end{alltt}
+
+
+This will run a benchmark, computes the medians, rewrites \texttt{tommath\_cutoffs.h}, recompiles
+\texttt{cutoffs.c}, and relinks the library.
 
 The benchmark itself can be fine--tuned in the file \texttt{etc/tune\_it.sh}.
 
 The program \texttt{etc/tune} is also able to print a list of values for printing curves with e.g.:
-\texttt{gnuplot}. type \texttt{./etc/tune -h} to get a list of all available options.
+\texttt{gnuplot}. Type \texttt{./etc/tune -h} to get a list of all the available options. There
+are a lot.
+
+To get some nice plots in \texttt{etc} try
+
+\begin{alltt}
+make graphs
+\end{alltt}
+
+With CMake
+\begin{alltt}
+cmake --build /path/to/build/dir -DBUILD_GRAPHS=ON
+\end{alltt}
+
+This will run a benchmark, computes the medians, rewrites \texttt{tommath\_cutoffs.h}, recompiles
+\texttt{cutoffs.c}, relinks the library and runs gnuplot to print plots in the PNG format. The size
+of the images is fixed in the file \texttt{etc/plot\_graphs.gp} and has to be changed manually.
 
 \chapter{Modular Reduction}
 

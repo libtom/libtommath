@@ -61,7 +61,7 @@ i=1
 while [ $i -le $LIMIT ]; do
    RNUM=$(LCG)
    printf "\r%d" $i
-   "$MPWD"/tune -t -r $RLOOPS -L $LAG -S "$RNUM" -o $OFFSET >> $FILE_NAME || die "tune" $?
+   "$MPWD"/tune -t  -r $RLOOPS -L $LAG -S "$RNUM" -o $OFFSET >> $FILE_NAME || die "tune" $?
    i=$((i + 1))
 done
 
@@ -92,15 +92,29 @@ END_OF_INPUT
 i=$(tail -n +2 $FILE_NAME | wc -l)
 # our median point will be at $i entries
 i=$(( (i / 2) + 1 ))
-TMP=$(median $FILE_NAME 1 $i)
-echo "#define MP_DEFAULT_MUL_KARATSUBA_CUTOFF $TMP"
-echo "#define MP_DEFAULT_MUL_KARATSUBA_CUTOFF $TMP" >> $TOMMATH_CUTOFFS_H || die "(km) Appending to $TOMMATH_CUTOFFS_H" $?
-TMP=$(median $FILE_NAME 2 $i)
-echo "#define MP_DEFAULT_SQR_KARATSUBA_CUTOFF $TMP"
-echo "#define MP_DEFAULT_SQR_KARATSUBA_CUTOFF $TMP" >> $TOMMATH_CUTOFFS_H || die "(ks) Appending to $TOMMATH_CUTOFFS_H" $?
-TMP=$(median $FILE_NAME 3 $i)
-echo "#define MP_DEFAULT_MUL_TOOM_CUTOFF      $TMP"
-echo "#define MP_DEFAULT_MUL_TOOM_CUTOFF      $TMP" >> $TOMMATH_CUTOFFS_H || die "(tc3m) Appending to $TOMMATH_CUTOFFS_H" $?
-TMP=$(median $FILE_NAME 4 $i)
-echo "#define MP_DEFAULT_SQR_TOOM_CUTOFF      $TMP"
-echo "#define MP_DEFAULT_SQR_TOOM_CUTOFF      $TMP" >> $TOMMATH_CUTOFFS_H || die "(tc3s) Appending to $TOMMATH_CUTOFFS_H" $?
+TMP1=$(median $FILE_NAME 1 $i)
+echo "#define MP_DEFAULT_MUL_KARATSUBA_CUTOFF $TMP1"
+echo "#define MP_DEFAULT_MUL_KARATSUBA_CUTOFF $TMP1" >> $TOMMATH_CUTOFFS_H || die "(km) Appending to $TOMMATH_CUTOFFS_H" $?
+TMP2=$(median $FILE_NAME 2 $i)
+echo "#define MP_DEFAULT_SQR_KARATSUBA_CUTOFF $TMP2"
+echo "#define MP_DEFAULT_SQR_KARATSUBA_CUTOFF $TMP2" >> $TOMMATH_CUTOFFS_H || die "(ks) Appending to $TOMMATH_CUTOFFS_H" $?
+TMP3=$(median $FILE_NAME 3 $i)
+echo "#define MP_DEFAULT_MUL_TOOM_CUTOFF      $TMP3"
+echo "#define MP_DEFAULT_MUL_TOOM_CUTOFF      $TMP3" >> $TOMMATH_CUTOFFS_H || die "(tc3m) Appending to $TOMMATH_CUTOFFS_H" $?
+TMP4=$(median $FILE_NAME 4 $i)
+echo "#define MP_DEFAULT_SQR_TOOM_CUTOFF      $TMP4"
+echo "#define MP_DEFAULT_SQR_TOOM_CUTOFF      $TMP4" >> $TOMMATH_CUTOFFS_H || die "(tc3s) Appending to $TOMMATH_CUTOFFS_H" $?
+
+# Print the tables for the graphs. Please do not change.
+if [ $# -eq 1 ]; then
+   OPTION0=$1
+   # Do not forget to raise if there are more fast algorithms with higher cutoffs.
+   if [ $OPTION0 -lt 500 ]; then
+      OPTION0=500
+   fi
+   "$MPWD"/tune -Z
+   "$MPWD"/tune -p -r $RLOOPS -L $LAG -S "$RNUM" -o $OFFSET -M $1 -G $(cat out) -s $TMP1,$TMP2,$TMP3,$TMP4
+   gnuplot -c  plot_graphs.gp $(cat out)
+fi
+
+

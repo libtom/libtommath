@@ -86,6 +86,10 @@ tune: $(LIBMAIN_S)
 	$(MAKE) -C etc tune
 	$(MAKE)
 
+graphs: $(LIBNAME)
+	$(MAKE) -C etc graphs
+	$(MAKE)
+
 clean-obj:
 	@-cmd /c del /Q /S *.OBJ 2>nul
 

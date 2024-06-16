@@ -32,7 +32,8 @@ include(sources.cmake)
 # Options
 #-----------------------------------------------------------------------------
 option(BUILD_SHARED_LIBS "Build shared library and only the shared library if \"ON\", default is static" OFF)
-
+option(BUILD_TUNING "Run a tuning program for the fast multiplication/squaring algorithms if \"ON\"" OFF)
+option(BUILD_GRAPHS "Run a benchmark of the fast multiplication/squaring algorithms and make graphics if \"ON\"" OFF)
 #-----------------------------------------------------------------------------
 # Compose CFLAGS
 #-----------------------------------------------------------------------------
@@ -135,6 +136,14 @@ endif()
 if(BUILD_TESTING)
     enable_testing()
     add_subdirectory(demo)
+endif()
+
+#-----------------------------------------------------------------------------
+# tuning and benchmark targets
+#-----------------------------------------------------------------------------
+
+if(BUILD_TUNING OR BUILD_GRAPHS)
+    add_subdirectory(etc ${CMAKE_CURRENT_SOURCE_DIR}/etc)
 endif()
 
 #-----------------------------------------------------------------------------

@@ -168,7 +168,6 @@ check: test
 	./test
 
 #make the code coverage of the library
-#
 coverage: LTM_CFLAGS += -fprofile-arcs -ftest-coverage -DTIMING_NO_LOGS
 coverage: LTM_LFLAGS += -lgcov
 coverage: LTM_LDFLAGS += -lgcov
@@ -192,8 +191,9 @@ cleancov: cleancov-clean clean
 clean:
 	rm -f *.gcda *.gcno *.gcov *.bat *.o *.a *.obj *.lib *.exe *.dll etclib/*.o \
 				demo/*.o test timing mtest_opponent mtest/mtest mtest/mtest.exe tuning_list \
-				*.s tommath_amalgam.c pre_gen/tommath_amalgam.c *.da *.dyn *.dpi tommath.tex \
+				*.s tommath_amalgam.c *.da *.dyn *.dpi tommath.tex \
+                                cmake_install.cmake Makefile \
 				`find . -type f | grep [~] | xargs` *.lo *.la
-	rm -rf .libs/ demo/.libs
+	rm -rf .libs/ demo/.libs CMakeFiles pre_gen
 	${MAKE} -C etc/ clean MAKE=${MAKE}
 	${MAKE} -C doc/ clean MAKE=${MAKE}

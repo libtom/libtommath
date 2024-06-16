@@ -69,8 +69,29 @@ profiled:
 	rm -f *.a *.o timing
 	make CFLAGS="$(CFLAGS) -fbranch-probabilities"
 
+# run tune first, than optimize branching
+profiled_tuned: tune
+	make CFLAGS="$(CFLAGS) -fprofile-arcs" timing
+	./timing
+	rm -f *.a *.o timing
+	make CFLAGS="$(CFLAGS) -fbranch-probabilities"
+
+# run tune first, optimize branching, run tune again
+# (running it in a loop until the timings stabilize is indeed tempting)
+profiled_tuned_tuned: tune
+	make CFLAGS="$(CFLAGS) -fprofile-arcs" timing
+	./timing
+	rm -f *.a *.o timing
+	make CFLAGS="$(CFLAGS) -fbranch-probabilities"
+	./etc/tune_it.sh
+
 #make a single object profiled library
 amalgamated_timing: pre_gen
+	$(CC) $(LTM_CFLAGS) -fprofile-arcs -c pre_gen/tommath_amalgam.c -o tommath_amalgam.o
+	$(CC) $(LTM_CFLAGS) -DMP_VERSION=\"before\" demo/timing.c tommath_amalgam.o -lgcov -o timing
+
+
+amalgamated_timing_tuned: tune pre_gen
 	$(CC) $(LTM_CFLAGS) -fprofile-arcs -c pre_gen/tommath_amalgam.c -o tommath_amalgam.o
 	$(CC) $(LTM_CFLAGS) -DMP_VERSION=\"before\" demo/timing.c tommath_amalgam.o -lgcov -o timing
 
@@ -79,6 +100,30 @@ profiled_single: amalgamated_timing
 	rm -f *.o timing
 	$(CC) $(LTM_CFLAGS) -fbranch-probabilities -c pre_gen/tommath_amalgam.c -o tommath_amalgam.o
 	$(AR) $(ARFLAGS) $(LIBNAME) tommath_amalgam.o
+
+# run tune first, than optimize branching
+profiled_single_tuned: amalgamated_timing_tuned
+	./timing
+	rm -f *.a *.o timing
+	$(CC) $(LTM_CFLAGS) -fbranch-probabilities -c pre_gen/tommath_amalgam.c -o tommath_amalgam.o
+	$(AR) $(ARFLAGS) $(LIBNAME) tommath_amalgam.o
+
+# run tune first, optimize branching, run tune again
+# (running it in a loop until the timings stabilize is indeed tempting)
+profiled_single_tuned_tuned: amalgamated_timing_tuned
+	./timing
+	rm -f *.o timing
+	$(CC) $(LTM_CFLAGS) -fbranch-probabilities -c pre_gen/tommath_amalgam.c -o tommath_amalgam.o
+	$(AR) $(ARFLAGS) $(LIBNAME) tommath_amalgam.o
+	rm -f etc/tune.o
+	$(CC) $(LTM_CFLAGS) -c etc/tune.c -o etc/tune.o
+	$(CC) $(LTM_CFLAGS) tommath_amalgam.o  etc/tune.o -o etc/tune
+	./etc/tune_it.sh
+	rm -f *.a *.o
+	$(CC) $(LTM_CFLAGS) -fprofile-arcs -c pre_gen/tommath_amalgam.c -o tommath_amalgam.o
+	$(CC) $(LTM_CFLAGS) -fbranch-probabilities -c pre_gen/tommath_amalgam.c -o tommath_amalgam.o
+	$(AR) $(ARFLAGS) $(LIBNAME) tommath_amalgam.o
+	
 
 install: $(LIBNAME) .install_common
 	install -m 644 $(LIBNAME) $(DESTDIR)$(LIBPATH)
@@ -108,6 +153,10 @@ tune: $(LIBNAME)
 	$(MAKE) -C etc tune CFLAGS="$(LTM_CFLAGS) -I../"
 	$(MAKE)
 
+graphs: $(LIBNAME)
+	$(MAKE) -C etc graphs CFLAGS="$(LTM_CFLAGS) -I../"
+	$(MAKE)
+
 etc-all: $(LIBNAME)
 	$(MAKE) -C etc all CFLAGS="$(LTM_CFLAGS) -I../"
 	$(MAKE)
@@ -123,6 +172,16 @@ pre_gen:
 	cat *mp_*.c > pre_gen/tommath_amalgam.c
 
 cmp: profiled_single
+	$(CC) $(LTM_CFLAGS) -DMP_VERSION=\"after\" demo/timing.c $(LIBNAME) -lgcov -o timing
+	./timing
+	$(MAKE) -C logs/ cmp
+
+cmp_tuned: profiled_single_tuned
+	$(CC) $(LTM_CFLAGS) -DMP_VERSION=\"after\" demo/timing.c $(LIBNAME) -lgcov -o timing
+	./timing
+	$(MAKE) -C logs/ cmp
+
+cmp_tuned_tuned: profiled_single_tuned_tuned
 	$(CC) $(LTM_CFLAGS) -DMP_VERSION=\"after\" demo/timing.c $(LIBNAME) -lgcov -o timing
 	./timing
 	$(MAKE) -C logs/ cmp
