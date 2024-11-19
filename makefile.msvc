@@ -46,9 +46,9 @@ s_mp_div_recursive.obj s_mp_div_school.obj s_mp_div_small.obj s_mp_exptmod.obj s
 s_mp_fp_log_d.obj s_mp_get_bit.obj s_mp_invmod.obj s_mp_invmod_odd.obj s_mp_log_2expt.obj \
 s_mp_montgomery_reduce_comba.obj s_mp_mul.obj s_mp_mul_balance.obj s_mp_mul_comba.obj s_mp_mul_high.obj \
 s_mp_mul_high_comba.obj s_mp_mul_karatsuba.obj s_mp_mul_toom.obj s_mp_prime_is_divisible.obj s_mp_prime_tab.obj \
-s_mp_radix_map.obj s_mp_radix_size_overestimate.obj s_mp_rand_platform.obj s_mp_sqr.obj s_mp_sqr_comba.obj \
-s_mp_sqr_karatsuba.obj s_mp_sqr_toom.obj s_mp_sub.obj s_mp_warray.obj s_mp_warray_get.obj s_mp_warray_put.obj \
-s_mp_zero_buf.obj s_mp_zero_digs.obj
+s_mp_radix_map.obj s_mp_radix_size_overestimate.obj s_mp_rand_platform.obj s_mp_rand_source.obj s_mp_sqr.obj \
+s_mp_sqr_comba.obj s_mp_sqr_karatsuba.obj s_mp_sqr_toom.obj s_mp_sub.obj s_mp_warray.obj s_mp_warray_get.obj \
+s_mp_warray_put.obj s_mp_zero_buf.obj s_mp_zero_digs.obj
 
 HEADERS_PUB=tommath.h
 HEADERS=tommath_private.h tommath_class.h tommath_superclass.h tommath_cutoffs.h $(HEADERS_PUB)

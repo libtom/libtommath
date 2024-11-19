@@ -913,6 +913,10 @@
 			>
 		</File>
 		<File
+			RelativePath="s_mp_rand_source.c"
+			>
+		</File>
+		<File
 			RelativePath="s_mp_sqr.c"
 			>
 		</File>
