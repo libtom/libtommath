@@ -31,6 +31,7 @@
 #   define MP_RADIX_SIZE_OVERESTIMATE_C
 #   define MP_LOG_N_C
 #   define MP_RAND_C
+#   define MP_RAND_SOURCE_C
 #   define MP_REDUCE_C
 #   define MP_REDUCE_2K_L_C
 #   define MP_FROM_SBIN_C
