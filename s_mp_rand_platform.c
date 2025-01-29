@@ -28,6 +28,17 @@ static mp_err s_read_arc4random(void *p, size_t n)
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+
+#ifdef LTM_WIN32_BCRYPT
+#include <bcrypt.h>
+#pragma comment(lib, "bcrypt")
+
+static mp_err s_read_wincsp(void *p, size_t n)
+{
+   return BCRYPT_SUCCESS(BCryptGenRandom(NULL, (PUCHAR)p, (ULONG)n,
+                                         BCRYPT_USE_SYSTEM_PREFERRED_RNG)) ? MP_OKAY : MP_ERR;
+}
+#else
 #include <wincrypt.h>
 
 static mp_err s_read_wincsp(void *p, size_t n)
@@ -45,6 +56,7 @@ static mp_err s_read_wincsp(void *p, size_t n)
    }
    return CryptGenRandom(hProv, (DWORD)n, (BYTE *)p) == TRUE ? MP_OKAY : MP_ERR;
 }
+#endif
 #endif /* WIN32 */
 
 #if !defined(S_READ_WINCSP_C) && defined(__linux__) && defined(__GLIBC_PREREQ)

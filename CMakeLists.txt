@@ -23,6 +23,8 @@ set(PACKAGE_RELEASE_VERSION 1)
 include(GNUInstallDirs)
 include(CheckIPOSupported)
 include(CMakePackageConfigHelpers)
+include(CMakePushCheckState)
+include(CheckSymbolExists)
 # default is "No tests"
 option(BUILD_TESTING "" OFF)
 include(CTest)
@@ -104,6 +106,16 @@ target_compile_options(${PROJECT_NAME} BEFORE PRIVATE
 target_link_options(${PROJECT_NAME} BEFORE PRIVATE
     ${LTM_LD_FLAGS}
 )
+if(MSVC)
+    cmake_push_check_state()
+    set(CMAKE_REQUIRED_LIBRARIES bcrypt)
+    check_symbol_exists(BCryptGenRandom "Windows.h;bcrypt.h" BCRYPT_AVAILABLE)
+    cmake_pop_check_state()
+    if(BCRYPT_AVAILABLE)
+        target_compile_definitions(${PROJECT_NAME} PRIVATE LTM_WIN32_BCRYPT)
+        target_link_libraries(${PROJECT_NAME} PRIVATE bcrypt)
+    endif()
+endif()
 
 set(PUBLIC_HEADERS tommath.h)
 set(C89 False CACHE BOOL "(Usually maintained automatically) Enable when the library is in c89 mode to package the correct header files on install")
