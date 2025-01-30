@@ -161,6 +161,7 @@
 #   define S_MP_RADIX_MAP_C
 #   define S_MP_RADIX_SIZE_OVERESTIMATE_C
 #   define S_MP_RAND_PLATFORM_C
+#   define S_MP_RAND_SOURCE_C
 #   define S_MP_SQR_C
 #   define S_MP_SQR_COMBA_C
 #   define S_MP_SQR_KARATSUBA_C
@@ -1246,6 +1247,10 @@
 #endif
 
 #if defined(S_MP_RAND_PLATFORM_C)
+#endif
+
+#if defined(S_MP_RAND_SOURCE_C)
+#   define S_MP_RAND_PLATFORM_C
 #endif
 
 #if defined(S_MP_SQR_C)
