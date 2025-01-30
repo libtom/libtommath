@@ -35,7 +35,7 @@ jobs:
           make docs V=1
           cp doc/bn.pdf bn-${{ github.run_id }}.pdf
       - name: upload PDF
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: bn-${{ github.run_id }}.pdf
           path: bn-${{ github.run_id }}.pdf
