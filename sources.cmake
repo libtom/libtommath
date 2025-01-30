@@ -173,3 +173,7 @@ tommath_cutoffs.h
 tommath_private.h
 tommath_superclass.h
 )
+
+if(MSVC AND BUILD_SHARED_LIBS)
+  list(APPEND SOURCES tommath.def)
+endif()

@@ -249,7 +249,11 @@ set(SOURCES\n";
   foreach my $hobj (sort @headers) {
     $output .= $hobj . "\n";
   }
-  $output .= ")\n";
+  $output .= ")
+
+if(MSVC AND BUILD_SHARED_LIBS)
+  list(APPEND SOURCES tommath.def)
+endif()\n";
   return $output;
 }
 
