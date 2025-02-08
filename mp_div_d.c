@@ -8,12 +8,13 @@ mp_err mp_div_d(const mp_int *a, mp_digit b, mp_int *c, mp_digit *d)
 {
    mp_int  q;
    mp_word w;
-   mp_err err;
+   mp_err err = MP_OKAY;
    int ix;
 
    /* cannot divide by zero */
    if (b == 0u) {
-      return MP_VAL;
+      err = MP_VAL;
+      MP_TRACE_ERROR(err, LTM_ERR);
    }
 
    /* quick outs */
@@ -22,9 +23,9 @@ mp_err mp_div_d(const mp_int *a, mp_digit b, mp_int *c, mp_digit *d)
          *d = 0;
       }
       if (c != NULL) {
-         return mp_copy(a, c);
+         if ((err = mp_copy(a, c)) != MP_OKAY)                          MP_TRACE_ERROR(err, LTM_ERR);
       }
-      return MP_OKAY;
+      return err;
    }
 
    /* power of two ? */
@@ -32,7 +33,10 @@ mp_err mp_div_d(const mp_int *a, mp_digit b, mp_int *c, mp_digit *d)
       if (d != NULL) {
          *d = mp_isodd(a) ? 1u : 0u;
       }
-      return (c == NULL) ? MP_OKAY : mp_div_2(a, c);
+      if (c != NULL) {
+         if ((err = mp_div_2(a, c)) != MP_OKAY)                         MP_TRACE_ERROR(err, LTM_ERR);
+      }
+      return err;
    }
    if (MP_HAS(MP_DIV_2D) && MP_IS_2EXPT(b)) {
       ix = 1;
@@ -42,18 +46,20 @@ mp_err mp_div_d(const mp_int *a, mp_digit b, mp_int *c, mp_digit *d)
       if (d != NULL) {
          *d = a->dp[0] & (((mp_digit)1<<(mp_digit)ix) - 1uL);
       }
-      return (c == NULL) ? MP_OKAY : mp_div_2d(a, ix, c, NULL);
+      if (c != NULL) {
+         if ((err = mp_div_2d(a, ix, c, NULL)) != MP_OKAY)              MP_TRACE_ERROR(err, LTM_ERR);
+      }
+      return err;
    }
 
    /* three? */
    if (MP_HAS(S_MP_DIV_3) && (b == 3u)) {
-      return s_mp_div_3(a, c, d);
+      if ((err = s_mp_div_3(a, c, d)) != MP_OKAY)                       MP_TRACE_ERROR(err, LTM_ERR);
+      return err;
    }
 
    /* no easy answer [c'est la vie].  Just division */
-   if ((err = mp_init_size(&q, a->used)) != MP_OKAY) {
-      return err;
-   }
+   if ((err = mp_init_size(&q, a->used)) != MP_OKAY)                     MP_TRACE_ERROR(err, LTM_ERR);
 
    q.used = a->used;
    q.sign = a->sign;
@@ -78,7 +84,8 @@ mp_err mp_div_d(const mp_int *a, mp_digit b, mp_int *c, mp_digit *d)
    }
    mp_clear(&q);
 
-   return MP_OKAY;
+LTM_ERR:
+   return err;
 }
 
 #endif

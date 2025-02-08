@@ -22,7 +22,7 @@
 mp_err s_mp_mul_comba(const mp_int *a, const mp_int *b, mp_int *c, int digs)
 {
    int      oldused, pa, ix;
-   mp_err   err;
+   mp_err   err = MP_OKAY;
    mp_digit MP_ALLOC_WARRAY(W);
    mp_word  _W;
 
@@ -30,13 +30,14 @@ mp_err s_mp_mul_comba(const mp_int *a, const mp_int *b, mp_int *c, int digs)
 
    if (digs < 0) {
       MP_FREE_WARRAY(W);
-      return MP_VAL;
+      err = MP_VAL;
+      MP_TRACE_ERROR(err, LTM_ERR);
    }
 
    /* grow the destination as required */
    if ((err = mp_grow(c, digs)) != MP_OKAY) {
       MP_FREE_WARRAY(W);
-      return err;
+      MP_TRACE_ERROR(err, LTM_ERR);
    }
 
    /* number of output digits to produce */
@@ -82,6 +83,8 @@ mp_err s_mp_mul_comba(const mp_int *a, const mp_int *b, mp_int *c, int digs)
 
    mp_clamp(c);
    MP_FREE_WARRAY(W);
-   return MP_OKAY;
+
+LTM_ERR:
+   return err;
 }
 #endif

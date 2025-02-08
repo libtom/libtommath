@@ -10,22 +10,22 @@
 mp_err s_mp_mul(const mp_int *a, const mp_int *b, mp_int *c, int digs)
 {
    mp_int  t;
-   mp_err  err;
+   mp_err  err = MP_OKAY;
    int     pa, ix;
 
    if (digs < 0) {
-      return MP_VAL;
+      err = MP_VAL;
+      MP_TRACE_ERROR(err, LTM_ERR);
    }
 
    /* can we use the fast multiplier? */
    if ((digs < MP_WARRAY) &&
        (MP_MIN(a->used, b->used) < MP_MAX_COMBA)) {
-      return s_mp_mul_comba(a, b, c, digs);
-   }
-
-   if ((err = mp_init_size(&t, digs)) != MP_OKAY) {
+      if ((err = s_mp_mul_comba(a, b, c, digs)) != MP_OKAY)             MP_TRACE_ERROR(err, LTM_ERR);
       return err;
    }
+
+   if ((err = mp_init_size(&t, digs)) != MP_OKAY)                        MP_TRACE_ERROR(err, LTM_ERR);
    t.used = digs;
 
    /* compute the digits of the product directly */
@@ -60,6 +60,8 @@ mp_err s_mp_mul(const mp_int *a, const mp_int *b, mp_int *c, int digs)
    mp_exch(&t, c);
 
    mp_clear(&t);
-   return MP_OKAY;
+
+LTM_ERR:
+   return err;
 }
 #endif

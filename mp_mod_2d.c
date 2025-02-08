@@ -7,10 +7,11 @@
 mp_err mp_mod_2d(const mp_int *a, int b, mp_int *c)
 {
    int x;
-   mp_err err;
+   mp_err err = MP_OKAY;
 
    if (b < 0) {
-      return MP_VAL;
+      err =  MP_VAL;
+      MP_TRACE_ERROR(err, LTM_ERR);
    }
 
    if (b == 0) {
@@ -20,21 +21,21 @@ mp_err mp_mod_2d(const mp_int *a, int b, mp_int *c)
 
    /* if the modulus is larger than the value than return */
    if (b >= (a->used * MP_DIGIT_BIT)) {
-      return mp_copy(a, c);
-   }
-
-   if ((err = mp_copy(a, c)) != MP_OKAY) {
+      if ((err = mp_copy(a, c)) != MP_OKAY)                             MP_TRACE_ERROR(err, LTM_ERR);
       return err;
    }
+
+   if ((err = mp_copy(a, c)) != MP_OKAY)                                 MP_TRACE_ERROR(err, LTM_ERR);
 
    /* zero digits above the last digit of the modulus */
    x = (b / MP_DIGIT_BIT) + (((b % MP_DIGIT_BIT) == 0) ? 0 : 1);
    s_mp_zero_digs(c->dp + x, c->used - x);
 
    /* clear the digit that is not completely outside/inside the modulus */
-   c->dp[b / MP_DIGIT_BIT] &=
-      ((mp_digit)1 << (mp_digit)(b % MP_DIGIT_BIT)) - (mp_digit)1;
+   c->dp[b / MP_DIGIT_BIT] &= ((mp_digit)1 << (mp_digit)(b % MP_DIGIT_BIT)) - (mp_digit)1;
    mp_clamp(c);
-   return MP_OKAY;
+
+LTM_ERR:
+   return err;
 }
 #endif

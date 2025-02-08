@@ -6,10 +6,11 @@
 /* d = a + b (mod c) */
 mp_err mp_addmod(const mp_int *a, const mp_int *b, const mp_int *c, mp_int *d)
 {
-   mp_err err;
-   if ((err = mp_add(a, b, d)) != MP_OKAY) {
-      return err;
-   }
-   return mp_mod(d, c, d);
+   mp_err err = MP_OKAY;
+   if ((err = mp_add(a, b, d)) != MP_OKAY)                               MP_TRACE_ERROR(err, LTM_ERR);
+   if ((err = mp_mod(d, c, d)) != MP_OKAY)                              MP_TRACE_ERROR(err, LTM_ERR);
+
+LTM_ERR:
+   return err;
 }
 #endif

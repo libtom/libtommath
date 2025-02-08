@@ -6,8 +6,11 @@
 /* grow as required */
 mp_err mp_grow(mp_int *a, int size)
 {
+   mp_err err = MP_OKAY;
+
    if (size < 0) {
-      return MP_VAL;
+      err = MP_VAL;
+      MP_TRACE_ERROR(err, LTM_ERR);
    }
 
    /* if the alloc size is smaller alloc more ram */
@@ -15,7 +18,8 @@ mp_err mp_grow(mp_int *a, int size)
       mp_digit *dp;
 
       if (size > MP_MAX_DIGIT_COUNT) {
-         return MP_OVF;
+         err = MP_OVF;
+         MP_TRACE_ERROR(err, LTM_ERR);
       }
 
       /* reallocate the array a->dp
@@ -29,7 +33,8 @@ mp_err mp_grow(mp_int *a, int size)
                                    (size_t)size * sizeof(mp_digit));
       if (dp == NULL) {
          /* reallocation failed but "a" is still valid [can be freed] */
-         return MP_MEM;
+         err = MP_MEM;
+         MP_TRACE_ERROR(err, LTM_ERR);
       }
 
       /* reallocation succeeded so set a->dp */
@@ -39,6 +44,8 @@ mp_err mp_grow(mp_int *a, int size)
       s_mp_zero_digs(a->dp + a->alloc, size - a->alloc);
       a->alloc = size;
    }
-   return MP_OKAY;
+
+LTM_ERR:
+   return err;
 }
 #endif

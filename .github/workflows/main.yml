@@ -134,6 +134,10 @@ jobs:
           # clang for the x86-64 architecture with restricted limb sizes
           - { BUILDOPTIONS: '--with-cc=clang --cflags=-DMP_16BIT --limit-valgrind',                                              SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: 'clang llvm' }
           - { BUILDOPTIONS: '--with-cc=clang --cflags=-DMP_32BIT --limit-valgrind',                                              SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: 'clang llvm' }
+
+          # Check error-tracing with 64 bit only, macros are independent of limb-size with the exception of the S_MP_WORD_TOO_SMALL_C branch
+          - { BUILDOPTIONS: '--with-cc=gcc --with-m64 --cflags=-DMP_ADD_ERROR_TRACING --limit-valgrind',                             SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: '' }
+          - { BUILDOPTIONS: '--with-cc=gcc --with-m64 --cflags=-DMP_ADD_ERROR_TRACING --cflags=-DS_MP_WORD_TOO_SMALL_C="" --limit-valgrind',  SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: '' }
     steps:
       - uses: actions/checkout@v3
       - name: install dependencies

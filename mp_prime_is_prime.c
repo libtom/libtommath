@@ -18,7 +18,7 @@ mp_err mp_prime_is_prime(const mp_int *a, int t, bool *result)
    mp_int  b;
    int     ix;
    bool    res;
-   mp_err  err;
+   mp_err  err = MP_OKAY;
 
    /* default to no */
    *result = false;
@@ -41,9 +41,7 @@ mp_err mp_prime_is_prime(const mp_int *a, int t, bool *result)
       return MP_OKAY;
    }
    /* N is not a perfect square: floor(sqrt(N))^2 != N */
-   if ((err = mp_is_square(a, &res)) != MP_OKAY) {
-      return err;
-   }
+   if ((err = mp_is_square(a, &res)) != MP_OKAY)                         MP_TRACE_ERROR(err, LTM_ERR);
    if (res) {
       return MP_OKAY;
    }
@@ -56,9 +54,7 @@ mp_err mp_prime_is_prime(const mp_int *a, int t, bool *result)
       }
    }
    /* first perform trial division */
-   if ((err = s_mp_prime_is_divisible(a, &res)) != MP_OKAY) {
-      return err;
-   }
+   if ((err = s_mp_prime_is_divisible(a, &res)) != MP_OKAY)              MP_TRACE_ERROR(err, LTM_ERR);
 
    /* return if it was trivially divisible */
    if (res) {
@@ -68,15 +64,11 @@ mp_err mp_prime_is_prime(const mp_int *a, int t, bool *result)
    /*
        Run the Miller-Rabin test with base 2 for the BPSW test.
     */
-   if ((err = mp_init_set(&b, 2uL)) != MP_OKAY) {
-      return err;
-   }
+   if ((err = mp_init_set(&b, 2uL)) != MP_OKAY)                          MP_TRACE_ERROR(err, LTM_ERR);
 
-   if ((err = mp_prime_miller_rabin(a, &b, &res)) != MP_OKAY) {
-      goto LBL_B;
-   }
+   if ((err = mp_prime_miller_rabin(a, &b, &res)) != MP_OKAY)            MP_TRACE_ERROR(err, LTM_ERR_B);
    if (!res) {
-      goto LBL_B;
+      goto LTM_ERR_B;
    }
    /*
       Rumours have it that Mathematica does a second M-R test with base 3.
@@ -84,11 +76,9 @@ mp_err mp_prime_is_prime(const mp_int *a, int t, bool *result)
       It does not hurt, though, beside a bit of extra runtime.
    */
    b.dp[0]++;
-   if ((err = mp_prime_miller_rabin(a, &b, &res)) != MP_OKAY) {
-      goto LBL_B;
-   }
+   if ((err = mp_prime_miller_rabin(a, &b, &res)) != MP_OKAY)            MP_TRACE_ERROR(err, LTM_ERR_B);
    if (!res) {
-      goto LBL_B;
+      goto LTM_ERR_B;
    }
 
    /*
@@ -100,18 +90,14 @@ mp_err mp_prime_is_prime(const mp_int *a, int t, bool *result)
    if (t >= 0) {
 #ifdef LTM_USE_FROBENIUS_TEST
       err = mp_prime_frobenius_underwood(a, &res);
-      if ((err != MP_OKAY) && (err != MP_ITER)) {
-         goto LBL_B;
-      }
+      if ((err != MP_OKAY) && (err != MP_ITER))                          MP_TRACE_ERROR(err, LTM_ERR_B);
       if (!res) {
-         goto LBL_B;
+         goto LTM_ERR_B;
       }
 #else
-      if ((err = mp_prime_strong_lucas_selfridge(a, &res)) != MP_OKAY) {
-         goto LBL_B;
-      }
+      if ((err = mp_prime_strong_lucas_selfridge(a, &res)) != MP_OKAY)   MP_TRACE_ERROR(err, LTM_ERR_B);
       if (!res) {
-         goto LBL_B;
+         goto LTM_ERR_B;
       }
 #endif
    }
@@ -138,34 +124,28 @@ mp_err mp_prime_is_prime(const mp_int *a, int t, bool *result)
            "Strong Pseudoprimes to Twelve Prime Bases".
        */
       /* 0x437ae92817f9fc85b7e5 = 318665857834031151167461 */
-      if ((err =   mp_read_radix(&b, "437ae92817f9fc85b7e5", 16)) != MP_OKAY) {
-         goto LBL_B;
-      }
+      if ((err =   mp_read_radix(&b, "437ae92817f9fc85b7e5", 16)) != MP_OKAY)      MP_TRACE_ERROR(err, LTM_ERR_B);
 
       if (mp_cmp(a, &b) == MP_LT) {
          p_max = 12;
       } else {
          /* 0x2be6951adc5b22410a5fd = 3317044064679887385961981 */
-         if ((err = mp_read_radix(&b, "2be6951adc5b22410a5fd", 16)) != MP_OKAY) {
-            goto LBL_B;
-         }
+         if ((err = mp_read_radix(&b, "2be6951adc5b22410a5fd", 16)) != MP_OKAY)    MP_TRACE_ERROR(err, LTM_ERR_B);
 
          if (mp_cmp(a, &b) == MP_LT) {
             p_max = 13;
          } else {
             err = MP_VAL;
-            goto LBL_B;
+            MP_TRACE_ERROR(err, LTM_ERR_B);
          }
       }
 
       /* we did bases 2 and 3  already, skip them */
       for (ix = 2; ix < p_max; ix++) {
          mp_set(&b, s_mp_prime_tab[ix]);
-         if ((err = mp_prime_miller_rabin(a, &b, &res)) != MP_OKAY) {
-            goto LBL_B;
-         }
+         if ((err = mp_prime_miller_rabin(a, &b, &res)) != MP_OKAY)                MP_TRACE_ERROR(err, LTM_ERR_B);
          if (!res) {
-            goto LBL_B;
+            goto LTM_ERR_B;
          }
       }
    }
@@ -226,9 +206,7 @@ mp_err mp_prime_is_prime(const mp_int *a, int t, bool *result)
          int len;
 
          /* mp_rand() guarantees the first digit to be non-zero */
-         if ((err = mp_rand(&b, 1)) != MP_OKAY) {
-            goto LBL_B;
-         }
+         if ((err = mp_rand(&b, 1)) != MP_OKAY)                          MP_TRACE_ERROR(err, LTM_ERR_B);
          /*
           * Reduce digit before casting because mp_digit might be bigger than
           * an unsigned int and "mask" on the other side is most probably not.
@@ -244,9 +222,7 @@ mp_err mp_prime_is_prime(const mp_int *a, int t, bool *result)
             ix--;
             continue;
          }
-         if ((err = mp_rand(&b, len)) != MP_OKAY) {
-            goto LBL_B;
-         }
+         if ((err = mp_rand(&b, len)) != MP_OKAY)                        MP_TRACE_ERROR(err, LTM_ERR_B);
          /*
           * That number might got too big and the witness has to be
           * smaller than "a"
@@ -254,28 +230,25 @@ mp_err mp_prime_is_prime(const mp_int *a, int t, bool *result)
          len = mp_count_bits(&b);
          if (len >= size_a) {
             len = (len - size_a) + 1;
-            if ((err = mp_div_2d(&b, len, &b, NULL)) != MP_OKAY) {
-               goto LBL_B;
-            }
+            if ((err = mp_div_2d(&b, len, &b, NULL)) != MP_OKAY)         MP_TRACE_ERROR(err, LTM_ERR_B);
          }
          /* Although the chance for b <= 3 is miniscule, try again. */
          if (mp_cmp_d(&b, 3uL) != MP_GT) {
             ix--;
             continue;
          }
-         if ((err = mp_prime_miller_rabin(a, &b, &res)) != MP_OKAY) {
-            goto LBL_B;
-         }
+         if ((err = mp_prime_miller_rabin(a, &b, &res)) != MP_OKAY)      MP_TRACE_ERROR(err, LTM_ERR_B);
          if (!res) {
-            goto LBL_B;
+            goto LTM_ERR_B;
          }
       }
    }
 
    /* passed the test */
    *result = true;
-LBL_B:
+LTM_ERR_B:
    mp_clear(&b);
+LTM_ERR:
    return err;
 }
 

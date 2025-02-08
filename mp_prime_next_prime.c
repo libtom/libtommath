@@ -11,7 +11,7 @@
 mp_err mp_prime_next_prime(mp_int *a, int t, bool bbs_style)
 {
    int      x;
-   mp_err   err;
+   mp_err   err = MP_OKAY;
    bool  res = false;
    mp_digit res_tab[MP_PRIME_TAB_SIZE], kstep;
    mp_int   b;
@@ -48,30 +48,22 @@ mp_err mp_prime_next_prime(mp_int *a, int t, bool bbs_style)
    if (bbs_style) {
       /* if a mod 4 != 3 subtract the correct value to make it so */
       if ((a->dp[0] & 3u) != 3u) {
-         if ((err = mp_sub_d(a, (a->dp[0] & 3u) + 1u, a)) != MP_OKAY) {
-            return err;
-         }
+         if ((err = mp_sub_d(a, (a->dp[0] & 3u) + 1u, a)) != MP_OKAY)    MP_TRACE_ERROR(err, LTM_ERR);
       }
    } else {
       if (mp_iseven(a)) {
          /* force odd */
-         if ((err = mp_sub_d(a, 1uL, a)) != MP_OKAY) {
-            return err;
-         }
+         if ((err = mp_sub_d(a, 1uL, a)) != MP_OKAY)                     MP_TRACE_ERROR(err, LTM_ERR);
       }
    }
 
    /* generate the restable */
    for (x = 1; x < MP_PRIME_TAB_SIZE; x++) {
-      if ((err = mp_mod_d(a, s_mp_prime_tab[x], res_tab + x)) != MP_OKAY) {
-         return err;
-      }
+      if ((err = mp_mod_d(a, s_mp_prime_tab[x], res_tab + x)) != MP_OKAY)MP_TRACE_ERROR(err, LTM_ERR);
    }
 
    /* init temp used for Miller-Rabin Testing */
-   if ((err = mp_init(&b)) != MP_OKAY) {
-      return err;
-   }
+   if ((err = mp_init(&b)) != MP_OKAY)                                   MP_TRACE_ERROR(err, LTM_ERR);
 
    for (;;) {
       mp_digit step = 0;
@@ -102,25 +94,22 @@ mp_err mp_prime_next_prime(mp_int *a, int t, bool bbs_style)
       } while (y && (step < (((mp_digit)1 << MP_DIGIT_BIT) - kstep)));
 
       /* add the step */
-      if ((err = mp_add_d(a, step, a)) != MP_OKAY) {
-         goto LBL_ERR;
-      }
+      if ((err = mp_add_d(a, step, a)) != MP_OKAY)                       MP_TRACE_ERROR(err, LTM_ERR_1);
 
       /* if didn't pass sieve and step == MP_MAX then skip test */
       if (y && (step >= (((mp_digit)1 << MP_DIGIT_BIT) - kstep))) {
          continue;
       }
 
-      if ((err = mp_prime_is_prime(a, t, &res)) != MP_OKAY) {
-         goto LBL_ERR;
-      }
+      if ((err = mp_prime_is_prime(a, t, &res)) != MP_OKAY)              MP_TRACE_ERROR(err, LTM_ERR_1);
       if (res) {
          break;
       }
    }
 
-LBL_ERR:
+LTM_ERR_1:
    mp_clear(&b);
+LTM_ERR:
    return err;
 }
 

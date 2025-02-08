@@ -16,20 +16,20 @@ mp_err mp_root_n(const mp_int *a, int b, mp_int *c)
 {
    mp_int t1, t2, t3, a_;
    int    ilog2;
-   mp_err err;
+   mp_err err = MP_OKAY;
 
    if (b < 0 || (unsigned)b > (unsigned)MP_DIGIT_MAX) {
-      return MP_VAL;
+      err = MP_VAL;
+      MP_TRACE_ERROR(err, LTM_ERR);
    }
 
    /* input must be positive if b is even */
    if (((b & 1) == 0) && mp_isneg(a)) {
-      return MP_VAL;
+      err = MP_VAL;
+      MP_TRACE_ERROR(err, LTM_ERR);
    }
 
-   if ((err = mp_init_multi(&t1, &t2, &t3, NULL)) != MP_OKAY) {
-      return err;
-   }
+   if ((err = mp_init_multi(&t1, &t2, &t3, NULL)) != MP_OKAY)            MP_TRACE_ERROR(err, LTM_ERR);
 
    /* if a is negative fudge the sign but keep track */
    a_ = *a;
@@ -47,7 +47,7 @@ mp_err mp_root_n(const mp_int *a, int b, mp_int *c)
       mp_set(c, 1uL);
       c->sign = a->sign;
       err = MP_OKAY;
-      goto LBL_ERR;
+      MP_TRACE_ERROR(err, LTM_ERR_1);
    }
 
    /* "b" is smaller than INT_MAX, we can cast safely */
@@ -55,42 +55,41 @@ mp_err mp_root_n(const mp_int *a, int b, mp_int *c)
       mp_set(c, 1uL);
       c->sign = a->sign;
       err = MP_OKAY;
-      goto LBL_ERR;
+      MP_TRACE_ERROR(err, LTM_ERR_1);
    }
    ilog2 =  ilog2 / b;
    if (ilog2 == 0) {
       mp_set(c, 1uL);
       c->sign = a->sign;
       err = MP_OKAY;
-      goto LBL_ERR;
+      MP_TRACE_ERROR(err, LTM_ERR_1);
    }
    /* Start value must be larger than root */
    ilog2 += 2;
-   if ((err = mp_2expt(&t2,ilog2)) != MP_OKAY)                    goto LBL_ERR;
+   if ((err = mp_2expt(&t2,ilog2)) != MP_OKAY)                           MP_TRACE_ERROR(err, LTM_ERR_1);
    do {
       /* t1 = t2 */
-      if ((err = mp_copy(&t2, &t1)) != MP_OKAY)                   goto LBL_ERR;
+      if ((err = mp_copy(&t2, &t1)) != MP_OKAY)                          MP_TRACE_ERROR(err, LTM_ERR_1);
 
       /* t2 = t1 - ((t1**b - a) / (b * t1**(b-1))) */
 
       /* t3 = t1**(b-1) */
-      if ((err = mp_expt_n(&t1, b - 1, &t3)) != MP_OKAY)       goto LBL_ERR;
+      if ((err = mp_expt_n(&t1, b - 1, &t3)) != MP_OKAY)                 MP_TRACE_ERROR(err, LTM_ERR_1);
 
       /* numerator */
       /* t2 = t1**b */
-      if ((err = mp_mul(&t3, &t1, &t2)) != MP_OKAY)               goto LBL_ERR;
+      if ((err = mp_mul(&t3, &t1, &t2)) != MP_OKAY)                      MP_TRACE_ERROR(err, LTM_ERR_1);
 
       /* t2 = t1**b - a */
-      if ((err = mp_sub(&t2, &a_, &t2)) != MP_OKAY)               goto LBL_ERR;
+      if ((err = mp_sub(&t2, &a_, &t2)) != MP_OKAY)                      MP_TRACE_ERROR(err, LTM_ERR_1);
 
       /* denominator */
       /* t3 = t1**(b-1) * b  */
-      if ((err = mp_mul_d(&t3, (mp_digit)b, &t3)) != MP_OKAY)               goto LBL_ERR;
+      if ((err = mp_mul_d(&t3, (mp_digit)b, &t3)) != MP_OKAY)            MP_TRACE_ERROR(err, LTM_ERR_1);
 
       /* t3 = (t1**b - a)/(b * t1**(b-1)) */
-      if ((err = mp_div(&t2, &t3, &t3, NULL)) != MP_OKAY)         goto LBL_ERR;
-
-      if ((err = mp_sub(&t1, &t3, &t2)) != MP_OKAY)               goto LBL_ERR;
+      if ((err = mp_div(&t2, &t3, &t3, NULL)) != MP_OKAY)                MP_TRACE_ERROR(err, LTM_ERR_1);
+      if ((err = mp_sub(&t1, &t3, &t2)) != MP_OKAY)                      MP_TRACE_ERROR(err, LTM_ERR_1);
 
       /*
           Number of rounds is at most log_2(root). If it is more it
@@ -105,23 +104,23 @@ mp_err mp_root_n(const mp_int *a, int b, mp_int *c)
    /* Loop beneath can overshoot by one if found root is smaller than actual root */
    for (;;) {
       mp_ord cmp;
-      if ((err = mp_expt_n(&t1, b, &t2)) != MP_OKAY)            goto LBL_ERR;
+      if ((err = mp_expt_n(&t1, b, &t2)) != MP_OKAY)                     MP_TRACE_ERROR(err, LTM_ERR_1);
       cmp = mp_cmp(&t2, &a_);
       if (cmp == MP_EQ) {
          err = MP_OKAY;
-         goto LBL_ERR;
+         MP_TRACE_ERROR(err, LTM_ERR_1);
       }
       if (cmp == MP_LT) {
-         if ((err = mp_add_d(&t1, 1uL, &t1)) != MP_OKAY)          goto LBL_ERR;
+         if ((err = mp_add_d(&t1, 1uL, &t1)) != MP_OKAY)                 MP_TRACE_ERROR(err, LTM_ERR_1);
       } else {
          break;
       }
    }
    /* correct overshoot from above or from recurrence */
    for (;;) {
-      if ((err = mp_expt_n(&t1, b, &t2)) != MP_OKAY)            goto LBL_ERR;
+      if ((err = mp_expt_n(&t1, b, &t2)) != MP_OKAY)                     MP_TRACE_ERROR(err, LTM_ERR_1);
       if (mp_cmp(&t2, &a_) == MP_GT) {
-         if ((err = mp_sub_d(&t1, 1uL, &t1)) != MP_OKAY)          goto LBL_ERR;
+         if ((err = mp_sub_d(&t1, 1uL, &t1)) != MP_OKAY)                 MP_TRACE_ERROR(err, LTM_ERR_1);
       } else {
          break;
       }
@@ -133,8 +132,9 @@ mp_err mp_root_n(const mp_int *a, int b, mp_int *c)
    /* set the sign of the result */
    c->sign = a->sign;
 
-LBL_ERR:
+LTM_ERR_1:
    mp_clear_multi(&t1, &t2, &t3, NULL);
+LTM_ERR:
    return err;
 }
 

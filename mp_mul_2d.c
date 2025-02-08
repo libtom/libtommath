@@ -6,25 +6,19 @@
 /* shift left by a certain bit count */
 mp_err mp_mul_2d(const mp_int *a, int b, mp_int *c)
 {
-   mp_err err;
+   mp_err err = MP_OKAY;
 
    if (b < 0) {
-      return MP_VAL;
+      err = MP_VAL;
+      MP_TRACE_ERROR(err, LTM_ERR);
    }
 
-   if ((err = mp_copy(a, c)) != MP_OKAY) {
-      return err;
-   }
-
-   if ((err = mp_grow(c, c->used + (b / MP_DIGIT_BIT) + 1)) != MP_OKAY) {
-      return err;
-   }
+   if ((err = mp_copy(a, c)) != MP_OKAY)                                 MP_TRACE_ERROR(err, LTM_ERR);
+   if ((err = mp_grow(c, c->used + (b / MP_DIGIT_BIT) + 1)) != MP_OKAY)  MP_TRACE_ERROR(err, LTM_ERR);
 
    /* shift by as many digits in the bit count */
    if (b >= MP_DIGIT_BIT) {
-      if ((err = mp_lshd(c, b / MP_DIGIT_BIT)) != MP_OKAY) {
-         return err;
-      }
+      if ((err = mp_lshd(c, b / MP_DIGIT_BIT)) != MP_OKAY)               MP_TRACE_ERROR(err, LTM_ERR);
    }
 
    /* shift any bit count < MP_DIGIT_BIT */
@@ -58,6 +52,8 @@ mp_err mp_mul_2d(const mp_int *a, int b, mp_int *c)
       }
    }
    mp_clamp(c);
-   return MP_OKAY;
+
+LTM_ERR:
+   return err;
 }
 #endif

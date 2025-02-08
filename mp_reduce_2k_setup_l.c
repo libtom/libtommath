@@ -6,23 +6,18 @@
 /* determines the setup value */
 mp_err mp_reduce_2k_setup_l(const mp_int *a, mp_int *d)
 {
-   mp_err err;
+   mp_err err = MP_OKAY;
    mp_int tmp;
 
-   if ((err = mp_init(&tmp)) != MP_OKAY) {
-      return err;
-   }
+   if ((err = mp_init(&tmp)) != MP_OKAY)                                 MP_TRACE_ERROR(err, LTM_ERR);
 
-   if ((err = mp_2expt(&tmp, mp_count_bits(a))) != MP_OKAY) {
-      goto LBL_ERR;
-   }
+   if ((err = mp_2expt(&tmp, mp_count_bits(a))) != MP_OKAY)              MP_TRACE_ERROR(err, LTM_ERR_1);
 
-   if ((err = s_mp_sub(&tmp, a, d)) != MP_OKAY) {
-      goto LBL_ERR;
-   }
+   if ((err = s_mp_sub(&tmp, a, d)) != MP_OKAY)                          MP_TRACE_ERROR(err, LTM_ERR_1);
 
-LBL_ERR:
+LTM_ERR_1:
    mp_clear(&tmp);
+LTM_ERR:
    return err;
 }
 #endif

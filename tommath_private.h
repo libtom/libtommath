@@ -8,6 +8,17 @@
 #include "tommath_class.h"
 #include <limits.h>
 
+
+#ifdef MP_ADD_ERROR_TRACING
+/* Not everything is supported everywhere but some (e.g.: filename and linenumber) are */
+#define MP_TRACE_ERROR(ERROR_NUMBER, ERROR_GOTO)   do{\
+           fprintf(stderr, "In %s at %d in %s: %s\n",__FILE__, __LINE__, __FUNCTION__, mp_error_to_string((ERROR_NUMBER)));\
+           goto ERROR_GOTO;\
+        }while(0)
+#else
+#define MP_TRACE_ERROR(ERROR_NUMBER, ERROR_GOTO)   goto ERROR_GOTO
+#endif
+
 /*
  * Private symbols
  * ---------------

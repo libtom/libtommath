@@ -9,7 +9,7 @@
 mp_err mp_pack(void *rop, size_t maxcount, size_t *written, mp_order order, size_t size,
                mp_endian endian, size_t nails, const mp_int *op)
 {
-   mp_err err;
+   mp_err err = MP_OKAY;
    size_t odd_nails, nail_bytes, i, j, count;
    uint8_t odd_nail_mask;
 
@@ -18,12 +18,11 @@ mp_err mp_pack(void *rop, size_t maxcount, size_t *written, mp_order order, size
    count = mp_pack_count(op, nails, size);
 
    if (count > maxcount) {
-      return MP_BUF;
+      err = MP_BUF;
+      MP_TRACE_ERROR(err, LTM_ERR);
    }
 
-   if ((err = mp_init_copy(&t, op)) != MP_OKAY) {
-      return err;
-   }
+   if ((err = mp_init_copy(&t, op)) != MP_OKAY)                          MP_TRACE_ERROR(err, LTM_ERR);
 
    if (endian == MP_NATIVE_ENDIAN) {
       MP_GET_ENDIANNESS(endian);
@@ -49,20 +48,18 @@ mp_err mp_pack(void *rop, size_t maxcount, size_t *written, mp_order order, size
 
          *byte = (uint8_t)((j == ((size - nail_bytes) - 1u)) ? (t.dp[0] & odd_nail_mask) : (t.dp[0] & 0xFFuL));
 
-         if ((err = mp_div_2d(&t, (j == ((size - nail_bytes) - 1u)) ? (int)(8u - odd_nails) : 8, &t, NULL)) != MP_OKAY) {
-            goto LBL_ERR;
-         }
-
+         if ((err = mp_div_2d(&t, (j == ((size - nail_bytes) - 1u)) ? (int)(8u - odd_nails) : 8, &t, NULL)) != MP_OKAY)
+            MP_TRACE_ERROR(err, LTM_ERR_1);
       }
    }
 
    if (written != NULL) {
       *written = count;
    }
-   err = MP_OKAY;
 
-LBL_ERR:
+LTM_ERR_1:
    mp_clear(&t);
+LTM_ERR:
    return err;
 }
 

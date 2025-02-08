@@ -6,7 +6,7 @@
 /* single digit subtraction */
 mp_err mp_sub_d(const mp_int *a, mp_digit b, mp_int *c)
 {
-   mp_err err;
+   mp_err err = MP_OKAY;
    int oldused;
 
    /* fast path for a == c */
@@ -24,17 +24,16 @@ mp_err mp_sub_d(const mp_int *a, mp_digit b, mp_int *c)
    }
 
    /* grow c as required */
-   if ((err = mp_grow(c, a->used + 1)) != MP_OKAY) {
-      return err;
-   }
+   if ((err = mp_grow(c, a->used + 1)) != MP_OKAY)                       MP_TRACE_ERROR(err, LTM_ERR);
 
    /* if a is negative just do an unsigned
     * addition [with fudged signs]
     */
    if (a->sign == MP_NEG) {
       mp_int a_ = *a;
+
       a_.sign = MP_ZPOS;
-      err     = mp_add_d(&a_, b, c);
+      if ((err = mp_add_d(&a_, b, c)) != MP_OKAY)                       MP_TRACE_ERROR(err, LTM_ERR);
       c->sign = MP_NEG;
 
       /* clamp */
@@ -72,7 +71,9 @@ mp_err mp_sub_d(const mp_int *a, mp_digit b, mp_int *c)
    s_mp_zero_digs(c->dp + c->used, oldused - c->used);
 
    mp_clamp(c);
-   return MP_OKAY;
+
+LTM_ERR:
+   return err;
 }
 
 #endif

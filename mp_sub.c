@@ -6,13 +6,15 @@
 /* high level subtraction (handles signs) */
 mp_err mp_sub(const mp_int *a, const mp_int *b, mp_int *c)
 {
+   mp_err err = MP_OKAY;
    if (a->sign != b->sign) {
       /* subtract a negative from a positive, OR */
       /* subtract a positive from a negative. */
       /* In either case, ADD their magnitudes, */
       /* and use the sign of the first number. */
       c->sign = a->sign;
-      return s_mp_add(a, b, c);
+      if ((err = s_mp_add(a, b, c)) != MP_OKAY)                         MP_TRACE_ERROR(err, LTM_ERR);
+      return err;
    }
 
    /* subtract a positive from a positive, OR */
@@ -30,7 +32,10 @@ mp_err mp_sub(const mp_int *a, const mp_int *b, mp_int *c)
       /* Copy the sign from the first */
       c->sign = a->sign;
    }
-   return s_mp_sub(a, b, c);
+   if ((err = s_mp_sub(a, b, c)) != MP_OKAY)                            MP_TRACE_ERROR(err, LTM_ERR);
+
+LTM_ERR:
+   return err;
 }
 
 #endif

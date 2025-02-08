@@ -9,15 +9,13 @@ mp_err s_mp_div_3(const mp_int *a, mp_int *c, mp_digit *d)
    mp_int   q;
    mp_word  w;
    mp_digit b;
-   mp_err   err;
+   mp_err   err = MP_OKAY;
    int      ix;
 
    /* b = 2**MP_DIGIT_BIT / 3 */
    b = ((mp_word)1 << (mp_word)MP_DIGIT_BIT) / (mp_word)3;
 
-   if ((err = mp_init_size(&q, a->used)) != MP_OKAY) {
-      return err;
-   }
+   if ((err = mp_init_size(&q, a->used)) != MP_OKAY)                     MP_TRACE_ERROR(err, LTM_ERR);
 
    q.used = a->used;
    q.sign = a->sign;
@@ -58,7 +56,8 @@ mp_err s_mp_div_3(const mp_int *a, mp_int *c, mp_digit *d)
    }
    mp_clear(&q);
 
-   return MP_OKAY;
+LTM_ERR:
+   return err;
 }
 
 #endif

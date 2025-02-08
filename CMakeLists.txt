@@ -34,6 +34,7 @@ include(sources.cmake)
 # Options
 #-----------------------------------------------------------------------------
 option(BUILD_SHARED_LIBS "Build shared library and only the shared library if \"ON\", default is static" OFF)
+option(ADD_ERROR_TRACING "Add some simple macros that allow for a primitive but useful error tracing if \"ON\", default is \"OFF\"" OFF)
 
 #-----------------------------------------------------------------------------
 # Compose CFLAGS
@@ -76,6 +77,10 @@ if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
 endif()
 if(CMAKE_SYSTEM_NAME MATCHES "CYGWIN")
     list(APPEND LTM_C_FLAGS -no-undefined)
+endif()
+
+if(ADD_ERROR_TRACING)
+    list(APPEND LTM_C_FLAGS -DMP_ADD_ERROR_TRACING)
 endif()
 
 # TODO: coverage (lgcov)

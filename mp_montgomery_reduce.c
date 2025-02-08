@@ -6,7 +6,7 @@
 /* computes xR**-1 == x (mod N) via Montgomery Reduction */
 mp_err mp_montgomery_reduce(mp_int *x, const mp_int *n, mp_digit rho)
 {
-   mp_err err;
+   mp_err err = MP_OKAY;
    int ix, digs;
 
    /* can the fast reduction [comba] method be used?
@@ -19,13 +19,12 @@ mp_err mp_montgomery_reduce(mp_int *x, const mp_int *n, mp_digit rho)
    if ((digs < MP_WARRAY) &&
        (x->used <= MP_WARRAY) &&
        (n->used < MP_MAX_COMBA)) {
-      return s_mp_montgomery_reduce_comba(x, n, rho);
+      if ((err = s_mp_montgomery_reduce_comba(x, n, rho)) != MP_OKAY)   MP_TRACE_ERROR(err, LTM_ERR);
+      return err;
    }
 
    /* grow the input as required */
-   if ((err = mp_grow(x, digs)) != MP_OKAY) {
-      return err;
-   }
+   if ((err = mp_grow(x, digs)) != MP_OKAY)                              MP_TRACE_ERROR(err, LTM_ERR);
    x->used = digs;
 
    for (ix = 0; ix < n->used; ix++) {
@@ -81,9 +80,10 @@ mp_err mp_montgomery_reduce(mp_int *x, const mp_int *n, mp_digit rho)
 
    /* if x >= n then x = x - n */
    if (mp_cmp_mag(x, n) != MP_LT) {
-      return s_mp_sub(x, n, x);
+      if ((err = s_mp_sub(x, n, x)) != MP_OKAY)                         MP_TRACE_ERROR(err, LTM_ERR);
    }
 
-   return MP_OKAY;
+LTM_ERR:
+   return err;
 }
 #endif

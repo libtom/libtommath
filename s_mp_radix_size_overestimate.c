@@ -42,7 +42,8 @@ mp_err s_mp_radix_size_overestimate(const mp_int *a, const int radix, size_t *si
    mp_err err = MP_OKAY;
 
    if ((radix < 2) || (radix > 64)) {
-      return MP_VAL;
+      err = MP_VAL;
+      MP_TRACE_ERROR(err, LTM_ERR);
    }
 
    if (mp_iszero(a)) {
@@ -56,9 +57,7 @@ mp_err s_mp_radix_size_overestimate(const mp_int *a, const int radix, size_t *si
       return MP_OKAY;
    }
 
-   if ((err = mp_init_multi(&bi_bit_count, &bi_k, NULL)) != MP_OKAY) {
-      return err;
-   }
+   if ((err = mp_init_multi(&bi_bit_count, &bi_k, NULL)) != MP_OKAY)     MP_TRACE_ERROR(err, LTM_ERR);
 
    /* la = floor(log_2(a)) + 1 */
    bit_count = mp_count_bits(a);
@@ -67,15 +66,17 @@ mp_err s_mp_radix_size_overestimate(const mp_int *a, const int radix, size_t *si
    /* k = floor(2^29/log_2(radix)) + 1 */
    mp_set_u32(&bi_k, s_log_bases[radix]);
    /* n = floor((la *  k) / 2^29) + 1 */
-   if ((err = mp_mul(&bi_bit_count, &bi_k, &bi_bit_count)) != MP_OKAY)                         goto LBL_ERR;
-   if ((err = mp_div_2d(&bi_bit_count, MP_RADIX_SIZE_SCALE, &bi_bit_count, NULL)) != MP_OKAY) goto LBL_ERR;
+   if ((err = mp_mul(&bi_bit_count, &bi_k, &bi_bit_count)) != MP_OKAY)   MP_TRACE_ERROR(err, LTM_ERR_1);
+   if ((err = mp_div_2d(&bi_bit_count, MP_RADIX_SIZE_SCALE, &bi_bit_count, NULL)) != MP_OKAY)
+      MP_TRACE_ERROR(err, LTM_ERR_1);
 
    /* The "+1" here is the "+1" in "floor((la *  k) / 2^29) + 1" */
    /* n = n + 1 + EOS + sign */
    *size = (size_t)(mp_get_u64(&bi_bit_count) + 3U);
 
-LBL_ERR:
+LTM_ERR_1:
    mp_clear_multi(&bi_bit_count, &bi_k, NULL);
+LTM_ERR:
    return err;
 }
 

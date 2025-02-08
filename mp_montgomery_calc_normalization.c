@@ -12,15 +12,14 @@
 mp_err mp_montgomery_calc_normalization(mp_int *a, const mp_int *b)
 {
    int    x, bits;
-   mp_err err;
+   mp_err err = MP_OKAY;
 
    /* how many bits of last digit does b use */
    bits = mp_count_bits(b) % MP_DIGIT_BIT;
 
    if (b->used > 1) {
-      if ((err = mp_2expt(a, ((b->used - 1) * MP_DIGIT_BIT) + bits - 1)) != MP_OKAY) {
-         return err;
-      }
+      if ((err = mp_2expt(a, ((b->used - 1) * MP_DIGIT_BIT) + bits - 1)) != MP_OKAY)
+         MP_TRACE_ERROR(err, LTM_ERR);
    } else {
       mp_set(a, 1uL);
       bits = 1;
@@ -28,16 +27,13 @@ mp_err mp_montgomery_calc_normalization(mp_int *a, const mp_int *b)
 
    /* now compute C = A * B mod b */
    for (x = bits - 1; x < (int)MP_DIGIT_BIT; x++) {
-      if ((err = mp_mul_2(a, a)) != MP_OKAY) {
-         return err;
-      }
+      if ((err = mp_mul_2(a, a)) != MP_OKAY)                             MP_TRACE_ERROR(err, LTM_ERR);
       if (mp_cmp_mag(a, b) != MP_LT) {
-         if ((err = s_mp_sub(a, b, a)) != MP_OKAY) {
-            return err;
-         }
+         if ((err = s_mp_sub(a, b, a)) != MP_OKAY)                       MP_TRACE_ERROR(err, LTM_ERR);
       }
    }
 
-   return MP_OKAY;
+LTM_ERR:
+   return err;
 }
 #endif

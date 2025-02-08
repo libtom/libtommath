@@ -9,7 +9,7 @@
 mp_err mp_unpack(mp_int *rop, size_t count, mp_order order, size_t size,
                  mp_endian endian, size_t nails, const void *op)
 {
-   mp_err err;
+   mp_err err = MP_OKAY;
    size_t odd_nails, nail_bytes, i, j;
    uint8_t odd_nail_mask;
 
@@ -32,10 +32,8 @@ mp_err mp_unpack(mp_int *rop, size_t count, mp_order order, size_t size,
                           (((order == MP_MSB_FIRST) ? i : ((count - 1u) - i)) * size) +
                           ((endian == MP_BIG_ENDIAN) ? (j + nail_bytes) : (((size - 1u) - j) - nail_bytes)));
 
-         if ((err = mp_mul_2d(rop, (j == 0u) ? (int)(8u - odd_nails) : 8, rop)) != MP_OKAY) {
-            return err;
-         }
-
+         if ((err = mp_mul_2d(rop, (j == 0u) ? (int)(8u - odd_nails) : 8, rop)) != MP_OKAY)
+            MP_TRACE_ERROR(err, LTM_ERR);
          rop->dp[0] |= (j == 0u) ? (mp_digit)(byte & odd_nail_mask) : (mp_digit)byte;
          rop->used  += 1;
       }
@@ -43,7 +41,8 @@ mp_err mp_unpack(mp_int *rop, size_t count, mp_order order, size_t size,
 
    mp_clamp(rop);
 
-   return MP_OKAY;
+LTM_ERR:
+   return err;
 }
 
 #endif

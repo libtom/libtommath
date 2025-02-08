@@ -6,11 +6,10 @@
 /* initialize and set a digit */
 mp_err mp_init_set(mp_int *a, mp_digit b)
 {
-   mp_err err;
-   if ((err = mp_init(a)) != MP_OKAY) {
-      return err;
-   }
+   mp_err err = MP_OKAY;
+   if ((err = mp_init(a)) != MP_OKAY)                                    MP_TRACE_ERROR(err, LTM_ERR);
    mp_set(a, b);
+LTM_ERR:
    return err;
 }
 #endif

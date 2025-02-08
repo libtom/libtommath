@@ -6,10 +6,10 @@
 mp_err mp_log_n(const mp_int *a, int base, int *c)
 {
    mp_int b;
-   mp_err err;
+   mp_err err = MP_OKAY;
 
-   if ((err = mp_init_i32(&b, base)) != MP_OKAY)                                                         goto LTM_ERR;
-   if ((err = mp_log(a, &b, c)) != MP_OKAY)                                                             goto LTM_ERR;
+   if ((err = mp_init_i32(&b, base)) != MP_OKAY)                          MP_TRACE_ERROR(err, LTM_ERR);
+   if ((err = mp_log(a, &b, c)) != MP_OKAY)                               MP_TRACE_ERROR(err, LTM_ERR);
 
 LTM_ERR:
    mp_clear(&b);

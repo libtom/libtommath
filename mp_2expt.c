@@ -10,19 +10,18 @@
  */
 mp_err mp_2expt(mp_int *a, int b)
 {
-   mp_err    err;
+   mp_err err = MP_OKAY;
 
    if (b < 0) {
-      return MP_VAL;
+      err = MP_VAL;
+      MP_TRACE_ERROR(err, LTM_ERR);
    }
 
    /* zero a as per default */
    mp_zero(a);
 
    /* grow a to accommodate the single bit */
-   if ((err = mp_grow(a, (b / MP_DIGIT_BIT) + 1)) != MP_OKAY) {
-      return err;
-   }
+   if ((err = mp_grow(a, (b / MP_DIGIT_BIT) + 1)) != MP_OKAY)            MP_TRACE_ERROR(err, LTM_ERR);
 
    /* set the used count of where the bit will go */
    a->used = (b / MP_DIGIT_BIT) + 1;
@@ -30,6 +29,7 @@ mp_err mp_2expt(mp_int *a, int b)
    /* put the single bit in its place */
    a->dp[b / MP_DIGIT_BIT] = (mp_digit)1 << (mp_digit)(b % MP_DIGIT_BIT);
 
-   return MP_OKAY;
+LTM_ERR:
+   return err;
 }
 #endif

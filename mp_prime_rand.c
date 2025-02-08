@@ -23,11 +23,12 @@ mp_err mp_prime_rand(mp_int *a, int t, int size, int flags)
    uint8_t *tmp, maskAND, maskOR_msb, maskOR_lsb;
    int bsize, maskOR_msb_offset;
    bool res;
-   mp_err err;
+   mp_err err = MP_OKAY;
 
    /* sanity check the input */
    if (size <= 1) {
-      return MP_VAL;
+      err = MP_VAL;
+      MP_TRACE_ERROR(err, LTM_ERR);
    }
 
    /* MP_PRIME_SAFE implies MP_PRIME_BBS */
@@ -41,7 +42,8 @@ mp_err mp_prime_rand(mp_int *a, int t, int size, int flags)
    /* we need a buffer of bsize bytes */
    tmp = (uint8_t *) MP_MALLOC((size_t)bsize);
    if (tmp == NULL) {
-      return MP_MEM;
+      err = MP_MEM;
+      MP_TRACE_ERROR(err, LTM_ERR);
    }
 
    /* calc the maskAND value for the MSbyte*/
@@ -62,9 +64,7 @@ mp_err mp_prime_rand(mp_int *a, int t, int size, int flags)
 
    do {
       /* read the bytes */
-      if ((err = s_mp_rand_source(tmp, (size_t)bsize)) != MP_OKAY) {
-         goto LBL_ERR;
-      }
+      if ((err = s_mp_rand_source(tmp, (size_t)bsize)) != MP_OKAY)       MP_TRACE_ERROR(err, LTM_ERR_1);
 
       /* work over the MSbyte */
       tmp[0]    &= maskAND;
@@ -76,47 +76,33 @@ mp_err mp_prime_rand(mp_int *a, int t, int size, int flags)
 
       /* read it in */
       /* TODO: casting only for now until all lengths have been changed to the type "size_t"*/
-      if ((err = mp_from_ubin(a, tmp, (size_t)bsize)) != MP_OKAY) {
-         goto LBL_ERR;
-      }
+      if ((err = mp_from_ubin(a, tmp, (size_t)bsize)) != MP_OKAY)        MP_TRACE_ERROR(err, LTM_ERR_1);
 
       /* is it prime? */
-      if ((err = mp_prime_is_prime(a, t, &res)) != MP_OKAY) {
-         goto LBL_ERR;
-      }
+      if ((err = mp_prime_is_prime(a, t, &res)) != MP_OKAY)              MP_TRACE_ERROR(err, LTM_ERR_1);
       if (!res) {
          continue;
       }
 
       if ((flags & MP_PRIME_SAFE) != 0) {
          /* see if (a-1)/2 is prime */
-         if ((err = mp_sub_d(a, 1uL, a)) != MP_OKAY) {
-            goto LBL_ERR;
-         }
-         if ((err = mp_div_2(a, a)) != MP_OKAY) {
-            goto LBL_ERR;
-         }
+         if ((err = mp_sub_d(a, 1uL, a)) != MP_OKAY)                     MP_TRACE_ERROR(err, LTM_ERR_1);
+         if ((err = mp_div_2(a, a)) != MP_OKAY)                          MP_TRACE_ERROR(err, LTM_ERR_1);
 
          /* is it prime? */
-         if ((err = mp_prime_is_prime(a, t, &res)) != MP_OKAY) {
-            goto LBL_ERR;
-         }
+         if ((err = mp_prime_is_prime(a, t, &res)) != MP_OKAY)           MP_TRACE_ERROR(err, LTM_ERR_1);
       }
    } while (!res);
 
    if ((flags & MP_PRIME_SAFE) != 0) {
       /* restore a to the original value */
-      if ((err = mp_mul_2(a, a)) != MP_OKAY) {
-         goto LBL_ERR;
-      }
-      if ((err = mp_add_d(a, 1uL, a)) != MP_OKAY) {
-         goto LBL_ERR;
-      }
+      if ((err = mp_mul_2(a, a)) != MP_OKAY)                             MP_TRACE_ERROR(err, LTM_ERR_1);
+      if ((err = mp_add_d(a, 1uL, a)) != MP_OKAY)                        MP_TRACE_ERROR(err, LTM_ERR_1);
    }
 
-   err = MP_OKAY;
-LBL_ERR:
+LTM_ERR_1:
    MP_FREE_BUF(tmp, (size_t)bsize);
+LTM_ERR:
    return err;
 }
 

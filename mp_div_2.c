@@ -6,13 +6,11 @@
 /* b = a/2 */
 mp_err mp_div_2(const mp_int *a, mp_int *b)
 {
-   mp_err err;
+   mp_err err = MP_OKAY;
    int x, oldused;
    mp_digit r;
 
-   if ((err = mp_grow(b, a->used)) != MP_OKAY) {
-      return err;
-   }
+   if ((err = mp_grow(b, a->used)) != MP_OKAY)                           MP_TRACE_ERROR(err, LTM_ERR);
 
    oldused = b->used;
    b->used = a->used;
@@ -35,6 +33,8 @@ mp_err mp_div_2(const mp_int *a, mp_int *b)
 
    b->sign = a->sign;
    mp_clamp(b);
-   return MP_OKAY;
+
+LTM_ERR:
+   return err;
 }
 #endif

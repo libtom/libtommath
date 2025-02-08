@@ -3,6 +3,8 @@
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
+/* TODO: it is a bit more complicated to fiddle the tracing in, so it is left for later */
+
 /* First the OS-specific special cases
  * - *BSD
  * - Windows

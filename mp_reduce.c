@@ -10,74 +10,54 @@
 mp_err mp_reduce(mp_int *x, const mp_int *m, const mp_int *mu)
 {
    mp_int  q;
-   mp_err  err;
+   mp_err  err = MP_OKAY;
    int     um = m->used;
 
    /* q = x */
-   if ((err = mp_init_copy(&q, x)) != MP_OKAY) {
-      return err;
-   }
+   if ((err = mp_init_copy(&q, x)) != MP_OKAY)                           MP_TRACE_ERROR(err, LTM_ERR);
 
    /* q1 = x / b**(k-1)  */
    mp_rshd(&q, um - 1);
 
    /* according to HAC this optimization is ok */
    if ((mp_digit)um > ((mp_digit)1 << (MP_DIGIT_BIT - 1))) {
-      if ((err = mp_mul(&q, mu, &q)) != MP_OKAY) {
-         goto LBL_ERR;
-      }
+      if ((err = mp_mul(&q, mu, &q)) != MP_OKAY)                         MP_TRACE_ERROR(err, LTM_ERR_1);
    } else if (MP_HAS(S_MP_MUL_HIGH)) {
-      if ((err = s_mp_mul_high(&q, mu, &q, um)) != MP_OKAY) {
-         goto LBL_ERR;
-      }
+      if ((err = s_mp_mul_high(&q, mu, &q, um)) != MP_OKAY)              MP_TRACE_ERROR(err, LTM_ERR_1);
    } else if (MP_HAS(S_MP_MUL_HIGH_COMBA)) {
-      if ((err = s_mp_mul_high_comba(&q, mu, &q, um)) != MP_OKAY) {
-         goto LBL_ERR;
-      }
+      if ((err = s_mp_mul_high_comba(&q, mu, &q, um)) != MP_OKAY)        MP_TRACE_ERROR(err, LTM_ERR_1);
    } else {
       err = MP_VAL;
-      goto LBL_ERR;
+      MP_TRACE_ERROR(err, LTM_ERR_1);
    }
 
    /* q3 = q2 / b**(k+1) */
    mp_rshd(&q, um + 1);
 
    /* x = x mod b**(k+1), quick (no division) */
-   if ((err = mp_mod_2d(x, MP_DIGIT_BIT * (um + 1), x)) != MP_OKAY) {
-      goto LBL_ERR;
-   }
+   if ((err = mp_mod_2d(x, MP_DIGIT_BIT * (um + 1), x)) != MP_OKAY)      MP_TRACE_ERROR(err, LTM_ERR_1);
 
    /* q = q * m mod b**(k+1), quick (no division) */
-   if ((err = s_mp_mul(&q, m, &q, um + 1)) != MP_OKAY) {
-      goto LBL_ERR;
-   }
+   if ((err = s_mp_mul(&q, m, &q, um + 1)) != MP_OKAY)                   MP_TRACE_ERROR(err, LTM_ERR_1);
 
    /* x = x - q */
-   if ((err = mp_sub(x, &q, x)) != MP_OKAY) {
-      goto LBL_ERR;
-   }
+   if ((err = mp_sub(x, &q, x)) != MP_OKAY)                              MP_TRACE_ERROR(err, LTM_ERR_1);
 
    /* If x < 0, add b**(k+1) to it */
    if (mp_cmp_d(x, 0uL) == MP_LT) {
       mp_set(&q, 1uL);
-      if ((err = mp_lshd(&q, um + 1)) != MP_OKAY) {
-         goto LBL_ERR;
-      }
-      if ((err = mp_add(x, &q, x)) != MP_OKAY) {
-         goto LBL_ERR;
-      }
+      if ((err = mp_lshd(&q, um + 1)) != MP_OKAY)                        MP_TRACE_ERROR(err, LTM_ERR_1);
+      if ((err = mp_add(x, &q, x)) != MP_OKAY)                           MP_TRACE_ERROR(err, LTM_ERR_1);
    }
 
    /* Back off if it's too big */
    while (mp_cmp(x, m) != MP_LT) {
-      if ((err = s_mp_sub(x, m, x)) != MP_OKAY) {
-         goto LBL_ERR;
-      }
+      if ((err = s_mp_sub(x, m, x)) != MP_OKAY)                          MP_TRACE_ERROR(err, LTM_ERR_1);
    }
 
-LBL_ERR:
+LTM_ERR_1:
    mp_clear(&q);
-
+LTM_ERR:
    return err;
 }
 #endif
