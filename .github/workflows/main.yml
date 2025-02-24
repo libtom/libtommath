@@ -103,7 +103,7 @@ jobs:
           # GCC for the x64_32 architecture (32-bit longs and 32-bit pointers)
           # TODO: Probably not possible to run anything in x32 in GH actions
           #       but needs to be checked to be sure.
-          - { BUILDOPTIONS: '--with-cc=gcc --with-mx32',                                                                         SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: 'libc6-dev-x32 gcc-multilib' }
+          # - { BUILDOPTIONS: '--with-cc=gcc --with-mx32',                                                                         SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: 'libc6-dev-x32 gcc-multilib' }
 
           # GCC for the x86-64 architecture (64-bit longs and 64-bit pointers)
           - { BUILDOPTIONS: '--with-cc=gcc --with-m64 --limit-valgrind',                                                         SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: '' }
