@@ -84,9 +84,9 @@ mp_err mp_gcd(const mp_int *a, const mp_int *b, mp_int *c)
    c->sign = MP_ZPOS;
    err = MP_OKAY;
 LBL_V:
-   mp_clear(&u);
-LBL_U:
    mp_clear(&v);
+LBL_U:
+   mp_clear(&u);
    return err;
 }
 #endif

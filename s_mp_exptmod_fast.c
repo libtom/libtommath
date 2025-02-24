@@ -22,7 +22,7 @@
 mp_err s_mp_exptmod_fast(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y, int redmode)
 {
    mp_int  M[TAB_SIZE], res;
-   mp_digit buf, mp;
+   mp_digit buf, mp = 0;
    int     bitbuf, bitcpy, bitcnt, mode, digidx, x, y, winsize;
    mp_err   err;
 
