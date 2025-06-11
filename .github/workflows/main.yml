@@ -13,16 +13,16 @@ on:
     branches:
       - master
       - develop
-      - /^release\/.*$/
-      - /^support\/.*$/
-      - /^ci\/.*$/
+      - 'release/**'
+      - 'support/**'
+      - 'ci/**'
   pull_request:
     branches:
       - master
       - develop
-      - /^release\/.*$/
-      - /^support\/.*$/
-      - /^ci\/.*$/
+      - 'release/**'
+      - 'support/**'
+      - 'ci/**'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
