@@ -223,3 +223,8 @@ jobs:
           CC=${{ matrix.cc }} cmake ${{ matrix.config.CMAKEOPTIONS }} ${{ matrix.build_type }} ..
           make -j$(nproc)
           ctest
+      - name: error logs
+        if: ${{ failure() }}
+        run: |
+          cat build/Testing/Temporary/LastTest.log || true
+          cat demo/build/Testing/Temporary/LastTest.log || true
