@@ -15,7 +15,7 @@ project(libtommath
 # package release version
 # bump if re-releasing the same VERSION + patches
 # set to 1 if releasing a new VERSION
-set(PACKAGE_RELEASE_VERSION 1)
+set(PACKAGE_RELEASE_VERSION "1" CACHE STRING "")
 
 #-----------------------------------------------------------------------------
 # Include cmake modules
