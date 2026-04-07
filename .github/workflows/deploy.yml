@@ -15,7 +15,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ ubuntu-22.04, ubuntu-24.04 ]
+        os: [ ubuntu-22.04, ubuntu-24.04, ubuntu-22.04-arm, ubuntu-24.04-arm ]
     steps:
       - uses: actions/checkout@v2
       - name: set Ubuntu codename
@@ -29,19 +29,29 @@ jobs:
           sudo apt-get install -y cmake gcc
       - name: build packages
         run: |
-          mkdir -p build
+          mkdir -p build demo/build
           cd build
-          cmake -DBUILD_SHARED_LIBS=Off -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX="/usr" ..
+          cmake -DBUILD_SHARED_LIBS=Off -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX="/usr" -DPACKAGE_RELEASE_VERSION="$GITHUB_RUN_NUMBER" ..
           make -j$(nproc)
-          cpack -G DEB
-          cmake -DBUILD_SHARED_LIBS=On -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX="/usr" ..
+          pushd ../demo/build
+          cmake ..
           make -j$(nproc)
-          cpack -G DEB
+          ctest
+          popd
+          cpack -DPACKAGE_RELEASE_VERSION="$GITHUB_RUN_NUMBER" -G DEB
+          cmake -DBUILD_SHARED_LIBS=On -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX="/usr" -DPACKAGE_RELEASE_VERSION="$GITHUB_RUN_NUMBER" ..
+          make -j$(nproc)
+          pushd ../demo/build
+          cmake ..
+          make -j$(nproc)
+          ctest
+          popd
+          cpack -DPACKAGE_RELEASE_VERSION="$GITHUB_RUN_NUMBER" -G DEB
       - name: push deb packages to packagecloud.io
-        uses: computology/packagecloud-github-action@v0.6
+        uses: danielmundi/upload-packagecloud@v1
         with:
           PACKAGE-NAME: build/packages/ubuntu/${{ env.ubuntu_codename }}/*.deb
           PACKAGECLOUD-USERNAME: libtom
-          PACKAGECLOUD-REPONAME: packages
-          PACKAGECLOUD-DISTRO: ubuntu/${{ env.ubuntu_codename }}
+          PACKAGECLOUD-REPO: packages
+          PACKAGECLOUD-DISTRIB: ubuntu/${{ env.ubuntu_codename }}
           PACKAGECLOUD-TOKEN: ${{ secrets.PACKAGECLOUD_TOKEN }}
