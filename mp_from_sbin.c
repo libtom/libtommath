@@ -8,6 +8,9 @@ mp_err mp_from_sbin(mp_int *a, const uint8_t *buf, size_t size)
 {
    mp_err err;
 
+   if (size == 0) {
+      return MP_VAL;
+   }
    /* read magnitude */
    if ((err = mp_from_ubin(a, buf + 1, size - 1u)) != MP_OKAY) {
       return err;
