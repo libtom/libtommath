@@ -17,7 +17,7 @@ extern "C" {
 #endif
 
 /* MS Visual C++ doesn't have a 128bit type for words, so fall back to 32bit MPI's (where words are 64bit) */
-#if (defined(_MSC_VER) || defined(__LLP64__) || defined(__e2k__) || defined(__LCC__)) && !defined(MP_64BIT)
+#if ((defined(_MSC_VER) && !defined(__clang__)) || defined(__LLP64__) || defined(__e2k__) || defined(__LCC__)) && !defined(MP_64BIT)
 #   define MP_32BIT
 #endif
 
@@ -29,7 +29,7 @@ extern "C" {
     defined(__ia64) || defined(__ia64__) || defined(__itanium__) || defined(_M_IA64) || \
     defined(__LP64__) || defined(_LP64) || defined(__64BIT__)
 #   if !(defined(MP_64BIT) || defined(MP_32BIT) || defined(MP_16BIT))
-#      if defined(__GNUC__) && defined(__SIZEOF_INT128__) && !defined(__hppa)
+#      if defined(__GNUC__) && defined(__SIZEOF_INT128__) && !defined(__hppa) || (defined(_MSC_VER) && defined(__SIZEOF_INT128__))
 /* we support 128bit integers only via: __attribute__((mode(TI))) */
 #         define MP_64BIT
 #      else

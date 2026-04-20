@@ -49,7 +49,19 @@ endif()
 
 # We only differentiate between MSVC and GCC-compatible compilers
 if(MSVC)
-    set(LTM_C_FLAGS -W3)
+  if (CMAKE_C_COMPILER_ID STREQUAL "Clang")
+    # We are clang-cl
+    # Some flags for linux similarity and warnings
+    set(LTM_C_FLAGS -fstrict-aliasing /W3 /D_CRT_SECURE_NO_WARNINGS)
+    # Optimization flags
+    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /Zc:inline /Gw /Gy /clang:-funroll-loops")
+    # Pass optimization option to override the debug flags, and allow dead code elimination
+    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /clang:-O1" )
+    # We need to link the runtime for 128 bit int support, which clang-cl has
+    link_libraries(clang_rt.builtins-x86_64.lib)
+  else()
+    set(LTM_C_FLAGS /W3 /D_CRT_SECURE_NO_WARNINGS)
+  endif()
 elseif(WATCOM)
     set(LTM_C_FLAGS -fo=.obj -oaxt -3r -w3)
 else()
@@ -63,7 +75,7 @@ else()
 endif()
 
 # What compiler do we have and what are their...uhm... peculiarities
-if(CMAKE_C_COMPILER_ID MATCHES "(C|c?)lang")
+if(CMAKE_C_COMPILER_ID MATCHES "(C|c?)lang" AND NOT MSVC)
     list(APPEND LTM_C_FLAGS -Wno-typedef-redefinition -Wno-tautological-compare -Wno-builtin-requires-header)
     # Clang requires at least '-O1' for dead code elimination
     set(CMAKE_C_FLAGS_DEBUG "-O1 ${CMAKE_C_FLAGS_DEBUG}")
@@ -97,7 +109,7 @@ add_library(${PROJECT_NAME}
 
 target_include_directories(${PROJECT_NAME} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
 target_compile_options(${PROJECT_NAME} BEFORE PRIVATE
