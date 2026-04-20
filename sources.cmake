@@ -77,7 +77,7 @@ mp_neg.c
 mp_or.c
 mp_pack.c
 mp_pack_count.c
-mp_prime_fermat.c
+mp_prime_extra_strong_lucas.c
 mp_prime_frobenius_underwood.c
 mp_prime_is_prime.c
 mp_prime_miller_rabin.c

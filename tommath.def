@@ -80,7 +80,7 @@ EXPORTS
     mp_or
     mp_pack
     mp_pack_count
-    mp_prime_fermat
+    mp_prime_extra_strong_lucas
     mp_prime_frobenius_underwood
     mp_prime_is_prime
     mp_prime_miller_rabin

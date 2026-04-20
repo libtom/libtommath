@@ -765,9 +765,9 @@ Sets \fBresult\fP to \fBtrue\fP if \fBa\fP is probably prime, \fBfalse\fP if com
 .in -1i
 
 .LP
-.BI "mp_err mp_prime_strong_lucas_selfridge(const mp_int *" a ", bool *" result ")"
+.BI "mp_err mp_prime_extra_strong_lucas(const mp_int *" a ", bool *" result ")"
 .in 1i
-Sets \fBresult\fP to \fBtrue\fP if \fBa\fP is a strong Lucas-Selfridge pseudoprime, \fBfalse\fP otherwise.
+Sets \fBresult\fP to \fBtrue\fP if \fBa\fP is an extra strong Lucas-Selfridge pseudoprime, \fBfalse\fP otherwise.
 .br
 It has been verified that this function together with one round of Miller-Rabin to the base 2 (two) is
 deterministic up to 2^64.
