@@ -5,8 +5,12 @@
 #define TOMMATH_H_
 
 #include <stddef.h>
+#if !defined(_MSC_VER) || (_MSC_VER >= 1600)
 #include <stdint.h>
 #include <stdbool.h>
+#else
+#include "old_msvc_glue.h"
+#endif
 
 #ifndef MP_NO_FILE
 #  include <stdio.h>
