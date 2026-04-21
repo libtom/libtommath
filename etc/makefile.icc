@@ -32,20 +32,10 @@ tune: tune.o
 	$(CC) $(CFLAGS) tune.o $(LIBNAME) -o tune
 	./tune_it.sh
 
-# same app but using RDTSC for higher precision [requires 80586+], coff based gcc installs [e.g. ming, cygwin, djgpp]
-tune86: tune.c
-	nasm -f coff timer.asm
-	$(CC) -DX86_TIMER $(CFLAGS) tune.c timer.o  $(LIBNAME) -o tune86
-
-# for cygwin
-tune86c: tune.c
-	nasm -f gnuwin32 timer.asm
-	$(CC) -DX86_TIMER $(CFLAGS) tune.c timer.o  $(LIBNAME) -o tune86
-
-#make tune86 for linux or any ELF format
-tune86l: tune.c
-	nasm -f elf -DUSE_ELF timer.asm
-	$(CC) -DX86_TIMER $(CFLAGS) tune.c timer.o $(LIBNAME) -o tune86l
+# Make pretty pictures (1000 is the maximum number of limbs to print for mul/sqr)
+# "tune" runs twice because it runs automatically when build.
+graphs: tune
+	./tune_it.sh 1000
 
 # spits out mersenne primes
 mersenne: mersenne.o
@@ -64,4 +54,4 @@ mont: mont.o
 
 
 clean:
-	rm -f *.log *.o *.obj *.exe pprime tune mersenne drprime tune86 tune86l mont 2kprime pprime.dat *.il tuning_list
+	rm -f *.log *.o *.obj *.exe pprime tune mersenne drprime mont 2kprime pprime.dat get_limbsize *.il tuning_list

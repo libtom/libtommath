@@ -55,41 +55,34 @@ static unsigned int lbit(void)
    }
 }
 
-/* RDTSC from Scott Duplichan */
+
+#if defined(_WIN32)
+#  include <windows.h>
+#endif
+
 static uint64_t TIMFUNC(void)
 {
-#if defined __GNUC__
-#if defined(__i386__) || defined(__x86_64__)
-   /* version from http://www.mcs.anl.gov/~kazutomo/rdtsc.html
-    * the old code always got a warning issued by gcc, clang did not complain...
-    */
-   unsigned hi, lo;
-   __asm__ __volatile__("rdtsc" : "=a"(lo), "=d"(hi));
-   return ((uint64_t)lo)|(((uint64_t)hi)<<32);
-#else /* gcc-IA64 version */
-   unsigned long result;
-   __asm__ __volatile__("mov %0=ar.itc":"=r"(result)::"memory");
+#if _POSIX_C_SOURCE >= 199309L
+#define LTM_BILLION 1000000000
+   struct timespec ts;
 
-   while (__builtin_expect((int) result == -1, 0))
-      __asm__ __volatile__("mov %0=ar.itc":"=r"(result)::"memory");
-
-   return result;
-#endif
-
-   /* Microsoft and Intel Windows compilers */
-#elif defined _M_IX86
-   __asm rdtsc
-#elif defined _M_AMD64
-   return __rdtsc();
-#elif defined _M_IA64
-#if defined __INTEL_COMPILER
-#include <ia64intrin.h>
-#endif
-   return __getReg(3116);
+   /* TODO: Sets errno in case of error. Use? */
+   clock_gettime(CLOCK_MONOTONIC, &ts);
+   return (((uint64_t)ts.tv_sec) * LTM_BILLION + (uint64_t)ts.tv_nsec);
+#elif defined(_WIN32)
+   LARGE_INTEGER ticks;
+   QueryPerformanceCounter(&ticks);
+   return (uint64_t)ticks.QuadPart;
 #else
-#error need rdtsc function for this build
+   clock_t t;
+   t = clock();
+   if (t < (clock_t)(0)) {
+      return (uint64_t)(0);
+   }
+   return (uint64_t)(t);
 #endif
 }
+
 
 #define DO2(x) do { mp_err err = x; err = x; (void)err; }while(0)
 #define DO4(x) DO2(x); DO2(x)
@@ -141,6 +134,12 @@ int main(int argc, char **argv)
    int n, cnt, ix, old_kara_m, old_kara_s, old_toom_m, old_toom_s;
    unsigned rr;
 
+#ifdef _WIN32
+   LARGE_INTEGER Frequency;
+#else
+   struct timespec ts;
+#endif
+
    CHECK_OK(mp_init(&a));
    CHECK_OK(mp_init(&b));
    CHECK_OK(mp_init(&c));
@@ -150,10 +149,21 @@ int main(int argc, char **argv)
 
    srand(LTM_TIMING_RAND_SEED);
 
-
+#ifdef _WIN32
+   QueryPerformanceFrequency(&Frequency);
+   CLK_PER_SEC = (uint64) Frequency;
+#elif _POSIX_C_SOURCE >= 199309L
+   /* returns -1 for an error and 0 for okay, sets errno (not used here) */
+   if (clock_getres(CLOCK_MONOTONIC, &ts)) {
+      fprintf(stderr, "%d, clock_getres failed\n", __LINE__);
+      exit(EXIT_FAILURE);
+   }
+   CLK_PER_SEC = LTM_BILLION / ts.tv_nsec;
+#else
    CLK_PER_SEC = TIMFUNC();
    sleep(1);
    CLK_PER_SEC = TIMFUNC() - CLK_PER_SEC;
+#endif
 
    printf("CLK_PER_SEC == %" PRIu64 "\n", CLK_PER_SEC);
 

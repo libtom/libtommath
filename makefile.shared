@@ -92,8 +92,19 @@ $(foreach demo, $(strip $(DEMOS)), $(eval $(call DEMO_template,$(demo))))
 mtest:
 	cd mtest ; $(CC) $(LTM_CFLAGS) -O0 mtest.c $(LTM_LDFLAGS) -o mtest
 
-tune: $(LIBNAME)
-	$(LTCOMPILE) $(LTM_CFLAGS) -c etc/tune.c -o etc/tune.o
-	$(LTLINK) $(LTM_LDFLAGS) -o etc/tune etc/tune.o $(LIBNAME)
-	cd etc/; /bin/sh tune_it.sh; cd ..
+# etc/tune.c uses hidden symbols, so we assume that only difference between the shared and static
+# libraries is just that: they are shared or static and simply build a static library to run
+# etc/tune
+tune:
+	$(MAKE) -f makefile tune
+	$(MAKE) -f makefile clean
 	$(MAKE) -f makefile.shared
+
+graphs:
+	$(MAKE) -f makefile graphs
+	$(MAKE) -f makefile clean
+	$(MAKE) -f makefile.shared
+
+
+
+

@@ -85,6 +85,10 @@ tune: $(LIBMAIN_S)
 	$(MAKE) -C etc tune
 	$(MAKE)
 
+graphs: $(LIBNAME)
+	$(MAKE) -C etc graphs
+	$(MAKE)
+
 #NOTE: this makefile works also on cygwin, thus we need to delete *.exe
 clean:
 	-@rm -f $(OBJECTS) $(LIBMAIN_S)

@@ -86,6 +86,11 @@ tune: $(LIBNAME_S)
 	$(MAKE) -C etc tune
 	$(MAKE)
 
+graphs: $(LIBNAME)
+	$(MAKE) -C etc graphs
+	$(MAKE)
+
+
 clean:
 	@-cmd /c del /Q /S *.o *.a *.exe *.dll 2>nul
 

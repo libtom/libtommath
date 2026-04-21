@@ -24,6 +24,9 @@ static uint64_t s_time_mul(int size);
 static uint64_t s_time_sqr(int size);
 static void s_usage(char *s);
 
+#if defined(_WIN32)
+#  include <windows.h>
+#endif
 static uint64_t s_timer_function(void)
 {
 #if _POSIX_C_SOURCE >= 199309L
@@ -33,6 +36,10 @@ static uint64_t s_timer_function(void)
    /* TODO: Sets errno in case of error. Use? */
    clock_gettime(CLOCK_MONOTONIC, &ts);
    return (((uint64_t)ts.tv_sec) * LTM_BILLION + (uint64_t)ts.tv_nsec);
+#elif defined(_WIN32)
+   LARGE_INTEGER ticks;
+   QueryPerformanceCounter(&ticks);
+   return (uint64_t)ticks.QuadPart;
 #else
    clock_t t;
    t = clock();
@@ -42,7 +49,6 @@ static uint64_t s_timer_function(void)
    return (uint64_t)(t);
 #endif
 }
-
 /* generic ISO C timer */
 static uint64_t s_timer_tmp;
 static void s_timer_start(void)
@@ -66,7 +72,7 @@ static uint64_t s_time_mul(int size)
    int x;
    mp_err  e;
    mp_int  a, b, c, d;
-   uint64_t t1;
+   uint64_t t1 = 0u;
 
    if ((e = mp_init_multi(&a, &b, &c, &d, NULL)) != MP_OKAY) {
       t1 = UINT64_MAX;
@@ -82,12 +88,14 @@ static uint64_t s_time_mul(int size)
       goto LBL_ERR;
    }
 
-   s_timer_start();
+
    for (x = 0; x < s_number_of_test_loops; x++) {
+      s_timer_start();
       if ((e = mp_mul(&a,&b,&c)) != MP_OKAY) {
          t1 = UINT64_MAX;
          goto LBL_ERR;
       }
+      t1 += s_timer_stop();
       if (s_check_result == 1) {
          if ((e = s_mp_mul_full(&a,&b,&d)) != MP_OKAY) {
             t1 = UINT64_MAX;
@@ -101,7 +109,7 @@ static uint64_t s_time_mul(int size)
       }
    }
 
-   t1 = s_timer_stop();
+
 LBL_ERR:
    mp_clear_multi(&a, &b, &c, &d, NULL);
    return t1;
@@ -112,7 +120,7 @@ static uint64_t s_time_sqr(int size)
    int x;
    mp_err  e;
    mp_int  a, b, c;
-   uint64_t t1;
+   uint64_t t1 = 0u;
 
    if ((e = mp_init_multi(&a, &b, &c, NULL)) != MP_OKAY) {
       t1 = UINT64_MAX;
@@ -124,12 +132,14 @@ static uint64_t s_time_sqr(int size)
       goto LBL_ERR;
    }
 
-   s_timer_start();
+
    for (x = 0; x < s_number_of_test_loops; x++) {
+      s_timer_start();
       if ((e = mp_sqr(&a,&b)) != MP_OKAY) {
          t1 = UINT64_MAX;
          goto LBL_ERR;
       }
+      t1 += s_timer_stop();
       if (s_check_result == 1) {
          if ((e = s_mp_sqr(&a,&c)) != MP_OKAY) {
             t1 = UINT64_MAX;
@@ -142,7 +152,7 @@ static uint64_t s_time_sqr(int size)
       }
    }
 
-   t1 = s_timer_stop();
+
 LBL_ERR:
    mp_clear_multi(&a, &b, &c, NULL);
    return t1;
@@ -288,7 +298,7 @@ int main(int argc, char **argv)
    int opt;
    struct cutoffs orig, updated;
 
-   FILE *squaring, *multiplying;
+   FILE *squaring, *multiplying, *out;
    char mullog[256] = "multiplying";
    char sqrlog[256] = "squaring";
    s_number_of_test_loops = 64;
@@ -309,6 +319,14 @@ int main(int argc, char **argv)
    if (argc != 1) {
       for (opt = 1; (opt < argc) && (argv[opt][0] == '-'); opt++) {
          switch (argv[opt][1]) {
+         case 'Z':
+            out = fopen("out", "w");
+            if (out == NULL) {
+               fprintf(stderr, "Opening file \"%s\" failed\n", "out");
+               exit(EXIT_FAILURE);
+            }
+            fprintf(out,"%d",MP_DIGIT_BIT);
+            exit(EXIT_SUCCESS);
          case 'T':
             args.testmode = 1;
             s_check_result = 1;
@@ -433,6 +451,7 @@ int main(int argc, char **argv)
       }
    }
 
+
    /*
      mp_rand uses the cryptographically secure
      source of the OS by default. That is too expensive, too slow and
@@ -469,7 +488,6 @@ int main(int argc, char **argv)
          if (test[n].fn != NULL) {
             s_run(test[n].name, test[n].fn, test[n].cutoff);
             *test[n].update = *test[n].cutoff;
-            *test[n].cutoff = INT_MAX;
          }
       }
    }
@@ -479,14 +497,10 @@ int main(int argc, char **argv)
              updated.SQR_KARATSUBA,
              updated.MUL_TOOM,
              updated.SQR_TOOM);
-   } else {
-      printf("MUL_KARATSUBA_CUTOFF = %d\n", updated.MUL_KARATSUBA);
-      printf("SQR_KARATSUBA_CUTOFF = %d\n", updated.SQR_KARATSUBA);
-      printf("MUL_TOOM_CUTOFF = %d\n", updated.MUL_TOOM);
-      printf("SQR_TOOM_CUTOFF = %d\n", updated.SQR_TOOM);
    }
 
    if (args.print == 1) {
+
       printf("Printing data for graphing to \"%s\" and \"%s\"\n",mullog, sqrlog);
 
       multiplying = fopen(mullog, "w+");

@@ -6,4 +6,4 @@ cmp:
 	gnuplot before_after.dem
 
 clean:
-	rm -f *-*.log *.png graphs-*.dem
+	rm -f *.log *.png graphs-*.dem
