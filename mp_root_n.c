@@ -18,6 +18,22 @@ mp_err mp_root_n(const mp_int *a, int b, mp_int *c)
    int    ilog2;
    mp_err err;
 
+
+   if (b == 0) {
+      mp_set(c, 0);
+      return MP_VAL;
+   }
+
+   /* 0^(1/x) = 0 with x != 0 is allowed */
+   if (mp_iszero(a)) {
+      mp_set(c, 0);
+      if (b != 0) {
+         return MP_OKAY;
+      } else {
+         return MP_VAL;
+      }
+   }
+
    if (b < 0 || (unsigned)b > (unsigned)MP_DIGIT_MAX) {
       return MP_VAL;
    }
@@ -109,7 +125,8 @@ mp_err mp_root_n(const mp_int *a, int b, mp_int *c)
       cmp = mp_cmp(&t2, &a_);
       if (cmp == MP_EQ) {
          err = MP_OKAY;
-         goto LBL_ERR;
+         /* On point, skip overshoot correction */
+         goto LBL_SET;
       }
       if (cmp == MP_LT) {
          if ((err = mp_add_d(&t1, 1uL, &t1)) != MP_OKAY)          goto LBL_ERR;
@@ -127,6 +144,7 @@ mp_err mp_root_n(const mp_int *a, int b, mp_int *c)
       }
    }
 
+LBL_SET:
    /* set the result */
    mp_exch(&t1, c);
 
