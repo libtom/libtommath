@@ -23,31 +23,6 @@ LTM_ERR:
    return err;
 }
 
-static mp_err s_approx_log(const mp_int *a, const mp_int *b, int *lb)
-{
-   mp_int La, Lb, t;
-   mp_err err;
-
-   if ((err = mp_init_multi(&La, &Lb, &t, NULL)) != MP_OKAY) {
-      return err;
-   }
-
-   if ((err = s_mp_fp_log(a, &La)) != MP_OKAY)                                                            goto LTM_ERR;
-   if ((err = s_mp_fp_log(b, &Lb)) != MP_OKAY)                                                            goto LTM_ERR;
-
-   if ((err = mp_add_d(&Lb, 1u, &t)) != MP_OKAY)                                                          goto LTM_ERR;
-   if ((err = mp_div_2(&t, &t)) != MP_OKAY)                                                               goto LTM_ERR;
-   if ((err = mp_sub(&La, &t, &t)) != MP_OKAY)                                                            goto LTM_ERR;
-   if ((err = mp_div(&t, &Lb, &t, NULL)) != MP_OKAY)                                                      goto LTM_ERR;
-   if ((err = mp_add_d(&t, 1u, &t)) != MP_OKAY)                                                           goto LTM_ERR;
-
-   *lb = mp_get_i32(&t);
-   err = MP_OKAY;
-LTM_ERR:
-   mp_clear_multi(&t, &Lb, &La, NULL);
-   return err;
-}
-
 mp_err mp_log(const mp_int *a, const mp_int *b, int *lb)
 {
    mp_int bn;
@@ -82,11 +57,8 @@ mp_err mp_log(const mp_int *a, const mp_int *b, int *lb)
       return MP_OKAY;
    }
 
-   if (MP_HAS(S_MP_WORD_TOO_SMALL)) {
-      err = s_approx_log(a, b, &n);
-   } else {
-      err = s_approx_log_d(a, b, &n);
-   }
+   err = s_approx_log_d(a, b, &n);
+
    if (err != MP_OKAY) {
       return err;
    }

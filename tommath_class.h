@@ -134,6 +134,7 @@
 #   define MP_WARRAY_FREE_C
 #   define MP_XOR_C
 #   define MP_ZERO_C
+#   define S_MP_32_UMUL32_C
 #   define S_MP_ADD_C
 #   define S_MP_COPY_DIGS_C
 #   define S_MP_DIV_3_C
@@ -142,6 +143,7 @@
 #   define S_MP_DIV_SMALL_C
 #   define S_MP_EXPTMOD_C
 #   define S_MP_EXPTMOD_FAST_C
+#   define S_MP_FP_EXP2_C
 #   define S_MP_FP_LOG_C
 #   define S_MP_FP_LOG_D_C
 #   define S_MP_GET_BIT_C
@@ -162,6 +164,8 @@
 #   define S_MP_RADIX_SIZE_OVERESTIMATE_C
 #   define S_MP_RAND_PLATFORM_C
 #   define S_MP_RAND_SOURCE_C
+#   define S_MP_ROOT_N_C
+#   define S_MP_SET_WORD_C
 #   define S_MP_SQR_C
 #   define S_MP_SQR_COMBA_C
 #   define S_MP_SQR_KARATSUBA_C
@@ -487,24 +491,17 @@
 #endif
 
 #if defined(MP_LOG_C)
-#   define MP_ADD_D_C
 #   define MP_CLEAR_C
-#   define MP_CLEAR_MULTI_C
 #   define MP_CMP_C
 #   define MP_CMP_D_C
 #   define MP_CNT_LSB_C
 #   define MP_COUNT_BITS_C
-#   define MP_DIV_2_C
 #   define MP_DIV_C
 #   define MP_DIV_D_C
 #   define MP_EXPT_N_C
-#   define MP_GET_I32_C
 #   define MP_INIT_C
-#   define MP_INIT_MULTI_C
 #   define MP_MUL_C
 #   define MP_MUL_D_C
-#   define MP_SUB_C
-#   define S_MP_FP_LOG_C
 #   define S_MP_FP_LOG_D_C
 #endif
 
@@ -813,21 +810,7 @@
 #endif
 
 #if defined(MP_ROOT_N_C)
-#   define MP_2EXPT_C
-#   define MP_ADD_D_C
-#   define MP_CLEAR_MULTI_C
-#   define MP_CMP_C
-#   define MP_COPY_C
-#   define MP_COUNT_BITS_C
-#   define MP_DIV_C
-#   define MP_EXCH_C
-#   define MP_EXPT_N_C
-#   define MP_INIT_MULTI_C
-#   define MP_MUL_C
-#   define MP_MUL_D_C
-#   define MP_SET_C
-#   define MP_SUB_C
-#   define MP_SUB_D_C
+#   define S_MP_ROOT_N_C
 #endif
 
 #if defined(MP_RSHD_C)
@@ -975,6 +958,9 @@
 #   define S_MP_ZERO_DIGS_C
 #endif
 
+#if defined(S_MP_32_UMUL32_C)
+#endif
+
 #if defined(S_MP_ADD_C)
 #   define MP_CLAMP_C
 #   define MP_GROW_C
@@ -1078,6 +1064,25 @@
 #   define S_MP_MONTGOMERY_REDUCE_COMBA_C
 #endif
 
+#if defined(S_MP_FP_EXP2_C)
+#   define MP_2EXPT_C
+#   define MP_ADD_C
+#   define MP_CLEAR_MULTI_C
+#   define MP_DIV_2D_C
+#   define MP_EXCH_C
+#   define MP_GET_I32_C
+#   define MP_GET_L_C
+#   define MP_INIT_MULTI_C
+#   define MP_MUL_2D_C
+#   define MP_MUL_C
+#   define MP_SET_C
+#   define MP_SET_U32_C
+#   define MP_SUB_C
+#   define S_MP_32_UMUL32_C
+#   define S_MP_FP_EXP2_FRACT_NEW_C
+#   define S_MP_MULHI_U32_C
+#endif
+
 #if defined(S_MP_FP_LOG_C)
 #   define MP_2EXPT_C
 #   define MP_ADD_C
@@ -1098,10 +1103,11 @@
 #   define MP_CLEAR_C
 #   define MP_COUNT_BITS_C
 #   define MP_DIV_2D_C
-#   define MP_GET_I64_C
+#   define MP_GET_MAG_U32_C
 #   define MP_INIT_C
-#   define S_MP_FLOG2_MP_WORD_D_C
-#   define S_MP_FP_LOG_FRACTION_D_C
+#   define S_MP_32_LOG2_C
+#   define S_MP_32_SHR_C
+#   define S_MP_32_UMUL32_C
 #endif
 
 #if defined(S_MP_GET_BIT_C)
@@ -1251,6 +1257,33 @@
 
 #if defined(S_MP_RAND_SOURCE_C)
 #   define S_MP_RAND_PLATFORM_C
+#endif
+
+#if defined(S_MP_ROOT_N_C)
+#   define MP_ADD_C
+#   define MP_ADD_D_C
+#   define MP_CLEAR_MULTI_C
+#   define MP_CMP_C
+#   define MP_COPY_C
+#   define MP_COUNT_BITS_C
+#   define MP_DIV_C
+#   define MP_EXCH_C
+#   define MP_EXPT_N_C
+#   define MP_INIT_MULTI_C
+#   define MP_MUL_2D_C
+#   define MP_MUL_C
+#   define MP_MUL_D_C
+#   define MP_SET_C
+#   define MP_SET_I64_C
+#   define MP_SUB_C
+#   define MP_SUB_D_C
+#   define S_MP_FP_EXP2_C
+#   define S_MP_FP_LOG_D_C
+#   define S_MP_SET_WORD_C
+#endif
+
+#if defined(S_MP_SET_WORD_C)
+#   define S_MP_ZERO_DIGS_C
 #endif
 
 #if defined(S_MP_SQR_C)

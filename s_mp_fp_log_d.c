@@ -3,43 +3,65 @@
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
-static mp_word s_mp_flog2_mp_word_d(mp_word value)
+
+/* LibTomMath, multiple-precision integer library -- Tom St Denis */
+/* SPDX-License-Identifier: Unlicense */
+
+
+static void s_mp_32_shr(uint32_t high, uint32_t low, uint32_t shift, uint32_t *r_high, uint32_t *r_low)
 {
-   mp_word r = 0u;
-   while ((value >>= 1) != 0u) {
-      r++;
+   if (shift == 0) {
+      *r_high = high;
+      *r_low = low;
+   } else if (shift >= 64) {
+      *r_high = 0;
+      *r_low = 0;
+   } else if (shift >= 32) {
+      *r_high = 0;
+      *r_low = high >> (shift - 32);
+   } else {
+      *r_high = high >> shift;
+      *r_low = (low >> shift) | (high << (32 - shift));
    }
-   return r;
 }
 
+#define MP_FP_16_HALF (1UL << 15)
+#define MP_FP_16_ONE (1UL << 16)
+#define MP_FP_16_TWO (1UL << 17)
+
 /* Fixed point bitwise logarithm base two of "x" with precision "p"  */
-static mp_err s_mp_fp_log_fraction_d(mp_word x, int p, mp_word *c)
+static uint32_t s_mp_32_log2(uint32_t x)
 {
-   mp_word b, L_out, L, a_bar, twoep;
-   int i;
+   uint32_t result = 0, a, b, bit;
 
-   L = s_mp_flog2_mp_word_d(x);
-
-   if ((L + (mp_word)p) > MP_UPPER_LIMIT_FIXED_LOG) {
-      return MP_VAL;
+   if (x == 0) {
+      /* works because log(x) < x */
+      return UINT32_MAX;
    }
 
-   a_bar = ((mp_word)p < L) ? x << (L - (mp_word)p) : x << ((mp_word)p - L);
-   b = (mp_word)(1u) << (p - 1);
-   L_out = L << p;
+   /* log2(1) == 0 */
+   if (x == MP_FP_16_ONE) {
+      return 0;
+   }
 
-   twoep = (mp_word)(1u) << (p + 1);
+   while (x >= MP_FP_16_TWO) {
+      result += MP_FP_16_ONE;
+      x >>= 1;
+   }
 
-   for (i = 0; i < p; i++) {
-      a_bar = (a_bar * a_bar) >> p;
-      if (a_bar >= twoep) {
-         a_bar >>= 1u;
-         L_out += b;
+   bit = MP_FP_16_HALF;
+
+   while (bit > 0) {
+      s_mp_32_umul32(x, x, &a, &b);
+      s_mp_32_shr(a, b, 16, &a, &x);
+
+      if (x >= (1 << 17)) {
+         result |= bit;
+         x >>= 1;
       }
-      b >>= 1u;
+      bit >>= 1;
    }
-   *c = L_out;
-   return MP_OKAY;
+   return result;
 }
 
 /* Approximate the base two logarithm of "a" */
@@ -48,7 +70,7 @@ mp_err s_mp_fp_log_d(const mp_int *a, mp_word *c)
    mp_err err;
    int la;
    int prec = MP_PRECISION_FIXED_LOG;
-   mp_word tmp, la_word;
+   uint32_t tmp, la_word;
    mp_int t;
 
    la = mp_count_bits(a) - 1;
@@ -58,21 +80,25 @@ mp_err s_mp_fp_log_d(const mp_int *a, mp_word *c)
       if ((err = mp_init(&t)) != MP_OKAY)                                                                 goto LTM_ERR;
       /* Get enough msb-bits for the chosen precision */
       if ((err = mp_div_2d(a, la - prec, &t, NULL)) != MP_OKAY)                                           goto LTM_ERR;
-      tmp = mp_get_u64(&t);
+      tmp = mp_get_mag_u32(&t);
       /* Compute the low precision approximation for the fractional part */
-      if ((err = s_mp_fp_log_fraction_d(tmp, prec, &la_word)) != MP_OKAY)                                   goto LTM_ERR;
+      la_word = s_mp_32_log2(tmp<<MP_FP_SCALE_LOG);
+      if (la_word == UINT32_MAX) {
+         err = MP_VAL;
+         goto LTM_ERR;
+      }
       /* Compute the integer part and add it */
-      tmp = ((mp_word)(la - prec))<<prec;
+      tmp = (uint32_t)((la - prec)<<MP_FP_SCALE_LOG);
       la_word += tmp;
       mp_clear(&t);
    } else {
-      tmp = mp_get_u64(a);
-      if ((err = s_mp_fp_log_fraction_d(tmp, prec, &la_word)) != MP_OKAY) {
-         return err;
-      }
+      tmp = mp_get_mag_u32(a);
+      la_word = s_mp_32_log2(tmp<<MP_FP_SCALE_LOG);
+      tmp = (uint32_t)la << prec;
+      la_word += tmp;
    }
 
-   *c = la_word;
+   *c = (mp_word)la_word;
 
    return MP_OKAY;
 LTM_ERR:

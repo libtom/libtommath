@@ -182,16 +182,6 @@ MP_STATIC_ASSERT(min_prec_geq_uint64size,
 #define MP_HAS_SET_DOUBLE
 #endif
 
-/*
-  The mp_log functions rely on the size of mp_word being larger than INT_MAX and in case
-  there is a really weird architecture we try to check for it. Not a 100% reliable
-  test but it has a safe fallback.
- */
-#if !(((UINT_MAX == UINT32_MAX) && (MP_WORD_SIZE > 4)) \
-      || ((UINT_MAX == UINT16_MAX) && (MP_WORD_SIZE > 2)))
-#define S_MP_WORD_TOO_SMALL_C
-#endif
-
 /* random number source */
 extern MP_PRIVATE mp_err(*s_mp_rand_source)(void *out, size_t size);
 
@@ -228,11 +218,21 @@ MP_PRIVATE void s_mp_copy_digs(mp_digit *d, const mp_digit *s, int digits);
 MP_PRIVATE void s_mp_zero_buf(void *mem, size_t size);
 MP_PRIVATE void s_mp_zero_digs(mp_digit *d, int digits);
 MP_PRIVATE mp_err s_mp_radix_size_overestimate(const mp_int *a, const int radix, size_t *size);
+/* Maximum of 13 bit usable, but it is still enough */
+#define MP_PRECISION_FIXED_LOG   ( (int) (((sizeof(uint32_t) * CHAR_BIT) / 2) - 3))
+/* Scaling factor for a Q16.16 fixed point type */
+#define MP_FP_SCALE_LOG ( (int) ( (sizeof(uint32_t) * CHAR_BIT)/2) )
 
-#define MP_PRECISION_FIXED_LOG   ( (int) (((sizeof(mp_word) * CHAR_BIT) / 2) - 1))
-#define MP_UPPER_LIMIT_FIXED_LOG ( (int) ( (sizeof(mp_word) * CHAR_BIT) - 1))
-MP_PRIVATE mp_err s_mp_fp_log(const mp_int *a, mp_int *c) MP_WUR;
+/* set to single mp_word */
+MP_PRIVATE void s_mp_set_word(mp_int *a, mp_word w);
+
 MP_PRIVATE mp_err s_mp_fp_log_d(const mp_int *a, mp_word *c) MP_WUR;
+MP_PRIVATE mp_err s_mp_fp_log(const mp_int *a, mp_int *c) MP_WUR;
+MP_PRIVATE void s_mp_32_umul32(uint32_t a, uint32_t b, uint32_t *high, uint32_t *low);
+/* Scaling factor for a Q0.32 fixed point type */
+#define MP_FP_SCALE_EXP ((int)(sizeof(uint32_t) *(size_t)CHAR_BIT))
+MP_PRIVATE mp_err s_mp_fp_exp2(const mp_int *a, mp_int *c) MP_WUR;
+MP_PRIVATE mp_err s_mp_root_n(const mp_int *a, int b, mp_int *c, bool *is_perfect_power) MP_WUR;
 
 #ifdef MP_SMALL_STACK_SIZE
 
@@ -344,3 +344,11 @@ extern MP_PRIVATE const mp_digit s_mp_prime_tab[];
     }
 
 #endif
+
+
+
+
+
+
+
+

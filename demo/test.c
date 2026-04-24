@@ -1454,12 +1454,6 @@ static int test_mp_log_n(void)
    int base, lb, size, i;
    const int max_base = MP_MIN(INT_MAX, MP_DIGIT_MAX);
 
-   if (MP_HAS(S_MP_WORD_TOO_SMALL)) {
-      fprintf(stderr, "Testing mp_log_n with restricted size of mp_word.\n");
-   } else {
-      fprintf(stderr, "Testing mp_log_n with normal size of mp_word.\n");
-   }
-
    DOR(mp_init(&a));
 
    /*
@@ -1930,6 +1924,26 @@ static int test_mp_root_n(void)
          EXPECT(mp_cmp(&r, &c) == MP_EQ);
       }
    }
+
+   /* 0^(1/x) = 0 with x != 0 is allowed, test */
+   mp_set(&a, 0);
+   DO(mp_root_n(&a, 2, &c));
+   EXPECT(mp_cmp_d(&c, 0) == MP_EQ);
+
+   /* Not allowed: division by zero */
+   mp_set(&a, 2);
+   EXPECT(mp_root_n(&a, 0, &c) == MP_VAL);
+
+   /* root^base == input with small input and base */
+   mp_set(&a, 4);
+   DO(mp_root_n(&a, 2, &c));
+   EXPECT(mp_cmp_d(&c, 2) == MP_EQ);
+
+   /* (root^base)^(1/(base + 1)) with small root */
+   DO(mp_2expt(&a, 48));
+   DO(mp_root_n(&a, 49, &c));
+   EXPECT(mp_cmp_d(&c, 1) == MP_EQ);
+
    mp_clear_multi(&a, &c, &r, NULL);
    return EXIT_SUCCESS;
 LBL_ERR:
@@ -2647,8 +2661,9 @@ static int unit_tests(int argc, char **argv)
             if (j == argc) continue;
          }
 
-         if (test[i].fn)
+         if (test[i].fn) {
             j = test[i].fn();
+         }
       } else if (MP_HAS(MULTI_THREADED)) {
          EXPECT(thread_join(&test_threads[i], &res) == 0);
          j = res->ret;
