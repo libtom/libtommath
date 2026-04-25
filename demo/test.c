@@ -1930,6 +1930,25 @@ static int test_mp_root_n(void)
          EXPECT(mp_cmp(&r, &c) == MP_EQ);
       }
    }
+   /* 0^(1/x) = 0 with x != 0 is allowed, test */
+   mp_set(&a, 0);
+   DO(mp_root_n(&a, 2, &c));
+   EXPECT(mp_cmp_d(&c, 0) == MP_EQ);
+
+   /* Not allowed: division by zero */
+   mp_set(&a, 2);
+   EXPECT(mp_root_n(&a, 0, &c) == MP_VAL);
+
+   /* root^base == input with small input and base */
+   mp_set(&a, 4);
+   DO(mp_root_n(&a, 2, &c));
+   EXPECT(mp_cmp_d(&c, 2) == MP_EQ);
+
+   /* (root^base)^(1/(base + 1)) with small root */
+   DO(mp_2expt(&a, 48));
+   DO(mp_root_n(&a, 49, &c));
+   EXPECT(mp_cmp_d(&c, 1) == MP_EQ);
+
    mp_clear_multi(&a, &c, &r, NULL);
    return EXIT_SUCCESS;
 LBL_ERR:
