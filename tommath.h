@@ -259,6 +259,8 @@ mp_err mp_init_ul(mp_int *a, unsigned long b) MP_WUR;
 void mp_set(mp_int *a, mp_digit b);
 mp_err mp_init_set(mp_int *a, mp_digit b) MP_WUR;
 
+
+
 /* copy, b = a */
 mp_err mp_copy(const mp_int *a, mp_int *b) MP_WUR;
 

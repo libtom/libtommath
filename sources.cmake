@@ -125,6 +125,7 @@ mp_unpack.c
 mp_warray_free.c
 mp_xor.c
 mp_zero.c
+s_mp_32_umul32.c
 s_mp_add.c
 s_mp_copy_digs.c
 s_mp_div_3.c
@@ -133,6 +134,7 @@ s_mp_div_school.c
 s_mp_div_small.c
 s_mp_exptmod.c
 s_mp_exptmod_fast.c
+s_mp_fp_exp2.c
 s_mp_fp_log.c
 s_mp_fp_log_d.c
 s_mp_get_bit.c
@@ -153,6 +155,8 @@ s_mp_radix_map.c
 s_mp_radix_size_overestimate.c
 s_mp_rand_platform.c
 s_mp_rand_source.c
+s_mp_root_n.c
+s_mp_set_word.c
 s_mp_sqr.c
 s_mp_sqr_comba.c
 s_mp_sqr_karatsuba.c
