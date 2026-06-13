@@ -16,7 +16,8 @@ else
 fi
 
 ret=0
-TEST_CFLAGS=""
+# Test mp_fprintf, too, even if not included explicitly
+TEST_CFLAGS=" -DMP_WITH_MP_FPRINTF "
 
 _help()
 {
@@ -112,14 +113,14 @@ _fixup_cflags() {
   case "$compiler_version" in
     clang*=4.2.1)
       # one of my versions of clang complains about some stuff in stdio.h and stdarg.h ...
-      TEST_CFLAGS="-Wno-typedef-redefinition"
+      TEST_CFLAGS+=" -Wno-typedef-redefinition "
     ;;
     gcc*=9)
       # gcc 9 seems to sometimes think that variables are uninitialized, but they are.
-      TEST_CFLAGS="-Wno-maybe-uninitialized"
+      TEST_CFLAGS+=" -Wno-maybe-uninitialized "
     ;;
     *)
-      TEST_CFLAGS=""
+      TEST_CFLAGS+=""
     ;;
   esac
   echo $compiler_version
