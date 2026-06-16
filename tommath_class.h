@@ -335,12 +335,6 @@
 #endif
 
 #if defined(MP_FPRINTF_C)
-#   define MP_CLEAR_C
-#   define MP_COPY_C
-#   define MP_INIT_C
-#   define MP_SET_C
-#   define S_MP_FPRINT_C
-#   define S_MP_PARSE_PRINTF_TOKEN_C
 #endif
 
 #if defined(MP_FREAD_C)
@@ -1118,8 +1112,6 @@
 #endif
 
 #if defined(S_MP_FPRINT_C)
-#   define S_MP_SPRINT_C
-#   define S_MP_ZERO_BUF_C
 #endif
 
 #if defined(S_MP_GET_BIT_C)
@@ -1275,8 +1267,6 @@
 #endif
 
 #if defined(S_MP_SPRINT_C)
-#   define MP_RADIX_SIZE_C
-#   define MP_TO_RADIX_C
 #endif
 
 #if defined(S_MP_SQR_C)

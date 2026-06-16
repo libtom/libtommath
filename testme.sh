@@ -344,7 +344,7 @@ fi
 
 if [[ "$CHECK_SYMBOLS" == "1" ]]
 then
-  make -f makefile.shared
+  CFLAGS=" -DMP_WITH_MP_FPRINTF " make -f makefile.shared
   cat << EOF
 
 

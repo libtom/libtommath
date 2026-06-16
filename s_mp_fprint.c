@@ -14,7 +14,7 @@ int s_mp_fprint(const mp_int *a, size_t maxlen, unsigned int flags, int radix, F
    if (written < 0) {
       goto LTM_ERR;
    }
-   if(buffer != NULL) {
+   if (buffer != NULL) {
       printed = fprintf(stream,"%s", buffer);
    }
    if (printed < 0) {

@@ -15,6 +15,7 @@ bool s_mp_parse_printf_token(const char *format, printf_token *token)
     */
    const char *specifiers = "iduopxXcsfFgGeEtpaAnbBK%";
    const char *p = format + 1;
+   int i;
 
    if ((format == NULL) || (*format != '%')) {
       return false;
@@ -130,7 +131,7 @@ bool s_mp_parse_printf_token(const char *format, printf_token *token)
 
    match = true;
    /* Only check for validity now, details in the main loop */
-   for (int i = 0;; i++) {
+   for (i = 0;; i++) {
       if (*p == '\0') {
          match = false;
          break;
