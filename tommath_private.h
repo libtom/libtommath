@@ -234,6 +234,69 @@ MP_PRIVATE mp_err s_mp_radix_size_overestimate(const mp_int *a, const int radix,
 MP_PRIVATE mp_err s_mp_fp_log(const mp_int *a, mp_int *c) MP_WUR;
 MP_PRIVATE mp_err s_mp_fp_log_d(const mp_int *a, mp_word *c) MP_WUR;
 
+
+#ifndef MP_NO_FILE
+#ifdef MP_WITH_MP_FPRINTF
+#include <ctype.h>
+#include <stdarg.h>
+#include <wchar.h>
+
+/* TODO: Quite a mix of storage methods (preproc, enum, struct,...), clean up! */
+#define FLAG_LEFT_JUSTIFY (1 << 0) /* '-' */
+#define FLAG_FORCE_SIGN   (1 << 1) /* '+' */
+#define FLAG_SPACE_SIGN   (1 << 2) /* ' ' */
+#define FLAG_HASH         (1 << 3) /* '#' */
+#define FLAG_ZERO_PAD     (1 << 4) /* '0' */
+/* TODO: would need locale. Implement nevertheless? */
+/* #define FLAG_THOUSAND_SEP (1 << 5) */ /* "'" */
+
+/*  Length Modifiers */
+/*
+   There are not many letters avaiable for extensions. The most logical
+   is 'Z' (also used by GMP for mpz) but that printf's manpage says "Do not use".
+   We don't care and use 'Z'.
+   Others are:
+   'q' seems to be a synonym for 'll', 'Q' (uppercase q) is free, (used
+   by gmp for mpq), 'F' (uppercase 'f') is available (used by gmp for
+   floating point). 'M' (uppercase 'm') is used by gmp to print a limb, 'N'
+   (uppercase 'n') for the limbarray
+
+   TODO: limb might be interesting, add?
+*/
+typedef enum {
+   LEN_NONE,
+   LEN_h,   /* short (or signed char if hh) */
+   LEN_hh,  /* char */
+   LEN_l,   /* long (or wchar_t) */
+   LEN_ll,  /* long long */
+   LEN_j,   /* intmax_t */
+   LEN_z,   /* size_t */
+   LEN_t,   /* ptrdiff_t */
+   /* Check if the diy-dtoa algorithm supports long double
+      easily (ld-mantissa has 64 bits, so it is possible)  */
+   LEN_L,   /* long double */
+   LEN_Z    /* arbitrary precision */
+} length_modifier;
+
+/* width/precision either not given or dynamic via '*' and argument */
+#define MP_PRINTF_OMITTED (-1)
+#define MP_PRINTF_DYNAMIC (-2)
+typedef struct {
+   unsigned int flags;
+   int width;
+   int precision;
+   length_modifier length;
+   char specifier;
+   const char *start_ptr;
+   const char *end_ptr;
+} printf_token;
+
+
+MP_PRIVATE bool s_mp_parse_printf_token(const char *format, printf_token *token);
+MP_PRIVATE int  s_mp_fprint(const mp_int *a, size_t maxlen, unsigned int flags, int radix, FILE *stream);
+MP_PRIVATE int  s_mp_sprint(const mp_int *a, size_t maxlen, unsigned int flags, int radix, char **formatted);
+#endif
+#endif
 #ifdef MP_SMALL_STACK_SIZE
 
 #if defined(__GNUC__)

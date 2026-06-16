@@ -40,6 +40,7 @@
 #   define MP_EXPT_N_C
 #   define MP_EXPTMOD_C
 #   define MP_EXTEUCLID_C
+#   define MP_FPRINTF_C
 #   define MP_FREAD_C
 #   define MP_FROM_SBIN_C
 #   define MP_FROM_UBIN_C
@@ -144,6 +145,7 @@
 #   define S_MP_EXPTMOD_FAST_C
 #   define S_MP_FP_LOG_C
 #   define S_MP_FP_LOG_D_C
+#   define S_MP_FPRINT_C
 #   define S_MP_GET_BIT_C
 #   define S_MP_INVMOD_C
 #   define S_MP_INVMOD_ODD_C
@@ -156,12 +158,14 @@
 #   define S_MP_MUL_HIGH_COMBA_C
 #   define S_MP_MUL_KARATSUBA_C
 #   define S_MP_MUL_TOOM_C
+#   define S_MP_PARSE_PRINTF_TOKEN_C
 #   define S_MP_PRIME_IS_DIVISIBLE_C
 #   define S_MP_PRIME_TAB_C
 #   define S_MP_RADIX_MAP_C
 #   define S_MP_RADIX_SIZE_OVERESTIMATE_C
 #   define S_MP_RAND_PLATFORM_C
 #   define S_MP_RAND_SOURCE_C
+#   define S_MP_SPRINT_C
 #   define S_MP_SQR_C
 #   define S_MP_SQR_COMBA_C
 #   define S_MP_SQR_KARATSUBA_C
@@ -328,6 +332,9 @@
 #   define MP_NEG_C
 #   define MP_SET_C
 #   define MP_SUB_C
+#endif
+
+#if defined(MP_FPRINTF_C)
 #endif
 
 #if defined(MP_FREAD_C)
@@ -1104,6 +1111,9 @@
 #   define S_MP_FP_LOG_FRACTION_D_C
 #endif
 
+#if defined(S_MP_FPRINT_C)
+#endif
+
 #if defined(S_MP_GET_BIT_C)
 #endif
 
@@ -1225,6 +1235,9 @@
 #   define S_MP_DIV_3_C
 #endif
 
+#if defined(S_MP_PARSE_PRINTF_TOKEN_C)
+#endif
+
 #if defined(S_MP_PRIME_IS_DIVISIBLE_C)
 #   define MP_DIV_D_C
 #endif
@@ -1251,6 +1264,9 @@
 
 #if defined(S_MP_RAND_SOURCE_C)
 #   define S_MP_RAND_PLATFORM_C
+#endif
+
+#if defined(S_MP_SPRINT_C)
 #endif
 
 #if defined(S_MP_SQR_C)

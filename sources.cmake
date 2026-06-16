@@ -31,6 +31,7 @@ mp_exch.c
 mp_expt_n.c
 mp_exptmod.c
 mp_exteuclid.c
+mp_fprintf.c
 mp_fread.c
 mp_from_sbin.c
 mp_from_ubin.c
@@ -135,6 +136,7 @@ s_mp_exptmod.c
 s_mp_exptmod_fast.c
 s_mp_fp_log.c
 s_mp_fp_log_d.c
+s_mp_fprint.c
 s_mp_get_bit.c
 s_mp_invmod.c
 s_mp_invmod_odd.c
@@ -147,12 +149,14 @@ s_mp_mul_high.c
 s_mp_mul_high_comba.c
 s_mp_mul_karatsuba.c
 s_mp_mul_toom.c
+s_mp_parse_printf_token.c
 s_mp_prime_is_divisible.c
 s_mp_prime_tab.c
 s_mp_radix_map.c
 s_mp_radix_size_overestimate.c
 s_mp_rand_platform.c
 s_mp_rand_source.c
+s_mp_sprint.c
 s_mp_sqr.c
 s_mp_sqr_comba.c
 s_mp_sqr_karatsuba.c
