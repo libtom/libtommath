@@ -170,6 +170,7 @@ c89:
 	-e 's/bool/mp_bool/g' \
 	-e 's/true/MP_YES/g' \
 	-e 's/false/MP_NO/g' \
+	-e 's/UINT16_MAX/0xFFFFu/g' \
 	-e 's/UINT32_MAX/0xFFFFFFFFu/g' \
 	-e 's/UINT64_MAX/(mp_u64)-1/g' \
 	-e 's/INT32_MAX/0x7FFFFFFF/g' \
@@ -195,6 +196,7 @@ c99:
 	-e 's/MP_YES/true/g' \
 	-e 's/MP_NO/false/g' \
 	-e 's/false_/MP_NO_/g' \
+	-e 's/0xFFFFu/UINT16_MAX/g' \
 	-e 's/0xFFFFFFFFu/UINT32_MAX/g' \
 	-e 's/(mp_u64)-1/UINT64_MAX/g' \
 	-e 's/(-2147483647-1)/INT32_MIN/g' \
