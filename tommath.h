@@ -586,6 +586,11 @@ mp_err mp_radix_size_overestimate(const mp_int *a, const int radix, size_t *size
 #ifndef MP_NO_FILE
 mp_err mp_fread(mp_int *a, int radix, FILE *stream) MP_WUR;
 mp_err mp_fwrite(const mp_int *a, int radix, FILE *stream) MP_WUR;
+#ifdef MP_WITH_MP_FPRINTF
+/* Supposed to work like a normal fprintf returning number of characters written or a negative value */
+int mp_fprintf(FILE *stream, const char *s, ...);
+/* int snprintf(char *str, size_t size, const char *format, ...); */
+#endif
 #endif
 
 int mp_warray_free(void);

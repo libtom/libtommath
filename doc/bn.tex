@@ -2466,6 +2466,17 @@ If \texttt{MP\_NO\_FILE} is not defined a function to write to a file is also av
 mp_err mp_fwrite(const mp_int *a, int radix, FILE *stream);
 \end{alltt}
 
+
+If \texttt{MP\_WITH\_MP\_FPRINTF} is defined a function \texttt{mp\_fprintf} is made available
+that behaves like \texttt{fprintf(3)}. The modifier for the bigint is \texttt{Z}. there is also
+the specifier \texttt{K} to print bigints with radix 64.
+\index{mp\_fprintf}
+\begin{alltt}
+int mp_fprintf(FILE *stream, const char *s, ...)
+\end{alltt}
+Some of the options from C23 (ISO/IEC 9899:2024) are not implemented, the compiler support
+is too sparse for now.
+
 \subsection{From ASCII}
 \index{mp\_read\_radix}
 \begin{alltt}

@@ -32,6 +32,10 @@ typedef __UINT64_TYPE__ mp_uintptr;
 typedef __UINT32_TYPE__ mp_uintptr;
 # endif
 
+typedef __INTMAX_TYPE__  intmax_t;
+typedef __UINTMAX_TYPE__ uintmax_t;
+
+
 /* inttypes.h replacement, printf format specifier */
 # if __WORDSIZE == 64
 #  define MP_PRI64_PREFIX "l"

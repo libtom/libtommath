@@ -227,6 +227,24 @@ Set the argument for \fBU1, U2, U3\fP to \fBNULL\fP to ignore the respective out
 .in -1i
 
 .LP
+.BI "int mp_fprintf(FILE * " stream ", const char * " format ", " ... " )"
+.in 1i
+Behaves like \fBfprintf(3)\fP. The modifier for a bigint is \fBZ\fP. There is also the specifier
+\fBK\fP to print mp_ints in radix 64.
+.br
+Example:
+.in +4n
+.EX
+ mp_fprintf(stdout,"The result number %d is %Zd\\n", result_idx, &bigint);
+.EE
+.in -4n
+.br
+Returns the number of characters written or a negative value in case of an error.
+.br
+Some of the options from C23 (ISO/IEC 9899:2024) are not implemented.
+.in -1i
+
+.LP
 .BI "mp_err mp_fread(mp_int *" a ", int " radix ", FILE *" stream ")"
 .in 1i
 Reads a number in radix \fBradix\fP from file \fBstream\fP and converts it into the big integer \fBa\fP.

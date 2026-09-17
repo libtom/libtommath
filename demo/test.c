@@ -325,7 +325,47 @@ LBL_ERR:
    mp_clear_multi(&a, &b, NULL);
    return EXIT_FAILURE;
 }
+#ifdef MP_WITH_MP_FPRINTF
+static int test_mp_fprintf(void)
+{
+   mp_int a, b;
+   FILE *tmp = NULL;
+   int written;
+   size_t read;
+   char buf_fprintf[1024] = {0};
+   const char *expected_output =
+      "signed -123 unsigned 456 double 3.141593 bigint-16 >0x17B8F8FB141F0A40000000<bigint-64 >00000000000000000001Uu+FiK7mf00000<"
+      "bigint-2 0b1100000111000100111010000101111001110010000100011111101110100011010110010110100110101010110110001"
+      "Float: +0.6931471806 Percent: % Log: some logfi";
 
+   DOR(mp_init_multi(&a, &b, NULL));
+
+   mp_set_ul(&a, 123456uL);
+   mp_set_ul(&b, 654321uL);
+   DO(mp_expt_n(&a, 5, &a));
+   DO(mp_expt_n(&b, 5, &b));
+   tmp = tmpfile();
+   written = mp_fprintf(tmp,
+                        "signed %d unsigned %u double %f bigint-16 >%-#Zx<bigint-64 >%0*ZK<"
+                        "bigint-2 %#ZbFloat: %+.10Lf Percent: %% Log: %.10s",
+                        -123,  456, 3.14159265, &a, &a, 35, &b,
+                        0.69314718055994530941723212145817656807L, "some logfile entry blabla");
+
+   rewind(tmp);
+
+   read = fread(buf_fprintf, 1, sizeof(buf_fprintf), tmp);
+   EXPECT(written == (int)read);
+   EXPECT(strcmp(buf_fprintf, expected_output) == 0);
+
+   fclose(tmp);
+   mp_clear_multi(&a, &b, NULL);
+   return EXIT_SUCCESS;
+LBL_ERR:
+   if (tmp != NULL) fclose(tmp);
+   mp_clear_multi(&a, &b, NULL);
+   return EXIT_FAILURE;
+}
+#endif
 static mp_err very_random_source(void *out, size_t size)
 {
    memset(out, 0xff, size);
@@ -2567,6 +2607,9 @@ static int unit_tests(int argc, char **argv)
       T1(mp_dr_reduce, MP_DR_REDUCE),
       T2(mp_pack_unpack,MP_PACK, MP_UNPACK),
       T2(mp_fread_fwrite, MP_FREAD, MP_FWRITE),
+#ifdef MP_WITH_MP_FPRINTF
+      T1(mp_fprintf, MP_FPRINTF),
+#endif
       T1(mp_get_u32, MP_GET_I32),
       T1(mp_get_u64, MP_GET_I64),
       T1(mp_get_ul, MP_GET_L),

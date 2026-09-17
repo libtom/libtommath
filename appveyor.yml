@@ -13,8 +13,8 @@ image:
 - Visual Studio 2015
 environment:
   matrix:
-  - CFLAGS_VAR: ""
-    CFLAGS_VAR_DLL: "CFLAGS=\"/Ox /MD /DLTM_TEST_DYNAMIC\""
+  - CFLAGS_VAR: "CFLAGS=\"/Ox /DMP_WITH_MP_FPRINTF /wd4061 /wd4774\""
+    CFLAGS_VAR_DLL: "CFLAGS=\"/Ox /MD /DLTM_TEST_DYNAMIC /DMP_WITH_MP_FPRINTF /wd4061 /wd4774\""
 build_script:
 - cmd: >-
     if "Visual Studio 2022"=="%APPVEYOR_BUILD_WORKER_IMAGE%" call "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"

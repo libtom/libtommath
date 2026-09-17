@@ -429,6 +429,10 @@
 			>
 		</File>
 		<File
+			RelativePath="mp_fprintf.c"
+			>
+		</File>
+		<File
 			RelativePath="mp_fread.c"
 			>
 		</File>
@@ -809,6 +813,10 @@
 			>
 		</File>
 		<File
+			RelativePath="s_mp_clear_bit.c"
+			>
+		</File>
+		<File
 			RelativePath="s_mp_copy_digs.c"
 			>
 		</File>
@@ -842,6 +850,10 @@
 		</File>
 		<File
 			RelativePath="s_mp_fp_log_d.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_fprint.c"
 			>
 		</File>
 		<File
@@ -893,6 +905,10 @@
 			>
 		</File>
 		<File
+			RelativePath="s_mp_parse_printf_token.c"
+			>
+		</File>
+		<File
 			RelativePath="s_mp_prime_is_divisible.c"
 			>
 		</File>
@@ -914,6 +930,14 @@
 		</File>
 		<File
 			RelativePath="s_mp_rand_source.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_set_bit.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_sprint.c"
 			>
 		</File>
 		<File

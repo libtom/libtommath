@@ -34,6 +34,7 @@ include(sources.cmake)
 # Options
 #-----------------------------------------------------------------------------
 option(BUILD_SHARED_LIBS "Build shared library and only the shared library if \"ON\", default is static" OFF)
+option(WITH_MP_FPRINTF "Build and link the rather large mp_fprintf if \"ON\"" OFF)
 
 #-----------------------------------------------------------------------------
 # Compose CFLAGS
@@ -181,6 +182,10 @@ if(BUILD_SHARED_LIBS)
     )
 endif()
 
+if(WITH_MP_FPRINTF)
+   # Only the big-integers get their own treatment, the rest gets send to fprintf
+   set(LTM_C_FLAGS -DMP_WITH_MP_FPRINTF  -Wno-switch-enum  -Wno-format-nonliteral  -Wno-format )
+endif()
 # generate package version file
 write_basic_package_version_file(
     ${PROJECT_VERSION_FILE}
