@@ -16,6 +16,7 @@ else
 fi
 
 ret=0
+# Test mp_fprintf, too, even if not included explicitly
 TEST_CFLAGS=""
 
 _help()
@@ -72,6 +73,9 @@ All other options will be tested with all MP_xBIT configurations.
 
     --multithread           Run tests in multi-threaded mode (via pthread).
 
+    --timeout=*             Set timeout in seconds (defaults are 90s without
+                            and 1800s with valgrind)
+
 Godmode:
 
     --all                   Choose all architectures and gcc and clang
@@ -112,14 +116,14 @@ _fixup_cflags() {
   case "$compiler_version" in
     clang*=4.2.1)
       # one of my versions of clang complains about some stuff in stdio.h and stdarg.h ...
-      TEST_CFLAGS="-Wno-typedef-redefinition"
+      TEST_CFLAGS+=" -Wno-typedef-redefinition "
     ;;
     gcc*=9)
       # gcc 9 seems to sometimes think that variables are uninitialized, but they are.
-      TEST_CFLAGS="-Wno-maybe-uninitialized"
+      TEST_CFLAGS+=" -Wno-maybe-uninitialized "
     ;;
     *)
-      TEST_CFLAGS=""
+      TEST_CFLAGS+=""
     ;;
   esac
   echo $compiler_version
@@ -129,6 +133,15 @@ _make()
 {
   echo -ne " Compile $1 $2"
   suffix=$(echo ${1}${2}  | tr ' ' '_')
+  suffix_length=$(printf %s "$suffix" | wc -c)
+  # I think sCryptFS has a limit of 143 bytes if I understood it correctly,
+  # otherwise 255 is quite safe here. Minus 15 for the prefix and the ".log"
+  # See https://en.wikipedia.org/wiki/Comparison_of_file_systems for more.
+  if [ "$suffix_length" -gt "240" ]
+  then
+     # Just the default date(1), cleaned up
+     suffix=$(date  | tr '[ :]' '_')
+  fi
   _fixup_cflags "$1"
   CC="$1" CFLAGS="$2 $TEST_CFLAGS" LFLAGS="$4" LDFLAGS="$5" make -j$MAKE_JOBS $3 $MAKE_OPTIONS 2>gcc_errors_${suffix}.log
   errcnt=$(wc -l < gcc_errors_${suffix}.log)
@@ -144,7 +157,14 @@ _runtest()
 {
   make clean > /dev/null
   local _timeout=""
-  which timeout >/dev/null && _timeout="timeout --foreground 90"
+  if [ -z "${TIMEOUT}" ]
+  then
+     echo "Set timeout to default 90"
+     TIMEOUT="90"
+  else
+     echo "Set timeout to ${TIMEOUT}"
+  fi
+  which timeout >/dev/null && _timeout="timeout --foreground ${TIMEOUT}"
   if [[ "$MAKE_OPTIONS" =~ "tune" ]]
   then
     # "make tune" will run "tune_it.sh" automatically, hence "autotune", but it cannot
@@ -166,9 +186,16 @@ _runvalgrind()
 {
   make clean > /dev/null
   local _timeout=""
+  if [ -z "${TIMEOUT}" ]
+  then
+     echo "Set timeout to default 1800"
+     TIMEOUT="1800"
+  else
+     echo "Set timeout to ${TIMEOUT}"
+  fi
   # 30 minutes? Yes. Had it at 20 minutes and the Valgrind run needed over 25 minutes.
   # A bit too close for comfort.
-  which timeout >/dev/null && _timeout="timeout --foreground 1800"
+  which timeout >/dev/null && _timeout="timeout --foreground ${TIMEOUT}"
 echo "MAKE_OPTIONS = \"$MAKE_OPTIONS\""
   if [[ "$MAKE_OPTIONS" =~ "tune"  ]]
   then
@@ -222,6 +249,7 @@ CHECK_SYMBOLS=""
 C89=""
 C89_C99_ROUNDTRIP=""
 TUNE_CMD="./etc/tune -t -r 10 -L 3"
+TIMEOUT=""
 
 alive_pid=0
 
@@ -307,6 +335,9 @@ do
       CFLAGS="$CFLAGS -DLTM_TEST_MULTITHREAD"
       LFLAGS="$LFLAGS -pthread"
       LDFLAGS="$LDFLAGS -pthread"
+    ;;
+    --timeout=*)
+      TIMEOUT="${1#*=}"
     ;;
     --all)
       COMPILERS="gcc clang"
