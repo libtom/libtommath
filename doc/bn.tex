@@ -2396,6 +2396,47 @@ the case of RSA) since there is no skew on the least significant bits.
   \label{fig:primeopts}
 \end{figure}
 
+\subsection{Small Prime Sieve}
+A small segmented sieve (unsigned 32-bit max.) is available via three functions.
+The type {\texttt{ERAT\_UINT}}, defined (\emph{not} {\texttt{typedef}}) in {\texttt{tommath.h}}
+is normally {\texttt{uint32\_t}} but should be checked before use to be sure.
+
+
+\index{mp\_small\_prime\_sieve\_init}
+\begin{alltt}
+mp_err mp_small_prime_sieve_init(mp_erat_sieve *sieve, bool warmup);
+\end{alltt}
+Initialize sieve to default values, build base-sieve, too, if the parameter {\texttt{warmup}} is true
+otherwise the first call to either {\texttt{mp\_small\_prime\_sieve\_is\_small\_prime}},
+{\texttt{mp\_small\_prime\_sieve\_next\_prime}}, or {\texttt{mp\_small\_prime\_sieve\_prec\_prime}}
+do it at first call.
+
+\index{mp\_small\_prime\_sieve\_clear}
+\begin{alltt}
+mp_err mp_small_prime_sieve_clear(mp_erat_sieve *sieve);
+\end{alltt}
+Reset sieve and free memory .
+
+\index{mp\_small\_prime\_sieve\_is\_small\_prime}
+\begin{alltt}
+mp_err mp_small_prime_sieve_is_small_prime(ERAT_UINT n, bool *result, mp_erat_sieve *sieve);
+\end{alltt}
+Check primality of $n$ if $n < 2^32$.
+
+
+\index{mp\_small\_prime\_sieve\_next\_prime}
+\begin{alltt}
+mp_err mp_small_prime_sieve_next_prime(ERAT_UINT n, ERAT_UINT *result, mp_erat_sieve *sieve);
+\end{alltt}
+Sets {\texttt{result}} to the prime {\texttt{p}} larger than or equal to {\texttt{n}} if $p > 2^32 - 5$.
+Returns {\texttt{MP\_OVF}} if $p > 2^32 - 5$ as an information about that fact.
+
+\index{mp\_small\_prime\_sieve\_prec\_prime}
+\begin{alltt}
+mp_err mp_small_prime_sieve_prec_prime(ERAT_UINT n, ERAT_UINT *result, mp_erat_sieve *sieve);
+\end{alltt}
+Sets {\texttt{result}} to the prime {\texttt{p}} smaller than or equal to {\texttt{n}} if $p > 1$.
+
 \chapter{Random Number Generation}
 \section{PRNG}
 \index{mp\_rand}
@@ -2414,6 +2455,7 @@ If you have a custom random source you might find the function \texttt{mp\_rand\
 \begin{alltt}
 void mp_rand_source(mp_err(*source)(void *out, size_t size));
 \end{alltt}
+
 
 \chapter{Input and Output}
 \section{ASCII Conversions}

@@ -1138,6 +1138,39 @@ Shifts right \fBa\fP by \fBb\fP bits with sign extension.
 .in -1i
 
 .LP
+.BI "mp_err mp_small_prime_sieve_init(mp_erat_sieve *" sieve ", bool " warmup ")"
+.in 1i
+Init sieve to default values, build base-sieve, too, if the parameter \fBwarmup\fP is true
+otherwise the first call to either \fBmp_small_prime_sieve_is_small_prime\fP,
+\fBmp_small_prime_sieve_next_prime\fP, or \fBmp_small_prime_sieve_prec_prime\fP do it at first call.
+.in -1i
+
+.LP
+.BI "mp_err mp_small_prime_sieve_clear(mp_erat_sieve *" sieve ")"
+.in 1i
+Reset sieve and clear memory.
+.in -1i
+
+.LP
+.BI "mp_err mp_small_prime_sieve_is_small_prime(ERAT_UINT " n ", bool *" result ", mp_erat_sieve * " sieve ")"
+.in 1i
+Check primality of \fBn\fP if \fBn < 2^32\fP.
+.in -1i
+
+.LP
+.BI "mp_err mp_small_prime_sieve_next_prime(ERAT_UINT " n ", ERAT_UINT *" result ", mp_erat_sieve *" sieve ")"
+.in 1i
+Sets \fBresult\fP to the prime \fBp\fP larger than or equal to \fBp\fP if \fBp > 2^32\fP.
+Returns \fBMP_OVF\fP if \fBp > 2^32\fP as an information about that fact. 
+.in -1i
+
+.LP
+.BI "mp_err mp_small_prime_sieve_prec_prime(ERAT_UINT " n ", ERAT_UINT *" result ", mp_erat_sieve *" sieve ")"
+.in 1i
+Sets \fBresult\fP to the prime \fBp\fP smaller than or equal to \fBn\fP if \fBp > 1\fP.
+.in -1i
+
+.LP
 .BI "mp_err mp_sqr (const mp_int *" a ", mp_int *" b ")"
 .in 1i
 Computes \fBa^2 = b\fP

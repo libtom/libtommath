@@ -114,6 +114,11 @@ EXPORTS
     mp_set_ul
     mp_shrink
     mp_signed_rsh
+    mp_small_prime_sieve_clear
+    mp_small_prime_sieve_init
+    mp_small_prime_sieve_is_small_prime
+    mp_small_prime_sieve_next_prime
+    mp_small_prime_sieve_prec_prime
     mp_sqrmod
     mp_sqrt
     mp_sqrtmod_prime

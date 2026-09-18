@@ -111,6 +111,11 @@ mp_set_u64.c
 mp_set_ul.c
 mp_shrink.c
 mp_signed_rsh.c
+mp_small_prime_sieve_clear.c
+mp_small_prime_sieve_init.c
+mp_small_prime_sieve_is_small_prime.c
+mp_small_prime_sieve_next_prime.c
+mp_small_prime_sieve_prec_prime.c
 mp_sqrmod.c
 mp_sqrt.c
 mp_sqrtmod_prime.c
@@ -153,6 +158,7 @@ s_mp_radix_map.c
 s_mp_radix_size_overestimate.c
 s_mp_rand_platform.c
 s_mp_rand_source.c
+s_mp_small_prime_sieve.c
 s_mp_sqr.c
 s_mp_sqr_comba.c
 s_mp_sqr_karatsuba.c

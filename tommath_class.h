@@ -120,6 +120,11 @@
 #   define MP_SET_UL_C
 #   define MP_SHRINK_C
 #   define MP_SIGNED_RSH_C
+#   define MP_SMALL_PRIME_SIEVE_CLEAR_C
+#   define MP_SMALL_PRIME_SIEVE_INIT_C
+#   define MP_SMALL_PRIME_SIEVE_IS_SMALL_PRIME_C
+#   define MP_SMALL_PRIME_SIEVE_NEXT_PRIME_C
+#   define MP_SMALL_PRIME_SIEVE_PREC_PRIME_C
 #   define MP_SQRMOD_C
 #   define MP_SQRT_C
 #   define MP_SQRTMOD_PRIME_C
@@ -162,6 +167,7 @@
 #   define S_MP_RADIX_SIZE_OVERESTIMATE_C
 #   define S_MP_RAND_PLATFORM_C
 #   define S_MP_RAND_SOURCE_C
+#   define S_MP_SMALL_PRIME_SIEVE_C
 #   define S_MP_SQR_C
 #   define S_MP_SQR_COMBA_C
 #   define S_MP_SQR_KARATSUBA_C
@@ -882,6 +888,28 @@
 #   define MP_SUB_D_C
 #endif
 
+#if defined(MP_SMALL_PRIME_SIEVE_CLEAR_C)
+#   define S_MP_ERAT_CLEAR_ONE_C
+#endif
+
+#if defined(MP_SMALL_PRIME_SIEVE_INIT_C)
+#   define S_MP_ERAT_ERATOSTHENES_INIT_C
+#endif
+
+#if defined(MP_SMALL_PRIME_SIEVE_IS_SMALL_PRIME_C)
+#   define S_MP_ERAT_ERATOSTHENES_INIT_C
+#   define S_MP_ERAT_INIT_SINGLE_SEGMENT_WITH_START_C
+#   define S_MP_MP_ERAT_SIEVE_GET_BIT_C
+#endif
+
+#if defined(MP_SMALL_PRIME_SIEVE_NEXT_PRIME_C)
+#   define MP_SMALL_PRIME_SIEVE_IS_SMALL_PRIME_C
+#endif
+
+#if defined(MP_SMALL_PRIME_SIEVE_PREC_PRIME_C)
+#   define MP_SMALL_PRIME_SIEVE_IS_SMALL_PRIME_C
+#endif
+
 #if defined(MP_SQRMOD_C)
 #   define MP_MOD_C
 #   define MP_MUL_C
@@ -1251,6 +1279,19 @@
 
 #if defined(S_MP_RAND_SOURCE_C)
 #   define S_MP_RAND_PLATFORM_C
+#endif
+
+#if defined(S_MP_SMALL_PRIME_SIEVE_C)
+#   define S_MP_ERAT_ERATOSTHENES_C
+#   define S_MP_ERAT_ERATOSTHENES_INIT_C
+#   define S_MP_ERAT_ERATOSTHENES_SEGMENT_C
+#   define S_MP_ERAT_INIT_SINGLE_SEGMENT_WITH_START_C
+#   define S_MP_ERAT_ISQRT_C
+#   define S_MP_ERAT_NEXTPRIME_C
+#   define S_MP_MP_ERAT_SIEVE_GET_BIT_C
+#   define S_MP_MP_ERAT_SIEVE_NEXTSET_C
+#   define S_MP_MP_ERAT_SIEVE_SETALL_C
+#   define S_MP_MP_MP_ERAT_SIEVE_CLEAR_BIT_C
 #endif
 
 #if defined(S_MP_SQR_C)

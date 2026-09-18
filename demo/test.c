@@ -469,6 +469,170 @@ LBL_ERR:
 
 }
 
+static int test_mp_small_prime_sieve_is_small_prime(void)
+{
+   mp_erat_sieve sieve;
+   mp_int N;
+   uint32_t n;
+   int i = 0;
+   bool isprime = false, isreallyprime = false;
+
+   /* Cold start to test a cold start */
+   DO(mp_small_prime_sieve_init(&sieve, false));
+   DOR(mp_init(&N));
+   /* Generate a handful of random numbers  1<n<2^32 */
+   for (i = 0; i < 100; i++) {
+      n = (uint32_t)rand_uint();
+      if ((n < 2) || (n > 4294967291u)) {
+         i--;
+         continue;
+      }
+      DO(mp_small_prime_sieve_is_small_prime(n, &isprime, &sieve));
+
+      mp_set_u32(&N, n);
+      DO(mp_prime_is_prime(&N, 1, &isreallyprime));
+      EXPECT(isprime == isreallyprime);
+   }
+   mp_small_prime_sieve_clear(&sieve);
+   mp_clear(&N);
+   return EXIT_SUCCESS;
+LBL_ERR:
+   mp_small_prime_sieve_clear(&sieve);
+   mp_clear(&N);
+   return EXIT_FAILURE;
+}
+
+
+
+
+static int test_mp_small_prime_sieve_prec_prime(void)
+{
+   mp_erat_sieve sieve;
+   mp_int N;
+#ifdef MP_SMALL_SIEVE_FULL_ROUND_DECREASING
+   uint64_t primesum;
+   uint32_t prime;
+#endif
+   uint32_t n = 0, precprime, nextprime ;
+   int i = 0;
+   bool isreallyprime = false;
+
+   /* Warm start to test a warm start */
+   DO(mp_small_prime_sieve_init(&sieve, true));
+   DOR(mp_init(&N));
+
+   for (i = 0; i < 100; i++) {
+      /* rand_uint() is a PRNG so it won't loop forever */
+      n = (uint32_t)rand_uint();
+      if (n < 3) {
+         i--;
+         continue;
+      }
+      DO(mp_small_prime_sieve_prec_prime(n - 1, &precprime, &sieve));
+      mp_set_u32(&N, precprime);
+      DO(mp_prime_is_prime(&N, 1, &isreallyprime));
+      EXPECT(isreallyprime);
+
+      /* precprime <= n, so nextprime(precprime) >= n */
+      DO(mp_prime_next_prime(&N, 1, false));
+      nextprime = mp_get_u32(&N);
+      EXPECT(nextprime >= n);
+   }
+
+   /*
+       A full round takes quite some time, but is checking everything
+       A long time is about 30 seconds, but with valgrind about 30 minutes!
+    */
+#ifdef MP_SMALL_SIEVE_FULL_ROUND_DECREASING
+   prime = 4294967291u;
+   primesum = 0u;
+   while (prime >= 2) {
+      primesum = primesum + (uint64_t)prime;
+      DO(mp_small_prime_sieve_prec_prime(prime - 1, &prime, &sieve));
+   }
+   EXPECT(primesum == 425649736193687430u);
+#endif
+   mp_small_prime_sieve_clear(&sieve);
+   mp_clear(&N);
+   return EXIT_SUCCESS;
+LBL_ERR:
+   mp_small_prime_sieve_clear(&sieve);
+   mp_clear(&N);
+   return EXIT_FAILURE;
+}
+
+
+
+
+
+static int test_mp_small_prime_sieve_next_prime(void)
+{
+   mp_erat_sieve sieve;
+   mp_int N;
+   mp_err err2;
+#ifdef MP_SMALL_SIEVE_FULL_ROUND_INCREASING
+   uint64_t primesum;
+   uint32_t prime;
+#endif
+   uint32_t n, nextprime = 0u, reallynextprime = 0u;
+   int i = 0;
+   bool isreallyprime = false;
+
+   /* Cold start to test a cold start */
+   DO(mp_small_prime_sieve_init(&sieve, false));
+   DOR(mp_init(&N));
+
+   for (i = 0; i < 100; i++) {
+      /* rand_uint() is a PRNG so it won't loop forever */
+      n = (uint32_t)rand_uint();
+      if ((n < 2) || (n > 4294967279u)) {
+         i--;
+         continue;
+      }
+      if ((err2 = mp_small_prime_sieve_next_prime(n + 1, &nextprime, &sieve)) != MP_OKAY) {
+         if (err2 != MP_OVF) {
+            goto LBL_ERR;
+         } else {
+            i--;
+            continue;
+         }
+      }
+      mp_set_u32(&N, nextprime);
+      DO(mp_prime_is_prime(&N, 1, &isreallyprime));
+      EXPECT(isreallyprime);
+
+      mp_set_u32(&N, n);
+      DO(mp_prime_next_prime(&N, 1, false));
+      reallynextprime = mp_get_u32(&N);
+      EXPECT(nextprime == reallynextprime);
+   }
+
+   /* A full round takes quite some time, but is checking everything */
+#ifdef MP_SMALL_SIEVE_FULL_ROUND_INCREASING
+   prime = 0u;
+   primesum = 0u;
+   while (prime <= 4294967291u) {
+      if ((err2 = mp_small_prime_sieve_next_prime(prime + 1, &prime, &sieve)) != MP_OKAY) {
+         /* Will throw ERAT_OVL which is the place we stop */
+         if (err2 != MP_OVF) {
+            goto LBL_ERR;
+         } else {
+            break;
+         }
+      }
+      primesum = primesum + (uint64_t)prime;
+   }
+   EXPECT(primesum == 425649736193687430u);
+#endif
+   mp_small_prime_sieve_clear(&sieve);
+   mp_clear(&N);
+   return EXIT_SUCCESS;
+LBL_ERR:
+   mp_small_prime_sieve_clear(&sieve);
+   mp_clear(&N);
+   return EXIT_FAILURE;
+}
+
 static int test_mp_xor(void)
 {
    int i;
@@ -2594,6 +2758,9 @@ static int unit_tests(int argc, char **argv)
       T1(mp_set_double, MP_SET_DOUBLE),
 #endif
       T1(mp_signed_rsh, MP_SIGNED_RSH),
+      T2(mp_small_prime_sieve_is_small_prime, MP_SMALL_PRIME_SIEVE_IS_SMALL_PRIME, S_MP_SMALL_PRIME_SIEVE),
+      T2(mp_small_prime_sieve_prec_prime, MP_SMALL_PRIME_SIEVE_PREC_PRIME, S_MP_SMALL_PRIME_SIEVE),
+      T2(mp_small_prime_sieve_next_prime, MP_SMALL_PRIME_SIEVE_NEXT_PRIME, S_MP_SMALL_PRIME_SIEVE),
       T2(mp_sqrt, MP_SQRT, MP_ROOT_N),
       T1(mp_sqrtmod_prime, MP_SQRTMOD_PRIME),
       T1(mp_xor, MP_XOR),
