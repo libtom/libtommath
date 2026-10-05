@@ -64,8 +64,8 @@ $(LIBNAME):  $(OBJECTS)
 install: $(LIBNAME) .install_common
 	$(LIBTOOL) --mode=install install -m 644 $(LIBNAME) $(DESTDIR)$(LIBPATH)/$(LIBNAME)
 	install -m 644 $(HEADERS_PUB) $(DESTDIR)$(INCPATH)
-	sed -e 's,^prefix=.*,prefix=$(PREFIX),' -e 's,^Version:.*,Version: $(VERSION_PC),' -e 's,@CMAKE_INSTALL_LIBDIR@,lib,' \
-		-e 's,@CMAKE_INSTALL_INCLUDEDIR@/@PROJECT_NAME@,include/tommath,' libtommath.pc.in > libtommath.pc
+	sed -e 's,^prefix=.*,prefix=$(PREFIX),' -e 's,^Version:.*,Version: $(VERSION_PC),' -e 's,^libdir=.*,libdir=$${prefix}/lib,' \
+		-e 's,^includedir=.*,includedir=$${prefix}/include/tommath,' libtommath.pc.in > libtommath.pc
 	install -d $(DESTDIR)$(LIBPATH)/pkgconfig
 	install -m 644 libtommath.pc $(DESTDIR)$(LIBPATH)/pkgconfig/
 

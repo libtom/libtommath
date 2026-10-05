@@ -147,6 +147,19 @@ endif()
 if(BUILD_TESTING)
     enable_testing()
     add_subdirectory(demo)
+    if(BUILD_SHARED_LIBS)
+        add_test(NAME test-pkg-config
+            COMMAND ${CMAKE_COMMAND}
+                -DLTM_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}
+                -DLTM_BINARY_DIR=${CMAKE_CURRENT_BINARY_DIR}/pkg-config-test
+                -DCMAKE_GENERATOR=${CMAKE_GENERATOR}
+                -DCMAKE_GENERATOR_PLATFORM=${CMAKE_GENERATOR_PLATFORM}
+                -DCMAKE_GENERATOR_TOOLSET=${CMAKE_GENERATOR_TOOLSET}
+                -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+                -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}
+                -P ${CMAKE_CURRENT_SOURCE_DIR}/demo/test_pkgconfig.cmake
+        )
+    endif()
 endif()
 
 #-----------------------------------------------------------------------------
@@ -169,6 +182,13 @@ install(TARGETS ${PROJECT_NAME}
 if(BUILD_SHARED_LIBS)
     # Let the user override the default directory of the pkg-config file (usually this shouldn't be required to be changed)
     set(CMAKE_INSTALL_PKGCONFIGDIR "${CMAKE_INSTALL_LIBDIR}/pkgconfig" CACHE PATH "Folder where to install .pc files")
+
+    foreach(DIR LIBDIR INCLUDEDIR)
+        set(LTM_PKGCONFIG_${DIR} "${CMAKE_INSTALL_${DIR}}")
+        if(NOT IS_ABSOLUTE "${LTM_PKGCONFIG_${DIR}}")
+            set(LTM_PKGCONFIG_${DIR} "\${prefix}/${CMAKE_INSTALL_${DIR}}")
+        endif()
+    endforeach()
 
     configure_file(
         ${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}.pc.in
