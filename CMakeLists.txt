@@ -191,7 +191,7 @@ write_basic_package_version_file(
 # Windows uses a different help sytem.
 if((NOT WIN32) AND (NOT CMAKE_HOST_WIN32))
 # install manpage (not gzipped, some BSD's do not want it compressed?)
-install(FILES ${CMAKE_SOURCE_DIR}/doc/tommath.3
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/doc/tommath.3
         DESTINATION ${CMAKE_INSTALL_MANDIR}/man3/
 )
 endif()

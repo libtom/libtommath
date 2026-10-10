@@ -186,6 +186,22 @@ jobs:
         run: |
           make amalgamated_timing
 
+  CMake-subproject:
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        shared: [ 'Off', 'On' ]
+    steps:
+      - uses: actions/checkout@v4
+      - name: build and install from a parent project
+        run: |
+          cmake -S demo/cmake_subproject -B build-subproject \
+            -DBUILD_SHARED_LIBS=${{ matrix.shared }} -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX="$PWD/install-subproject" \
+            -DCMAKE_EXPORT_NO_PACKAGE_REGISTRY=ON
+          cmake --build build-subproject --parallel 2
+          cmake --install build-subproject
+
   CMake:
     runs-on: ${{ matrix.os }}
     strategy:
