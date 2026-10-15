@@ -155,7 +155,41 @@
 #   define S_MP_MUL_HIGH_C
 #   define S_MP_MUL_HIGH_COMBA_C
 #   define S_MP_MUL_KARATSUBA_C
+#   define S_MP_MUL_NTT_C
 #   define S_MP_MUL_TOOM_C
+#   define S_MP_NTT_AUTOCONVOLVE_SINGLE_C
+#   define S_MP_NTT_CONVOLVE_SINGLE_C
+#   define S_MP_NTT_CRT_ASSEMBLE_C
+#   define S_MP_NTT_CRT_COEFF_C
+#   define S_MP_NTT_CRT_INIT_C
+#   define S_MP_NTT_FIND_SMOOTH_PRIME_C
+#   define S_MP_NTT_FROM_MONT_C
+#   define S_MP_NTT_FWD2_C
+#   define S_MP_NTT_FWD3_C
+#   define S_MP_NTT_FWD5_C
+#   define S_MP_NTT_ILOG2_CEIL_C
+#   define S_MP_NTT_INV2_C
+#   define S_MP_NTT_INV3_C
+#   define S_MP_NTT_INV5_C
+#   define S_MP_NTT_INVMOD_D_C
+#   define S_MP_NTT_MONT_ADD_C
+#   define S_MP_NTT_MONT_INIT_C
+#   define S_MP_NTT_MONT_MUL_C
+#   define S_MP_NTT_MONT_POW_C
+#   define S_MP_NTT_MONT_REDC_C
+#   define S_MP_NTT_MONT_SUB_C
+#   define S_MP_NTT_SMALL_IS_PRIME_C
+#   define S_MP_NTT_SMALL_MULMOD_C
+#   define S_MP_NTT_SMALL_POWMOD_C
+#   define S_MP_NTT_SMOOTH_FWD_C
+#   define S_MP_NTT_SMOOTH_INV_C
+#   define S_MP_NTT_SMOOTH_LENGTH_C
+#   define S_MP_NTT_SMOOTH_LENGTH_WEIGHTED_C
+#   define S_MP_NTT_SMOOTH_PLAN_C
+#   define S_MP_NTT_SORT_PRIMES_C
+#   define S_MP_NTT_SROOTS_FREE_C
+#   define S_MP_NTT_SROOTS_INIT_C
+#   define S_MP_NTT_TO_MONT_C
 #   define S_MP_PRIME_IS_DIVISIBLE_C
 #   define S_MP_PRIME_TAB_C
 #   define S_MP_RADIX_MAP_C
@@ -165,6 +199,7 @@
 #   define S_MP_SQR_C
 #   define S_MP_SQR_COMBA_C
 #   define S_MP_SQR_KARATSUBA_C
+#   define S_MP_SQR_NTT_C
 #   define S_MP_SQR_TOOM_C
 #   define S_MP_SUB_C
 #   define S_MP_WARRAY_C
@@ -557,10 +592,12 @@
 #   define S_MP_MUL_C
 #   define S_MP_MUL_COMBA_C
 #   define S_MP_MUL_KARATSUBA_C
+#   define S_MP_MUL_NTT_C
 #   define S_MP_MUL_TOOM_C
 #   define S_MP_SQR_C
 #   define S_MP_SQR_COMBA_C
 #   define S_MP_SQR_KARATSUBA_C
+#   define S_MP_SQR_NTT_C
 #   define S_MP_SQR_TOOM_C
 #endif
 
@@ -1209,6 +1246,21 @@
 #   define S_MP_SUB_C
 #endif
 
+#if defined(S_MP_MUL_NTT_C)
+#   define MP_CLEAR_MULTI_C
+#   define MP_COUNT_BITS_C
+#   define MP_INIT_MULTI_C
+#   define MP_MUL_C
+#   define MP_SET_C
+#   define S_MP_NTT_CONVOLVE_SINGLE_C
+#   define S_MP_NTT_CRT_ASSEMBLE_C
+#   define S_MP_NTT_CRT_INIT_C
+#   define S_MP_NTT_FIND_SMOOTH_PRIME_C
+#   define S_MP_NTT_ILOG2_CEIL_C
+#   define S_MP_NTT_SMOOTH_LENGTH_C
+#   define S_MP_NTT_SORT_PRIMES_C
+#endif
+
 #if defined(S_MP_MUL_TOOM_C)
 #   define MP_ADD_C
 #   define MP_CLAMP_C
@@ -1223,6 +1275,172 @@
 #   define MP_SUB_C
 #   define S_MP_COPY_DIGS_C
 #   define S_MP_DIV_3_C
+#endif
+
+#if defined(S_MP_NTT_AUTOCONVOLVE_SINGLE_C)
+#   define S_MP_NTT_FROM_MONT_C
+#   define S_MP_NTT_MONT_INIT_C
+#   define S_MP_NTT_MONT_MUL_C
+#   define S_MP_NTT_SMOOTH_FWD_C
+#   define S_MP_NTT_SMOOTH_INV_C
+#   define S_MP_NTT_SROOTS_FREE_C
+#   define S_MP_NTT_SROOTS_INIT_C
+#   define S_MP_NTT_TO_MONT_C
+#endif
+
+#if defined(S_MP_NTT_CONVOLVE_SINGLE_C)
+#   define S_MP_NTT_FROM_MONT_C
+#   define S_MP_NTT_MONT_INIT_C
+#   define S_MP_NTT_MONT_MUL_C
+#   define S_MP_NTT_SMOOTH_FWD_C
+#   define S_MP_NTT_SMOOTH_INV_C
+#   define S_MP_NTT_SROOTS_FREE_C
+#   define S_MP_NTT_SROOTS_INIT_C
+#   define S_MP_NTT_TO_MONT_C
+#endif
+
+#if defined(S_MP_NTT_CRT_ASSEMBLE_C)
+#   define MP_CLAMP_C
+#   define MP_GROW_C
+#   define S_MP_NTT_CRT_COEFF_C
+#endif
+
+#if defined(S_MP_NTT_CRT_COEFF_C)
+#   define S_MP_NTT_MONT_MUL_C
+#endif
+
+#if defined(S_MP_NTT_CRT_INIT_C)
+#   define S_MP_NTT_MONT_INIT_C
+#   define S_MP_NTT_SMALL_POWMOD_C
+#   define S_MP_NTT_TO_MONT_C
+#endif
+
+#if defined(S_MP_NTT_FIND_SMOOTH_PRIME_C)
+#   define S_MP_NTT_SMALL_IS_PRIME_C
+#   define S_MP_NTT_SMALL_POWMOD_C
+#endif
+
+#if defined(S_MP_NTT_FROM_MONT_C)
+#   define S_MP_NTT_MONT_REDC_C
+#endif
+
+#if defined(S_MP_NTT_FWD2_C)
+#   define S_MP_NTT_MONT_ADD_C
+#   define S_MP_NTT_MONT_MUL_C
+#   define S_MP_NTT_MONT_SUB_C
+#endif
+
+#if defined(S_MP_NTT_FWD3_C)
+#   define S_MP_NTT_MONT_ADD_C
+#   define S_MP_NTT_MONT_MUL_C
+#   define S_MP_NTT_MONT_SUB_C
+#endif
+
+#if defined(S_MP_NTT_FWD5_C)
+#   define S_MP_NTT_MONT_ADD_C
+#   define S_MP_NTT_MONT_MUL_C
+#   define S_MP_NTT_MONT_SUB_C
+#endif
+
+#if defined(S_MP_NTT_ILOG2_CEIL_C)
+#endif
+
+#if defined(S_MP_NTT_INV2_C)
+#   define S_MP_NTT_MONT_ADD_C
+#   define S_MP_NTT_MONT_MUL_C
+#   define S_MP_NTT_MONT_SUB_C
+#endif
+
+#if defined(S_MP_NTT_INV3_C)
+#   define S_MP_NTT_MONT_ADD_C
+#   define S_MP_NTT_MONT_MUL_C
+#   define S_MP_NTT_MONT_SUB_C
+#endif
+
+#if defined(S_MP_NTT_INV5_C)
+#   define S_MP_NTT_MONT_ADD_C
+#   define S_MP_NTT_MONT_MUL_C
+#   define S_MP_NTT_MONT_SUB_C
+#endif
+
+#if defined(S_MP_NTT_INVMOD_D_C)
+#endif
+
+#if defined(S_MP_NTT_MONT_ADD_C)
+#endif
+
+#if defined(S_MP_NTT_MONT_INIT_C)
+#   define S_MP_NTT_INVMOD_D_C
+#endif
+
+#if defined(S_MP_NTT_MONT_MUL_C)
+#   define S_MP_NTT_MONT_REDC_C
+#endif
+
+#if defined(S_MP_NTT_MONT_POW_C)
+#   define S_MP_NTT_MONT_MUL_C
+#   define S_MP_NTT_TO_MONT_C
+#endif
+
+#if defined(S_MP_NTT_MONT_REDC_C)
+#endif
+
+#if defined(S_MP_NTT_MONT_SUB_C)
+#endif
+
+#if defined(S_MP_NTT_SMALL_IS_PRIME_C)
+#   define S_MP_NTT_SMALL_MULMOD_C
+#   define S_MP_NTT_SMALL_POWMOD_C
+#endif
+
+#if defined(S_MP_NTT_SMALL_MULMOD_C)
+#endif
+
+#if defined(S_MP_NTT_SMALL_POWMOD_C)
+#   define S_MP_NTT_SMALL_MULMOD_C
+#endif
+
+#if defined(S_MP_NTT_SMOOTH_FWD_C)
+#   define S_MP_NTT_FWD2_C
+#   define S_MP_NTT_FWD3_C
+#   define S_MP_NTT_FWD5_C
+#endif
+
+#if defined(S_MP_NTT_SMOOTH_INV_C)
+#   define S_MP_NTT_INV2_C
+#   define S_MP_NTT_INV3_C
+#   define S_MP_NTT_INV5_C
+#   define S_MP_NTT_MONT_MUL_C
+#   define S_MP_NTT_MONT_POW_C
+#   define S_MP_NTT_TO_MONT_C
+#endif
+
+#if defined(S_MP_NTT_SMOOTH_LENGTH_C)
+#   define S_MP_NTT_SMOOTH_LENGTH_WEIGHTED_C
+#endif
+
+#if defined(S_MP_NTT_SMOOTH_LENGTH_WEIGHTED_C)
+#endif
+
+#if defined(S_MP_NTT_SMOOTH_PLAN_C)
+#endif
+
+#if defined(S_MP_NTT_SORT_PRIMES_C)
+#endif
+
+#if defined(S_MP_NTT_SROOTS_FREE_C)
+#endif
+
+#if defined(S_MP_NTT_SROOTS_INIT_C)
+#   define S_MP_NTT_MONT_ADD_C
+#   define S_MP_NTT_MONT_MUL_C
+#   define S_MP_NTT_MONT_SUB_C
+#   define S_MP_NTT_SMOOTH_PLAN_C
+#   define S_MP_NTT_TO_MONT_C
+#endif
+
+#if defined(S_MP_NTT_TO_MONT_C)
+#   define S_MP_NTT_MONT_MUL_C
 #endif
 
 #if defined(S_MP_PRIME_IS_DIVISIBLE_C)
@@ -1278,6 +1496,21 @@
 #   define S_MP_ADD_C
 #   define S_MP_COPY_DIGS_C
 #   define S_MP_SUB_C
+#endif
+
+#if defined(S_MP_SQR_NTT_C)
+#   define MP_CLEAR_MULTI_C
+#   define MP_COUNT_BITS_C
+#   define MP_INIT_MULTI_C
+#   define MP_MUL_C
+#   define MP_SET_C
+#   define S_MP_NTT_AUTOCONVOLVE_SINGLE_C
+#   define S_MP_NTT_CRT_ASSEMBLE_C
+#   define S_MP_NTT_CRT_INIT_C
+#   define S_MP_NTT_FIND_SMOOTH_PRIME_C
+#   define S_MP_NTT_ILOG2_CEIL_C
+#   define S_MP_NTT_SMOOTH_LENGTH_C
+#   define S_MP_NTT_SORT_PRIMES_C
 #endif
 
 #if defined(S_MP_SQR_TOOM_C)

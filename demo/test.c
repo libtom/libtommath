@@ -2142,8 +2142,71 @@ LBL_ERR:
    mp_clear_multi(&a, &b, &c, NULL);
    return EXIT_FAILURE;
 }
+#if (MP_DIGIT_BIT > 16)
+static int test_s_mp_mul_ntt(void)
+{
+   mp_int a, b, c, d;
+   int size;
 
+#if (MP_DIGIT_BIT == 60)
+   int tc_cutoff;
+#endif
 
+   DOR(mp_init_multi(&a, &b, &c, &d, NULL));
+   /* This number construction is limb-size specific */
+#if (MP_DIGIT_BIT == 60)
+   DO(mp_rand(&a, 1196));
+   DO(mp_mul_2d(&a,71787  - mp_count_bits(&a), &a));
+
+   DO(mp_rand(&b, 1338));
+   DO(mp_mul_2d(&b, 80318 - mp_count_bits(&b), &b));
+   DO(mp_mul_2d(&b, 6310, &b));
+   DO(mp_2expt(&c, 99000 - 1000));
+   DO(mp_add(&b, &c, &b));
+
+   tc_cutoff = MP_MUL_NTT_CUTOFF;
+   MP_MUL_NTT_CUTOFF = INT_MAX;
+   DO(mp_mul(&a, &b, &c));
+   MP_MUL_NTT_CUTOFF = tc_cutoff;
+   DO(mp_mul(&a, &b, &d));
+   EXPECT(mp_cmp(&c, &d) == MP_EQ);
+#endif
+
+   for (size = MP_MUL_NTT_CUTOFF; size < (MP_MUL_NTT_CUTOFF + 20); size++) {
+      DO(mp_rand(&a, size));
+      DO(mp_rand(&b, size));
+      DO(s_mp_mul_ntt(&a, &b, &c));
+      DO(s_mp_mul_full(&a,&b,&d));
+      EXPECT(mp_cmp(&c, &d) == MP_EQ);
+   }
+
+   mp_clear_multi(&a, &b, &c, &d, NULL);
+   return EXIT_SUCCESS;
+LBL_ERR:
+   mp_clear_multi(&a, &b, &c, &d, NULL);
+   return EXIT_FAILURE;
+}
+
+static int test_s_mp_sqr_ntt(void)
+{
+   mp_int a, b, c;
+   int size;
+
+   DOR(mp_init_multi(&a, &b, &c, NULL));
+   for (size = MP_SQR_NTT_CUTOFF; size < (MP_SQR_NTT_CUTOFF + 20); size++) {
+      DO(mp_rand(&a, size));
+      DO(s_mp_sqr_ntt(&a, &b));
+      DO(s_mp_sqr(&a, &c));
+      EXPECT(mp_cmp(&b, &c) == MP_EQ);
+   }
+
+   mp_clear_multi(&a, &b, &c, NULL);
+   return EXIT_SUCCESS;
+LBL_ERR:
+   mp_clear_multi(&a, &b, &c, NULL);
+   return EXIT_FAILURE;
+}
+#endif
 static int test_mp_radix_size(void)
 {
    mp_int a;
@@ -2606,7 +2669,11 @@ static int unit_tests(int argc, char **argv)
       T2(s_mp_mul_karatsuba, ONLY_PUBLIC_API, S_MP_MUL_KARATSUBA),
       T2(s_mp_sqr_karatsuba, ONLY_PUBLIC_API, S_MP_SQR_KARATSUBA),
       T2(s_mp_mul_toom, ONLY_PUBLIC_API, S_MP_MUL_TOOM),
-      T2(s_mp_sqr_toom, ONLY_PUBLIC_API, S_MP_SQR_TOOM)
+      T2(s_mp_sqr_toom, ONLY_PUBLIC_API, S_MP_SQR_TOOM),
+#if (MP_DIGIT_BIT > 16)
+      T2(s_mp_mul_ntt, ONLY_PUBLIC_API, S_MP_MUL_NTT),
+      T2(s_mp_sqr_ntt, ONLY_PUBLIC_API, S_MP_SQR_NTT)
+#endif
 #undef T3
 #undef T2
 #undef T1
