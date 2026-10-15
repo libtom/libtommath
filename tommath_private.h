@@ -86,6 +86,8 @@ do {                                                    \
 #  define MP_SQR_KARATSUBA_CUTOFF MP_DEFAULT_SQR_KARATSUBA_CUTOFF
 #  define MP_MUL_TOOM_CUTOFF      MP_DEFAULT_MUL_TOOM_CUTOFF
 #  define MP_SQR_TOOM_CUTOFF      MP_DEFAULT_SQR_TOOM_CUTOFF
+#  define MP_MUL_NTT_CUTOFF       MP_DEFAULT_MUL_NTT_CUTOFF
+#  define MP_SQR_NTT_CUTOFF       MP_DEFAULT_SQR_NTT_CUTOFF
 #endif
 
 /* define heap macros */
@@ -217,6 +219,178 @@ MP_PRIVATE mp_err s_mp_mul_high(const mp_int *a, const mp_int *b, mp_int *c, int
 MP_PRIVATE mp_err s_mp_mul_high_comba(const mp_int *a, const mp_int *b, mp_int *c, int digs) MP_WUR;
 MP_PRIVATE mp_err s_mp_mul_karatsuba(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
 MP_PRIVATE mp_err s_mp_mul_toom(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
+
+/* NTT stuff, it's a lot */
+
+/* MP_16BIT is just too small, not worth it */
+#if (MP_DIGIT_BIT > 16)
+
+#include <limits.h>
+
+/* Magic numbers */
+#define NTT_BASE_SIZE         (sizeof(mp_digit) * CHAR_BIT)
+#define NTT_BASE_SIZE_M_ONE   (NTT_BASE_SIZE - 1)
+#define NTT_LARGE_SIZE        (2 * NTT_BASE_SIZE)
+#define NTT_LIMB_SIZE         MP_DIGIT_BIT
+#define NTT_LIMB_SIZE_M_ONE   (NTT_LIMB_SIZE - 1)
+
+#if (NTT_LIMB_SIZE == 60)
+#define NTT_PRIME_MAX_SIZE    (NTT_BASE_SIZE - 2)
+#else
+#define NTT_PRIME_MAX_SIZE    (NTT_BASE_SIZE - 2)
+#endif
+
+/* Indirectly influences the number of primes */
+#define NTT_BOUND_BIT_MULTIPLICATOR  2
+
+
+/* One coeff holds 2 limbs at most (120 bits for MP_64BIT)  */
+#if (NTT_LIMB_SIZE == 60)
+#define NTT_QUARTER_COEFF     (NTT_LIMB_SIZE/2)
+#else
+#define NTT_QUARTER_COEFF     (NTT_LIMB_SIZE)
+#endif
+
+/* TODO: make tunable, although the tuning runs would take a a lot of time */
+/*
+  Weights for radix-n when computing optimal coefficient-array length.
+  Assuming radix 2 is the fastest, radix 5 the slowest.
+  Profiling would be a better idea than the general values below.
+ */
+#define NTT_SMOOTH_W2   1
+#define NTT_SMOOTH_W3   2
+#define NTT_SMOOTH_W5   6
+
+#define NTT_MR_MAXSTAGE 48   /* stages of m: log2(m) plus the 3s and 5s */
+
+/* Three primes for 60 bits, four for 28 bit */
+#define NTT_MAXP 6           /* max CRT primes */
+
+#if (NTT_LIMB_SIZE == 60)
+#define NTT_MAXW 4            /* max limbs per coefficient */
+#else
+#define NTT_MAXW 6
+#endif
+
+/* TODO: Basically MP_MASK. Use directly? */
+#define NTT_MASK (((mp_digit)1 << NTT_LIMB_SIZE) - 1)
+
+/* Montgomery context for a prime p < 2^62, R = 2^64. */
+typedef struct {
+   mp_digit p;      /* The prime p */
+   mp_digit ninv;   /* (-p^{-1}) mod R  */
+   mp_digit r2;     /* R^2 mod p */
+} ntt_mont;
+
+typedef struct {
+   mp_digit  p;      /* The prime p */
+   mp_digit  root;   /* primitive 2^s-th (or m-th) root mod p, ordinary residue */
+   int  s;           /* root order is a power of two */
+   int  m;           /* 5-smooth transform length of the root order */
+} ntt_prime_ent;
+
+/* Root table and butterfly constants of a single smooth transform. */
+typedef struct {
+   int  m;
+   int  nstages;
+   int  radix[NTT_MR_MAXSTAGE];
+   int  ell[NTT_MR_MAXSTAGE];        /* block length at each stage */
+   mp_digit *w;                      /* w[s] = zeta^s, Montgomery form, s < m */
+   mp_digit  c3, c3i;                /* primitive cube root, and its inverse */
+   mp_digit  k5[4], k5i[4];          /* radix-5 constants, forward / inverse */
+   bool has3;
+   bool has5;
+} ntt_sroots;
+
+typedef struct {
+   int           t;                        /* number of primes */
+   int           width;                    /* 60-bit limbs per coefficient */
+   mp_digit      p[NTT_MAXP];              /* the primes, ascending */
+   ntt_mont      mc[NTT_MAXP];             /* Montgomery context of each prime */
+   mp_digit      minv[NTT_MAXP][NTT_MAXP]; /* p_i^{-1} * 2^64 mod p_j, i < j */
+   mp_digit      x[NTT_MAXP];              /* scratch */
+   mp_digit      d[NTT_MAXP];              /* mixed-radix digits */
+} ntt_crt_ctx;
+
+/* The main function, the rest are helpers */
+MP_PRIVATE mp_err s_mp_mul_ntt(const mp_int *a, const mp_int *b, mp_int *c);
+MP_PRIVATE mp_err s_mp_sqr_ntt(const mp_int *a, mp_int *c);
+/* ceil(log_2(x)) */
+MP_PRIVATE int s_mp_ntt_ilog2_ceil(int x);
+/* Convolution of a single radix */
+MP_PRIVATE mp_err s_mp_ntt_convolve_single(const mp_int *a, const mp_int *b, const ntt_prime_ent *ent, mp_digit *ra,
+      mp_digit *rb, mp_digit *out, int ncoef);
+MP_PRIVATE mp_err s_mp_ntt_autoconvolve_single(const mp_int *a, const ntt_prime_ent *ent, mp_digit *ra,
+      mp_digit *out, int ncoef);
+
+/* Forward butterflies */
+MP_PRIVATE void s_mp_ntt_fwd2(const ntt_mont *mc, mp_digit *b, int L, int step, const ntt_sroots *R);
+MP_PRIVATE void s_mp_ntt_fwd3(const ntt_mont *mc, mp_digit *b, int L, int step, const ntt_sroots *R);
+MP_PRIVATE void s_mp_ntt_fwd5(const ntt_mont *mc, mp_digit *b, int L, int step, const ntt_sroots *R);
+
+/* Inverse butterflies */
+MP_PRIVATE void s_mp_ntt_inv2(const ntt_mont *mc, mp_digit *b, int L, int step, const ntt_sroots *R);
+MP_PRIVATE void s_mp_ntt_inv3(const ntt_mont *mc, mp_digit *b, int L, int step, const ntt_sroots *R);
+MP_PRIVATE void s_mp_ntt_inv5(const ntt_mont *mc, mp_digit *b, int L, int step, const ntt_sroots *R);
+
+/* Chinese remainder to get teh differrent radices together */
+MP_PRIVATE void s_mp_ntt_crt_init(ntt_crt_ctx *cx, const mp_digit *primes, int t, int bound_bits);
+MP_PRIVATE void s_mp_ntt_crt_coeff(ntt_crt_ctx *cx, const mp_digit *r, mp_digit *limbs);
+MP_PRIVATE mp_err s_mp_ntt_crt_assemble(ntt_crt_ctx *cx, mp_digit **residues, int nprimes,int ncoef, mp_int *c);
+
+/* Single mp_digit modular inverse. Was here but got out, div_exact* uses it, too */
+/* Initialize ntt_mont structure with prime p */
+MP_PRIVATE void s_mp_ntt_mont_init(ntt_mont *m, mp_digit p);
+/* Montgomery reduction */
+MP_PRIVATE mp_digit s_mp_ntt_mont_redc(const ntt_mont *m, mp_word T);
+/* Montgomery to plain */
+MP_PRIVATE mp_digit s_mp_ntt_from_mont(const ntt_mont *m, mp_digit a);
+/* Plain to Montgomery */
+MP_PRIVATE mp_digit s_mp_ntt_to_mont(const ntt_mont *m, mp_digit x);
+
+/* Montgomery arithmetic */
+MP_PRIVATE mp_digit s_mp_ntt_mont_add(const ntt_mont *m, mp_digit a, mp_digit b);
+MP_PRIVATE mp_digit s_mp_ntt_mont_mul(const ntt_mont *m, mp_digit a, mp_digit b);
+MP_PRIVATE mp_digit s_mp_ntt_mont_pow(const ntt_mont *m, mp_digit base, mp_digit exp);
+MP_PRIVATE mp_digit s_mp_ntt_mont_sub(const ntt_mont *m, mp_digit a, mp_digit b);
+/* Plain arithmetic. Helpers for bootstrapping the primes */
+MP_PRIVATE mp_digit s_mp_ntt_small_mulmod(mp_digit a, mp_digit b, mp_digit m);
+MP_PRIVATE mp_digit s_mp_ntt_small_powmod(mp_digit b, mp_digit e, mp_digit m);
+
+/* Selects forward butterfly according to radix */
+MP_PRIVATE void s_mp_ntt_smooth_fwd(ntt_mont *mc, mp_digit *a, int m, const ntt_sroots *R);
+/* Selects forward butterfly according to radix */
+MP_PRIVATE void s_mp_ntt_smooth_inv(ntt_mont *mc, mp_digit *a, int m, const ntt_sroots *R);
+
+#ifdef USE_NAIVE
+/* Choose length of the coefficient array */
+/* All weights 1 */
+MP_PRIVATE int s_mp_ntt_smooth_length_naive(int n_min);
+#else
+/* Takes different weights per radix*/
+MP_PRIVATE int s_mp_ntt_smooth_length_weighted(int n_min, int w2, int w3, int w5);
+#endif
+/* Choose length of the coefficient array, given minimum. Returns n >= need */
+MP_PRIVATE int s_mp_ntt_smooth_length(int need);
+/* Organizes the number of radix calls */
+MP_PRIVATE int s_mp_ntt_smooth_plan(int m, int *radix, int max);
+
+/* Memory for root array */
+MP_PRIVATE mp_err s_mp_ntt_sroots_init(ntt_sroots *R, ntt_mont *mc, int m, mp_digit zeta);
+MP_PRIVATE void s_mp_ntt_sroots_free(ntt_sroots *R);
+
+/* Gnerate prime for NTT round */
+MP_PRIVATE bool s_mp_ntt_find_smooth_prime(ntt_prime_ent *ent, int m, int index, mp_digit min_p);
+/* Small number primetest */
+MP_PRIVATE bool s_mp_ntt_small_is_prime(mp_digit n);
+/* The NTT primes are expected in a certain order */
+MP_PRIVATE void s_mp_ntt_sort_primes(ntt_prime_ent *ents, int n);
+
+#endif
+/* NTT stuff ends here. Yes, it was a lot, as promised.  */
+
+
+
 MP_PRIVATE mp_err s_mp_prime_is_divisible(const mp_int *a, bool *result) MP_WUR;
 MP_PRIVATE mp_err s_mp_rand_platform(void *p, size_t n) MP_WUR;
 MP_PRIVATE mp_err s_mp_sqr(const mp_int *a, mp_int *b) MP_WUR;
@@ -231,6 +405,10 @@ MP_PRIVATE mp_err s_mp_radix_size_overestimate(const mp_int *a, const int radix,
 
 #define MP_PRECISION_FIXED_LOG   ( (int) (((sizeof(mp_word) * CHAR_BIT) / 2) - 1))
 #define MP_UPPER_LIMIT_FIXED_LOG ( (int) ( (sizeof(mp_word) * CHAR_BIT) - 1))
+
+/* Compute the modular inverse b^(-1) mod 2^MP_DIGIT_BIT */
+MP_PRIVATE mp_digit s_mp_ntt_invmod_d(mp_digit p);
+
 MP_PRIVATE mp_err s_mp_fp_log(const mp_int *a, mp_int *c) MP_WUR;
 MP_PRIVATE mp_err s_mp_fp_log_d(const mp_int *a, mp_word *c) MP_WUR;
 

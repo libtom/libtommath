@@ -889,7 +889,143 @@
 			>
 		</File>
 		<File
+			RelativePath="s_mp_mul_ntt.c"
+			>
+		</File>
+		<File
 			RelativePath="s_mp_mul_toom.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_ntt_autoconvolve_single.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_ntt_convolve_single.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_ntt_crt_assemble.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_ntt_crt_coeff.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_ntt_crt_init.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_ntt_find_smooth_prime.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_ntt_from_mont.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_ntt_fwd2.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_ntt_fwd3.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_ntt_fwd5.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_ntt_ilog2_ceil.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_ntt_inv2.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_ntt_inv3.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_ntt_inv5.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_ntt_invmod_d.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_ntt_mont_add.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_ntt_mont_init.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_ntt_mont_mul.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_ntt_mont_pow.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_ntt_mont_redc.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_ntt_mont_sub.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_ntt_small_is_prime.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_ntt_small_mulmod.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_ntt_small_powmod.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_ntt_smooth_fwd.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_ntt_smooth_inv.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_ntt_smooth_length.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_ntt_smooth_length_weighted.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_ntt_smooth_plan.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_ntt_sort_primes.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_ntt_sroots_free.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_ntt_sroots_init.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_ntt_to_mont.c"
 			>
 		</File>
 		<File
@@ -926,6 +1062,10 @@
 		</File>
 		<File
 			RelativePath="s_mp_sqr_karatsuba.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_sqr_ntt.c"
 			>
 		</File>
 		<File
