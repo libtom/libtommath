@@ -66,6 +66,10 @@ static uint64_t TIMFUNC(void)
    unsigned hi, lo;
    __asm__ __volatile__("rdtsc" : "=a"(lo), "=d"(hi));
    return ((uint64_t)lo)|(((uint64_t)hi)<<32);
+#elif defined(__riscv) && __riscv_xlen == 64
+   uint64_t cycles;
+   __asm__ __volatile__ ("rdcycle %0" : "=r" (cycles));
+   return cycles;
 #else /* gcc-IA64 version */
    unsigned long result;
    __asm__ __volatile__("mov %0=ar.itc":"=r"(result)::"memory");
