@@ -314,6 +314,7 @@
 #   define MP_INVMOD_C
 #   define MP_REDUCE_IS_2K_C
 #   define MP_REDUCE_IS_2K_L_C
+#   define MP_ZERO_C
 #   define S_MP_EXPTMOD_C
 #   define S_MP_EXPTMOD_FAST_C
 #endif
