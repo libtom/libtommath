@@ -2002,10 +2002,59 @@ static int test_s_mp_sqr_comba(void)
       }
    }
 
+   /* Reject the first size whose square does not fit in the workspace. */
+   DO(s_fill_with_ones(&a, (MP_WARRAY / 2) + 1));
+   DO(mp_copy(&a, &r2));
+   mp_set(&r1, 42u);
+   EXPECT(s_mp_sqr_comba(&a, &r1) == MP_VAL);
+   EXPECT(mp_cmp(&a, &r2) == MP_EQ);
+   EXPECT(mp_cmp_d(&r1, 42u) == MP_EQ);
+   EXPECT(s_mp_sqr_comba(&a, &a) == MP_VAL);
+   EXPECT(mp_cmp(&a, &r2) == MP_EQ);
+
    mp_clear_multi(&a, &r1, &r2, NULL);
    return EXIT_SUCCESS;
 LBL_ERR:
    mp_clear_multi(&a, &r1, &r2, NULL);
+   return EXIT_FAILURE;
+}
+
+static int test_s_mp_montgomery_reduce_comba_bounds(void)
+{
+   mp_int n, x, original;
+   mp_digit rho;
+   int limit = (MP_WARRAY - 1) / 2;
+
+   DOR(mp_init_multi(&n, &x, &original, NULL));
+
+   /* The last supported modulus still reduces n to zero. */
+   DO(s_fill_with_ones(&n, limit));
+   DO(mp_montgomery_setup(&n, &rho));
+   DO(mp_copy(&n, &x));
+   DO(s_mp_montgomery_reduce_comba(&x, &n, rho));
+   EXPECT(mp_iszero(&x));
+
+   /* The first oversized modulus needs MP_WARRAY + 1 workspace entries. */
+   DO(s_fill_with_ones(&n, limit + 1));
+   DO(mp_montgomery_setup(&n, &rho));
+   DO(mp_copy(&n, &x));
+   DO(mp_copy(&n, &original));
+   EXPECT(s_mp_montgomery_reduce_comba(&x, &n, rho) == MP_VAL);
+   EXPECT(mp_cmp(&x, &original) == MP_EQ);
+   EXPECT(mp_cmp(&n, &original) == MP_EQ);
+
+   /* Retain the existing input-size check. */
+   mp_set(&n, 1u);
+   DO(mp_montgomery_setup(&n, &rho));
+   DO(s_fill_with_ones(&x, MP_WARRAY + 1));
+   DO(mp_copy(&x, &original));
+   EXPECT(s_mp_montgomery_reduce_comba(&x, &n, rho) == MP_VAL);
+   EXPECT(mp_cmp(&x, &original) == MP_EQ);
+
+   mp_clear_multi(&n, &x, &original, NULL);
+   return EXIT_SUCCESS;
+LBL_ERR:
+   mp_clear_multi(&n, &x, &original, NULL);
    return EXIT_FAILURE;
 }
 
@@ -2602,6 +2651,7 @@ static int unit_tests(int argc, char **argv)
       T2(s_mp_sqr, ONLY_PUBLIC_API, S_MP_SQR),
       /* s_mp_mul_comba not (yet) testable because s_mp_mul branches to s_mp_mul_comba automatically */
       T2(s_mp_sqr_comba, ONLY_PUBLIC_API, S_MP_SQR_COMBA),
+      T2(s_mp_montgomery_reduce_comba_bounds, ONLY_PUBLIC_API, S_MP_MONTGOMERY_REDUCE_COMBA),
       T2(s_mp_mul_balance, ONLY_PUBLIC_API, S_MP_MUL_BALANCE),
       T2(s_mp_mul_karatsuba, ONLY_PUBLIC_API, S_MP_MUL_KARATSUBA),
       T2(s_mp_sqr_karatsuba, ONLY_PUBLIC_API, S_MP_SQR_KARATSUBA),

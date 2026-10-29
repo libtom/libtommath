@@ -19,7 +19,8 @@ mp_err s_mp_montgomery_reduce_comba(mp_int *x, const mp_int *n, mp_digit rho)
 
    MP_CHECK_WARRAY(W);
 
-   if (x->used > MP_WARRAY) {
+   /* Copying x and zeroing through W[2 * n->used] must stay in bounds. */
+   if ((x->used > MP_WARRAY) || (n->used > ((MP_WARRAY - 1) / 2))) {
       MP_FREE_WARRAY(W);
       return MP_VAL;
    }
