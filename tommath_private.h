@@ -367,8 +367,9 @@ MP_PRIVATE void s_mp_ntt_smooth_inv(ntt_mont *mc, mp_digit *a, int m, const ntt_
 /* All weights 1 */
 MP_PRIVATE int s_mp_ntt_smooth_length_naive(int n_min);
 #else
-/* Takes different weights per radix*/
-MP_PRIVATE int s_mp_ntt_smooth_length_weighted(int n_min, int w2, int w3, int w5);
+/* Takes different weights per radix. Does onl make sense up to about 100k*/
+/* MP_PRIVATE int s_mp_ntt_smooth_length_weighted(int n_min, int w2, int w3, int w5);*/
+MP_PRIVATE int s_mp_ntt_smooth_length_table(int n_min);
 #endif
 /* Choose length of the coefficient array, given minimum. Returns n >= need */
 MP_PRIVATE int s_mp_ntt_smooth_length(int need);
