@@ -41,7 +41,6 @@ mp_err mp_reduce_2k_l(mp_int *a, const mp_int *n, const mp_int *d)
       if ((err = s_mp_sub(a, n, a)) != MP_OKAY) {
          goto LBL_ERR;
       }
-
    }
 
 LBL_ERR:

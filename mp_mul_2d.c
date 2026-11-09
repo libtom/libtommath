@@ -40,7 +40,7 @@ mp_err mp_mul_2d(const mp_int *a, int b, mp_int *c)
       shift = (mp_digit)(MP_DIGIT_BIT - b);
 
       /* carry */
-      r    = 0;
+      r = 0;
       for (x = 0; x < c->used; x++) {
          /* get the higher bits of the current word */
          mp_digit rr = (c->dp[x] >> shift) & mask;

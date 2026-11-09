@@ -27,7 +27,7 @@ mp_err s_mp_montgomery_reduce_comba(mp_int *x, const mp_int *n, mp_digit rho)
    /* get old used count */
    oldused = x->used;
 
-   /* grow a as required */
+   /* grow x as required */
    if ((err = mp_grow(x, n->used + 1)) != MP_OKAY) {
       MP_FREE_WARRAY(W);
       return err;
@@ -37,12 +37,12 @@ mp_err s_mp_montgomery_reduce_comba(mp_int *x, const mp_int *n, mp_digit rho)
     * an array of double precision words W[...]
     */
 
-   /* copy the digits of a into W[0..a->used-1] */
+   /* copy the digits of x into W[0..x->used-1] */
    for (ix = 0; ix < x->used; ix++) {
       W[ix] = x->dp[ix];
    }
 
-   /* zero the high words of W[a->used..m->used*2] */
+   /* zero the high words of W[x->used..n->used*2] */
    if (ix < ((n->used * 2) + 1)) {
       s_mp_zero_buf(W + x->used, sizeof(mp_word) * (size_t)(((n->used * 2) + 1) - ix));
    }
@@ -54,7 +54,7 @@ mp_err s_mp_montgomery_reduce_comba(mp_int *x, const mp_int *n, mp_digit rho)
       int iy;
       mp_digit mu;
 
-      /* mu = ai * m' mod b
+      /* mu = xi * n' mod b
        *
        * We avoid a double precision multiplication (which isn't required)
        * by casting the value down to a mp_digit.  Note this requires
@@ -62,7 +62,7 @@ mp_err s_mp_montgomery_reduce_comba(mp_int *x, const mp_int *n, mp_digit rho)
        */
       mu = ((W[ix] & MP_MASK) * rho) & MP_MASK;
 
-      /* a = a + mu * m * b**i
+      /* x = x + mu * n * b**i
        *
        * This is computed in place and on the fly.  The multiplication
        * by b**i is handled by offsetting which columns the results
@@ -74,7 +74,7 @@ mp_err s_mp_montgomery_reduce_comba(mp_int *x, const mp_int *n, mp_digit rho)
        * result (so far) [see above] to work.  This is
        * handled by fixing up one carry after the inner loop.  The
        * carry fixups are done in order so after these loops the
-       * first m->used words of W[] have the carries fixed
+       * first n->used words of W[] have the carries fixed
        */
       for (iy = 0; iy < n->used; iy++) {
          W[ix + iy] += (mp_word)mu * (mp_word)n->dp[iy];
@@ -93,9 +93,9 @@ mp_err s_mp_montgomery_reduce_comba(mp_int *x, const mp_int *n, mp_digit rho)
       W[ix + 1] += W[ix] >> (mp_word)MP_DIGIT_BIT;
    }
 
-   /* copy out, A = A/b**n
+   /* copy out, x = x/b**n
     *
-    * The result is A/b**n but instead of converting from an
+    * The result is x/b**n but instead of converting from an
     * array of mp_word to mp_digit than calling mp_rshd
     * we just copy them in the right order
     */
@@ -107,15 +107,15 @@ mp_err s_mp_montgomery_reduce_comba(mp_int *x, const mp_int *n, mp_digit rho)
    /* set the max used */
    x->used = n->used + 1;
 
-   /* zero oldused digits, if the input a was larger than
-    * m->used+1 we'll have to clear the digits
+   /* zero oldused digits, if the input x was larger than
+    * n->used+1 we'll have to clear the digits
     */
    s_mp_zero_digs(x->dp + x->used, oldused - x->used);
 
    mp_clamp(x);
 
    MP_FREE_WARRAY(W);
-   /* if A >= m then A = A - m */
+   /* if x >= n then x = x - n */
    if (mp_cmp_mag(x, n) != MP_LT) {
       return s_mp_sub(x, n, x);
    }

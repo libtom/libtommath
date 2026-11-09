@@ -7,8 +7,8 @@
 mp_err mp_mul_d(const mp_int *a, mp_digit b, mp_int *c)
 {
    mp_digit u;
-   mp_err   err;
-   int   ix, oldused;
+   mp_err err;
+   int ix, oldused;
 
    if (b == 1u) {
       return mp_copy(a, c);
@@ -43,13 +43,13 @@ mp_err mp_mul_d(const mp_int *a, mp_digit b, mp_int *c)
    /* compute columns */
    for (ix = 0; ix < a->used; ix++) {
       /* compute product and carry sum for this term */
-      mp_word r       = (mp_word)u + ((mp_word)a->dp[ix] * (mp_word)b);
+      mp_word r = (mp_word)u + ((mp_word)a->dp[ix] * (mp_word)b);
 
       /* mask off higher bits to get a single digit */
       c->dp[ix] = (mp_digit)(r & (mp_word)MP_MASK);
 
       /* send carry into next iteration */
-      u       = (mp_digit)(r >> (mp_word)MP_DIGIT_BIT);
+      u = (mp_digit)(r >> (mp_word)MP_DIGIT_BIT);
    }
 
    /* store final carry [if any] and increment ix offset  */

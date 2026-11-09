@@ -6,9 +6,9 @@
 /* low level squaring, b = a*a, HAC pp.596-597, Algorithm 14.16 */
 mp_err s_mp_sqr(const mp_int *a, mp_int *b)
 {
-   mp_int   t;
-   int      ix, pa;
-   mp_err   err;
+   mp_int t;
+   int    ix, pa;
+   mp_err err;
 
    pa = a->used;
    if ((err = mp_init_size(&t, (2 * pa) + 1)) != MP_OKAY) {

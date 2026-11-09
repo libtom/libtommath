@@ -29,19 +29,19 @@ class LibTommathTests: XCTestCase {
         var b = mp_int()
         var c = mp_int()
         var d = mp_int()
-        
+
         XCTAssertEqual(mp_init(&a), MP_OKAY)
         XCTAssertEqual(mp_init(&b), MP_OKAY)
         XCTAssertEqual(mp_init(&c), MP_OKAY)
         XCTAssertEqual(mp_init(&d), MP_OKAY)
-        
+
         defer {
             mp_clear(&a)
             mp_clear(&b)
             mp_clear(&c)
             mp_clear(&d)
         }
-        
+
         XCTAssert(mp_error_to_string(MP_OKAY) != nil)
 
         /* a: 0->5 */
