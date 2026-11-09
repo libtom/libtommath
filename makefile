@@ -53,9 +53,9 @@ s_mp_ntt_find_smooth_prime.o s_mp_ntt_from_mont.o s_mp_ntt_fwd2.o s_mp_ntt_fwd3.
 s_mp_ntt_ilog2_ceil.o s_mp_ntt_inv2.o s_mp_ntt_inv3.o s_mp_ntt_inv5.o s_mp_ntt_invmod_d.o \
 s_mp_ntt_mont_add.o s_mp_ntt_mont_init.o s_mp_ntt_mont_mul.o s_mp_ntt_mont_pow.o s_mp_ntt_mont_redc.o \
 s_mp_ntt_mont_sub.o s_mp_ntt_small_is_prime.o s_mp_ntt_small_mulmod.o s_mp_ntt_small_powmod.o \
-s_mp_ntt_smooth_fwd.o s_mp_ntt_smooth_inv.o s_mp_ntt_smooth_length.o s_mp_ntt_smooth_length_weighted.o \
-s_mp_ntt_smooth_plan.o s_mp_ntt_sort_primes.o s_mp_ntt_sroots_free.o s_mp_ntt_sroots_init.o \
-s_mp_ntt_to_mont.o s_mp_prime_is_divisible.o s_mp_prime_tab.o s_mp_radix_map.o \
+s_mp_ntt_smooth_fwd.o s_mp_ntt_smooth_inv.o s_mp_ntt_smooth_length.o s_mp_ntt_smooth_length_table.o \
+s_mp_ntt_smooth_length_weighted.o s_mp_ntt_smooth_plan.o s_mp_ntt_sort_primes.o s_mp_ntt_sroots_free.o \
+s_mp_ntt_sroots_init.o s_mp_ntt_to_mont.o s_mp_prime_is_divisible.o s_mp_prime_tab.o s_mp_radix_map.o \
 s_mp_radix_size_overestimate.o s_mp_rand_platform.o s_mp_rand_source.o s_mp_sqr.o s_mp_sqr_comba.o \
 s_mp_sqr_karatsuba.o s_mp_sqr_ntt.o s_mp_sqr_toom.o s_mp_sub.o s_mp_warray.o s_mp_warray_get.o \
 s_mp_warray_put.o s_mp_zero_buf.o s_mp_zero_digs.o

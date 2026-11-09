@@ -1005,6 +1005,10 @@
 			>
 		</File>
 		<File
+			RelativePath="s_mp_ntt_smooth_length_table.c"
+			>
+		</File>
+		<File
 			RelativePath="s_mp_ntt_smooth_length_weighted.c"
 			>
 		</File>
