@@ -9,9 +9,9 @@
  */
 mp_err mp_reduce(mp_int *x, const mp_int *m, const mp_int *mu)
 {
-   mp_int  q;
-   mp_err  err;
-   int     um = m->used;
+   mp_int q;
+   mp_err err;
+   int    um = m->used;
 
    /* q = x */
    if ((err = mp_init_copy(&q, x)) != MP_OKAY) {

@@ -12,9 +12,9 @@
  */
 mp_err s_mp_sqr_karatsuba(const mp_int *a, mp_int *b)
 {
-   mp_int  x0, x1, t1, t2, x0x0, x1x1;
+   mp_int x0, x1, t1, t2, x0x0, x1x1;
    int B;
-   mp_err  err;
+   mp_err err;
 
    /* min # of digits */
    B = a->used;

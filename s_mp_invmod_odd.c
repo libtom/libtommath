@@ -11,8 +11,8 @@
  */
 mp_err s_mp_invmod_odd(const mp_int *a, const mp_int *b, mp_int *c)
 {
-   mp_int  x, y, u, v, B, D;
-   mp_err  err;
+   mp_int x, y, u, v, B, D;
+   mp_err err;
 
    /* 2. [modified] b must be odd   */
    if (mp_iseven(b)) {

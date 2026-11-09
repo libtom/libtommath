@@ -14,7 +14,7 @@
  */
 mp_err s_mp_mul_high_comba(const mp_int *a, const mp_int *b, mp_int *c, int digs)
 {
-   int     oldused, pa, ix;
+   int      oldused, pa, ix;
    mp_err   err;
    mp_digit MP_ALLOC_WARRAY(W);
    mp_word  _W;
@@ -37,7 +37,7 @@ mp_err s_mp_mul_high_comba(const mp_int *a, const mp_int *b, mp_int *c, int digs
    pa = a->used + b->used;
    _W = 0;
    for (ix = digs; ix < pa; ix++) {
-      int      tx, ty, iy, iz;
+      int tx, ty, iy, iz;
 
       /* get offsets into the two bignums */
       ty = MP_MIN(b->used-1, ix);

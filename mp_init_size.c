@@ -3,7 +3,7 @@
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
-/* init an mp_init for a given size */
+/* init an mp_int for a given size */
 mp_err mp_init_size(mp_int *a, int size)
 {
    if (size < 0) {

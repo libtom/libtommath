@@ -61,8 +61,8 @@ mp_err mp_montgomery_reduce(mp_int *x, const mp_int *n, mp_digit rho)
 
       /* propagate carries upwards as required*/
       while (u != 0u) {
-         x->dp[ix + iy]   += u;
-         u        = x->dp[ix + iy] >> MP_DIGIT_BIT;
+         x->dp[ix + iy] += u;
+         u = x->dp[ix + iy] >> MP_DIGIT_BIT;
          x->dp[ix + iy] &= MP_MASK;
          ++iy;
       }

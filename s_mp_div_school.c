@@ -78,7 +78,7 @@ mp_err s_mp_div_school(const mp_int *a, const mp_int *b, mp_int *c, mp_int *d)
          q.dp[(i - t) - 1] = ((mp_digit)1 << (mp_digit)MP_DIGIT_BIT) - (mp_digit)1;
       } else {
          mp_word tmp;
-         tmp = (mp_word)xdpi << (mp_word)MP_DIGIT_BIT;
+         tmp  = (mp_word)xdpi << (mp_word)MP_DIGIT_BIT;
          tmp |= (mp_word)x.dp[i - 1];
          tmp /= (mp_word)y.dp[t];
          if (tmp > (mp_word)MP_MASK) {
