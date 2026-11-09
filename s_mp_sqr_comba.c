@@ -15,10 +15,10 @@ After that loop you do the squares and add them in.
 
 mp_err s_mp_sqr_comba(const mp_int *a, mp_int *b)
 {
-   int       oldused, pa, ix;
-   mp_digit  MP_ALLOC_WARRAY(W);
-   mp_word   W1;
-   mp_err err;
+   int      oldused, pa, ix;
+   mp_digit MP_ALLOC_WARRAY(W);
+   mp_word  W1;
+   mp_err   err;
 
    MP_CHECK_WARRAY(W);
 
@@ -32,8 +32,8 @@ mp_err s_mp_sqr_comba(const mp_int *a, mp_int *b)
    /* number of output digits to produce */
    W1 = 0;
    for (ix = 0; ix < pa; ix++) {
-      int      tx, ty, iy, iz;
-      mp_word  _W;
+      int     tx, ty, iy, iz;
+      mp_word _W;
 
       /* clear counter */
       _W = 0;
