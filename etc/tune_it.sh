@@ -33,10 +33,12 @@ RNUM=0
 # test are running if you do not have enough memory to avoid page faults.   #
 #############################################################################
 
+# TODO: Because of NTT the defaults of LIMIT is down from 100, RLOOPS down from 10
+#       and LAG is up from 3
 # Number of rounds overall.
-LIMIT=100
+LIMIT=10
 # Number of loops for each input.
-RLOOPS=10
+RLOOPS=3
 # Offset ( > 0 ) . Runs tests with asymmetric input of the form 1:OFFSET
 # Please use another destination for TOMMATH_CUTOFFS_H if you change OFFSET, because the numbers
 # with an offset different from 1 (one) are not usable as the general cut-off values
@@ -45,7 +47,7 @@ OFFSET=1
 # Number ( >= 3 ) of positive results (TC-is-faster) accumulated until it is accepted.
 # Due to the algorithm used to compute the median in this Posix compliant shell script
 # the value needs to be 3 (three), not less, to keep the variation small.
-LAG=3
+LAG=100
 # Keep the temporary file $FILE_NAME. Set to 0 (zero) to remove it at the end.
 # The file is in a format fit to feed into R directly. If you do it and find the median
 # of this program to be off by more than a couple: please contact the authors and report
@@ -56,7 +58,7 @@ KEEP_TEMP=1
 echo "You might like to watch the numbers go up to $LIMIT but it will take a long time!"
 
 # Might not have sufficient rights or disc full.
-echo "km ks tc3m tc3s" > $FILE_NAME || die "Writing header to $FILE_NAME" $?
+echo "km ks tc3m tc3s nttm ntts" > $FILE_NAME || die "Writing header to $FILE_NAME" $?
 i=1
 while [ $i -le $LIMIT ]; do
    RNUM=$(LCG)
@@ -104,3 +106,19 @@ echo "#define MP_DEFAULT_MUL_TOOM_CUTOFF      $TMP" >> $TOMMATH_CUTOFFS_H || die
 TMP=$(median $FILE_NAME 4 $i)
 echo "#define MP_DEFAULT_SQR_TOOM_CUTOFF      $TMP"
 echo "#define MP_DEFAULT_SQR_TOOM_CUTOFF      $TMP" >> $TOMMATH_CUTOFFS_H || die "(tc3s) Appending to $TOMMATH_CUTOFFS_H" $?
+TMP=$(median $FILE_NAME 5 $i)
+echo "#define MP_DEFAULT_MUL_NTT_CUTOFF       $TMP"
+echo "#define MP_DEFAULT_MUL_NTT_CUTOFF       $TMP" >> $TOMMATH_CUTOFFS_H || die "(nttm) Appending to $TOMMATH_CUTOFFS_H" $?
+TMP=$(median $FILE_NAME 6 $i)
+echo "#define MP_DEFAULT_SQR_NTT_CUTOFF       $TMP"
+echo "#define MP_DEFAULT_SQR_NTT_CUTOFF       $TMP" >> $TOMMATH_CUTOFFS_H || die "(ntts) Appending to $TOMMATH_CUTOFFS_H" $?
+
+
+
+
+
+
+
+
+
+
