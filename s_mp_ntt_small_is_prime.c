@@ -3,9 +3,6 @@
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
-
-
-/* MP_16BIT is just too small, not worth it */
 #if (MP_DIGIT_BIT > 16)
 bool s_mp_ntt_small_is_prime(mp_digit n)
 {
@@ -63,7 +60,5 @@ bool s_mp_ntt_small_is_prime(mp_digit n)
    return true;
 }
 #endif
-
-
 
 #endif

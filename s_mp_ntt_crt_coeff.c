@@ -3,9 +3,6 @@
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
-
-
-/* MP_16BIT is just too small, not worth it */
 #if (MP_DIGIT_BIT > 16)
 /*
    Recover one coefficient (from its residue modulo every prime) as a short
@@ -26,10 +23,12 @@ void s_mp_ntt_crt_coeff(ntt_crt_ctx *cx, const mp_digit *r, mp_digit *limbs)
    mp_digit di, pj, diff;
    mp_word carry, v;
 
-   for (i = 0; i < t; i++) x[i] = r[i];            /* each < p_i */
+   for (i = 0; i < t; i++) {
+      x[i] = r[i];
+   }
 
    for (i = 0; i < t; i++) {
-      di = x[i];                          /* mixed-radix digit */
+      di = x[i];
       d[i] = di;
       for (j = i + 1; j < t; j++) {
          pj = cx->p[j];
@@ -39,7 +38,9 @@ void s_mp_ntt_crt_coeff(ntt_crt_ctx *cx, const mp_digit *r, mp_digit *limbs)
    }
 
    /* Horner: c = d_0 + p_0 (d_1 + p_1 (d_2 + ... )) */
-   for (w = 0; w < NTT_MAXW; w++) limbs[w] = 0;
+   for (w = 0; w < NTT_MAXW; w++) {
+      limbs[w] = 0;
+   }
    limbs[0] = d[t - 1];
    for (i = t - 2; i >= 0; i--) {
       carry = (mp_word)d[i];
@@ -51,6 +52,5 @@ void s_mp_ntt_crt_coeff(ntt_crt_ctx *cx, const mp_digit *r, mp_digit *limbs)
    }
 }
 #endif
-
 
 #endif

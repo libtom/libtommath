@@ -3,9 +3,6 @@
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
-
-
-/* MP_16BIT is just too small, not worth it */
 #if (MP_DIGIT_BIT > 16)
 mp_err s_mp_ntt_autoconvolve_single(const mp_int *a, const ntt_prime_ent *ent, mp_digit *ra, mp_digit *out, int ncoef)
 {
@@ -33,7 +30,7 @@ mp_err s_mp_ntt_autoconvolve_single(const mp_int *a, const ntt_prime_ent *ent, m
       ra[i] = s_mp_ntt_mont_mul(&mc, ra[i], ra[i]);
    }
 
-   s_mp_ntt_smooth_inv(&mc, ra, m, &R);            /* includes the 1/m */
+   s_mp_ntt_smooth_inv(&mc, ra, m, &R);
 
    for (i = 0; i < ncoef; i++) {
       out[i] = s_mp_ntt_from_mont(&mc, ra[i]);

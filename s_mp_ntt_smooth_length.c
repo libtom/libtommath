@@ -3,8 +3,8 @@
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
-/* MP_16BIT is just too small, not worth it */
 #if (MP_DIGIT_BIT > 16)
+/* TODO: there are no alternatives anymore, pull the two together */
 int s_mp_ntt_smooth_length(int need)
 {
    int length;
@@ -12,4 +12,5 @@ int s_mp_ntt_smooth_length(int need)
    return length;
 }
 #endif
+
 #endif

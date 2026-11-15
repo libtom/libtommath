@@ -3,31 +3,28 @@
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
-
-/* MP_16BIT is just too small, not worth it */
 #if (MP_DIGIT_BIT > 16)
 /* The main function to multiply two mp_int's into another mp_int */
 mp_err s_mp_mul_ntt(const mp_int *a, const mp_int *b, mp_int *c)
 {
+   mp_err err = MP_OKAY;
    int ncoef, m, minl, bound_bits, nprimes, pi, i;
    ntt_prime_ent *ents = NULL;
    ntt_crt_ctx   *cx = NULL;
    mp_digit *primes = NULL, **residues = NULL, *ra = NULL, *rb = NULL;
    mp_int P, pmp;
-   mp_err err = MP_OKAY;
 
    if (mp_iszero(a) || mp_iszero(b)) {
-      return mp_mul(a, b, c);
-   }
-   if (a->used < 8 || b->used < 8) {
-      return mp_mul(a, b, c);
+      mp_zero(c);
+      return err;
    }
 
-   ncoef = a->used + b->used - 1; /* coefficients that carry the product */
+   ncoef = a->used + b->used - 1;
    if ((ncoef > (1 << NTT_QUARTER_COEFF)) || (ncoef < 0)) {
       return MP_VAL;
    }
-   m = s_mp_ntt_smooth_length(ncoef); /* smallest 5-smooth transform length */
+   /* Smallest 5-smooth transform length under some conditions */
+   m = s_mp_ntt_smooth_length(ncoef);
    if (m < ncoef) {
       return MP_VAL;
    }
@@ -48,10 +45,12 @@ mp_err s_mp_mul_ntt(const mp_int *a, const mp_int *b, mp_int *c)
       MP_FREE(ents, (size_t)NTT_MAXP * sizeof(ntt_prime_ent));
       return err;
    }
-   /* TODO */
+
    mp_set(&P, 1);
 
-   /* Find primes until their product > 2^bound_bits. should result in three primes */
+   /* Find primes until their product > 2^bound_bits.
+      Should result in three primes for MP_64BIT and
+      four for MP_32BIT. */
    nprimes = 0;
    while (mp_count_bits(&P) <= bound_bits) {
       if (nprimes >= NTT_MAXP) {
@@ -66,7 +65,6 @@ mp_err s_mp_mul_ntt(const mp_int *a, const mp_int *b, mp_int *c)
       if ((err = mp_mul(&P, &pmp, &P)) != MP_OKAY) goto LTM_ERR;
       nprimes++;
    }
-
 
    s_mp_ntt_sort_primes(ents, nprimes);
 

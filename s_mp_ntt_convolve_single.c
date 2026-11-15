@@ -48,7 +48,7 @@ mp_err s_mp_ntt_convolve_single(const mp_int *a, const mp_int *b, const ntt_prim
       ra[i] = s_mp_ntt_mont_mul(&mc, ra[i], rb[i]);
    }
 
-   s_mp_ntt_smooth_inv(&mc, ra, m, &R);            /* includes the 1/m */
+   s_mp_ntt_smooth_inv(&mc, ra, m, &R);
 
    for (i = 0; i < ncoef; i++) {
       out[i] = s_mp_ntt_from_mont(&mc, ra[i]);
