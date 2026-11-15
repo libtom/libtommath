@@ -176,7 +176,6 @@ s_mp_ntt_smooth_fwd.c
 s_mp_ntt_smooth_inv.c
 s_mp_ntt_smooth_length.c
 s_mp_ntt_smooth_length_table.c
-s_mp_ntt_smooth_length_weighted.c
 s_mp_ntt_smooth_plan.c
 s_mp_ntt_sort_primes.c
 s_mp_ntt_sroots_free.c

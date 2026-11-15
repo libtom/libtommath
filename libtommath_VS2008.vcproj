@@ -1009,10 +1009,6 @@
 			>
 		</File>
 		<File
-			RelativePath="s_mp_ntt_smooth_length_weighted.c"
-			>
-		</File>
-		<File
 			RelativePath="s_mp_ntt_smooth_plan.c"
 			>
 		</File>
