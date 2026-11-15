@@ -3,9 +3,6 @@
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
-
-
-/* MP_16BIT is just too small, not worth it */
 #if (MP_DIGIT_BIT > 16)
 /*
    Radix 5 needs more care than radix 2 or 3: the field has no imaginary part to
@@ -94,6 +91,5 @@ mp_err s_mp_ntt_sroots_init(ntt_sroots *R, ntt_mont *mc, int m, mp_digit zeta)
    return MP_OKAY;
 }
 #endif
-
 
 #endif

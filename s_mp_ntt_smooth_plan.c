@@ -3,9 +3,6 @@
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
-
-
-/* MP_16BIT is just too small, not worth it */
 #if (MP_DIGIT_BIT > 16)
 /*
    Radices of m in the order the stages apply them: all the 5s, then the 3s,
@@ -15,7 +12,7 @@
    elements.)  Returns the number of stages, or -1 if m is not 5-smooth or needs
    more room than the caller has.
  */
-/* TODO: output to given variable and only return errors */
+
 int s_mp_ntt_smooth_plan(int m, int *radix, int max)
 {
    int n = 0, t = m;
@@ -45,6 +42,5 @@ int s_mp_ntt_smooth_plan(int m, int *radix, int max)
    return (t == 1) ? n : -1;
 }
 #endif
-
 
 #endif

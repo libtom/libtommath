@@ -3,11 +3,7 @@
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
-
-
-/* MP_16BIT is just too small, not worth it */
 #if (MP_DIGIT_BIT > 16)
-/* TODO: There are at most four primes, no extra sort function necessary, do it inline */
 /*
     Insertion sort by prime value. Both drivers select their primes largest
     first and hand them to Garner ascending.
@@ -27,6 +23,5 @@ void s_mp_ntt_sort_primes(ntt_prime_ent *ents, int n)
    }
 }
 #endif
-
 
 #endif

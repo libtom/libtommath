@@ -11,31 +11,25 @@
 mp_err s_mp_sqr_ntt(const mp_int *a, mp_int *c)
 {
    mp_err err = MP_OKAY;
-   /* TODO: nprimes is three, defined in NTT_MAXP, rewrite accordingly */
    int ncoef, m, minl, bound_bits, nprimes, pi, i;
    ntt_prime_ent *ents = NULL;
    ntt_crt_ctx   *cx = NULL;
    mp_digit *primes = NULL, **residues = NULL, *ra = NULL;
    mp_int P, pmp;
 
-
    if (mp_iszero(a)) {
       return mp_sqr(a,c);
    }
-   if (a->used < 8) {
-      return mp_sqr(a, c);
-   }
 
-   ncoef = a->used + a->used - 1; /* coefficients that carry the product */
+   ncoef = a->used + a->used - 1;
    if ((ncoef > (1 << NTT_QUARTER_COEFF)) || (ncoef < 0)) {
       return MP_VAL;
    }
-   m = s_mp_ntt_smooth_length(ncoef); /* smallest 5-smooth transform length */
+   m = s_mp_ntt_smooth_length(ncoef);
    if (m < ncoef) {
       return MP_VAL;
    }
 
-   /* Convolution bound: each output coefficient < min(la,lb) * 2^120. */
    minl = a->used;
    bound_bits = (int)NTT_LARGE_SIZE + s_mp_ntt_ilog2_ceil(minl) + 1;
    if (((bound_bits + NTT_LIMB_SIZE_M_ONE) / NTT_LIMB_SIZE) > NTT_MAXW) {
@@ -51,10 +45,9 @@ mp_err s_mp_sqr_ntt(const mp_int *a, mp_int *c)
       MP_FREE(ents, (size_t)NTT_MAXP * sizeof(ntt_prime_ent));
       return err;
    }
-   /* TODO */
+
    mp_set(&P, 1);
 
-   /* Find primes until their product > 2^bound_bits */
    nprimes = 0;
    while (mp_count_bits(&P) <= bound_bits) {
       if (nprimes >= NTT_MAXP) {
@@ -88,8 +81,6 @@ mp_err s_mp_sqr_ntt(const mp_int *a, mp_int *c)
       goto LTM_ERR;
    }
 
-
-   /* convolve over each prime and keep the residues */
    for (pi = 0; pi < nprimes; pi++) {
       residues[pi] = (mp_digit *)MP_MALLOC((size_t)ncoef * sizeof(mp_digit));
       if (residues[pi] == NULL) {
@@ -100,7 +91,6 @@ mp_err s_mp_sqr_ntt(const mp_int *a, mp_int *c)
       primes[pi] = ents[pi].p;
    }
 
-   /* CRT: residues -> binary, then one linear carry sweep */
    cx = (ntt_crt_ctx *)MP_MALLOC(sizeof(ntt_crt_ctx));
    if (cx == NULL) {
       err = MP_MEM;

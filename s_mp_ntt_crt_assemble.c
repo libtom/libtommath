@@ -3,9 +3,6 @@
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
 
-
-
-/* MP_16BIT is just too small, not worth it */
 #if (MP_DIGIT_BIT > 16)
 /*
     Residues -> the product.  residues[i] holds the first ncoef convolution
@@ -61,6 +58,5 @@ LTM_ERR:
    return err;
 }
 #endif
-
 
 #endif

@@ -2,6 +2,7 @@
 #ifdef S_MP_NTT_SMOOTH_LENGTH_TABLE_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
+
 #if (MP_DIGIT_BIT > 16)
 /*
    A list of 5-smooth numbers without (for n>=20)
@@ -136,7 +137,6 @@ int s_mp_ntt_smooth_length_table(int need)
       return MP_VAL;
    }
 
-
    array_size = (int)(sizeof(five_smooth) / sizeof(five_smooth[0]));
 
    idx = s_mp_search_5_smooth_array(five_smooth, array_size, need);
@@ -146,4 +146,5 @@ int s_mp_ntt_smooth_length_table(int need)
    return five_smooth[idx];
 }
 #endif
+
 #endif
