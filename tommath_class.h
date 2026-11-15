@@ -185,7 +185,6 @@
 #   define S_MP_NTT_SMOOTH_INV_C
 #   define S_MP_NTT_SMOOTH_LENGTH_C
 #   define S_MP_NTT_SMOOTH_LENGTH_TABLE_C
-#   define S_MP_NTT_SMOOTH_LENGTH_WEIGHTED_C
 #   define S_MP_NTT_SMOOTH_PLAN_C
 #   define S_MP_NTT_SORT_PRIMES_C
 #   define S_MP_NTT_SROOTS_FREE_C
@@ -1422,9 +1421,6 @@
 
 #if defined(S_MP_NTT_SMOOTH_LENGTH_TABLE_C)
 #   define S_MP_SEARCH_5_SMOOTH_ARRAY_C
-#endif
-
-#if defined(S_MP_NTT_SMOOTH_LENGTH_WEIGHTED_C)
 #endif
 
 #if defined(S_MP_NTT_SMOOTH_PLAN_C)
