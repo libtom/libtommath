@@ -2,7 +2,7 @@
 #ifdef S_MP_NTT_SMOOTH_LENGTH_TABLE_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis */
 /* SPDX-License-Identifier: Unlicense */
-
+#if (MP_DIGIT_BIT > 16)
 /*
    A list of 5-smooth numbers without (for n>=20)
    2^n, 2^n*3, 2^n*5, 2^n*3*5,2^n*3^2, 2^n*3^2, 2^n*5^2.
@@ -145,5 +145,5 @@ int s_mp_ntt_smooth_length_table(int need)
    }
    return five_smooth[idx];
 }
-
+#endif
 #endif
