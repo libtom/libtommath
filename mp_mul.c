@@ -49,6 +49,9 @@ mp_err mp_mul(const mp_int *a, const mp_int *b, mp_int *c)
               /* Not much effect was observed below a ratio of 1:2, but again: YMMV. */
               (max >= (2 * min))) {
       err = s_mp_mul_balance(a,b,c);
+   } else if (MP_HAS(S_MP_MUL_6_TOOM) &&
+              (min >= MP_MUL_TOOM_6_CUTOFF)) {
+      err = s_mp_mul_toom_6(a, b, c);
    } else if (MP_HAS(S_MP_MUL_5_TOOM) &&
               (min >= MP_MUL_TOOM_5_CUTOFF)) {
       err = s_mp_mul_toom_5(a, b, c);
