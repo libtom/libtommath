@@ -255,9 +255,9 @@ mp_err s_mp_mul_toom_5(const mp_int *a, const mp_int *b, mp_int *c)
    /** S7 = S7 * S9; */
    if ((err = mp_mul(&S7, &S9, &S7)) != MP_OKAY)                                                          goto LTM_ERR;
    /** S1 = a4*b4; */
-   if( (err = mp_mul(&a4, &b4, &S1) ) != MP_OKAY)                                                         goto LTM_ERR;
+   if ((err = mp_mul(&a4, &b4, &S1)) != MP_OKAY)                                                         goto LTM_ERR;
    /** S9 = a0*b0; */
-   if( (err = mp_mul(&a0, &b0, &S9) ) != MP_OKAY)                                                         goto LTM_ERR;
+   if ((err = mp_mul(&a0, &b0, &S9)) != MP_OKAY)                                                         goto LTM_ERR;
    /** S6 = S6 - S7; */
    if ((err = mp_sub(&S6, &S7, &S6)) != MP_OKAY)                                                          goto LTM_ERR;
    /** S2 = S2 - S5; */
