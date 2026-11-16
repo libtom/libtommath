@@ -243,6 +243,8 @@ static void s_usage(char *s)
    fprintf(stderr,"             kss  = karatsuba squaring\n");
    fprintf(stderr,"             tc3m = Toom-Cook 3-way multiplication\n");
    fprintf(stderr,"             tc3s = Toom-Cook 3-way squaring\n");
+   fprintf(stderr,"             tc4m = Toom-Cook 4-way multiplication\n");
+   fprintf(stderr,"             tc4s = Toom-Cook 4-way squaring\n");
    fprintf(stderr,"             Implies '-p'\n");
    fprintf(stderr,"          -h this message\n");
    exit(s_exit_code);
@@ -251,10 +253,11 @@ static void s_usage(char *s)
 struct cutoffs {
    int MUL_KARATSUBA, SQR_KARATSUBA;
    int MUL_TOOM, SQR_TOOM;
+   int MUL_TOOM_4, SQR_TOOM_4;
 };
 
 const struct cutoffs max_cutoffs =
-{ INT_MAX, INT_MAX, INT_MAX, INT_MAX };
+{ INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX};
 
 static void set_cutoffs(const struct cutoffs *c)
 {
@@ -262,6 +265,8 @@ static void set_cutoffs(const struct cutoffs *c)
    MP_SQR_KARATSUBA_CUTOFF = c->SQR_KARATSUBA;
    MP_MUL_TOOM_CUTOFF = c->MUL_TOOM;
    MP_SQR_TOOM_CUTOFF = c->SQR_TOOM;
+   MP_MUL_TOOM_4_CUTOFF = c->MUL_TOOM_4;
+   MP_SQR_TOOM_4_CUTOFF = c->SQR_TOOM_4;
 }
 
 static void get_cutoffs(struct cutoffs *c)
@@ -270,7 +275,8 @@ static void get_cutoffs(struct cutoffs *c)
    c->SQR_KARATSUBA  = MP_SQR_KARATSUBA_CUTOFF;
    c->MUL_TOOM = MP_MUL_TOOM_CUTOFF;
    c->SQR_TOOM = MP_SQR_TOOM_CUTOFF;
-
+   c->MUL_TOOM_4 = MP_MUL_TOOM_4_CUTOFF;
+   c->SQR_TOOM_4 = MP_SQR_TOOM_4_CUTOFF;
 }
 
 int main(int argc, char **argv)
@@ -416,13 +422,17 @@ int main(int argc, char **argv)
                s_usage(argv[0]);
             }
             str = argv[opt];
-            MP_MUL_KARATSUBA_CUTOFF = (int)s_strtol(str, &endptr, "[1/4] No value for MP_MUL_KARATSUBA_CUTOFF given");
+            MP_MUL_KARATSUBA_CUTOFF = (int)s_strtol(str, &endptr, "[1/6] No value for MP_MUL_KARATSUBA_CUTOFF given");
             str = endptr + 1;
-            MP_SQR_KARATSUBA_CUTOFF = (int)s_strtol(str, &endptr, "[2/4] No value for MP_SQR_KARATSUBA_CUTOFF given");
+            MP_SQR_KARATSUBA_CUTOFF = (int)s_strtol(str, &endptr, "[2/6] No value for MP_SQR_KARATSUBA_CUTOFF given");
             str = endptr + 1;
-            MP_MUL_TOOM_CUTOFF = (int)s_strtol(str, &endptr, "[3/4] No value for MP_MUL_TOOM_CUTOFF given");
+            MP_MUL_TOOM_CUTOFF = (int)s_strtol(str, &endptr, "[3/6] No value for MP_MUL_TOOM_CUTOFF given");
             str = endptr + 1;
-            MP_SQR_TOOM_CUTOFF = (int)s_strtol(str, &endptr, "[4/4] No value for MP_SQR_TOOM_CUTOFF given");
+            MP_SQR_TOOM_CUTOFF = (int)s_strtol(str, &endptr, "[4/6] No value for MP_SQR_TOOM_CUTOFF given");
+            str = endptr + 1;
+            MP_MUL_TOOM_4_CUTOFF = (int)s_strtol(str, &endptr, "[5/6] No value for MP_MUL_TOOM_4_CUTOFF given");
+            str = endptr + 1;
+            MP_SQR_TOOM_4_CUTOFF = (int)s_strtol(str, &endptr, "[6/6] No value for MP_SQR_TOOM_4_CUTOFF given");
             break;
          case 'h':
             s_exit_code = EXIT_SUCCESS;
@@ -461,6 +471,8 @@ int main(int argc, char **argv)
          T_MUL_SQR("Karatsuba squaring", SQR_KARATSUBA, s_time_sqr),
          T_MUL_SQR("Toom-Cook 3-way multiplying", MUL_TOOM, s_time_mul),
          T_MUL_SQR("Toom-Cook 3-way squaring", SQR_TOOM, s_time_sqr),
+         T_MUL_SQR("Toom-Cook 4-way multiplying", MUL_TOOM_4, s_time_mul),
+         T_MUL_SQR("Toom-Cook 4-way squaring", SQR_TOOM_4, s_time_sqr)
 #undef T_MUL_SQR
       };
       /* Turn all limits from bncore.c to the max */
@@ -474,16 +486,20 @@ int main(int argc, char **argv)
       }
    }
    if (args.terse == 1) {
-      printf("%d %d %d %d\n",
+      printf("%d %d %d %d %d %d\n",
              updated.MUL_KARATSUBA,
              updated.SQR_KARATSUBA,
              updated.MUL_TOOM,
-             updated.SQR_TOOM);
+             updated.SQR_TOOM,
+             updated.MUL_TOOM_4,
+             updated.SQR_TOOM_4);
    } else {
       printf("MUL_KARATSUBA_CUTOFF = %d\n", updated.MUL_KARATSUBA);
       printf("SQR_KARATSUBA_CUTOFF = %d\n", updated.SQR_KARATSUBA);
       printf("MUL_TOOM_CUTOFF = %d\n", updated.MUL_TOOM);
       printf("SQR_TOOM_CUTOFF = %d\n", updated.SQR_TOOM);
+      printf("MUL_TOOM_4_CUTOFF = %d\n", updated.MUL_TOOM_4);
+      printf("SQR_TOOM_4_CUTOFF = %d\n", updated.SQR_TOOM_4);
    }
 
    if (args.print == 1) {
@@ -527,16 +543,20 @@ int main(int argc, char **argv)
       if (args.verbose == 1) {
          set_cutoffs(&orig);
          if (args.terse == 1) {
-            printf("%d %d %d %d\n",
+            printf("%d %d %d %d %d %d\n",
                    MP_MUL_KARATSUBA_CUTOFF,
                    MP_SQR_KARATSUBA_CUTOFF,
                    MP_MUL_TOOM_CUTOFF,
-                   MP_SQR_TOOM_CUTOFF);
+                   MP_SQR_TOOM_CUTOFF,
+                   MP_MUL_TOOM_4_CUTOFF,
+                   MP_SQR_TOOM_4_CUTOFF);
          } else {
             printf("MUL_KARATSUBA_CUTOFF = %d\n", MP_MUL_KARATSUBA_CUTOFF);
             printf("SQR_KARATSUBA_CUTOFF = %d\n", MP_SQR_KARATSUBA_CUTOFF);
             printf("MUL_TOOM_CUTOFF = %d\n", MP_MUL_TOOM_CUTOFF);
             printf("SQR_TOOM_CUTOFF = %d\n", MP_SQR_TOOM_CUTOFF);
+            printf("MUL_TOOM_4_CUTOFF = %d\n", MP_MUL_TOOM_4_CUTOFF);
+            printf("SQR_TOOM_4_CUTOFF = %d\n", MP_SQR_TOOM_4_CUTOFF);
          }
       }
    }

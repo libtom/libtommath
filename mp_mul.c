@@ -13,8 +13,12 @@ mp_err mp_mul(const mp_int *a, const mp_int *b, mp_int *c)
    bool neg = (a->sign != b->sign);
 
    if ((a == b) &&
-       MP_HAS(S_MP_SQR_TOOM) && /* use Toom-Cook? */
-       (a->used >= MP_SQR_TOOM_CUTOFF)) {
+       MP_HAS(S_MP_SQR_TOOM_4) && /* use Toom-Cook 4-way? */
+       (a->used >= MP_SQR_TOOM_4_CUTOFF)) {
+      err = s_mp_sqr_toom_4(a, c);
+   } else if ((a == b) &&
+              MP_HAS(S_MP_SQR_TOOM) && /* use Toom-Cook? */
+              (a->used >= MP_SQR_TOOM_CUTOFF)) {
       err = s_mp_sqr_toom(a, c);
    } else if ((a == b) &&
               MP_HAS(S_MP_SQR_KARATSUBA) &&  /* Karatsuba? */
@@ -41,6 +45,9 @@ mp_err mp_mul(const mp_int *a, const mp_int *b, mp_int *c)
               /* Not much effect was observed below a ratio of 1:2, but again: YMMV. */
               (max >= (2 * min))) {
       err = s_mp_mul_balance(a,b,c);
+   } else if (MP_HAS(S_MP_MUL_4_TOOM) &&
+              (min >= MP_MUL_TOOM_4_CUTOFF)) {
+      err = s_mp_mul_toom_4(a, b, c);
    } else if (MP_HAS(S_MP_MUL_TOOM) &&
               (min >= MP_MUL_TOOM_CUTOFF)) {
       err = s_mp_mul_toom(a, b, c);

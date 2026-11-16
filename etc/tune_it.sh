@@ -104,3 +104,13 @@ echo "#define MP_DEFAULT_MUL_TOOM_CUTOFF      $TMP" >> $TOMMATH_CUTOFFS_H || die
 TMP=$(median $FILE_NAME 4 $i)
 echo "#define MP_DEFAULT_SQR_TOOM_CUTOFF      $TMP"
 echo "#define MP_DEFAULT_SQR_TOOM_CUTOFF      $TMP" >> $TOMMATH_CUTOFFS_H || die "(tc3s) Appending to $TOMMATH_CUTOFFS_H" $?
+TMP=$(median $FILE_NAME 5 $i)
+echo "#define MP_DEFAULT_MUL_TOOM_4_CUTOFF    $TMP"
+echo "#define MP_DEFAULT_MUL_TOOM_4_CUTOFF    $TMP" >> $TOMMATH_CUTOFFS_H || die "(tc4m) Appending to $TOMMATH_CUTOFFS_H" $?
+TMP=$(median $FILE_NAME 6 $i)
+echo "#define MP_DEFAULT_SQR_TOOM_4_CUTOFF    $TMP"
+echo "#define MP_DEFAULT_SQR_TOOM_4_CUTOFF    $TMP" >> $TOMMATH_CUTOFFS_H || die "(tc4s) Appending to $TOMMATH_CUTOFFS_H" $?
+
+
+
+
