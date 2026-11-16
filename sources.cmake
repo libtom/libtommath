@@ -148,6 +148,7 @@ s_mp_mul_high_comba.c
 s_mp_mul_karatsuba.c
 s_mp_mul_toom.c
 s_mp_mul_toom_4.c
+s_mp_mul_toom_5.c
 s_mp_prime_is_divisible.c
 s_mp_prime_tab.c
 s_mp_radix_map.c
@@ -160,6 +161,7 @@ s_mp_sqr_comba.c
 s_mp_sqr_karatsuba.c
 s_mp_sqr_toom.c
 s_mp_sqr_toom_4.c
+s_mp_sqr_toom_5.c
 s_mp_sub.c
 s_mp_warray.c
 s_mp_warray_get.c

@@ -56,7 +56,7 @@ KEEP_TEMP=1
 echo "You might like to watch the numbers go up to $LIMIT but it will take a long time!"
 
 # Might not have sufficient rights or disc full.
-echo "km ks tc3m tc3s" > $FILE_NAME || die "Writing header to $FILE_NAME" $?
+echo "km ks tc3m tc3s tc4m tc4s tc5m tc5s " > $FILE_NAME || die "Writing header to $FILE_NAME" $?
 i=1
 while [ $i -le $LIMIT ]; do
    RNUM=$(LCG)
@@ -110,7 +110,12 @@ echo "#define MP_DEFAULT_MUL_TOOM_4_CUTOFF    $TMP" >> $TOMMATH_CUTOFFS_H || die
 TMP=$(median $FILE_NAME 6 $i)
 echo "#define MP_DEFAULT_SQR_TOOM_4_CUTOFF    $TMP"
 echo "#define MP_DEFAULT_SQR_TOOM_4_CUTOFF    $TMP" >> $TOMMATH_CUTOFFS_H || die "(tc4s) Appending to $TOMMATH_CUTOFFS_H" $?
-
+TMP=$(median $FILE_NAME 7 $i)
+echo "#define MP_DEFAULT_MUL_TOOM_5_CUTOFF    $TMP"
+echo "#define MP_DEFAULT_MUL_TOOM_5_CUTOFF    $TMP" >> $TOMMATH_CUTOFFS_H || die "(tc5m) Appending to $TOMMATH_CUTOFFS_H" $?
+TMP=$(median $FILE_NAME 8 $i)
+echo "#define MP_DEFAULT_SQR_TOOM_5_CUTOFF    $TMP"
+echo "#define MP_DEFAULT_SQR_TOOM_5_CUTOFF    $TMP" >> $TOMMATH_CUTOFFS_H || die "(tc5s) Appending to $TOMMATH_CUTOFFS_H" $?
 
 
 
