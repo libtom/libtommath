@@ -13,12 +13,20 @@ mp_err mp_mul(const mp_int *a, const mp_int *b, mp_int *c)
    bool neg = (a->sign != b->sign);
 
    if ((a == b) &&
-       MP_HAS(S_MP_SQR_TOOM_5) && /* use Toom-Cook 5-way? */
-       (a->used >= MP_SQR_TOOM_5_CUTOFF)) {
+       MP_HAS(S_MP_SQR_TOOM_7) && /* use Toom-Cook 7-way? */
+       (a->used >= MP_SQR_TOOM_7_CUTOFF)) {
+      err = s_mp_sqr_toom_7(a, c);
+   } else if ((a == b) &&
+              MP_HAS(S_MP_SQR_TOOM_6) && /* use Toom-Cook 6-way? */
+              (a->used >= MP_SQR_TOOM_6_CUTOFF)) {
+      err = s_mp_sqr_toom_6(a, c);
+   } else  if ((a == b) &&
+               MP_HAS(S_MP_SQR_TOOM_5) && /* use Toom-Cook 5-way? */
+               (a->used >= MP_SQR_TOOM_5_CUTOFF)) {
       err = s_mp_sqr_toom_5(a, c);
    } else if ((a == b) &&
-       MP_HAS(S_MP_SQR_TOOM_4) && /* use Toom-Cook 4-way? */
-       (a->used >= MP_SQR_TOOM_4_CUTOFF)) {
+              MP_HAS(S_MP_SQR_TOOM_4) && /* use Toom-Cook 4-way? */
+              (a->used >= MP_SQR_TOOM_4_CUTOFF)) {
       err = s_mp_sqr_toom_4(a, c);
    } else if ((a == b) &&
               MP_HAS(S_MP_SQR_TOOM) && /* use Toom-Cook? */
@@ -49,13 +57,16 @@ mp_err mp_mul(const mp_int *a, const mp_int *b, mp_int *c)
               /* Not much effect was observed below a ratio of 1:2, but again: YMMV. */
               (max >= (2 * min))) {
       err = s_mp_mul_balance(a,b,c);
-   } else if (MP_HAS(S_MP_MUL_6_TOOM) &&
+   } else if (MP_HAS(S_MP_MUL_TOOM_7) &&
+              (min >= MP_MUL_TOOM_7_CUTOFF)) {
+      err = s_mp_mul_toom_7(a, b, c);
+   } else if (MP_HAS(S_MP_MUL_TOOM_6) &&
               (min >= MP_MUL_TOOM_6_CUTOFF)) {
       err = s_mp_mul_toom_6(a, b, c);
-   } else if (MP_HAS(S_MP_MUL_5_TOOM) &&
+   } else if (MP_HAS(S_MP_MUL_TOOM_5) &&
               (min >= MP_MUL_TOOM_5_CUTOFF)) {
       err = s_mp_mul_toom_5(a, b, c);
-   } else if (MP_HAS(S_MP_MUL_4_TOOM) &&
+   } else if (MP_HAS(S_MP_MUL_TOOM_4) &&
               (min >= MP_MUL_TOOM_4_CUTOFF)) {
       err = s_mp_mul_toom_4(a, b, c);
    } else if (MP_HAS(S_MP_MUL_TOOM) &&

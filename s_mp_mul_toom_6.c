@@ -18,7 +18,6 @@ mp_err s_mp_mul_toom_6(const mp_int *a, const mp_int *b,  mp_int *c)
       return err;
    }
 
-
    /** A = a0 + a1 * x + a2 * x^2 + a3 * x^3 + a4 * x^4 + a5 * x^5; */
    if ((err = s_mp_ro_digs(a,     0, B, &a0)) != MP_OKAY)                                                 goto LTM_ERR;
    if ((err = s_mp_ro_digs(a,     B, B, &a1)) != MP_OKAY)                                                 goto LTM_ERR;
@@ -26,14 +25,14 @@ mp_err s_mp_mul_toom_6(const mp_int *a, const mp_int *b,  mp_int *c)
    if ((err = s_mp_ro_digs(a, 3 * B, B, &a3)) != MP_OKAY)                                                 goto LTM_ERR;
    if ((err = s_mp_ro_digs(a, 4 * B, B, &a4)) != MP_OKAY)                                                 goto LTM_ERR;
    if ((err = s_mp_ro_digs(a, 5 * B, a->used - 5 * B, &a5)) != MP_OKAY)                                   goto LTM_ERR;
-   
+
    /** B = b0 + b1 * x + b2 * x^2 + b3 * x^3 + b4 * x^4 + b5 * x^5; */
    if ((err = s_mp_ro_digs(b,     0, B, &b0)) != MP_OKAY)                                                 goto LTM_ERR;
    if ((err = s_mp_ro_digs(b,     B, B, &b1)) != MP_OKAY)                                                 goto LTM_ERR;
    if ((err = s_mp_ro_digs(b, 2 * B, B, &b2)) != MP_OKAY)                                                 goto LTM_ERR;
    if ((err = s_mp_ro_digs(b, 3 * B, B, &b3)) != MP_OKAY)                                                 goto LTM_ERR;
    if ((err = s_mp_ro_digs(b, 4 * B, B, &b4)) != MP_OKAY)                                                 goto LTM_ERR;
-   if ((err = s_mp_ro_digs(b, 5 * B, a->used - 5 * B, &b5)) != MP_OKAY)                                   goto LTM_ERR;
+   if ((err = s_mp_ro_digs(b, 5 * B, b->used - 5 * B, &b5)) != MP_OKAY)                                   goto LTM_ERR;
 
 
    /* Evaluation */

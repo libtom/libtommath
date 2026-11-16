@@ -15,9 +15,6 @@
     Towards optimal Toom-Cook matrices." Proceedings of the 2007 international
     symposium on Symbolic and algebraic computation. ACM, 2007.
 */
-#ifdef _OPENMP
-#  include <omp.h>
-#endif
 mp_err s_mp_mul_toom_4(const mp_int *a, const mp_int *b, mp_int *c)
 {
    mp_int S1, S2, S3, S4, S5, S6, S7;
@@ -44,7 +41,7 @@ mp_err s_mp_mul_toom_4(const mp_int *a, const mp_int *b, mp_int *c)
    if ((err = s_mp_ro_digs(b,     0, B, &b0)) != MP_OKAY)                                                goto LTM_ERR;
    if ((err = s_mp_ro_digs(b,     B, B, &b1)) != MP_OKAY)                                                goto LTM_ERR;
    if ((err = s_mp_ro_digs(b, 2 * B, B, &b2)) != MP_OKAY)                                                goto LTM_ERR;
-   if ((err = s_mp_ro_digs(b, 3 * B, a->used - 3 * B, &b3)) != MP_OKAY)                                  goto LTM_ERR;
+   if ((err = s_mp_ro_digs(b, 3 * B, b->used - 3 * B, &b3)) != MP_OKAY)                                  goto LTM_ERR;
 
 
 

@@ -127,7 +127,9 @@ MP_MUL_TOOM_4_CUTOFF,
 MP_SQR_TOOM_5_CUTOFF,
 MP_MUL_TOOM_5_CUTOFF,
 MP_SQR_TOOM_6_CUTOFF,
-MP_MUL_TOOM_6_CUTOFF;
+MP_MUL_TOOM_6_CUTOFF,
+MP_SQR_TOOM_7_CUTOFF,
+MP_MUL_TOOM_7_CUTOFF;
 #endif
 
 /* define this to use lower memory usage routines (exptmods mostly) */

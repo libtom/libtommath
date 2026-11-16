@@ -16,9 +16,6 @@
      Chung, Jaewook, and M. Anwar Hasan. "Asymmetric squaring formulae."
      18th IEEE Symposium on Computer Arithmetic (ARITH'07). IEEE, 2007.
 */
-#ifdef _OPENMP
-#  include <omp.h>
-#endif
 mp_err s_mp_sqr_toom_4(const mp_int *a, mp_int *c)
 {
    mp_int S1, S2, S3, S4, S5, S6, S7;
