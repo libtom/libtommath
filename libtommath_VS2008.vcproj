@@ -901,6 +901,10 @@
 			>
 		</File>
 		<File
+			RelativePath="s_mp_mul_toom_6.c"
+			>
+		</File>
+		<File
 			RelativePath="s_mp_prime_is_divisible.c"
 			>
 		</File>
@@ -950,6 +954,10 @@
 		</File>
 		<File
 			RelativePath="s_mp_sqr_toom_5.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_sqr_toom_6.c"
 			>
 		</File>
 		<File
