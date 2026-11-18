@@ -22,9 +22,9 @@ bool s_mp_is_mul_wrong(const mp_int *a, const mp_int *b, const mp_int *c)
       checksum_prod = 0u;
    }
    if (checksum_prod != checksum_c) {
-      return false;
+      return true;
    }
-   return true;
+   return false;
 }
 
 

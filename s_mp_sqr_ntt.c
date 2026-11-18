@@ -101,7 +101,7 @@ mp_err s_mp_sqr_ntt(const mp_int *a, mp_int *c)
 
 #ifdef MP_CHECK_NTT
    if (err == MP_OKAY) {
-      if (!s_mp_is_sqr_wrong(a,c)) {
+      if (s_mp_is_sqr_wrong(a,c)) {
          err = MP_VAL;
       }
    }

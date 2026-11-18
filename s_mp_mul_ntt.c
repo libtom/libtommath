@@ -112,7 +112,7 @@ mp_err s_mp_mul_ntt(const mp_int *a, const mp_int *b, mp_int *c)
 
 #ifdef MP_CHECK_NTT
    if (err == MP_OKAY) {
-      if (!s_mp_is_mul_wrong(a,b,c)) {
+      if (s_mp_is_mul_wrong(a,b,c)) {
          err = MP_VAL;
       }
    }

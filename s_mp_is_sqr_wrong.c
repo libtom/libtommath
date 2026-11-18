@@ -21,9 +21,9 @@ bool s_mp_is_sqr_wrong(const mp_int *a, const mp_int *c)
       checksum_sqr = 0u;
    }
    if (checksum_sqr != checksum_c) {
-      return false;
+      return true;
    }
-   return true;
+   return false;
 }
 
 

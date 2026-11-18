@@ -25,10 +25,10 @@ bool s_mp_is_div_wrong(const mp_int *a, const mp_int *b, const mp_int *q, const 
    }
 
    if (checksum_a != checksum_should_be_a) {
-      return false;
+      return true;
    }
 
-   return true;
+   return false;
 }
 
 
