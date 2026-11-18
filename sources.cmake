@@ -126,6 +126,7 @@ mp_warray_free.c
 mp_xor.c
 mp_zero.c
 s_mp_add.c
+s_mp_compute_limb_checksum.c
 s_mp_copy_digs.c
 s_mp_div_3.c
 s_mp_div_recursive.c
@@ -138,6 +139,9 @@ s_mp_fp_log_d.c
 s_mp_get_bit.c
 s_mp_invmod.c
 s_mp_invmod_odd.c
+s_mp_is_div_wrong.c
+s_mp_is_mul_wrong.c
+s_mp_is_sqr_wrong.c
 s_mp_log_2expt.c
 s_mp_montgomery_reduce_comba.c
 s_mp_mul.c

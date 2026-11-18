@@ -393,6 +393,13 @@ MP_PRIVATE mp_err s_mp_sqr_comba(const mp_int *a, mp_int *b) MP_WUR;
 MP_PRIVATE mp_err s_mp_sqr_karatsuba(const mp_int *a, mp_int *b) MP_WUR;
 MP_PRIVATE mp_err s_mp_sqr_toom(const mp_int *a, mp_int *b) MP_WUR;
 MP_PRIVATE mp_err s_mp_sub(const mp_int *a, const mp_int *b, mp_int *c) MP_WUR;
+
+MP_PRIVATE mp_word s_mp_compute_limb_checksum(const mp_int *a);
+MP_PRIVATE bool s_mp_is_mul_wrong(const mp_int *a, const mp_int *b, const mp_int *c);
+MP_PRIVATE bool s_mp_is_sqr_wrong(const mp_int *a, const mp_int *c);
+MP_PRIVATE bool s_mp_is_div_wrong(const mp_int *a, const mp_int *b, const mp_int *q, const mp_int *r);
+
+
 MP_PRIVATE void s_mp_copy_digs(mp_digit *d, const mp_digit *s, int digits);
 MP_PRIVATE void s_mp_zero_buf(void *mem, size_t size);
 MP_PRIVATE void s_mp_zero_digs(mp_digit *d, int digits);

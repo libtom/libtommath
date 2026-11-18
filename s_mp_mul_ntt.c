@@ -110,6 +110,14 @@ mp_err s_mp_mul_ntt(const mp_int *a, const mp_int *b, mp_int *c)
    s_mp_ntt_crt_init(cx, primes, nprimes, bound_bits);
    err = s_mp_ntt_crt_assemble(cx, residues, nprimes, ncoef, c);
 
+#ifdef MP_CHECK_NTT
+   if (err == MP_OKAY) {
+      if (!s_mp_is_mul_wrong(a,b,c)) {
+         err = MP_VAL;
+      }
+   }
+#endif
+
 LTM_ERR:
    mp_clear_multi(&P, &pmp, NULL);
    if (residues) {

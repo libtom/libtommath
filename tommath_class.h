@@ -135,6 +135,7 @@
 #   define MP_XOR_C
 #   define MP_ZERO_C
 #   define S_MP_ADD_C
+#   define S_MP_COMPUTE_LIMB_CHECKSUM_C
 #   define S_MP_COPY_DIGS_C
 #   define S_MP_DIV_3_C
 #   define S_MP_DIV_RECURSIVE_C
@@ -147,6 +148,9 @@
 #   define S_MP_GET_BIT_C
 #   define S_MP_INVMOD_C
 #   define S_MP_INVMOD_ODD_C
+#   define S_MP_IS_DIV_WRONG_C
+#   define S_MP_IS_MUL_WRONG_C
+#   define S_MP_IS_SQR_WRONG_C
 #   define S_MP_LOG_2EXPT_C
 #   define S_MP_MONTGOMERY_REDUCE_COMBA_C
 #   define S_MP_MUL_C
@@ -1018,6 +1022,9 @@
 #   define S_MP_ZERO_DIGS_C
 #endif
 
+#if defined(S_MP_COMPUTE_LIMB_CHECKSUM_C)
+#endif
+
 #if defined(S_MP_COPY_DIGS_C)
 #endif
 
@@ -1174,6 +1181,18 @@
 #   define MP_SUB_C
 #endif
 
+#if defined(S_MP_IS_DIV_WRONG_C)
+#   define S_MP_COMPUTE_LIMB_CHECKSUM_C
+#endif
+
+#if defined(S_MP_IS_MUL_WRONG_C)
+#   define S_MP_COMPUTE_LIMB_CHECKSUM_C
+#endif
+
+#if defined(S_MP_IS_SQR_WRONG_C)
+#   define S_MP_COMPUTE_LIMB_CHECKSUM_C
+#endif
+
 #if defined(S_MP_LOG_2EXPT_C)
 #   define MP_COUNT_BITS_C
 #endif
@@ -1252,6 +1271,7 @@
 #   define MP_INIT_MULTI_C
 #   define MP_MUL_C
 #   define MP_SET_C
+#   define MP_ZERO_C
 #   define S_MP_NTT_CONVOLVE_SINGLE_C
 #   define S_MP_NTT_CRT_ASSEMBLE_C
 #   define S_MP_NTT_CRT_INIT_C

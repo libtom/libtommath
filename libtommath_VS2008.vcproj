@@ -809,6 +809,10 @@
 			>
 		</File>
 		<File
+			RelativePath="s_mp_compute_limb_checksum.c"
+			>
+		</File>
+		<File
 			RelativePath="s_mp_copy_digs.c"
 			>
 		</File>
@@ -854,6 +858,18 @@
 		</File>
 		<File
 			RelativePath="s_mp_invmod_odd.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_is_div_wrong.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_is_mul_wrong.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_is_sqr_wrong.c"
 			>
 		</File>
 		<File

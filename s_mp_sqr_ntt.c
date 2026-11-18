@@ -99,6 +99,14 @@ mp_err s_mp_sqr_ntt(const mp_int *a, mp_int *c)
    s_mp_ntt_crt_init(cx, primes, nprimes, bound_bits);
    err = s_mp_ntt_crt_assemble(cx, residues, nprimes, ncoef, c);
 
+#ifdef MP_CHECK_NTT
+   if (err == MP_OKAY) {
+      if (!s_mp_is_sqr_wrong(a,c)) {
+         err = MP_VAL;
+      }
+   }
+#endif
+
 LTM_ERR:
    mp_clear_multi(&P, &pmp, NULL);
    if (residues) {
