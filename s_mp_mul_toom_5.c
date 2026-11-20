@@ -20,7 +20,8 @@ mp_err s_mp_mul_toom_5(const mp_int *a, const mp_int *b, mp_int *c)
    mp_int a0, a1, a2, a3, a4;
    mp_int b0, b1, b2, b3, b4;
    mp_err err = MP_OKAY;
-   int B, sign;
+   int B;
+   mp_sign sign;
    B = MP_MIN(a->used, b->used) / 5;
    if ((err =
            mp_init_multi(&S1, &S2, &S3, &S4, &S5, &S6, &S7, &S8, &S9, &tmp, &tmp2, NULL)) != MP_OKAY) {

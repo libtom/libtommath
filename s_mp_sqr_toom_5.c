@@ -32,9 +32,9 @@ mp_err s_mp_sqr_toom_5(const mp_int *a, mp_int *c)
    if ((err = s_mp_ro_digs(a, 4 * B, a->used - 4 * B, &a4)) != MP_OKAY)                                   goto LTM_ERR;
 
    /** S1 = a0^2 ; */
-   if ((err = mp_sqr(&a0, &S1)) != MP_OKAY)                                                              goto LTM_ERR;
+   if ((err = mp_sqr(&a0, &S1)) != MP_OKAY)                                                               goto LTM_ERR;
    /** S2 = a4^2 ; */
-   if ((err = mp_sqr(&a4, &S2)) != MP_OKAY)                                                              goto LTM_ERR;
+   if ((err = mp_sqr(&a4, &S2)) != MP_OKAY)                                                               goto LTM_ERR;
 
    /** \\S3 = (a0 + a1 + a2 + a3 + a4)^2; */
    /** S3 = a0 + a1; */

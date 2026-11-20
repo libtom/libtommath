@@ -1249,7 +1249,7 @@ static int test_mp_reduce_2k(void)
    EXPECT(!is2k);
 
    for (cnt = 3; cnt <= 128; ++cnt) {
-      mp_digit tmp;
+      mp_digit tmp = 0u;
 
       DO(mp_2expt(&a, cnt));
       DO(mp_sub_d(&a, 2u, &a));  /* a = 2**cnt - 2 */
