@@ -34,10 +34,10 @@ mp_err s_mp_sqr_toom_4(const mp_int *a, mp_int *c)
 
    /** A = a3*x^3 + a2*x^2 + a1*x + a0; */
 
-   if ((err = s_mp_ro_digs(a,     0, B, &a0)) != MP_OKAY)                                                goto LTM_ERR;
-   if ((err = s_mp_ro_digs(a,     B, B, &a1)) != MP_OKAY)                                                goto LTM_ERR;
-   if ((err = s_mp_ro_digs(a, 2 * B, B, &a2)) != MP_OKAY)                                                goto LTM_ERR;
-   if ((err = s_mp_ro_digs(a, 3 * B, a->used - 3 * B, &a3)) != MP_OKAY)                                  goto LTM_ERR;
+   if ((err = s_mp_ro_digs(a,     0, B, &a0)) != MP_OKAY)                                                 goto LTM_ERR;
+   if ((err = s_mp_ro_digs(a,     B, B, &a1)) != MP_OKAY)                                                 goto LTM_ERR;
+   if ((err = s_mp_ro_digs(a, 2 * B, B, &a2)) != MP_OKAY)                                                 goto LTM_ERR;
+   if ((err = s_mp_ro_digs(a, 3 * B, a->used - 3 * B, &a3)) != MP_OKAY)                                   goto LTM_ERR;
 
    /** S2 = a0 * a1; */
    if ((err = mp_mul(&a0, &a1, &S2)) != MP_OKAY)                                                          goto LTM_ERR;

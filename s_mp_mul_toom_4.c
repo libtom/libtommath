@@ -116,9 +116,9 @@ mp_err s_mp_mul_toom_4(const mp_int *a, const mp_int *b, mp_int *c)
    if ((err = mp_sub(&S7, &tmp1, &S7)) != MP_OKAY)                                                        goto LTM_ERR;
    if ((err = mp_mul(&S6, &S7, &S6)) != MP_OKAY)                                                          goto LTM_ERR;
    /** S7 = a0 * b0; */
-   if ((err = mp_mul(&a0, &b0, &S7)) != MP_OKAY)                                                         goto LTM_ERR;
+   if ((err = mp_mul(&a0, &b0, &S7)) != MP_OKAY)                                                          goto LTM_ERR;
    /** S1 = a3 * b3; */
-   if ((err = mp_mul(&a3, &b3, &S1)) != MP_OKAY)                                                         goto LTM_ERR;
+   if ((err = mp_mul(&a3, &b3, &S1)) != MP_OKAY)                                                          goto LTM_ERR;
    /** S2 = S2 + S5; */
    if ((err = mp_add(&S2, &S5, &S2)) != MP_OKAY)                                                          goto LTM_ERR;
    /** S4 = S4 - S3; */
