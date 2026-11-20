@@ -156,16 +156,25 @@
 #   define S_MP_MUL_HIGH_COMBA_C
 #   define S_MP_MUL_KARATSUBA_C
 #   define S_MP_MUL_TOOM_C
+#   define S_MP_MUL_TOOM_4_C
+#   define S_MP_MUL_TOOM_5_C
+#   define S_MP_MUL_TOOM_6_C
+#   define S_MP_MUL_TOOM_7_C
 #   define S_MP_PRIME_IS_DIVISIBLE_C
 #   define S_MP_PRIME_TAB_C
 #   define S_MP_RADIX_MAP_C
 #   define S_MP_RADIX_SIZE_OVERESTIMATE_C
 #   define S_MP_RAND_PLATFORM_C
 #   define S_MP_RAND_SOURCE_C
+#   define S_MP_RO_DIGS_C
 #   define S_MP_SQR_C
 #   define S_MP_SQR_COMBA_C
 #   define S_MP_SQR_KARATSUBA_C
 #   define S_MP_SQR_TOOM_C
+#   define S_MP_SQR_TOOM_4_C
+#   define S_MP_SQR_TOOM_5_C
+#   define S_MP_SQR_TOOM_6_C
+#   define S_MP_SQR_TOOM_7_C
 #   define S_MP_SUB_C
 #   define S_MP_WARRAY_C
 #   define S_MP_WARRAY_GET_C
@@ -557,10 +566,18 @@
 #   define S_MP_MUL_C
 #   define S_MP_MUL_COMBA_C
 #   define S_MP_MUL_KARATSUBA_C
+#   define S_MP_MUL_TOOM_4_C
+#   define S_MP_MUL_TOOM_5_C
+#   define S_MP_MUL_TOOM_6_C
+#   define S_MP_MUL_TOOM_7_C
 #   define S_MP_MUL_TOOM_C
 #   define S_MP_SQR_C
 #   define S_MP_SQR_COMBA_C
 #   define S_MP_SQR_KARATSUBA_C
+#   define S_MP_SQR_TOOM_4_C
+#   define S_MP_SQR_TOOM_5_C
+#   define S_MP_SQR_TOOM_6_C
+#   define S_MP_SQR_TOOM_7_C
 #   define S_MP_SQR_TOOM_C
 #endif
 
@@ -1225,6 +1242,75 @@
 #   define S_MP_DIV_3_C
 #endif
 
+#if defined(S_MP_MUL_TOOM_4_C)
+#   define MP_ADD_C
+#   define MP_CLEAR_MULTI_C
+#   define MP_COPY_C
+#   define MP_DIV_2D_C
+#   define MP_DIV_D_C
+#   define MP_INIT_MULTI_C
+#   define MP_LSHD_C
+#   define MP_MUL_2D_C
+#   define MP_MUL_C
+#   define MP_MUL_D_C
+#   define MP_NEG_C
+#   define MP_SUB_C
+#   define S_MP_RO_DIGS_C
+#endif
+
+#if defined(S_MP_MUL_TOOM_5_C)
+#   define MP_ADD_C
+#   define MP_CLEAR_MULTI_C
+#   define MP_COPY_C
+#   define MP_DIV_2D_C
+#   define MP_DIV_2_C
+#   define MP_DIV_D_C
+#   define MP_INIT_MULTI_C
+#   define MP_LSHD_C
+#   define MP_MUL_2D_C
+#   define MP_MUL_2_C
+#   define MP_MUL_C
+#   define MP_MUL_D_C
+#   define MP_NEG_C
+#   define MP_SUB_C
+#   define S_MP_RO_DIGS_C
+#endif
+
+#if defined(S_MP_MUL_TOOM_6_C)
+#   define MP_ADD_C
+#   define MP_CLEAR_MULTI_C
+#   define MP_DIV_2D_C
+#   define MP_DIV_2_C
+#   define MP_DIV_D_C
+#   define MP_EXCH_C
+#   define MP_INIT_MULTI_C
+#   define MP_LSHD_C
+#   define MP_MUL_2D_C
+#   define MP_MUL_2_C
+#   define MP_MUL_C
+#   define MP_MUL_D_C
+#   define MP_SUB_C
+#   define S_MP_DIV_3_C
+#   define S_MP_RO_DIGS_C
+#endif
+
+#if defined(S_MP_MUL_TOOM_7_C)
+#   define MP_ADD_C
+#   define MP_CLEAR_MULTI_C
+#   define MP_DIV_2D_C
+#   define MP_DIV_2_C
+#   define MP_DIV_D_C
+#   define MP_EXCH_C
+#   define MP_INIT_MULTI_C
+#   define MP_LSHD_C
+#   define MP_MUL_2D_C
+#   define MP_MUL_2_C
+#   define MP_MUL_C
+#   define MP_MUL_D_C
+#   define MP_SUB_C
+#   define S_MP_RO_DIGS_C
+#endif
+
 #if defined(S_MP_PRIME_IS_DIVISIBLE_C)
 #   define MP_DIV_D_C
 #endif
@@ -1251,6 +1337,9 @@
 
 #if defined(S_MP_RAND_SOURCE_C)
 #   define S_MP_RAND_PLATFORM_C
+#endif
+
+#if defined(S_MP_RO_DIGS_C)
 #endif
 
 #if defined(S_MP_SQR_C)
@@ -1292,6 +1381,65 @@
 #   define MP_MUL_C
 #   define MP_SUB_C
 #   define S_MP_COPY_DIGS_C
+#endif
+
+#if defined(S_MP_SQR_TOOM_4_C)
+#   define MP_ADD_C
+#   define MP_CLEAR_MULTI_C
+#   define MP_DIV_2_C
+#   define MP_EXCH_C
+#   define MP_INIT_MULTI_C
+#   define MP_LSHD_C
+#   define MP_MUL_2_C
+#   define MP_MUL_C
+#   define MP_SUB_C
+#   define S_MP_RO_DIGS_C
+#endif
+
+#if defined(S_MP_SQR_TOOM_5_C)
+#   define MP_ADD_C
+#   define MP_CLEAR_MULTI_C
+#   define MP_DIV_2_C
+#   define MP_EXCH_C
+#   define MP_INIT_MULTI_C
+#   define MP_LSHD_C
+#   define MP_MUL_2_C
+#   define MP_MUL_C
+#   define MP_SUB_C
+#   define S_MP_RO_DIGS_C
+#endif
+
+#if defined(S_MP_SQR_TOOM_6_C)
+#   define MP_ADD_C
+#   define MP_CLEAR_MULTI_C
+#   define MP_DIV_2D_C
+#   define MP_DIV_D_C
+#   define MP_EXCH_C
+#   define MP_INIT_MULTI_C
+#   define MP_LSHD_C
+#   define MP_MUL_2D_C
+#   define MP_MUL_C
+#   define MP_MUL_D_C
+#   define MP_NEG_C
+#   define MP_SUB_C
+#   define S_MP_RO_DIGS_C
+#endif
+
+#if defined(S_MP_SQR_TOOM_7_C)
+#   define MP_ADD_C
+#   define MP_CLEAR_MULTI_C
+#   define MP_DIV_2D_C
+#   define MP_DIV_2_C
+#   define MP_DIV_D_C
+#   define MP_EXCH_C
+#   define MP_INIT_MULTI_C
+#   define MP_LSHD_C
+#   define MP_MUL_2D_C
+#   define MP_MUL_2_C
+#   define MP_MUL_C
+#   define MP_MUL_D_C
+#   define MP_SUB_C
+#   define S_MP_RO_DIGS_C
 #endif
 
 #if defined(S_MP_SUB_C)
