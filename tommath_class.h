@@ -1228,18 +1228,17 @@
 
 #if defined(S_MP_MUL_TOOM_C)
 #   define MP_ADD_C
-#   define MP_CLAMP_C
-#   define MP_CLEAR_C
 #   define MP_CLEAR_MULTI_C
 #   define MP_DIV_2_C
+#   define MP_EXCH_C
 #   define MP_INIT_MULTI_C
-#   define MP_INIT_SIZE_C
 #   define MP_LSHD_C
+#   define MP_MUL_2D_C
 #   define MP_MUL_2_C
 #   define MP_MUL_C
 #   define MP_SUB_C
-#   define S_MP_COPY_DIGS_C
 #   define S_MP_DIV_3_C
+#   define S_MP_RO_DIGS_C
 #endif
 
 #if defined(S_MP_MUL_TOOM_4_C)
@@ -1371,16 +1370,15 @@
 
 #if defined(S_MP_SQR_TOOM_C)
 #   define MP_ADD_C
-#   define MP_CLAMP_C
-#   define MP_CLEAR_C
+#   define MP_CLEAR_MULTI_C
 #   define MP_DIV_2_C
-#   define MP_INIT_C
-#   define MP_INIT_SIZE_C
+#   define MP_EXCH_C
+#   define MP_INIT_MULTI_C
 #   define MP_LSHD_C
 #   define MP_MUL_2_C
 #   define MP_MUL_C
 #   define MP_SUB_C
-#   define S_MP_COPY_DIGS_C
+#   define S_MP_RO_DIGS_C
 #endif
 
 #if defined(S_MP_SQR_TOOM_4_C)
