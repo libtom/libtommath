@@ -88,6 +88,10 @@ tune: $(LIBMAIN_S)
 	$(MAKE) -C etc tune
 	$(MAKE)
 
+tune: $(LIBMAIN_S)
+	$(MAKE) -C etc tune-valgrind
+	$(MAKE)
+
 clean-obj:
 	@-cmd /c del /Q /S *.OBJ 2>nul
 

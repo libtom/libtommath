@@ -110,6 +110,10 @@ tune: $(LIBNAME)
 	$(MAKE) -C etc tune CFLAGS="$(LTM_CFLAGS) -I../"
 	$(MAKE)
 
+tune-valgrind: $(LIBNAME)
+	$(MAKE) -C etc tune-valgrind CFLAGS="$(LTM_CFLAGS) -I../"
+	$(MAKE)
+
 etc-all: $(LIBNAME)
 	$(MAKE) -C etc all CFLAGS="$(LTM_CFLAGS) -I../"
 	$(MAKE)
