@@ -1244,7 +1244,7 @@ static int test_mp_reduce_2k(void)
    EXPECT(!is2k);
 
    for (cnt = 3; cnt <= 128; ++cnt) {
-      mp_digit tmp;
+      mp_digit tmp = 0u;
 
       DO(mp_2expt(&a, cnt));
       DO(mp_sub_d(&a, 2u, &a));  /* a = 2**cnt - 2 */
@@ -2123,13 +2123,101 @@ LBL_ERR:
    return EXIT_FAILURE;
 }
 
+static int test_s_mp_mul_toom_4(void)
+{
+   mp_int a, b, c, d;
+   int size;
+
+   DOR(mp_init_multi(&a, &b, &c, &d, NULL));
+
+   for (size = MP_MUL_TOOM_4_CUTOFF; size < (MP_MUL_TOOM_4_CUTOFF + 30); size++) {
+      DO(mp_rand(&a, size));
+      DO(mp_rand(&b, size));
+      DO(s_mp_mul_toom_4(&a, &b, &c));
+      DO(s_mp_mul_full(&a,&b,&d));
+      EXPECT(mp_cmp(&c, &d) == MP_EQ);
+   }
+
+   mp_clear_multi(&a, &b, &c, &d, NULL);
+   return EXIT_SUCCESS;
+LBL_ERR:
+   mp_clear_multi(&a, &b, &c, &d, NULL);
+   return EXIT_FAILURE;
+}
+
+static int test_s_mp_mul_toom_5(void)
+{
+   mp_int a, b, c, d;
+   int size;
+
+   DOR(mp_init_multi(&a, &b, &c, &d, NULL));
+
+   for (size = MP_MUL_TOOM_5_CUTOFF; size < (MP_MUL_TOOM_5_CUTOFF + 30); size++) {
+      DO(mp_rand(&a, size));
+      DO(mp_rand(&b, size));
+      DO(s_mp_mul_toom_5(&a, &b, &c));
+      DO(s_mp_mul_full(&a,&b,&d));
+      EXPECT(mp_cmp(&c, &d) == MP_EQ);
+   }
+
+   mp_clear_multi(&a, &b, &c, &d, NULL);
+   return EXIT_SUCCESS;
+LBL_ERR:
+   mp_clear_multi(&a, &b, &c, &d, NULL);
+   return EXIT_FAILURE;
+}
+
+static int test_s_mp_mul_toom_6(void)
+{
+   mp_int a, b, c, d;
+   int size;
+
+   DOR(mp_init_multi(&a, &b, &c, &d, NULL));
+
+   for (size = MP_MUL_TOOM_6_CUTOFF; size < (MP_MUL_TOOM_6_CUTOFF + 30); size++) {
+      DO(mp_rand(&a, size));
+      DO(mp_rand(&b, size));
+      DO(s_mp_mul_toom_6(&a, &b, &c));
+      DO(s_mp_mul_full(&a,&b,&d));
+      EXPECT(mp_cmp(&c, &d) == MP_EQ);
+   }
+
+   mp_clear_multi(&a, &b, &c, &d, NULL);
+   return EXIT_SUCCESS;
+LBL_ERR:
+   mp_clear_multi(&a, &b, &c, &d, NULL);
+   return EXIT_FAILURE;
+}
+
+static int test_s_mp_mul_toom_7(void)
+{
+   mp_int a, b, c, d;
+   int size;
+
+   DOR(mp_init_multi(&a, &b, &c, &d, NULL));
+
+   for (size = MP_MUL_TOOM_7_CUTOFF; size < (MP_MUL_TOOM_7_CUTOFF + 30); size++) {
+      DO(mp_rand(&a, size));
+      DO(mp_rand(&b, size));
+      DO(s_mp_mul_toom_7(&a, &b, &c));
+      DO(s_mp_mul_full(&a,&b,&d));
+      EXPECT(mp_cmp(&c, &d) == MP_EQ);
+   }
+
+   mp_clear_multi(&a, &b, &c, &d, NULL);
+   return EXIT_SUCCESS;
+LBL_ERR:
+   mp_clear_multi(&a, &b, &c, &d, NULL);
+   return EXIT_FAILURE;
+}
+
 static int test_s_mp_sqr_toom(void)
 {
    mp_int a, b, c;
    int size;
 
    DOR(mp_init_multi(&a, &b, &c, NULL));
-   for (size = MP_SQR_TOOM_CUTOFF; size < (MP_SQR_TOOM_CUTOFF + 20); size++) {
+   for (size = MP_SQR_TOOM_CUTOFF; size < (MP_SQR_TOOM_CUTOFF + 30); size++) {
       DO(mp_rand(&a, size));
       DO(s_mp_sqr_toom(&a, &b));
       DO(s_mp_sqr(&a, &c));
@@ -2143,7 +2231,85 @@ LBL_ERR:
    return EXIT_FAILURE;
 }
 
+static int test_s_mp_sqr_toom_4(void)
+{
+   mp_int a, b, c;
+   int size;
 
+   DOR(mp_init_multi(&a, &b, &c, NULL));
+   for (size = MP_SQR_TOOM_4_CUTOFF; size < (MP_SQR_TOOM_4_CUTOFF + 20); size++) {
+      DO(mp_rand(&a, size));
+      DO(s_mp_sqr_toom_4(&a, &b));
+      DO(s_mp_sqr(&a, &c));
+      EXPECT(mp_cmp(&b, &c) == MP_EQ);
+   }
+
+   mp_clear_multi(&a, &b, &c, NULL);
+   return EXIT_SUCCESS;
+LBL_ERR:
+   mp_clear_multi(&a, &b, &c, NULL);
+   return EXIT_FAILURE;
+}
+
+static int test_s_mp_sqr_toom_5(void)
+{
+   mp_int a, b, c;
+   int size;
+
+   DOR(mp_init_multi(&a, &b, &c, NULL));
+   for (size = MP_SQR_TOOM_5_CUTOFF; size < (MP_SQR_TOOM_5_CUTOFF + 20); size++) {
+      DO(mp_rand(&a, size));
+      DO(s_mp_sqr_toom_5(&a, &b));
+      DO(s_mp_sqr(&a, &c));
+      EXPECT(mp_cmp(&b, &c) == MP_EQ);
+   }
+
+   mp_clear_multi(&a, &b, &c, NULL);
+   return EXIT_SUCCESS;
+LBL_ERR:
+   mp_clear_multi(&a, &b, &c, NULL);
+   return EXIT_FAILURE;
+}
+
+static int test_s_mp_sqr_toom_6(void)
+{
+   mp_int a, b, c;
+   int size;
+
+   DOR(mp_init_multi(&a, &b, &c, NULL));
+   for (size = MP_SQR_TOOM_6_CUTOFF; size < (MP_SQR_TOOM_6_CUTOFF + 20); size++) {
+      DO(mp_rand(&a, size));
+      DO(s_mp_sqr_toom_6(&a, &b));
+      DO(s_mp_sqr(&a, &c));
+      EXPECT(mp_cmp(&b, &c) == MP_EQ);
+   }
+
+   mp_clear_multi(&a, &b, &c, NULL);
+   return EXIT_SUCCESS;
+LBL_ERR:
+   mp_clear_multi(&a, &b, &c, NULL);
+   return EXIT_FAILURE;
+}
+
+static int test_s_mp_sqr_toom_7(void)
+{
+   mp_int a, b, c;
+   int size;
+
+   DOR(mp_init_multi(&a, &b, &c, NULL));
+   for (size = MP_SQR_TOOM_7_CUTOFF; size < (MP_SQR_TOOM_7_CUTOFF + 20); size++) {
+      DO(mp_rand(&a, size));
+      DO(s_mp_sqr_toom_7(&a, &b));
+      DO(s_mp_sqr(&a, &c));
+      EXPECT(mp_cmp(&b, &c) == MP_EQ);
+   }
+
+   mp_clear_multi(&a, &b, &c, NULL);
+   return EXIT_SUCCESS;
+LBL_ERR:
+   mp_clear_multi(&a, &b, &c, NULL);
+   return EXIT_FAILURE;
+}
 static int test_mp_radix_size(void)
 {
    mp_int a;
@@ -2606,7 +2772,15 @@ static int unit_tests(int argc, char **argv)
       T2(s_mp_mul_karatsuba, ONLY_PUBLIC_API, S_MP_MUL_KARATSUBA),
       T2(s_mp_sqr_karatsuba, ONLY_PUBLIC_API, S_MP_SQR_KARATSUBA),
       T2(s_mp_mul_toom, ONLY_PUBLIC_API, S_MP_MUL_TOOM),
-      T2(s_mp_sqr_toom, ONLY_PUBLIC_API, S_MP_SQR_TOOM)
+      T2(s_mp_sqr_toom, ONLY_PUBLIC_API, S_MP_SQR_TOOM),
+      T2(s_mp_mul_toom_4, ONLY_PUBLIC_API, S_MP_MUL_TOOM_4),
+      T2(s_mp_sqr_toom_4, ONLY_PUBLIC_API, S_MP_SQR_TOOM_4),
+      T2(s_mp_mul_toom_5, ONLY_PUBLIC_API, S_MP_MUL_TOOM_5),
+      T2(s_mp_sqr_toom_5, ONLY_PUBLIC_API, S_MP_SQR_TOOM_5),
+      T2(s_mp_mul_toom_6, ONLY_PUBLIC_API, S_MP_MUL_TOOM_6),
+      T2(s_mp_sqr_toom_6, ONLY_PUBLIC_API, S_MP_SQR_TOOM_6),
+      T2(s_mp_mul_toom_7, ONLY_PUBLIC_API, S_MP_MUL_TOOM_7),
+      T2(s_mp_sqr_toom_7, ONLY_PUBLIC_API, S_MP_SQR_TOOM_7)
 #undef T3
 #undef T2
 #undef T1

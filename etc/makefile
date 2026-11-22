@@ -17,6 +17,10 @@ tune: tune.o
 	$(CC) $(LTM_TUNE_CFLAGS) tune.o $(LIBNAME) -o tune
 	./tune_it.sh
 
+tune-valgrind: tune.o
+	$(CC) $(LTM_TUNE_CFLAGS) tune.o $(LIBNAME) -o tune
+	./tune_it.sh -T
+
 test_standalone: tune.o
 	# The benchmark program works as a testtool, too
 	$(CC) $(LTM_TUNE_CFLAGS) tune.o $(LIBNAME) -o test

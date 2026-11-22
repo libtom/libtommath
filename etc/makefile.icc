@@ -32,6 +32,10 @@ tune: tune.o
 	$(CC) $(CFLAGS) tune.o $(LIBNAME) -o tune
 	./tune_it.sh
 
+tune-valgrind: tune.o
+	$(CC) $(LTM_TUNE_CFLAGS) tune.o $(LIBNAME) -o tune
+	./tune_it.sh -T
+
 # same app but using RDTSC for higher precision [requires 80586+], coff based gcc installs [e.g. ming, cygwin, djgpp]
 tune86: tune.c
 	nasm -f coff timer.asm

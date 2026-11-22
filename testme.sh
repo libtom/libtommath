@@ -145,13 +145,13 @@ _runtest()
   make clean > /dev/null
   local _timeout=""
   which timeout >/dev/null && _timeout="timeout --foreground 90"
-  if [[ "$MAKE_OPTIONS" =~ "tune" ]]
+  if [[ "$MAKE_OPTIONS" =~ "tune-valgrind" ]]
   then
     # "make tune" will run "tune_it.sh" automatically, hence "autotune", but it cannot
     # get switched off without some effort, so we just let it run twice for testing purposes
     echo -e "\rRun autotune $1 $2"
     _make "$1" "$2" "" "$3" "$4"
-    $_timeout $TUNE_CMD > test_${suffix}.log || _die "running autotune" $?
+    $_timeout $TUNE_CMD_TESTING > test_${suffix}.log || _die "running autotune" $?
   else
     _make "$1" "$2" "test" "$3" "$4"
     echo -e "\rRun test $1 $2"
@@ -170,14 +170,14 @@ _runvalgrind()
   # A bit too close for comfort.
   which timeout >/dev/null && _timeout="timeout --foreground 1800"
 echo "MAKE_OPTIONS = \"$MAKE_OPTIONS\""
-  if [[ "$MAKE_OPTIONS" =~ "tune"  ]]
+  if [[ "$MAKE_OPTIONS" =~ "tune-valgrind"  ]]
   then
 echo "autotune branch"
     _make "$1" "$2" "" "$3" "$4"
     # The shell used for /bin/sh is DASH 0.5.7-4ubuntu1 on the author's machine which fails valgrind, so
     # we just run on instance of etc/tune with the same options as in etc/tune_it.sh
     echo -e "\rRun etc/tune $1 $2 once inside valgrind"
-    $_timeout $VALGRIND_BIN $VALGRIND_OPTS $TUNE_CMD > test_${suffix}.log || _die "running etc/tune" $?
+    $_timeout $VALGRIND_BIN $VALGRIND_OPTS $TUNE_CMD_TESTING > test_${suffix}.log || _die "running etc/tune" $?
   else
     _make "$1" "$2" "test" "$3" "$4"
     echo -e "\rRun test $1 $2 inside valgrind"
@@ -221,8 +221,9 @@ CHECK_FORMAT=""
 CHECK_SYMBOLS=""
 C89=""
 C89_C99_ROUNDTRIP=""
-TUNE_CMD="./etc/tune -t -r 10 -L 3"
-
+# Normal tuning is too slow for testing now.
+# TUNE_CMD="./etc/tune -t -r 10 -L 3"
+TUNE_CMD_TESTING="./etc/tune -T -r 1 -L 1 -o 1"
 alive_pid=0
 
 function kill_alive() {

@@ -34,7 +34,7 @@
  */
 mp_err s_mp_mul_karatsuba(const mp_int *a, const mp_int *b, mp_int *c)
 {
-   mp_int  x0, x1, y0, y1, t1, x0y0, x1y1;
+   mp_int  x0, x1, y0, y1, t1, t2, x0y0, x1y1;
    int  B;
    mp_err  err;
 
@@ -44,26 +44,21 @@ mp_err s_mp_mul_karatsuba(const mp_int *a, const mp_int *b, mp_int *c)
    /* now divide in two */
    B = B >> 1;
 
-   /* init copy all the temps */
-   if ((err = mp_init_size(&x0, B)) != MP_OKAY) {
-      goto LBL_ERR;
-   }
-   if ((err = mp_init_size(&x1, a->used - B)) != MP_OKAY) {
-      goto X0;
-   }
-   if ((err = mp_init_size(&y0, B)) != MP_OKAY) {
-      goto X1;
-   }
-   if ((err = mp_init_size(&y1, b->used - B)) != MP_OKAY) {
-      goto Y0;
-   }
+   /* copy all the temps */
+   if ((err = s_mp_ro_digs(a, 0, B, &x0)) != MP_OKAY)                                                     goto LBL_ERR;
+   if ((err = s_mp_ro_digs(a, B, a->used - B, &x1)) != MP_OKAY)                                           goto LBL_ERR;
+   if ((err = s_mp_ro_digs(b, 0, B, &y0)) != MP_OKAY)                                                     goto LBL_ERR;
+   if ((err = s_mp_ro_digs(b, B, b->used - B, &y1)) != MP_OKAY)                                           goto LBL_ERR;
 
    /* init temps */
    if ((err = mp_init_size(&t1, B * 2)) != MP_OKAY) {
-      goto Y1;
+      goto LBL_ERR;
+   }
+   if ((err = mp_init_size(&t2, B * 2)) != MP_OKAY) {
+      goto T1;
    }
    if ((err = mp_init_size(&x0y0, B * 2)) != MP_OKAY) {
-      goto T1;
+      goto T2;
    }
    if ((err = mp_init_size(&x1y1, B * 2)) != MP_OKAY) {
       goto X0Y0;
@@ -82,54 +77,36 @@ mp_err s_mp_mul_karatsuba(const mp_int *a, const mp_int *b, mp_int *c)
    s_mp_copy_digs(x1.dp, a->dp + B, x1.used);
    s_mp_copy_digs(y1.dp, b->dp + B, y1.used);
 
-   /* only need to clamp the lower words since by definition the
-    * upper words x1/y1 must have a known number of digits
-    */
-   mp_clamp(&x0);
-   mp_clamp(&y0);
+   /* now calc x1+x0 and y1+y0 */
+   /* t1 = x1 - x0 */
+   if ((err = s_mp_add(&x1, &x0, &t1)) != MP_OKAY)                                                           goto X1Y1;
+   /* t2 = y1 - y0 */
+   if ((err = s_mp_add(&y1, &y0, &t2)) != MP_OKAY)                                                           goto X1Y1;
+   /* t1 = (x1 + x0) * (y1 + y0) */
+   if ((err = mp_mul(&t1, &t2, &t1)) != MP_OKAY)                                                             goto X1Y1;
 
    /* now calc the products x0y0 and x1y1 */
-   /* after this x0 is no longer required, free temp [x0==t2]! */
-   if ((err = mp_mul(&x0, &y0, &x0y0)) != MP_OKAY) {
-      goto X1Y1;          /* x0y0 = x0*y0 */
-   }
-   if ((err = mp_mul(&x1, &y1, &x1y1)) != MP_OKAY) {
-      goto X1Y1;          /* x1y1 = x1*y1 */
-   }
+   /* x0y0 = x0*y0 */
+   if ((err = mp_mul(&x0, &y0, &x0y0)) != MP_OKAY)                                                           goto X1Y1;
+   /* x1y1 = x1*y1 */
+   if ((err = mp_mul(&x1, &y1, &x1y1)) != MP_OKAY)                                                           goto X1Y1;
 
-   /* now calc x1+x0 and y1+y0 */
-   if ((err = s_mp_add(&x1, &x0, &t1)) != MP_OKAY) {
-      goto X1Y1;          /* t1 = x1 - x0 */
-   }
-   if ((err = s_mp_add(&y1, &y0, &x0)) != MP_OKAY) {
-      goto X1Y1;          /* t2 = y1 - y0 */
-   }
-   if ((err = mp_mul(&t1, &x0, &t1)) != MP_OKAY) {
-      goto X1Y1;          /* t1 = (x1 + x0) * (y1 + y0) */
-   }
 
    /* add x0y0 */
-   if ((err = mp_add(&x0y0, &x1y1, &x0)) != MP_OKAY) {
-      goto X1Y1;          /* t2 = x0y0 + x1y1 */
-   }
-   if ((err = s_mp_sub(&t1, &x0, &t1)) != MP_OKAY) {
-      goto X1Y1;          /* t1 = (x1+x0)*(y1+y0) - (x1y1 + x0y0) */
-   }
+   /* t2 = x0y0 + x1y1 */
+   if ((err = mp_add(&x0y0, &x1y1, &t2)) != MP_OKAY)                                                         goto X1Y1;
+   /* t1 = (x1+x0)*(y1+y0) - (x1y1 + x0y0) */
+   if ((err = s_mp_sub(&t1, &t2, &t1)) != MP_OKAY)                                                           goto X1Y1;
 
    /* shift by B */
-   if ((err = mp_lshd(&t1, B)) != MP_OKAY) {
-      goto X1Y1;          /* t1 = (x0y0 + x1y1 - (x1-x0)*(y1-y0))<<B */
-   }
-   if ((err = mp_lshd(&x1y1, B * 2)) != MP_OKAY) {
-      goto X1Y1;          /* x1y1 = x1y1 << 2*B */
-   }
-
-   if ((err = mp_add(&x0y0, &t1, &t1)) != MP_OKAY) {
-      goto X1Y1;          /* t1 = x0y0 + t1 */
-   }
-   if ((err = mp_add(&t1, &x1y1, c)) != MP_OKAY) {
-      goto X1Y1;          /* t1 = x0y0 + t1 + x1y1 */
-   }
+   /* t1 = (x0y0 + x1y1 - (x1-x0)*(y1-y0))<<B */
+   if ((err = mp_lshd(&t1, B)) != MP_OKAY)                                                                   goto X1Y1;
+   /* x1y1 = x1y1 << 2*B */
+   if ((err = mp_lshd(&x1y1, B * 2)) != MP_OKAY)                                                             goto X1Y1;
+   /* t1 = x0y0 + t1 */
+   if ((err = mp_add(&x0y0, &t1, &t1)) != MP_OKAY)                                                           goto X1Y1;
+   /* t1 = x0y0 + t1 + x1y1 */
+   if ((err = mp_add(&t1, &x1y1, c)) != MP_OKAY)                                                             goto X1Y1;
 
 X1Y1:
    mp_clear(&x1y1);
@@ -137,14 +114,8 @@ X0Y0:
    mp_clear(&x0y0);
 T1:
    mp_clear(&t1);
-Y1:
-   mp_clear(&y1);
-Y0:
-   mp_clear(&y0);
-X1:
-   mp_clear(&x1);
-X0:
-   mp_clear(&x0);
+T2:
+   mp_clear(&t2);
 LBL_ERR:
    return err;
 }
