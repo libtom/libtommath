@@ -1216,13 +1216,13 @@
 
 #if defined(S_MP_MUL_KARATSUBA_C)
 #   define MP_ADD_C
-#   define MP_CLAMP_C
 #   define MP_CLEAR_C
 #   define MP_INIT_SIZE_C
 #   define MP_LSHD_C
 #   define MP_MUL_C
 #   define S_MP_ADD_C
 #   define S_MP_COPY_DIGS_C
+#   define S_MP_RO_DIGS_C
 #   define S_MP_SUB_C
 #endif
 
@@ -1358,13 +1358,12 @@
 
 #if defined(S_MP_SQR_KARATSUBA_C)
 #   define MP_ADD_C
-#   define MP_CLAMP_C
 #   define MP_CLEAR_C
 #   define MP_INIT_SIZE_C
 #   define MP_LSHD_C
 #   define MP_MUL_C
 #   define S_MP_ADD_C
-#   define S_MP_COPY_DIGS_C
+#   define S_MP_RO_DIGS_C
 #   define S_MP_SUB_C
 #endif
 
