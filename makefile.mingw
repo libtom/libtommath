@@ -88,6 +88,10 @@ tune: $(LIBNAME_S)
 	$(MAKE) -C etc tune
 	$(MAKE)
 
+tune-valgrind: $(LIBNAME_S)
+	$(MAKE) -C etc tune-valgrind
+	$(MAKE)
+
 clean:
 	@-cmd /c del /Q /S *.o *.a *.exe *.dll 2>nul
 

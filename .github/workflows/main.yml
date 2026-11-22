@@ -86,7 +86,7 @@ jobs:
           #- env: SANITIZER=1 BUILDOPTIONS='--with-cc=gcc-5 --limit-valgrind --make-option=tune'
           #- env: SANITIZER=1 BUILDOPTIONS='--with-cc=clang-7 --cflags=-DMP_16BIT --limit-valgrind --make-option=tune'
           #- env: SANITIZER=1 BUILDOPTIONS='--with-cc=clang-7 --cflags=-DMP_32BIT --limit-valgrind --make-option=tune'
-          - { BUILDOPTIONS: '--with-cc=clang-14 --limit-valgrind --make-option=tune',                                            SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: 'clang-14 llvm-14' }
+          - { BUILDOPTIONS: '--with-cc=clang-14 --limit-valgrind --make-option=tune-valgrind',                                   SANITIZER: '1', COMPILE_DEBUG: '0', COMPILE_LTO: '0', CONV_WARNINGS: '',        OTHERDEPS: 'clang-14 llvm-14' }
 
           # GCC for the x86-64 architecture testing against a different Bigint-implementation
           # with 333333 different inputs.

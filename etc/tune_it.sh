@@ -1,5 +1,10 @@
 #!/bin/sh
 
+RUNNING_VALGRIND_TESTS=0
+if [ "$1" = "-T" ]; then
+   RUNNING_VALGRIND_TESTS=1
+fi
+
 die() {
   echo "$1 failed"
   echo "Exiting"
@@ -33,6 +38,7 @@ RNUM=0
 # test are running if you do not have enough memory to avoid page faults.   #
 #############################################################################
 
+if [ $RUNNING_VALGRIND_TESTS -eq 0 ];then
 # Number of rounds overall.
 LIMIT=200
 # Number of loops for each input.
@@ -52,22 +58,38 @@ LAG=1
 # the numbers from this program and R and the standard deviation. This program is known
 # to get larger errors if the standard deviation is larger than ~50.
 KEEP_TEMP=1
+else
+   LIMIT=1
+   RLOOPS=1
+   OFFSET=1
+   LAG=1
+   KEEP_TEMP=0
+fi
 
 echo "You might like to watch the numbers go up to $LIMIT but it will take a long time!"
 
 # Might not have sufficient rights or disc full.
 echo "km ks tc3m tc3s tc4m tc4s tc5m tc5s tc6m tc6s tc7m tc7s " > $FILE_NAME || die "Writing header to $FILE_NAME" $?
 i=1
+
 while [ $i -le $LIMIT ]; do
    RNUM=$(LCG)
    printf "\r%d" $i
-   "$MPWD"/tune -t -r $RLOOPS -L $LAG -S "$RNUM" -o $OFFSET >> $FILE_NAME || die "tune" $?
+   if [ $RUNNING_VALGRIND_TESTS -eq 0 ];then
+      "$MPWD"/tune -t -r $RLOOPS -L $LAG -S "$RNUM" -o $OFFSET >> $FILE_NAME || die "tune" $?
+   else
+      "$MPWD"/tune -T -r $RLOOPS -L $LAG -S "$RNUM" -o $OFFSET >> $FILE_NAME || die "tune" $?
+   fi
    i=$((i + 1))
 done
 
 if [ $KEEP_TEMP -eq 0 ]; then
    rm -v $FILE_NAME || die "Removing $KEEP_TEMP" $?
 fi
+
+
+# No need for actually changing the cutoff values for a test
+if [ $RUNNING_VALGRIND_TESTS -eq 0 ];then
 
 echo "Writing cut-off values to \"$TOMMATH_CUTOFFS_H\"."
 echo "In case of failure: a copy of \"$TOMMATH_CUTOFFS_H\" is in \"$TOMMATH_CUTOFFS_H$BACKUP_SUFFIX\""
@@ -129,6 +151,9 @@ TMP=$(median $FILE_NAME 12 $i)
 echo "#define MP_DEFAULT_SQR_TOOM_7_CUTOFF    $TMP"
 echo "#define MP_DEFAULT_SQR_TOOM_7_CUTOFF    $TMP" >> $TOMMATH_CUTOFFS_H || die "(tc7s) Appending to $TOMMATH_CUTOFFS_H" $?
 
+else
+   exit 0
+fi
 
 
 
