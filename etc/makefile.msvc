@@ -16,7 +16,7 @@ tune: tune.obj
 
 mont: mont.obj
 	cl mont.obj ../tommath.lib
-	
+
 drprime: drprime.obj
 	cl drprime.obj ../tommath.lib
 

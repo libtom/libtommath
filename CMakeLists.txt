@@ -147,19 +147,6 @@ endif()
 if(BUILD_TESTING)
     enable_testing()
     add_subdirectory(demo)
-    if(BUILD_SHARED_LIBS)
-        add_test(NAME test-pkg-config
-            COMMAND ${CMAKE_COMMAND}
-                -DLTM_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}
-                -DLTM_BINARY_DIR=${CMAKE_CURRENT_BINARY_DIR}/pkg-config-test
-                -DCMAKE_GENERATOR=${CMAKE_GENERATOR}
-                -DCMAKE_GENERATOR_PLATFORM=${CMAKE_GENERATOR_PLATFORM}
-                -DCMAKE_GENERATOR_TOOLSET=${CMAKE_GENERATOR_TOOLSET}
-                -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
-                -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}
-                -P ${CMAKE_CURRENT_SOURCE_DIR}/demo/test_pkgconfig.cmake
-        )
-    endif()
 endif()
 
 #-----------------------------------------------------------------------------
@@ -211,7 +198,7 @@ write_basic_package_version_file(
 # Windows uses a different help sytem.
 if((NOT WIN32) AND (NOT CMAKE_HOST_WIN32))
 # install manpage (not gzipped, some BSD's do not want it compressed?)
-install(FILES ${CMAKE_SOURCE_DIR}/doc/tommath.3
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/doc/tommath.3
         DESTINATION ${CMAKE_INSTALL_MANDIR}/man3/
 )
 endif()

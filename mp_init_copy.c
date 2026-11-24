@@ -6,7 +6,7 @@
 /* creates "a" then copies b into it */
 mp_err mp_init_copy(mp_int *a, const mp_int *b)
 {
-   mp_err     err;
+   mp_err err;
 
    if ((err = mp_init_size(a, b->used)) != MP_OKAY) {
       return err;

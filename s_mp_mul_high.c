@@ -8,9 +8,9 @@
  */
 mp_err s_mp_mul_high(const mp_int *a, const mp_int *b, mp_int *c, int digs)
 {
-   mp_int   t;
-   int      pa, pb, ix;
-   mp_err   err;
+   mp_int t;
+   int    pa, pb, ix;
+   mp_err err;
 
    if (digs < 0) {
       return MP_VAL;

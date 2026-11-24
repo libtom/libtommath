@@ -38,7 +38,7 @@ mp_err mp_dr_reduce(mp_int *x, const mp_int *n, mp_digit k)
 
       /* compute (x mod B**m) + k * [x/B**m] inline and inplace */
       for (i = 0; i < m; i++) {
-         mp_word r         = ((mp_word)x->dp[i + m] * (mp_word)k) + x->dp[i] + mu;
+         mp_word r = ((mp_word)x->dp[i + m] * (mp_word)k) + x->dp[i] + mu;
          x->dp[i]  = (mp_digit)(r & MP_MASK);
          mu        = (mp_digit)(r >> ((mp_word)MP_DIGIT_BIT));
       }

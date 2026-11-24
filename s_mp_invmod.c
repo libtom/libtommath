@@ -6,8 +6,8 @@
 /* hac 14.61, pp608 */
 mp_err s_mp_invmod(const mp_int *a, const mp_int *b, mp_int *c)
 {
-   mp_int  x, y, u, v, A, B, C, D;
-   mp_err  err;
+   mp_int x, y, u, v, A, B, C, D;
+   mp_err err;
 
    /* b cannot be negative */
    if ((b->sign == MP_NEG) || mp_iszero(b)) {
@@ -78,7 +78,7 @@ mp_err s_mp_invmod(const mp_int *a, const mp_int *b, mp_int *c)
 
          if ((err = mp_sub(&B, &D, &B)) != MP_OKAY)                  goto LBL_ERR;
       } else {
-         /* v - v - u, C = C - A, D = D - B */
+         /* v = v - u, C = C - A, D = D - B */
          if ((err = mp_sub(&v, &u, &v)) != MP_OKAY)                  goto LBL_ERR;
 
          if ((err = mp_sub(&C, &A, &C)) != MP_OKAY)                  goto LBL_ERR;

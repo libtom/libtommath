@@ -34,9 +34,9 @@
  */
 mp_err s_mp_mul_karatsuba(const mp_int *a, const mp_int *b, mp_int *c)
 {
-   mp_int  x0, x1, y0, y1, t1, x0y0, x1y1;
-   int  B;
-   mp_err  err;
+   mp_int x0, x1, y0, y1, t1, x0y0, x1y1;
+   int B;
+   mp_err err;
 
    /* min # of digits */
    B = MP_MIN(a->used, b->used);
