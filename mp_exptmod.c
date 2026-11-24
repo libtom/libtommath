@@ -17,6 +17,12 @@ mp_err mp_exptmod(const mp_int *G, const mp_int *X, const mp_int *P, mp_int *Y)
       return MP_VAL;
    }
 
+   /* n = 0 mod 1 for all n in Z */
+   if (mp_isone(P)) {
+      mp_zero(Y);
+      return MP_OKAY;
+   }
+
    /* if exponent X is negative we have to recurse */
    if (mp_isneg(X)) {
       mp_int tmpG, tmpX;
