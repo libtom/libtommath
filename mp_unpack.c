@@ -13,6 +13,10 @@ mp_err mp_unpack(mp_int *rop, size_t count, mp_order order, size_t size,
    size_t odd_nails, nail_bytes, i, j;
    uint8_t odd_nail_mask;
 
+   if ((size == 0u) || (nails >= (size * 8u))) {
+      return MP_VAL;
+   }
+
    mp_zero(rop);
 
    if (endian == MP_NATIVE_ENDIAN) {
