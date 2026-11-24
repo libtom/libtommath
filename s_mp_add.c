@@ -11,7 +11,7 @@ mp_err s_mp_add(const mp_int *a, const mp_int *b, mp_int *c)
    mp_err err;
 
    /* find sizes, we let |a| <= |b| which means we have to sort
-    * them.  "x" will point to the input with the most digits
+    * them.  "a" will point to the input with the most digits
     */
    if (a->used < b->used) {
       MP_EXCH(const mp_int *, a, b);
