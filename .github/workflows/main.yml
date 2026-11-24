@@ -186,7 +186,7 @@ jobs:
         run: |
           make amalgamated_timing
 
-  CMake-subproject:
+  CMake-related-tests:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
@@ -195,12 +195,18 @@ jobs:
       - uses: actions/checkout@v4
       - name: build and install from a parent project
         run: |
-          cmake -S demo/cmake_subproject -B build-subproject \
+          cmake -S demo/cmake-tests/subproject -B build-subproject \
             -DBUILD_SHARED_LIBS=${{ matrix.shared }} -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_INSTALL_PREFIX="$PWD/install-subproject" \
             -DCMAKE_EXPORT_NO_PACKAGE_REGISTRY=ON
           cmake --build build-subproject --parallel 2
           cmake --install build-subproject
+      - name: check pkg-config install layouts
+        if: matrix.shared == 'On'
+        run: |
+          cmake -DLTM_SOURCE_DIR="$PWD" -DLTM_BINARY_DIR="$PWD/build-pkg-config" \
+            -DCMAKE_GENERATOR="Unix Makefiles" -DCMAKE_C_COMPILER=cc \
+            -P demo/cmake-tests/pkg-config/test.cmake
 
   CMake:
     runs-on: ${{ matrix.os }}

@@ -170,6 +170,13 @@ if(BUILD_SHARED_LIBS)
     # Let the user override the default directory of the pkg-config file (usually this shouldn't be required to be changed)
     set(CMAKE_INSTALL_PKGCONFIGDIR "${CMAKE_INSTALL_LIBDIR}/pkgconfig" CACHE PATH "Folder where to install .pc files")
 
+    foreach(DIR LIBDIR INCLUDEDIR)
+        set(LTM_PKGCONFIG_${DIR} "${CMAKE_INSTALL_${DIR}}")
+        if(NOT IS_ABSOLUTE "${LTM_PKGCONFIG_${DIR}}")
+            set(LTM_PKGCONFIG_${DIR} "\${prefix}/${CMAKE_INSTALL_${DIR}}")
+        endif()
+    endforeach()
+
     configure_file(
         ${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}.pc.in
         ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.pc
