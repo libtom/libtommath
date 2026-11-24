@@ -68,7 +68,7 @@ static uint64_t TIMFUNC(void)
    return ((uint64_t)lo)|(((uint64_t)hi)<<32);
 #elif defined(__riscv) && __riscv_xlen == 64
    uint64_t cycles;
-   __asm__ __volatile__ ("rdcycle %0" : "=r" (cycles));
+   __asm__ __volatile__("rdcycle %0" : "=r"(cycles));
    return cycles;
 #else /* gcc-IA64 version */
    unsigned long result;
