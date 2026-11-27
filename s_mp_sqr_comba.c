@@ -22,6 +22,12 @@ mp_err s_mp_sqr_comba(const mp_int *a, mp_int *b)
 
    MP_CHECK_WARRAY(W);
 
+   /* Each input digit requires two entries in W. Check before doubling. */
+   if (a->used > (MP_WARRAY / 2)) {
+      MP_FREE_WARRAY(W);
+      return MP_VAL;
+   }
+
    /* grow the destination as required */
    pa = a->used + a->used;
    if ((err = mp_grow(b, pa)) != MP_OKAY) {
