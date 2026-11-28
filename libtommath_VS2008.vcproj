@@ -749,6 +749,26 @@
 			>
 		</File>
 		<File
+			RelativePath="mp_small_prime_sieve_clear.c"
+			>
+		</File>
+		<File
+			RelativePath="mp_small_prime_sieve_init.c"
+			>
+		</File>
+		<File
+			RelativePath="mp_small_prime_sieve_is_small_prime.c"
+			>
+		</File>
+		<File
+			RelativePath="mp_small_prime_sieve_next_prime.c"
+			>
+		</File>
+		<File
+			RelativePath="mp_small_prime_sieve_prec_prime.c"
+			>
+		</File>
+		<File
 			RelativePath="mp_sqrmod.c"
 			>
 		</File>
@@ -914,6 +934,10 @@
 		</File>
 		<File
 			RelativePath="s_mp_rand_source.c"
+			>
+		</File>
+		<File
+			RelativePath="s_mp_small_prime_sieve.c"
 			>
 		</File>
 		<File

@@ -2396,6 +2396,144 @@ the case of RSA) since there is no skew on the least significant bits.
   \label{fig:primeopts}
 \end{figure}
 
+\subsection{Small Prime Sieve}
+A small segmented sieve (unsigned 32-bit max.) is available via three functions.
+
+
+\index{mp\_small\_prime\_sieve\_init}
+\begin{alltt}
+mp_err mp_small_prime_sieve_init(mp_erat_sieve *sieve, bool warmup);
+\end{alltt}
+Initialize sieve to default values, build base-sieve, too, if the parameter {\texttt{warmup}} is true
+otherwise the first call to either {\texttt{mp\_small\_prime\_sieve\_is\_small\_prime}},
+{\texttt{mp\_small\_prime\_sieve\_next\_prime}}, or {\texttt{mp\_small\_prime\_sieve\_prec\_prime}}
+do it at first call.
+
+\index{mp\_small\_prime\_sieve\_clear}
+\begin{alltt}
+mp_err mp_small_prime_sieve_clear(mp_erat_sieve *sieve);
+\end{alltt}
+Reset sieve and free memory .
+
+\index{mp\_small\_prime\_sieve\_is\_small\_prime}
+\begin{alltt}
+mp_err mp_small_prime_sieve_is_small_prime(uint32_t n, bool *result, mp_erat_sieve *sieve);
+\end{alltt}
+Check primality of $n$ if $n < 2^32$.
+
+
+\index{mp\_small\_prime\_sieve\_next\_prime}
+\begin{alltt}
+mp_err mp_small_prime_sieve_next_prime(uint32_t n, uint32_t *result, mp_erat_sieve *sieve);
+\end{alltt}
+Sets {\texttt{result}} to the prime {\texttt{p}} larger than or equal to {\texttt{n}} if $p > 2^32 - 5$.
+Returns {\texttt{MP\_OVF}} if $p > 2^32 - 5$ as an information about that fact.
+
+\index{mp\_small\_prime\_sieve\_prec\_prime}
+\begin{alltt}
+mp_err mp_small_prime_sieve_prec_prime(uint32_t n, uint32_t *result, mp_erat_sieve *sieve);
+\end{alltt}
+Sets {\texttt{result}} to the prime {\texttt{p}} smaller than or equal to {\texttt{n}} if $p > 1$.
+
+\subsubsection{Example Primesieve}
+
+\begin{alltt}
+#include <tommath.h>
+/* Simple example function. Fast enough for n < 2^32 */
+static mp_err erat_phi_moebius(uint32_t n, mp_erat_sieve *sieve, uint32_t *phi, int *moebius)
+{
+   uint32_t r_phi, prime;
+   mp_err err = MP_OKAY;
+   int m_count = 0, m_ret = 2;
+
+   /* All checks&balances omitted!
+      - is > 2
+      - < largest prime
+      - is even
+      (- is prob. prime)
+   */
+   if (n == 1) {
+      m_ret = 3;
+   }
+   r_phi = n;
+   prime = 2;
+   /* Would normally check only a small range ... */
+   while ((prime * prime) <= n) {
+      if ((n % prime) == 0) {
+         if ((n % (prime * prime)) == 0) {
+            m_ret = 0;
+         } else {
+            m_count++;
+         }
+         while ((n % prime) == 0) {
+            n = n / prime;
+         }
+         r_phi = r_phi - (r_phi / prime);
+         if (n == 1) {
+            break;
+         }
+      }
+      /* MP_OVF gets not caught here */
+      if ((err = mp_small_prime_sieve_next_prime(prime + 1, &prime, sieve)) != MP_OKAY)        goto ERAT_ERR;
+   }
+   if (n > 1) {
+      r_phi = r_phi - (r_phi / n);
+      m_count++;
+   }
+   /* .. followed by an asymptotically faster factoring algorithm */
+   if (moebius != NULL) {
+      if (m_ret == 0) {
+         *moebius = 0;
+      } else if (m_ret == 3) {
+         *moebius = 1;
+      } else {
+         *moebius = ((m_count % 2) == 0) ? 1 : -1;
+      }
+   }
+   if (phi != NULL) {
+      *phi = r_phi;
+   }
+ERAT_ERR:
+   return err;
+}
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <errno.h>
+#include <string.h>
+int main(int argc, char **argv){
+   mp_err err = MP_OKAY;
+   mp_erat_sieve sieve;
+   uint32_t n, phi;
+   int moebius;
+   if(argc > 1) {
+      if( (err = mp_small_prime_sieve_init(&sieve, true) ) != MP_OKAY) {
+         fprintf(stderr, "Unable to init primesieve: %s\textbackslash{}n", mp_error_to_string(err));
+         exit(EXIT_FAILURE);
+      }
+      errno = 0;
+      n = strtoul(argv[1], NULL, 10);
+      if(errno != 0){
+         fprintf(stderr, "Unable to read the number error: %s\textbackslash{}n", strerror(errno));
+         exit(EXIT_FAILURE);
+      }
+      if( (err = erat_phi_moebius(n, &sieve, &phi, &moebius) ) != MP_OKAY)        goto LTM_ERR;
+      printf("phi(%u) = %u, moebius(%u) = %d\textbackslash{}n", n, phi, n, moebius);
+
+   } else {
+     fprintf(stderr, "Usage: %s number\textbackslash{}n",argv[0]);
+     exit(EXIT_FAILURE);
+   }
+
+   mp_small_prime_sieve_clear(&sieve);
+   exit(EXIT_SUCCESS);
+LTM_ERR:
+   fprintf(stderr, "An error occured: %s\textbackslash{}n", mp_error_to_string(err));
+   mp_small_prime_sieve_clear(&sieve);
+   exit(EXIT_FAILURE);
+}
+\end{alltt}
+
 \chapter{Random Number Generation}
 \section{PRNG}
 \index{mp\_rand}
@@ -2414,6 +2552,7 @@ If you have a custom random source you might find the function \texttt{mp\_rand\
 \begin{alltt}
 void mp_rand_source(mp_err(*source)(void *out, size_t size));
 \end{alltt}
+
 
 \chapter{Input and Output}
 \section{ASCII Conversions}
